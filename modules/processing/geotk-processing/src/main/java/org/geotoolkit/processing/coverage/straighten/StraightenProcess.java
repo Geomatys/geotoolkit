@@ -24,6 +24,8 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.utility.parameter.ParametersExt;
+import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,6 +46,31 @@ public class StraightenProcess extends AbstractProcess {
      */
     public StraightenProcess(final ParameterValueGroup input) {
         super(StraightenDescriptor.INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param coverage coverage to process
+     */
+    public StraightenProcess(Coverage coverage){
+        super(StraightenDescriptor.INSTANCE, asParameters(coverage));
+    }
+
+    private static ParameterValueGroup asParameters(Coverage coverage){
+        final ParameterValueGroup params = StraightenDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, StraightenDescriptor.COVERAGE_IN.getName().getCode()).setValue(coverage);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return straighten coverage
+     * @throws ProcessException
+     */
+    public Coverage executeNow() throws ProcessException {
+        execute();
+        return (Coverage) outputParameters.parameter(StraightenDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
     }
 
     /**

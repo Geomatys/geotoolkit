@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -86,6 +87,43 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
     ComputeVolumeProcess(final ParameterValueGroup input) {
         super(ComputeVolumeDescriptor.INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param gcReader elevation model coverage reader
+     * @param jtsGeom polygon area to process
+     * @param geomCRS geometry crs
+     * @param bIndex coverage band index
+     * @param zMinCeil coverage min ceiling
+     * @param zMaxCeil coverage max ceiling
+     */
+    public ComputeVolumeProcess(GridCoverageReader gcReader, Geometry jtsGeom,
+            CoordinateReferenceSystem geomCRS, Integer bIndex, Double zMinCeil, double zMaxCeil){
+        super(ComputeVolumeDescriptor.INSTANCE, asParameters(gcReader, jtsGeom, geomCRS, bIndex, zMinCeil, zMaxCeil));
+    }
+
+    private static ParameterValueGroup asParameters(GridCoverageReader gcReader, Geometry jtsGeom,
+            CoordinateReferenceSystem geomCRS, Integer bIndex, Double zMinCeil, double zMaxCeil){
+        final ParameterValueGroup params = ComputeVolumeDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER.getName().getCode()).setValue(gcReader);
+        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_JTSGEOMETRY.getName().getCode()).setValue(jtsGeom);
+        if(geomCRS!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GEOMETRY_CRS.getName().getCode()).setValue(geomCRS);
+        if(bIndex!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_INDEX_BAND.getName().getCode()).setValue(bIndex);
+        if(zMinCeil!=null) ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_GEOMETRY_ALTITUDE.getName().getCode()).setValue(zMinCeil);
+        ParametersExt.getOrCreateValue(params, ComputeVolumeDescriptor.IN_MAX_ALTITUDE_CEILING.getName().getCode()).setValue(zMaxCeil);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return result volume
+     * @throws ProcessException
+     */
+    public Geometry[] executeNow() throws ProcessException {
+        execute();
+        return (Geometry[]) outputParameters.parameter(ComputeVolumeDescriptor.OUT_VOLUME_RESULT.getName().getCode()).getValue();
     }
 
     /**
