@@ -32,6 +32,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,6 +47,48 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
     PyramidProcess(final ParameterValueGroup input) {
         super(PyramidDescriptor.INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param covref input coverage reference
+     * @param covstore output store
+     * @param fillValues tiles fill values
+     * @param interpolation tile interpolation method
+     * @param pyramidName name of created pyramid
+     * @param resPerEnvelope resolution of mosaics
+     * @param reuseTile reuse tiles
+     * @param tileSize tile size
+     */
+    public PyramidProcess(CoverageReference covref,CoverageStore covstore,double[] fillValues,
+            InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
+        super(PyramidDescriptor.INSTANCE, asParameters(covref,covstore,fillValues,
+                interpolation,pyramidName,resPerEnvelope,reuseTile,tileSize));
+    }
+
+    private static ParameterValueGroup asParameters(CoverageReference covref,CoverageStore covstore,double[] fillValues,
+            InterpolationCase interpolation,String pyramidName,Map resPerEnvelope, Boolean reuseTile, Dimension tileSize){
+        final ParameterValueGroup params = PyramidDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_COVERAGEREF.getName().getCode()).setValue(covref);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_COVERAGESTORE.getName().getCode()).setValue(covstore);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_FILLVALUES.getName().getCode()).setValue(fillValues);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_INTERPOLATIONCASE.getName().getCode()).setValue(interpolation);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_PYRAMID_NAME.getName().getCode()).setValue(pyramidName);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_RES_PER_ENVELOPE.getName().getCode()).setValue(resPerEnvelope);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_REUSETILES.getName().getCode()).setValue(reuseTile);
+        ParametersExt.getOrCreateValue(params, PyramidDescriptor.IN_TILE_SIZE.getName().getCode()).setValue(tileSize);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return result coverage store
+     * @throws ProcessException
+     */
+    public CoverageStore executeNow() throws ProcessException {
+        execute();
+        return (CoverageStore) outputParameters.parameter(PyramidDescriptor.OUT_COVERAGESTORE.getName().getCode()).getValue();
     }
 
     /**

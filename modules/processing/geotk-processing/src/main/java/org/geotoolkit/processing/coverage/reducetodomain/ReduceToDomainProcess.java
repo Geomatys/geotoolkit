@@ -37,6 +37,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.utility.parameter.ParametersExt;
+import org.opengis.coverage.Coverage;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -59,7 +61,32 @@ public class ReduceToDomainProcess extends AbstractProcess {
      * Default constructor
      */
     public ReduceToDomainProcess(final ParameterValueGroup input) {
-        super(StraightenDescriptor.INSTANCE,input);
+        super(ReduceToDomainDescriptor.INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param coverage coverage to process
+     */
+    public ReduceToDomainProcess(Coverage coverage){
+        super(ReduceToDomainDescriptor.INSTANCE, asParameters(coverage));
+    }
+
+    private static ParameterValueGroup asParameters(Coverage coverage){
+        final ParameterValueGroup params = ReduceToDomainDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, ReduceToDomainDescriptor.COVERAGE_IN.getName().getCode()).setValue(coverage);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return reduced coverage
+     * @throws ProcessException
+     */
+    public Coverage executeNow() throws ProcessException {
+        execute();
+        return (Coverage) outputParameters.parameter(ReduceToDomainDescriptor.COVERAGE_OUT.getName().getCode()).getValue();
     }
 
     /**

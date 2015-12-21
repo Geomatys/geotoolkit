@@ -33,6 +33,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  *
@@ -42,6 +43,32 @@ public class ExtractionProcess extends AbstractProcess {
 
     ExtractionProcess(final ParameterValueGroup input) {
        super(ExtractionDescriptor.INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param source source to extract metadata from.
+     *
+     */
+    public ExtractionProcess(Object source){
+        super(ExtractionDescriptor.INSTANCE, asParameters(source));
+    }
+
+    private static ParameterValueGroup asParameters(Object source){
+        final ParameterValueGroup params = ExtractionDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, ExtractionDescriptor.IN_SOURCE.getName().getCode()).setValue(source);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return metadata
+     * @throws ProcessException
+     */
+    public Metadata executeNow() throws ProcessException {
+        execute();
+        return (Metadata) outputParameters.parameter(ExtractionDescriptor.OUT_METADATA.getName().getCode()).getValue();
     }
 
     @Override

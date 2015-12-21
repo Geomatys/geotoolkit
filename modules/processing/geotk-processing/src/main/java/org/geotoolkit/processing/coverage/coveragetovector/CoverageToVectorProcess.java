@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.parameter.Parameters.*;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  * Process to extract Polygon from a coverage.
@@ -69,6 +70,35 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
     CoverageToVectorProcess(final ParameterValueGroup input) {
         super(CoverageToVectorDescriptor.INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param coverage coverage to process
+     * @param ranges data value ranges
+     * @param band coverage band to process
+     */
+    public CoverageToVectorProcess(GridCoverage2D coverage, NumberRange[] ranges, int band){
+        super(CoverageToVectorDescriptor.INSTANCE, asParameters(coverage,ranges,band));
+    }
+
+    private static ParameterValueGroup asParameters(GridCoverage2D coverage, NumberRange[] ranges, int band){
+        final ParameterValueGroup params = CoverageToVectorDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
+        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(coverage);
+        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(coverage);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return geometries
+     * @throws ProcessException
+     */
+    public Geometry[] executeNow() throws ProcessException {
+        execute();
+        return (Geometry[]) outputParameters.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
     }
 
     public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)

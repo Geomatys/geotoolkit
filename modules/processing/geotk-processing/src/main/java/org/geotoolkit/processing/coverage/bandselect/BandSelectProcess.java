@@ -30,6 +30,7 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  *
@@ -39,6 +40,33 @@ public class BandSelectProcess extends AbstractProcess {
 
     public BandSelectProcess(ParameterValueGroup input) {
         super(BandSelectDescriptor.INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param coverage Coverage to process
+     * @param bands bands to select for output
+     */
+    public BandSelectProcess(GridCoverage2D coverage, int[] bands){
+        super(BandSelectDescriptor.INSTANCE, asParameters(coverage,bands));
+    }
+
+    private static ParameterValueGroup asParameters(GridCoverage2D coverage, int[] bands){
+        final ParameterValueGroup params = BandSelectDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, BandSelectDescriptor.IN_COVERAGE.getName().getCode()).setValue(coverage);
+        ParametersExt.getOrCreateValue(params, BandSelectDescriptor.IN_BANDS.getName().getCode()).setValue(bands);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return result coverage
+     * @throws ProcessException
+     */
+    public GridCoverage2D executeNow() throws ProcessException {
+        execute();
+        return (GridCoverage2D) outputParameters.parameter(BandSelectDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override
