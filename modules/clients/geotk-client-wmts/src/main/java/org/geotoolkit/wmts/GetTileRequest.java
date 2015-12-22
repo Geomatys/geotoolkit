@@ -55,6 +55,10 @@ public interface GetTileRequest extends Request {
 
     void setTileCol(int tr);
 
+    String getResourceURL();
+
+    void setResourceURL(String url);
+
     Map<String,String> dimensions();
 
 }

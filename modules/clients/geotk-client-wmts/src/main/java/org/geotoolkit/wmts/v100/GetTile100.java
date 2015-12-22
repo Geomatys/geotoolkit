@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.wmts.v100;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wmts.AbstractGetTile;
 
@@ -34,6 +38,22 @@ public class GetTile100 extends AbstractGetTile {
      */
     public GetTile100(final String serverURL, final ClientSecurity security){
         super(serverURL,"1.0.0", security);
+    }
+
+    @Override
+    public URL getURL() throws MalformedURLException {
+        if(resourceUrl==null){
+            return super.getURL();
+        }else{
+            prepareParameters();
+            //use template url
+            String url = resourceUrl;
+            //replace all parameters
+            for (Map.Entry<String,String> entry : requestParameters.entrySet()) {
+                url = url.replaceAll("(?i)"+Pattern.quote("{"+entry.getKey()+"}"), entry.getValue());
+            }
+            return new URL(url);
+        }
     }
 
 }

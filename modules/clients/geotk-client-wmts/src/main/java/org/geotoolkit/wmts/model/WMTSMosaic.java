@@ -166,7 +166,10 @@ public class WMTSMosaic implements GridMosaic{
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
+        if(!hints.containsKey(PyramidSet.HINT_FORMAT)){
+            hints = new HashMap(hints);
+            hints.put(PyramidSet.HINT_FORMAT,"image/png");
+        }
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
 
