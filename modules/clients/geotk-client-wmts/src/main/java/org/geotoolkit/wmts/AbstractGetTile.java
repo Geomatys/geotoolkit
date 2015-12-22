@@ -47,6 +47,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
     protected String tileMatrix    = null;
     protected Integer tileRow       = null;
     protected Integer tileCol       = null;
+    protected String resourceUrl    = null;
 
     protected final Map<String,String> dims = new HashMap<String, String>();
 
@@ -171,6 +172,22 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
     @Override
     public void setTileCol(int tr){
         this.tileCol = tr;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getResourceURL() {
+        return resourceUrl;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setResourceURL(String url) {
+        this.resourceUrl = url;
     }
 
     /**

@@ -145,6 +145,15 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         request.setTileMatrix(wmtsMosaic.getMatrix().getIdentifier().getValue());
         request.setTileMatrixSet(wmtsMosaic.getPyramid().getMatrixset().getIdentifier().getValue());
 
+        //search if there is a resource url
+        final List<URLTemplateType> resourceURLs = wmtsLayer.getResourceURL();
+        for(URLTemplateType template : resourceURLs){
+            if(format.equals(template.getFormat()) && "tile".equals(template.getResourceType())){
+                request.setResourceURL(template.getTemplate());
+                break;
+            }
+        }
+
         //set the style
         Object style = hints.get(HINT_STYLE);
         if(style == null || !(style instanceof String)){
