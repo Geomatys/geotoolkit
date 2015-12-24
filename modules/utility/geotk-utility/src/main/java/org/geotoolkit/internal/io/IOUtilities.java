@@ -513,4 +513,24 @@ public final class IOUtilities extends Static {
             output.write(buffer, 0, bytesRead);
         }
     }
+
+
+    /**
+     * Read all bytes in given stream.
+     * Does not close the stream.
+     *
+     * @param in
+     * @return byte[]
+     */
+    public static byte[] readAll(final InputStream in) throws IOException{
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final byte[] buffer = new byte[1024];
+        int nb;
+        while ((nb = in.read(buffer)) != -1){
+            out.write(buffer, 0, nb);
+        }
+        return out.toByteArray();
+    }
+
+
 }
