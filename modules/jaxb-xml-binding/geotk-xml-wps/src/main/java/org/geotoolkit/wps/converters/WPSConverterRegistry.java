@@ -119,6 +119,7 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new StringToDoubleWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerWArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToMapConverter()));
 
         // Object -> String converters
         register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
@@ -127,6 +128,7 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new DoubleWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerWArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new FloatWArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new MapToStringConverter()));
 
     }
 
