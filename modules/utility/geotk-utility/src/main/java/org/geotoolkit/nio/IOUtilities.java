@@ -18,6 +18,7 @@
 package org.geotoolkit.nio;
 
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Exceptions;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Static;
@@ -37,18 +38,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.Charset;
-import java.nio.file.CopyOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -310,16 +304,26 @@ public final class IOUtilities extends Static {
         } else if (candidate instanceof URI) {
             final URI uri = (URI) candidate;
             try {
+                if (uri.getScheme() == null) {
+                    //scheme null, consider as Path on default FileSystem
+                    return Paths.get(uri.toString());
+                }
                 return Paths.get(uri);
-            } catch (IllegalArgumentException cause) {
+            } catch (IllegalArgumentException | FileSystemNotFoundException cause) {
+                final String message = Exceptions.formatChainedMessages(null,
+                        org.apache.sis.util.resources.Errors.format(org.apache.sis.util.resources.Errors.Keys.IllegalArgumentValue_2, "URI", uri), cause);
                 /*
-                 * Typically because the URI contains a fragment (for example a query part)
-                 * that can not be represented as a File. We consider that as an error
-                 * because the scheme pretended that we had a file URI.
+                 * If the exception is IllegalArgumentException, then the URI scheme has been recognized
+                 * but the URI syntax is illegal for that file system. So we can consider that the URL is
+                 * malformed in regard to the rules of that particular file system.
                  */
-                final IOException e = new MalformedURLException(concatenate(
-                        Errors.format(Errors.Keys.IllegalArgument_2, "URI", candidate), cause));
-                e.initCause(cause);
+                final IOException e;
+                if (cause instanceof IllegalArgumentException) {
+                    e = new MalformedURLException(message);
+                    e.initCause(cause);
+                } else {
+                    e = new IOException(message, cause);
+                }
                 throw e;
             }
         }
@@ -329,6 +333,7 @@ public final class IOUtilities extends Static {
 
     /**
      * Returns {@code true} if the method in this class can process the given object as a path.
+     * Note: {@link String} input is not considered compatible as {@link Path}.
      *
      * @param  path The object to test, or {@code null}.
      * @return {@code true} If the given object is non-null and can be processed like a path.
@@ -336,8 +341,60 @@ public final class IOUtilities extends Static {
      * @since 3.08
      */
     public static boolean canProcessAsPath(final Object path) {
-        return (path instanceof CharSequence) || (path instanceof File) ||
-                (path instanceof URL) || (path instanceof URI) || (path instanceof Path);
+        return (
+                //(path instanceof CharSequence) ||
+                (path instanceof File) ||
+                (path instanceof URL) ||
+                (path instanceof URI) ||
+                (path instanceof Path));
+    }
+
+    /**
+     * Test if an object can be process as Path (see {@link #canProcessAsPath(Object)}) and if input object
+     * target a known FileSystem using his scheme and {@link FileSystemProvider#installedProviders()}.
+     *
+     * @param path candidate object
+     * @return {@code true} if input object is compatible with {@link Path} API AND
+     * if FileSystem is known. {@code false} otherwise.
+     */
+    public static boolean isFileSystemSupported(final Object path) {
+        if (!canProcessAsPath(path)) {
+            return false;
+        }
+
+        URI uri = null;
+        if (path instanceof URL) {
+            try {
+                uri = org.apache.sis.internal.storage.IOUtilities.toURI((URL) path, "UTF-8");
+            } catch (IOException e) {
+                //unable to create URI from URL
+                return false;
+            }
+        } else if (path instanceof URI) {
+            uri = (URI) path;
+        } else {
+            return true;
+        }
+
+        String scheme = uri.getScheme();
+        if (scheme == null) {
+            //scheme null, consider as Path on default FileSystem
+           return true;
+        } else {
+            // loop over FS providers and test path creation
+            for (FileSystemProvider provider: FileSystemProvider.installedProviders()) {
+                if (provider.getScheme().equalsIgnoreCase(scheme)) {
+                    try {
+                        provider.getPath(uri);
+                        return true;
+                    } catch (IllegalArgumentException fse) {
+                        // path construction failed
+                    }
+                }
+            }
+            //no matching FS provider
+            return false;
+        }
     }
 
     /**
@@ -400,6 +457,15 @@ public final class IOUtilities extends Static {
     public static Object changeExtension(final Object path, final String extension) throws MalformedURLException, IOException {
         final boolean isPath = canProcessAsPath(path);
         if (!isPath) {
+            //special case of CharSequence and String
+            if (path instanceof CharSequence) {
+                String pathStr = (String) path;
+                int dotIdx = pathStr.lastIndexOf('.');
+                if (dotIdx > 0) {
+                    pathStr = pathStr.substring(0, dotIdx);
+                }
+                return pathStr + "." + extension;
+            }
             return null;
         }
 
@@ -448,18 +514,62 @@ public final class IOUtilities extends Static {
      * @throws IOException If an error occurred while opening the given file or input resource is not supported.
      */
     public static InputStream open(Object resource) throws IOException {
+        return open(resource, READ);
+    }
+
+    /**
+     * Opens an input stream from the given {@link String}, {@link File}, {@link URL}, {@link URI},
+     * {@link Path} or {@link InputStream}. The stream will not be buffered, and is not required to support the mark or
+     * reset methods.
+     * <p>
+     * It is the caller responsibility to close the given stream. This method does not accept
+     * pre-existing streams because they would usually require a different handling by the
+     * caller (e.g. in many case, the caller will not want to close such pre-existing streams).
+     *
+     * @param  resource The file to open,
+     * @param options open options
+     * @return The input stream for the given resource.
+     * @throws IOException If an error occurred while opening the given file or input resource is not supported.
+     */
+    public static InputStream open(Object resource, OpenOption... options) throws IOException {
         ArgumentChecks.ensureNonNull("resource", resource);
         if (resource instanceof InputStream) {
             return (InputStream) resource;
         }
 
-        final boolean isPath = canProcessAsPath(resource);
-        if (!isPath) {
+        if (!canProcessAsPath(resource)) {
             throw new IOException("Can not handle input type : " + resource.getClass());
         }
 
-        Path realPath = toPath(resource);
-        return newInputStream(realPath);
+        try {
+            Path realPath = toPath(resource);
+            return newInputStream(realPath, options);
+        } catch (IOException e) {
+             /*
+                An IOException is also thrown if toPath catch a FileSystemNotFoundException (http case)
+                Try with URL.
+                Typical case when resource input is an URL not supported as FileSystem
+                Path conversion will fail
+             */
+            URL url = null;
+            if (resource instanceof URL) {
+                url = (URL) resource;
+            }
+
+            if (resource instanceof URI) {
+                URI uri = (URI) resource;
+                try {
+                    url = uri.toURL();
+                } catch (MalformedURLException e2) {
+                    e.addSuppressed(e2);
+                }
+            }
+
+            if (url != null) {
+                return url.openStream();
+            }
+            throw e;
+        }
     }
 
     /**
@@ -486,19 +596,59 @@ public final class IOUtilities extends Static {
      * @since 3.07
      */
     public static OutputStream openWrite(Object resource) throws IOException {
+        return openWrite(resource, CREATE, WRITE);
+    }
+
+    /**
+     * Opens an output stream from the given {@link String}, {@link File}, {@link URL},
+     * {@link URI}, {@link Path} or {@link OutputStream}.
+     *
+     * @param  resource The resource to open,
+     * @param options open options
+     * @return The output stream for the given file.
+     * @throws IOException If an error occurred while opening the given file or input resource is not supported.
+     */
+    public static OutputStream openWrite(Object resource, OpenOption... options) throws IOException {
         ArgumentChecks.ensureNonNull("resource", resource);
 
         if (resource instanceof OutputStream) {
             return (OutputStream) resource;
         }
 
-        final boolean isPath = canProcessAsPath(resource);
-        if (!isPath) {
+        if (!canProcessAsPath(resource)) {
             throw new IOException("Can not handle input type : " + resource.getClass());
         }
 
-        Path realPath = toPath(resource);
-        return newOutputStream(realPath);
+        try {
+            Path realPath = toPath(resource);
+            return newOutputStream(realPath, options);
+        } catch (IOException e) {
+            /*
+                Try with URL.
+                Typical case when resource input is an URL not supported as FileSystem
+                Path conversion will fail
+             */
+            URL url = null;
+            if (resource instanceof URL) {
+                url = (URL) resource;
+            }
+
+            if (resource instanceof URI) {
+                URI uri = (URI) resource;
+                try {
+                    url = uri.toURL();
+                } catch (MalformedURLException e2) {
+                    e.addSuppressed(e2);
+                }
+            }
+
+            if (url != null) {
+                URLConnection connection = url.openConnection();
+                connection.setDoOutput(true);
+                return connection.getOutputStream();
+            }
+            throw e;
+        }
     }
 
     /**
@@ -887,5 +1037,49 @@ public final class IOUtilities extends Static {
         }
         return null;
     }
+
+//    /**
+//     * Find if a resource is "local" (meaning NIO API compatible)
+//     * or distant (accessed with URL API).
+//     *
+//     * @param uri
+//     * @return true if NIO compatible, false otherwise
+//     */
+//    public static boolean isNIO(URI uri) {
+//        try {
+//            if (uri.getScheme() == null) {
+//                //scheme null, consider as Path on default FileSystem
+//                Paths.get(uri.toString());
+//            } else {
+//                Paths.get(uri);
+//            }
+//            return true;
+//        } catch (FileSystemNotFoundException fse) {
+//            // No FileSystemProvider defined for uri scheme
+//            return false;
+//        }
+//    }
+//
+//    /**
+//     * Find if a resource is "local" (meaning NIO API compatible)
+//     * or distant (accessed with URL API).
+//     *
+//     * @param url
+//     * @return true if NIO compatible, false otherwise
+//     */
+//    public static boolean isNIO(URL url) {
+//        try {
+//            if (url.toExternalForm().startsWith("file:")) {
+//                //scheme null, consider as Path on default FileSystem
+//                Paths.get(url.toString());
+//            } else {
+//                Paths.get(url);
+//            }
+//            return true;
+//        } catch (FileSystemNotFoundException fse) {
+//            // No FileSystemProvider defined for url scheme
+//            return false;
+//        }
+//    }
 
 }

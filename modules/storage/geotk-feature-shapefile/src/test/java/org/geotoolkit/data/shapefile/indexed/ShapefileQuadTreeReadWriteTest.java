@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,9 +107,9 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     }
 
     private FeatureStore createDataStore( final ShapefileFeatureStoreFactory fac, final URL url, final boolean memoryMapped )
-            throws IOException, DataStoreException {
+            throws IOException, DataStoreException, URISyntaxException {
         Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), url);
+        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), url.toURI());
         params.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
         FeatureStore createFeatureStore = fac.open(params);
         return createFeatureStore;
@@ -117,7 +118,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     private void doubleWrite( final FeatureType type, final FeatureCollection one, final File tmp,
             final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException,
-            DataStoreException {
+            DataStoreException, URISyntaxException {
         FeatureStore s;
         s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
 
@@ -199,7 +200,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
 
         Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), file.toURI().toURL());
+        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), file.toURI());
         params.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 

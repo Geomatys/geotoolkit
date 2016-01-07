@@ -26,8 +26,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,22 +101,15 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
+        if(!(obj instanceof URI)){
             return false;
         }
 
-        final URL path = (URL)obj;
-        Path pathFile;
-        try {
-            pathFile = Paths.get(path.toURI());
-        } catch (URISyntaxException e) {
-            // Should not happen if the url is well-formed.
-            LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = Paths.get(path.toExternalForm());
-        }
+        final URI path = (URI)obj;
+        Path pathFile = Paths.get(path);
 
-        if (Files.exists(pathFile) && Files.isDirectory(pathFile)){
+        if (Files.isDirectory(pathFile)){
             boolean dbfFiles = false;
             boolean shpFiles = false;
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile)) {

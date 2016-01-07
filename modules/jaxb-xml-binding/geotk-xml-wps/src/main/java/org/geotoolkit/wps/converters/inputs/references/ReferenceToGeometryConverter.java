@@ -18,8 +18,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -39,7 +38,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.URLP;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PATH;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
@@ -106,7 +105,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
             try {
-                param.parameter(URLP.getName().getCode()).setValue(new URL(source.getHref()));
+                param.parameter(PATH.getName().getCode()).setValue(URI.create(source.getHref()));
                 FeatureStore store = FeatureStoreFinder.open(param);
                 Iterator<GenericName> iterator = store.getNames().iterator();
 
@@ -137,7 +136,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
 
                     return (Geometry) value;
                 }
-            } catch (MalformedURLException | DataStoreException ex) {
+            } catch (DataStoreException ex) {
                 throw new UnconvertibleObjectException(ex);
             }
         }

@@ -23,13 +23,12 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.*;
 import org.opengis.parameter.ParameterValueGroup;
 
-import javax.measure.unit.SI;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.URLP;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -58,7 +57,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         Path pointFile = Files.createTempFile("point", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile.toUri().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
@@ -110,7 +109,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         Path geomsFile = Files.createTempFile("geoms", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(geomsFile.toUri().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(geomsFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
@@ -208,7 +207,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         Path complexFile = Files.createTempFile("complex", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(complexFile.toUri().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(complexFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);

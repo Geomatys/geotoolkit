@@ -112,7 +112,7 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     }
 
     private InputStream openConnexion() throws IOException {
-        final URI source = parameters.parameter(NMEAFeatureStoreFactory.URLP.getName().getCode()).valueFile();
+        final URI source = parameters.parameter(NMEAFeatureStoreFactory.PATH.getName().getCode()).valueFile();
         final Path tmpFile = Paths.get(source);
         return Files.newInputStream(tmpFile);
     }

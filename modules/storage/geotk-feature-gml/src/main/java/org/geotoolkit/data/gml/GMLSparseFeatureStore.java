@@ -19,7 +19,7 @@ package org.geotoolkit.data.gml;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -87,18 +87,14 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(GMLFeatureStoreFactory.URLP.getName().toString()).getValue();
-        try {
-            this.file = Paths.get(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        final URI uri = (URI) params.parameter(GMLFeatureStoreFactory.PATH.getName().toString()).getValue();
+        this.file = Paths.get(uri);
         this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
     private static ParameterValueGroup toParameters(final Path f,String xsd, String typeName) throws MalformedURLException{
         final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
+        Parameters.getOrCreate(GMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(GMLFeatureStoreFactory.SPARSE, params).setValue(true);
         if(xsd!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD, params).setValue(xsd);
         if(typeName!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD_TYPE_NAME, params).setValue(typeName);

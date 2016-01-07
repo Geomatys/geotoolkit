@@ -49,7 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -99,9 +99,9 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     public GPXFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
-        final URL url = (URL) params.parameter(GPXFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(GPXFeatureStoreFactory.PATH.getName().toString()).getValue();
         try {
-            this.file = IOUtilities.toPath(url);
+            this.file = IOUtilities.toPath(uri);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -109,7 +109,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     private static ParameterValueGroup toParameter(final Path f) throws MalformedURLException{
         final ParameterValueGroup params = GPXFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GPXFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
+        Parameters.getOrCreate(GPXFeatureStoreFactory.PATH, params).setValue(f.toUri());
         return params;
     }
 

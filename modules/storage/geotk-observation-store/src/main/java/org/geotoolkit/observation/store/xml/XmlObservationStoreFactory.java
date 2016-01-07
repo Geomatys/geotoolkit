@@ -17,6 +17,7 @@
 
 package org.geotoolkit.observation.store.xml;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -55,12 +56,12 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URL> FILE_PATH =  new ParameterBuilder()
-            .addName("url")
+    public static final ParameterDescriptor<URI> FILE_PATH =  new ParameterBuilder()
+            .addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationXmlFileParameters").createGroup(

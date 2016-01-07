@@ -17,8 +17,8 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 
 import org.apache.sis.parameter.ParameterBuilder;
@@ -61,12 +61,12 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
             .addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.coverageXMLPath))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.coverageXMLPathRemarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
     /**
      * A parameter to specify if tile states will be checked using descriptor file (default) or not.
      */

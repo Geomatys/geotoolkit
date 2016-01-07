@@ -73,14 +73,14 @@ public final class Bundle extends IndexedResourceBundle {
         public static final short paramNamespaceRemarks = 5;
 
         /**
-         * URL
+         * URI path
          */
-        public static final short paramURLAlias = 6;
+        public static final short paramPathAlias = 6;
 
         /**
-         * URL toward data
+         * URI path toward data
          */
-        public static final short paramURLRemarks = 7;
+        public static final short paramPathRemarks = 7;
 
         /**
          * Recursive

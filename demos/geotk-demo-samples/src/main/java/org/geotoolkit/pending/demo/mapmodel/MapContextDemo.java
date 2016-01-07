@@ -85,7 +85,7 @@ public class MapContextDemo {
 
     public static FeatureCollection openShapeFile() throws Exception{
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put("url", MapContextDemo.class.getResource("/data/world/Countries.shp"));
+        params.put("path", MapContextDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         final FeatureStore store = FeatureStoreFinder.open(params);
         final Session session = store.createSession(true);

@@ -18,8 +18,8 @@ package org.geotoolkit.wps.converters.outputs.reference;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
@@ -56,7 +56,7 @@ public class FeatureCollectionToReferenceConverterTest extends org.geotoolkit.te
         assertNull(reference.getSchema());
         assertNotNull(reference.getHref());
 
-        final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(new URL(reference.getHref()));
+        final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(reference.getHref()));
         ConvertersTestUtils.assertFeatureCollectionIsValid((FeatureCollection) testResource);
         ConvertersTestUtils.assertFeatureCollectionIsValid(featureCollection);
     }

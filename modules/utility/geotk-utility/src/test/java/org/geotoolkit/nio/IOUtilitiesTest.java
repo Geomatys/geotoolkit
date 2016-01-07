@@ -23,9 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -192,6 +190,7 @@ public final strictfp class IOUtilitiesTest {
         Path pathObj = Files.createTempFile("path", ".tmp");
         File fileObj = File.createTempFile("file", ".tmp");
         URI uriObj = URI.create("file:/tmp");
+        URL urlFileObj = new URL("file:/tmp");
         URL urlObj = new URL("http://some/url");
         String strObj = "/tmp";
         Integer intObj = 1;
@@ -200,14 +199,18 @@ public final strictfp class IOUtilitiesTest {
         assertTrue(IOUtilities.canProcessAsPath(pathObj));
         assertTrue(IOUtilities.canProcessAsPath(fileObj));
         assertTrue(IOUtilities.canProcessAsPath(uriObj));
+        assertTrue(IOUtilities.canProcessAsPath(urlFileObj));
         assertTrue(IOUtilities.canProcessAsPath(urlObj));
-        assertTrue(IOUtilities.canProcessAsPath(strObj));
+        assertFalse(IOUtilities.canProcessAsPath(strObj));
         assertFalse(IOUtilities.canProcessAsPath(intObj));
 
         //convert to Path
         assertSame(pathObj, IOUtilities.toPath(pathObj)); //must be same object
         assertEquals(fileObj.toPath(), IOUtilities.toPath(fileObj));
         assertEquals(Paths.get(uriObj), IOUtilities.toPath(uriObj));
+        assertEquals(Paths.get(uriObj), IOUtilities.toPath(urlFileObj));
+
+        //valid string Object
         assertEquals(Paths.get(strObj), IOUtilities.toPath(strObj));
 
         try {
@@ -228,6 +231,7 @@ public final strictfp class IOUtilitiesTest {
         assertSame(pathObj, IOUtilities.tryToPath(pathObj)); //must be same object
         assertEquals(fileObj.toPath(), IOUtilities.tryToPath(fileObj));
         assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(uriObj));
+        assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(urlFileObj));
         assertEquals(Paths.get(strObj), IOUtilities.tryToPath(strObj));
         assertEquals(urlObj, IOUtilities.tryToPath(urlObj));// not converted because FS not supported
         assertEquals(1, IOUtilities.tryToPath(intObj)); // not converted
@@ -236,9 +240,45 @@ public final strictfp class IOUtilitiesTest {
         assertEquals(pathObj.toFile(), IOUtilities.tryToFile(pathObj));
         assertSame(fileObj, IOUtilities.tryToFile(fileObj));
         assertEquals(new File(uriObj), IOUtilities.tryToFile(uriObj));
+        assertEquals(new File(uriObj), IOUtilities.tryToFile(urlFileObj));
         assertEquals(new File(strObj), IOUtilities.tryToFile(strObj));
         assertEquals(urlObj, IOUtilities.tryToFile(urlObj)); // not converted
         assertEquals(1, IOUtilities.tryToFile(intObj)); // not converted
     }
 
+
+    @Test
+    public void uriFSTests() throws IOException, URISyntaxException {
+        URI uriUnixFile = URI.create("file:/tmp");
+        URI uriUnixFile2 = URI.create("/tmp");
+        URI uriUnixFile3 = URI.create("../tmp");
+        URI uriFileWin = URI.create("file://c:/shapefiles/file1");
+
+        URI uriHTTP = URI.create("http://www.geotoolkit.org/");
+        URI uriHTTPS = URI.create("https://www.geotoolkit.org/");
+        URI uriFTP = URI.create("ftp://temp/test");
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        //Windows
+        if (os.contains("win")) {
+            assertFalse(IOUtilities.isFileSystemSupported(uriUnixFile));
+            assertFalse(IOUtilities.isFileSystemSupported(uriUnixFile2));
+            assertFalse(IOUtilities.isFileSystemSupported(uriUnixFile3));
+
+            assertTrue(IOUtilities.isFileSystemSupported(uriFileWin));
+        } else {
+            //Unix/Linux/Solaris/Mac
+            assertTrue(IOUtilities.isFileSystemSupported(uriUnixFile));
+            assertTrue(IOUtilities.isFileSystemSupported(uriUnixFile2));
+            assertTrue(IOUtilities.isFileSystemSupported(uriUnixFile3));
+
+            assertFalse(IOUtilities.isFileSystemSupported(uriFileWin));
+        }
+
+        //other scheme
+        assertFalse(IOUtilities.isFileSystemSupported(uriHTTP));
+        assertFalse(IOUtilities.isFileSystemSupported(uriHTTPS));
+        assertFalse(IOUtilities.isFileSystemSupported(uriFTP));
+    }
 }

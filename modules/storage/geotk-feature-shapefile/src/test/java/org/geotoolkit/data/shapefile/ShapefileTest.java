@@ -149,7 +149,8 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
-        FeatureStore s = make.create(Collections.singletonMap("url", tmpFile.toURI().toURL()));
+        String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
+        FeatureStore s = make.create(Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
         s.createFeatureType(type.getName(),type);
         GenericName typeName = type.getName();
 
@@ -157,7 +158,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         session.addFeatures(typeName,features);
         session.commit();
 
-        s = new ShapefileFeatureStore(tmpFile.toURI().toURL());
+        s = new ShapefileFeatureStore(tmpFile.toURI());
         typeName = s.getNames().iterator().next();
         FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -185,7 +186,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     @Test
     public void testDuplicateColumnNames() throws Exception {
         File file = TestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
-        ShapefileFeatureStore featureStore = new ShapefileFeatureStore(file.toURI().toURL());
+        ShapefileFeatureStore featureStore = new ShapefileFeatureStore(file.toURI());
         FeatureType schema = featureStore.getFeatureType(featureStore.getNames().iterator().next());
 
         assertEquals(6, schema.getDescriptors().size());

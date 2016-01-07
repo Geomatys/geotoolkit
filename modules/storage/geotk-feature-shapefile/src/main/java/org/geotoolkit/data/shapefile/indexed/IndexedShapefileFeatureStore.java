@@ -21,11 +21,10 @@ import com.vividsolutions.jts.geom.Envelope;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureReader;
@@ -45,7 +44,6 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFiles.toFile;
-import static org.geotoolkit.data.shapefile.lock.ShpFiles.toPath;
 
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
@@ -104,40 +102,40 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      */
-    public IndexedShapefileFeatureStore(final URL url)
+    public IndexedShapefileFeatureStore(final URI uri)
             throws MalformedURLException,DataStoreException {
-        this(url, null, false, true, IndexType.QIX,null);
+        this(uri, null, false, true, IndexType.QIX,null);
     }
 
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      */
-    public IndexedShapefileFeatureStore(final URL url, final String namespace)
+    public IndexedShapefileFeatureStore(final URI uri, final String namespace)
             throws MalformedURLException,DataStoreException {
-        this(url, namespace, false, true, IndexType.QIX,null);
+        this(uri, namespace, false, true, IndexType.QIX,null);
     }
 
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
      */
-    public IndexedShapefileFeatureStore(final URL url, final boolean useMemoryMappedBuffer,
+    public IndexedShapefileFeatureStore(final URI uri, final boolean useMemoryMappedBuffer,
             final boolean createIndex) throws MalformedURLException,DataStoreException {
-        this(url, null, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
+        this(uri, null, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
     }
 
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
@@ -146,10 +144,10 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      *
      * @throws MalformedURLException
      */
-    public IndexedShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
+    public IndexedShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMappedBuffer,
             final boolean createIndex, final IndexType treeType, final Charset dbfCharset)
             throws MalformedURLException,DataStoreException {
-        super(url, namespace, useMemoryMappedBuffer, dbfCharset);
+        super(uri, namespace, useMemoryMappedBuffer, dbfCharset);
 
         this.treeType = treeType;
         this.useIndex = treeType != IndexType.NONE;
@@ -517,10 +515,10 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                     "This method only applies if the files are local and the file can be created");
         }
 
-        final URL indexURL = shpFiles.getURL(indexType);
-        final URL shpURL = shpFiles.getURL(SHP);
+        final URI indexURI = shpFiles.getURI(indexType);
+        final URI shpURI = shpFiles.getURI(SHP);
 
-        if (indexURL == null) {
+        if (indexURI == null) {
             return true;
         }
         // indexes require both the SHP and SHX so if either or missing then
@@ -529,8 +527,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             return false;
         }
 
-        final File indexFile = toFile(indexURL);
-        final File shpFile = toFile(shpURL);
+        final File indexFile = toFile(indexURI);
+        final File shpFile = toFile(shpURI);
         final long indexLastModified = indexFile.lastModified();
         final long shpLastModified = shpFile.lastModified();
         final boolean shpChangedMoreRecently = indexLastModified < shpLastModified;

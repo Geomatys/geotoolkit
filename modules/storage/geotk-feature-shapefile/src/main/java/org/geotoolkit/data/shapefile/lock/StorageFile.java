@@ -21,6 +21,7 @@ import org.geotoolkit.nio.IOUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -104,7 +105,7 @@ public final class StorageFile implements Comparable<StorageFile> {
 
             final Path storage = storageFile.getFile();
 
-            final URL url = storageFile.getSrcURLForWrite();
+            final URI url = storageFile.getSrcURLForWrite();
             try {
                 Path dest = toPath(url);
 
@@ -132,8 +133,8 @@ public final class StorageFile implements Comparable<StorageFile> {
         }
     }
 
-    private URL getSrcURLForWrite() {
-        return shpFiles.getURL(type);
+    private URI getSrcURLForWrite() {
+        return shpFiles.getURI(type);
     }
 
     /**

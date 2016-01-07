@@ -32,11 +32,11 @@ import static org.junit.Assert.*;
 public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
     @Test
-    public void readPointTest() throws DataStoreException {
+    public void readPointTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/point.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -53,11 +53,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readMultiPointTest() throws DataStoreException {
+    public void readMultiPointTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/multipoint.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -74,11 +74,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readLineStringTest() throws DataStoreException {
+    public void readLineStringTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/linestring.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -95,11 +95,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readMultiLineStringTest() throws DataStoreException {
+    public void readMultiLineStringTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/multilinestring.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -116,11 +116,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readPolygonTest() throws DataStoreException {
+    public void readPolygonTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/polygon.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -137,11 +137,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readMultiPolygonTest() throws DataStoreException {
+    public void readMultiPolygonTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/multipolygon.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -158,11 +158,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readGeometryCollectionTest() throws DataStoreException {
+    public void readGeometryCollectionTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/geometrycollection.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -180,11 +180,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readFeatureTest() throws DataStoreException {
+    public void readFeatureTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/feature.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -201,11 +201,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void readFeatureCollectionTest() throws DataStoreException {
+    public void readFeatureCollectionTest() throws DataStoreException, URISyntaxException {
         URL pointFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/featurecollection.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile);
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -226,11 +226,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException
      */
     @Test
-    public void readPropertyArrayTest() throws DataStoreException {
+    public void readPropertyArrayTest() throws DataStoreException, URISyntaxException {
         URL arrayFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/f_prop_array.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(arrayFile);
+        param.parameter(PATH.getName().getCode()).setValue(arrayFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 
@@ -268,11 +268,11 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException
      */
     @Test
-    public void readNullPropsTest() throws DataStoreException {
+    public void readNullPropsTest() throws DataStoreException, URISyntaxException {
         URL jsonFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/sample_with_null_properties.json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(jsonFile);
+        param.parameter(PATH.getName().getCode()).setValue(jsonFile.toURI());
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
 

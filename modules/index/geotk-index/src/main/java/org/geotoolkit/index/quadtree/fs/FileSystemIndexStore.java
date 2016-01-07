@@ -56,6 +56,10 @@ public class FileSystemIndexStore implements IndexStore {
         this(file.toPath(), NEW_MSB_ORDER);
     }
 
+    public FileSystemIndexStore(final Path path) {
+        this(path, NEW_MSB_ORDER);
+    }
+
     /**
      * Constructor
      * 

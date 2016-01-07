@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.indexed;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -155,9 +156,9 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     private void deleteFile(final ShpFileType shpFileType) {
-        final URL url = shpFiles.getURL(shpFileType);
+        final URI url = shpFiles.getURI(shpFileType);
         try {
-            Path toDelete = IOUtilities.toPath(url, ENCODING);
+            Path toDelete = IOUtilities.toPath(url.toURL(), ENCODING);
             Files.deleteIfExists(toDelete);
         } catch(IOException ex){
             //should not happen

@@ -23,6 +23,7 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -30,12 +31,10 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collections;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -64,7 +63,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("MIFParameters").createGroup(IDENTIFIER,URLP,NAMESPACE);
+            new ParameterBuilder().addName("MIFParameters").createGroup(IDENTIFIER, PATH,NAMESPACE);
 
     @Override
     public CharSequence getDisplayName() {
@@ -98,23 +97,14 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     @Override
     public FeatureStore open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        final URL filePath = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
         // Try to open a stream to ensure we've got an existing file.
-        InputStream in = null;
-        try {
-            in = filePath.openStream();
+        try (InputStream stream = IOUtilities.open(filePath)){
+            //do nothing (stream can be created)
         } catch (IOException ex) {
-            throw new DataStoreException("Can't reach data pointed by given URL.", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "An input stream can't be closed.", e);
-                }
-            }
+            throw new DataStoreException("Can't reach data pointed by given URI.", ex);
         }
 
         return new MIFFeatureStore(filePath, namespace);
@@ -126,7 +116,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     @Override
     public FeatureStore create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        final URL filePath = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
         return new MIFFeatureStore(filePath, namespace);

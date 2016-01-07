@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
@@ -142,15 +142,15 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(CSVFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(CSVFeatureStoreFactory.PATH.getName().toString()).getValue();
         try {
-            this.file = IOUtilities.toPath(url);
+            this.file = IOUtilities.toPath(uri);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
         this.separator = (Character) params.parameter(CSVFeatureStoreFactory.SEPARATOR.getName().toString()).getValue();
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -163,7 +163,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     private static ParameterValueGroup toParameters(final Path f,
             final String namespace, final Character separator) throws MalformedURLException{
         final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
+        Parameters.getOrCreate(CSVFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(CSVFeatureStoreFactory.SEPARATOR, params).setValue(separator);
         return params;

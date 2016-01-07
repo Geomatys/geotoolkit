@@ -79,7 +79,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         f.deleteOnExit();
 
         final FeatureStore ds = FeatureStoreFinder.open(
-                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.URLP.getName().getCode(),
+                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.PATH.getName().getCode(),
                 f.toURL()));
         assertNotNull(ds);
 

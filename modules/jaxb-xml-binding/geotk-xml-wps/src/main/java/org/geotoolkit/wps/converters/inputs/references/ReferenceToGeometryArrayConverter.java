@@ -20,8 +20,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -57,7 +57,7 @@ public class ReferenceToGeometryArrayConverter extends AbstractReferenceInputCon
     public Geometry[] convert(ReferenceType source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
             try {
-                final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(new URL(source.getHref()));
+                final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));
 
                 if (featureCollection.size() != 1)
                     throw new UnconvertibleObjectException("Expected size for feature collection was 1." + "Found : " + featureCollection.size());

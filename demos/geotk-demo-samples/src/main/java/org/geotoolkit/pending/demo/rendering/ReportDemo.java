@@ -87,7 +87,7 @@ public class ReportDemo {
 
         //source to make an atlas ----------------------------------------------------
         final FeatureStore store = FeatureStoreFinder.open(
-                (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
+                (Map)Collections.singletonMap("path",ReportDemo.class.getResource("/data/world/Countries.shp").toURI()));
         final GenericName name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 

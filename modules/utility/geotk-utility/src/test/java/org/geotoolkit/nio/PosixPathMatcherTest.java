@@ -11,12 +11,12 @@ import static org.junit.Assert.*;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class UnixPathMatcherTest {
+public class PosixPathMatcherTest {
 
     @Test
     public void testMatcher() throws IOException {
 
-        PathMatcher phgMatcher = new UnixPathMatcher("*.png");
+        PathMatcher phgMatcher = new PosixPathMatcher("*.png");
 
         assertTrue(phgMatcher.matches(Paths.get("test.png")));
         assertFalse(phgMatcher.matches(Paths.get("test.jpeg")));
@@ -29,7 +29,7 @@ public class UnixPathMatcherTest {
     @Test
     public void testMatcherCaseUnsensitive() throws IOException {
 
-        PathMatcher phgMatcher = new UnixPathMatcher("*.pNg", true);
+        PathMatcher phgMatcher = new PosixPathMatcher("*.pNg", true);
 
         assertTrue(phgMatcher.matches(Paths.get("test.png")));
         assertFalse(phgMatcher.matches(Paths.get("test.jpeg")));

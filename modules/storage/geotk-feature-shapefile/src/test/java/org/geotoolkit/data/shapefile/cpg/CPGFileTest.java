@@ -17,6 +17,7 @@
 package org.geotoolkit.data.shapefile.cpg;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
@@ -38,10 +39,10 @@ public class CPGFileTest extends org.geotoolkit.test.TestBase {
      * @throws DataStoreException
      */
     @Test
-    public void testReadUTF8() throws DataStoreException, MalformedURLException{
+    public void testReadUTF8() throws DataStoreException, MalformedURLException, URISyntaxException {
 
         final URL url = CPGFileTest.class.getResource("/org/geotoolkit/test-data/shapes/utf8.shp");
-        final ShapefileFeatureStore store = new ShapefileFeatureStore(url);
+        final ShapefileFeatureStore store = new ShapefileFeatureStore(url.toURI());
 
         try(final FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getName()))){
             Assert.assertTrue(reader.hasNext());

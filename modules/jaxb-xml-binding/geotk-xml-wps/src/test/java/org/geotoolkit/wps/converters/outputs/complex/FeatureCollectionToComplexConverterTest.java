@@ -63,7 +63,7 @@ public class FeatureCollectionToComplexConverterTest extends org.geotoolkit.test
 
         // The main part of the test consist in retrieving the same feature collection
         // that we gave as input to the converter
-        FeatureCollection readFeatureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(tmpFilePath.toUri().toURL());
+        FeatureCollection readFeatureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(tmpFilePath.toUri());
         ConvertersTestUtils.assertFeatureCollectionIsValid(readFeatureCollection);
     }
 }

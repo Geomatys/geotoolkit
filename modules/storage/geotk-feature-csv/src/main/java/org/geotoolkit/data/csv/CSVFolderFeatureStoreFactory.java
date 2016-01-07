@@ -101,7 +101,7 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
         if(!(obj instanceof URL)){
             return false;
         }
@@ -116,7 +116,7 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             pathFile = Paths.get(path.toExternalForm());
         }
 
-        if (Files.exists(pathFile) && Files.isDirectory(pathFile)){
+        if (Files.isDirectory(pathFile)){
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, "*.csv")) {
                 //at least one
                 return stream.iterator().hasNext();

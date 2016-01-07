@@ -45,8 +45,7 @@ import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
 import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,24 +76,29 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     private Integer coordAccuracy;
     private boolean isLocal = true;
 
-    public GeoJSONFeatureStore(final URL url, final String namespace, Integer coordAccuracy)
+    public GeoJSONFeatureStore(final Path path, final String namespace, Integer coordAccuracy)
             throws DataStoreException {
-        this(toParameter(url, namespace, coordAccuracy));
+        this(toParameter(path.toUri(), namespace, coordAccuracy));
+    }
+
+    public GeoJSONFeatureStore(final URI uri, final String namespace, Integer coordAccuracy)
+            throws DataStoreException {
+        this(toParameter(uri, namespace, coordAccuracy));
     }
 
     public GeoJSONFeatureStore (final ParameterValueGroup params) throws DataStoreException {
         super(params);
         this.coordAccuracy = (Integer) params.parameter(COORDINATE_ACCURACY.getName().toString()).getValue();
 
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
 
         //FIXME
-        this.isLocal = url.toExternalForm().toLowerCase().startsWith("file:");
+        this.isLocal = "file".equalsIgnoreCase(uri.getScheme());
 
         Path tmpFile = null;
         try {
-            tmpFile = Paths.get(url.toURI());
-        } catch (URISyntaxException | FileSystemNotFoundException ex) {
+            tmpFile = Paths.get(uri);
+        } catch (FileSystemNotFoundException ex) {
             throw new DataStoreException(ex);
         }
 
@@ -110,9 +114,9 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         }
     }
 
-    private static ParameterValueGroup toParameter(final URL url, final String namespace, Integer coordAccuracy){
+    private static ParameterValueGroup toParameter(final URI uri, final String namespace, Integer coordAccuracy){
         final ParameterValueGroup params = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GeoJSONFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(GeoJSONFeatureStoreFactory.PATH, params).setValue(uri);
         Parameters.getOrCreate(GeoJSONFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(GeoJSONFeatureStoreFactory.COORDINATE_ACCURACY, params).setValue(coordAccuracy);
         return params;

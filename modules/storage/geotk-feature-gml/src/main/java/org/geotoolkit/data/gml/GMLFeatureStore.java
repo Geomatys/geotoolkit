@@ -19,8 +19,7 @@ package org.geotoolkit.data.gml;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -86,14 +85,10 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(GMLFeatureStoreFactory.URLP.getName().toString()).getValue();
-        try {
-            this.file = Paths.get(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        final URI uri = (URI) params.parameter(GMLFeatureStoreFactory.PATH.getName().toString()).getValue();
+        this.file = Paths.get(uri);
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -105,7 +100,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
         final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
+        Parameters.getOrCreate(GMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
         return params;
     }
 

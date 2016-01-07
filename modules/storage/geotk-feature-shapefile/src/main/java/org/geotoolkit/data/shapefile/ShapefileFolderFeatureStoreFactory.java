@@ -26,7 +26,7 @@ import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
-import org.geotoolkit.nio.UnixPathMatcher;
+import org.geotoolkit.nio.PosixPathMatcher;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -93,7 +93,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
         if(!(obj instanceof URL)){
             return false;
         }
@@ -104,7 +104,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
         final URL url = (URL)obj;
         try {
             Path path = IOUtilities.toPath(url);
-            if (Files.exists(path) && Files.isDirectory(path)){
+            if (Files.isDirectory(path)){
                 if(Boolean.TRUE.equals(emptyDirectory)){
                     return true;
                 }
@@ -121,7 +121,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
     private static boolean containsShp(Path folder, boolean recursive) throws IOException {
 
         int depth = recursive ? Integer.MAX_VALUE : 1;
-        PathFilterVisitor visitor = new PathFilterVisitor(new UnixPathMatcher("*.shp", Boolean.TRUE));
+        PathFilterVisitor visitor = new PathFilterVisitor(new PosixPathMatcher("*.shp", Boolean.TRUE));
         Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), depth, visitor);
 
         return !(visitor.getMatchedPaths().isEmpty());

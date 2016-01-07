@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.indexed;
 import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Test
     public void testCanProcessMap() throws Exception {
         Map map = new HashMap();
-        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), ShapeTestData
+        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
         assertTrue(factory.canProcess(map));
     }
@@ -87,7 +88,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         Map map = new HashMap();
         String namespace = "http://jesse.com";
         map.put(ShapefileFeatureStoreFactory.NAMESPACE.getName().toString(), namespace);
-        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), ShapeTestData
+        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
         FeatureStore store = factory.open(map);
@@ -101,7 +102,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
             final boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         Map map = new HashMap();
-        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
+        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
         map.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
                 createIndex ? Boolean.TRUE : Boolean.FALSE);
@@ -158,7 +159,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
         factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
-        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.URLP.getName().toString());
+        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.PATH.getName().toString());
     }
 
     /*
@@ -176,8 +177,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(URL)'
      */
     @Test
-    public void testCanProcessURL() throws FileNotFoundException {
-        factory.canProcess(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP));
+    public void testCanProcessURL() throws FileNotFoundException, URISyntaxException {
+        factory.canProcess(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP).toURI());
     }
 
     /*
@@ -185,10 +186,10 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(URL)'
      */
     @Test
-    public void testCreateDataStoreURL() throws DataStoreException,IOException {
+    public void testCreateDataStoreURL() throws DataStoreException, IOException, URISyntaxException {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         FeatureStore ds = factory.createDataStore(TestData.url(AbstractTestCaseSupport.class,
-                IndexedShapefileDataStoreTest.STATE_POP));
+                IndexedShapefileDataStoreTest.STATE_POP).toURI());
         testDataStore(IndexType.QIX, true, (IndexedShapefileFeatureStore) ds);
     }
 

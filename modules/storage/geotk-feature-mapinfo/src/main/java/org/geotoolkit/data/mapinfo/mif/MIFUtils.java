@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
@@ -339,51 +340,51 @@ public final class MIFUtils {
 
     /**
      * Check if the data pointed by given URL is inside or outside current fileSystem.
-     * @param url The address of the file to test.
+     * @param uri The address of the file to test.
      * @return true if the URL describe a local file, false otherwise.
      */
-    public static boolean isLocal(final URL url){
-        return url.toExternalForm().toLowerCase().startsWith("file:");
+    public static boolean isLocal(final URI uri){
+        return "file".equalsIgnoreCase(uri.getScheme());
     }
 
 
-
-    public static OutputStream openOutConnection(URL source) throws IOException {
-        OutputStream out = null;
-
-        try {
-        if(MIFUtils.isLocal(source)) {
-            final File tmpFile = new File(source.toURI());
-            out = new FileOutputStream(tmpFile, true);
-        } else {
-            URLConnection connection = source.openConnection();
-            connection.setDoOutput(true);
-            out = connection.getOutputStream();
-        }
-        } catch (Exception e) {
-            throw new IOException("Unable to open data in write mode.", e);
-        }
-        return out;
-    }
-
-
-    public static InputStream openInConnection(URL source) throws IOException {
-        InputStream in = null;
-
-        try {
-        if(MIFUtils.isLocal(source)) {
-            final File tmpFile = new File(source.toURI());
-            in = new FileInputStream(tmpFile);
-        } else {
-            URLConnection connection = source.openConnection();
-            connection.setDoOutput(true);
-            in = connection.getInputStream();
-        }
-        } catch (Exception e) {
-            throw new IOException("Unable to open data in read mode.", e);
-        }
-        return in;
-    }
+//
+//    public static OutputStream openOutConnection(URI source) throws IOException {
+//        OutputStream out = null;
+//
+//        try {
+//        if(MIFUtils.isLocal(source)) {
+//            final File tmpFile = new File(source);
+//            out = new FileOutputStream(tmpFile, true);
+//        } else {
+//            URLConnection connection = source.openConnection();
+//            connection.setDoOutput(true);
+//            out = connection.getOutputStream();
+//        }
+//        } catch (Exception e) {
+//            throw new IOException("Unable to open data in write mode.", e);
+//        }
+//        return out;
+//    }
+//
+//
+//    public static InputStream openInConnection(URL source) throws IOException {
+//        InputStream in = null;
+//
+//        try {
+//        if(MIFUtils.isLocal(source)) {
+//            final File tmpFile = new File(source.toURI());
+//            in = new FileInputStream(tmpFile);
+//        } else {
+//            URLConnection connection = source.openConnection();
+//            connection.setDoOutput(true);
+//            in = connection.getInputStream();
+//        }
+//        } catch (Exception e) {
+//            throw new IOException("Unable to open data in read mode.", e);
+//        }
+//        return in;
+//    }
 
 
     /**

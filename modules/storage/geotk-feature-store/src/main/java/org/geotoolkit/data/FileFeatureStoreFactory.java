@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.data;
 
-import java.net.URL;
+import java.net.URI;
 import org.apache.sis.storage.DataStoreException;
 
 /**
- * FileFeatureStoreFactory for working with formats based on a single URL.
+ * FileFeatureStoreFactory for working with formats based on a single URI.
  * <p>
  * This interface provides a mechanism of discovery for DataStoreFactories
  * which support singular files.
@@ -40,27 +40,27 @@ public interface FileFeatureStoreFactory extends FeatureStoreFactory {
     String[] getFileExtensions();
 
     /**
-     * Tests if the provided url can be handled by this factory.
+     * Tests if the provided uri can be handled by this factory.
      *
-     * @param url URL to a real file (may not be local)
+     * @param uri URL to a real file (may not be local)
      *
-     * @return <code>true</code> if this url can when this FeatureStore can resolve and read the data specified
+     * @return <code>true</code> if this uri can when this FeatureStore can resolve and read the data specified
      */
-    boolean canProcess(URL url);
+    boolean canProcess(URI uri);
 
     /**
-     * A FeatureStore attached to the provided url, may be created if needed.
+     * A FeatureStore attached to the provided uri, may be created if needed.
      * <p>
      * Please note that additional configuration options may be available
      * via the traditional createFeatureStore( Map ) method provided by the
      * superclass.
      * <p>
-     * @param url The data location for the
+     * @param uri The data location for the
      *
      * @return Returns a FeatureStore created from the data source provided.
      *
      * @throws DataStoreException
      */
-    FeatureStore createDataStore(URL url) throws DataStoreException;
+    FeatureStore createDataStore(URI uri) throws DataStoreException;
 
 }

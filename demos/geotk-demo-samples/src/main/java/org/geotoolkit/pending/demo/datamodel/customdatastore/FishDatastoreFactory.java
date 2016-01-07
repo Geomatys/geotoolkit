@@ -41,7 +41,7 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
             .create(String.class, NAME);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER,URLP,NAMESPACE);
+            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER, PATH,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

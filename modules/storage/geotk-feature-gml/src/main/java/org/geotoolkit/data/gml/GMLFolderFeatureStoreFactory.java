@@ -26,11 +26,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,16 +100,16 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
+        if(!(obj instanceof URI)){
             return false;
         }
 
-        final URL url = (URL)obj;
+        final URI url = (URI)obj;
 
         try {
             Path path = IOUtilities.toPath(url);
-            if (Files.exists(path) && Files.isDirectory(path)){
+            if (Files.isDirectory(path)){
                 try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, "*.gml")) {
                     return dirStream.iterator().hasNext();
                 }

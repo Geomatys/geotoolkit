@@ -24,7 +24,6 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -194,7 +193,7 @@ public final class ConvertersTestUtils {
 
         Object testResource = null;
         if ("/inputs/geometry.json".equals(resourcePath)) {
-            final Feature feature = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath));
+            final Feature feature = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
             final GeometryAttribute geometryAttribute = feature.getDefaultGeometryProperty();
 
             assertNotNull(geometryAttribute);
@@ -207,9 +206,9 @@ public final class ConvertersTestUtils {
         else if ("/inputs/geometrycollection.json".equals(resourcePath))
             testResource = ConvertersTestUtils.getGeometryArrayFromTestFolder(resourcePath);
         else if ("/inputs/feature.json".equals(resourcePath))
-            testResource = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath));
+            testResource = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
         else if ("/inputs/featurecollection.json".equals(resourcePath))
-            testResource = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath));
+            testResource = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
         else
             fail("Unknown test resource : " + resourcePath);
 

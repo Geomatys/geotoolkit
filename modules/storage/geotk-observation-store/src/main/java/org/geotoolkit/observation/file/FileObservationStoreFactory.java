@@ -18,6 +18,7 @@
 package org.geotoolkit.observation.file;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -58,12 +59,12 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URL> FILE_PATH =  new ParameterBuilder()
-            .addName("url")
+    public static final ParameterDescriptor<URI> FILE_PATH =  new ParameterBuilder()
+            .addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationFileParameters").createGroup(

@@ -18,6 +18,7 @@ package org.geotoolkit.data.shapefile.lock;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -75,6 +76,18 @@ public enum ShpFileType {
         this.pattern = Pattern.compile(".*"+extension+"$", Pattern.CASE_INSENSITIVE);
     }
 
+
+    /**
+     * Returns the base of the file or null if the file passed in is not of the
+     * correct type (has the correct extension.)
+     * <p>
+     * For example if the file is c:\shapefiles\file1.dbf. The DBF type will
+     * return c:\shapefiles\file1 but all other will return null.
+     */
+    public String toBase(final URI uri) {
+        return toBase(uri.toString());
+    }
+
     /**
      * Returns the base of the file or null if the file passed in is not of the
      * correct type (has the correct extension.)
@@ -112,7 +125,7 @@ public enum ShpFileType {
      * return c:\shapefiles\file1 but all other will return null.
      */
     public String toBase(final URL url) {
-        if(!ShpFiles.isLocal(url)){
+        if(!org.geotoolkit.nio.IOUtilities.canProcessAsPath(url)){
             try {
                 return toBase(java.net.URLDecoder.decode(url.toExternalForm(),"US-ASCII"));
             } catch (UnsupportedEncodingException e) {

@@ -84,7 +84,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
         IndexedShapefileFeatureStore s1 = new IndexedShapefileFeatureStore(TestData
-                .url(ShapeTestData.class, "shapes/stream.shp"));
+                .url(ShapeTestData.class, "shapes/stream.shp").toURI());
         GenericName typeName = s1.getName();
         FeatureType type = s1.getFeatureType();
         FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
@@ -99,7 +99,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     private void doubleWrite(final FeatureType type, final FeatureCollection one,
             final File tmp, final boolean memorymapped) throws IOException, MalformedURLException, DataStoreException {
         IndexedShapefileFeatureStore s;
-        s = new IndexedShapefileFeatureStore(tmp.toURI().toURL(), memorymapped, true);
+        s = new IndexedShapefileFeatureStore(tmp.toURI(), memorymapped, true);
 
         s.createFeatureType(type.getName(),type);
 
@@ -108,7 +108,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(type.getName(),one);
         session.commit();
 
-        s = new IndexedShapefileFeatureStore(tmp.toURI().toURL());
+        s = new IndexedShapefileFeatureStore(tmp.toURI());
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
         
         s.close();
@@ -116,7 +116,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
     void test(final String f) throws Exception {
         File file = copyShapefiles(f); // Work on File rather than URL from JAR.
-        IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(file.toURI().toURL());
+        IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(file.toURI());
         FeatureType type = s.getFeatureType();
         FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(type.getName()));
 
@@ -130,7 +130,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
             throws IOException, MalformedURLException, Exception {
         IndexedShapefileFeatureStore s;
         GenericName typeName;
-        s = (IndexedShapefileFeatureStore) new IndexedShapefileFeatureStore(tmp.toURI().toURL(),
+        s = (IndexedShapefileFeatureStore) new IndexedShapefileFeatureStore(tmp.toURI(),
                 memorymapped, true);
 
         s.createFeatureType(type.getName(),type);
@@ -141,7 +141,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         
         s.close();
 
-        s = new IndexedShapefileFeatureStore(tmp.toURI().toURL());
+        s = new IndexedShapefileFeatureStore(tmp.toURI());
         typeName = s.getName();
 
         FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));

@@ -18,6 +18,7 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
@@ -88,7 +89,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
         singleFileDefaultParameters = desc.createValue();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == URLP || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
+            if(pdesc == PATH || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
                 continue;
             }
             Parameters.getOrCreate((ParameterDescriptor)pdesc, singleFileDefaultParameters)
@@ -181,7 +182,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
 
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
         try {
-            Parameters.getOrCreate(URLP, params).setValue(file.toUri().toURL());
+            Parameters.getOrCreate(PATH, params).setValue(file.toUri().toURL());
         } catch (MalformedURLException ex) {
             getLogger().log(Level.FINE, ex.getLocalizedMessage(), ex);
         }
@@ -219,7 +220,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
             final Path folder = getFolder(folderParameters);
             final String fileName = typeName.tip().toString() + singleFileFactory.getFileExtensions()[0];
             final Path newFile = folder.resolve(fileName);
-            Parameters.getOrCreate(URLP, params).setValue(newFile.toUri().toURL());
+            Parameters.getOrCreate(PATH, params).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
@@ -254,18 +255,16 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
                 sourceFiles = ((DataFileStore) store).getDataFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URL fileURL = Parameters.value(URLP, store.getConfiguration());
-                if (fileURL == null) {
+                final URI fileURI = Parameters.value(PATH, store.getConfiguration());
+                if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
-                sourceFiles = new Path[]{Paths.get(fileURL.toURI())};
+                sourceFiles = new Path[]{Paths.get(fileURI)};
             }
 
             for (Path path : sourceFiles) {
                 Files.deleteIfExists(path);
             }
-        } catch (URISyntaxException e) {
-            throw new DataStoreException("Source data cannot be reached for type name : " + typeName, e);
         } catch (IOException e) {
             throw new DataStoreException("Source data cannot be deleted for type name : " + typeName, e);
         }
@@ -355,11 +354,11 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     }
 
     private Path getFolder(final ParameterValueGroup params) throws DataStoreException{
-        final URL url = Parameters.value(URLFOLDER, params);
+        final URI uri = Parameters.value(FOLDER_PATH, params);
 
         try {
-            return Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
+            return Paths.get(uri);
+        } catch (FileSystemNotFoundException | IllegalArgumentException e) {
             throw new DataStoreException(e);
         }
     }

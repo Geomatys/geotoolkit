@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
@@ -70,7 +71,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     private final Path root;
     private final String format;
-    private final URL rootPath;
+    private final URI rootPath;
 
     private final String separator;
 
@@ -80,13 +81,21 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     final ImageReaderSpi spi;
 
     public FileCoverageStore(URL url, String format) throws URISyntaxException, IOException {
-        this(toParameters(url, format));
+        this(toParameters(url.toURI(), format));
+    }
+
+    public FileCoverageStore(Path path, String format) throws URISyntaxException, IOException {
+        this(toParameters(path.toUri(), format));
+    }
+
+    public FileCoverageStore(URI uri, String format) throws URISyntaxException, IOException {
+        this(toParameters(uri, format));
     }
 
     public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
-        rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
-        root = Paths.get(rootPath.toURI());
+        rootPath = (URI) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
+        root = Paths.get(rootPath);
         format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
 
         if("AUTO".equalsIgnoreCase(format)){
@@ -100,9 +109,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         visit(root);
     }
 
-    private static ParameterValueGroup toParameters(URL url, String format){
+    private static ParameterValueGroup toParameters(URI uri, String format){
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(params,"path").setValue(url);
+        ParametersExt.getOrCreateValue(params,"path").setValue(uri);
         if(format!=null){
             ParametersExt.getOrCreateValue(params,"type").setValue(format);
         }

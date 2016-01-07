@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.nio;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.regex.Pattern;
@@ -40,14 +39,14 @@ import java.util.regex.Pattern;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class UnixPathMatcher implements PathMatcher {
+public class PosixPathMatcher implements PathMatcher {
 
     /**
      * The pattern to matchs to filenames.
      */
     private final Pattern pattern;
 
-    public UnixPathMatcher(final String pattern) {
+    public PosixPathMatcher(final String pattern) {
         this(pattern, Boolean.FALSE);
     }
     /**
@@ -57,7 +56,7 @@ public class UnixPathMatcher implements PathMatcher {
      * @param pattern The pattern. Example: {@code "*.png"}
      * @param caseInsensitive use {@link Pattern#CASE_INSENSITIVE} flag
      */
-    public UnixPathMatcher(final String pattern, boolean caseInsensitive) {
+    public PosixPathMatcher(final String pattern, boolean caseInsensitive) {
         final int length = pattern.length();
         final StringBuilder buffer = new StringBuilder(length + 8);
         for (int i=0; i<length; i++) {

@@ -46,7 +46,7 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
     @Before
     public void setUp() throws Exception {
         file = copyShapefiles("shapes/statepop.shp");
-        ds = new IndexedShapefileFeatureStore(file.toURI().toURL());
+        ds = new IndexedShapefileFeatureStore(file.toURI());
         ds.buildQuadTree(0);
         final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
         tree = (QuadTree) v[0];

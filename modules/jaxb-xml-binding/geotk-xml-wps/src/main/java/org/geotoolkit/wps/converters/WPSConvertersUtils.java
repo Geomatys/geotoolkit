@@ -59,7 +59,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.URLP;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory;
@@ -829,46 +829,43 @@ public class WPSConvertersUtils {
      * If it is a remote file, it will be copied and then an URL to this local
      * file will be returned
      *
-     * @param url url of a remote or a file on the filesystem
-     * @return an url of file on the filesystem
+     * @param uri uri of a remote or a file on the filesystem
+     * @return an uri of file on the filesystem
      */
-    private static final URL makeLocalURL(final URL url) throws URISyntaxException, IOException {
-        ArgumentChecks.ensureNonNull("url", url);
-
-        URI uri = url.toURI();
+    private static final URI makeLocalURL(final URI uri) throws URISyntaxException, IOException {
+        ArgumentChecks.ensureNonNull("uri", uri);
 
         // This condition detects that the file is not on the filesystem
         // based on the java.io.File(URI uri) constructor
         String scheme = uri.getScheme();
         if ((scheme == null) || !scheme.equalsIgnoreCase("file")) {
 
-            final String toStringUrl = url.toString();
+            final String toStringUrl = uri.toString();
             final String extension = toStringUrl.substring(toStringUrl.lastIndexOf("."), toStringUrl.length());
 
             // Create a temporary file
             final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), extension);
             // Copy the content of the remote file into the file on the local filesystem
-            try (InputStream remoteStream = url.openStream()) {
+            try (InputStream remoteStream = IOUtilities.open(uri)) {
                 IOUtilities.writeStream(remoteStream, tmpFilePath);
             }
 
 
-            return tmpFilePath.toUri().toURL();
+            return tmpFilePath.toUri();
         }
-        else
-            return url;
+        return uri;
     }
 
     /**
      * Read one feature from a GeoJSON file containing exactly one feature
-     * @param url location of the file to read
+     * @param uri location of the file to read
      * @return the read feature
      * @throws DataStoreException when there are more than one feature in the file
      * or when errors occurs while reading
      */
-    public static final Feature readFeatureFromJson(final URL url) throws DataStoreException, URISyntaxException, IOException {
+    public static final Feature readFeatureFromJson(final URI uri) throws DataStoreException, URISyntaxException, IOException {
         ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(makeLocalURL(url));
+        param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(uri));
         FeatureStore store = FeatureStoreFinder.open(param);
 
         if (store == null)
@@ -899,9 +896,9 @@ public class WPSConvertersUtils {
      * when more than one feature collection has been found or when an error
      * occurs while reading the json file
      */
-    public static final FeatureCollection readFeatureCollectionFromJson(final URL url) throws DataStoreException, URISyntaxException, IOException {
+    public static final FeatureCollection readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
         final ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(makeLocalURL(url));
+        param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(url));
         final FeatureStore store = FeatureStoreFinder.open(param);
 
         if (store == null)

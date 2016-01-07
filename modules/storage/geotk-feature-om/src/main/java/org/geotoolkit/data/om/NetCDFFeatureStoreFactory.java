@@ -18,8 +18,12 @@
 package org.geotoolkit.data.om;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -63,11 +67,11 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<URL> FILE_PATH = new ParameterBuilder()
-            .addName("url")
-            .setRemarks("url")
+    public static final ParameterDescriptor<URI> FILE_PATH = new ParameterBuilder()
+            .addName("path")
+            .setRemarks("path")
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
@@ -109,11 +113,14 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
     public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
         if(valid){
-            File value = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
-            if (value != null && value.exists()) {
-                String fileName = value.getName();
-                int dotIdx = fileName.lastIndexOf('.');
-                return dotIdx > 0 && "nc".equalsIgnoreCase(fileName.substring(dotIdx+1, fileName.length()));
+            URI value = (URI) params.parameter(FILE_PATH.getName().toString()).getValue();
+            if (value != null) {
+                try {
+                    Path path = Paths.get(value);
+                    return Files.exists(path) && "nc".equalsIgnoreCase(org.apache.sis.internal.storage.IOUtilities.extension(path));
+                } catch (IllegalArgumentException| FileSystemNotFoundException e) {
+                    return false;
+                }
             }
         }
         return false;

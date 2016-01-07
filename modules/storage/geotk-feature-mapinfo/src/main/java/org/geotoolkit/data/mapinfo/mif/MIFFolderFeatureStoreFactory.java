@@ -27,7 +27,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,17 +87,17 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
+        if(!(obj instanceof URI)){
             return false;
         }
 
         final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
-        final URL url = (URL)obj;
+        final URI uri = (URI)obj;
         try {
-            Path path = IOUtilities.toPath(url);
+            Path path = IOUtilities.toPath(uri);
 
-            if (Files.exists(path) && Files.isDirectory(path)){
+            if (Files.isDirectory(path)){
                 if(emptyDirectory){
                     return true;
                 }
@@ -107,7 +107,7 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
                 }
             }
         } catch (IOException e) {
-            // Should not happen if the url is well-formed.
+            // Should not happen if the uri is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
         }
 

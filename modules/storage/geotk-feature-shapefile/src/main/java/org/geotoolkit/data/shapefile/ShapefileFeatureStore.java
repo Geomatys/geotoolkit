@@ -26,7 +26,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -112,13 +112,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      *
      * @throws NullPointerException DOCUMENT ME!
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
      */
-    public ShapefileFeatureStore(final URL url) throws DataStoreException,MalformedURLException {
-        this(url, null);
+    public ShapefileFeatureStore(final URI uri) throws DataStoreException,MalformedURLException {
+        this(uri, null);
     }
 
     /**
@@ -126,12 +126,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * FeatureType - will have the correct value) You can call this with
      * namespace = null, but I suggest you give it an actual namespace.
      *
-     * @param url
+     * @param uri
      * @param namespace
      */
-    public ShapefileFeatureStore(final URL url, final String namespace)
+    public ShapefileFeatureStore(final URI uri, final String namespace)
             throws DataStoreException,MalformedURLException {
-        this(url, namespace, false, null);
+        this(uri, namespace, false, null);
     }
 
     /**
@@ -139,32 +139,31 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * FeatureType - will have the correct value) You can call this with
      * namespace = null, but I suggest you give it an actual namespace.
      *
-     * @param url
+     * @param uri
      * @param namespace
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
-    public ShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMapped,
+    public ShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
-        this(toParameter(url, namespace, useMemoryMapped, dbfCharset));
+        this(toParameter(uri, namespace, useMemoryMapped, dbfCharset));
     }
 
     public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(
-                ShapefileFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(
+                ShapefileFeatureStoreFactory.PATH.getName().toString()).getValue();
         final Boolean useMemoryMapped = (Boolean) params.parameter(
                 ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(
                 ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).getValue();
 
-        shpFiles = new ShpFiles(url);
+        shpFiles = new ShpFiles(uri);
 
         //search for a .cpg file which contains the character encoding
         if(dbfCharset == null && shpFiles.exists(CPG)){
-            try {
-                final ReadableByteChannel channel = shpFiles.getReadChannel(CPG);
+            try (ReadableByteChannel channel = shpFiles.getReadChannel(CPG)) {
                 dbfCharset = CpgFiles.read(channel);
             } catch (IOException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
@@ -184,10 +183,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         this.dbfCharset = dbfCharset;
     }
 
-    private static ParameterValueGroup toParameter(final URL url, final String namespace,
+    private static ParameterValueGroup toParameter(final URI uri, final String namespace,
             final boolean useMemoryMapped, Charset dbfCharset){
         final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH, params).setValue(uri);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
         if(dbfCharset!=null){

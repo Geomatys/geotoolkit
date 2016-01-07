@@ -17,8 +17,8 @@
 package org.geotoolkit.wps.converters.outputs.reference;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
@@ -54,7 +54,7 @@ public class FeatureToReferenceConverterTest extends org.geotoolkit.test.TestBas
         assertNull(reference.getSchema());
         assertNotNull(reference.getHref());
 
-        Feature feature = WPSConvertersUtils.readFeatureFromJson(new URL(reference.getHref()));
+        Feature feature = WPSConvertersUtils.readFeatureFromJson(URI.create(reference.getHref()));
         ConvertersTestUtils.assertFeatureIsValid((Feature) testResource);
         ConvertersTestUtils.assertFeatureIsValid(feature);
     }

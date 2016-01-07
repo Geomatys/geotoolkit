@@ -20,8 +20,7 @@ package org.geotoolkit.data.dbf;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,14 +88,10 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     public DbaseFileFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
 
-        final URL url = (URL) params.parameter(DbaseFeatureStoreFactory.URLP.getName().toString()).getValue();
-        try {
-            this.file = Paths.get(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        final URI uri = (URI) params.parameter(DbaseFeatureStoreFactory.PATH.getName().toString()).getValue();
+        this.file = Paths.get(uri);
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -108,7 +103,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     private static ParameterValueGroup toParameters(final Path f,
             final String namespace) throws MalformedURLException{
         final ParameterValueGroup params = DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(DbaseFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
+        Parameters.getOrCreate(DbaseFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(DbaseFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         return params;
     }

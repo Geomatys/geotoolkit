@@ -11,6 +11,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.NonSI;
@@ -46,11 +47,11 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class JIsoline extends JAbstractMapPane{
   
 
-    public JIsoline() throws DataStoreException{
+    public JIsoline() throws DataStoreException, URISyntaxException {
         super(createContext());
     }
 
-    private static MapContext createContext() throws DataStoreException {
+    private static MapContext createContext() throws DataStoreException, URISyntaxException {
         final MapContext context = Styles.createWorldContext(null);
         Map<String,Serializable> params;
         FeatureStore store;
@@ -62,7 +63,7 @@ public class JIsoline extends JAbstractMapPane{
         //stations -------------------------------------------------------------
         try{
             params = new HashMap<String,Serializable>();
-            params.put( "url", JAbstractMapPane.class.getResource("/data/weather/stations2.shp") );
+            params.put( "path", JAbstractMapPane.class.getResource("/data/weather/stations2.shp").toURI() );
             store = FeatureStoreFinder.open(params);
             fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
             layer = MapBuilder.createFeatureLayer(fs, createStationStyle());
