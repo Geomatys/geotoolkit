@@ -31,6 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.merge.MergeDescriptor.*;
 import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
 
@@ -42,6 +43,33 @@ public class MergeProcess extends AbstractProcess {
 
     public MergeProcess(ParameterValueGroup input) {
         super(INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param coverages coverage to merge
+     * @param env area to merge
+     */
+    public MergeProcess(Coverage[] coverages, Envelope env){
+        super(MergeDescriptor.INSTANCE, asParameters(coverages,env));
+    }
+
+    private static ParameterValueGroup asParameters(Coverage[] coverages, Envelope env){
+        final ParameterValueGroup params = MergeDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, MergeDescriptor.IN_COVERAGES.getName().getCode()).setValue(coverages);
+        if(env!=null)ParametersExt.getOrCreateValue(params, MergeDescriptor.IN_ENVELOPE.getName().getCode()).setValue(env);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return merged coverage
+     * @throws ProcessException
+     */
+    public Coverage executeNow() throws ProcessException {
+        execute();
+        return (Coverage) outputParameters.parameter(MergeDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override

@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.processing.vector.maxlimit;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,18 +48,19 @@ public final class MaxLimitDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Number maximum of Feature
      */
-    public static final ParameterDescriptor<Integer> MAX_IN =
-            new DefaultParameterDescriptor("max_in", "Number maximum of Feature", Integer.class, null, true);
+    public static final ParameterDescriptor<Integer> MAX_IN = new ParameterBuilder()
+            .addName("max_in")
+            .setRemarks("Number maximum of Feature")
+            .setRequired(true)
+            .create(Integer.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, MAX_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, MAX_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new MaxLimitDescriptor();

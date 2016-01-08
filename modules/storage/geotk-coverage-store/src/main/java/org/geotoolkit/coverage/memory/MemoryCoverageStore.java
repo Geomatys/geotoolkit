@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
@@ -41,11 +42,9 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
@@ -61,7 +60,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("Unamed", AbstractCoverageStoreFactory.NAMESPACE);
+    private static final ParameterDescriptorGroup desc = new ParameterBuilder().addName("Unamed").createGroup(AbstractCoverageStoreFactory.NAMESPACE);
 
     private final DataNode rootNode = new DefaultDataNode();
 

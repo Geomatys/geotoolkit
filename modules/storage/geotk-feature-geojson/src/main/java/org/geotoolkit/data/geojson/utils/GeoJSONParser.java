@@ -113,6 +113,10 @@ public class GeoJSONParser {
         while (p.nextToken() != JsonToken.END_OBJECT) {
             String fieldname = p.getCurrentName();
 
+            if (fieldname == null) {
+                throw new IOException("Parsing error, expect object field name value but got null");
+            }
+
             switch (fieldname) {
                 case TYPE:
                     p.nextToken();
@@ -197,8 +201,18 @@ public class GeoJSONParser {
      * @throws IOException
      */
     public static Map<String, Object> parseMap(JsonParser p) throws IOException {
-        assert(p.getCurrentToken() == JsonToken.START_OBJECT);
         Map<String, Object> map = new HashMap<>();
+        final JsonToken currentToken = p.getCurrentToken();
+        if (currentToken == JsonToken.VALUE_NULL) {
+            return map;
+        }
+
+        if (currentToken != JsonToken.START_OBJECT) {
+            LOGGER.log(Level.WARNING, "Expect START_OBJECT token but got "+currentToken+" for "+p.getCurrentName());
+            return map;
+        }
+
+        assert(currentToken == JsonToken.START_OBJECT);
         while (p.nextToken() != JsonToken.END_OBJECT) {
             String key = p.getCurrentName();
             JsonToken next = p.nextToken();

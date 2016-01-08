@@ -16,6 +16,11 @@
  */
 package org.geotoolkit.gui.swing.render3d;
 
+import com.jogamp.opengl.FPSCounter;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 import org.geotoolkit.gui.swing.util.BufferLayout;
 
@@ -28,11 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.EventListener;
 import java.util.logging.Level;
-import javax.media.opengl.FPSCounter;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLJPanel;
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -177,14 +177,14 @@ public class JMap3D extends JPanel {
 
         // Create a animator that drives canvas' display() at 60 fps.
         animator = new FPSAnimator(glCanvas, FPS){
-            @Override
-            protected void display() {
-                super.display();
-                if(map3d.getMonitor().stopRequested()){
-                    System.err.println("Stop display Map3D");
-                    this.stop();
-                }
-            }
+//            @Override
+//            protected void display() {
+//                super.display();
+//                if(map3d.getMonitor().stopRequested()){
+//                    System.err.println("Stop display Map3D");
+//                    this.stop();
+//                }
+//            }
         };
         animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
         animator.start(); //active animator

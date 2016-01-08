@@ -115,7 +115,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
             this.offering = Arrays.asList(offering);
         }
         if (eventTime != null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
             for (TemporalOpsType temporal : eventTime) {
                 this.temporalFilter.add(new TemporalFilterType(temporal));
             }
@@ -135,7 +135,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
             this.offering = Arrays.asList(offering);
         }
         if (eventTime != null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
             for (TemporalOpsType temporal : eventTime) {
                 this.temporalFilter.add(new TemporalFilterType(temporal));
             }
@@ -152,7 +152,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         super(version, service);
         this.offering = offering;
         if (eventTime != null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
             for (TemporalOpsType temporal : eventTime) {
                 this.temporalFilter.add(new TemporalFilterType(temporal));
             }
@@ -177,7 +177,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<String> getProcedure() {
         if (procedure == null) {
-            procedure = new ArrayList<String>();
+            procedure = new ArrayList<>();
         }
         return this.procedure;
     }
@@ -192,7 +192,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<String> getOfferings() {
         if (offering == null) {
-            offering = new ArrayList<String>();
+            offering = new ArrayList<>();
         }
         return this.offering;
     }
@@ -207,7 +207,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
-            observedProperty = new ArrayList<String>();
+            observedProperty = new ArrayList<>();
         }
         return this.observedProperty;
     }
@@ -222,9 +222,9 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
         }
-        final List<Filter> result = new ArrayList<Filter>();
+        final List<Filter> result = new ArrayList<>();
         for (TemporalFilterType tf : temporalFilter) {
             if (tf.getTemporalOps() != null) {
                 result.add(tf.getTemporalOps());
@@ -243,7 +243,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<String> getFeatureIds() {
         if (featureOfInterest == null) {
-            featureOfInterest = new ArrayList<String>();
+            featureOfInterest = new ArrayList<>();
         }
         return this.featureOfInterest;
     }

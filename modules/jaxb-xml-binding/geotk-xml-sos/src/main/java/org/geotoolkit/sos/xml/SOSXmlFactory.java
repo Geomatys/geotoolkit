@@ -352,9 +352,10 @@ public class SOSXmlFactory {
     }
     
     public static GetObservationById buildGetObservationById(final String version, final String service, final List<String> observations,
-            final QName resultModel, final ResponseModeType responseMode, final String srsName, final String responseFormat) {
+            final QName resultModel, final ResponseModeType responseMode, final String srsName, final String responseFormat, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.sos.xml.v200.GetObservationByIdType(version, service, observations);
+            org.geotoolkit.sos.xml.v200.GetObservationByIdType result = new org.geotoolkit.sos.xml.v200.GetObservationByIdType(version, service, observations, extension);
+            return result;
         } else if ("1.0.0".equals(version)) {
             String oid = null;
             if (observations != null && !observations.isEmpty()) {
@@ -367,9 +368,9 @@ public class SOSXmlFactory {
     }
     
     public static GetResultTemplate buildGetResultTemplate(final String version, final String service, final String offering,
-            final String observedProperty) {
+            final String observedProperty, final List<Object> extensions) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.sos.xml.v200.GetResultTemplateType(version, service, offering, observedProperty);
+            return new org.geotoolkit.sos.xml.v200.GetResultTemplateType(version, service, offering, observedProperty, extensions);
         } else if ("1.0.0".equals(version)) {
             throw new IllegalArgumentException("GetResultTemplate is not implemented in SOS v100");
         } else {
@@ -478,9 +479,11 @@ public class SOSXmlFactory {
     }
     
     public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId, 
-            final List<String> observedProperties, final List<String> procedures, final Filter spatialFilter) {
+            final List<String> observedProperties, final List<String> procedures, final Filter spatialFilter, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, observedProperties, procedures, featureId, spatialFilter);
+            org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType result = new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, observedProperties, procedures, featureId, spatialFilter);
+            result.setExtension(extension);
+            return result;
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v100.GetFeatureOfInterest(version, service, featureId, spatialFilter);
         } else {
@@ -499,7 +502,7 @@ public class SOSXmlFactory {
     }
     
     public static GetResult buildGetResult(final String version, final String service, final String offering, final String observedProperty,
-            final List<String> featureOfInterest, final Filter spatialFilter, final List<Filter> temporalFilter) {
+            final List<String> featureOfInterest, final Filter spatialFilter, final List<Filter> temporalFilter, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.ogc.xml.v200.TemporalOpsType> temps = new ArrayList<>();
             if (temporalFilter != null) {
@@ -514,7 +517,9 @@ public class SOSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for spatial filter element");
             }
             final org.geotoolkit.ogc.xml.v200.SpatialOpsType spa = (org.geotoolkit.ogc.xml.v200.SpatialOpsType)spatialFilter;
-            return new org.geotoolkit.sos.xml.v200.GetResultType(version, service, offering, observedProperty, temps, spa, featureOfInterest);
+            org.geotoolkit.sos.xml.v200.GetResultType result = new org.geotoolkit.sos.xml.v200.GetResultType(version, service, offering, observedProperty, temps, spa, featureOfInterest);
+            result.setExtension(extension);
+            return result;
         } else if ("1.0.0".equals(version)) {
             throw new IllegalArgumentException("GetResult KVP is not implemented in SOS v100");
         } else {

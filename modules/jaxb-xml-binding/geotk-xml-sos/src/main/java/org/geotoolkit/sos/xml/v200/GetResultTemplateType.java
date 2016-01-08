@@ -17,9 +17,11 @@
 
 package org.geotoolkit.sos.xml.v200;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sos.xml.GetResultTemplate;
@@ -51,6 +53,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "offering",
     "observedProperty"
 })
+@XmlRootElement(name="GetResultTemplate")
 public class GetResultTemplateType extends ExtensibleRequestType implements GetResultTemplate {
 
     @XmlElement(required = true)
@@ -72,6 +75,12 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
     
     public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty) {
         super(version, service);
+        this.observedProperty = observedProperty;
+        this.offering         = offering;
+    }
+    
+    public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty, final List<Object> extension) {
+        super(version, service, extension);
         this.observedProperty = observedProperty;
         this.offering         = offering;
     }
@@ -126,4 +135,16 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
         this.observedProperty = value;
     }
 
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return "text/xml";
+    }
 }

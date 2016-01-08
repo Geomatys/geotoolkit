@@ -95,6 +95,7 @@
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     
+    <!-- TEST DEPENDENCIES--> 
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_core</artifactId>

@@ -399,6 +399,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
         for (GridSampleDimension dimension : dimensions) {
+            dimension = dimension.geophysics(false);
             final SampleDimensionType sdt = dimension.getSampleDimensionType();
             final XMLSampleDimension dim  = new XMLSampleDimension();
             dim.fill(dimension);
@@ -445,7 +446,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                 }
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
                         (short) photometricInterpretation, (short) sampleFormat,
-                        minColorSampleValue, maxColorSampleValue, null, colorMap);
+                        minColorSampleValue, maxColorSampleValue, colorMap);
             }
         }
         return colorModel;

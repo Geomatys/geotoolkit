@@ -31,9 +31,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.util.collection.MapUtilities;
 import org.apache.sis.util.Classes;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
@@ -275,20 +273,12 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      * @return an identifier descriptor.
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 IDENTIFIER.getName().getCode(),
-                                 DefaultParameterDescriptor.ALIAS_KEY,
-                                 IDENTIFIER.getAlias().iterator().next(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 AbstractFeatureStoreFactory.IDENTIFIER.getRemarks()),
-            String.class,
-            new String[]{idValue},
-            idValue,
-            null,
-            null,
-            null,
-            true);
+            return new ParameterBuilder()
+                    .addName(IDENTIFIER.getName().getCode())
+                    .addName(IDENTIFIER.getAlias().iterator().next())
+                    .setRemarks(AbstractFeatureStoreFactory.IDENTIFIER.getRemarks())
+                    .setRequired(true)
+                    .createEnumerated(String.class, new String[]{idValue}, idValue);
     }
 
 }

@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.processing.vector.intersection;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -52,24 +50,28 @@ public final class IntersectionDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_INTER =
-            new DefaultParameterDescriptor("feature_inter", "Inpute FeatureCollection for the intersection", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_INTER = new ParameterBuilder()
+            .addName("feature_inter")
+            .setRemarks("Inpute FeatureCollection for the intersection")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
     /**
      * Optional - Geometry property name. Refer to the geometry to use for the intersection process
      */
-    public static final ParameterDescriptor<String> GEOMETRY_NAME =
-            new DefaultParameterDescriptor("geometry_name", "Geometry property name", String.class, null, false);
+    public static final ParameterDescriptor<String> GEOMETRY_NAME = new ParameterBuilder()
+            .addName("geometry_name")
+            .setRemarks("Geometry property name")
+            .setRequired(false)
+            .create(String.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_INTER,GEOMETRY_NAME});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FEATURE_INTER,GEOMETRY_NAME);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new IntersectionDescriptor();

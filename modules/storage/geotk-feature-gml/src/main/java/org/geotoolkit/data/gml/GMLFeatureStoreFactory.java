@@ -24,7 +24,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.metadata.Identifier;
@@ -99,7 +98,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
             .create(Boolean.class, Boolean.TRUE);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("GMLParameters",
+            new ParameterBuilder().addName("GMLParameters").createGroup(
                 IDENTIFIER,URLP,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST,NAMESPACE);
 
     @Override

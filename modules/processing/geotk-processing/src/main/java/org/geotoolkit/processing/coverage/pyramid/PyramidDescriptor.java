@@ -18,10 +18,9 @@ package org.geotoolkit.processing.coverage.pyramid;
 
 import java.awt.Dimension;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -46,60 +45,76 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     /**
      * Input coverage which will be resample.
      */
-    public static final ParameterDescriptor<CoverageReference> IN_COVERAGEREF =
-            new DefaultParameterDescriptor<>("coverageref",
-            "Coverage which will be tile.", CoverageReference.class, null, true);
+    public static final ParameterDescriptor<CoverageReference> IN_COVERAGEREF = new ParameterBuilder()
+            .addName("coverageref")
+            .setRemarks("Coverage which will be tile.")
+            .setRequired(true)
+            .create(CoverageReference.class, null);
 
     /**
      * Coverage store within pyramid will be store.
      */
-    public static final ParameterDescriptor<CoverageStore> IN_COVERAGESTORE =
-            new DefaultParameterDescriptor<>("in_coverage_store",
-            "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
+    public static final ParameterDescriptor<CoverageStore> IN_COVERAGESTORE = new ParameterBuilder()
+            .addName("in_coverage_store")
+            .setRemarks("Coverage store within tiled coverage is stored.")
+            .setRequired(true)
+            .create(CoverageStore.class, null);
 
     /**
      * Tile size of pyramid mosaic.
      */
-    public static final ParameterDescriptor<Dimension> IN_TILE_SIZE =
-            new DefaultParameterDescriptor<>("tile_size",
-            "Tile size of mosaic.", Dimension.class, null, false);
+    public static final ParameterDescriptor<Dimension> IN_TILE_SIZE = new ParameterBuilder()
+            .addName("tile_size")
+            .setRemarks("Tile size of mosaic.")
+            .setRequired(false)
+            .create(Dimension.class, null);
 
     /**
      * Pixel interpolation type used during resampling.
      */
-    public static final ParameterDescriptor<InterpolationCase> IN_INTERPOLATIONCASE =
-            new DefaultParameterDescriptor<>("interpolation_type",
-            "Tile size of mosaic.", InterpolationCase.class, null, true);
+    public static final ParameterDescriptor<InterpolationCase> IN_INTERPOLATIONCASE = new ParameterBuilder()
+            .addName("interpolation_type")
+            .setRemarks("Tile size of mosaic.")
+            .setRequired(true)
+            .create(InterpolationCase.class, null);
 
     /**
      * Pyramid name in database.
      */
-    public static final ParameterDescriptor<String> IN_PYRAMID_NAME =
-            new DefaultParameterDescriptor<>("pyramid_name",
-            "Tile size of mosaic.", String.class, null, true);
+    public static final ParameterDescriptor<String> IN_PYRAMID_NAME = new ParameterBuilder()
+            .addName("pyramid_name")
+            .setRemarks("Tile size of mosaic.")
+            .setRequired(true)
+            .create(String.class, null);
 
     /**
      * Pixel scale associate at each geographic envelope.
      */
-    public static final ParameterDescriptor<Map> IN_RES_PER_ENVELOPE =
-            new DefaultParameterDescriptor<>("resolution_per_envelope",
-            "Define different resample scales for each envelope.", Map.class, null, true);
+    public static final ParameterDescriptor<Map> IN_RES_PER_ENVELOPE =  new ParameterBuilder()
+            .addName("resolution_per_envelope")
+            .setRemarks("Define different resample scales for each envelope.")
+            .setRequired(true)
+            .create(Map.class, null);
 
     /**
      * Double table value used during interpolation if pixel coordinates are out of source image boundary.
      */
-    public static final ParameterDescriptor<double[]> IN_FILLVALUES =
-            new DefaultParameterDescriptor<>("fillvalue",
-            "Contains value use when pixel transformation is out of source image boundary during resampling.", double[].class, null, false);
+    public static final ParameterDescriptor<double[]> IN_FILLVALUES = new ParameterBuilder()
+            .addName("fillvalue")
+            .setRemarks("Contains value use when pixel transformation is out of source image boundary during resampling.")
+            .setRequired(false)
+            .create(double[].class, null);
 
     /**
      * Boolean flag that activate the re-using of input CoverageStore tiles.
      */
-    public static final ParameterDescriptor<Boolean> IN_REUSETILES =
-            new DefaultParameterDescriptor<>("reuse_tiles",
-                    "Optional flat that activate the re-using of input CoverageStore tiles if exist instead of override them.", Boolean.class, false, false);
+    public static final ParameterDescriptor<Boolean> IN_REUSETILES = new ParameterBuilder()
+            .addName("reuse_tiles")
+            .setRemarks("Optional flat that activate the re-using of input CoverageStore tiles if exist instead of override them.")
+            .setRequired(false)
+            .create(Boolean.class, false);
 
-
+    
     /**************************************************************************/
 
                                       /*OUTPUT*/
@@ -107,20 +122,23 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     /**
      * FeatureStore where pyramid is stored.
      */
-    public static final ParameterDescriptor<CoverageStore> OUT_COVERAGESTORE =
-            new DefaultParameterDescriptor<>("out_coverage_store",
-            "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
+    public static final ParameterDescriptor<CoverageStore> OUT_COVERAGESTORE = new ParameterBuilder()
+            .addName("out_coverage_store")
+            .setRemarks("Coverage store within tiled coverage is stored.")
+            .setRequired(true)
+            .create(CoverageStore.class, null);
+
     /**************************************************************************/
 
                                       /*GROUP*/
     /**************************************************************************/
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_COVERAGEREF, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES, IN_REUSETILES);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_COVERAGESTORE);
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(OUT_COVERAGESTORE);
     /**************************************************************************/
 
     public static final ProcessDescriptor INSTANCE = new PyramidDescriptor();

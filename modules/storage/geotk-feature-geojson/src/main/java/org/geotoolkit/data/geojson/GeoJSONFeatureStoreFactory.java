@@ -23,7 +23,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -68,7 +67,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("GeoJSONParameters",
+            new ParameterBuilder().addName("GeoJSONParameters").createGroup(
                 IDENTIFIER, URLP, NAMESPACE, COORDINATE_ACCURACY);
 
     @Override

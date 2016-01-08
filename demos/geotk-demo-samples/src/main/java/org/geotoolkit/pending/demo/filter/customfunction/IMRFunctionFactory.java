@@ -2,8 +2,8 @@
 
 package org.geotoolkit.pending.demo.filter.customfunction;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.filter.function.FunctionFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -12,6 +12,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class IMRFunctionFactory implements FunctionFactory{
 
     public static final String DENSITY = "density";
+    private static final ParameterDescriptorGroup DESC = new ParameterBuilder().addName("density").createGroup();
 
     /**
      * {@inheritDoc }
@@ -34,7 +35,7 @@ public class IMRFunctionFactory implements FunctionFactory{
 
     @Override
     public ParameterDescriptorGroup describeFunction(String name) throws IllegalArgumentException {
-        return new DefaultParameterDescriptorGroup("density");
+        return DESC;
     }
 
 }

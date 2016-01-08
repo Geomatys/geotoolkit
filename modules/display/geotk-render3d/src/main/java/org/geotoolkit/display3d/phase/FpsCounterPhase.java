@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display3d.phase;
 
+import com.jogamp.opengl.GL;
 import jogamp.opengl.FPSCounterImpl;
 
-import javax.media.opengl.GL;
 import org.geotoolkit.display3d.Map3D;
 
 /**

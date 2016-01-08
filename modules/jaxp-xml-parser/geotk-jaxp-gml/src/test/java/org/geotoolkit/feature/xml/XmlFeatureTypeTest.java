@@ -149,6 +149,7 @@ public class XmlFeatureTypeTest {
     }
 
     @Test
+    @Ignore("Random test failure due to connection timeout or when internet is not available. See #GEOTK-485")
     public void testReadVeryComplexFeatureType() throws Exception {
         final XmlFeatureTypeReader reader = getReader(true);
         final URL url = new URL("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");

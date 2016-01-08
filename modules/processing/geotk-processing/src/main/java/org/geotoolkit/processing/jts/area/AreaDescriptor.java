@@ -17,15 +17,13 @@
 package org.geotoolkit.processing.jts.area;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,22 +40,26 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM =
-            new DefaultParameterDescriptor("geom", "Geometry JTS", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM =new ParameterBuilder()
+            .addName("geom")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{GEOM});
+            new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
     
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT =
-            new DefaultParameterDescriptor("result", "Area result", Double.class, 0.0, true);
+    public static final ParameterDescriptor<Double> RESULT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Area result")
+            .setRequired(true)
+            .create(Double.class, 0.0);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new AreaDescriptor();

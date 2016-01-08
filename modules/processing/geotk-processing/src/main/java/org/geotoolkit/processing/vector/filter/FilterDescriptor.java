@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.processing.vector.filter;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.filter.Filter;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,18 +48,19 @@ public final class FilterDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Filter
      */
-    public static final ParameterDescriptor<Filter> FILTER_IN =
-            new DefaultParameterDescriptor("filter_in", "Filter", org.opengis.filter.Filter.class, null, true);
+    public static final ParameterDescriptor<Filter> FILTER_IN = new ParameterBuilder()
+            .addName("filter_in")
+            .setRemarks("Filter")
+            .setRequired(true)
+            .create(org.opengis.filter.Filter.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FILTER_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FILTER_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new FilterDescriptor();

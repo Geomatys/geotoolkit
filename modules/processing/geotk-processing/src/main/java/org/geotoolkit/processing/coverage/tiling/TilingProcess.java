@@ -20,6 +20,8 @@ package org.geotoolkit.processing.coverage.tiling;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.File;
+import java.util.AbstractMap;
+import java.util.Map.Entry;
 import javax.imageio.ImageReader;
 
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -40,6 +42,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.coverage.tiling.TilingDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.utility.parameter.ParametersExt;
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -49,6 +52,39 @@ public final class TilingProcess extends AbstractProcess {
 
     TilingProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param imgReader input image reader
+     * @param inFile input image file
+     * @param output output folder where tiles will be stored
+     * @param gridtoCRS grid to crs transform
+     */
+    public TilingProcess(ImageReader imgReader, File inFile, File output, AffineTransform gridtoCRS){
+        super(INSTANCE, asParameters(imgReader,inFile,output,gridtoCRS));
+    }
+
+    private static ParameterValueGroup asParameters(ImageReader imgReader, File file, File output, AffineTransform gridtoCRS){
+        final ParameterValueGroup params = INPUT_DESC.createValue();
+        if(imgReader!=null) ParametersExt.getOrCreateValue(params, IN_SOURCE_READER.getName().getCode()).setValue(imgReader);
+        if(file!=null) ParametersExt.getOrCreateValue(params, IN_SOURCE_FILE.getName().getCode()).setValue(file);
+        ParametersExt.getOrCreateValue(params, IN_TILES_FOLDER.getName().getCode()).setValue(output);
+        ParametersExt.getOrCreateValue(params, IN_GRID_TO_CRS.getName().getCode()).setValue(gridtoCRS);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return TileManager and CoordinateReferenceSystem
+     * @throws ProcessException
+     */
+    public Entry<TileManager,CoordinateReferenceSystem> executeNow() throws ProcessException {
+        execute();
+        final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) outputParameters.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).getValue();
+        final TileManager tilemanager = (TileManager) outputParameters.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).getValue();
+        return new AbstractMap.SimpleEntry<>(tilemanager,crs);
     }
 
     @Override

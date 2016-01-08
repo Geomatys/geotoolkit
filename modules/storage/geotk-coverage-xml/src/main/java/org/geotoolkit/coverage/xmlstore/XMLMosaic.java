@@ -30,7 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -79,6 +81,7 @@ import org.opengis.geometry.Envelope;
 public class XMLMosaic implements GridMosaic {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
+    private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
 
     /** Executor used to write images */
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -258,16 +261,18 @@ public class XMLMosaic implements GridMosaic {
                 SampleModel sampleModel = ref.getSampleModel();
 
                 if (colorModel != null && sampleModel != null) {
-                    long[] colorMap = null;
+                    int[] java2DColorMap = null;
                     if (colorModel instanceof IndexColorModel) {
                         final IndexColorModel indexColorMod = (IndexColorModel) colorModel;
                         final int mapSize = indexColorMod.getMapSize();
-                        int[] rgbs  = new int[mapSize];
-                        indexColorMod.getRGBs(rgbs);
-                        colorMap = new long[mapSize];
-                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
+                        java2DColorMap  = new int[mapSize];
+                        indexColorMod.getRGBs(java2DColorMap);
+//                        colorMap = new long[mapSize];
+//                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
                     }
-                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()), sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel), ImageUtils.getEnumPlanarConfiguration(sampleModel), colorMap);
+                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()),
+                            sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel),
+                            ImageUtils.getEnumPlanarConfiguration(sampleModel), java2DColorMap);
 
                 } else {
                     emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
@@ -300,10 +305,12 @@ public class XMLMosaic implements GridMosaic {
         sb.append(scale);
         for(int i=0;i<upperLeft.length;i++){
             sb.append('x');
-            sb.append(upperLeft[i]);
+            synchronized(DECIMAL_FORMAT){
+                sb.append(DECIMAL_FORMAT.format(upperLeft[i]));
+            }
         }
         //avoid local system formating
-        return sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
+        return sb.toString().replace('.', 'd');
     }
 
     public File getFolder() {
@@ -627,6 +634,9 @@ public class XMLMosaic implements GridMosaic {
 
      void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
 
+        final int offsetX = image.getMinTileX();
+        final int offsetY = image.getMinTileY();
+
         final int startX = (int)area.getMinX();
         final int startY = (int)area.getMinY();
         final int endX = (int)area.getMaxX();
@@ -645,18 +655,21 @@ public class XMLMosaic implements GridMosaic {
                     return;
                 }
 
-                if(onlyMissing && !isMissing(x, y)){
+                final int tx = offsetX+x;
+                final int ty = offsetY+y;
+
+                if(onlyMissing && !isMissing(tx, ty)){
                     continue;
                 }
 
-                final int tileIndex = getTileIndex(x, y);
-                checkPosition(x, y);
+                final int tileIndex = getTileIndex(tx, ty);
+                checkPosition(tx, ty);
 
 
-                File f = getTileFile(x, y);
-                if (f == null) f = getDefaultTileFile(x, y);
+                File f = getTileFile(tx, ty);
+                if (f == null) f = getDefaultTileFile(tx, ty);
                 f.getParentFile().mkdirs();
-                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
+                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, tx, ty, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
                 futurs.add(fut);
             }
         }
@@ -835,7 +848,7 @@ public class XMLMosaic implements GridMosaic {
                 } else {
                     //encapsulate image in a buffered image with parent color model
                     final BufferedImage buffer = new BufferedImage(
-                            cm, (WritableRaster) raster, true, null);
+                            cm, (WritableRaster) raster, cm.isAlphaPremultiplied(), null);
                     writer.write(buffer);
                 }
 

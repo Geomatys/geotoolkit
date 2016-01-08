@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.processing.vector.centroid;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,13 +44,11 @@ public final class CentroidDescriptor extends VectorDescriptor {
     
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new CentroidDescriptor();

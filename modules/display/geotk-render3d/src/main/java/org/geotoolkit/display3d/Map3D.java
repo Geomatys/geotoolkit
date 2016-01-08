@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.display3d;
 
-import javax.media.opengl.*;
-import javax.media.opengl.fixedfunc.GLMatrixFunc;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.glu.GLU;
 import javax.vecmath.Vector3d;
 import java.util.*;
 import java.util.List;

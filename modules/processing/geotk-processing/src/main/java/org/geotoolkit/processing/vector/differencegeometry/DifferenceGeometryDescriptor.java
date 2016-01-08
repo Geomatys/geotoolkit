@@ -17,14 +17,12 @@
 package org.geotoolkit.processing.vector.differencegeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -52,18 +50,19 @@ public final class DifferenceGeometryDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Difference Geometry
      */
-    public static final ParameterDescriptor<Geometry> DIFF_GEOMETRY_IN=
-            new DefaultParameterDescriptor("diff_geometry_in", "Inpute clip geometry", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> DIFF_GEOMETRY_IN =new ParameterBuilder()
+            .addName("diff_geometry_in")
+            .setRemarks("Inpute clip geometry")
+            .setRequired(true)
+            .create(Geometry.class, null);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, DIFF_GEOMETRY_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, DIFF_GEOMETRY_IN);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
 
     /**Instance */
     public static final ProcessDescriptor INSTANCE = new DifferenceGeometryDescriptor();

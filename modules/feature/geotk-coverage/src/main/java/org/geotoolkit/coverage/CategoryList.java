@@ -1128,6 +1128,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         transform(srcPts, null, srcOff, null, dstPts, dstOff, numPts);
     }
 
+    private static final boolean CHECK_BOUND = false;
+
     /**
      * Transforms a raster. Only the current band in {@code iterator} will be transformed.
      * The transformed value are written back in the {@code iterator}. If a different
@@ -1180,8 +1182,13 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                         if (category == null) {
                             category = nodata;
                         }
-                        maximum = (category!=categoryMax) ? category.maximum : POSITIVE_INFINITY;
-                        minimum = (category!=categoryMin) ? category.minimum : NEGATIVE_INFINITY;
+                        if (CHECK_BOUND) {
+                            maximum = (category!=categoryMax) ? category.maximum : POSITIVE_INFINITY;
+                            minimum = (category!=categoryMin) ? category.minimum : NEGATIVE_INFINITY;
+                        } else {
+                            maximum = category.maximum;
+                            minimum = category.minimum;
+                        }
                         rawBits = doubleToRawLongBits(minimum);
                         tr      = category.transform;
                         if (overflowFallback != null) {
@@ -1199,9 +1206,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                      *       The CategoryList.minimums array would still inclusive,   but tests
                      *       for range inclusion should use the exclusive extremas.
                      */
-                    assert hasGaps || (category==nodata) || // Disable assertion in those cases
-                           (isNaN(value) ? doubleToRawLongBits(value) == rawBits
-                                         : (value >= minimum && value <= maximum)) : value;
+                    if (CHECK_BOUND) {
+                        assert hasGaps || (category==nodata) || // Disable assertion in those cases
+                               (isNaN(value) ? doubleToRawLongBits(value) == rawBits
+                                             : (value >= minimum && value <= maximum))
+                                : "min=" + minimum + ", max=" + maximum + ", val=" + value + ", list=" + this;
+                    }
                     value = tr.transform(value);
                     if (value > maxTr) {
                         value = maxTr;

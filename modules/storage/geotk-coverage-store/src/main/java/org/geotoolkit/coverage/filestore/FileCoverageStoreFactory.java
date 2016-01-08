@@ -28,7 +28,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -95,7 +94,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
             .create(String.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("FileCoverageStoreParameters",
+            new ParameterBuilder().addName("FileCoverageStoreParameters").createGroup(
                 IDENTIFIER,PATH,TYPE,NAMESPACE, PATH_SEPARATOR);
 
     @Override

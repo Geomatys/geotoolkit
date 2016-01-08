@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.processing.coverage.isoline;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,33 +44,41 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
-            new DefaultParameterDescriptor(IN_COVERAGE_PARAM_NAME, IN_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
+    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+            .addName(IN_COVERAGE_PARAM_NAME)
+            .setRemarks(IN_COVERAGE_PARAM_REMARKS)
+            .setRequired(true)
+            .create(GridCoverage2D.class, null);
 
     /*
      * Intervals
      */
     public static final String IN_INTERVAL_PARAM_NAME = "inIntervals";
     public static final InternationalString IN_INTERVAL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inIntervals);
-    public static final ParameterDescriptor<double[]> INTERVALS =
-            new DefaultParameterDescriptor(IN_INTERVAL_PARAM_NAME, IN_INTERVAL_PARAM_REMARKS, double[].class, null, true);
+    public static final ParameterDescriptor<double[]> INTERVALS = new ParameterBuilder()
+            .addName(IN_INTERVAL_PARAM_NAME)
+            .setRemarks(IN_INTERVAL_PARAM_REMARKS)
+            .setRequired(true)
+            .create(double[].class, null);
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE, INTERVALS});
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE, INTERVALS);
 
     /*
      * FeatureCollection of isoline
      */
     public static final String OUT_FCOLL_PARAM_NAME = "outFeatureCollection";
     public static final InternationalString OUT_FCOLL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_outFeatureCollection);
-    public static final ParameterDescriptor<FeatureCollection> FCOLL =
-            new DefaultParameterDescriptor(OUT_FCOLL_PARAM_NAME, OUT_FCOLL_PARAM_REMARKS, FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FCOLL = new ParameterBuilder()
+            .addName(OUT_FCOLL_PARAM_NAME)
+            .setRemarks(OUT_FCOLL_PARAM_REMARKS)
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FCOLL});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName(
+            "OutputParameters").createGroup(FCOLL);
 
 
     public static final ProcessDescriptor INSTANCE = new IsolineDescriptor();

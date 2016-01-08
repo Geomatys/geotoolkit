@@ -19,16 +19,21 @@ package org.geotoolkit.gui.javafx.crs;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -39,9 +44,13 @@ public class FXCRSChooser extends BorderPane {
     @FXML
     private CheckBox uiLongFirst;
     @FXML
+    private CheckBox uiAxisConv;
+    @FXML
     private BorderPane uiPane;
     @FXML
     private TextField uiSearch;
+    @FXML
+    private ChoiceBox<AxesConvention> uiChoice;
 
     private FXCRSTable uiTable;
     
@@ -63,11 +72,7 @@ public class FXCRSChooser extends BorderPane {
         uiTable = new FXCRSTable();
         uiPane.setCenter(uiTable);
         
-        uiTable.crsProperty().set(crsProperty.get());
-        uiTable.crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
-                              CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
-            crsProperty.set(newValue);
-        });
+        uiTable.crsProperty().bindBidirectional(crsProperty);
         
         crsProperty.addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
                               CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
@@ -78,7 +83,29 @@ public class FXCRSChooser extends BorderPane {
                 updateText = false;
             }
         });
-        
+
+        uiChoice.setItems(FXCollections.observableArrayList(AxesConvention.values()));
+
+    }
+
+    public CoordinateReferenceSystem getCorrectedCRS(){
+        CoordinateReferenceSystem crs = crsProperty.get();
+        if(crs==null) return null;
+
+        //fix longitude first
+        try{
+            Integer epsg = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true);
+            if(epsg!=null){
+                crs = CRS.decode("EPSG:"+epsg, uiLongFirst.isSelected());
+            }
+        }catch(FactoryException ex){/*no important*/}
+
+        //fix axes convention
+        if(uiAxisConv.isSelected() && crs instanceof DefaultGeographicCRS && uiChoice.getValue()!=null){
+            crs = ((DefaultGeographicCRS)crs).forConvention(uiChoice.getValue());
+        }
+
+        return crs;
     }
     
     public ObjectProperty<CoordinateReferenceSystem> crsProperty(){
@@ -89,7 +116,7 @@ public class FXCRSChooser extends BorderPane {
         final FXCRSChooser chooser = new FXCRSChooser();
         chooser.crsProperty.set(crs);
         FXOptionDialog.showOkCancel(parent, chooser, "", false);
-        return chooser.crsProperty.get();
+        return chooser.getCorrectedCRS();
     }
     
 }

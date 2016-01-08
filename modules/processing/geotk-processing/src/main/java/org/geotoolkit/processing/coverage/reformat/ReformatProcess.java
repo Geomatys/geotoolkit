@@ -33,6 +33,8 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.*;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.utility.parameter.ParametersExt;
+import org.opengis.coverage.Coverage;
 
 /**
  *
@@ -42,6 +44,33 @@ public class ReformatProcess extends AbstractProcess {
 
     public ReformatProcess(ParameterValueGroup input) {
         super(INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param coverage coverage to process
+     * @param dataType new output data type
+     */
+    public ReformatProcess(Coverage coverage, Integer dataType){
+        super(ReformatDescriptor.INSTANCE, asParameters(coverage,dataType));
+    }
+
+    private static ParameterValueGroup asParameters(Coverage coverage, Integer dataType){
+        final ParameterValueGroup params = ReformatDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, ReformatDescriptor.IN_COVERAGE.getName().getCode()).setValue(coverage);
+        ParametersExt.getOrCreateValue(params, ReformatDescriptor.IN_DATATYPE.getName().getCode()).setValue(dataType);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return reformatted coverage
+     * @throws ProcessException
+     */
+    public Coverage executeNow() throws ProcessException {
+        execute();
+        return (Coverage) outputParameters.parameter(ReformatDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override

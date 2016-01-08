@@ -254,8 +254,30 @@ public class GeoJSONReadTest {
         assertArrayEquals(array1, (Double[][]) feat1.getProperty("array").getValue());
 
         Feature feat2 = ite.next();
-        assertArrayEquals(array2, (Double[][])feat2.getProperty("array").getValue());
+        assertArrayEquals(array2, (Double[][]) feat2.getProperty("array").getValue());
 
+    }
+
+    /**
+     * This test ensure that properties fields with null value doesn't rise NullPointerException
+     * @throws DataStoreException
+     */
+    @Test
+    public void readNullPropsTest() throws DataStoreException {
+        URL jsonFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/sample_with_null_properties.json");
+
+        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(URLP.getName().getCode()).setValue(jsonFile);
+        FeatureStore store = FeatureStoreFinder.open(param);
+        assertNotNull(store);
+
+        assertEquals(1, store.getNames().size());
+        GenericName name = store.getNames().iterator().next();
+
+        FeatureType ft = store.getFeatureType(name);
+        Session session = store.createSession(false);
+        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name));
+        assertEquals(15, fcoll.size());
     }
 
     private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {

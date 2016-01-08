@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.processing.coverage.reducetodomain;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -43,24 +41,28 @@ public class ReduceToDomainDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_IN =
-            new DefaultParameterDescriptor("coverage_in", "Input coverage ", Coverage.class, null, true);
+    public static final ParameterDescriptor<Coverage> COVERAGE_IN = new ParameterBuilder()
+            .addName("coverage_in")
+            .setRemarks("Input coverage ")
+            .setRequired(true)
+            .create(Coverage.class, null);
 
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_OUT =
-            new DefaultParameterDescriptor("coverage_out", "Output coverage ", Coverage.class, null, true);
+    public static final ParameterDescriptor<Coverage> COVERAGE_OUT = new ParameterBuilder()
+            .addName("coverage_out")
+            .setRemarks("Output coverage ")
+            .setRequired(true)
+            .create(Coverage.class, null);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_IN);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(COVERAGE_OUT);
 
     /**Instance */
     public static final ProcessDescriptor INSTANCE = new ReduceToDomainDescriptor();

@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.display3d.utils;
 
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureData;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLProfile;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

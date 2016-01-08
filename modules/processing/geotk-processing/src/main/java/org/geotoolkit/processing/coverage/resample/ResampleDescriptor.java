@@ -18,18 +18,19 @@ package org.geotoolkit.processing.coverage.resample;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
@@ -153,6 +154,20 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
                 false);                             // Parameter is optional
 
     /**
+     * The parameter descriptor for the interpolation type.
+     */
+    public static final ParameterDescriptor<ResampleBorderComportement> IN_BORDER_COMPORTEMENT_TYPE =
+            new DefaultParameterDescriptor<ResampleBorderComportement>(Citations.OGC,
+                "BorderComportementType",           // Parameter name
+                ResampleBorderComportement.class,   // Value class (mandatory)
+                null,                               // Array of valid values
+                ResampleBorderComportement.EXTRAPOLATION,// Default value
+                null,                               // Minimal value
+                null,                               // Maximal value
+                null,                               // Unit of measure
+                false);                             // Parameter is optional
+
+    /**
      * The parameter descriptor for the coordinate reference system.
      */
     public static final ParameterDescriptor<CoordinateReferenceSystem> IN_COORDINATE_REFERENCE_SYSTEM =
@@ -218,8 +233,8 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
                 
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", 
-                IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
+        INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(
+                IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_BORDER_COMPORTEMENT_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
 
         final Map<String, Object> propertiesOut = new HashMap<>();
         propertiesOut.put(IdentifiedObject.NAME_KEY, "result");
@@ -228,7 +243,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         OUT_COVERAGE = new DefaultParameterDescriptor<>(
                 propertiesOut, Coverage.class, null, null, null, null, null, true);
 
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     }
 
     /**

@@ -75,6 +75,7 @@ import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescripto
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -91,6 +92,35 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      */
     public CopyCoverageStoreProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param inStore input coverage store
+     * @param outStore output coverage store
+     * @param erase erase output data before insert
+     * @param reduce reduce to data domain
+     */
+    public CopyCoverageStoreProcess(CoverageStore inStore,CoverageStore outStore,boolean erase, boolean reduce){
+        super(INSTANCE, asParameters(inStore,outStore,erase,reduce));
+    }
+
+    private static ParameterValueGroup asParameters(CoverageStore inStore,CoverageStore outStore,boolean erase, boolean reduce){
+        final ParameterValueGroup params = CopyCoverageStoreDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.STORE_IN.getName().getCode()).setValue(inStore);
+        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.STORE_OUT.getName().getCode()).setValue(outStore);
+        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.ERASE.getName().getCode()).setValue(erase);
+        ParametersExt.getOrCreateValue(params, CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN.getName().getCode()).setValue(reduce);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @throws ProcessException
+     */
+    public void executeNow() throws ProcessException {
+        execute();
     }
 
     /**

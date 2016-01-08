@@ -96,6 +96,16 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         return null;  // not in v1.0.0
     }
     
+    @Override
+    public List<String> getFeatureOfInterest() {
+        return new ArrayList<>();  // not in v1.0.0
+    }
+    
+    @Override
+    public Filter getSpatialFilter() {
+        return null;  // not in v1.0.0
+    }
+    
     /**
      * Gets the value of the observationTemplateId property.
      * 
@@ -111,7 +121,7 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
      */
     public List<EventTime> getEventTime() {
         if (eventTime == null){
-            eventTime = new ArrayList<EventTime>();
+            eventTime = new ArrayList<>();
         }
         return eventTime;
     }
@@ -119,13 +129,13 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
     @Override
     public List<Filter> getTemporalFilter() {
         if (eventTime != null) {
-            final List<Filter> temporalFilter = new ArrayList<Filter>();
+            final List<Filter> temporalFilter = new ArrayList<>();
             for (EventTime time : eventTime) {
                 temporalFilter.add(time.getFilter());
             }
             return temporalFilter;
         }
-        return new ArrayList<Filter>();
+        return new ArrayList<>();
     }
     
     /**
@@ -162,5 +172,10 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
             }
         }
         return  s.toString();
+    }
+    
+    @Override
+    public String getResponseFormat() {
+        return "text/xml";
     }
 }

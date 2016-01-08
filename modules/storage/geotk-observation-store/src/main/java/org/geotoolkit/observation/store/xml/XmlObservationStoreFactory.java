@@ -22,11 +22,11 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
 import org.geotoolkit.observation.ObservationStore;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -55,13 +55,15 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<File> FILE_PATH = createDescriptor("url",
-                    Bundle.formatInternational(Bundle.Keys.paramURLAlias),
-                    Bundle.formatInternational(Bundle.Keys.paramURLRemarks),
-                    File.class,null,null,null,null,null,true);
+    public static final ParameterDescriptor<File> FILE_PATH =  new ParameterBuilder()
+            .addName("url")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
+            .setRequired(true)
+            .create(File.class,null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("ObservationXmlFileParameters",
+            new ParameterBuilder().addName("ObservationXmlFileParameters").createGroup(
                 IDENTIFIER,NAMESPACE,FILE_PATH);
     
     @Override

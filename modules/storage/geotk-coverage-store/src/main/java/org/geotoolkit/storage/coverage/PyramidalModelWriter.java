@@ -62,6 +62,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.coverage.InterpolationMethod;
 
 
 /**
@@ -98,8 +99,18 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         }
         //geographic area where pixel values changes.
         Envelope requestedEnvelope = null;
+        InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
         if(param != null){
             requestedEnvelope = param.getEnvelope();
+            final InterpolationMethod inter = param.getInterpolation();
+            if(InterpolationMethod.BICUBIC.equals(inter)){
+                interpolation = InterpolationCase.BICUBIC;
+            }else if(InterpolationMethod.LINEAR.equals(inter)){
+                interpolation = InterpolationCase.BILINEAR;
+            }else{
+                //NOTE : we can not map other types of interpolations yet.
+                interpolation = InterpolationCase.NEIGHBOR;
+            }
         }
 
         if(requestedEnvelope == null){
@@ -151,7 +162,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             //extract the 2D part of the gridtocrs transform
             final DimensionFilter filter = new DimensionFilter(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate());
+            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         } catch (FactoryException ex) {
@@ -182,6 +193,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private final RenderedImage sourceImage;
         private final MathTransform srcCRSToGrid;
         private final int nbBand;
+        private final InterpolationCase interpolation;
         private volatile boolean finished = false;
 
         //iteration state informations
@@ -210,13 +222,15 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private int idy = -1;
 
         private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope,
-                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand, MathTransform srcCRSToGrid) throws DataStoreException{
+                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
+                MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
             this.model = model;
             this.requestedEnvelope = requestedEnvelope;
             this.crsCoverage2D = crsCoverage2D;
             this.sourceImage = sourceImage;
             this.nbBand = nbBand;
             this.srcCRSToGrid = srcCRSToGrid;
+            this.interpolation = interpolation;
             pyramidsIte = model.getPyramidSet().getPyramids().iterator();
         }
 
@@ -400,7 +414,8 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                         mosAreaMaxX, mosAreaMaxY,
                         mosULX, mosULY,
                         crsDestToSrcGrid,
-                        sourceImage, nbBand, res);
+                        sourceImage, nbBand, res,
+                        interpolation);
             }
         }
 
@@ -431,7 +446,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         public TileUpdater(PyramidalCoverageReference pm, GridMosaic mosaic, int idx, int idy,
                 int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
-                RenderedImage image, int nbBand, double res) {
+                RenderedImage image, int nbBand, double res, InterpolationCase interpolation) {
             this.pm = pm;
             this.mosaic = mosaic;
             this.pyramid = mosaic.getPyramid();
@@ -443,7 +458,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             this.mosAreaMaxY = mosAreaMaxY;
             this.mosULX = mosULX;
             this.mosULY = mosULY;
-            this.interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
+            this.interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), interpolation, 2);
             this.nbBand = nbBand;
             this.res = res;
             this.crsDestToSrcGrid = crsDestToSrcGrid;

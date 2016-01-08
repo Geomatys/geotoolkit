@@ -442,9 +442,12 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             // no subsampling nor offset, read directly the specified region.
             if (sourceReadParam == null) {
                 imgParam.setSourceRegion(new Rectangle(minRx, minRy, tileWidth, tileHeight));
-                // TODO : Modify reading mechanism to allow multi-threading ?
-                synchronized (imageReader) {
-                    result = imageReader.read(imageIndex, imgParam);
+                ImageReader reader = imageReader.getOriginatingProvider().createReaderInstance();
+                try{
+                    reader.setInput(imageReader.getInput());
+                    result = reader.read(imageIndex, imgParam);
+                }finally{
+                    reader.dispose();
                 }
             } else {
                 /* If an offset has been specified, we must fill result only from this point. First, we check if the given tile
@@ -474,9 +477,12 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
                             (tileHeight + Math.min(0, readOffsetY)) * ssY));
                     imgParam.setSourceSubsampling(ssX, ssY, 0, 0);
 
-                    // TODO : Modify reading mechanism to allow multi-threading ?
-                    synchronized (imageReader) {
-                        result = imageReader.read(imageIndex, imgParam);
+                    ImageReader reader = imageReader.getOriginatingProvider().createReaderInstance();
+                    try{
+                        reader.setInput(imageReader.getInput());
+                        result = reader.read(imageIndex, imgParam);
+                    }finally{
+                        reader.dispose();
                     }
                 }
             }

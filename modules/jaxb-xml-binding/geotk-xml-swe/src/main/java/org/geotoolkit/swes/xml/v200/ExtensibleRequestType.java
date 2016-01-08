@@ -84,6 +84,12 @@ public abstract class ExtensibleRequestType implements RequestBase {
         this.version = version;
     }
     
+    public ExtensibleRequestType(final String version, final String service, final List<Object> extension) {
+        this.service   = service;
+        this.version   = version;
+        this.extension = extension;
+    }
+    
     /**
      * Gets the value of the extension property.
      * 
@@ -94,9 +100,13 @@ public abstract class ExtensibleRequestType implements RequestBase {
      */
     public List<Object> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<>();
         }
         return this.extension;
+    }
+    
+    public void setExtension(List<Object> extension) {
+        this.extension = extension;
     }
 
     /**

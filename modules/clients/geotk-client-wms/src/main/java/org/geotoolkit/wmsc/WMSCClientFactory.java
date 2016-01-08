@@ -23,12 +23,12 @@ import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataType;
@@ -64,7 +64,7 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new DefaultParameterDescriptorGroup("WMSCParameters", IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
+            new ParameterBuilder().addName("WMSCParameters").createGroup(IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public Identification getIdentification() {

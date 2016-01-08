@@ -96,11 +96,6 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-analytics</artifactId>
             <version>${project.version}</version>
         </dependency>

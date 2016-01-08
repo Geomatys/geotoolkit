@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BBOX;
@@ -93,7 +92,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         }
         DirectPositionType lower = new DirectPositionType(minx, miny);
         DirectPositionType upper = new DirectPositionType(maxx, maxy);
-        this.any = new ArrayList<Object>();
+        this.any = new ArrayList<>();
         this.any.add(new EnvelopeType(lower, upper, srs));
 
     }
@@ -128,7 +127,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             }
             
             if (that.any != null) {
-                this.any = new ArrayList<Object>();
+                this.any = new ArrayList<>();
                 for (Object obj : that.any) {
                     if (obj instanceof EnvelopeType) {
                         this.any.add(new EnvelopeType((EnvelopeType)obj));
@@ -197,7 +196,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     public void cleanAny() {
         if (this.any != null) {
-            final List<Object> toRemove = new ArrayList<Object>();
+            final List<Object> toRemove = new ArrayList<>();
             int i = 0;
             for (Object element : any) {
                 if (element instanceof String) {
@@ -259,8 +258,12 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     
     @Override
     public String getSRS() {
-        if (any != null && any.get(0) instanceof Envelope) {
-            final Envelope env = (Envelope) any.get(0);
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
+        }
+        if (candidate instanceof Envelope) {
+            final Envelope env = (Envelope) candidate;
             return (env.getSrsName() != null) ? env.getSrsName() : DEFAULT_SRS;
         }
         return null;
@@ -268,52 +271,64 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     @Override
     public double getMinX() {
-        DirectPosition pos = null;
-        if (any != null && any.get(0) instanceof Envelope) {
-            final Envelope env = (Envelope) any.get(0);
-            pos = env.getLowerCorner();
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
         }
-        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-            return pos.getCoordinate()[0];
+        if (candidate instanceof Envelope) {
+            final Envelope env = (Envelope) candidate;
+            final DirectPosition pos = env.getLowerCorner();
+            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+                return pos.getCoordinate()[0];
+            }
         }
         return -1;
     }
 
     @Override
     public double getMinY() {
-       DirectPosition pos = null;
-        if (any != null && any.get(0) instanceof Envelope) {
-            final Envelope env = (Envelope) any.get(0);
-            pos = env.getLowerCorner();
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
         }
-        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-            return pos.getCoordinate()[1];
+        if (candidate instanceof Envelope) {
+            final Envelope env = (Envelope) candidate;
+            final DirectPosition pos = env.getLowerCorner();
+            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+                return pos.getCoordinate()[1];
+            }
         }
         return -1;
     }
 
     @Override
     public double getMaxX() {
-        DirectPosition pos = null;
-        if (any != null && any.get(0) instanceof Envelope) {
-            final Envelope env = (Envelope) any.get(0);
-            pos = env.getUpperCorner();
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
         }
-        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-            return pos.getCoordinate()[0];
+        if (candidate instanceof Envelope) {
+            final Envelope env = (Envelope) candidate;
+            final DirectPosition pos = env.getUpperCorner();
+            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+                return pos.getCoordinate()[0];
+            }
         }
         return -1;
     }
 
     @Override
     public double getMaxY() {
-        DirectPosition pos = null;
-        if (any != null && any.get(0) instanceof Envelope) {
-            final Envelope env = (Envelope) any.get(0);
-            pos = env.getUpperCorner();
+        Object candidate = getAny();
+        if (candidate instanceof JAXBElement) {
+            candidate = ((JAXBElement)candidate).getValue();
         }
-        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
-            return pos.getCoordinate()[1];
+        if (candidate instanceof Envelope) {
+            final Envelope env = (Envelope) candidate;
+            final DirectPosition pos = env.getUpperCorner();
+            if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+                return pos.getCoordinate()[1];
+            }
         }
         return -1;
     }

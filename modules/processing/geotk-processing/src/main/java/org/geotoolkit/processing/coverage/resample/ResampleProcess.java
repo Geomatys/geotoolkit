@@ -143,6 +143,9 @@ public class ResampleProcess extends AbstractProcess {
         if(interpolation == null){
             interpolation = InterpolationCase.NEIGHBOR;
         }
+        final ResampleBorderComportement border = (ResampleBorderComportement) Parameters
+                .getOrCreate(IN_BORDER_COMPORTEMENT_TYPE, inputParameters).getValue();
+
         CoordinateReferenceSystem targetCRS = (CoordinateReferenceSystem) inputParameters.parameter("CoordinateReferenceSystem").getValue();
         if (targetCRS == null) {
             targetCRS = source.getCoordinateReferenceSystem();
@@ -152,7 +155,7 @@ public class ResampleProcess extends AbstractProcess {
         final GridCoverage2D target;
 
         try {
-            target = reproject(source, targetCRS, targetGG, interpolation, background, null);
+            target = reproject(source, targetCRS, targetGG, interpolation, border, background, null);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
@@ -225,6 +228,43 @@ public class ResampleProcess extends AbstractProcess {
                                            final Hints               hints)
             throws FactoryException, TransformException
     {
+        return reproject(sourceCoverage, targetCRS, targetGG, interpolationType, 
+                null, background, hints);
+    }
+
+    /**
+     * Creates a new coverage with a different coordinate reference reference system. If a
+     * grid geometry is supplied, only its {@linkplain GridGeometry2D#getRange grid envelope}
+     * and {@linkplain GridGeometry2D#getGridToCRS grid to CRS} transform are taken in account.
+     *
+     * @param sourceCoverage The source grid coverage.
+     * @param targetCRS      Coordinate reference system for the new grid coverage, or {@code null}.
+     * @param targetGG       The target grid geometry, or {@code null} for default.
+     * @param background     The background values, or {@code null} for default.
+     * @param borderComportement The comportement used when points are outside of the source coverage,
+     *          or {@code null} for default. Default is EXTRAPOLATION.
+     * @param interpolationType  The interpolation to use, or {@code null} if none.
+     * @param hints
+     *          The rendering hints. This is usually provided by {@link AbstractCoverageProcessor}.
+     *          This method will looks for {@link Hints#COORDINATE_OPERATION_FACTORY} and
+     *          {@link Hints#JAI_INSTANCE} keys.
+     * @return  The new grid coverage, or {@code sourceCoverage} if no resampling was needed.
+     * @throws  FactoryException If a transformation step can't be created.
+     * @throws TransformException If a transformation failed.
+     */
+    public static GridCoverage2D reproject(GridCoverage2D            sourceCoverage,
+                                           CoordinateReferenceSystem targetCRS,
+                                           GridGeometry2D            targetGG,
+                                           InterpolationCase         interpolationType,
+                                           ResampleBorderComportement borderComportement,
+                                           double[]                  background,
+                                           final Hints               hints)
+            throws FactoryException, TransformException
+    {
+
+        //set default values
+        if(borderComportement==null) borderComportement = ResampleBorderComportement.EXTRAPOLATION;
+
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
         //// =======>>  STEP 1: Extracts needed informations from the parameters   <<====== ////
@@ -501,7 +541,7 @@ public class ResampleProcess extends AbstractProcess {
 //        final Interpolation interpolator = Interpolation.create(
 //                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
          final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
-                interpolationType, ResampleBorderComportement.EXTRAPOLATION, fillValue);
+                interpolationType, borderComportement, fillValue);
         resample.fillImage();
 
         return create(sourceCoverage, targetImage, targetGG, finalView, hints);

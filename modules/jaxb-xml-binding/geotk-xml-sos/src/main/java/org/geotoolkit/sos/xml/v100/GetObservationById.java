@@ -123,6 +123,7 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
     /**
      * Gets the value of the responseFormat property.
      */
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }

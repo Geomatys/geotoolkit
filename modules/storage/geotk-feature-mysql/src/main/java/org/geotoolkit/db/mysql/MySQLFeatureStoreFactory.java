@@ -20,7 +20,7 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -61,7 +61,7 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
     public static final ParameterDescriptor<Integer> PORT = createFixedPort(3306);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("MySQLParameters",
+            new ParameterBuilder().addName("MySQLParameters").createGroup(
                 IDENTIFIER,HOST,PORT,DATABASE,TABLE,USER,PASSWORD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 

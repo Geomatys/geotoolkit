@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.processing.vector.extendfeature;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.memory.GenericExtendFeatureIterator.FeatureExtend;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,24 +51,28 @@ public final class ExtendFeatureDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Extend
      */
-    public static final ParameterDescriptor<FeatureExtend> EXTEND_IN =
-            new DefaultParameterDescriptor("extend_in", "Feature extension", FeatureExtend.class, null, true);
+    public static final ParameterDescriptor<FeatureExtend> EXTEND_IN = new ParameterBuilder()
+            .addName("extend_in")
+            .setRemarks("Feature extension")
+            .setRequired(true)
+            .create(FeatureExtend.class, null);
 
     /**
      * Mandatory - Hints
      */
-    public static final ParameterDescriptor<Hints> HINTS_IN =
-            new DefaultParameterDescriptor("hint_in", "Hints", Hints.class, null, true);
+    public static final ParameterDescriptor<Hints> HINTS_IN = new ParameterBuilder()
+            .addName("hint_in")
+            .setRemarks("Hints")
+            .setRequired(true)
+            .create(Hints.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, EXTEND_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, EXTEND_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new ExtendFeatureDescriptor();

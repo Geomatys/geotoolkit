@@ -35,6 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridGeometry;
@@ -48,6 +49,31 @@ public class BandCombineProcess extends AbstractProcess {
 
     public BandCombineProcess(ParameterValueGroup input) {
         super(INSTANCE, input);
+    }
+
+    /**
+     *
+     * @param coverages Coverages to combine
+     */
+    public BandCombineProcess(Coverage ... coverages){
+        super(INSTANCE, asParameters(coverages));
+    }
+
+    private static ParameterValueGroup asParameters(Coverage ... coverages){
+        final ParameterValueGroup params = BandCombineDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, IN_COVERAGES.getName().getCode()).setValue(coverages);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     * 
+     * @return result coverage
+     * @throws ProcessException
+     */
+    public GridCoverage2D executeNow() throws ProcessException {
+        execute();
+        return (GridCoverage2D) outputParameters.parameter(OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     @Override

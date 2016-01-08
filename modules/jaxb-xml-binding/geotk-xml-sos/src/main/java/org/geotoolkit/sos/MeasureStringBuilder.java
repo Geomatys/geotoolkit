@@ -55,6 +55,30 @@ public class MeasureStringBuilder {
         sb.append(encoding.getTokenSeparator());
     }
     
+    public void appendValue(final String value) {
+        //empty string for null value
+        if (value != null) {
+            sb.append(value);
+        }
+        sb.append(encoding.getTokenSeparator());
+    }
+    
+    public void appendValue(final Integer value) {
+        //empty string for null value
+        if (value != null) {
+            sb.append(value);
+        }
+        sb.append(encoding.getTokenSeparator());
+    }
+    
+    public void appendValue(final Boolean value) {
+        //empty string for null value
+        if (value != null) {
+            sb.append(value);
+        }
+        sb.append(encoding.getTokenSeparator());
+    }
+    
     public void closeBlock() {
          // remove the last token separator
         sb.deleteCharAt(sb.length() - 1);

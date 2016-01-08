@@ -17,7 +17,7 @@
 package org.geotoolkit.display3d.phase;
 
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 import org.geotoolkit.display3d.Map3D;
 
 /**

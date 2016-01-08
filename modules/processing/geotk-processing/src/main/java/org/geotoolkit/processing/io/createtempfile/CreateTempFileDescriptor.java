@@ -17,14 +17,12 @@
 package org.geotoolkit.processing.io.createtempfile;
 
 import java.net.URL;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.io.IOProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -56,43 +54,50 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Optional - file prefix
      */
-    public static final ParameterDescriptor<String> PREFIX_IN =
-            new DefaultParameterDescriptor("prefix", "The file prefix", 
-            String.class, "temp", false);
+    public static final ParameterDescriptor<String> PREFIX_IN = new ParameterBuilder()
+            .addName("prefix")
+            .setRemarks("The file prefix")
+            .setRequired(false)
+            .create(String.class, "temp");
     
     /**
      * Optional - file postfix
      */
-    public static final ParameterDescriptor<String> POSTFIX_IN =
-            new DefaultParameterDescriptor("postfix", "The file postfix", 
-            String.class, "tmp", false);
+    public static final ParameterDescriptor<String> POSTFIX_IN = new ParameterBuilder()
+            .addName("postfix")
+            .setRemarks("The file postfix")
+            .setRequired(false)
+            .create(String.class, "tmp");
     
     /**
      * Optional - delete on exit, default true.
      */
-    public static final ParameterDescriptor<Boolean> DELETE_IN =
-            new DefaultParameterDescriptor("delete", "Delete file on application end", 
-            Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> DELETE_IN = new ParameterBuilder()
+            .addName("delete")
+            .setRemarks("Delete file on application end")
+            .setRequired(false)
+            .create(Boolean.class, true);
         
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{PREFIX_IN,POSTFIX_IN,DELETE_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(PREFIX_IN,POSTFIX_IN,DELETE_IN);
 
     /**
      * Mandatory - temporary output file
      */
-    public static final ParameterDescriptor<URL> FILE_OUT =
-            new DefaultParameterDescriptor("file", "Created temp file", 
-            URL.class, null, true);
+    public static final ParameterDescriptor<URL> FILE_OUT = new ParameterBuilder()
+            .addName("file")
+            .setRemarks("Created temp file")
+            .setRequired(true)
+            .create(URL.class, null);
     
     /** 
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",FILE_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(FILE_OUT);
     
     public static final ProcessDescriptor INSTANCE = new CreateTempFileDescriptor();
 

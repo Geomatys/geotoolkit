@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.bandcombine;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -30,7 +27,6 @@ import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  *
@@ -43,34 +39,29 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverages to combine
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES;
+    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+                .addName("coverages")
+                .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoverages))
+                .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoveragesDesc))
+                .setRequired(true)
+                .create(Coverage[].class, null);
     
-    public static final ParameterDescriptorGroup INPUT_DESC;
+    public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "InputParameters").createGroup(IN_COVERAGES);
     
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE;
+    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+            .addName("result")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverageDesc))
+            .setRequired(true)
+            .create(Coverage.class, null);
 
-    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     
-    static {
-        Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "coverages");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoverages));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoveragesDesc));
-        IN_COVERAGES = new DefaultParameterDescriptor<Coverage[]>(propertiesInCov, Coverage[].class, null, null, null, null, null, true);
-        
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_COVERAGES);
-
-        Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
-        propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverage));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverageDesc));
-        OUT_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesOutCov, Coverage.class, null, null, null, null, null, true);
-
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);
-    }
 
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();
 

@@ -32,7 +32,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -163,7 +162,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("PGRasterParameters",
+            new ParameterBuilder().addName("PGRasterParameters").createGroup(
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT);
 

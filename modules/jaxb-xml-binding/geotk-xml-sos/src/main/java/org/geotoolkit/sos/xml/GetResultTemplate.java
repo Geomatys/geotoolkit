@@ -27,4 +27,6 @@ public interface GetResultTemplate extends RequestBase {
     String getOffering();
     
     String getObservedProperty();
+    
+    String getResponseFormat();
 }

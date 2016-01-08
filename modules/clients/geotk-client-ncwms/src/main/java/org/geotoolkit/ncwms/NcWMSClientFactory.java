@@ -25,7 +25,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -70,7 +70,7 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new DefaultParameterDescriptorGroup("NcWMSParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName("NcWMSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {

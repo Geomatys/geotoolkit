@@ -36,11 +36,11 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.color.ColorUtilities;
+import org.opengis.parameter.ParameterDescriptorGroup;
 
 
 /**
@@ -62,7 +62,7 @@ public abstract class IndexColorOperation extends Operation2D {
      *
      * @param descriptor The parameters descriptor.
      */
-    protected IndexColorOperation(final DefaultParameterDescriptorGroup descriptor) {
+    protected IndexColorOperation(final ParameterDescriptorGroup descriptor) {
         super(descriptor);
     }
 

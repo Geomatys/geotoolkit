@@ -36,4 +36,5 @@ public interface GetFeatureOfInterest extends RequestBase {
     
     List<String> getObservedProperty();
     
+    String getResponseFormat();
 }

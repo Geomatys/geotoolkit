@@ -27,6 +27,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
@@ -43,6 +44,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.parameter.Parameters.*;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  * Process CoverageToFeature create a collection of Feature based on a coverage layer.
@@ -65,6 +67,31 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      */
     public CoverageToFeaturesProcess(final ParameterValueGroup input) {
         super(CoverageToFeaturesDescriptor.INSTANCE,input);
+    }
+
+    /**
+     *
+     * @param reader source coverage reader
+     */
+    public CoverageToFeaturesProcess(GridCoverageReader reader){
+        super(CoverageToFeaturesDescriptor.INSTANCE, asParameters(reader));
+    }
+
+    private static ParameterValueGroup asParameters(GridCoverageReader reader){
+        final ParameterValueGroup params = CoverageToFeaturesDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, CoverageToFeaturesDescriptor.READER_IN.getName().getCode()).setValue(reader);
+        return params;
+    }
+
+    /**
+     * Execute process now.
+     *
+     * @return features
+     * @throws ProcessException
+     */
+    public FeatureCollection executeNow() throws ProcessException {
+        execute();
+        return (FeatureCollection) outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).getValue();
     }
 
     /**

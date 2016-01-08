@@ -28,18 +28,30 @@ import java.io.OutputStream;
  */
 public class LEDataOutputStream extends FilterOutputStream implements DataOutput {
 
+    private long position = 0;
+
     public LEDataOutputStream(OutputStream out) {
         super(out);
     }
 
+    /**
+     * Get current stream position from the first written byte.
+     * @return stream position
+     */
+    public long getPosition() {
+        return position;
+    }
+    
     @Override
     public void write(int b) throws IOException {
         out.write(b);
+        position++;
     }
 
     @Override
     public void write(byte[] data, int offset, int length) throws IOException {
         out.write(data, offset, length);
+        position+=length;
     }
 
     @Override
@@ -50,18 +62,21 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
     @Override
     public void writeByte(int b) throws IOException {
         out.write(b);
+        position++;
     }
 
     @Override
     public void writeShort(int s) throws IOException {
         out.write((s      ) & 0xFF);
         out.write((s >>> 8) & 0xFF);
+        position+=2;
     }
 
     @Override
     public void writeChar(int c) throws IOException {
         out.write((c      ) & 0xFF);
         out.write((c >>> 8) & 0xFF);
+        position+=2;
     }
 
     @Override
@@ -70,6 +85,7 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         out.write((i >>>  8) & 0xFF);
         out.write((i >>> 16) & 0xFF);
         out.write((i >>> 24) & 0xFF);
+        position+=4;
     }
 
     @Override
@@ -82,6 +98,7 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         out.write((int) (l >>> 40) & 0xFF);
         out.write((int) (l >>> 48) & 0xFF);
         out.write((int) (l >>> 56) & 0xFF);
+        position+=8;
     }
 
     @Override
@@ -99,6 +116,7 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
         for (int i=0,n=s.length(); i<n; i++) {
             out.write((byte) s.charAt(i));
         }
+        position+=s.length();
     }
 
     @Override
@@ -108,6 +126,7 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
             out.write((c      ) & 0xFF);
             out.write((c >>> 8) & 0xFF);
         }
+        position+=s.length()*2;
     }
 
     @Override

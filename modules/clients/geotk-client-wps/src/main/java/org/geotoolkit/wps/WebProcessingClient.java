@@ -33,12 +33,12 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.client.ClientFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import org.geotoolkit.ows.xml.v110.ExceptionType;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.*;
@@ -636,10 +636,10 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                 }
             }
 
-            final ParameterDescriptorGroup inputs = new DefaultParameterDescriptorGroup("inputs",
-                    inputDescriptors.toArray(new DefaultParameterDescriptor[inputDescriptors.size()]));
-            final ParameterDescriptorGroup outputs = new DefaultParameterDescriptorGroup("ouptuts",
-                    outputDescriptors.toArray(new DefaultParameterDescriptor[outputDescriptors.size()]));
+            final ParameterDescriptorGroup inputs = new ParameterBuilder().addName("inputs").createGroup(
+                    inputDescriptors.toArray(new ParameterDescriptor[inputDescriptors.size()]));
+            final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
+                    outputDescriptors.toArray(new ParameterDescriptor[outputDescriptors.size()]));
 
             //Process Descriptor creation
             final ProcessDescriptor processDesc = new AbstractProcessDescriptor(processIdentifier, getIdentification(), processAbstract, inputs, outputs) {

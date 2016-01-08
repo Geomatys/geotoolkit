@@ -74,6 +74,11 @@ public class GetObservationByIdType extends ExtensibleRequestType implements Get
         this.observation = observation;
     }
     
+    public GetObservationByIdType(final String version, final String service, final List<String> observation, final List<Object> extension) {
+        super(version, service, extension);
+        this.observation = observation;
+    }
+    
     /**
      * Gets the value of the observation property.
      * 
@@ -92,6 +97,19 @@ public class GetObservationByIdType extends ExtensibleRequestType implements Get
     @Override
     public QName getResultModel() {
         return new QName("http://www.opengis.net/om/1.0", "Observation", "om");
+    }
+
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return null;
     }
 
 }
