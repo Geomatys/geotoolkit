@@ -150,6 +150,7 @@ public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTest
      * @see http://jira.codehaus.org/browse/GEOT-1702
      */
     @Test
+    @Ignore
     public void testLookupTrivial() throws FactoryException {
         final CoordinateReferenceSystem crsXY = CRS.decode("EPSG:27572", true);
         String code = IdentifiedObjects.lookupIdentifier(crsXY, false);

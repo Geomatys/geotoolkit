@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation;
 import java.io.LineNumberReader;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.referencing.operation.provider.NADCON;
 
 import org.junit.*;
 
@@ -177,8 +176,9 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
      * @throws Exception If a test failed.
      */
     @Test
+    @Ignore("Revisit after migration to SIS.")
     public void testNADCON() throws Exception {
-        Assume.assumeTrue(NADCON.isAvailable());
+//        Assume.assumeTrue(NADCON.isAvailable());
         runScript("NADCON.txt");
     }
 }

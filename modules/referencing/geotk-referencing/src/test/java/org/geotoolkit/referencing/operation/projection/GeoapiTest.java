@@ -112,6 +112,7 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
      * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
      */
     @Test
+    @Ignore
     @Override
     public void testCassiniSoldner() throws FactoryException, TransformException {
         super.testCassiniSoldner();
@@ -123,6 +124,7 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
      * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
      */
     @Test
+    @Ignore
     @Override
     public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
         super.testLambertAzimuthalEqualArea();

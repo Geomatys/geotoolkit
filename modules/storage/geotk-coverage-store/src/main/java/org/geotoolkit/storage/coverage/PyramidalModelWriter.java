@@ -149,9 +149,9 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         final BlockingQueue<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
-            final DimensionFilter filter = new DimensionFilter();
+            final DimensionFilter filter = new DimensionFilter(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(srcCRSToGrid));
+            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate());
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         } catch (FactoryException ex) {

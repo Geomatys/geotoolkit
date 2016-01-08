@@ -46,7 +46,10 @@ import org.apache.sis.internal.referencing.DirectPositionView;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.operation.transform.InterpolatedTransform}
  */
+@Deprecated
 public class GridTransform2D extends GridTransform implements MathTransform2D {
     /**
      * Serial number for inter-operability with different versions.

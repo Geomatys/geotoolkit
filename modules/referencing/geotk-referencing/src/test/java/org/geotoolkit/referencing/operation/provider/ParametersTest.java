@@ -45,14 +45,11 @@ public final strictfp class ParametersTest {
         Krovak                            .PARAMETERS,
         LambertAzimuthalEqualArea         .PARAMETERS,
         Logarithmic                       .PARAMETERS,
-        NADCON                            .PARAMETERS,
-        NTv2                              .PARAMETERS,
         NewZealandMapGrid                 .PARAMETERS,
         ObliqueMercator                   .PARAMETERS,
         ObliqueMercator.TwoPoint          .PARAMETERS,
         Orthographic                      .PARAMETERS,
-        Polyconic                         .PARAMETERS,
-        RGF93                             .PARAMETERS
+        Polyconic                         .PARAMETERS
     };
 
     /**

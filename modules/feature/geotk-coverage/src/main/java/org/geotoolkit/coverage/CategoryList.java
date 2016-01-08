@@ -501,13 +501,18 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
-     * Returns {@code true} if the {@linkplain #getRange range} includes negative values. If this
-     * list does not declare any quantitative category, then this method returns {@code false}.
+     * Returns {@code true} if the {@linkplain #getRange range} includes negative values.
+     * If this list does not declare any quantitative category and does not declare unit
+     * of measurement, then this method returns {@code false}.
      *
      * @since 3.11
      */
     public final boolean isRangeSigned() {
-        return (categories.length != 0) && categories[0].minimum < 0;
+        if (categories.length != 0) {
+            return categories[0].minimum < 0;
+        } else {
+            return geophysics(true).getUnits() != null;
+        }
     }
 
     /**

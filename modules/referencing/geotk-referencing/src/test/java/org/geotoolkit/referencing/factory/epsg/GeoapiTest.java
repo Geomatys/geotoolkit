@@ -59,8 +59,8 @@ public final strictfp class GeoapiTest extends AuthorityFactoryTest {
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(Commons.isEpsgFactoryAvailable() ?
-                CRS.getAuthorityFactory(false) : null, null, null);
+        super(null /*Commons.isEpsgFactoryAvailable() ?
+                CRS.getAuthorityFactory(false) : null*/, null, null);
     }
 
     /**
