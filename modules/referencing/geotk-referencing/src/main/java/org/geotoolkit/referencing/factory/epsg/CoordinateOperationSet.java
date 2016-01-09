@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectSet;
  * @since 2.2
  * @module
  */
+@Deprecated
 final class CoordinateOperationSet extends IdentifiedObjectSet<CoordinateOperation> {
     /**
      * For compatibility with previous versions.

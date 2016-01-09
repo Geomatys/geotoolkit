@@ -52,6 +52,7 @@ import org.apache.sis.util.logging.Logging;
  * @since 2.2
  * @module
  */
+@Deprecated
 final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     /**
      * For compatibility with different versions.

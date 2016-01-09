@@ -29,6 +29,7 @@ import java.util.Objects;
  * @since 2.3
  * @module
  */
+@Deprecated
 final class AxisName {
     /**
      * The coordinate system axis name (never {@code null}).

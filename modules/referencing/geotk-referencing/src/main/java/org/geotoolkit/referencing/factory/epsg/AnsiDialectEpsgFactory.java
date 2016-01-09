@@ -43,7 +43,10 @@ import org.geotoolkit.factory.Hints;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.sql.SQLTranslator} in Apache SIS.
  */
+@Deprecated
 public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
      * Table names using as "sentinel value" for detecting the presence of an EPSG database.

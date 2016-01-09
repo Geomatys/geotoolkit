@@ -75,7 +75,10 @@ import static org.apache.sis.util.Utilities.deepEquals;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.IdentifiedObjectFinder} in Apache SIS.
  */
+@Deprecated
 public class IdentifiedObjectFinder {
     /**
      * The factory to use for creating objects. This is the factory specified at construction time.

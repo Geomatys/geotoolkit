@@ -28,6 +28,7 @@ package org.geotoolkit.referencing.factory.epsg;
  * @since 2.1
  * @module
  */
+@Deprecated
 final class BursaWolfInfo {
     /**
      * The value of {@code CO.COORD_OP_CODE}.

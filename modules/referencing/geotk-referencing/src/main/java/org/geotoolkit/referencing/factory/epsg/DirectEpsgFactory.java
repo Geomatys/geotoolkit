@@ -130,7 +130,10 @@ import static org.apache.sis.internal.metadata.ReferencingServices.PARAMETERS_KE
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.sql.EPSGDataAccess} in Apache SIS.
  */
+@Deprecated
 @ImplementationHints(forceLongitudeFirst=false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
