@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
-import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -646,7 +645,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
             final GridEnvelope gridExtent = new GeneralGridEnvelope(lower, upper, false);
-            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null); 
+            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null);
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
@@ -686,7 +685,7 @@ public class ImageCoverageReader extends GridCoverageReader {
 
     /**
      * Return {@code true} if metadata contains Dimension informations from image descriptions else false.
-     * 
+     *
      * @param metadata current image description.
      * @return {@code true} if metadata contains Dimension informations from image descriptions else false.
      */
@@ -701,14 +700,14 @@ public class ImageCoverageReader extends GridCoverageReader {
                      final NodeList idnl = current.getChildNodes();
                      final int l = idnl.getLength();
                      for (int j = 0; j < l; j++) {
-                         if (idnl.item(j).getNodeName().equalsIgnoreCase("Dimensions")) return true; 
+                         if (idnl.item(j).getNodeName().equalsIgnoreCase("Dimensions")) return true;
                      }
                  }
             }
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -731,7 +730,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     DimensionAccessor accessor = new DimensionAccessor(metadata);
                     sd = accessor.getGridSampleDimensions();
                     if (sd != null) return sd;
-                    bands = metadata.getListForType(SampleDimension.class); 
+                    bands = metadata.getListForType(SampleDimension.class);
                 }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
@@ -1142,6 +1141,16 @@ public class ImageCoverageReader extends GridCoverageReader {
             final int[] high = gridExtent.getHigh().getCoordinateValues();
             low[xi] = xmin; high[xi] = xmin + image.getWidth()  - 1;
             low[yi] = ymin; high[yi] = ymin + image.getHeight() - 1;
+            if (imageParam instanceof SpatialImageReadParam) {
+                for (final DimensionSlice slice : ((SpatialImageReadParam) imageParam).getDimensionSlices()) {
+                    for (final Object id : slice.getDimensionIds()) {
+                        if (id instanceof Integer) {
+                            final int dim = (Integer) id;
+                            low[dim] = high[dim] = slice.getSliceIndex();
+                        }
+                    }
+                }
+            }
             final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
                 gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
