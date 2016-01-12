@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
@@ -105,7 +106,9 @@ public final class Parameters extends Static {
      */
     @Deprecated
     public static final ParameterDescriptorGroup EMPTY_GROUP =
-            new DefaultParameterDescriptorGroup(Vocabulary.format(Vocabulary.Keys.Empty));
+            new org.apache.sis.parameter.DefaultParameterDescriptorGroup(
+                    Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY,
+                    Vocabulary.format(Vocabulary.Keys.Empty)), 1, 1);
 
     /**
      * Do not allow instantiation of this utility class.

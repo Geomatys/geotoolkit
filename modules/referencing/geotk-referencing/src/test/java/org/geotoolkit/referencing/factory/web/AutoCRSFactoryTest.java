@@ -17,19 +17,15 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
-import java.util.Collection;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.referencing.operation.projection.TransverseMercator;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
@@ -61,73 +57,6 @@ public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
     @Before
     public void setUp() {
         factory = new AutoCRSFactory();
-    }
-
-    /**
-     * Tests the registration in {@link AuthorityFactoryFinder}.
-     */
-    @Test
-    public void testFactoryFinder() {
-        final Collection<String> authorities = AuthorityFactoryFinder.getAuthorityNames();
-        assertTrue(authorities.contains("AUTO"));
-        assertTrue(authorities.contains("AUTO2"));
-        factory = AuthorityFactoryFinder.getCRSAuthorityFactory("AUTO", null);
-        assertTrue(factory instanceof AutoCRSFactory);
-        assertSame(factory, AuthorityFactoryFinder.getCRSAuthorityFactory("AUTO2", null));
-    }
-
-    /**
-     * Checks the authority names.
-     */
-    @Test
-    public void testAuthority() {
-        final Citation authority = factory.getAuthority();
-        assertTrue (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "AUTO"));
-        assertTrue (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "AUTO2"));
-        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
-        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "CRS"));
-    }
-
-    /**
-     * Tests {@link CRSAuthorityFactory#getDescriptionText(String)}.
-     *
-     * @throws FactoryException Should never happen.
-     *
-     * @since 3.16
-     */
-    @Test
-    public void testDescription() throws FactoryException {
-        assertEquals("WGS 84 / Auto UTM", factory.getDescriptionText("AUTO:42001,0,0").toString());
-        assertEquals("WGS 84 / Auto UTM", factory.getDescriptionText("AUTO:42001").toString());
-    }
-
-    /**
-     * Tests that using an incomplete code throws an exception.
-     *
-     * @throws FactoryException Should never happen if not of kind {@link NoSuchAuthorityCodeException}.
-     *
-     * @since 3.16
-     */
-    @Test(expected=NoSuchAuthorityCodeException.class)
-    public void testIncompleteCode() throws FactoryException {
-        factory.createObject("AUTO:42001");
-    }
-
-    /**
-     * UDIG requires this to work.
-     *
-     * @throws FactoryException Should never happen.
-     */
-    @Test
-    public void test42001() throws FactoryException {
-        final ProjectedCRS proj = factory.createProjectedCRS("AUTO:42001,0.0,0.0");
-        assertNotNull("auto-utm", proj);
-        assertSame   (proj, factory.createObject("AUTO :42001, 0,0"));
-        assertSame   (proj, factory.createObject("AUTO2:42001, 0,0"));
-        assertSame   (proj, factory.createObject(      "42001, 0,0"));
-        assertSame   (proj, factory.createObject(      "42001 ,0,0"));
-        assertNotSame(proj, factory.createObject("AUTO :42001,30,0"));
-        assertEquals ("Transverse Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
     }
 
     /**

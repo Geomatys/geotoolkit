@@ -26,10 +26,8 @@ import java.util.Collections;
 import javax.measure.unit.Unit;
 
 import org.opengis.util.CodeList;
-import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
-import org.opengis.parameter.ParameterDescriptor;
 
 import org.apache.sis.measure.Range;
 import org.apache.sis.measure.MeasurementRange;
@@ -68,42 +66,6 @@ import org.apache.sis.util.Numbers;
 @Deprecated
 public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
     /**
-     * Serial number for inter-operability with different versions.
-     */
-//  private static final long serialVersionUID = -295668622297737705L;
-
-    /**
-     * Constructs a descriptor with the same values than the specified one. This copy constructor
-     * can be used in order to wrap an arbitrary implementation into a Geotk one.
-     *
-     * @param descriptor The descriptor to copy.
-     *
-     * @since 2.2
-     */
-    public DefaultParameterDescriptor(final ParameterDescriptor<T> descriptor) {
-        super(descriptor);
-    }
-
-    /**
-     * Constructs a descriptor for a mandatory parameter having a set of valid values.
-     * The descriptor has no minimal or maximal value and no unit.
-     *
-     * @param name         The parameter name.
-     * @param valueClass   The class that describe the type of the parameter.
-     * @param validValues  A finite set of valid values (usually from a {@linkplain CodeList
-     *                     code list}) or {@code null} if it doesn't apply.
-     * @param defaultValue The default value for the parameter, or {@code null} if none.
-     */
-    public DefaultParameterDescriptor(final String   name,
-                                      final Class<T> valueClass,
-                                      final T[]      validValues,
-                                      final T        defaultValue)
-    {
-        this(Collections.singletonMap(NAME_KEY, name),
-             valueClass, validValues, defaultValue, null, null, null, true);
-    }
-
-    /**
      * Constructs a descriptor from an authority and a name.
      *
      * @param authority    The authority (example: {@link Citations#OGC OGC}).
@@ -132,24 +94,6 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
     {
         this(Collections.singletonMap(NAME_KEY, new NamedIdentifier(authority, name)),
              valueClass, validValues, defaultValue, minimum, maximum, unit, required);
-    }
-
-    /**
-     * Constructs a descriptor from a name and a default value.
-     *
-     * @param  name         The parameter name.
-     * @param  remarks      An optional description as a {@link String} or an {@link InternationalString}.
-     * @param  valueClass   The class that describe the type of the parameter.
-     * @param  defaultValue The default value.
-     * @param  required     {@code true} if this parameter is required, {@code false} otherwise.
-     *
-     * @since 2.5
-     */
-    public DefaultParameterDescriptor(final String name, final CharSequence remarks,
-            final Class<T> valueClass, final T defaultValue, final boolean required) // LGPL
-    {
-        this(properties(name, remarks), valueClass, codeList(valueClass),
-                defaultValue, null, null, null, required);
     }
 
     /**

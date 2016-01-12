@@ -42,7 +42,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 import static org.opengis.referencing.operation.SingleOperation.*;
 import static org.geotoolkit.metadata.Citations.*;
