@@ -21,6 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -76,7 +77,7 @@ public class LiteralType implements XMLLiteral {
         if (that != null) {
             this.type = that.type;
             if (that.content != null) {
-                this.content = new ArrayList<Object>(that.content);
+                this.content = new ArrayList<>(that.content);
             }
         }
     }
@@ -92,7 +93,7 @@ public class LiteralType implements XMLLiteral {
      * build a new Literal with the specified Object.
      */
     public LiteralType(final Object content) {
-        this.content = new ArrayList<Object>(); 
+        this.content = new ArrayList<>(); 
         this.content.add(content);
     }
     
@@ -100,7 +101,7 @@ public class LiteralType implements XMLLiteral {
      * build a new Literal with the specified String
      */
     public LiteralType(final String content) {
-        this.content = new ArrayList<Object>(); 
+        this.content = new ArrayList<>(); 
         this.content.add(content);
     }
 
@@ -116,7 +117,7 @@ public class LiteralType implements XMLLiteral {
     @Override
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return this.content;
     }
@@ -128,7 +129,7 @@ public class LiteralType implements XMLLiteral {
     public void setContent(final Object content) {
         if (content != null) {
             if (this.content == null) {
-                this.content = new ArrayList<Object>();
+                this.content = new ArrayList<>();
             }
             this.content.add(content);
         }
@@ -230,7 +231,30 @@ public class LiteralType implements XMLLiteral {
         }
         if (object instanceof LiteralType) {
             final LiteralType that = (LiteralType) object;
-            return Objects.equals(this.content, that.content) &&
+            boolean contentEquals  = false;
+            if (this.content == null && that.content == null) {
+                contentEquals  = true;
+            } else if (this.content != null && that.content != null) {
+                if (this.content.size() == that.content.size()) {
+                    contentEquals  = true;
+                    for (int i = 0; i < this.content.size(); i++) {
+                        Object thisO = this.content.get(i);
+                        Object thatO = that.content.get(i);
+                        
+                        if (thisO instanceof JAXBElement &&
+                            thatO instanceof JAXBElement) {
+                            thisO = ((JAXBElement)thisO).getValue();
+                            thatO = ((JAXBElement)thatO).getValue();
+                        }
+                        
+                        if (!Objects.equals(thisO, thatO)){
+                            contentEquals = false;
+                        }
+                    }
+                }
+            }
+            
+            return contentEquals &&
                    Objects.equals(this.type,    that.type);
         }
         return false;

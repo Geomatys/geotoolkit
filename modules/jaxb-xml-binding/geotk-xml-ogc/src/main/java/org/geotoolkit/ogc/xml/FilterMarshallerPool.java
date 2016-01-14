@@ -34,7 +34,8 @@ public final class FilterMarshallerPool {
                     "org.geotoolkit.ogc.xml.v110:"           +
                     "org.geotoolkit.ogc.xml.v200:"           +
                     "org.apache.sis.internal.jaxb.geometry:" +
-                    "org.geotoolkit.gml.xml.v311"), null);
+                    "org.geotoolkit.gml.xml.v311:"           +
+                    "org.geotoolkit.gml.xml.v321"), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

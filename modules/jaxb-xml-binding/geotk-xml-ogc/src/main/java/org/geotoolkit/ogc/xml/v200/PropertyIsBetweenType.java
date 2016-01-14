@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -203,5 +204,50 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsBetweenType(this);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof PropertyIsBetweenType) {
+            final PropertyIsBetweenType that = (PropertyIsBetweenType) obj;
+            boolean expEquals;
+            if (this.expression != null && that.expression != null) {
+                expEquals = Objects.equals(this.expression.getValue(), that.expression.getValue());
+            } else {
+                expEquals = Objects.equals(this.expression, that.expression);
+            }
+            return expEquals &&
+                   Objects.equals(this.lowerBoundary, that.lowerBoundary) &&
+                   Objects.equals(this.upperBoundary, that.upperBoundary);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + Objects.hashCode(this.expression);
+        hash = 23 * hash + Objects.hashCode(this.lowerBoundary);
+        hash = 23 * hash + Objects.hashCode(this.upperBoundary);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[PropertyIsBetweenType]\n");
+        if (expression != null) {
+            sb.append("expression:\nQname:").append(expression.getName()).append('\n');
+            sb.append(expression.getValue());
+        }
+        if (lowerBoundary != null) {
+            sb.append("lower:").append(lowerBoundary).append('\n');
+        }
+        if (upperBoundary != null) {
+            sb.append("upper:").append(upperBoundary).append('\n');
+        }
+        return sb.toString();
     }
 }
