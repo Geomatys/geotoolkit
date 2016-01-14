@@ -21,8 +21,11 @@ import java.util.Collections;
 import java.util.Properties;
 import org.opengis.parameter.*;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import javax.measure.unit.Unit;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -43,15 +46,15 @@ public final strictfp class ParametersTest {
      *
      * @param  name         The parameter name.
      * @param  defaultValue The default value for the parameter.
-     * @param  minimum      The minimum parameter value, or {@link Integer#MIN_VALUE} if none.
-     * @param  maximum      The maximum parameter value, or {@link Integer#MAX_VALUE} if none.
+     * @param  minimum      The minimum parameter value.
+     * @param  maximum      The maximum parameter value.
      * @return The parameter descriptor for the given range of values.
      */
     private static DefaultParameterDescriptor<Integer> create(final String name,
             final int defaultValue, final int minimum, final int maximum)
     {
-        return DefaultParameterDescriptor.create(Collections.singletonMap(NAME_KEY, name),
-                defaultValue, minimum, maximum, true);
+        return new DefaultParameterDescriptor<Integer>(Collections.singletonMap(NAME_KEY, name), 1, 1,
+                Integer.class, NumberRange.create(minimum, true, maximum, true), null, defaultValue);
     }
 
     /**
@@ -69,10 +72,9 @@ public final strictfp class ParametersTest {
     private static DefaultParameterDescriptor<Double> create(final String name,
             final double defaultValue, final double minimum, final double maximum, final Unit<?> unit)
     {
-        return new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, name), Double.class, null,
-                Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
-                minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
-                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, true);
+        return new DefaultParameterDescriptor<Double>(Collections.singletonMap(NAME_KEY, name), 1, 1,
+                Double.class, MeasurementRange.create(minimum, true, maximum, true, unit), null,
+                Double.isNaN(defaultValue) ? null : Double.valueOf(defaultValue));
     }
     private static DefaultParameterDescriptorGroup create(final String name, final GeneralParameterDescriptor... parameters) {
         return new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, name), 1, 1, parameters);
@@ -88,8 +90,8 @@ public final strictfp class ParametersTest {
                 // A mandatory parameter with values in the [5 ... 15] range.
                 create("Test1", 10, 5, 15),
                 // A mandatory parameter with values in the {1, 4, 8} set.
-                new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, "Test2"),
-                        Integer.class, new Integer[] {1, 4, 8}, 4, null, null, null, true));
+                new DefaultParameterDescriptor<Integer>(Collections.singletonMap(NAME_KEY, "Test2"),
+                        1, 1, Integer.class, null, new Integer[] {1, 4, 8}, 4));
         /*
          * Create a parameter group more flexible than the one below.
          * This is needed in order to allow us to create invalide parameters.

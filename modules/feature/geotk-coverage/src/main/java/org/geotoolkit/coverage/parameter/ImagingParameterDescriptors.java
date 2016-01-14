@@ -39,7 +39,7 @@ import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Role;
@@ -511,15 +511,18 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * been checked by the caller, and will be checked again by the descriptor constructor.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private static ParameterDescriptor<?> descriptor(final Map<String,?>         properties,
-                                                     final Class<?>              valueClass,
-                                                     final EnumeratedParameter[] validValues,
-                                                     final Object                defaultValue,
-                                                     final Comparable<?>         minimum,
-                                                     final Comparable<?>         maximum)
+    private static <T> ParameterDescriptor<?> descriptor(final Map<String,?>         properties,
+                                                         final Class<T>              valueClass,
+                                                         final EnumeratedParameter[] validValues,
+                                                         final Object                defaultValue,
+                                                         final Comparable<?>         minimum,
+                                                         final Comparable<?>         maximum)
     {
-        return new DefaultParameterDescriptor(properties, valueClass, validValues,
-                defaultValue, minimum, maximum, null, true);
+        org.apache.sis.measure.Range range = null;
+        if (minimum != null || maximum != null) {
+            range = new org.apache.sis.measure.Range(valueClass, minimum, true, maximum, true);
+        }
+        return new DefaultParameterDescriptor<T>(properties, 1, 1, valueClass, range, (T[]) validValues, (T) defaultValue);
     }
 
     /**

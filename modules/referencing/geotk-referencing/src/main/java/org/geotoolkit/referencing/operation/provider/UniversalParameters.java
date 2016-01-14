@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.provider;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Arrays;
 import javax.measure.unit.SI;
@@ -33,7 +32,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.util.ArraysExt;
@@ -81,7 +79,10 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  *
  * @since 3.20 (derived from 3.00)
  * @module
+ *
+ * @deprecated Will be removed after completion of migration to Apache SIS.
  */
+@Deprecated
 public final class UniversalParameters extends DefaultParameterDescriptor<Double> {
     /**
      * For cross-version compatibility. Provided as a safety, however
@@ -490,12 +491,6 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     private final Map<String,NamedIdentifier> identifiersMap;
 
     /**
-     * If there is many parameter instances for the same name, allow to iterate over the
-     * other instances. Otherwise, {@code null}.
-     */
-    private final Map<NamedIdentifier,NamedIdentifier> nextSameName;
-
-    /**
      * Creates a new instance of {@code Identifiers} for the given identifiers.
      * The array given in argument should never be modified, since it will not be cloned.
      *
@@ -527,7 +522,6 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 nextSameName.put(id, old);
             }
         }
-        this.nextSameName = nextSameName;
     }
 
     /**
@@ -642,48 +636,6 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     }
 
     /**
-     * Returns the element from the given collection having at least one of the names known to
-     * this {@code UniversalParameters} instance. If no such element is found, returns {@code null}.
-     *
-     * @param  candidates The collection of descriptors to compare with the names known to this
-     *         {@code UniversalParameters} instance.
-     * @return A descriptor from the given collection, or {@code null} if this method did not
-     *         found any descriptor having at least one known name.
-     * @throws IllegalArgumentException If more than one descriptor having a known name is found.
-     */
-    public ParameterDescriptor<?> find(final Collection<GeneralParameterDescriptor> candidates)
-            throws IllegalArgumentException
-    {
-        ParameterDescriptor<?> found = null;
-        for (final GeneralParameterDescriptor candidate : candidates) {
-            final Identifier candidateId = candidate.getName();
-            NamedIdentifier identifier = identifiersMap.get(candidateId.getCode());
-            while (identifier != null) {
-                final Citation authority = candidateId.getAuthority();
-                if (authority == null || org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, identifier.getAuthority())) {
-                    if (candidate instanceof ParameterDescriptor<?>) {
-                        if (found != null) {
-                            throw new IllegalArgumentException(Errors.format(
-                                    Errors.Keys.AmbiguousValue_1, getName().getCode()) +
-                                    IdentifiedObjects.toString(found.getName()) + ", " +
-                                    IdentifiedObjects.toString(candidate.getName()));
-                        }
-                        found = (ParameterDescriptor<?>) candidate;
-                        break; // Continue the 'for' loop.
-                    } else {
-                        // Name matches, but this is not an instance of parameter descriptor.
-                        // It is probably an error. For now continue the search, but future
-                        // implementations may do some other action here.
-                    }
-                }
-                if (nextSameName == null) break;
-                identifier = nextSameName.get(identifier);
-            }
-        }
-        return found;
-    }
-
-    /**
      * Constructs a parameter descriptor for a mandatory floating point value. The parameter is
      * identified by codes in the namespace of one or more authorities ({@link Citations#OGC OGC},
      * {@link Citations#EPSG EPSG}, <i>etc.</i>). Those codes are declared as elements in the
@@ -713,7 +665,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * @param  required     {@code true} if the parameter is mandatory, or {@code false} if optional.
      * @return The descriptor for the given identifiers.
      */
-    static ParameterDescriptor<Double> createDescriptor(
+    private static ParameterDescriptor<Double> createDescriptor(
             final Identifier[] identifiers, final double defaultValue,
             final double minimum, final double maximum, final Unit<?> unit, final boolean required)
     {

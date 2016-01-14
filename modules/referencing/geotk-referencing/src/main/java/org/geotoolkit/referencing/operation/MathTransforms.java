@@ -105,24 +105,4 @@ public final class MathTransforms extends Static {
         }
         return matrix.isIdentity() ? org.apache.sis.referencing.operation.transform.MathTransforms.identity(2) : new AffineTransform2D(matrix);
     }
-
-    /**
-     * Creates an affine transform that keep only a subset of the source ordinate values.
-     * The dimension of source coordinates is {@code sourceDim} and
-     * the dimension of target coordinates is {@code toKeep.length}.
-     *
-     * @param  sourceDim the dimension of source coordinates.
-     * @param  toKeep the indices of source ordinate values to keep.
-     * @return The affine transform keeping only the given dimensions, and discarding all others.
-     * @throws IndexOutOfBoundsException if a value of {@code toKeep}
-     *         is lower than 0 or not smaller than {@code sourceDim}.
-     *
-     * @see Matrices#createDimensionFilter(int, int[])
-     *
-     * @deprecated Moved to Apache SIS as {@code MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, toKeep))}.
-     */
-    @Deprecated
-    public static LinearTransform dimensionFilter(final int sourceDim, final int[] toKeep) throws IndexOutOfBoundsException {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, toKeep));
-    }
 }

@@ -28,13 +28,13 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
@@ -76,8 +76,7 @@ public class Logarithmic extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> BASE = new DefaultParameterDescriptor<Double>(
-            Citations.GEOTOOLKIT, "base", Double.class, null, 10.0, 0.0, null, Unit.ONE, true);
+    public static final ParameterDescriptor<Double> BASE;
 
     /**
      * The operation parameter descriptor for the {@linkplain LogarithmicTransform1D#offset offset}
@@ -87,8 +86,12 @@ public class Logarithmic extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> OFFSET = new DefaultParameterDescriptor<Double>(
-            Citations.GEOTOOLKIT, "offset", Double.class, null, 0.0, null, null, Unit.ONE, true);
+    public static final ParameterDescriptor<Double> OFFSET;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
+        BASE = builder.addName("base").createBounded(0, Double.POSITIVE_INFINITY, 10, Unit.ONE);
+        OFFSET = builder.addName("offset").create(0, Unit.ONE);
+    }
 
     /**
      * The group of all parameters expected by this coordinate operation.

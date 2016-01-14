@@ -27,7 +27,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.parameter.Parameters;
@@ -156,20 +155,6 @@ abstract class UnitaryProjection extends NormalizedProjection {
 
     static boolean nameMatches(final Parameters parameters, final ParameterDescriptorGroup method) {
         return IdentifiedObjects.isHeuristicMatchForName(method, parameters.getDescriptor().getName().getCode()); // TODO: need more flexible match.
-    }
-
-    /**
-     * Convenience method for throwing an exception in case of unknown parameter.
-     * This is used by subclass constructors.
-     */
-    static IllegalArgumentException unknownParameter(final Object parameter) {
-        final String name;
-        if (parameter instanceof IdentifiedObject) {
-            name = ((IdentifiedObject) parameter).getName().getCode();
-        } else {
-            name = String.valueOf(parameter);
-        }
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UnknownParameter_1, name));
     }
 
     @Override

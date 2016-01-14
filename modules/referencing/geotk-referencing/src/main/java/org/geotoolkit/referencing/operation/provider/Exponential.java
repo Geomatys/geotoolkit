@@ -28,13 +28,13 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
@@ -86,8 +86,11 @@ public class Exponential extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> SCALE = new DefaultParameterDescriptor<Double>(
-            Citations.GEOTOOLKIT, "scale", Double.class, null, 1.0, null, null, Unit.ONE, true);
+    public static final ParameterDescriptor<Double> SCALE;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
+        SCALE = builder.addName("scale").create(1, Unit.ONE);
+    }
 
     /**
      * The group of all parameters expected by this coordinate operation.

@@ -41,7 +41,6 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.processing.Operation2D;
@@ -50,6 +49,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -153,60 +153,31 @@ public class Resample extends Operation2D {
     /**
      * The parameter descriptor for the interpolation type.
      */
-    public static final ParameterDescriptor<Object> INTERPOLATION_TYPE =
-            new DefaultParameterDescriptor<>(Citations.OGC,
-                "InterpolationType",                // Parameter name
-                Object.class,                       // Value class (mandatory)
-                null,                               // Array of valid values
-                "NearestNeighbor",                  // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<Object> INTERPOLATION_TYPE;
 
     /**
      * The parameter descriptor for the coordinate reference system.
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> COORDINATE_REFERENCE_SYSTEM =
-            new DefaultParameterDescriptor<>(Citations.OGC,
-                "CoordinateReferenceSystem",        // Parameter name
-                CoordinateReferenceSystem.class,    // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<CoordinateReferenceSystem> COORDINATE_REFERENCE_SYSTEM;
 
     /**
      * The parameter descriptor for the grid geometry.
      */
-    public static final ParameterDescriptor<GridGeometry> GRID_GEOMETRY =
-            new DefaultParameterDescriptor<>(Citations.OGC,
-                "GridGeometry",                     // Parameter name
-                GridGeometry.class,                 // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<GridGeometry> GRID_GEOMETRY;
 
     /**
      * The parameter descriptor for the background values.
      *
      * @since 3.16
      */
-    public static final ParameterDescriptor<double[]> BACKGROUND =
-            new DefaultParameterDescriptor<>(Citations.GEOTOOLKIT,
-                "Background",                       // Parameter name
-                double[].class,                     // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<double[]> BACKGROUND;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.OGC, null);
+        INTERPOLATION_TYPE = builder.addName("InterpolationType").create(Object.class, "NearestNeighbor");
+        COORDINATE_REFERENCE_SYSTEM = builder.addName("CoordinateReferenceSystem").create(CoordinateReferenceSystem.class, null);
+        GRID_GEOMETRY = builder.addName("GridGeometry").create(GridGeometry.class, null);
+        BACKGROUND = builder.setCodeSpace(Citations.GEOTOOLKIT, null).addName("Background").create(double[].class, null);
+    }
 
     /**
      * Constructs a {@code "Resample"} operation.

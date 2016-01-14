@@ -24,21 +24,7 @@ import static java.lang.Math.*;
 
 
 /**
- * Utility methods for affine transforms. This class provides two kind of services:
- * <p>
- * <ul>
- *   <li>A set of public static methods working on any {@link AffineTransform}.</li>
- *   <li>An abstract base class that override all mutable {@link AffineTransform} methods
- *       in order to check for permission before changing the transform state.
- *       If {@link #checkPermission} is defined to always throw an exception,
- *       then {@code XAffineTransform} is immutable.</li>
- * </ul>
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 4.00
- *
- * @since 1.2
- * @module
+ * Utility methods for affine transforms.
  */
 @Deprecated
 public final class XAffineTransform {
