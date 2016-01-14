@@ -45,6 +45,11 @@ import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.ContainsType;
 import org.geotoolkit.ogc.xml.v200.TimeAfterType;
+import org.geotoolkit.ogc.xml.v200.LowerBoundaryType;
+import org.geotoolkit.ogc.xml.v200.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v200.UpperBoundaryType;
+import org.geotoolkit.ogc.xml.v200.LiteralType;
+import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
@@ -140,9 +145,23 @@ public class FilterXMLBindingTest {
 
         org.geotoolkit.ogc.xml.v200.FilterType filter2   = new org.geotoolkit.ogc.xml.v200.FilterType(bbox);
 
-        //sw = new StringWriter();
-
-        marshaller.marshal(filter2, System.out);
+        sw = new StringWriter();
+        marshaller.marshal(filter2, sw);
+        result = sw.toString();
+        
+        expResult = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\" xmlns:ns8=\"http://www.opengis.net/gml\">\n" +
+                "  <fes:BBOX>\n" +
+                "    <fes:ValueReference>propName</fes:ValueReference>\n" +
+                "    <ns8:Envelope srsName=\"EPSG:4326\">\n" +
+                "      <ns8:lowerCorner>10.0 11.0</ns8:lowerCorner>\n" +
+                "      <ns8:upperCorner>10.0 11.0</ns8:upperCorner>\n" +
+                "    </ns8:Envelope>\n" +
+                "  </fes:BBOX>\n" +
+                "</fes:Filter>";
+        
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         /*--------------------------------------------*/
         /*- --------------- DEBUG --------------------*/
@@ -168,11 +187,80 @@ public class FilterXMLBindingTest {
 
         BBOXType filterBox = new BBOXType("boundingBox", "$test");
         org.geotoolkit.ogc.xml.v200.FilterType filter3 = new org.geotoolkit.ogc.xml.v200.FilterType(filterBox);
-        marshaller.marshal(filter3, System.out);
+        sw = new StringWriter();
+        marshaller.marshal(filter3, sw);
+        result = sw.toString();
+        
+        expResult = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
+                "  <fes:BBOX>\n" +
+                "    <fes:ValueReference>boundingBox</fes:ValueReference>$test</fes:BBOX>\n" +
+                "</fes:Filter>";
+        
+        assertXmlEquals(expResult, result, "xmlns:*");
+        
 
         TimeAfterType filterAfter = new TimeAfterType("boundingBox", "$test");
         org.geotoolkit.ogc.xml.v200.FilterType filter4 = new org.geotoolkit.ogc.xml.v200.FilterType(filterAfter);
-        marshaller.marshal(filter4, System.out);
+
+        sw = new StringWriter();
+        marshaller.marshal(filter4, sw);
+        result = sw.toString();
+        
+        expResult = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
+                "  <fes:After>\n" +
+                "    <fes:ValueReference>boundingBox</fes:ValueReference>$test</fes:After>\n" +
+                "</fes:Filter>";
+        
+        assertXmlEquals(expResult, result, "xmlns:*");
+        
+
+        final org.geotoolkit.gml.xml.v321.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
+        final org.geotoolkit.ogc.xml.v200.ObjectFactory fesFactory = new org.geotoolkit.ogc.xml.v200.ObjectFactory();
+        PropertyIsBetweenType pes = new PropertyIsBetweenType();
+        pes.setExpression(fesFactory.createValueReference((String)"prop"));
+        final LowerBoundaryType lower = new LowerBoundaryType();
+        final TimeInstantType ti = new TimeInstantType("2002");
+        final LiteralType lowlit = new LiteralType(gmlFactory.createTimeInstant(ti));
+        lower.setExpression(fesFactory.createLiteral(lowlit));
+        pes.setLowerBoundary(lower);
+        final UpperBoundaryType upper = new UpperBoundaryType();
+        final TimeInstantType ti2 = new TimeInstantType("2004");
+        final LiteralType upplit = new LiteralType(gmlFactory.createTimeInstant(ti2));
+        upper.setExpression(fesFactory.createLiteral(upplit));
+        pes.setUpperBoundary(upper);
+        org.geotoolkit.ogc.xml.v200.FilterType filter5 = new org.geotoolkit.ogc.xml.v200.FilterType(pes);
+        
+        sw = new StringWriter();
+        marshaller.marshal(filter5, sw);
+        result = sw.toString();
+        
+        expResult = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<fes:Filter xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
+                "  <fes:PropertyIsBetween>\n" +
+                "    <fes:ValueReference>prop</fes:ValueReference>\n" +
+                "    <fes:LowerBoundary>\n" +
+                "      <fes:Literal>\n" +
+                "        <gml:TimeInstant>\n" +
+                "          <gml:timePosition>2002</gml:timePosition>\n" +
+                "        </gml:TimeInstant>\n" +
+                "      </fes:Literal>\n" +
+                "    </fes:LowerBoundary>\n" +
+                "    <fes:UpperBoundary>\n" +
+                "      <fes:Literal>\n" +
+                "        <gml:TimeInstant>\n" +
+                "          <gml:timePosition>2004</gml:timePosition>\n" +
+                "        </gml:TimeInstant>\n" +
+                "      </fes:Literal>\n" +
+                "    </fes:UpperBoundary>\n" +
+                "  </fes:PropertyIsBetween>\n" +
+                "</fes:Filter>";
+        
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**
@@ -302,7 +390,56 @@ public class FilterXMLBindingTest {
 
         assertEquals(expResult2.getTemporalOps().getValue(), result2.getTemporalOps().getValue());
         assertEquals(expResult2, result2);
+        
+        
+        xml = 
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<fes:Filter xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmi=\"http://www.isotc211.org/2005/gmi\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ns8=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:fes=\"http://www.opengis.net/fes/2.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\">\n" +
+            "  <fes:PropertyIsBetween>\n" +
+            "    <fes:ValueReference>prop</fes:ValueReference>\n" +
+            "    <fes:LowerBoundary>\n" +
+            "      <fes:Literal><gml:TimeInstant>\n" +
+            "          <gml:timePosition>2002</gml:timePosition>\n" +
+            "        </gml:TimeInstant></fes:Literal>\n" + 
+            "    </fes:LowerBoundary>\n" +
+            "    <fes:UpperBoundary>\n" +
+            "      <fes:Literal><gml:TimeInstant>\n" +
+            "          <gml:timePosition>2004</gml:timePosition>\n" +
+            "        </gml:TimeInstant></fes:Literal>\n" +
+            "    </fes:UpperBoundary>\n" +
+            "  </fes:PropertyIsBetween>\n" +
+            "</fes:Filter>";
 
+        sr = new StringReader(xml);
+
+        jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        org.geotoolkit.ogc.xml.v200.FilterType result3 = (org.geotoolkit.ogc.xml.v200.FilterType) jb.getValue();
+
+        final org.geotoolkit.gml.xml.v321.ObjectFactory gml32Factory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
+        final org.geotoolkit.ogc.xml.v200.ObjectFactory fesFactory = new org.geotoolkit.ogc.xml.v200.ObjectFactory();
+        PropertyIsBetweenType expPes = new PropertyIsBetweenType();
+        expPes.setExpression(fesFactory.createValueReference((String)"prop"));
+        final LowerBoundaryType lower = new LowerBoundaryType();
+        final TimeInstantType ti = new TimeInstantType("2002");
+        final LiteralType lowlit = new LiteralType(gml32Factory.createTimeInstant(ti));
+        lower.setExpression(fesFactory.createLiteral(lowlit));
+        expPes.setLowerBoundary(lower);
+        final UpperBoundaryType upper = new UpperBoundaryType();
+        final TimeInstantType ti2 = new TimeInstantType("2004");
+        final LiteralType upplit = new LiteralType(gml32Factory.createTimeInstant(ti2));
+        upper.setExpression(fesFactory.createLiteral(upplit));
+        expPes.setUpperBoundary(upper);
+        org.geotoolkit.ogc.xml.v200.FilterType expResult3 = new org.geotoolkit.ogc.xml.v200.FilterType(expPes);
+
+
+        assertTrue(result3.getComparisonOps().getValue() instanceof PropertyIsBetweenType);
+        PropertyIsBetweenType resPes = (PropertyIsBetweenType) result3.getComparisonOps().getValue();
+        
+        assertEquals(expPes.getUpperBoundary(), resPes.getUpperBoundary());
+        assertEquals(expPes.getLowerBoundary(), resPes.getLowerBoundary());
+        assertEquals(expPes, resPes);
+        assertEquals(expResult3.getComparisonOps().getValue(), result3.getComparisonOps().getValue());
+        assertEquals(expResult3, result3);
     }
 }
 

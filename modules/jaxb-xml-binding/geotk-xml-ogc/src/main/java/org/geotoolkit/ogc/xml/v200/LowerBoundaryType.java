@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -120,5 +121,37 @@ public class LowerBoundaryType implements Expression {
     @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return extraData;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof LowerBoundaryType) {
+            final LowerBoundaryType that = (LowerBoundaryType) obj;
+            if (this.expression != null && that.expression != null) {
+                return Objects.equals(this.expression.getValue(), that.expression.getValue());
+            }
+            return Objects.equals(this.expression, that.expression);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.expression);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[LowerBoundaryType]\n");
+        if (expression != null) {
+            sb.append("expression:\nQname:").append(expression.getName()).append('\n');
+            sb.append(expression.getValue());
+        }
+        return sb.toString();
     }
 }
