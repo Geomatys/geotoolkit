@@ -67,7 +67,7 @@ public class BandCombineProcess extends AbstractProcess {
 
     /**
      * Execute process now.
-     * 
+     *
      * @return result coverage
      * @throws ProcessException
      */
@@ -94,9 +94,11 @@ public class BandCombineProcess extends AbstractProcess {
             // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
             final StringBuilder sb = new StringBuilder();
             final RenderedImage[] images = new RenderedImage[inputCoverage.length];
+            final SampleDimension[] sds = new SampleDimension[inputCoverage.length];
 
             for (int i = 0; i < inputCoverage.length; i++) {
                 final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
+                sds[i] = gridCoverage2D.getSampleDimension(0);
                 images[i] = gridCoverage2D.getRenderedImage();
                 sb.append(String.valueOf(gridCoverage2D.getName()));
             }
@@ -105,20 +107,21 @@ public class BandCombineProcess extends AbstractProcess {
             final ParameterValueGroup params = imageCombineDesc.getInputDescriptor().createValue();
             params.parameter("images").setValue(images);
             final Process process = imageCombineDesc.createProcess(params);
-            BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
+            RenderedImage resultImage = (RenderedImage)process.call().parameter("result").getValue();
 
-
-            // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
-            //TODO try to reuse java colormodel if possible
-            //extract grayscale min/max from sample dimension
+////
+////            // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
+////            //TODO try to reuse java colormodel if possible
+////            //extract grayscale min/max from sample dimension
             final GridCoverage2D firstCoverage = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[0]);
-            final SampleDimension gridSample = firstCoverage.getSampleDimension(0);
+
+////            final SampleDimension gridSample = firstCoverage.getSampleDimension(0);
             final GridGeometry gridGeometry = firstCoverage.getGridGeometry();
-            final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
-                    resultImage.getSampleModel().getDataType(),
-                    resultImage.getSampleModel().getNumBands(),0,
-                    gridSample.getMinimumValue(), gridSample.getMaximumValue());
-            resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<>());
+////            final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
+////                    resultImage.getSampleModel().getDataType(),
+////                    resultImage.getSampleModel().getNumBands(),0,
+////                    gridSample.getMinimumValue(), gridSample.getMaximumValue());
+////            resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<>());
 
 
             // REBUILD COVERAGE ////////////////////////////////////////////////////
@@ -126,6 +129,7 @@ public class BandCombineProcess extends AbstractProcess {
             gcb.setName(sb.toString());
             gcb.setRenderedImage(resultImage);
             gcb.setGridGeometry(gridGeometry);
+            gcb.setSampleDimensions(sds);
             final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
 
 

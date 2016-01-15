@@ -16,23 +16,21 @@
  */
 package org.geotoolkit.processing.image.bandcombine;
 
+import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
-import java.util.Hashtable;
+import java.awt.image.WritableRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.image.reformat.ReformatProcess;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 
 /**
  *
@@ -72,15 +70,15 @@ public class BandCombineProcess extends AbstractProcess {
             if(sampleType==-1){
                 //first image
                 sampleType = sm.getDataType();
-                width = sm.getWidth();
-                height = sm.getHeight();
+                width = image.getWidth();
+                height = image.getHeight();
                 upperLeft = new Point(image.getMinX(), image.getMinY());
             }else{
                 //check same model
                 if(sampleType != sm.getDataType()){
                     throw new ProcessException("Images do not have the same sample type", this, null);
                 }
-                if(width != sm.getWidth() || height != sm.getHeight()){
+                if(width != image.getWidth() || height != image.getHeight()){
                     throw new ProcessException("Images do not have the same size", this, null);
                 }
             }
@@ -89,34 +87,17 @@ public class BandCombineProcess extends AbstractProcess {
             nbtotalbands += sm.getNumBands();
         }
 
-        final WritableRaster raster;
-        try{
-            raster = ReformatProcess.createRaster(sampleType, width, height, nbtotalbands, upperLeft);
-        }catch(IllegalArgumentException ex){
-            throw new ProcessException(ex.getMessage(), this, ex);
-        }
-
         //try to reuse a java color model for better performances
         ColorModel cm = null;
-        if(sampleType == DataBuffer.TYPE_BYTE){
-            if(nbtotalbands == 3){
-                //assume it's a RGB model
-                //TODO
-            }else if(nbtotalbands == 4){
-                //assume it's a RGBA model
-                //TODO
-            }
-        }
-
         if(cm == null){
             //create a fallback grayscale colormodel which will always work
             cm = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands,0,0,10);
         }
 
-        final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());
+        final WritableRenderedImage resultImage = new WritableLargeRenderedImage(0, 0, width, height, new Dimension(256, 256), 0, 0, cm);
 
         //copy datas
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(resultImage, resultImage);
         final double[] pixel = new double[nbtotalbands];
         while(writeIte.next()){
             //read pixel from all input iterators
