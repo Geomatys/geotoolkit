@@ -48,6 +48,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.owc.gtkext.ObjectFactory;
 import org.geotoolkit.owc.xml.v10.ContentType;
 import org.geotoolkit.owc.xml.v10.OfferingType;
@@ -136,12 +137,12 @@ public class OwcXmlIO {
         
         final Envelope aoi = context.getAreaOfInterest();
         if(aoi!=null){
-            final Integer epsg = IdentifiedObjects.lookupEpsgCode(aoi.getCoordinateReferenceSystem(), true);
+            final String ogc = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, aoi.getCoordinateReferenceSystem(), true);
             final WhereType where = GEORSS_FACTORY.createWhereType();
             final DirectPositionType lowerCorner = new DirectPositionType(aoi.getLowerCorner());
             final DirectPositionType upperCorner = new DirectPositionType(aoi.getUpperCorner());
             final EnvelopeType envelopeType = new EnvelopeType(null, 
-                    lowerCorner, upperCorner, "EPSG:"+epsg);
+                    lowerCorner, upperCorner, ogc);
             envelopeType.setSrsDimension(2);
             where.setEnvelope(envelopeType);
             feed.getAuthorOrCategoryOrContributor().add(GEORSS_FACTORY.createWhere(where));

@@ -199,9 +199,13 @@ public final class GeotkFX {
     }
     
     public static void loadJRXML(Parent candidate, Class cdtClass, boolean loadDefaultCSS) {
+        loadJRXML(candidate, cdtClass, loadDefaultCSS, null);
+    }
+
+    public static void loadJRXML(Parent candidate, Class cdtClass, boolean loadDefaultCSS, ResourceBundle bundle) {
         final String fxmlpath = "/"+cdtClass.getName().replace('.', '/')+".fxml";
         final FXMLLoader loader = new FXMLLoader(cdtClass.getResource(fxmlpath));
-        loader.setResources(GeotkFX.BUNDLE);
+        loader.setResources(bundle==null ? GeotkFX.BUNDLE : bundle);
         loader.setController(candidate);
         loader.setRoot(candidate);
         //in special environement like osgi or other, we must use the proper class loaders
@@ -212,7 +216,7 @@ public final class GeotkFX {
         } catch (IOException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-        
+
         if (loadDefaultCSS) {
             candidate.getStylesheets().add(GeotkFX.CSS_PATH);
         }
