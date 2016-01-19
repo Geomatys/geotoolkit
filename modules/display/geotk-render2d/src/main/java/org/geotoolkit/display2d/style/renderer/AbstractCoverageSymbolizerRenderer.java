@@ -255,6 +255,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final GridCoverageReader reader = ref.acquireReader();
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
         final Envelope dataBBox = gridGeometry.getEnvelope();
         ref.recycle(reader);
 
@@ -316,7 +317,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //hints forced nearest neighbor interpolation
             interpolation = InterpolationCase.NEIGHBOR;
         }else{
-            interpolation = findInterpolationCase(ref, reader);
+            interpolation = findInterpolationCase(sampleDimensions);
         }
 
         //-- expand param envelope if we use an interpolation
@@ -493,10 +494,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Detect the most appropriate interpolation type based on coverage sample dimensions.
      * Interpolation is possible only when data do not contain qualitative informations.
      */
-    private static InterpolationCase findInterpolationCase(CoverageReference ref, GridCoverageReader reader) throws CoverageStoreException{
-        ArgumentChecks.ensureNonNull("CoverageReference", ref);
-        ArgumentChecks.ensureNonNull("GridCoverageReader", reader);
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+    private static InterpolationCase findInterpolationCase(List<GridSampleDimension> sampleDimensions) throws CoverageStoreException{
 
         if (sampleDimensions != null) {
             for (GridSampleDimension sd : sampleDimensions) {
