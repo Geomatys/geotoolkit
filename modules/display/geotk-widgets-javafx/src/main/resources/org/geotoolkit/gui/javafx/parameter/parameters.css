@@ -43,13 +43,6 @@ Component hierarchy for FXParameterGroupPane should be :
     Author     : Alexis Manin (Geomatys)
 */
 
-.root {
-    -fx-border-radius : 12;
-    -fx-border-color : #AAAAAA;
-    -fx-background-radius : 12;
-    -fx-background-color : #FFFFFF;
-}
-
 .infobutton {
     -fx-alignment:CENTER;
     -fx-graphic-text-gap:0;
@@ -137,7 +130,7 @@ Component hierarchy for FXParameterGroupPane should be :
 }
 
 .tree-table-row-cell:odd {
-    -fx-background-color: -fx-table-cell-border-color, #F9F9F9;
+    -fx-background-color: -fx-table-cell-border-color, derivate(-fx-control-inner-background,-80%);
     -fx-background-insets: 0, 0 0 1 0;
 }
 
