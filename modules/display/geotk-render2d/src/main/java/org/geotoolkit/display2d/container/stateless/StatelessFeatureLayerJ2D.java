@@ -179,19 +179,20 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //calculate max symbol size, to expand search envelope.
-        for(Rule rule : validRules){
-            for(Symbolizer s : rule.symbolizers()){
+        symbolsMargin = 0.0;
+        for (Rule rule : validRules) {
+            for (Symbolizer s : rule.symbolizers()) {
                 final CachedSymbolizer cs = GO2Utilities.getCached(s, null);
-                symbolsMargin = Math.max(symbolsMargin,cs.getMargin(null, renderingContext));
+                symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderingContext));
             }
         }
-        if(Double.isNaN(symbolsMargin)){
+        if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
             //symbol margin can not be pre calculated, expect a max of 300pixels
             symbolsMargin = 300f;
         }
-        if(symbolsMargin>0){
+        if (symbolsMargin > 0) {
             final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
-            symbolsMargin = scale*symbolsMargin;
+            symbolsMargin = scale * symbolsMargin;
         }
         
         
@@ -221,7 +222,6 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     private void renderStyledFeature(final RenderingContext2D context){
         
         final CanvasMonitor monitor = context.getMonitor();
-        final StatelessContextParams params = getStatefullParameters(context);
         final FeatureCollection candidates;
         try {
             candidates = (FeatureCollection)optimizeCollection(context);
@@ -229,7 +229,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
         }
-        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
+        final RenderingIterator statefullIterator = getIterator(candidates, context, getStatefullParameters(context));
         
         //prepare the rendering parameters
         if(monitor.stopRequested()) return;
@@ -712,8 +712,6 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
         }
 
-        final Set<String> copy = new HashSet<String>();
-
         //concatenate with temporal range if needed ----------------------------
         for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
             final CoordinateReferenceSystem crs = def.getCrs();
@@ -730,15 +728,6 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                     FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
 
             filter = FILTER_FACTORY.and(filter, dimFilter);
-
-            //add extra dimension property name on attributes list for retype.
-            if (def.getLower() instanceof DefaultPropertyName) {
-                copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
-            }
-
-            if (def.getUpper() instanceof DefaultPropertyName) {
-                copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
-            }
         }
 
         //optimize the filter---------------------------------------------------
