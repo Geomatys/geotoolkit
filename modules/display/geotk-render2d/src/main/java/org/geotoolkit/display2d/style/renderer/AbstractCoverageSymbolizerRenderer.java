@@ -314,7 +314,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- find most appropriate interpolation
         final InterpolationCase interpolation;
         if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
-                || (!(gridGeometry instanceof GridGeometry2D))){
+        || (!(gridGeometry instanceof GridGeometry2D))){
             //hints forced nearest neighbor interpolation
             interpolation = InterpolationCase.NEIGHBOR;
         }else{
@@ -338,8 +338,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (dataCoverage == null) {
             //-- in future jdk8 version return an Optional<Coverage>
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
-            strB.append(" : \n impossible to read coverage ");
-            strB.append("with internally projected coverage boundary : ");
+            strB.append(" : \n impossible to read");
+            strB.append((isElevation) ? " Elevation ":" Image ");
+            strB.append("Coverage with internally projected coverage boundary : ");
             strB.append(dataBBox);
             strB.append("\nwith the following renderer requested Envelope.");
             strB.append(paramEnvelope);
