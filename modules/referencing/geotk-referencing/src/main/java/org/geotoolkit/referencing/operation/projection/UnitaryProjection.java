@@ -27,7 +27,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.parameter.Parameters;
@@ -158,20 +157,6 @@ abstract class UnitaryProjection extends NormalizedProjection {
         return IdentifiedObjects.isHeuristicMatchForName(method, parameters.getDescriptor().getName().getCode()); // TODO: need more flexible match.
     }
 
-    /**
-     * Convenience method for throwing an exception in case of unknown parameter.
-     * This is used by subclass constructors.
-     */
-    static IllegalArgumentException unknownParameter(final Object parameter) {
-        final String name;
-        if (parameter instanceof IdentifiedObject) {
-            name = ((IdentifiedObject) parameter).getName().getCode();
-        } else {
-            name = String.valueOf(parameter);
-        }
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UnknownParameter_1, name));
-    }
-
     @Override
     protected abstract void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException;
@@ -179,7 +164,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
     /**
      * Computes function <code>f(s,c,e²) = c/sqrt(1 - s²&times;e²)</code> needed for the true scale
      * latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
-     * the true scale latitude, and <var>e²</var> is the {@linkplain #excentricitySquared
+     * the true scale latitude, and <var>e²</var> is the {@linkplain #eccentricitySquared
      * eccentricity squared}.
      * <p>
      * Special cases:
@@ -194,7 +179,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
      */
     final double msfn(final double sinφ, final double cosφ) {               // == cosφ / rν(sinφ)
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
-        return cosφ / sqrt(1.0 - (sinφ*sinφ) * excentricitySquared);
+        return cosφ / sqrt(1.0 - (sinφ*sinφ) * eccentricitySquared);
     }
 
     /**
@@ -209,7 +194,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
      * @since 3.19
      */
     final double dmsfn_dφ(final double sinφ, final double cosφ, double msfn) {
-        msfn *= excentricity;
+        msfn *= eccentricity;
         return (sinφ/cosφ) * (msfn - 1) * (msfn + 1);
     }
 
@@ -224,8 +209,8 @@ abstract class UnitaryProjection extends NormalizedProjection {
      */
     final double ssfn(double φ, double sinφ) {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
-        sinφ *= excentricity;
-        return tan(PI/4 + 0.5*φ) * pow((1-sinφ) / (1+sinφ), 0.5*excentricity);
+        sinφ *= eccentricity;
+        return tan(PI/4 + 0.5*φ) * pow((1-sinφ) / (1+sinφ), 0.5*eccentricity);
     }
 
     /**
@@ -242,7 +227,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
     final double dssfn_dφ(final double φ, final double sinφ, final double cosφ) {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
         assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
-        return (1/cosφ) - (excentricitySquared*cosφ)/(1-excentricitySquared*sinφ*sinφ);
+        return (1/cosφ) - (eccentricitySquared*cosφ)/(1-eccentricitySquared*sinφ*sinφ);
         /*
          * NOTE: 0.5*(t + 1/t)   =   1/cosφ
          */
@@ -277,10 +262,10 @@ abstract class UnitaryProjection extends NormalizedProjection {
      * @return The negative of function 7-7 from Snyder. In the case of Mercator projection,
      *         this is {@code exp(-y)} where <var>y</var> is the northing on the unit ellipse.
      */
-    final double tsfn(final double φ, double sinφ) {                    // == 1 / exp_y(φ, excentricity * sinφ)
-        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;         // ou exp_y(-φ, -excentricity * sinφ)
-        sinφ *= excentricity;
-        return tan(PI/4 - 0.5*φ) / pow((1-sinφ) / (1+sinφ), 0.5*excentricity);
+    final double tsfn(final double φ, double sinφ) {                    // == 1 / exp_y(φ, eccentricity * sinφ)
+        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;         // ou exp_y(-φ, -eccentricity * sinφ)
+        sinφ *= eccentricity;
+        return tan(PI/4 - 0.5*φ) / pow((1-sinφ) / (1+sinφ), 0.5*eccentricity);
     }
 
     /**
@@ -298,7 +283,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
         assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
         final double t = (1 - sinφ) / cosφ;
-        return (excentricitySquared*cosφ / (1 - excentricitySquared*sinφ*sinφ) - 0.5*(t + 1/t));
+        return (eccentricitySquared*cosφ / (1 - eccentricitySquared*sinφ*sinφ) - 0.5*(t + 1/t));
     }
 
     /**
@@ -317,10 +302,10 @@ abstract class UnitaryProjection extends NormalizedProjection {
      * @throws ProjectionException if the iteration does not converge.
      */
     final double cphi2(final double ts) throws ProjectionException {    // == φ(ts)
-        final double he = 0.5 * excentricity;
+        final double he = 0.5 * eccentricity;
         double φ = (PI/2) - 2.0 * atan(ts);
         for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
-            final double con  = excentricity * sin(φ);
+            final double con  = eccentricity * sin(φ);
             final double dphi = abs(φ - (φ = PI/2 - 2.0*atan(ts * pow((1-con)/(1+con), he))));
             if (dphi <= ITERATION_TOLERANCE) {
                 return φ;
@@ -347,7 +332,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
      * @return <var>q</var> from Snyder equation (3-12).
      */
     final double qsfn(final double sinφ) {
-        if (excentricity < EPSILON) {
+        if (eccentricity < EPSILON) {
             return 2 * sinφ;
         }
         /*
@@ -355,8 +340,8 @@ abstract class UnitaryProjection extends NormalizedProjection {
          * sinφ - 0.5/0*log(1) where the right terms are infinity multiplied by
          * zero, thus producing NaN.
          */
-        final double esinφ = excentricity * sinφ;
-        return (1 - excentricitySquared) * (sinφ / (1 - esinφ*esinφ) + atanh(esinφ)/excentricity);
+        final double esinφ = eccentricity * sinφ;
+        return (1 - eccentricitySquared) * (sinφ / (1 - esinφ*esinφ) + atanh(esinφ)/eccentricity);
     }
 
     /**
@@ -370,8 +355,8 @@ abstract class UnitaryProjection extends NormalizedProjection {
      */
     final double dqsfn_dφ(final double sinφ, final double cosφ) {
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
-        double esinφ2 = excentricity * sinφ;
+        double esinφ2 = eccentricity * sinφ;
         esinφ2 *= esinφ2;
-        return (1 - excentricitySquared) * (cosφ / (1 - esinφ2)) * (1 + ((1 + esinφ2) / (1 - esinφ2)));
+        return (1 - eccentricitySquared) * (cosφ / (1 - esinφ2)) * (1 + ((1 + esinφ2) / (1 - esinφ2)));
     }
 }

@@ -33,7 +33,10 @@ import org.opengis.util.NoSuchIdentifierException;
  *
  * @since 3.20 (derived from 3.10)
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.MissingFactoryResourceException} in Apache SIS.
  */
+@Deprecated
 public class NoSuchIdentifiedResource extends NoSuchIdentifierException {
     /**
      * Serial number for inter-operability with different versions.

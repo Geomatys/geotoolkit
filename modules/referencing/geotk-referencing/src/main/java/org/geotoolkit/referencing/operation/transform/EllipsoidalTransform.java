@@ -1,19 +1,18 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2012, Geomatys
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.geotoolkit.referencing.operation.transform;
 
@@ -25,19 +24,21 @@ import org.opengis.referencing.operation.MathTransform;
  * Those transforms can work on two- or three- dimensional coordinates, where the third coordinate
  * (the height) is assumed to be zero in the two-dimensional case.
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
- *
- * @since 3.16
+ * @author  Martin Desruisseaux (Geomatys)
+ * @since   0.7
+ * @version 0.7
  * @module
+ *
+ * @deprecated This approach does not work anymore in Apache SIS architecture.
  */
+@Deprecated
 public interface EllipsoidalTransform extends MathTransform {
     /**
      * Returns a transform performing the same calculation than {@code this}, but using the
      * specified number of dimensions. {@code EllipsoidalTransform}s work conceptually on
      * three-dimensional coordinates, but the ellipsoidal height can be omitted resulting
      * in two-dimensional coordinates. No dimensions other than 2 or 3 are allowed.
-     * <p>
+     *
      * <ul>
      *   <li>If the height is omitted from the input coordinates ({@code source3D} = {@code false}),
      *       then the {@linkplain #getSourceDimensions() source dimensions} is 2 and the height is
@@ -50,7 +51,7 @@ public interface EllipsoidalTransform extends MathTransform {
      * @param  source3D {@code true} if the source coordinates have a height.
      * @param  target3D {@code true} if the target coordinates have a height.
      * @return A transform having the requested source and target dimensions (may be {@code this}).
-     * @throws IllegalArgumentException If a dimension can not be changed.
+     * @throws IllegalArgumentException if a dimension can not be changed.
      */
-    EllipsoidalTransform forDimensions(boolean source3D, boolean target3D) throws IllegalArgumentException;
+    EllipsoidalTransform withHeights(boolean source3D, boolean target3D) throws IllegalArgumentException;
 }

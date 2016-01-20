@@ -653,16 +653,16 @@ public class ResampleProcess extends AbstractProcess {
                                                      final GridGeometry2D       sourceGG)
             throws FactoryException
     {
-        final DimensionFilter filter = new DimensionFilter(mtFactory);
-        filter.addSourceDimension(sourceGG.axisDimensionX);
-        filter.addSourceDimension(sourceGG.axisDimensionY);
-        MathTransform candidate = filter.separate(transform);
+        final DimensionFilter filter = new DimensionFilter(transform, mtFactory);
+        filter.addSourceDimensions(sourceGG.axisDimensionX,
+                                   sourceGG.axisDimensionY);
+        MathTransform candidate = filter.separate();
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }
-        filter.addTargetDimension(sourceGG.axisDimensionX);
-        filter.addTargetDimension(sourceGG.axisDimensionY);
-        candidate = filter.separate(transform);
+        filter.addTargetDimensions(sourceGG.axisDimensionX,
+                                   sourceGG.axisDimensionY);
+        candidate = filter.separate();
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }

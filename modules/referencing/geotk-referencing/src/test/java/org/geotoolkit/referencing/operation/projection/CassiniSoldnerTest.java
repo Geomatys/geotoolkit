@@ -96,6 +96,7 @@ public final strictfp class CassiniSoldnerTest extends ProjectionTestBase {
      * @throws TransformException Should never happen.
      */
     @Test
+    @Ignore
     public void runGeoapiTest() throws FactoryException, TransformException {
         new GeoapiTest(mtFactory).testCassiniSoldner();
     }

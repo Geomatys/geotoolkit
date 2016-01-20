@@ -40,6 +40,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterCardinalityException;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.IdentifiedObjects;

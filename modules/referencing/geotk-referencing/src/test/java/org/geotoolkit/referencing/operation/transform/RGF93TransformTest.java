@@ -17,21 +17,18 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import java.io.IOException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
-
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.Commons;
 import org.opengis.test.CalculationType;
-import org.apache.sis.referencing.operation.transform.CoordinateDomain;
+import org.opengis.test.referencing.TransformTestCase;
+import org.apache.sis.internal.system.DataDirectory;
+import org.junit.Test;
 
-import org.junit.*;
-import static org.junit.Assume.*;
-import static org.junit.Assert.*;
+import static org.apache.sis.test.Assume.*;
 import static java.lang.StrictMath.*;
 
 
@@ -40,16 +37,8 @@ import static java.lang.StrictMath.*;
  *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
- *
- * @since 3.12
  */
-public final strictfp class RGF93TransformTest extends TransformTestBase {
-    /**
-     * The data file.
-     */
-    private static final String FILE = NTv2Transform.RGF93;
-
+public final strictfp class RGF93TransformTest extends TransformTestCase {
     /**
      * The test points, as (Easting, Northing) ordinates.
      * <ol>
@@ -131,54 +120,6 @@ public final strictfp class RGF93TransformTest extends TransformTestBase {
     }
 
     /**
-     * Creates a new test suite.
-     */
-    public RGF93TransformTest() {
-        super(NTv2Transform.class, null);
-    }
-
-    /**
-     * Checks if the RGF93 data are available.
-     */
-    private static void assumeAvailable() {
-        try {
-            assumeTrue(Installation.NTv2.exists(NTv2Transform.class, FILE));
-        } catch (IOException e) {
-            throw new AssertionError(e); // Cause JUnit test failure.
-        }
-    }
-
-    /**
-     * Loads an binary file.
-     *
-     * @throws FactoryException Should never happen.
-     * @throws TransformException Should never happen.
-     */
-    @Test
-    public void testBinary() throws FactoryException, TransformException {
-        assumeAvailable();
-        final NTv2Transform rgf = new NTv2Transform(FILE);
-        transform = rgf;
-        tolerance = 1E-10;
-
-//      Disabled for now because test is outside domain of validity.
-        isDerivativeSupported = false;
-        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 426005043);
-    }
-
-    /**
-     * Ensures that the cache works properly.
-     *
-     * @throws FactoryException Should never happen.
-     */
-    @Test
-    public void testCache() throws FactoryException {
-        assumeAvailable();
-        final NTv2Transform rgf = new NTv2Transform(FILE);
-        assertSame(rgf.grid, new NTv2Transform(FILE).grid);
-    }
-
-    /**
      * Test the transformation of some points givens in the test set of
      * <a href="http://lambert93.ign.fr/index.php?id=30">"Notice explicative"</a>
      * from IGN lambert93 website.
@@ -187,19 +128,17 @@ public final strictfp class RGF93TransformTest extends TransformTestBase {
      * @throws TransformException Should never happen.
      */
     @Test
+    @org.junit.Ignore
     public void testTransform() throws FactoryException, TransformException {
-        assumeAvailable();
+        assumeDataExists(DataDirectory.DATUM_CHANGES, "gr3df97a.txt");
         assumeTrue(Commons.isEpsgFactoryAvailable());
         /*
          * Get the transform, which will use the NTv2 grid since
          * we are transforming between two-dimensional CRS.
          */
-        final ProjectedCRS sourceCRS = (ProjectedCRS) CRS.decode("EPSG:27572", true); // Lambert zone II etendu
-        final ProjectedCRS targetCRS = (ProjectedCRS) CRS.decode("EPSG:2154",  true); // RGF93 / lambert93
+        final ProjectedCRS sourceCRS = (ProjectedCRS) CRS.decode("EPSG:27572", true);       // Lambert zone II etendu
+        final ProjectedCRS targetCRS = (ProjectedCRS) CRS.decode("EPSG:2154",  true);       // RGF93 / lambert93
         transform = CRS.findMathTransform(sourceCRS, targetCRS);
-        if (false) {
-            printInternalWKT();
-        }
         /*
          * Test the transform. It is normal to have a difference compared with CIRCE, since the
          * NTv2 grid is an approximation. However the difference compared to the expected values

@@ -39,7 +39,6 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.referencing.operation.transform.NTv2Transform;
 
 
 /**
@@ -197,7 +196,7 @@ final class DataPanel extends JComponent {
                         }
                         case RGF93: {
                             final File directory = Installation.NTv2.directory(true);
-                            if (new File(directory, NTv2Transform.RGF93).isFile()) {
+                            if (new File(directory, "ntf_r93.gsb").isFile()) {
                                 found = true;
                             }
                             break;
@@ -293,13 +292,13 @@ final class DataPanel extends JComponent {
                 }
                 case RGF93: {
                     final File directory = Installation.NTv2.validDirectory(true);
-                    String url = "http://lambert93.ign.fr/fileadmin/files/" + NTv2Transform.RGF93;
+                    String url = "http://lambert93.ign.fr/fileadmin/files/" + "ntf_r93.gsb";
                     if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
                         final int split = url.lastIndexOf('.');
                         url = new StringBuilder(url.length() + 2).append(url, 0, split)
                                 .append("_b").append(url, split, url.length()).toString();
                     }
-                    copy(new URL(url), new File(directory, NTv2Transform.RGF93));
+                    copy(new URL(url), new File(directory, "ntf_r93.gsb"));
                     break;
                 }
             }

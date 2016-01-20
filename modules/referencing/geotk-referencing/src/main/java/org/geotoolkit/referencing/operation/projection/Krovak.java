@@ -125,7 +125,7 @@ public class Krovak extends UnitaryProjection {
 
     /**
      * Useful variables calculated from parameters defined by user. They depend on the
-     * latitude of origin, the latitude of pseudo standard parallel and the excentricity.
+     * latitude of origin, the latitude of pseudo standard parallel and the eccentricity.
      */
     private final double n, tanS2, alfa, hae, k1, ka, ro0;
 
@@ -176,17 +176,17 @@ public class Krovak extends UnitaryProjection {
         sinLat = sin(latitudeOfOrigin);
         cosLat = cos(latitudeOfOrigin);
         cosL2  = cosLat * cosLat;
-        alfa   = sqrt(1 + ((excentricitySquared * (cosL2*cosL2)) / (1 - excentricitySquared)));
-        hae    = alfa * excentricity / 2;
+        alfa   = sqrt(1 + ((eccentricitySquared * (cosL2*cosL2)) / (1 - eccentricitySquared)));
+        hae    = alfa * eccentricity / 2;
         u0     = asin(sinLat / alfa);
 
         final double g, esl;
-        esl = excentricity * sinLat;
-        g   = pow((1 - esl) / (1 + esl), (alfa * excentricity) / 2);
+        esl = eccentricity * sinLat;
+        g   = pow((1 - esl) / (1 + esl), (alfa * eccentricity) / 2);
         k1  = pow(tan(latitudeOfOrigin/2 + PI/4), alfa) * g / tan(u0/2 + PI/4);
         ka  = pow(1/k1, -1/alfa);
         ro0 = pow(tanS2, -n);
-        final double radius = sqrt(1 - excentricitySquared) / (1 - (excentricitySquared * (sinLat*sinLat))); // TODO: radiusOfConformanceSphere.
+        final double radius = sqrt(1 - eccentricitySquared) / (1 - (eccentricitySquared * (sinLat*sinLat))); // TODO: radiusOfConformanceSphere.
         final double rop = radius / (ro0 * tan(pseudoStandardParallel));
         /*
          * At this point, all parameters have been processed. Now process to their
@@ -213,7 +213,7 @@ public class Krovak extends UnitaryProjection {
         final double φ     = srcPts[srcOff+1];
         final double sinΔv = sin(Δv);
         final double cosΔv = cos(Δv);
-        final double esinφ = excentricity * sin(φ);
+        final double esinφ = eccentricity * sin(φ);
         final double tan1  = tan(φ/2 + PI/4);
         final double gφ    = pow((1-esinφ) / (1+esinφ), hae);
         final double V     = pow(tan1, alfa) / k1 * gφ;
@@ -240,7 +240,7 @@ public class Krovak extends UnitaryProjection {
         //
         // End of map projection. Now compute the derivative.
         //
-        final double dgφ    = excentricitySquared*cos(φ) / (1 - esinφ*esinφ);
+        final double dgφ    = eccentricitySquared*cos(φ) / (1 - esinφ*esinφ);
         final double dU_dφ  = alfa * (1/tan1 + tan1 - 2*dgφ) / (1/V + V);
         final double dS_dλ  = (-sinAzim*cosU*sinΔv) / cosS;
         final double dS_dφ  = (-sinAzim*sinU*cosΔv + cosAzim*cosU)*dU_dφ / cosS;
@@ -279,8 +279,8 @@ public class Krovak extends UnitaryProjection {
         // iteration calculation
         for (int i=MAXIMUM_ITERATIONS;;) {
             final double φ1 = φ;
-            final double esf = excentricity * sin(φ1);
-            φ = 2 * (atan(kau * pow((1 + esf) / (1 - esf), excentricity/2)) - PI/4);
+            final double esf = eccentricity * sin(φ1);
+            φ = 2 * (atan(kau * pow((1 + esf) / (1 - esf), eccentricity/2)) - PI/4);
             if (abs(φ1 - φ) <= ITERATION_TOLERANCE) {
                 break;
             }

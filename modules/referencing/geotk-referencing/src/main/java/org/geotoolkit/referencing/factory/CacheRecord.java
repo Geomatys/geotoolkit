@@ -48,6 +48,7 @@ import org.geotoolkit.internal.InternalUtilities;
  * @since 3.17
  * @module
  */
+@Deprecated
 final class CacheRecord implements Comparable<CacheRecord> {
     /**
      * The key-value pair, and the identity string representation of the value.

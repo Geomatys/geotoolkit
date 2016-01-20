@@ -287,12 +287,12 @@ public class ObliqueMercator extends UnitaryProjection {
          * Computes some common constants. All those constants
          * depend only on the latitude of centre, in radians.
          */
-        final double com   = sqrt(1 - excentricitySquared);  // TODO: == b
+        final double com   = sqrt(1 - eccentricitySquared);  // TODO: == b
         final double sinφ0 = sin(latitudeOfCentre);
         final double cosφ0 = cos(latitudeOfCentre);
         double t = cosφ0 * cosφ0; // t is used as a temporary variable.
-        B = sqrt(1 + excentricitySquared * (t*t) / (1 - excentricitySquared));
-        final double con = 1 - excentricitySquared * (sinφ0 * sinφ0);
+        B = sqrt(1 + eccentricitySquared * (t*t) / (1 - eccentricitySquared));
+        final double con = 1 - eccentricitySquared * (sinφ0 * sinφ0);
         final double A = B * com / con;
         final double D = B * com / (cosφ0 * sqrt(con));
         double F = D*D - 1;

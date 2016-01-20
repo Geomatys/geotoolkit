@@ -62,7 +62,7 @@ public final class SimpleRecord implements Record, java.io.Serializable {
     }
 
     @Override public RecordType getRecordType() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override public java.util.Map<org.opengis.util.MemberName, Object> getAttributes() {

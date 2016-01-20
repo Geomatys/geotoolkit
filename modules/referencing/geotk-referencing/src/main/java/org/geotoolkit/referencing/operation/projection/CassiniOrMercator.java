@@ -87,20 +87,20 @@ abstract class CassiniOrMercator extends UnitaryProjection {
      */
     CassiniOrMercator(final OperationMethod method, final Parameters parameters) {
         super(method, parameters, null);
-        final double excentricitySquared = this.excentricitySquared;
+        final double eccentricitySquared = this.eccentricitySquared;
         double t;
-        en0 = C00 - excentricitySquared  * (C02 + excentricitySquared  *
-             (C04 + excentricitySquared  * (C06 + excentricitySquared  * C08)));
-        en1 =       excentricitySquared  * (C22 - excentricitySquared  *
-             (C04 + excentricitySquared  * (C06 + excentricitySquared  * C08)));
-        en2 =  (t = excentricitySquared  *        excentricitySquared) *
-             (C44 - excentricitySquared  * (C46 + excentricitySquared  * C48));
-        en3 = (t *= excentricitySquared) * (C66 - excentricitySquared  * C68);
-        en4 =  t *  excentricitySquared  *  C88;
+        en0 = C00 - eccentricitySquared  * (C02 + eccentricitySquared  *
+             (C04 + eccentricitySquared  * (C06 + eccentricitySquared  * C08)));
+        en1 =       eccentricitySquared  * (C22 - eccentricitySquared  *
+             (C04 + eccentricitySquared  * (C06 + eccentricitySquared  * C08)));
+        en2 =  (t = eccentricitySquared  *        eccentricitySquared) *
+             (C44 - eccentricitySquared  * (C46 + eccentricitySquared  * C48));
+        en3 = (t *= eccentricitySquared) * (C66 - eccentricitySquared  * C68);
+        en4 =  t *  eccentricitySquared  *  C88;
 
         final double latitudeOfOrigin = toRadians(getAndStore(parameters, org.apache.sis.internal.referencing.provider.TransverseMercator.LATITUDE_OF_ORIGIN));
         final double ml0;
-        if (excentricitySquared != 0) {
+        if (eccentricitySquared != 0) {
             ml0 = mlfn(latitudeOfOrigin, sin(latitudeOfOrigin), cos(latitudeOfOrigin));
         } else {
             // Above equation simplifies to the latitude of origin in the spherical case.
@@ -175,12 +175,12 @@ abstract class CassiniOrMercator extends UnitaryProjection {
      * @throws ProjectionException if the iteration does not converge.
      */
     final double inv_mlfn(final double delta) throws ProjectionException {
-        final double k = 1/(1 - excentricitySquared);
+        final double k = 1/(1 - eccentricitySquared);
         double φ = delta;
         int i=MAXIMUM_ITERATIONS;
         do { // rarely goes over 5 iterations
             final double s = sin(φ);
-            double t = 1 - excentricitySquared * (s*s);
+            double t = 1 - eccentricitySquared * (s*s);
             t = (mlfn(φ, s, cos(φ)) - delta) * (t * sqrt(t)) * k;
             φ -= t;
             if (abs(t) < ITERATION_TOLERANCE/10) {

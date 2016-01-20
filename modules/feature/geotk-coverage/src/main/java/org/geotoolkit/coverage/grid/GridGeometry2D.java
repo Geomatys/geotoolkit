@@ -594,7 +594,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
          * Finds the axis for the two dimensional parts. We infer them from the grid envelope.
          * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
          */
-        final DimensionFilter filter = DimensionFilter.getInstance(hints);
+        final DimensionFilter filter = new DimensionFilter(gridToCRS);
         boolean isEmpty = true;
         if (extent != null) {
             final int dimension = extent.getDimension();
@@ -620,12 +620,12 @@ public class GridGeometry2D extends GeneralGridGeometry {
             dimensions[0] = srcDim[0]; // gridDimensionX
             dimensions[1] = srcDim[1]; // gridDimensionY
             try {
-                candidate = filter.separate(gridToCRS);
+                candidate = filter.separate();
                 if (candidate.getTargetDimensions() != 2) {
                     filter.clear();
                     filter.addSourceDimensions(srcDim);
                     filter.addTargetDimensions(srcDim);
-                    candidate = filter.separate(gridToCRS);
+                    candidate = filter.separate();
                 }
                 srcDim = filter.getTargetDimensions();
                 dimensions[2] = srcDim[0]; // axisDimensionX

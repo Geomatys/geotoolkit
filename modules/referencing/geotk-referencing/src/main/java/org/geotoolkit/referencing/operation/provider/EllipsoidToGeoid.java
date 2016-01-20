@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import java.util.Collections;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,11 +30,11 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
@@ -75,19 +74,20 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      * The operation parameter descriptor for the datum.
      * Valid values are {@code "WGS84"} and {@code "WGS72"}.
      */
-    public static final ParameterDescriptor<String> DATUM = new DefaultParameterDescriptor<>(
-            Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
-                    Vocabulary.formatInternational(Vocabulary.Keys.Datum))),
-            String.class, new String[] {"WGS84", "WGS72"}, "WGS84", null, null, null, true);
+    public static final ParameterDescriptor<String> DATUM;
 
     /**
      * The operation parameter descriptor for the maximum degree and order. The default value is
      * {@value org.geotoolkit.referencing.operation.transform.EarthGravitationalModel#DEFAULT_ORDER}.
      */
-    public static final ParameterDescriptor<Integer> ORDER = DefaultParameterDescriptor.create(
-            Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
-                    Vocabulary.formatInternational(Vocabulary.Keys.Order))),
-            DEFAULT_ORDER, 2, 180, false);
+    public static final ParameterDescriptor<Integer> ORDER;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null);
+        ORDER = builder.addName(Vocabulary.formatInternational(Vocabulary.Keys.Order)).createBounded(2, 180, DEFAULT_ORDER);
+        builder.setRequired(true);
+        DATUM = builder.addName(Vocabulary.formatInternational(Vocabulary.Keys.Datum))
+                .createEnumerated(String.class, new String[] {"WGS84", "WGS72"}, "WGS84");
+    }
 
     /**
      * The group of all parameters expected by this coordinate operation.

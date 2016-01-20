@@ -481,18 +481,21 @@ public class ReferencingConsole extends InteractiveConsole {
         table.setAlignment(TableWriter.ALIGN_RIGHT);
         if (sourcePosition != null) {
             table.write(resources.getLabel(Vocabulary.Keys.SourcePoint));
+            table.write(' ');
             print(sourcePosition,    table);
             print(transformedSource, table);
             table.nextLine();
         }
         if (targetPosition != null) {
             table.write(resources.getLabel(Vocabulary.Keys.TargetPoint));
+            table.write(' ');
             print(transformedTarget, table);
             print(targetPosition,    table);
             table.nextLine();
         }
         if (sourceCRS!=null && targetCRS!=null) {
             table.write(resources.getLabel(Vocabulary.Keys.Distance));
+            table.write(' ');
             printDistance(sourceCRS, sourcePosition, transformedTarget, table);
             printDistance(targetCRS, targetPosition, transformedSource, table);
             table.nextLine();

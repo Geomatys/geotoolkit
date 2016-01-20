@@ -18,17 +18,13 @@
 package org.geotoolkit.referencing;
 
 import java.util.Objects;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 import static java.lang.StrictMath.*;
-import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -139,30 +135,6 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
                 }
                 assertEquals("matrix(" + j + ',' + i + ')', expected, matrix.getElement(j, i), EPS);
             }
-        }
-    }
-
-    /**
-     * Asserts that the WKT of the given object is equal to the expected one.
-     *
-     * @param object The object to format in <cite>Well Known Text</cite> format.
-     * @param expected The expected text, or {@code null} if {@code object} is expected to be null.
-     *        If non-null, the expected text can use the format produced by
-     *        {@link org.geotoolkit.test.Tools#printAsJavaCode} for easier reading.
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static void assertWktEquals(final IdentifiedObject object, final String expected) {
-        if (expected == null) {
-            assertNull(object);
-        } else {
-            assertNotNull(object);
-            final WKTFormat format = new WKTFormat(null, null);
-            format.setConvention(Convention.WKT1);
-            format.setIndentation(org.apache.sis.io.wkt.WKTFormat.SINGLE_LINE);
-            final String wkt = format.format(object);
-            assertMultilinesEquals(object.getName().getCode(), decodeQuotes(expected), wkt);
         }
     }
 }

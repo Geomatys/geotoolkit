@@ -29,7 +29,10 @@ import org.opengis.util.FactoryException;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.UnavailableFactoryException} in Apache SIS.
  */
+@Deprecated
 public class NoSuchFactoryException extends FactoryException {
     /**
      * Serial number for inter-operability with different versions.

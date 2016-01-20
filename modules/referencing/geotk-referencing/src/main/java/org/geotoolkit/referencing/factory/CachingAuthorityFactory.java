@@ -83,8 +83,11 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.ConcurrentAuthorityFactory} in Apache SIS.
  */
 @Buffered
+@Deprecated
 @Decorator(AbstractAuthorityFactory.class)
 public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     /**

@@ -559,7 +559,13 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * @throws FactoryException If an error occurred while creating the coordinate operation.
      *
      * @since 3.16
+     *
+     * @deprecated We will remove this very complicated method. Instead, we will modify the EPSG factory
+     *             for inserting an explicit "Geographic3D to 2D conversion" operation (EPSG:9659) in the
+     *             transformation chain. When we need to work on the 3D coordinates, we would just need to
+     *             remove EPSG:9659 from the operation chain.
      */
+    @Deprecated
     private CoordinateOperation propagateVertical(CoordinateOperation operation,
             final boolean source3D, final boolean target3D) throws FactoryException
     {
@@ -599,10 +605,10 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         if (first != null) {
             final EllipsoidalTransform newFirst, newLast;
             if (indexFirst == indexLast) {
-                newFirst = newLast = first.forDimensions(source3D, target3D);
+                newFirst = newLast = first.withHeights(source3D, target3D);
             } else {
-                newFirst = first.forDimensions(source3D, true);
-                newLast  = last .forDimensions(true, target3D);
+                newFirst = first.withHeights(source3D, true);
+                newLast  = last .withHeights(true, target3D);
             }
             /*
              * Now update the transformation steps with the new operations. The following loop

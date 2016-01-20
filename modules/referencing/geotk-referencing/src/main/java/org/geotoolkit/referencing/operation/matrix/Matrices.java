@@ -42,34 +42,6 @@ public class Matrices extends Static {
     }
 
     /**
-     * Creates a matrix for an affine transform that keep only a subset of source ordinate values.
-     * The matrix size will be ({@code toKeep.length}+1) &times; ({@code sourceDim}+1).
-     *
-     * @param  sourceDim the dimension of source coordinates.
-     * @param  toKeep the indices of source ordinate values to keep.
-     * @return The matrix for an affine transform keeping only the given dimensions, and
-     *         discarding all others.
-     * @throws IndexOutOfBoundsException if a value of {@code toKeep}
-     *         is lower than 0 or not smaller than {@code sourceDim}.
-     *
-     * @see org.geotoolkit.referencing.operation.MathTransforms#dimensionFilter(int, int[])
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createDimensionSelect(int, int[])}.
-     */
-    @Deprecated
-    public static Matrix createDimensionFilter(final int sourceDim, final int[] toKeep)
-            throws IndexOutOfBoundsException
-    {
-        final int targetDim = toKeep.length;
-        final Matrix matrix = org.apache.sis.referencing.operation.matrix.Matrices.createZero(targetDim+1, sourceDim+1);
-        for (int j=0; j<targetDim; j++) {
-            matrix.setElement(j, toKeep[j], 1);
-        }
-        matrix.setElement(targetDim, sourceDim, 1);
-        return matrix;
-    }
-
-    /**
      * Returns {@code true} if the given matrix is affine.
      *
      * @param matrix The matrix to test.

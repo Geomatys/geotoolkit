@@ -66,8 +66,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultPassThroughOperation;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
-import static java.util.Collections.singletonMap;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName;
@@ -1119,50 +1119,86 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * above the ellipsoid. However, the horizontal datum is preserved.
          */
         final GeographicCRS normSourceCRS = normalize(sourceCRS);
+        final GeographicCRS normSource3D  = toGeographic3D(normSourceCRS);
         final GeodeticDatum datum         = normSourceCRS.getDatum();
         final GeocentricCRS normTargetCRS = normalize(targetCRS, datum);
-        final Ellipsoid         ellipsoid = datum.getEllipsoid();
-        final Unit<Length>           unit = ellipsoid.getAxisUnit();
-        final ParameterValueGroup   param;
-        param = getMathTransformFactory().getDefaultParameters("Ellipsoid_To_Geocentric");
+        final Ellipsoid     ellipsoid     = datum.getEllipsoid();
+        final Unit<Length>  unit          = ellipsoid.getAxisUnit();
+        final ParameterValueGroup param = getMathTransformFactory().getDefaultParameters("Ellipsoid_To_Geocentric");
         param.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis(), unit);
         param.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis(), unit);
-        param.parameter("dim")       .setValue(getDimension(normSourceCRS));
-        return concatenate(
-                createOperationStep (sourceCRS, normSourceCRS),
-                createFromParameters(GEOCENTRIC_CONVERSION, normSourceCRS, normTargetCRS, param),
-                createOperationStep (normTargetCRS, targetCRS));
+
+        CoordinateOperation step1, step2, step3;
+        step1 = createOperationStep (sourceCRS, normSourceCRS);
+        step2 = createFromParameters(GEOCENTRIC_CONVERSION, normSource3D, normTargetCRS, param);
+        step3 = createOperationStep (normTargetCRS, targetCRS);
+        if (normSourceCRS != normSource3D) {
+            step1 = concatenate(step1, changeGeographicDimension(normSourceCRS, normSource3D));
+        }
+        return concatenate(step1, step2, step3);
     }
 
     /**
      * Creates an operation from a geocentric to a geographic coordinate reference systems.
-     * The default implementation use the <code>"Geocentric_To_Ellipsoid"</code> math transform.
+     * The default implementation uses the <code>"Geocentric_To_Ellipsoid"</code> math transform.
      *
      * @param  sourceCRS Input coordinate reference system.
      * @param  targetCRS Output coordinate reference system.
      * @return A coordinate operation from {@code sourceCRS} to {@code targetCRS}.
-     * @throws FactoryException If the operation can't be constructed.
+     * @throws FactoryException if the operation can not be constructed.
      */
     protected CoordinateOperation createOperationStep(final GeocentricCRS sourceCRS,
                                                       final GeographicCRS targetCRS)
             throws FactoryException
     {
         final GeographicCRS normTargetCRS = normalize(targetCRS);
+        final GeographicCRS normTarget3D  = toGeographic3D(normTargetCRS);
         final GeodeticDatum datum         = normTargetCRS.getDatum();
         final GeocentricCRS normSourceCRS = normalize(sourceCRS, datum);
-        final Ellipsoid         ellipsoid = datum.getEllipsoid();
-        final Unit<Length>           unit = ellipsoid.getAxisUnit();
-        final ParameterValueGroup   param;
-        param = getMathTransformFactory().getDefaultParameters("Geocentric_To_Ellipsoid");
+        final Ellipsoid     ellipsoid     = datum.getEllipsoid();
+        final Unit<Length>  unit          = ellipsoid.getAxisUnit();
+        final ParameterValueGroup param = getMathTransformFactory().getDefaultParameters("Geocentric_To_Ellipsoid");
         param.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis(), unit);
         param.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis(), unit);
-        param.parameter("dim")       .setValue(getDimension(normTargetCRS));
 
-        final CoordinateOperation step1, step2, step3;
+        CoordinateOperation step1, step2, step3;
         step1 = createOperationStep (sourceCRS, normSourceCRS);
-        step2 = createFromParameters(GEOCENTRIC_CONVERSION, normSourceCRS, normTargetCRS, param);
+        step2 = createFromParameters(GEOCENTRIC_CONVERSION, normSourceCRS, normTarget3D, param);
         step3 = createOperationStep (normTargetCRS, targetCRS);
+        if (normTarget3D != normTargetCRS) {
+            step3 = concatenate(changeGeographicDimension(normTarget3D, normTargetCRS), step3);
+        }
         return concatenate(step1, step2, step3);
+    }
+
+    private GeographicCRS toGeographic3D(GeographicCRS crs) throws FactoryException {
+        if (getDimension(crs) == 2) {
+            crs = (GeographicCRS) factories.toGeodetic3D(crs);
+        }
+        return crs;
+    }
+
+    /**
+     * TODO: temporary patch while waiting migration to SIS.
+     * We should get the operation from EPSG database instead.
+     */
+    private CoordinateOperation changeGeographicDimension(final GeographicCRS sourceCRS, final GeographicCRS targetCRS)
+            throws FactoryException
+    {
+        final MathTransformFactory mtFactory = getMathTransformFactory();
+        final Map<String,?> properties = singletonMap(GeographicCRS.NAME_KEY, GEOGRAPHIC_2D_3D);
+        MathTransform transform = mtFactory.createParameterizedTransform(
+                mtFactory.getDefaultParameters("Geographic3D to 2D conversion"));
+        if (getDimension(sourceCRS) < getDimension(targetCRS)) {
+            // TODO: we should invoke transform.inverse() but for an unknown reason it produces NaN in the matrix.
+            transform = mtFactory.createAffineTransform(Matrices.create(4, 3, new double[] {
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 0,
+                0, 0, 1}));
+        }
+        OperationMethod method = mtFactory.getLastMethodUsed();
+        return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, Conversion.class);
     }
 
     /**

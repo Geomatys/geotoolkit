@@ -63,7 +63,7 @@ import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.temporal.Duration;
-import org.opengis.util.Enumerated;
+import org.opengis.util.ControlledVocabulary;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 
@@ -387,9 +387,9 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          *
          * The enums are the code list elements. There is no default value.
          */
-        if (Enumerated.class.isAssignableFrom(type)) {
+        if (ControlledVocabulary.class.isAssignableFrom(type)) {
             @SuppressWarnings("unchecked")
-            final Class<Enumerated> codeType = (Class<Enumerated>) type;
+            final Class<ControlledVocabulary> codeType = (Class<ControlledVocabulary>) type;
             metadata.addEnumeration(parentName, elementName, (minOccurrence != 0), getCodeList(codeType));
             return elementName;
         }
@@ -493,7 +493,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
                 // policy. Note that a null 'incomplete' map means that every types are incomplete.
                 continue;
             }
-            if (standard.isMetadata(candidate) && !Enumerated.class.isAssignableFrom(candidate)) {
+            if (standard.isMetadata(candidate) && !ControlledVocabulary.class.isAssignableFrom(candidate)) {
                 final ValueRestriction vr = ValueRestriction.create(restrictions.get(entry.getKey()));
                 if (vr != null) {
                     final Obligation c = vr.obligation;
@@ -647,8 +647,8 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      *
      * @since 3.03
      */
-    private static String[] identifiers(final Class<? extends Enumerated> codeType) {
-        final Enumerated[] codes = Types.getCodeValues(codeType);
+    private static String[] identifiers(final Class<? extends ControlledVocabulary> codeType) {
+        final ControlledVocabulary[] codes = Types.getCodeValues(codeType);
         final String[] ids = new String[codes.length];
         for (int i=0; i<codes.length; i++) {
             ids[i] = Types.getCodeName(codes[i]);
@@ -660,7 +660,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      * Returns the code list identifiers, with some changes for code inherited from
      * legacy specifications.
      */
-    private static String[] getCodeList(final Class<? extends Enumerated> codeType) {
+    private static String[] getCodeList(final Class<? extends ControlledVocabulary> codeType) {
         String[] identifiers = identifiers(codeType);
         if (codeType == AxisDirection.class) {
             for (int i=0; i<identifiers.length; i++) {

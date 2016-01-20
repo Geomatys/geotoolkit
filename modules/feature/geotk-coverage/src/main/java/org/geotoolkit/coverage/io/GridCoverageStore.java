@@ -781,7 +781,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         if (requestToDataCRS == null) {
             final int sourceDim = destToExtractedGrid.getTargetDimensions();
             if (sourceDim != 2) {
-                requestToDataCRS = org.geotoolkit.referencing.operation.MathTransforms.dimensionFilter(sourceDim, new int[] {X_DIMENSION, Y_DIMENSION});
+                requestToDataCRS = MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, new int[] {X_DIMENSION, Y_DIMENSION}));
             }
         }
         if (requestToDataCRS != null) {

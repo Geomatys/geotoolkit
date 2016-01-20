@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation;
 import java.io.LineNumberReader;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.referencing.operation.provider.NADCON;
 
 import org.junit.*;
 
@@ -88,26 +87,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     }
 
     /**
-     * Run {@code "AbridgedMolodensky.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testAbridgedMolodesky() throws Exception {
-        runScript("AbridgedMolodensky.txt");
-    }
-
-    /**
-     * Run {@code "Molodensky.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testMolodesky() throws Exception {
-        runScript("Molodensky.txt");
-    }
-
-    /**
      * Run {@code "DatumShift.txt"}.
      *
      * @throws Exception If a test failed.
@@ -126,17 +105,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     @Ignore("Too many test failures to fix (when projection a point too far from the central meridian).")
     public void testObliqueMercator() throws Exception {
         runScript("ObliqueMercator.txt");
-    }
-
-    /**
-     * Run {@code "TransverseMercator.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    @Ignore("Platform-dependent failures: need to investigate")
-    public void testTransverseMercator() throws Exception {
-        runScript("TransverseMercator.txt");
     }
 
     /**
@@ -159,16 +127,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     @Ignore("Temporarily disabled. A tolerance threshold which is currently 1E-6 needs to be come 1.3E-6. But before to change the threshold, we are waiting to see if migration in SIS fix the issue.")
     public void testLambertAzimuthalEqualArea() throws Exception {
         runScript("LambertAzimuthalEqualArea.txt");
-    }
-
-    /**
-     * Run {@code "Stereographic.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testStereographic() throws Exception {
-        runScript("Stereographic.txt");
     }
 
     /**
@@ -218,8 +176,9 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
      * @throws Exception If a test failed.
      */
     @Test
+    @Ignore("Revisit after migration to SIS.")
     public void testNADCON() throws Exception {
-        Assume.assumeTrue(NADCON.isAvailable());
+//        Assume.assumeTrue(NADCON.isAvailable());
         runScript("NADCON.txt");
     }
 }

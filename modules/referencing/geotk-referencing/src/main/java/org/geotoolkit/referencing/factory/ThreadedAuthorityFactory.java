@@ -52,7 +52,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.ConcurrentAuthorityFactory} in Apache SIS.
  */
+@Deprecated
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created

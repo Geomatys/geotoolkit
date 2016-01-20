@@ -220,9 +220,9 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         //
         MathTransform tr = gridGeometry.getGridToCRS();
         assertFalse(tr.getClass().getName(), tr instanceof LinearTransform);
-        final DimensionFilter filter = new DimensionFilter();
+        final DimensionFilter filter = new DimensionFilter(tr);
         filter.addSourceDimensions(0, 1);
-        tr = filter.separate(tr);
+        tr = filter.separate();
         assertInstanceOf("DimensionFilter.separate(gridToCRS)", LinearTransform.class, tr);
         final Matrix gridToCRS = ((LinearTransform) tr).getMatrix();
         assertEquals("Scale X",      0.5, gridToCRS.getElement(0, 0), 0.0);

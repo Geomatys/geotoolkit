@@ -50,6 +50,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
      * @throws Exception Should not happen.
      */
     @Test
+    @Ignore
     public void testNADCON() throws Exception {
         assumeTrue(Installation.NADCON.directory(true).isDirectory());
         assumeTrue(isEpsgFactoryAvailable());
@@ -79,6 +80,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
      * @since 3.20
      */
     @Test
+    @Ignore
     public void testNTF() throws Exception {
         assumeTrue(Installation.NADCON.directory(true).isDirectory());
         assumeTrue(isEpsgFactoryAvailable());

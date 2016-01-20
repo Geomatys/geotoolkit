@@ -501,13 +501,18 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
-     * Returns {@code true} if the {@linkplain #getRange range} includes negative values. If this
-     * list does not declare any quantitative category, then this method returns {@code false}.
+     * Returns {@code true} if the {@linkplain #getRange range} includes negative values.
+     * If this list does not declare any quantitative category and does not declare unit
+     * of measurement, then this method returns {@code false}.
      *
      * @since 3.11
      */
     public final boolean isRangeSigned() {
-        return (categories.length != 0) && categories[0].minimum < 0;
+        if (categories.length != 0) {
+            return categories[0].minimum < 0;
+        } else {
+            return geophysics(true).getUnits() != null;
+        }
     }
 
     /**
@@ -1123,6 +1128,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         transform(srcPts, null, srcOff, null, dstPts, dstOff, numPts);
     }
 
+    private static final boolean CHECK_BOUND = false;
+
     /**
      * Transforms a raster. Only the current band in {@code iterator} will be transformed.
      * The transformed value are written back in the {@code iterator}. If a different
@@ -1175,8 +1182,13 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                         if (category == null) {
                             category = nodata;
                         }
-                        maximum = category.maximum;
-                        minimum = category.minimum;
+                        if (CHECK_BOUND) {
+                            maximum = (category!=categoryMax) ? category.maximum : POSITIVE_INFINITY;
+                            minimum = (category!=categoryMin) ? category.minimum : NEGATIVE_INFINITY;
+                        } else {
+                            maximum = category.maximum;
+                            minimum = category.minimum;
+                        }
                         rawBits = doubleToRawLongBits(minimum);
                         tr      = category.transform;
                         if (overflowFallback != null) {
@@ -1194,9 +1206,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                      *       The CategoryList.minimums array would still inclusive,   but tests
                      *       for range inclusion should use the exclusive extremas.
                      */
-                    assert hasGaps || (category==nodata) || // Disable assertion in those cases
-                           (isNaN(value) ? doubleToRawLongBits(value) == rawBits
-                                         : (value >= minimum && value <= maximum)) : value;
+                    if (CHECK_BOUND) {
+                        assert hasGaps || (category==nodata) || // Disable assertion in those cases
+                               (isNaN(value) ? doubleToRawLongBits(value) == rawBits
+                                             : (value >= minimum && value <= maximum))
+                                : "min=" + minimum + ", max=" + maximum + ", val=" + value + ", list=" + this;
+                    }
                     value = tr.transform(value);
                     if (value > maxTr) {
                         value = maxTr;

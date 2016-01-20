@@ -273,6 +273,7 @@ public final strictfp class LambertAzimuthalEqualAreaTest extends ProjectionTest
      * @throws TransformException Should never happen.
      */
     @Test
+    @Ignore
     public void runGeoapiTest() throws FactoryException, TransformException {
         new GeoapiTest(mtFactory).testLambertAzimuthalEqualArea();
     }

@@ -85,7 +85,10 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  *
  * @since 2.2
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.IdentifiedObjectSet} in Apache SIS.
  */
+@Deprecated
 public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet<T> implements Serializable {
     /**
      * For cross-version compatibility during serialisation.

@@ -29,7 +29,6 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 
 /**
@@ -101,29 +100,19 @@ public class SelectSampleDimension extends Operation2D {
     /**
      * The parameter descriptor for the sample dimension indices.
      */
-    public static final ParameterDescriptor<int[]> SAMPLE_DIMENSIONS =
-            new DefaultParameterDescriptor<>(Citations.OGC, "SampleDimensions",
-                int[].class, // Value class (mandatory)
-                null,        // Array of valid values
-                null,        // Default value
-                null,        // Minimal value
-                null,        // Maximal value
-                null,        // Unit of measure
-                false);      // Parameter is optional
+    public static final ParameterDescriptor<int[]> SAMPLE_DIMENSIONS;
 
     /**
      * The parameter descriptor for the visible dimension indice.
      * This is a Geotk-specific parameter.
      */
-    public static final ParameterDescriptor<Integer> VISIBLE_SAMPLE_DIMENSION =
-            new DefaultParameterDescriptor<>(Citations.GEOTOOLKIT, "VisibleSampleDimension",
-                Integer.class,  // Value class (mandatory)
-                null,           // Array of valid values
-                null,           // Default value
-                0,              // Minimal value
-                null,           // Maximal value
-                null,           // Unit of measure
-                false);         // Parameter is optional
+    public static final ParameterDescriptor<Integer> VISIBLE_SAMPLE_DIMENSION;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.OGC, null);
+        SAMPLE_DIMENSIONS = builder.addName("SampleDimensions").create(int[].class, null);
+        VISIBLE_SAMPLE_DIMENSION = builder.setCodeSpace(Citations.GEOTOOLKIT, null).addName("VisibleSampleDimension")
+                .createBounded(Integer.class, 0, null, null);
+    }
 
     /**
      * Constructs a default {@code "SelectSampleDimension"} operation.

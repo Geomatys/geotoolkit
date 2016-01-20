@@ -18,10 +18,5 @@
 
 /**
  * Extension to the map projection implementations provided in Apache SIS.
- *
- * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @author André Gosselin (MPO)
- * @author Rueben Schulz (UBC)
- * @author Rémi Maréchal (Geomatys)
  */
 package org.geotoolkit.referencing.operation.projection;

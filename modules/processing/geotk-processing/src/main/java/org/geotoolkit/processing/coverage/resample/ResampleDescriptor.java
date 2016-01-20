@@ -122,14 +122,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * 
+ *
  * @version 4.x
  * @since 2.2
- * 
+ *
  * @module
  */
 public class ResampleDescriptor extends AbstractProcessDescriptor {
-    
+
     public static final String NAME = "Resample";
 
     /**
@@ -138,101 +138,64 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
      * is {@code "source0"} (for compatibility with <cite>Java Advanced Imaging</cite>).
      */
     public static final ParameterDescriptor<GridCoverage2D> IN_COVERAGE;
-    
-    /**
-     * The parameter descriptor for the interpolation type.
-     */
-    public static final ParameterDescriptor<InterpolationCase> IN_INTERPOLATION_TYPE =
-            new DefaultParameterDescriptor<InterpolationCase>(Citations.OGC,
-                "InterpolationType",                // Parameter name
-                InterpolationCase.class,            // Value class (mandatory)
-                null,                               // Array of valid values
-                InterpolationCase.NEIGHBOR,         // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
 
     /**
      * The parameter descriptor for the interpolation type.
      */
-    public static final ParameterDescriptor<ResampleBorderComportement> IN_BORDER_COMPORTEMENT_TYPE =
-            new DefaultParameterDescriptor<ResampleBorderComportement>(Citations.OGC,
-                "BorderComportementType",           // Parameter name
-                ResampleBorderComportement.class,   // Value class (mandatory)
-                null,                               // Array of valid values
-                ResampleBorderComportement.EXTRAPOLATION,// Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<InterpolationCase> IN_INTERPOLATION_TYPE;
+
+    /**
+     * The parameter descriptor for the interpolation type.
+     */
+    public static final ParameterDescriptor<ResampleBorderComportement> IN_BORDER_COMPORTEMENT_TYPE;
 
     /**
      * The parameter descriptor for the coordinate reference system.
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_COORDINATE_REFERENCE_SYSTEM =
-            new DefaultParameterDescriptor<CoordinateReferenceSystem>(Citations.OGC,
-                "CoordinateReferenceSystem",        // Parameter name
-                CoordinateReferenceSystem.class,    // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_COORDINATE_REFERENCE_SYSTEM;
 
     /**
      * The parameter descriptor for the grid geometry.
      */
-    public static final ParameterDescriptor<GridGeometry> IN_GRID_GEOMETRY =
-            new DefaultParameterDescriptor<GridGeometry>(Citations.OGC,
-                "GridGeometry",                     // Parameter name
-                GridGeometry.class,                 // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<GridGeometry> IN_GRID_GEOMETRY;
 
     /**
      * The parameter descriptor for the background values.
      *
      * @since 3.16
      */
-    public static final ParameterDescriptor<double[]> IN_BACKGROUND =
-            new DefaultParameterDescriptor<double[]>(Citations.GEOTOOLKIT,
-                "Background",                       // Parameter name
-                double[].class,                     // Value class (mandatory)
-                null,                               // Array of valid values
-                null,                               // Default value
-                null,                               // Minimal value
-                null,                               // Maximal value
-                null,                               // Unit of measure
-                false);                             // Parameter is optional
+    public static final ParameterDescriptor<double[]> IN_BACKGROUND;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.OGC, null);
+        IN_INTERPOLATION_TYPE          = builder.addName("InterpolationType")        .create(InterpolationCase.class,          InterpolationCase.NEIGHBOR);
+        IN_BORDER_COMPORTEMENT_TYPE    = builder.addName("BorderComportementType")   .create(ResampleBorderComportement.class, ResampleBorderComportement.EXTRAPOLATION);   // TODO - not an OGC parameter.
+        IN_COORDINATE_REFERENCE_SYSTEM = builder.addName("CoordinateReferenceSystem").create(CoordinateReferenceSystem.class,  null);
+        IN_GRID_GEOMETRY               = builder.addName("GridGeometry")             .create(GridGeometry.class,               null);
+        IN_BACKGROUND = builder.setCodeSpace(Citations.GEOTOOLKIT, null).addName("Background").create(double[].class, null);
+    }
 
     /**
      * Input parameters descriptor of this process.
      */
-    public static final ParameterDescriptorGroup INPUT_DESC;    
-    
+    public static final ParameterDescriptorGroup INPUT_DESC;
+
     /**
      * Output coverage result of the process execution.
      */
     public static final ParameterDescriptor<Coverage> OUT_COVERAGE;
-    
+
     /**
      * Output parameters descriptor of this process.
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC;
-    
+
     static {
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY,  new NamedIdentifier(Citations.OGC, "Source"));
         properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(Citations.JAI, "source0"));
         IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
-                
+
         INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(
                 IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_BORDER_COMPORTEMENT_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
 
@@ -252,9 +215,9 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ResampleDescriptor();
 
     private ResampleDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 
-                new SimpleInternationalString("Resample a coverage."), 
-                INPUT_DESC, 
+        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+                new SimpleInternationalString("Resample a coverage."),
+                INPUT_DESC,
                 OUTPUT_DESC);
     }
 
@@ -262,5 +225,5 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new ResampleProcess(input);
     }
-        
+
 }
