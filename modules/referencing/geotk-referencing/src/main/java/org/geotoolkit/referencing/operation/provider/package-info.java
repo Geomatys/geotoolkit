@@ -18,11 +18,5 @@
 
 /**
  * Providers for the Geotk extensions to Apache SIS.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @author Rueben Schulz (UBC)
- * @version 3.20
- * @since 3.00
- * @module
  */
 package org.geotoolkit.referencing.operation.provider;

@@ -120,6 +120,9 @@ public abstract class AbstractCoordinateOperationFactory
     protected static final Identifier INVERSE_OPERATION =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.InverseOperation));
 
+    static final Identifier GEOGRAPHIC_2D_3D =
+            new NamedIdentifier(GEOTOOLKIT, "Geographic 2D/3D conversion");
+
     @Deprecated
     final Map<RenderingHints.Key, Object> hints;
 
@@ -344,7 +347,7 @@ public abstract class AbstractCoordinateOperationFactory
      * @throws FactoryException if the operation can't be created.
      */
     protected CoordinateOperation createFromParameters(
-            final Identifier       name,
+            final Identifier                name,
             final CoordinateReferenceSystem sourceCRS,
             final CoordinateReferenceSystem targetCRS,
             final ParameterValueGroup       parameters) throws FactoryException

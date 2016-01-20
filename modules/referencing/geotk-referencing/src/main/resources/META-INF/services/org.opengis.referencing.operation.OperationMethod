@@ -1,12 +1,5 @@
 org.geotoolkit.referencing.operation.provider.Logarithmic
 org.geotoolkit.referencing.operation.provider.Exponential
-org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric
-org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid
-org.geotoolkit.referencing.operation.provider.GeocentricTranslation
-org.geotoolkit.referencing.operation.provider.PositionVector7Param
-org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation
-org.geotoolkit.referencing.operation.provider.Molodensky
-org.geotoolkit.referencing.operation.provider.AbridgedMolodensky
 org.geotoolkit.referencing.operation.provider.AlbersEqualArea
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
 org.geotoolkit.referencing.operation.provider.Orthographic
@@ -16,11 +9,7 @@ org.geotoolkit.referencing.operation.provider.HotineObliqueMercator
 org.geotoolkit.referencing.operation.provider.HotineObliqueMercator$TwoPoint
 org.geotoolkit.referencing.operation.provider.CassiniSoldner
 org.geotoolkit.referencing.operation.provider.Stereographic
-org.geotoolkit.referencing.operation.provider.ObliqueStereographic
 org.geotoolkit.referencing.operation.provider.Polyconic
 org.geotoolkit.referencing.operation.provider.NewZealandMapGrid
 org.geotoolkit.referencing.operation.provider.Krovak
-org.geotoolkit.referencing.operation.provider.NADCON
-org.geotoolkit.referencing.operation.provider.NTv2
-org.geotoolkit.referencing.operation.provider.RGF93
 org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid

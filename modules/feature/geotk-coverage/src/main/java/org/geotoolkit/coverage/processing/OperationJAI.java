@@ -497,12 +497,12 @@ public class OperationJAI extends Operation2D {
                     throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
                 }
                 final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(hints);
-                final DimensionFilter       filter = new DimensionFilter(factory);
+                final DimensionFilter       filter = new DimensionFilter(toSource, factory);
                 toTarget = gridToCrs2D;
                 try {
                     if (lowerDim != 0) {
                         filter.addSourceDimensionRange(0, lowerDim);
-                        MathTransform step = filter.separate(toSource);
+                        MathTransform step = filter.separate();
                         ensureStableDimensions(filter);
                         step = factory.createPassThroughTransform(0, step, sourceDim-lowerDim);
                         toTarget = factory.createConcatenatedTransform(step, toTarget);
@@ -510,7 +510,7 @@ public class OperationJAI extends Operation2D {
                     if (upperDim != sourceDim) {
                         filter.clear();
                         filter.addSourceDimensionRange(upperDim, sourceDim);
-                        MathTransform step = filter.separate(toSource);
+                        MathTransform step = filter.separate();
                         ensureStableDimensions(filter);
                         step = factory.createPassThroughTransform(upperDim, step, 0);
                         toTarget = factory.createConcatenatedTransform(toTarget, step);

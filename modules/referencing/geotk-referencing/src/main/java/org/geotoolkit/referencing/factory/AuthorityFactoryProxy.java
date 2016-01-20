@@ -65,6 +65,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
+@Deprecated
 abstract class AuthorityFactoryProxy<T> {
     /**
      * The type of objects to be created.

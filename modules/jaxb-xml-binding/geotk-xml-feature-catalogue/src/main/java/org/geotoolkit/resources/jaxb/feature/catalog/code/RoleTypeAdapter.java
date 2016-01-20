@@ -36,12 +36,12 @@ public final class RoleTypeAdapter extends CodeListAdapter<RoleTypeAdapter, Role
     private RoleTypeAdapter() {
     }
 
-    public RoleTypeAdapter(final CodeListProxy proxy) {
+    public RoleTypeAdapter(final CodeListUID proxy) {
         super(proxy);
     }
 
     @Override
-    protected RoleTypeAdapter wrap(final CodeListProxy proxy) {
+    protected RoleTypeAdapter wrap(final CodeListUID proxy) {
         return new RoleTypeAdapter(proxy);
     }
 
@@ -52,11 +52,11 @@ public final class RoleTypeAdapter extends CodeListAdapter<RoleTypeAdapter, Role
 
     @Override
     @XmlElement(name = "FC_RoleType", namespace = "http://www.isotc211.org/2005/gfc")
-    public CodeListProxy getElement() {
-        return proxy;
+    public CodeListUID getElement() {
+        return identifier;
     }
 
-    public void setElement(final CodeListProxy proxy) {
-        this.proxy = proxy;
+    public void setElement(final CodeListUID proxy) {
+        this.identifier = proxy;
     }
 }

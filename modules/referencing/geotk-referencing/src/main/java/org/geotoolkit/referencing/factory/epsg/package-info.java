@@ -49,16 +49,6 @@
  *     CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
  * }
  *
- *
- * {@section How CRS are identified}
- *
- * EPSG codes are numerical identifiers. For example "4326" is the EPSG identifier for the
- * "<cite>WGS 84</cite>" geographic CRS. However, the default implementation accepts names
- * as well as numeric identifiers. For example "<cite>NTF (Paris) / France I</cite>" and
- * {@code "27581"} both fetchs the same object. Note that names may be ambiguous since the
- * same name may be used for more than one object. This is the case of "<cite>WGS 84</cite>"
- * for example. If such an ambiguity is found, an exception will be thrown.
- *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Yann Cézard (IRD)
  * @author Rueben Schulz (UBC)
@@ -68,11 +58,6 @@
  * @author Didier Richard (IGN)
  * @author John Grange
  *
- * @version 3.00
- *
- * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
- *
- * @since 2.1
- * @module
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.sql}.
  */
 package org.geotoolkit.referencing.factory.epsg;

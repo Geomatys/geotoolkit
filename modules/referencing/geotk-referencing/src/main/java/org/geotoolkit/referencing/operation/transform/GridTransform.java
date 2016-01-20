@@ -88,7 +88,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.operation.transform.InterpolatedTransform}
  */
+@Deprecated
 public class GridTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

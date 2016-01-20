@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
-import java.awt.geom.AffineTransform;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import javax.vecmath.GMatrix;
@@ -78,25 +77,6 @@ public class GeneralMatrix extends GMatrix implements Matrix {
      */
     public GeneralMatrix(final int numRow, final int numCol) {
         super(numRow, numCol);
-    }
-
-    /**
-     * Constructs a {@code numRow}&nbsp;&times;&nbsp;{@code numCol} matrix
-     * initialized to the values in the {@code matrix} array. The array values
-     * are copied in one row at a time in row major fashion. The array should be
-     * exactly {@code numRow*numCol} in length. Note that because row and column
-     * numbering begins with zero, {@code numRow} and {@code numCol} will be
-     * one larger than the maximum possible matrix index values.
-     *
-     * @param numRow Number of rows.
-     * @param numCol Number of columns.
-     * @param matrix Initial values.
-     */
-    public GeneralMatrix(final int numRow, final int numCol, final double[] matrix) {
-        super(numRow, numCol, matrix);
-        if (numRow*numCol != matrix.length) {
-            throw new IllegalArgumentException(String.valueOf(matrix.length));
-        }
     }
 
     /**
@@ -342,7 +322,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
      * Returns a string representation of the specified matrix. The returned string is
      * implementation dependent. It is usually provided for debugging purposes only.
      */
-    static String toString(final Matrix matrix) {
+    private static String toString(final Matrix matrix) {
         /*
          * Chooses a NumberFormat (more specifically the number of fraction digits)
          * based on the element values (their range, mean and standard deviation).

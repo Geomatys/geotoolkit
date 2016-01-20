@@ -28,13 +28,10 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
-import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.apache.sis.referencing.CommonCRS;
@@ -52,7 +49,6 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@DependsOn({WebCRSFactoryTest.class, AutoCRSFactoryTest.class, AuthorityFactoryProxyTest.class})
 public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link AllAuthoritiesFactory#getAuthorityCodes} method.

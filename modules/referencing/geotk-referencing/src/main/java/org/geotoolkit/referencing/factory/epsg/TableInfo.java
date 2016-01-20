@@ -30,6 +30,7 @@ package org.geotoolkit.referencing.factory.epsg;
  * @since 2.2
  * @module
  */
+@Deprecated
 final class TableInfo {
     /**
      * The class of object to be created.

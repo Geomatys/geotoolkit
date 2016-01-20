@@ -23,7 +23,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.io.IOException;
-import org.opengis.util.Enumerated;
+import org.opengis.util.ControlledVocabulary;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.KeyNamePolicy;
@@ -195,8 +195,8 @@ final class Writer {
         } else {
             final String text;
             final boolean quote;
-            if (value instanceof Enumerated) {
-                text  = Types.getCodeName((Enumerated) value);
+            if (value instanceof ControlledVocabulary) {
+                text  = Types.getCodeName((ControlledVocabulary) value);
                 quote = true;
             } else if (value instanceof Date) {
                 text  = Long.toString(((Date) value).getTime());

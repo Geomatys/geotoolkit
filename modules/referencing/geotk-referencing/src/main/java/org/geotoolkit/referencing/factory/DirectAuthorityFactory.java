@@ -42,7 +42,10 @@ import org.geotoolkit.factory.Hints;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.GeodeticAuthorityFactory} in Apache SIS.
  */
+@Deprecated
 public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
 
     // IMPLEMENTATION NOTE:  The reason why this class exist is that we don't want "indirect"

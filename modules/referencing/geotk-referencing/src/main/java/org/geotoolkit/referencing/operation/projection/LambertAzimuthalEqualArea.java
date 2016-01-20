@@ -106,19 +106,19 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     final double latitudeOfOrigin;
 
     /**
-     * Parameters derived from the latitude of origin and the excentricity. In the
+     * Parameters derived from the latitude of origin and the eccentricity. In the
      * spherical case, they are straight sinus and cosinus of the latitude of origin.
      */
     final double sinb1, cosb1;
 
     /**
-     * Constant parameters. They depend only on the excentricity, not on the
+     * Constant parameters. They depend only on the eccentricity, not on the
      * latitude of origin. Consequently they are not used in the spherical case.
      */
     final double qp, rq;
 
     /**
-     * Coefficients for authalic latitude. They depend only on the excentricity,
+     * Coefficients for authalic latitude. They depend only on the eccentricity,
      * not on the latitude of origin. They are all zero in the spherical case.
      */
     private final double APA0, APA1, APA2;
@@ -177,15 +177,15 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         }
         /*
          * Computes the constants for authalic latitude. Those constants depend
-         * only on the excentricity. Note that in the spherical cases:
+         * only on the eccentricity. Note that in the spherical cases:
          *
          *   - All APA coefficients simplifies to zero.
          *   - qp = 2  (result of qsfn(1) when e² = 0).
          *   - rq = 1  (concequence of the above).
          */
-        final double es2 = excentricitySquared * excentricitySquared;
-        final double es3 = excentricitySquared * es2;
-        APA0 = P02 * es3 + P01 * es2 + P00 * excentricitySquared;
+        final double es2 = eccentricitySquared * eccentricitySquared;
+        final double es3 = eccentricitySquared * es2;
+        APA0 = P02 * es3 + P01 * es2 + P00 * eccentricitySquared;
         APA1 = P11 * es3 + P10 * es2;
         APA2 = P20 * es3;
         qp   = qsfn(1);
@@ -224,7 +224,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  * including spherical. However in the spherical case, the equation simplifies to
                  * dd = 1/rq. With rq = 1 (see above), we get dd = 1.
                  */
-                final double dd = cos(latitudeOfOrigin) / (sqrt(1 - excentricitySquared*(sinφ*sinφ))*rq*cosb1);
+                final double dd = cos(latitudeOfOrigin) / (sqrt(1 - eccentricitySquared*(sinφ*sinφ))*rq*cosb1);
                 denormalize.convertBefore(0,   dd, null);
                 denormalize.convertBefore(1, 1/dd, null);
             } else {
@@ -606,7 +606,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         if (super.equals(object, mode)) {
             final LambertAzimuthalEqualArea that = (LambertAzimuthalEqualArea) object;
             return epsilonEqual(this.latitudeOfOrigin, that.latitudeOfOrigin, mode);
-            // All other coefficients are derived from the latitude of origin and excentricity.
+            // All other coefficients are derived from the latitude of origin and eccentricity.
         }
         return false;
     }

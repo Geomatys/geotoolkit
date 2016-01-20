@@ -32,9 +32,9 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
@@ -113,15 +113,11 @@ public class Interpolate extends Operation2D {
      * The parameter descriptor for the interpolation type. Values should be
      * either a {@link String} or an {@link Interpolation} object.
      */
-    public static final ParameterDescriptor<Object> TYPE =
-            new DefaultParameterDescriptor<>(Citations.OGC, "Type",
-                Object.class,       // Value class (mandatory)
-                null,               // Array of valid values
-                "NearestNeighbor",  // Default value
-                null,               // Minimal value
-                null,               // Maximal value
-                null,               // Unit of measure
-                true);              // Parameter is mandatory
+    public static final ParameterDescriptor<Object> TYPE;
+    static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.OGC, null).setRequired(true);
+        TYPE = builder.addName("Type").create(Object.class, "NearestNeighbor");
+    }
 
     /**
      * Constructs an {@code "Interpolate"} operation.

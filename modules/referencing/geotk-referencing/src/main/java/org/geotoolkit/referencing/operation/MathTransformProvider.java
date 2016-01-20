@@ -67,10 +67,6 @@ public abstract class MathTransformProvider extends DefaultOperationMethod
      */
     private static final long serialVersionUID = 7530475536803158473L;
 
-    protected MathTransformProvider(final ParameterDescriptorGroup parameters) {
-        super(toMap(parameters), null, null, parameters);
-    }
-
     /**
      * Constructs a math transform provider from a set of parameters. The provider
      * {@linkplain #getIdentifiers identifiers} will be the same than the parameter
@@ -85,24 +81,6 @@ public abstract class MathTransformProvider extends DefaultOperationMethod
                                  final ParameterDescriptorGroup parameters)
     {
         super(toMap(parameters), sourceDimension, targetDimension, parameters);
-    }
-
-    /**
-     * Constructs a math transform provider from a set of properties. The properties map is given
-     * unchanged to the {@linkplain DefaultOperationMethod#DefaultOperationMethod(Map, Integer,
-     * Integer, ParameterDescriptorGroup) super-class constructor}.
-     *
-     * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param sourceDimension Number of dimensions in the source CRS of this operation method.
-     * @param targetDimension Number of dimensions in the target CRS of this operation method.
-     * @param parameters The set of parameters (never {@code null}).
-     */
-    public MathTransformProvider(final Map<String,?> properties,
-                                 final int sourceDimension,
-                                 final int targetDimension,
-                                 final ParameterDescriptorGroup parameters)
-    {
-        super(properties, sourceDimension, targetDimension, parameters);
     }
 
     /**

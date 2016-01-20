@@ -18,6 +18,7 @@
 package org.geotoolkit;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import org.opengis.util.Factory;
 import org.opengis.referencing.IdentifiedObject;
@@ -34,8 +35,8 @@ import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.referencing.operation.transform.Accessor;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
 import static org.apache.sis.referencing.IdentifiedObjects.*;
@@ -122,48 +123,35 @@ public final strictfp class GeoapiTest implements ImplementationDetails, Factory
      */
     @Override
     public ToleranceModifier tolerance(final MathTransform transform) {
-        return tolerance(transform, true);
-    }
-
-    /**
-     * Implementation of the public {@link #tolerance(MathTransform)} with a boolean
-     * argument indicating if the transform is alone, or part of a concatenated transforms chain.
-     * In the later case, we will increase the tolerance for the two ordinate values rather than
-     * only the latitude axis, because it is more difficult to know which axis is the latitude.
-     */
-    private static ToleranceModifier tolerance(MathTransform transform, boolean isAlone) {
-        while (transform instanceof AbstractMathTransform) {
-            final IdentifiedObject id = ((AbstractMathTransform) transform).getParameterDescriptors();
-            if (id != null) {
-                if (isHeuristicMatchForName(id, "Abridged_Molodenski")) {
-                    // Increase to 2 cm the tolerance factor for datum shift.
-                    return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 2, 2, 2);
-                }
-                if (isHeuristicMatchForName(id, "Lambert_Azimuthal_Equal_Area")) {
-                    // Increase to 5 cm the tolerance factor in latitude for inverse projections.
-                    return scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 1 : 5, 5);
-                }
-                if (isHeuristicMatchForName(id, "Cassini_Soldner")) {
-                    // Increase to 5 cm the tolerance factor in latitude for direct projections,
-                    // and to 1 metres the tolerance factor in latitude for inverse projections.
-                    if (isAlone) {
-                        return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  5),
-                                       scale(EnumSet.of(INVERSE_TRANSFORM), 2, 100));
-                    } else {
-                        return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 250, 250);
+        if (true) {
+            return null;  // TODO
+        }
+        final List<MathTransform> steps = MathTransforms.getSteps(transform);
+        final boolean isAlone = steps.size() == 1;
+        for (final MathTransform step : steps) {
+            while (step instanceof AbstractMathTransform) {
+                final IdentifiedObject id = ((AbstractMathTransform) step).getParameterDescriptors();
+                if (id != null) {
+                    if (isHeuristicMatchForName(id, "Abridged_Molodenski")) {
+                        // Increase to 2 cm the tolerance factor for datum shift.
+                        return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 2, 2, 2);
+                    }
+                    if (isHeuristicMatchForName(id, "Lambert_Azimuthal_Equal_Area")) {
+                        // Increase to 5 cm the tolerance factor in latitude for inverse projections.
+                        return scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 1 : 5, 5);
+                    }
+                    if (isHeuristicMatchForName(id, "Cassini_Soldner")) {
+                        // Increase to 5 cm the tolerance factor in latitude for direct projections,
+                        // and to 1 metres the tolerance factor in latitude for inverse projections.
+                        if (isAlone) {
+                            return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  5),
+                                           scale(EnumSet.of(INVERSE_TRANSFORM), 2, 100));
+                        } else {
+                            return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 250, 250);
+                        }
                     }
                 }
             }
-            if (Accessor.isConcatenatedTransform(transform)) {
-                final ToleranceModifier candidate = tolerance(Accessor.transform1(transform), false);
-                if (candidate != null) {
-                    return candidate;
-                }
-                transform = Accessor.transform2(transform);
-                isAlone = false;
-                continue; // Check again the above transform.
-            }
-            break;
         }
         return null;
     }

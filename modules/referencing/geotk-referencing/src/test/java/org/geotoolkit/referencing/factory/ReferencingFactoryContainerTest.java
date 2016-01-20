@@ -28,7 +28,6 @@ import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.internal.referencing.Identifier3D;
@@ -46,7 +45,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.16
  */
-@DependsOn(ReferencingObjectFactoryTest.class)
 public final strictfp class ReferencingFactoryContainerTest {
     /**
      * Tests {@link ReferencingFactoryContainer#toGeodetic3D}.

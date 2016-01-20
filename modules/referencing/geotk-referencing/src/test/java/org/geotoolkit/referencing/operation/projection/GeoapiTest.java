@@ -32,7 +32,6 @@ import org.junit.runners.JUnit4;
 
 import static java.lang.StrictMath.*;
 import static org.opengis.test.Assert.*;
-import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase.isSpherical;
 
 
 /**
@@ -90,7 +89,6 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
      */
     private void makeSpherical(final double latitudeOfOrigin, final double newTolerance) {
         ensureMathTransform2D();
-//      assertFalse(isSpherical(transform));
         final double a = parameters.parameter("semi-major axis").doubleValue();
         final double b = parameters.parameter("semi-minor axis").doubleValue();
         final double r = b + (a-b)*cos(toRadians(latitudeOfOrigin));
@@ -101,57 +99,12 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     }
 
     /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testMercator1SP() throws FactoryException, TransformException {
-        super.testMercator1SP();
-        makeSpherical(0, 3);
-        super.testMercator1SP();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testMercator2SP() throws FactoryException, TransformException {
-        super.testMercator2SP();
-        makeSpherical(42, 20);
-        super.testMercator2SP();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests and ensure that we used spherical formulas.
-     */
-    @Test
-    @Override
-    public void testPseudoMercator() throws FactoryException, TransformException {
-        super.testPseudoMercator();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests and ensure that we used spherical formulas.
-     */
-    @Test
-    @Override
-    public void testMiller() throws FactoryException, TransformException {
-        super.testMiller();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
      * Runs the GeoAPI tests and ensure that we used ellipsoidal formulas.
      */
     @Test
     @Override
     public void testHotineObliqueMercator() throws FactoryException, TransformException {
         super.testHotineObliqueMercator();
-//      assertFalse(isSpherical(transform));
         // No spherical formulas for this one.
     }
 
@@ -159,108 +112,24 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
      * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
      */
     @Test
-    @Override
-    public void testTransverseMercator() throws FactoryException, TransformException {
-        super.testTransverseMercator();
-        makeSpherical(49, 1);
-        super.testTransverseMercator();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
+    @Ignore
     @Override
     public void testCassiniSoldner() throws FactoryException, TransformException {
         super.testCassiniSoldner();
         makeSpherical(10.45, 0.1);
         super.testCassiniSoldner();
-//      assertTrue(isSpherical(transform));
     }
 
     /**
      * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
      */
     @Test
-    @Override
-    public void testLambertConicConformal1SP() throws FactoryException, TransformException {
-        super.testLambertConicConformal1SP();
-        makeSpherical(18, 0.05);
-        super.testLambertConicConformal1SP();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testLambertConicConformal2SP() throws FactoryException, TransformException {
-        super.testLambertConicConformal2SP();
-        makeSpherical(27.8, 0.5);
-        super.testLambertConicConformal2SP();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testLambertConicConformalBelgium() throws FactoryException, TransformException {
-        super.testLambertConicConformalBelgium();
-        makeSpherical(50, 20);
-        super.testLambertConicConformalBelgium();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
+    @Ignore
     @Override
     public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
         super.testLambertAzimuthalEqualArea();
         makeSpherical(52, 2);
         super.testLambertAzimuthalEqualArea();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testPolarStereographicA() throws FactoryException, TransformException {
-        super.testPolarStereographicA();
-        makeSpherical(90, 20);
-        super.testPolarStereographicA();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testPolarStereographicB() throws FactoryException, TransformException {
-        super.testPolarStereographicB();
-        makeSpherical(-71, 10);
-        super.testPolarStereographicB();
-//      assertTrue(isSpherical(transform));
-    }
-
-    /**
-     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
-     */
-    @Test
-    @Override
-    public void testObliqueStereographic() throws FactoryException, TransformException {
-        super.testObliqueStereographic();
-        makeSpherical(52, 1);
-        super.testObliqueStereographic();
-//      assertTrue(isSpherical(transform));
     }
 
     /**
@@ -272,7 +141,6 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
         super.testPolyconic();
         makeSpherical(0, 30);
         super.testPolyconic();
-//      assertTrue(isSpherical(transform));
     }
 
     /**
@@ -282,7 +150,6 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     @Override
     public void testKrovak() throws FactoryException, TransformException {
         super.testKrovak();
-//      assertFalse(isSpherical(transform));
         // No spherical formulas for this one.
     }
 }

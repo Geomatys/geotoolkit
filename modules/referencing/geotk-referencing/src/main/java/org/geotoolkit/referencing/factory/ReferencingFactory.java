@@ -57,7 +57,10 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory} in Apache SIS.
  */
+@Deprecated
 public class ReferencingFactory extends org.geotoolkit.factory.Factory implements Factory {
     /**
      * The logger for event related to Geotk factories.

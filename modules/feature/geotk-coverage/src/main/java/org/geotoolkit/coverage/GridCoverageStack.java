@@ -82,9 +82,9 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         final int nbDim = crs.getCoordinateSystem().getDimension();
 
-        if (elements.length == 0) 
+        if (elements.length == 0)
             throw new IOException("Coverages list is empty");
-        
+
 
         //build the grid geometry
         final int[] gridLower = new int[nbDim];
@@ -97,27 +97,27 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
 
             final GridGeometry gg  = coverage.getGridGeometry();
             final GridEnvelope ext = gg.getExtent();
-            
+
             //-- check extent pertinency
             //we expect the axisIndex dimension to be a slice, low == high
-            if (ext.getLow(zDimension) != ext.getHigh(zDimension)) 
+            if (ext.getLow(zDimension) != ext.getHigh(zDimension))
                 throw new IOException("Last dimension of the coverage is not a slice.");
-            
+
             if (baseGridToCRS == null) {
                 for (int i = 0; i < nbDim; i++) {
                     gridLower[i] = ext.getLow(i);
                     gridUpper[i] = ext.getHigh(i);
                 }
             }
-            
+
             //-- check baseGridToCRS pertinency
             baseGridToCRS = gg.getGridToCRS();
             assert baseGridToCRS != null;
-            
+
             //-- pass gridToCRS into Corner
             //-- GeoApi define that gridToCRS in Center
             baseGridToCRS = PixelTranslation.translate(baseGridToCRS, PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
-                
+
 
             //find the real value
             final double[] coord = new double[gridUpper.length];
@@ -145,11 +145,11 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
          * TODO replace this hack by a GridCoverageStackBuilder that rebuild global gridGeometry and propagate it to every level
          * and GridCoverage2D.
          */
-        
+
         //extract MT [0, zDim[
-        DimensionFilter df = new DimensionFilter();
+        DimensionFilter df = new DimensionFilter(baseGridToCRS);
         df.addSourceDimensionRange(0, zDimension);
-        MathTransform firstMT = df.separate(baseGridToCRS);
+        MathTransform firstMT = df.separate();
         firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
 
         //create dimension pass through transform with linear
@@ -164,9 +164,9 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         //extract MT [zDim+1, nbDim[
         MathTransform lastPart = null;
         if (remainingDimensions > 0) {
-            df = new DimensionFilter();
+            df = new DimensionFilter(baseGridToCRS);
             df.addSourceDimensionRange(zDimension+1, nbDim);
-            lastPart = df.separate(baseGridToCRS);
+            lastPart = df.separate();
             lastPart = PassThroughTransform.create(zDimension+1, lastPart, 0);
         }
 

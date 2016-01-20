@@ -253,6 +253,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
         } else {
             for (final String code : duplicated) {
                 out.print(resources.getLabel(Vocabulary.Keys.DuplicatedValue));
+                out.print(' ');
                 out.println(code);
             }
         }

@@ -598,7 +598,10 @@ public final class ReferencingUtilities {
      * @param crs
      * @return
      * @throws org.opengis.util.FactoryException
+     *
+     * @deprecated Use {@link org.apache.sis.referencing.crs.AbstractCRS#forConvention} instead.
      */
+    @Deprecated
     public static CoordinateReferenceSystem setLongitudeFirst(final CoordinateReferenceSystem crs) throws FactoryException{
         if(crs instanceof SingleCRS){
             final SingleCRS singlecrs = (SingleCRS) crs;

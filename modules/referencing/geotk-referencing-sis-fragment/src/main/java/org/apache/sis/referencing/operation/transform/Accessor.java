@@ -18,7 +18,6 @@ package org.apache.sis.referencing.operation.transform;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -36,21 +35,5 @@ public final class Accessor {
             throws TransformException
     {
         return AbstractMathTransform2D.createTransformedShape(mt, shape, preTransform, postTransform, horizontal);
-    }
-
-    public static boolean isConcatenatedTransform(final MathTransform tr) {
-        return tr instanceof ConcatenatedTransform;
-    }
-
-    public static MathTransform transform1(final MathTransform tr) {
-        return ((ConcatenatedTransform) tr).transform1;
-    }
-
-    public static MathTransform transform2(final MathTransform tr) {
-        return ((ConcatenatedTransform) tr).transform2;
-    }
-
-    public static int firstAffectedOrdinate(final PassThroughTransform tr) {
-        return tr.firstAffectedOrdinate;
     }
 }

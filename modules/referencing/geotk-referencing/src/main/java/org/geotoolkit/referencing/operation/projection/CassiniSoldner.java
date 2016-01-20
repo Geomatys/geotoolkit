@@ -136,9 +136,9 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double tanφ2  = tanφ * tanφ;
         final double λcosφ  = λ * cosφ;
         final double λcosφ2 = λcosφ * λcosφ;
-        final double rn2    = 1 - excentricitySquared * sinφ2;
+        final double rn2    = 1 - eccentricitySquared * sinφ2;
         final double rn     = sqrt(rn2);
-        final double c      = cosφ2 * excentricitySquared / (1 - excentricitySquared);
+        final double c      = cosφ2 * eccentricitySquared / (1 - eccentricitySquared);
         if (dstPts != null) {
             dstPts[dstOff  ] = λcosφ*(1 - λcosφ2*tanφ2*(C1 - (8 - tanφ2 + 8*c)*λcosφ2*C2)) / rn;
             dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + tanφ*λcosφ2*(0.5 + (5 - tanφ2 + 6*c)*λcosφ2*C3) / rn;
@@ -152,7 +152,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double sincosφ = sinφ*cosφ;
         final double λ2sinφ2 = λ*λ * sinφ2;
         final double λ2cosφ2 = λ*λ * cosφ2;
-        final double en2     = excentricitySquared / rn2;
+        final double en2     = eccentricitySquared / rn2;
         final double a = (-C2 * (8*(c + 1) - tanφ2)) * λ2cosφ2;
         final double b = ( C3 * (6* c + 5  - tanφ2)) * λ2cosφ2 + 0.5;
         final double D = ( C1 + a*(1 - tanφ2*(1 - C2*cosφ*(8*c + 1/cosφ2)))) * λ2cosφ2;
@@ -178,9 +178,9 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double tn = tan(φ1);
         final double t  = tn * tn;
         double n = sin(φ1);
-        double r = 1 / (1 - excentricitySquared * (n*n));
+        double r = 1 / (1 - eccentricitySquared * (n*n));
         n = sqrt(r);
-        r *= (1 - excentricitySquared)*n;
+        r *= (1 - eccentricitySquared)*n;
         final double dd  = x / n;
         final double d2  = dd*dd;
         dstPts[dstOff  ] = dd*(1 + t*d2*(-C4+(1 + 3*t)*d2*C5)) / cos(φ1);

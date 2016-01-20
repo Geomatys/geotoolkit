@@ -17,12 +17,6 @@
  */
 
 /**
- * Utilities related to {@linkplain org.opengis.referencing.operation.Matrix}.
- *
- * @author Martin Desruisseaux (IRD)
- * @version 4.00
- *
- * @since 2.2
- * @module
+ * Extension to the matrix implementations provided in Apache SIS.
  */
 package org.geotoolkit.referencing.operation.matrix;

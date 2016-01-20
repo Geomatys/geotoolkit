@@ -168,13 +168,13 @@ public class Orthographic extends UnitaryProjection {
             getContextualParameters().getMatrix(true).convertAfter(1, -1, null);
         }
         final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
-        if (excentricity != 0) {
+        if (eccentricity != 0) {
             /*
              * In principle the elliptical case is not supported. If nevertheless the user gave
              * an ellipsoid, use the same Earth radius than the one computed in Equirectangular.
              */
             double p = sin(abs(latitudeOfOrigin));
-            p = sqrt(1 - excentricitySquared) / (1 - (p*p)*excentricitySquared); // TODO: radiusOfConformanceSphere.
+            p = sqrt(1 - eccentricitySquared) / (1 - (p*p)*eccentricitySquared); // TODO: radiusOfConformanceSphere.
             denormalize.convertBefore(0, p, null);
             denormalize.convertBefore(1, p, null);
         }

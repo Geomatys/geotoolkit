@@ -39,14 +39,8 @@ import static java.lang.Math.*;
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- *
- * @see PolarStereographic
- * @see ObliqueStereographic
- *
- * @since 2.0
- * @module
  */
-public class EquatorialStereographic extends Stereographic {
+class EquatorialStereographic extends Stereographic {
     /**
      * For cross-version compatibility.
      */

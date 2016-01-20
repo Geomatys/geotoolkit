@@ -67,7 +67,7 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
@@ -130,7 +130,10 @@ import static org.apache.sis.internal.metadata.ReferencingServices.PARAMETERS_KE
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.sql.EPSGDataAccess} in Apache SIS.
  */
+@Deprecated
 @ImplementationHints(forceLongitudeFirst=false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
@@ -2813,14 +2816,23 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("src_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);
                                 parameters.parameter("src_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
-                                parameters.parameter("src_dim").setValue(sourceCRS.getCoordinateSystem().getDimension());
+                                try {
+                                    parameters.parameter("dim").setValue(sourceCRS.getCoordinateSystem().getDimension());
+                                } catch (ParameterNotFoundException e) {
+                                    // TODO: "dim" parameter is present only for Molodensky operation.
+                                }
                             }
                             ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(targetCRS);
                             if (ellipsoid != null) {
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("tgt_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);
                                 parameters.parameter("tgt_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
-                                parameters.parameter("tgt_dim").setValue(targetCRS.getCoordinateSystem().getDimension());
+                                try {
+                                    parameters.parameter("dim").setValue(targetCRS.getCoordinateSystem().getDimension());
+                                    // TODO: we should verify that the number of dimension is the same than source.
+                                } catch (ParameterNotFoundException e) {
+                                    // TODO: "dim" parameter is present only for Molodensky operation.
+                                }
                             }
                             // Since Geotk will implement the transformation as a concatenation of
                             // MathTransforms, it will not be able to find those parameters alone.

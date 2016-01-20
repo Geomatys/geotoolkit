@@ -68,7 +68,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.GeodeticAuthorityFactory} in Apache SIS.
  */
+@Deprecated
 public abstract class AbstractAuthorityFactory extends ReferencingFactory implements AuthorityFactory {
     /**
      * The name factory to use for creating {@link GenericName}.

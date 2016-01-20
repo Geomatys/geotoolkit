@@ -208,18 +208,18 @@ public class Polyconic extends CassiniOrMercator {
                 }
                 final double sinφ = sin(φ);
                 final double sinφcosφ = sinφ * cosφ;
-                double mlp = sqrt(1 - excentricitySquared * (sinφ*sinφ));
+                double mlp = sqrt(1 - eccentricitySquared * (sinφ*sinφ));
                 final double c   = mlp * sinφ/cosφ;
                 final double ml  = mlfn(φ, sinφ, cosφ);
                 final double mlb = ml*ml + r;
-                mlp  = (1 - excentricitySquared) / (mlp*mlp*mlp);
+                mlp  = (1 - eccentricitySquared) / (mlp*mlp*mlp);
                 dφ = (2*ml + c*mlb - y2*(c*ml + 1)) /
-                        (excentricitySquared * sinφcosφ * (mlb - y2*ml)/c +
+                        (eccentricitySquared * sinφcosφ * (mlb - y2*ml)/c +
                         (y2 - 2*ml) * (c*mlp - 1/sinφcosφ) - 2*mlp);
                 φ += dφ;
             } while (abs(dφ) > ITERATION_TOLERANCE);
             final double c = sin(φ);
-            λ = asin(x*tan(φ) * sqrt(1 - excentricitySquared*(c*c))) / c;
+            λ = asin(x*tan(φ) * sqrt(1 - eccentricitySquared*(c*c))) / c;
         }
         dstPts[dstOff  ] = λ;
         dstPts[dstOff+1] = φ;

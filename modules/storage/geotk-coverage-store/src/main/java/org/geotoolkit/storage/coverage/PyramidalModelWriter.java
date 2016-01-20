@@ -160,10 +160,9 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         final BlockingQueue<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
-            final DimensionFilter filter = new DimensionFilter();
+            final DimensionFilter filter = new DimensionFilter(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, 
-                    nbBand, filter.separate(srcCRSToGrid),interpolation);
+            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         } catch (FactoryException ex) {
@@ -223,7 +222,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private int idy = -1;
 
         private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope,
-                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand, 
+                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
                 MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
             this.model = model;
             this.requestedEnvelope = requestedEnvelope;

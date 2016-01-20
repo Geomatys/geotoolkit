@@ -31,12 +31,12 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
@@ -83,8 +83,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
      * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<Integer> DEGREE = new DefaultParameterDescriptor<Integer>(
-            Citations.GEOTOOLKIT, "degree", Integer.class, null, 2, 1, WarpTransform2D.MAX_DEGREE, null, true);
+    public static final ParameterDescriptor<Integer> DEGREE;
 
     /**
      * The operation parameter descriptor for the
@@ -93,8 +92,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
      * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<>(
-            Citations.GEOTOOLKIT, "xCoeffs", float[].class, null, null, null, null, null, true);
+    public static final ParameterDescriptor<float[]> X_COEFFS;
 
     /**
      * The operation parameter descriptor for the
@@ -103,8 +101,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
      * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<>(
-            Citations.GEOTOOLKIT, "yCoeffs", float[].class, null, null, null, null, null, true);
+    public static final ParameterDescriptor<float[]> Y_COEFFS;
 
     /**
      * The operation parameter descriptor for the
@@ -142,12 +139,17 @@ public class WarpPolynomial extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Float> POST_SCALE_Y;
     static {
+        final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null);
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
-        PRE_SCALE_X  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleX",  type, null, ONE, null, null, null, false);
-        PRE_SCALE_Y  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleY",  type, null, ONE, null, null, null, false);
-        POST_SCALE_X = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleX", type, null, ONE, null, null, null, false);
-        POST_SCALE_Y = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleY", type, null, ONE, null, null, null, false);
+        PRE_SCALE_X  = builder.addName("preScaleX") .create(type, ONE);
+        PRE_SCALE_Y  = builder.addName("preScaleY") .create(type, ONE);
+        POST_SCALE_X = builder.addName("postScaleX").create(type, ONE);
+        POST_SCALE_Y = builder.addName("postScaleY").create(type, ONE);
+        builder.setRequired(true);
+        X_COEFFS = builder.addName("xCoeffs").create(float[].class, null);
+        Y_COEFFS = builder.addName("yCoeffs").create(float[].class, null);
+        DEGREE = builder.addName("degree").createBounded(1, WarpTransform2D.MAX_DEGREE, 2);
     }
 
     /**

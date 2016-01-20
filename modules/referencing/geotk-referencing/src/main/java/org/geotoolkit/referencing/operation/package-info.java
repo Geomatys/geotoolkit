@@ -17,12 +17,6 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.referencing.operation.AbstractCoordinateOperation Coordinate operation} implementations.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 1.2
- * @module
+ * Extension to the coordinate operation implementations provided in Apache SIS.
  */
 package org.geotoolkit.referencing.operation;

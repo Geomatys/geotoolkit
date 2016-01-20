@@ -99,7 +99,10 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.factory.sql.EPSGFactory} in Apache SIS.
  */
+@Deprecated
 @ImplementationHints(forceLongitudeFirst=false)
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
