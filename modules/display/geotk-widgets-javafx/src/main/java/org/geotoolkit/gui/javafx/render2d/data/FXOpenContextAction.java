@@ -51,6 +51,7 @@ public class FXOpenContextAction extends FXMapAction {
             final MapContext context = FXContextChooser.showOpenChooser(map);
             if(context!=null){
                 map.getContainer().setContext(context);
+                map.getCanvas().setVisibleArea(context.getAreaOfInterest());
             }
 
         } catch (JAXBException | FactoryException | DataStoreException ex) {

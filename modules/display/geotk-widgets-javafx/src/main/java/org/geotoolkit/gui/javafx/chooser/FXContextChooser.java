@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.chooser;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.util.prefs.Preferences;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -40,9 +41,9 @@ public class FXContextChooser extends BorderPane {
     private FXContextChooser(){
     }
     
-    public static MapContext showOpenChooser(final FXMap map) throws JAXBException, FactoryException, DataStoreException, NoninvertibleTransformException, TransformException{
+    public static MapContext showOpenChooser(final Node parent) throws JAXBException, FactoryException, DataStoreException, NoninvertibleTransformException, TransformException{
         
-        final Window owner = map.getScene().getWindow();
+        final Window owner = parent.getScene().getWindow();
         final FileChooser chooser = new FileChooser();
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("OWC Context", "xml"));        
         
@@ -58,7 +59,6 @@ public class FXContextChooser extends BorderPane {
         if(file!=null){
             setPreviousPath(file.getParentFile().getAbsolutePath());
             final MapContext context = OwcXmlIO.read(file);
-            map.getCanvas().setVisibleArea(context.getAreaOfInterest());
             return context;
         }
         

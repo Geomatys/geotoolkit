@@ -28,6 +28,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
@@ -73,6 +74,7 @@ public class FXMapContextTree extends BorderPane{
         treetable.setTableMenuButtonVisible(false);
         treetable.setEditable(true);
         treetable.setContextMenu(new ContextMenu());
+        treetable.setPlaceholder(new Label(""));
         
         treetable.setRowFactory(new Callback<TreeTableView<MapItem>, TreeTableRow<MapItem>>() {
             @Override

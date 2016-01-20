@@ -26,6 +26,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +40,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.math.DecimalFunctions;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
@@ -123,7 +126,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             for (int i = 0; i < keys.length; i++) {
                 final Object current = keys[i];
                 final Object next = (i<keys.length - 1) ? keys[i+1] : null;
-                final StringBuilder text = getLineText(current, next);
+                final StringBuilder text = getLineText(current, next, null);
                 int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth(text.toString());
                 maxX = Math.max(maxX, lineWidth);
             }
@@ -173,6 +176,33 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             boolean doInterpolation = true;
             if (colorMap.keySet().iterator().next() instanceof Range) {
                 doInterpolation = false;
+            }
+
+            //find an appropriate number format without too much digits for this value range
+            NumberFormat numFormat = null;
+            if(doInterpolation){
+                double min = Double.POSITIVE_INFINITY;
+                double max = Double.NEGATIVE_INFINITY;
+                for(Object o : colorMap.keySet()){
+                    if(o instanceof String){
+                        try{
+                            o = Double.valueOf(o.toString().trim());
+                        }catch(NumberFormatException ex){
+                            continue;
+                        }
+                    }
+
+                    if(o instanceof Number){
+                        min = Math.min( ((Number)o).doubleValue(), min);
+                        max = Math.max( ((Number)o).doubleValue(), max);
+                    }
+                }
+                if(!Double.isInfinite(max)){
+                    final double step = (max-min) / (colorMap.size()*10);
+                    final int nbDigit = DecimalFunctions.fractionDigitsForDelta(step, false);
+                    numFormat = NumberFormat.getNumberInstance();
+                    numFormat.setMaximumFractionDigits(nbDigit);
+                }
             }
 
             final int colorMapSize = colorMap.size();
@@ -242,7 +272,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             for (int i = 0; i < keys.length; i++) {
                 final Object current = keys[i];
                 final Object next = (i<keys.length - 1) ? keys[i+1] : null;
-                final StringBuilder text = getLineText(current, next);
+                final StringBuilder text = getLineText(current, next, numFormat);
                 g.drawString(text.toString(), LEGEND_PALETTE_WIDTH + 1f , Y + intervalHeight * shift );
 
                 Y += intervalHeight;
@@ -250,8 +280,8 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
         }
     }
 
-    private static StringBuilder getLineText(Object currentElem, Object nextElement) {
-        final StringBuilder text = new StringBuilder("< ");
+    private static StringBuilder getLineText(Object currentElem, Object nextElement, NumberFormat numFormat) {
+        final StringBuilder text = new StringBuilder(" < ");
         if (currentElem instanceof NumberRange) {
             double min = ((NumberRange) currentElem).getMaxDouble();
             double max = Double.POSITIVE_INFINITY;
@@ -265,8 +295,19 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
 
             text.append(String.format("%.3f", max));
             text.append(']');
+        } else if (numFormat != null) {
+            if(currentElem instanceof String){
+                try{
+                    currentElem = Double.valueOf(currentElem.toString().trim());
+                    text.append(numFormat.format(currentElem));
+                }catch(NumberFormatException ex){
+                    text.append(currentElem);
+                }
+            }else if(currentElem instanceof Number){
+                text.append(numFormat.format(currentElem));
+            }
         } else {
-            text.append(currentElem.toString());
+            text.append(currentElem);
         }
         return text;
     }

@@ -20,6 +20,8 @@ package org.geotoolkit.gui.javafx.render2d;
 import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -68,7 +70,15 @@ public abstract class FXMapAction extends Action implements Consumer<ActionEvent
     public Button createButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createButton(this, behavior);
     }
-    
+
+    public MenuButton createMenuButton(ActionUtils.ActionTextBehavior behavior){
+        return ActionUtils.createMenuButton(this, behavior);
+    }
+
+    public MenuItem createMenuItem(){
+        return ActionUtils.createMenuItem(this);
+    }
+
     public ToggleButton createToggleButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createToggleButton(this,behavior);
     }
