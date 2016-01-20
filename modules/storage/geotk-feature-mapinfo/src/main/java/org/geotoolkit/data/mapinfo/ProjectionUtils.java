@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.parameter.Parameters;
@@ -55,6 +55,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 
+import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
 
 /**
@@ -90,18 +91,18 @@ public class ProjectionUtils {
     public static String getMIFProjCoefs(Conversion source, int projCode) throws FactoryException {
         final StringBuilder builder = new StringBuilder();
 
-        ParameterDescriptor[] paramList = getProjectionParameters(projCode);
+        String[] paramList = getProjectionParameters(projCode);
 
         final ParameterValueGroup coefs = source.getParameterValues();
 
         // First element case
-        ParameterValue first = coefs.parameter(getName(paramList[0], coefs.getDescriptor()));
+        ParameterValue first = coefs.parameter(paramList[0]);
         if (first != null && first.getValue() != null) {
             builder.append(first.getValue());
         }
 
         for (int i = 1; i < paramList.length; i++) {
-            ParameterValue param = coefs.parameter(getName(paramList[i], coefs.getDescriptor()));
+            ParameterValue param = coefs.parameter(paramList[i]);
             if (param != null && param.getValue() != null) {
                 builder.append(", ").append(param.getValue());
             }
@@ -109,21 +110,6 @@ public class ProjectionUtils {
         return builder.toString();
     }
 
-    /**
-     * Returns the name of the given parameter, using the authority code space expected by
-     * the given group if possible.
-     *
-     * @param parameter The parameter for which the name is wanted.
-     * @param group     The group to use for determining the authority code space.
-     * @return The name of the given parameter.
-     */
-    private static String getName(final GeneralParameterDescriptor parameter, final ParameterDescriptorGroup group) {
-        String name = IdentifiedObjects.getName(parameter, group.getName().getAuthority());
-        if (name == null) {
-            name = parameter.getName().getCode();
-        }
-        return name;
-    }
 
     public static String getMIFBounds(CoordinateReferenceSystem source) {
         StringBuilder builder = new StringBuilder();
@@ -158,7 +144,7 @@ public class ProjectionUtils {
         Map<String, Object> crsIdentifiers = new HashMap<String, Object>();
 
         int projCode = -1;
-        ParameterDescriptor[] paramList;
+        String[] paramList;
 
         GeodeticDatum datum = null;
 
@@ -309,7 +295,7 @@ public class ProjectionUtils {
             //Parse coefficients given in the CoordSys string. The order is REALLY important, so we browse possible
             // parameters list with an index.
             for(int i = 0 ; i < paramList.length ; i++) {
-                final String paramName = getName(paramList[i], projDesc);
+                final String paramName = paramList[i];
 
                 final ParameterValue currentParam;
                 try {
@@ -418,13 +404,9 @@ public class ProjectionUtils {
                     ParameterValueGroup values = desc.createValue();
                     Parameters.copy(proj.getParameterValues(), values);
 
-//                    for(GeneralParameterValue source : proj.getParameterValues().values()) {
-//                        values.parameter(source.getDescriptor().getName().getCode())
-//                                .setValue(((ParameterValue) source).getValue());
-//                    }
-                    final String originLat = getName(UniversalParameters.LATITUDE_OF_ORIGIN, proj.getParameterValues().getDescriptor());
-                    final String stParallel1 = getName(UniversalParameters.STANDARD_PARALLEL_1, desc);
-                    final String stParallel2 = getName(UniversalParameters.STANDARD_PARALLEL_2, desc);
+                    final String originLat = PARAMETER_LIST.get(1);
+                    final String stParallel1 = PARAMETER_LIST.get(2);
+                    final String stParallel2 = PARAMETER_LIST.get(3);
                     values.parameter(stParallel1).setValue(proj.getParameterValues().parameter(originLat).getValue());
                     values.parameter(stParallel2).setValue(proj.getParameterValues().parameter(originLat).getValue());
 
