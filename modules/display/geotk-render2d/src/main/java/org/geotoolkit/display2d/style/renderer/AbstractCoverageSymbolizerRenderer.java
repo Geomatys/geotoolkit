@@ -68,9 +68,9 @@ import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
@@ -173,7 +173,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      */
     protected abstract GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, C symbolizer);
 
-     /**
+    /**
      * Returns expected {@link GridCoverage2D} from given {@link ProjectedCoverage},
      * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
      *
@@ -255,6 +255,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final GridCoverageReader reader = ref.acquireReader();
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
         final Envelope dataBBox = gridGeometry.getEnvelope();
         ref.recycle(reader);
 
@@ -312,11 +313,12 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //-- find most appropriate interpolation
         final InterpolationCase interpolation;
-        if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))){
+        if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
+        || (!(gridGeometry instanceof GridGeometry2D))){
             //hints forced nearest neighbor interpolation
             interpolation = InterpolationCase.NEIGHBOR;
         }else{
-            interpolation = findInterpolationCase(ref, reader);
+            interpolation = findInterpolationCase(sampleDimensions);
         }
 
         //-- expand param envelope if we use an interpolation
@@ -336,8 +338,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (dataCoverage == null) {
             //-- in future jdk8 version return an Optional<Coverage>
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
-            strB.append(" : \n impossible to read coverage ");
-            strB.append("with internally projected coverage boundary : ");
+            strB.append(" : \n impossible to read");
+            strB.append((isElevation) ? " Elevation ":" Image ");
+            strB.append("Coverage with internally projected coverage boundary : ");
             strB.append(dataBBox);
             strB.append("\nwith the following renderer requested Envelope.");
             strB.append(paramEnvelope);
@@ -493,10 +496,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Detect the most appropriate interpolation type based on coverage sample dimensions.
      * Interpolation is possible only when data do not contain qualitative informations.
      */
-    private static InterpolationCase findInterpolationCase(CoverageReference ref, GridCoverageReader reader) throws CoverageStoreException{
-        ArgumentChecks.ensureNonNull("CoverageReference", ref);
-        ArgumentChecks.ensureNonNull("GridCoverageReader", reader);
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+    private static InterpolationCase findInterpolationCase(List<GridSampleDimension> sampleDimensions) throws CoverageStoreException{
 
         if (sampleDimensions != null) {
             for (GridSampleDimension sd : sampleDimensions) {
@@ -524,15 +524,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @param nbPoint in grid crs to expand the envelope
      * @param gridGeom coverage grid geometry
      */
-    private static void expand(GeneralEnvelope env, int nbPoint, GeneralGridGeometry gridGeom) throws TransformException{
-        final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
-        final MathTransform crsToGrid = gridToCRS.inverse();
-        final GeneralEnvelope gridEnv = CRS.transform(crsToGrid,env);
-        //we are only interested in the 2D part
-        gridEnv.setRange(0, Math.floor(gridEnv.getMinimum(0)-nbPoint), Math.ceil(gridEnv.getMaximum(0)+nbPoint));
-        gridEnv.setRange(1, Math.floor(gridEnv.getMinimum(1)-nbPoint), Math.ceil(gridEnv.getMaximum(1)+nbPoint));
-        env.setEnvelope(CRS.transform(gridToCRS,gridEnv));
+    private static void expand(final GeneralEnvelope env, final int nbPoint, final GeneralGridGeometry gridGeom)
+            throws TransformException {
+        if (!(gridGeom instanceof GridGeometry2D))
+            throw new IllegalArgumentException("Impossible to compute expand for interpolation with no 2D GridGeometry.");
+        final GridGeometry2D grigrid = (GridGeometry2D) gridGeom;
 
+        //-- we are only interested in the 2D part.
+        final MathTransform gridToCrs2D = grigrid.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform crsToGrid2D = gridToCrs2D.inverse();
+        final Envelope env2D = Envelopes.transform(env, grigrid.getCoordinateReferenceSystem2D());
+
+        final GeneralEnvelope gridEnv2D = CRS.transform(crsToGrid2D,env2D);
+        gridEnv2D.setRange(0, Math.floor(gridEnv2D.getMinimum(0)-nbPoint), Math.ceil(gridEnv2D.getMaximum(0)+nbPoint));
+        gridEnv2D.setRange(1, Math.floor(gridEnv2D.getMinimum(1)-nbPoint), Math.ceil(gridEnv2D.getMaximum(1)+nbPoint));
+
+        final Envelope geoEnv2D = CRS.transform(gridToCrs2D,gridEnv2D);
+
+        final int horizontalAxis = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
+        env.setRange(horizontalAxis,     geoEnv2D.getMinimum(0), geoEnv2D.getMaximum(0));
+        env.setRange(horizontalAxis + 1, geoEnv2D.getMinimum(1), geoEnv2D.getMaximum(1));
     }
 
 }
