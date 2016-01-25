@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.data.mapinfo;
 
+import org.apache.sis.internal.util.Constants;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.FactoryException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Reference the needed parameters used for MapInfo projections.
@@ -33,17 +32,16 @@ import java.util.Map;
 public class ProjectionParameters {
 
     /** A list of the different possible parameters in MapInfo */
-    private static final ArrayList<ParameterDescriptor> PARAMETER_LIST = new ArrayList<ParameterDescriptor>(8);
-    static {
-        PARAMETER_LIST.add(UniversalParameters.CENTRAL_MERIDIAN);   // 0
-        PARAMETER_LIST.add(UniversalParameters.LATITUDE_OF_ORIGIN); // 1
-        PARAMETER_LIST.add(UniversalParameters.STANDARD_PARALLEL_1);// 2
-        PARAMETER_LIST.add(UniversalParameters.STANDARD_PARALLEL_2);// 3
-        PARAMETER_LIST.add(UniversalParameters.AZIMUTH);            // 4
-        PARAMETER_LIST.add(UniversalParameters.SCALE_FACTOR);       // 5
-        PARAMETER_LIST.add(UniversalParameters.FALSE_EASTING);      // 6
-        PARAMETER_LIST.add(UniversalParameters.FALSE_NORTHING);     // 7
-    }
+    static final List<String> PARAMETER_LIST = Collections.unmodifiableList(Arrays.asList(
+            Constants.CENTRAL_MERIDIAN,   // 0
+            "latitude of origin",         // 1
+            Constants.STANDARD_PARALLEL_1,// 2
+            Constants.STANDARD_PARALLEL_2,// 3
+            "azimuth",                    // 4
+            Constants.SCALE_FACTOR,       // 5
+            Constants.FALSE_EASTING,      // 6
+            Constants.FALSE_NORTHING      // 7
+    ));
 
     /** A map whose key is the MapInfo projection code, and value is a list of the possible parameters for it (their indice in the previous list). */
     private static final Map<Integer, int[]> PROJECTION_PARAMETERS = new HashMap<Integer, int[]>();
@@ -71,10 +69,10 @@ public class ProjectionParameters {
      * @return a list of {@link ParameterDescriptor} to fill to build the projection.
      * @throws FactoryException if we can't find the projection pointed by the given code.
      */
-    public static ParameterDescriptor[] getProjectionParameters(int projectionCode) throws FactoryException {
-        if(PROJECTION_PARAMETERS.containsKey(projectionCode)) {
-            final int[] parameterIndices = PROJECTION_PARAMETERS.get(projectionCode);
-            ParameterDescriptor[] parameters = new ParameterDescriptor[parameterIndices.length];
+    public static String[] getProjectionParameters(int projectionCode) throws FactoryException {
+        final int[] parameterIndices = PROJECTION_PARAMETERS.get(projectionCode);
+        if(parameterIndices != null) {
+            String[] parameters = new String[parameterIndices.length];
             for(int i = 0 ; i < parameterIndices.length ; i++) {
                 parameters[i] = PARAMETER_LIST.get(parameterIndices[i]);
             }
