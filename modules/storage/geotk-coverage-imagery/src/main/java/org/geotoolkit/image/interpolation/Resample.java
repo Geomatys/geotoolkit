@@ -258,7 +258,7 @@ public class Resample {
             final int miny = (int) dest.getLower(1);
             final int w    = (int) dest.getSpan(0);
             final int h    = (int) dest.getSpan(1);
-            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, imageSrc.getColorModel());
+            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, imageSrc.getColorModel(), imageSrc.getSampleModel());
         } else {
             /*
              * If a user give a destination image he should hope that his image boundary stay unchanged.
@@ -317,7 +317,7 @@ public class Resample {
             final int miny = (int) dest.getLower(1);
             final int w    = (int) dest.getSpan(0);
             final int h    = (int) dest.getSpan(1);
-            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, interpol.pixelIterator.getRenderedImage().getColorModel());
+            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, interpol.pixelIterator.getRenderedImage().getColorModel(), interpol.pixelIterator.getRenderedImage().getSampleModel());
         } else {
             /*
              * If a user give a destination image he should hope that his image boundary stay unchanged.

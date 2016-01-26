@@ -30,6 +30,9 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 
 /**
@@ -94,7 +97,9 @@ public class BandCombineProcess extends AbstractProcess {
             cm = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands,0,0,10);
         }
 
-        final WritableRenderedImage resultImage = new WritableLargeRenderedImage(0, 0, width, height, new Dimension(256, 256), 0, 0, cm);
+        final SampleModel sm = ImageUtils.createSampleModel(PlanarConfiguration.Interleaved, SampleType.valueOf(sampleType), width, height, nbtotalbands);
+
+        final WritableRenderedImage resultImage = new WritableLargeRenderedImage(0, 0, width, height, new Dimension(256, 256), 0, 0, cm, sm);
 
         //copy datas
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(resultImage, resultImage);

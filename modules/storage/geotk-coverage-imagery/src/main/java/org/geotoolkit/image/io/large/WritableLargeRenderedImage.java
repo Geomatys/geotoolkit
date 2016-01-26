@@ -41,19 +41,19 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      * Default tile size.
      */
     private static final int DEFAULT_TILE_SIZE = 256;
-    
+
     /**
      * Minimum required tile size.
      */
     private static final int MIN_TILE_SIZE = 64;
-    
+
     /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;
-    
+
     /**
-     * Defaine if tile is allready writen. 
+     * Defaine if tile is allready writen.
      */
     private final boolean[][] isWrite;
 
@@ -62,7 +62,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      *      y * {@linkplain #nbrTileX} + x.
      */
     private final ReentrantReadWriteLock[] tileLocks;
-    
+
     /**
      * Image attributs.
      */
@@ -84,29 +84,30 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     /**
      * Create {@link WritableLargeRenderedImage} with default upper corner at position (0, 0),
      * a default tile size of 256 x 256 pixels and a default tile grid offset at position (0, 0).
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles).
      */
-    public WritableLargeRenderedImage(int width, int height, ColorModel colorModel) { 
-        this(0, 0, width, height, null, 0, 0, colorModel);
+    public WritableLargeRenderedImage(int width, int height, ColorModel colorModel, SampleModel sampleModel) {
+        this(0, 0, width, height, null, 0, 0, colorModel, sampleModel);
     }
-    
+
     /**
      * Create {@link WritableLargeRenderedImage} object.
-     * 
+     *
      * @param minX image upper left corner min X values.
-     * @param minY image upper left corner min Y values. 
+     * @param minY image upper left corner min Y values.
      * @param width image width.
-     * @param height image height. 
+     * @param height image height.
      * @param tileSize size of tile or raster within this image.
      * @param tileGridXOffset tile grid offset in X direction.
      * @param tileGridYOffset tile grid offset in Y direction.
-     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles). 
+     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles).
      */
     public WritableLargeRenderedImage(int minX, int minY, int width, int height,
-            Dimension tileSize, int tileGridXOffset, int tileGridYOffset, ColorModel colorModel) {
+            Dimension tileSize, int tileGridXOffset, int tileGridYOffset,
+            ColorModel colorModel, SampleModel sm) {
         ArgumentChecks.ensureNonNull("ColorModel", colorModel);
         ArgumentChecks.ensureStrictlyPositive("image width", width);
         ArgumentChecks.ensureStrictlyPositive("image height", height);
@@ -128,14 +129,14 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         this.nbrTileX = (width  + tileWidth - 1)  / tileWidth;
         this.nbrTileY = (height + tileHeight - 1) / tileHeight;
         this.cm = colorModel;
-        this.sm = colorModel.createCompatibleSampleModel(tileWidth, tileHeight);
+        this.sm = sm;
         this.minTileGridX = (minX - tileGridXOffset) / tileWidth;
         this.minTileGridY = (minY - tileGridYOffset) / tileHeight;
         if (tileGridXOffset < minX) minTileGridX--;
         if (tileGridYOffset < minY) minTileGridY--;
         isWrite = new boolean[nbrTileY][nbrTileX];
         for (boolean[] bool : isWrite) Arrays.fill(bool, false);
-        
+
         //-- tile lock initialize
         tileLocks = new ReentrantReadWriteLock[nbrTileX * nbrTileY];
         for (int i = 0; i < tileLocks.length; i++) {
@@ -395,7 +396,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      */
     @Override
     public Raster getTile(int tileX, int tileY) {
-        
+
         final ReentrantReadWriteLock lock = tileLocks[tileY * nbrTileX + tileX];
         lock.readLock().lock(); //-- ask reading token
         final boolean iswrite;
@@ -406,7 +407,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         }
 
         if (!iswrite) fillWritableImage(tileX, tileY);//-- inside this method : writing lock
-        
+
         return tilecache.getTile(this, tileX, tileY);
     }
 
@@ -499,7 +500,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         tilecache.removeTiles(this);
         super.finalize();
     }
-    
+
     /**
      * Create an original {@link Raster} adapted for image properties.
      *

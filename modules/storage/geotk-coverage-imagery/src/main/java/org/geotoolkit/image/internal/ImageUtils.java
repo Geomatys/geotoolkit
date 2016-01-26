@@ -29,6 +29,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.SampleModel;
 
 import javax.imageio.ImageTypeSpecifier;
@@ -38,6 +39,7 @@ import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Static;
+import static org.geotoolkit.image.internal.PlanarConfiguration.Interleaved;
 
 /**
  * Aggregate some methods to create {@link BufferedImage} or {@link WritableLargeRenderedImage} more easily.
@@ -255,8 +257,9 @@ public class ImageUtils extends Static{
      */
     public static WritableLargeRenderedImage createPaletteLargeImage(final int width, final int height, final SampleType type,
                                                                      final int numBand, final int[] java2DColorMap) {
-        final ColorModel cm = createColorModel(type, numBand, PhotometricInterpretation.Palette, java2DColorMap);
-        return new WritableLargeRenderedImage(width, height, cm);
+        final ColorModel cm  = createColorModel(type, numBand, PhotometricInterpretation.Palette, java2DColorMap);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, numBand);
+        return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
     /**
@@ -276,8 +279,9 @@ public class ImageUtils extends Static{
      * @see PhotometricInterpretation#RGB
      */
     public static WritableLargeRenderedImage createARGBLargeImage(final int width, final int height, final SampleType type) {
-        final ColorModel cm = createColorModel(type, 4, PhotometricInterpretation.RGB, null);
-        return new WritableLargeRenderedImage(width, height, cm);
+        final ColorModel cm  = createColorModel(type, 4, PhotometricInterpretation.RGB, null);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, 4);
+        return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
     /**
@@ -297,8 +301,9 @@ public class ImageUtils extends Static{
      * @see PhotometricInterpretation#RGB
      */
     public static WritableLargeRenderedImage createRGBLargeImage(final int width, final int height, final SampleType type) {
-        final ColorModel cm = createColorModel(type, 3, PhotometricInterpretation.RGB, null);
-        return new WritableLargeRenderedImage(width, height, cm);
+        final ColorModel cm  = createColorModel(type, 3, PhotometricInterpretation.RGB, null);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, 3);
+        return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
     /**
@@ -320,8 +325,9 @@ public class ImageUtils extends Static{
      */
     public static WritableLargeRenderedImage createScaledLargeImage(final int width, final int height,
                                                                     final SampleType type, final int numBand) {
-        final ColorModel cm = createColorModel(type, numBand, PhotometricInterpretation.GrayScale, null);
-        return new WritableLargeRenderedImage(width, height, cm);
+        final ColorModel cm  = createColorModel(type, numBand, PhotometricInterpretation.GrayScale, null);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, numBand);
+        return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
     /**
@@ -346,7 +352,8 @@ public class ImageUtils extends Static{
     public static WritableLargeRenderedImage createLargeImage(final int width, final int height, final SampleType type, final int numBand,
                                                               final PhotometricInterpretation pI, final int[] java2DColorMap) {
         final ColorModel cm = createColorModel(type, numBand, pI, java2DColorMap);
-        return new WritableLargeRenderedImage(width, height, cm);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, numBand);
+        return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
     /**
@@ -377,8 +384,9 @@ public class ImageUtils extends Static{
                                                               final Dimension tileSize, final SampleType type, final int numBand,
                                                               final int tilegridXOffset, final int tilegridYOffset,
                                                               final PhotometricInterpretation pI, final int[] java2DColorMap) {
-        final ColorModel cm = createColorModel(type, numBand, pI, java2DColorMap);
-        return new WritableLargeRenderedImage(minx, miny, width, height, tileSize, tilegridXOffset, tilegridYOffset, cm);
+        final ColorModel cm  = createColorModel(type, numBand, pI, java2DColorMap);
+        final SampleModel sm = createSampleModel(Interleaved, type, width, height, numBand);
+        return new WritableLargeRenderedImage(minx, miny, width, height, tileSize, tilegridXOffset, tilegridYOffset, cm, sm);
     }
 
     /**
@@ -641,9 +649,10 @@ public class ImageUtils extends Static{
             case DataBuffer.TYPE_DOUBLE : {
                 return SAMPLEFORMAT_IEEEFP; //-- type floating point --//
             }
+            case DataBuffer.TYPE_BYTE  :
             case DataBuffer.TYPE_SHORT :
             case DataBuffer.TYPE_INT   : {
-                return SAMPLEFORMAT_INT; //-- type signed 32 bits Int --//
+                return SAMPLEFORMAT_INT; //-- type signed 8, 16, 32 bits Int --//
             }
             default : { return SAMPLEFORMAT_UINT;} //-- type UInt or UShort--//
         }
@@ -685,27 +694,42 @@ public class ImageUtils extends Static{
     }
 
     /**
-     * Create and returns appropriate {@link SampleModel} built from given parameters.
+     * Create and returns appropriate {@link SampleModel} built from given parameters.<br><br>
+     *
+     * Note : 2 kind of {@link SampleModel} may be returned with differents internales configurations.<br>
+     * 1 - {@link PixelInterleavedSampleModel} : <br>
+     * pixelstride = numband<br>
+     * scanlineStride = width * pixelstride.<br><br>
+     * 2 - {@link BandedSampleModel} : <br>
+     * scanlineStride = width
      *
      * @param planarConfiguration define planar configuration of asked {@link SampleModel},
      * 1 for {@link PixelInterleavedSampleModel} and 2 for {@link BandedSampleModel}
-     * @param colorModel the associate {@link ColorModel}.
+     * @param sampleType Data type of internal image raster.
+     * @param width image width
+     * @param height image height
+     * @param numBand image numband
      * @return {@link ImageTypeSpecifier}.
      * @see #PLANAR_INTERLEAVED
      * @see #PLANAR_BANDED
      */
-    public static SampleModel createSampleModel(final short planarConfiguration, final ColorModel colorModel)
+    public static SampleModel createSampleModel(final PlanarConfiguration planarConfiguration, final SampleType sampleType,
+                                                final int width, final int height, final int numBand)
             throws UnsupportedOperationException {
-        final int numBand        = colorModel.getNumComponents();
-        final int sampleBitsSize = colorModel.getComponentSize()[0];
+
+        final int[] bandOff = new int[numBand];
         switch (planarConfiguration) {
-            case 1 : return colorModel.createCompatibleSampleModel(1, 1);
-            case 2 : {
+            case Interleaved : {
+                int b = -1;
+                while (++b < numBand) bandOff[b] = b;
+                return new PixelInterleavedSampleModel(SampleType.valueOf(sampleType), width, height, numBand, numBand * width, bandOff);
+            }
+            case Banded : {
                 final int[] bankIndices = new int[numBand];
                 int b = -1;
                 while (++b < numBand) bankIndices[b] = b;
-                final int[] bandOff = new int[numBand];
-                return new BandedSampleModel(colorModel.getTransferType(), 1, 1, sampleBitsSize, bankIndices, bandOff);
+
+                return new BandedSampleModel(SampleType.valueOf(sampleType), width, height, width, bankIndices, bandOff);
             }
             default : throw new IllegalArgumentException("unknow planarConfiguration type. Expected 1 for interleaved or 2 for banded. Found : "+planarConfiguration);
         }
@@ -811,7 +835,7 @@ public class ImageUtils extends Static{
                 break;
             }
             case 3 : {//-- palette
-                if (java2DColorMap == null) 
+                if (java2DColorMap == null)
                      throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
 
                 final ColorModel cm = new IndexColorModel(sampleBitsSize, java2DColorMap.length, java2DColorMap, 0, true, -1, dataBufferType);
