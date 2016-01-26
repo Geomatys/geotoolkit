@@ -99,15 +99,24 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
         return PARAMETERS_DESCRIPTOR;
     }
 
+    /**
+     * Can process if input File exist and has "xml" extension
+     *
+     * @param params
+     * @return
+     */
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
         if(valid){
-            Object value = params.parameter(FILE_PATH.getName().toString()).getValue();
-            return value != null;
-        } else {
-            return false;
+            File value = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+            if (value != null && value.exists()) {
+                String fileName = value.getName();
+                int dotIdx = fileName.lastIndexOf('.');
+                return dotIdx > 0 && "xml".equalsIgnoreCase(fileName.substring(dotIdx+1, fileName.length()));
+            }
         }
+        return false;
     }
 
     @Override

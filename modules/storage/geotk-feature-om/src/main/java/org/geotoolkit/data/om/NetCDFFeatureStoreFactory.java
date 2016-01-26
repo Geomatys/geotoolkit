@@ -57,9 +57,9 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Parameter for database port
      */
@@ -99,15 +99,24 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
         return PARAMETERS_DESCRIPTOR;
     }
 
+    /**
+     * Can process if input File exist and has "nc" extension
+     *
+     * @param params
+     * @return
+     */
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
         if(valid){
-            Object value = params.parameter(FILE_PATH.getName().toString()).getValue();
-            return value != null;
-        } else {
-            return false;
+            File value = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+            if (value != null && value.exists()) {
+                String fileName = value.getName();
+                int dotIdx = fileName.lastIndexOf('.');
+                return dotIdx > 0 && "nc".equalsIgnoreCase(fileName.substring(dotIdx+1, fileName.length()));
+            }
         }
+        return false;
     }
 
     @Override

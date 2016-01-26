@@ -68,7 +68,12 @@ import org.apache.sis.util.logging.Logging;
 @XmlRootElement(name="CoverageReference")
 public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
-    private static final String CURRENT_VERSION = "1.0";
+    /**
+     * Changes :
+     * 1.1 - number format used to name folder was using system local,
+     *      local is fixed to EN in 1.1.
+     */
+    private static final String CURRENT_VERSION = "1.1";
 
     @XmlTransient
     private static MarshallerPool POOL;

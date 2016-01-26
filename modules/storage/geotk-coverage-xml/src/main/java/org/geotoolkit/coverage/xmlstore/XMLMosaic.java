@@ -303,14 +303,26 @@ public class XMLMosaic implements GridMosaic {
     public String getId() {
         final StringBuilder sb = new StringBuilder();
         sb.append(scale);
-        for(int i=0;i<upperLeft.length;i++){
-            sb.append('x');
-            synchronized(DECIMAL_FORMAT){
-                sb.append(DECIMAL_FORMAT.format(upperLeft[i]));
+        
+        final XMLCoverageReference ref = pyramid.getPyramidSet().getRef();
+        final String version = ref.getVersion();
+        
+        if("1.0".equals(version)){
+            //backward compatibility for older pyramid files
+            for(int i=0;i<upperLeft.length;i++){
+                sb.append('x');
+                sb.append(upperLeft[i]);
             }
+            return sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
+        }else{
+            for(int i=0;i<upperLeft.length;i++){
+                sb.append('x');
+                synchronized(DECIMAL_FORMAT){
+                    sb.append(DECIMAL_FORMAT.format(upperLeft[i]));
+                }
+            }
+            return sb.toString().replace('.', 'd');
         }
-        //avoid local system formating
-        return sb.toString().replace('.', 'd');
     }
 
     public File getFolder() {
