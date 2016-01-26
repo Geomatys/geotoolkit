@@ -40,6 +40,7 @@ import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.sql.Dialect;
 import org.apache.sis.util.NullArgumentException;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
@@ -411,8 +412,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                     Loggings.Keys.CreatingCachedEpsgDatabase_1, EPSG_VERSION);
             log.setSourceMethodName("call");
             log.setSourceClassName(EpsgInstaller.class.getName());
-            log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
-            ThreadedEpsgFactory.LOGGER.log(log);
+            log.setLoggerName("org.geotoolkit.referencing.factory.epsg");
+            Logging.getLogger("org.geotoolkit.referencing.factory.epsg").log(log);
             for (String script : runner.getScriptFiles()) {
                 script += ".sql";
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);

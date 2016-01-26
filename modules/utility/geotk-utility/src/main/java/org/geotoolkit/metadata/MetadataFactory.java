@@ -20,9 +20,9 @@ package org.geotoolkit.metadata;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.ObjectFactory;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
@@ -122,7 +122,7 @@ public class MetadataFactory extends Factory {
     private static Set<?> factories() {
         final Set<Object> factories = new LinkedHashSet<>();
         for (int i=0; ; i++) {
-            final Set<?> factory;
+            final ObjectFactory factory;
             switch (i) {
                 /*
                  * We declare only the factories having create(Map<String,?>, ...) methods.
@@ -130,22 +130,12 @@ public class MetadataFactory extends Factory {
                  * implementation, CRS and CS factories are also Datum factory and we don't
                  * want them to hide the default DatumFactory.
                  */
-                case 0: factory = FactoryFinder.getDatumFactories(null); break;
-                case 1: factory = FactoryFinder.getCSFactories   (null); break;
-                case 2: factory = FactoryFinder.getCRSFactories  (null); break;
+                case 0: factory = FactoryFinder.getDatumFactory(null); break;
+                case 1: factory = FactoryFinder.getCSFactory   (null); break;
+                case 2: factory = FactoryFinder.getCRSFactory  (null); break;
                 default: return factories;
             }
-            /*
-             * Retains only the first factory. It is not worth to retain the next one because
-             * they should have the same set of create methods, and FactoryMethod pickup only
-             * the create method found in the first factory. Actually, it would be worth only
-             * if the next factories declare more create methods than the first one, but we
-             * don't check that.
-             */
-            final Iterator<?> it = factory.iterator();
-            if (it.hasNext()) {
-                factories.add(it.next());
-            }
+            factories.add(factory);
         }
     }
 

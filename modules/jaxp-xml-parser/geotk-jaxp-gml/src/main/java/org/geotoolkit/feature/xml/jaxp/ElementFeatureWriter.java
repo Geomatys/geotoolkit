@@ -38,8 +38,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
@@ -415,7 +414,7 @@ public class ElementFeatureWriter {
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
-                    srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
+                    srsName = IdentifiedObjects.lookupURN(bounds.getCoordinateReferenceSystem(), null);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }

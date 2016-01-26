@@ -192,7 +192,6 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
                     directory = new File((String) hint);
                 }
             }
-            hints.put(directoryKey, directory);
         }
         /*
          * Now build the list of URLs to load. First we look for a real file (not
@@ -324,20 +323,6 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
                     }
                 }
             }
-        }
-        /*
-         * If the WKT definitions do not contain any AXIS[...] element, then every CRS will be
-         * created with the default (longitude,latitude) axis order. In such case this factory
-         * is insensitive to the FORCE_LONGITUDE_FIRST_AXIS_ORDER hint  (in other words, every
-         * CRS created by this instance are invariant under the above-cited hint value) and we
-         * can omit them from the hint map. This omission allows the CRS.decode(..., true)
-         * convenience method to accept this factory (GEOT-1175).
-         */
-        if (!containsAxis) {
-            hints.remove(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER);
-            hints.remove(Hints.FORCE_STANDARD_AXIS_DIRECTIONS);
-            // Do not remove FORCE_STANDARD_AXIS_UNITS. It still taken in account
-            // because units are defined outside AXIS[...] elements in WKT format.
         }
     }
 

@@ -20,15 +20,21 @@
  */
 package org.geotoolkit.referencing.factory;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.Collection;
-import java.awt.RenderingHints;
-
-import org.opengis.referencing.*;
-
+import java.util.logging.Logger;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.parameter.InvalidParameterValueException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
+import org.opengis.util.NameFactory;
+import org.opengis.util.ScopedName;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -38,34 +44,32 @@ import org.geotoolkit.factory.Hints;
  * an other factory.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.3
  * @module
  *
  * @deprecated Moved to {@link org.apache.sis.referencing.factory.GeodeticAuthorityFactory} in Apache SIS.
  */
 @Deprecated
-public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
+public abstract class DirectAuthorityFactory extends GeodeticAuthorityFactory {
+    /**
+     * The logger for event related to Geotk factories.
+     */
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.referencing.factory");
 
-    // IMPLEMENTATION NOTE:  The reason why this class exist is that we don't want "indirect"
-    // factories like CachingAuthorityFactory to inherit the factories field.  If this field
-    // existed in their super-class, then the super-class constructor could try to initialize
-    // it while in fact CachingAuthorityFactory doesn't need it. Experience with GeoTools 2.2
-    // suggests that it can lead to tricky recursivity problems in FactoryFinder, because most
-    // factories registered in META-INF/services are some kind of CachingAuthorityFactory.
+    /**
+     * The name factory to use for creating {@link GenericName}.
+     *
+     * @since 3.00
+     */
+    protected final NameFactory nameFactory;
 
     /**
      * The underlying factories used for objects creation.
      */
     protected final ReferencingFactoryContainer factories;
 
-    /**
-     * Tells if {@link ReferencingFactoryContainer#hints} has been invoked. It must be
-     * invoked exactly once, but can't be invoked in the constructor because it causes
-     * a {@link StackOverflowError} in some situations.
-     */
-    private volatile boolean hintsInitialized;
+    protected DirectAuthorityFactory() {
+        this((Hints) null);
+    }
 
     /**
      * Constructs an instance using the specified set of factories.
@@ -73,9 +77,9 @@ public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
      * @param factories The low-level factories to use.
      */
     protected DirectAuthorityFactory(final ReferencingFactoryContainer factories) {
-        super(EMPTY_HINTS);
-        this.factories = factories;
         ensureNonNull("factories", factories);
+        this.factories = factories;
+        nameFactory = DefaultFactories.forBuildin(NameFactory.class);
     }
 
     /**
@@ -86,52 +90,108 @@ public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
      * @param userHints An optional set of hints, or {@code null} for the default ones.
      */
     protected DirectAuthorityFactory(final Hints userHints) {
-        super(userHints);
-        factories = ReferencingFactoryContainer.instance(userHints);
-        // Do not copies the user-provided hints to this.hints, because
-        // this is up to sub-classes to decide which hints are relevant.
+        this(ReferencingFactoryContainer.instance(userHints));
     }
 
     /**
-     * Returns the implementation hints for this factory. The returned map contains values for
-     * {@link Hints#CRS_FACTORY CRS}, {@link Hints#CS_FACTORY CS}, {@link Hints#DATUM_FACTORY DATUM}
-     * and {@link Hints#MATH_TRANSFORM_FACTORY MATH_TRANSFORM} {@code FACTORY} hints. Other values
-     * may be provided as well, at implementation choice.
+     * Returns the vendor responsible for creating this factory implementation.
+     * Many implementations from different vendors may be available for the same
+     * factory interface.
+     * <p>
+     * The default for Geotk implementations is to return
+     * {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
+     *
+     * @return The vendor for this factory implementation.
+     *
+     * @see Citations#GEOTOOLKIT
      */
     @Override
-    public Map<RenderingHints.Key,?> getImplementationHints() {
-        if (!hintsInitialized) {
-            final Map<RenderingHints.Key, ?> toAdd = factories.getImplementationHints();
-            /*
-             * Double-check locking: was a deprecated practice before Java 5, but is okay since
-             * Java 5 provided that 'hintsInitialized' is volatile. In this particular case, it
-             * is important to invoke factories.getImplementationHints() outside the synchronized
-             * block in order to reduce the risk of deadlock. It is not a big deal if its value
-             * is computed twice.
-             */
-            synchronized (this) {
-                if (!hintsInitialized) {
-                    hintsInitialized = true;
-                    hints.putAll(toAdd);
-                }
+    public Citation getVendor() {
+        return getClass().getName().startsWith("org.geotoolkit.") ? org.geotoolkit.metadata.Citations.GEOTOOLKIT : org.geotoolkit.metadata.Citations.UNKNOWN;
+    }
+
+    /**
+     * Returns the organization or party responsible for definition and maintenance of the database.
+     */
+    @Override
+    public abstract Citation getAuthority();
+
+    /**
+     * Returns a description of the underlying backing store, or {@code null} if unknown.
+     * This is for example the database software used for storing the data.
+     * The default implementation returns always {@code null}.
+     *
+     * @return The description of the underlying backing store, or {@code null}.
+     * @throws FactoryException if a failure occurs while fetching the engine description.
+     */
+    public String getBackingStoreDescription() throws FactoryException {
+        return null;
+    }
+
+    /**
+     * Releases resources immediately instead of waiting for the garbage collector.
+     * Once a factory has been disposed, further {@code create(...)} invocations
+     * may throw a {@link FactoryException}. Disposing a previously-disposed factory,
+     * however, has no effect.
+     */
+    protected void dispose(final boolean shutdown) {
+        // To be overridden by subclasses.
+    }
+
+    /**
+     * Trims the authority scope, if presents. For example if this factory is an EPSG authority
+     * factory and the specified code start with the {@code "EPSG:"} prefix, then the prefix is
+     * removed. Otherwise, the string is returned unchanged (except for leading and trailing spaces).
+     *
+     * @param  code The code to trim.
+     * @return The code without the authority scope.
+     */
+    protected String trimAuthority(String code) {
+        /*
+         * IMPLEMENTATION NOTE: This method is overridden in PropertyAuthorityFactory. If
+         * implementation below is modified, it is probably worth to revisit the overridden
+         * method as well.
+         */
+        code = code.trim();
+        final GenericName name  = nameFactory.parseGenericName(null, code);
+        if (name instanceof ScopedName) {
+            final GenericName scope = ((ScopedName) name).path();
+            if (Citations.identifierMatches(getAuthority(), scope.toString())) {
+                return name.tip().toString().trim();
             }
         }
-        return super.getImplementationHints();
+        return code;
     }
 
     /**
-     * Returns the direct {@linkplain Factory factory} dependencies.
+     * Creates an exception for an unknown authority code. This convenience method is provided
+     * for implementation of {@code createXXX} methods.
+     *
+     * @param  type  The GeoAPI interface that was to be created
+     *               (e.g. {@code CoordinateReferenceSystem.class}).
+     * @param  code  The unknown authority code.
+     * @return An exception initialized with an error message built
+     *         from the specified informations.
      */
-    @Override
-    final Collection<? super AuthorityFactory> dependencies() {
-        final ReferencingFactoryContainer factories = this.factories;
-        if (factories != null) {
-            final Set<Object> dependencies = new LinkedHashSet<>(8);
-            dependencies.add(factories.getCRSFactory());
-            dependencies.add(factories.getCSFactory());
-            dependencies.add(factories.getDatumFactory());
-            return dependencies;
+    protected final NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
+        final InternationalString authority = getAuthority().getTitle();
+        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,
+                   code, authority, type), authority.toString(), trimAuthority(code), code);
+    }
+
+    /**
+     * Makes sure that an argument is non-null. This is a convenience method for subclass methods.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws InvalidParameterValueException if {@code object} is null.
+     */
+    protected static void ensureNonNull(final String name, final Object object)
+            throws InvalidParameterValueException
+    {
+        if (object == null) {
+            throw new InvalidParameterValueException(Errors.format(
+                    Errors.Keys.NullArgument_1, name), name, object);
         }
-        return super.dependencies();
     }
 }

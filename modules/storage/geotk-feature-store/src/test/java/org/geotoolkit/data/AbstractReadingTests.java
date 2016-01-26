@@ -207,7 +207,7 @@ public abstract class AbstractReadingTests{
     private void testCounts(final FeatureStore store, final ExpectedResult candidate) throws Exception{
 
         assertEquals(candidate.size, store.getCount(QueryBuilder.all(candidate.name)));
-        
+
         //todo make more generic count tests
     }
 
@@ -253,7 +253,7 @@ public abstract class AbstractReadingTests{
         query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name), candidate.name.tip().toString()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
-            throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
+            throw new Exception("Asking for a reader with a wrong name should raise a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }
@@ -261,11 +261,11 @@ public abstract class AbstractReadingTests{
         query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name)+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
         try{
             store.getFeatureReader(query);
-            throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");
+            throw new Exception("Asking for a reader with a wrong namespace should raise a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }
-        
+
 
         //crs ------------------------------------------------------------------
         if(type.getGeometryDescriptor() != null){
@@ -317,7 +317,7 @@ public abstract class AbstractReadingTests{
         }
 
         //property -------------------------------------------------------------
-        
+
         //check only id query
         query = QueryBuilder.fids(candidate.name);
         FeatureReader ite = store.getFeatureReader(query);
@@ -489,7 +489,7 @@ public abstract class AbstractReadingTests{
 
             assertEquals(1, i);
         }
-        
+
         //filter ---------------------------------------------------------------
         //filters are tested more deeply in the filter module
         //we just make a few tests here for sanity check

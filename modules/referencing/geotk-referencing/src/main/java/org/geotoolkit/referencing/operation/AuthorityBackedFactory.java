@@ -45,12 +45,12 @@ import org.geotoolkit.internal.referencing.OperationContext;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
-import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
+import org.apache.sis.referencing.factory.MissingFactoryResourceException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 
+import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
@@ -163,7 +163,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      *
      * @return The underlying coordinate operation authority factory.
      */
-    protected CoordinateOperationAuthorityFactory getAuthorityFactory() {
+    protected CoordinateOperationAuthorityFactory getAuthorityFactory() throws FactoryException {
         /*
          * No need to synchronize. This is not a big deal if AuthorityFactoryFinder is invoked
          * twice since it is already synchronized. Actually, we should not synchronize at all.
@@ -180,7 +180,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             final Hints hints = EMPTY_HINTS.clone();
             noForce(hints);
 // TODO     authorityFactory = factory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
-            authorityFactory = factory = new ThreadedEpsgFactory();
+            authorityFactory = factory = (CoordinateOperationAuthorityFactory) CRS.getAuthorityFactory("EPSG");
         }
         return factory;
     }
@@ -226,6 +226,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     @Override
     protected CoordinateOperation createFromDatabase(final CoordinateReferenceSystem sourceCRS,
                                                      final CoordinateReferenceSystem targetCRS)
+            throws FactoryException
     {
         /*
          * Safety check against recursivity: returns null if this method is invoked indirectly
@@ -790,7 +791,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * @param factory The factory used in the attempt to create an operation.
      */
     private static void log(final Throwable exception, final AuthorityFactory factory) {
-        log(Level.WARNING, exception, factory, exception instanceof NoSuchIdentifiedResource);
+        log(Level.WARNING, exception, factory, exception instanceof MissingFactoryResourceException);
     }
 
     /**

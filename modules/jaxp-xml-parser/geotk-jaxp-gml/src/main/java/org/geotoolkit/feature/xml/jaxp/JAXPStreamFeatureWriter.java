@@ -40,7 +40,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.ComplexType;
@@ -73,8 +72,7 @@ import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
@@ -345,7 +343,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     break;
                 }
             }
-            
+
             writer.writeCharacters(Utils.getStringValue(value));
 
 
@@ -608,14 +606,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } catch (JAXBException ex) {
                     LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                 }
-                
+
                 if(!descIsType)writer.writeEndElement();
             }
         }
     }
 
     /**
-     * 
+     *
      * @param gmlGeometry
      * @param id
      * @param inc auto increment value, ids must be unique
@@ -770,7 +768,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
-                    srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
+                    srsName = IdentifiedObjects.lookupURN(bounds.getCoordinateReferenceSystem(), null);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }

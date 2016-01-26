@@ -43,6 +43,8 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
@@ -68,7 +70,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
     /**
      * The factory which create CRS instances.
      */
-    private final CRSAuthorityFactory factory, xyOrder;
+    private final CRSAuthorityFactory factory;
 
     /**
      * Creates a new instance.
@@ -86,8 +88,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
                 "  <li>The <del>codes with a strike</del> (${PERCENT.DEPRECATED} of them) identify deprecated CRS." +
                 " In some cases, the remarks column indicates the replacement.</li>\n" +
                 "</ul>");
-        factory = CRS.getAuthorityFactory(false);
-        xyOrder = CRS.getAuthorityFactory(true);
+        factory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
         add(factory);
         /*
          * We have to use this hack for now because exceptions are formatted in the current locale.
@@ -157,13 +158,9 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
     protected Row createRow(final String code, final IdentifiedObject object) {
         final Row row = super.createRow(code, object);
         final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) object;
-        try {
-            final CoordinateReferenceSystem crsXY = xyOrder.createCoordinateReferenceSystem(code);
-            if (!CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(), crsXY.getCoordinateSystem())) {
-                row.annotation = YX_ORDER;
-            }
-        } catch (FactoryException e) {
-            Logging.unexpectedException(null, CRSAuthorityCodesReport.class, "createRow", e);
+        final CoordinateReferenceSystem crsXY = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+        if (!CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(), crsXY.getCoordinateSystem())) {
+            row.annotation = YX_ORDER;
         }
         row.remark = getRemark(crs);
         if (object instanceof AbstractIdentifiedObject) {

@@ -147,13 +147,12 @@ public final strictfp class DirectPostgisFactoryTest {
     @Test
     @Ignore
     public void testCaching() throws FactoryException, IOException {
-        final CachingPostgisFactory factory = new CachingPostgisFactory(null, getCoverageDataSource());
+        final CachingPostgisFactory factory = new CachingPostgisFactory(getCoverageDataSource());
         try {
             /*
              * Test general information.
              */
             assertEquals("EPSG", org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
-            assertTrue(factory.getBackingStoreDescription().contains("PostgreSQL"));
             /*
              * Test fetching a few CRS.
              */
@@ -179,7 +178,7 @@ public final strictfp class DirectPostgisFactoryTest {
             assertSame(projCRS, factory.createProjectedCRS ("EPSG:3395"));
             assertSame(vertCRS, factory.createVerticalCRS  ("EPSG:57150"));
         } finally {
-            factory.dispose();
+            factory.close();
         }
     }
 }

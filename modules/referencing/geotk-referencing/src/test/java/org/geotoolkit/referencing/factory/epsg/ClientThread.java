@@ -29,10 +29,10 @@ import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.apache.sis.geometry.DirectPosition2D;
-
 import org.apache.sis.referencing.CommonCRS;
+
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
@@ -97,7 +97,7 @@ final strictfp class ClientThread extends Thread {
     /**
      * The factory to test.
      */
-    private final AbstractAuthorityFactory factory;
+    private final GeodeticAuthorityFactory factory;
 
     /**
      * Used in order to wait until every threads are ready to process.
@@ -110,7 +110,7 @@ final strictfp class ClientThread extends Thread {
      * @param id Thread identifier.
      * @param factory The factory to test.
      */
-    public ClientThread(final int id, final AbstractAuthorityFactory factory, final CountDownLatch lock) {
+    public ClientThread(final int id, final GeodeticAuthorityFactory factory, final CountDownLatch lock) {
         super("ClientThread" + (id < 10 ? " 0" : " ") + id);
         this.id         = id;
         this.factory    = factory;

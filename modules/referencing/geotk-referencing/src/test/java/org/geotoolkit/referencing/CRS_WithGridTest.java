@@ -31,7 +31,6 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
-import static org.geotoolkit.referencing.Commons.*;
 
 
 /**
@@ -53,7 +52,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Ignore
     public void testNADCON() throws Exception {
         assumeTrue(Installation.NADCON.directory(true).isDirectory());
-        assumeTrue(isEpsgFactoryAvailable());
+        assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final MathTransform tr;
         final DirectPosition2D sourcePt, targetPt;
@@ -83,7 +82,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Ignore
     public void testNTF() throws Exception {
         assumeTrue(Installation.NADCON.directory(true).isDirectory());
-        assumeTrue(isEpsgFactoryAvailable());
+        assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:27582"); // Nouvelle Triangulation Française (Paris)

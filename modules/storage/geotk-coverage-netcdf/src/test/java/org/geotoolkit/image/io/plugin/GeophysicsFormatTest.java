@@ -119,14 +119,14 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
             "│               │   ├───direction=“east”\n" +
             "│               │   ├───minimumValue=“6.0”\n" +
             "│               │   ├───maximumValue=“70.0”\n" +
-            "│               │   └───unit=“deg”\n" +
+            "│               │   └───unit=“°”\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:lat”\n" +
             "│               │   ├───axisAbbrev=“φ”\n" +
             "│               │   ├───direction=“north”\n" +
             "│               │   ├───minimumValue=“68.0”\n" +
             "│               │   ├───maximumValue=“81.0”\n" +
-            "│               │   └───unit=“deg”\n" +
+            "│               │   └───unit=“°”\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:depth”\n" +
             "│               │   ├───axisAbbrev=“d”\n" +

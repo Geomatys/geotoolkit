@@ -17,12 +17,11 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import java.util.Map;
-import java.sql.Connection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.geotoolkit.factory.Hints;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import org.apache.sis.referencing.factory.sql.SQLTranslator;
 
 
 /**
@@ -32,12 +31,9 @@ import org.geotoolkit.factory.Hints;
  * programmatically here.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.20
- *
- * @since 3.10 (derived from 2.2)
  * @module
  */
-final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
+final class HsqlDialectEpsgFactory extends SQLTranslator {
     /**
      * The regular expression pattern for searching the "FROM (" clause.
      * This is the pattern for the opening parenthesis.
@@ -47,17 +43,10 @@ final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
             Pattern.CASE_INSENSITIVE);
 
     /**
-     * Constructs an authority factory using the given connection.
+     * Constructs an authority factory using the given metadata.
      */
-    public HsqlDialectEpsgFactory(final Hints userHints, final Connection connection) {
-        super(userHints, connection);
-    }
-
-    /**
-     * Constructs an authority factory using an existing map.
-     */
-    HsqlDialectEpsgFactory(Hints userHints, Connection connection, Map<String,String> toANSI) {
-        super(userHints, connection, toANSI);
+    public HsqlDialectEpsgFactory(final DatabaseMetaData metadata) throws SQLException {
+        super(metadata);
     }
 
     /**
@@ -67,8 +56,8 @@ final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
      * @return The The adapted SQL statement, or {@code query} if no change was needed.
      */
     @Override
-    public String adaptSQL(String query) {
-        query = super.adaptSQL(query);
+    public String apply(String query) {
+        query = super.apply(query);
         final Matcher matcher = OPENING_PATTERN.matcher(query);
         if (matcher.find()) {
             final int opening = matcher.end()-1;

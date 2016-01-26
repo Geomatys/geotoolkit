@@ -26,7 +26,6 @@ import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.crs.AbstractCRS;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.util.ComparisonMode;
@@ -42,25 +41,13 @@ import static org.geotoolkit.referencing.Assert.*;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
  * @version 3.18
- *
- * @since 2.1
  */
 public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     /**
      * Creates a test suite for the MS-Access database.
      */
     public ThreadedEpsgFactoryTest() {
-        super(ThreadedEpsgFactory.class);
-    }
-
-    /**
-     * Creates a test suite for the given factory type.
-     * This is used for the test suite in other modules.
-     *
-     * @param type The class of the factory being tested.
-     */
-    protected ThreadedEpsgFactoryTest(final Class<? extends AbstractAuthorityFactory> type) {
-        super(type);
+        super();
     }
 
     /**

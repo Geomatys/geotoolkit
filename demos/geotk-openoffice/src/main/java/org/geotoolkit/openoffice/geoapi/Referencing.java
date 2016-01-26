@@ -196,8 +196,11 @@ public final class Referencing extends Formulas implements XReferencing {
      * Returns the CRS authority factory.
      */
     private CRSAuthorityFactory crsFactory() {
-        if (crsFactory == null) {
-            crsFactory = CRS.getAuthorityFactory(null);
+        if (crsFactory == null) try {
+            crsFactory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
+        } catch (FactoryException e) {
+            // Should never happen.
+            throw new RuntimeException(e);  // TODO
         }
         return crsFactory;
     }

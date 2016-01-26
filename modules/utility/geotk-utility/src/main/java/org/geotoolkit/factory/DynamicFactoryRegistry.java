@@ -51,7 +51,10 @@ import org.apache.sis.util.Classes;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Will be replaced by a more standard dependency injection mechanism.
  */
+@Deprecated
 public class DynamicFactoryRegistry extends FactoryRegistry {
     /**
      * The array of classes for searching the one-argument constructor.

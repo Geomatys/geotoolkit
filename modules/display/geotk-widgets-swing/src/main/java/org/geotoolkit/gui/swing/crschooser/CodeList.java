@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -37,14 +37,13 @@ import org.opengis.util.FactoryException;
  * database backed (not a usual implementation from {@code java.util} package), so it
  * is worth to do lazy loading here.
  *
- * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending
  */
 final class CodeList extends AbstractListModel {
 
     private static CodeList DEFAULT_INSTANCE;
-    
+
     /**
      * The authority factory, or {@code null} if disposed.
      */
@@ -76,7 +75,7 @@ final class CodeList extends AbstractListModel {
             selected = getElementAt(0);
         }
     }
-        
+
 
     /**
      * Returns the length of the list.
@@ -156,12 +155,13 @@ final class CodeList extends AbstractListModel {
     }
 
     public static CodeList getCRSInstance() throws FactoryException {
-        if(DEFAULT_INSTANCE == null){
-            final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
+        if (DEFAULT_INSTANCE == null) try {
+            final CRSAuthorityFactory factory = CRS.getAuthorityFactory(null);
             DEFAULT_INSTANCE = new CodeList(factory, CoordinateReferenceSystem.class);
+        } catch (FactoryException e) {
+            throw new RuntimeException(e);  // Should never happen.
         }
-        
         return DEFAULT_INSTANCE;
     }
-    
+
 }

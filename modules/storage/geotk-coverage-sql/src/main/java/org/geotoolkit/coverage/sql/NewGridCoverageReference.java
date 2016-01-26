@@ -66,7 +66,7 @@ import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -677,9 +677,9 @@ public final class NewGridCoverageReference {
     private static Integer getIdentifier(final CoordinateReferenceSystem crs, final CRSAuthorityFactory crsFactory)
             throws FactoryException
     {
-        if (crsFactory instanceof AbstractAuthorityFactory) {
-            IdentifiedObject identifiedCRS = ((AbstractAuthorityFactory) crsFactory)
-                    .getIdentifiedObjectFinder(crs.getClass()).find(crs);
+        if (crsFactory instanceof GeodeticAuthorityFactory) {
+            IdentifiedObject identifiedCRS = ((GeodeticAuthorityFactory) crsFactory)
+                    .newIdentifiedObjectFinder().findSingleton(crs);
             if (identifiedCRS == null) {
                 identifiedCRS = crs;
             }

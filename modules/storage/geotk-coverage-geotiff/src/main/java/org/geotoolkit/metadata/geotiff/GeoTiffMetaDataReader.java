@@ -162,7 +162,7 @@ public final class GeoTiffMetaDataReader {
             //create the spatial metadatas.
             fillGridMetaDatas(spatialMetadata, entries);
 
-            final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);
+            final GeoTiffCRSReader crsReader = new GeoTiffCRSReader();
             crsReader.fillCRSMetaDatas(spatialMetadata, entries);
         }
 

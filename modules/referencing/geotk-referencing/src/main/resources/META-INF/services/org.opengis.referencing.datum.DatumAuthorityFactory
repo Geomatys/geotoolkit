@@ -1,4 +1,0 @@
-org.geotoolkit.referencing.factory.web.URN_AuthorityFactory
-org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory
-org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory
-org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory

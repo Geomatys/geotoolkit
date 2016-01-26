@@ -3,7 +3,6 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.collection.Cache;
@@ -38,9 +37,11 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
             try {
                 srsName = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                    srsName = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
+                    srsName = org.apache.sis.referencing.IdentifiedObjects.lookupURN(crs, null);
                     if (srsName == null) {
                         srsName = IdentifiedObjects.getIdentifierOrName(crs);
+                    } else {
+                        srsName = srsName.toLowerCase();
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -50,7 +51,7 @@ public final strictfp class FactoryMethodTest {
      */
     @Test
     public void testFind() {
-        final Object[] crsFactory = FactoryFinder.getCRSFactories(null).toArray();
+        final Object[] crsFactory = Collections.singleton(FactoryFinder.getCRSFactory(null)).toArray();
         FactoryMethod fm;
 
         fm = FactoryMethod.find(Citation.class, crsFactory);
@@ -68,7 +69,7 @@ public final strictfp class FactoryMethodTest {
      */
     @Test
     public void testCreate() throws FactoryException {
-        final Object[] crsFactory = FactoryFinder.getCRSFactories(null).toArray();
+        final Object[] crsFactory =Collections.singleton(FactoryFinder.getCRSFactory(null)).toArray();
         final FactoryMethod fm = FactoryMethod.find(VerticalCRS.class, crsFactory);
         final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("datum", CommonCRS.Vertical.MEAN_SEA_LEVEL.datum()));

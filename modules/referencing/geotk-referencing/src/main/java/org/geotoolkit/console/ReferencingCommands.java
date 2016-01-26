@@ -26,8 +26,6 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.parameter.ParameterFormat;
 
@@ -140,12 +138,6 @@ public class ReferencingCommands extends CommandLine {
     int indent = 2;
 
     /**
-     * Whatever to force "longitude first" axis order.
-     */
-    @Option
-    boolean forcexy;
-
-    /**
      * Creates a new instance of {@code ReferencingCommands}.
      *
      * @param arguments The command-line arguments.
@@ -207,20 +199,6 @@ public class ReferencingCommands extends CommandLine {
             examples = {"authorities", "codes", "operations", "conversions", "projections"})
     protected void list() {
         new ReferencingAction(this).list(arguments);
-    }
-
-    /**
-     * Invoked when the user asked the {@code "factories"} action. The default implementation
-     * prints all {@linkplain AuthorityFactory authority factories} dependencies as a tree.
-     */
-    @Action(maximalArgumentCount = 0)
-    protected void factories() {
-        final FactoryDependencies printer = new FactoryDependencies(CRS.getAuthorityFactory(forcexy));
-        printer.setAttributeEnabled(true);
-        printer.setColorEnabled(colors);
-        printer.setAbridged(!debug);
-        printer.print(out);
-        out.flush();
     }
 
     /**

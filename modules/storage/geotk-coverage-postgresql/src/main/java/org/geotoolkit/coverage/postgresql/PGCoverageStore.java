@@ -35,7 +35,6 @@ import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
@@ -44,6 +43,8 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model.
@@ -52,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class PGCoverageStore extends AbstractCoverageStore{
 
-    private ThreadedEpsgFactory epsgfactory;
+    private EPSGFactory epsgfactory;
     private DataSource source;
     private int fetchSize;
     private String schema;
@@ -84,9 +85,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return source;
     }
 
-    public synchronized ThreadedEpsgFactory getEPSGFactory() throws SQLException{
-        if(epsgfactory == null){
-            epsgfactory = new ThreadedEpsgFactory(source);
+    public synchronized EPSGFactory getEPSGFactory() throws FactoryException {
+        if (epsgfactory == null) {
+            epsgfactory = new EPSGFactory(source, null, null, null, null, null, null, null);
         }
         return epsgfactory;
     }

@@ -108,7 +108,7 @@ public class AuthorityFactoryProvider {
         } catch (IOException e) {
             throw new FactoryException(e);
         }
-        return new CachingPropertyFactory(factory);
+        return factory;
     }
 
     /**
@@ -121,6 +121,6 @@ public class AuthorityFactoryProvider {
      * @throws FactoryException If the authority factory can not be created.
      */
     public CRSAuthorityFactory createFromPostGIS(final DataSource datasource) throws FactoryException {
-        return new CachingPostgisFactory(hints, datasource);
+        return new CachingPostgisFactory(datasource);
     }
 }

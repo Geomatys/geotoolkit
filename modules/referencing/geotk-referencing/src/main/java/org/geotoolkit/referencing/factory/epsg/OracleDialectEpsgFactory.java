@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import java.util.Map;
-import java.sql.Connection;
-
-import org.geotoolkit.factory.Hints;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import org.apache.sis.referencing.factory.sql.SQLTranslator;
 
 
 /**
@@ -29,24 +28,14 @@ import org.geotoolkit.factory.Hints;
  *
  * @author John Grange
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
- *
- * @since 3.18 (derived from 2.1)
  * @module
  */
-final class OracleDialectEpsgFactory extends AnsiDialectEpsgFactory {
+final class OracleDialectEpsgFactory extends SQLTranslator {
     /**
-     * Constructs an authority factory using the given connection.
+     * Constructs an authority factory for the given metadata.
      */
-    public OracleDialectEpsgFactory(final Hints userHints, final Connection connection) {
-        super(userHints, connection);
-    }
-
-    /**
-     * Constructs an authority factory using an existing map.
-     */
-    OracleDialectEpsgFactory(Hints userHints, Connection connection, Map<String,String> toANSI) {
-        super(userHints, connection, toANSI);
+    public OracleDialectEpsgFactory(final DatabaseMetaData metadata) throws SQLException {
+        super(metadata);
     }
 
     /**
@@ -58,7 +47,7 @@ final class OracleDialectEpsgFactory extends AnsiDialectEpsgFactory {
      * @return The SQL statement to use, suitable for an Oracle database.
      */
     @Override
-    protected String adaptSQL(final String statement) {
-        return super.adaptSQL(statement).replace(" AS ", " ");
+    public String apply(final String statement) {
+        return super.apply(statement).replace(" AS ", " ");
     }
 }
