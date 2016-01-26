@@ -77,6 +77,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -150,7 +151,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(factoryId);
+        return (FeatureStoreFactory) DataStores.getFactoryById(factoryId);
     }
     
     /**

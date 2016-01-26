@@ -21,17 +21,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.AbstractStorage;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractClient extends AbstractStorage implements Client{
+public abstract class AbstractClient extends DataStore implements Client{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
@@ -51,12 +57,18 @@ public abstract class AbstractClient extends AbstractStorage implements Client{
 
     private final Map<String,Object> userProperties = new HashMap<String,Object>();
     private String sessionId = null;
+    protected final Set<StorageListener> listeners = new HashSet<>();
 
 
     public AbstractClient(final ParameterValueGroup params) {
         this.parameters = params;
         this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
         ArgumentChecks.ensureNonNull("server url", serverURL);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return null;
     }
 
     @Override
@@ -174,4 +186,69 @@ public abstract class AbstractClient extends AbstractStorage implements Client{
         }
         return param;
     }
+
+    @Override
+    public void close() throws DataStoreException {
+        //do nothing
+    }
+
+
+    public void addStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward a structure event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendStructureEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.structureChanged(event);
+        }
+    }
+
+    /**
+     * Forward a data event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendContentEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.contentChanged(event);
+        }
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardStructureEvent(StorageEvent event){
+        sendStructureEvent(event.copy(this));
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardContentEvent(StorageEvent event){
+        sendContentEvent(event.copy(this));
+    }
+
 }

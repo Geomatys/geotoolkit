@@ -23,6 +23,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.Serializable;
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * Base interface for {@link org.apache.sis.storage.DataStore} factories. The aim is to get a factory with metadata which
@@ -39,7 +40,7 @@ public interface DataStoreFactory {
      */
     public FactoryMetadata getMetadata();
 
-        /**
+    /**
      * General information about this factory.
      * If a given ParameterValueGroup has an identifier parameter set, it's value must
      * be {@linkplain org.opengis.metadata.Identifier#getAuthority() identifier authority}, otherwise this
@@ -49,7 +50,7 @@ public interface DataStoreFactory {
      */
     Identification getIdentification();
 
-        /**
+    /**
      * Test to see if the implementation is available for use.
      * This method ensures all the appropriate libraries to construct
      * the DataAccess are available.
@@ -122,4 +123,41 @@ public interface DataStoreFactory {
      * @see org.geotoolkit.storage.DataStoreFactory#canProcess(java.util.Map)
      */
     boolean canProcess(ParameterValueGroup params);
+
+    /**
+     * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
+     */
+    DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
+
+    /**
+     * Open a link to the storage location.
+     * This method is intended to open an existing storage.
+     * <br/>
+     * If the purpose is to create a new one storage use the create method :
+     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
+     *
+     * @param params
+     * @return DataStore opened store
+     * @throws DataStoreException if parameters are incorrect or connexion failed.
+     */
+    DataStore open(ParameterValueGroup params) throws DataStoreException;
+
+    /**
+     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
+     */
+    DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
+
+    /**
+     * Create a new storage location.
+     * This method is intended to create from scratch a new storage location.
+     * <br/>
+     * If the purpose is to open an already existing  storage use the open method :
+     * @see DataStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
+     *
+     * @param params
+     * @return FeatureStore created store
+     * @throws DataStoreException if parameters are incorrect or creation failed.
+     */
+    DataStore create(ParameterValueGroup params) throws DataStoreException;
+
 }

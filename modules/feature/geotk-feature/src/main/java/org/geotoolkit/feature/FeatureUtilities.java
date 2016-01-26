@@ -38,6 +38,7 @@ import org.geotoolkit.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  *
@@ -644,9 +645,7 @@ public final class FeatureUtilities {
      * @deprecated Use method {@link Parameters#toParameter(java.util.Map, org.opengis.parameter.ParameterDescriptorGroup)} instead.
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
-        ArgumentChecks.ensureNonNull("params", params);
-        ArgumentChecks.ensureNonNull("desc", desc);
-        return toParameter(params, desc, true);
+        return ParametersExt.toParameter(params, desc);
     }
 
     /**
@@ -664,56 +663,7 @@ public final class FeatureUtilities {
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params,
             final ParameterDescriptorGroup desc, final boolean checkMandatory) {
-
-        ArgumentChecks.ensureNonNull("params", params);
-        ArgumentChecks.ensureNonNull("desc", desc);
-        if(checkMandatory){
-            for(GeneralParameterDescriptor de : desc.descriptors()){
-                if(de.getMinimumOccurs()>0 && !(params.containsKey(de.getName().getCode()))){
-                    //a mandatory parameter is not present
-                    return null;
-                }
-            }
-        }
-
-        final ParameterValueGroup parameter = desc.createValue();
-
-        for(final Entry<String, ?> entry : params.entrySet()){
-
-            final GeneralParameterDescriptor subdesc;
-            try{
-                subdesc = desc.descriptor(entry.getKey());
-            }catch(ParameterNotFoundException ex){
-                //do nothing, the map may contain other values for other uses
-                continue;
-            }
-
-            if(!(subdesc instanceof ParameterDescriptor)){
-                //we can not recreate value groups
-                continue;
-            }
-
-            final ParameterDescriptor pd = (ParameterDescriptor) subdesc;
-
-            final ParameterValue param;
-            try{
-                param = Parameters.getOrCreate(pd,parameter);
-            }catch(ParameterNotFoundException ex){
-                //do nothing, the map may contain other values for other uses
-                continue;
-            }
-
-            Object val = entry.getValue();
-            try {
-                val = ObjectConverters.convert(val, pd.getValueClass());
-                param.setValue(val);
-            } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(null, FeatureUtilities.class, "toParameter", e);
-                // TODO - do we really want to ignore?
-            }
-        }
-
-        return parameter;
+        return ParametersExt.toParameter(params, desc, checkMandatory);
     }
 
     /**

@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.observation.store.xml;
+package org.geotoolkit.data.om.xml;
 
 import java.util.Arrays;
 import java.util.Collection;

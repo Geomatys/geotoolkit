@@ -22,8 +22,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.CoverageClientFactory;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -40,6 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 
 /**
  * WMS Server factory.
@@ -47,7 +46,7 @@ import org.geotoolkit.storage.DefaultFactoryMetadata;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSClientFactory extends AbstractClientFactory implements CoverageClientFactory{
+public class WMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 
     /** factory identification **/
     public static final String NAME = "wms";
@@ -100,18 +99,18 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
     }
 
     @Override
+    public WebMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
     public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         return new WebMapClient(params);
     }
 
     @Override
-    public WebMapClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapClient) super.open(params);
-    }
-
-    @Override
-    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public WebMapClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
@@ -120,7 +119,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapClient create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMS coverage store.");
     }
 

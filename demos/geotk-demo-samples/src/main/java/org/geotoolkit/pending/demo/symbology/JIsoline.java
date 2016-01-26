@@ -11,15 +11,14 @@ import com.vividsolutions.jts.geom.Point;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -30,6 +29,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.style.MutableStyle;
 import org.jdesktop.swingx.JXErrorPane;
 import org.geotoolkit.feature.Feature;
@@ -47,11 +47,11 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class JIsoline extends JAbstractMapPane{
   
 
-    public JIsoline() throws DataStoreException, URISyntaxException {
+    public JIsoline() throws DataStoreException, MalformedURLException{
         super(createContext());
     }
 
-    private static MapContext createContext() throws DataStoreException, URISyntaxException {
+    private static MapContext createContext() throws DataStoreException, MalformedURLException, URISyntaxException {
         final MapContext context = Styles.createWorldContext(null);
         Map<String,Serializable> params;
         FeatureStore store;
@@ -62,9 +62,7 @@ public class JIsoline extends JAbstractMapPane{
 
         //stations -------------------------------------------------------------
         try{
-            params = new HashMap<String,Serializable>();
-            params.put( "path", JAbstractMapPane.class.getResource("/data/weather/stations2.shp").toURI() );
-            store = FeatureStoreFinder.open(params);
+            store = new ShapefileFeatureStore(JAbstractMapPane.class.getResource("/data/weather/stations2.shp").toURI());
             fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
             layer = MapBuilder.createFeatureLayer(fs, createStationStyle());
             layer.setDescription(SF.description("stations", ""));

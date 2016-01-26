@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,25 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.storage;
 
-package org.geotoolkit.client;
-
-import java.io.Serializable;
-import java.util.Map;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface CoverageClientFactory extends CoverageStoreFactory,ClientFactory{
+public abstract class DataStore extends org.apache.sis.storage.DataStore {
 
-    @Override
-    public AbstractCoverageClient open(ParameterValueGroup params) throws DataStoreException;
-
-    @Override
-    public AbstractCoverageClient open(Map<String, ? extends Serializable> params) throws DataStoreException;
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     *
+     * @return source configuration parameters
+     */
+    public abstract ParameterValueGroup getConfiguration();
     
+    /**
+     * Get the factory which created this source.
+     *
+     * @return this source original factory
+     */
+    public abstract DataStoreFactory getFactory();
+
 }

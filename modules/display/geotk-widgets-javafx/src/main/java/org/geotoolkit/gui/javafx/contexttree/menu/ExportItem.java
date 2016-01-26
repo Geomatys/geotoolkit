@@ -39,7 +39,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.session.Session;
@@ -51,6 +50,7 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.geometry.Geometry;
 
@@ -73,7 +73,7 @@ public class ExportItem extends TreeMenuItem {
         menuItem.setGraphic(new ImageView(ICON));
         
         //select file factories which support writing
-        final Set<FileFeatureStoreFactory> factories = FeatureStoreFinder.getAvailableFactories(FileFeatureStoreFactory.class);
+        final Set<FileFeatureStoreFactory> factories = DataStores.getAvailableFactories(FileFeatureStoreFactory.class);
         for(FileFeatureStoreFactory ff : factories){
             final FactoryMetadata metadata = ff.getMetadata();
             if(metadata.supportStoreCreation() && metadata.supportStoreWriting() && metadata.supportedGeometryTypes().length>0){

@@ -17,13 +17,14 @@
 package org.geotoolkit.storage.coverage;
 
 import java.util.Set;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
+import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -32,21 +33,23 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class CoverageStore extends DataStore {
+public interface CoverageStore {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
      *
      * @return source configuration parameters
      */
-    public abstract ParameterValueGroup getConfiguration();
+    ParameterValueGroup getConfiguration();
 
     /**
      * Get the factory which created this source.
      *
      * @return this source original factory
      */
-    public abstract CoverageStoreFactory getFactory();
+    DataStoreFactory getFactory();
+
+    Metadata getMetadata() throws DataStoreException;
 
     /**
      * Returns the root node of the coverage store.
@@ -138,4 +141,6 @@ public abstract class CoverageStore extends DataStore {
      */
     public abstract void removeStorageListener(StorageListener listener);
 
+    void close() throws DataStoreException;
+    
 }

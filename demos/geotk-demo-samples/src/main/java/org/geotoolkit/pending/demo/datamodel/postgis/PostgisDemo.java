@@ -1,7 +1,6 @@
 package org.geotoolkit.pending.demo.datamodel.postgis;
 
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -11,6 +10,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,7 +29,7 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgresFeatureStoreFactory.USER, parameters).setValue("user");
         Parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD, parameters).setValue("secret");
         
-        final FeatureStore store = FeatureStoreFinder.open(parameters);
+        final FeatureStore store = (FeatureStore) DataStores.open(parameters);
         
         final MapContext context = MapBuilder.createContext();
         

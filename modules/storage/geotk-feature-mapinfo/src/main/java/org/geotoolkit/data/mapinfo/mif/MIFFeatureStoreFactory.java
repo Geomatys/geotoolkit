@@ -18,7 +18,6 @@ package org.geotoolkit.data.mapinfo.mif;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -95,8 +94,8 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public MIFFeatureStore open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
@@ -114,8 +113,8 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore create(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public MIFFeatureStore create(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         final URI filePath = (URI) params.parameter(PATH.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 

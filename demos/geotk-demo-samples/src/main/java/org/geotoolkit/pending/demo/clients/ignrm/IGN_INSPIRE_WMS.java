@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 import java.net.URL;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -14,6 +13,7 @@ import org.geotoolkit.security.BasicAuthenticationSecurity;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wms.WMSClientFactory;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.opengis.util.GenericName;
@@ -34,7 +34,7 @@ public class IGN_INSPIRE_WMS {
         Parameters.getOrCreate(WMTSClientFactory.URL, params).setValue(url);
         Parameters.getOrCreate(WMTSClientFactory.SECURITY, params).setValue(authentication);
 
-        final CoverageStore store = CoverageStoreFinder.open(params);
+        final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         final MapContext context = MapBuilder.createContext();
 

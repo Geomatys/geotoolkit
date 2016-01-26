@@ -19,7 +19,6 @@ package org.geotoolkit.osmtms;
 import java.net.URL;
 
 import org.geotoolkit.client.AbstractCoverageClient;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
@@ -28,7 +27,9 @@ import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTileMapClient extends AbstractCoverageClient {
+public class OSMTileMapClient extends AbstractCoverageClient implements Client{
 
     private final OSMTMSPyramidSet pyramidSet;
     private final DataNode rootNode = new DefaultDataNode();
@@ -99,7 +100,7 @@ public class OSMTileMapClient extends AbstractCoverageClient {
 
     @Override
     public OSMTMSClientFactory getFactory() {
-        return (OSMTMSClientFactory)ClientFinder.getFactoryById(OSMTMSClientFactory.NAME);
+        return (OSMTMSClientFactory)DataStores.getFactoryById(OSMTMSClientFactory.NAME);
     }
 
     @Override

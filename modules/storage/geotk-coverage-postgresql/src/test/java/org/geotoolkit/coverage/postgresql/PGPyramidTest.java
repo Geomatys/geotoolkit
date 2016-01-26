@@ -55,6 +55,7 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 
 import javax.measure.unit.SI;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -98,14 +99,13 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         if(store != null){
             store.close();
         }
-
-        final CoverageStoreFactory factory = CoverageStoreFinder.getFactoryById("pgraster");
-
+        
+        final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
         try{
-            store = factory.create(params);
+            store = (CoverageStore) factory.create(params);
         }catch(DataStoreException ex){
             //it may already exist
-            store = factory.open(params);
+            store = (CoverageStore) factory.open(params);
         }
 
         for(GenericName n : store.getNames()){

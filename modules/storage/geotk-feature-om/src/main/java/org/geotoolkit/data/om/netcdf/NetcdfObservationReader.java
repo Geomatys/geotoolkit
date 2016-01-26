@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation.file;
+package org.geotoolkit.data.om.netcdf;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
-import static org.geotoolkit.observation.store.xml.XmlObservationUtils.*;
+import static org.geotoolkit.data.om.xml.XmlObservationUtils.*;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
@@ -46,12 +46,12 @@ import org.opengis.temporal.TemporalPrimitive;
  *
  * @author guilhem
  */
-public class FileObservationReader implements ObservationReader {
+public class NetcdfObservationReader implements ObservationReader {
 
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
     
-    public FileObservationReader(final Path dataFile, final NCFieldAnalyze analyze) {
+    public NetcdfObservationReader(final Path dataFile, final NCFieldAnalyze analyze) {
         this.analyze = analyze;
         this.dataFile = dataFile;
     }

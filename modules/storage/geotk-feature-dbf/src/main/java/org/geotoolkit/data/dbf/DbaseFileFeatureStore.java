@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -54,6 +53,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -113,7 +113,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      */
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(DbaseFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(DbaseFeatureStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

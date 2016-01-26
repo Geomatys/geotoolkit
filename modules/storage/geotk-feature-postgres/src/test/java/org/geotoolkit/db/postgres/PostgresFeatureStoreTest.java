@@ -46,7 +46,6 @@ import java.util.Properties;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -86,6 +85,7 @@ import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import org.opengis.filter.identity.FeatureId;
 
@@ -288,7 +288,7 @@ public class PostgresFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
+        store = (PostgresFeatureStore) DataStores.open(params);
         while(!store.getNames().isEmpty()){ // we get the list each type because relations may delete multiple types each time
             final GenericName n = store.getNames().iterator().next();
             final VersionControl vc = store.getVersioning(n);
@@ -300,7 +300,7 @@ public class PostgresFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
+        store = (PostgresFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

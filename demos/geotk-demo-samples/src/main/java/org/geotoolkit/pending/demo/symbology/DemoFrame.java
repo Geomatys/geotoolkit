@@ -4,6 +4,7 @@ package org.geotoolkit.pending.demo.symbology;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,7 +38,7 @@ public class DemoFrame extends JFrame{
     private final JXTree guiTree = new JXTree();
     private final JPanel mainPane = new JPanel(new BorderLayout());
 
-    public DemoFrame(){
+    public DemoFrame() throws CoverageStoreException, MalformedURLException{
         Demos.init();
 
         setTitle("SLD/SE 1.1 demo.");
@@ -83,7 +84,7 @@ public class DemoFrame extends JFrame{
         setContentPane(split);
     }
 
-    private static TreeModel createModel() throws URISyntaxException, CoverageStoreException, DataStoreException{
+    private static TreeModel createModel() throws URISyntaxException, CoverageStoreException, DataStoreException, MalformedURLException{
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
 
         // Point demo -------------------------------------------------------
@@ -141,7 +142,7 @@ public class DemoFrame extends JFrame{
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CoverageStoreException, MalformedURLException {
         WorldFileImageReader.Spi.registerDefaults(null);
 
         try {

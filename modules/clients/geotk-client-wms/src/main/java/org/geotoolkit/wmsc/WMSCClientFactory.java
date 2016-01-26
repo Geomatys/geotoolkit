@@ -26,7 +26,6 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.parameter.Parameters;
@@ -34,6 +33,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -48,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSCClientFactory extends AbstractClientFactory implements CoverageClientFactory {
+public class WMSCClientFactory extends AbstractClientFactory implements CoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "wmsc";
@@ -88,7 +88,7 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
 
     @Override
     public WebMapClientCached open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         ClientSecurity security = null;
         try{
@@ -130,6 +130,6 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, false);
+        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 }

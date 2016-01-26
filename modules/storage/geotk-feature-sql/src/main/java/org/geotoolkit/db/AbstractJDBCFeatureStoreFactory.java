@@ -24,12 +24,12 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStore;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -194,7 +194,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
 
     @Override
     public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         
         final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
                 getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
@@ -237,7 +237,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
      * @throws DataStoreException 
      */
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         
         JDBCFeatureStore store = null;
         Connection cnx = null;

@@ -31,6 +31,7 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStore;
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -123,8 +124,8 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
      * {@inheritDoc}
      */
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public DataStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new DefaultFolderFeatureStore(params,this);
     }
 
@@ -132,7 +133,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
      * {@inheritDoc}
      */
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         //we can open an empty featurestore of this type
         //the open featurestore will always work, it will just be empty if there are no files in it.
         return open(params);

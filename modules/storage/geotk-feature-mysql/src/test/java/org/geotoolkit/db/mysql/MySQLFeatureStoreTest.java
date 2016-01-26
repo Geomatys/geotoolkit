@@ -44,7 +44,6 @@ import java.util.Properties;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -81,6 +80,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 
@@ -255,7 +255,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (MySQLFeatureStore) FeatureStoreFinder.open(params);
+        store = (MySQLFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
@@ -266,7 +266,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
-        store = (MySQLFeatureStore) FeatureStoreFinder.open(params);
+        store = (MySQLFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

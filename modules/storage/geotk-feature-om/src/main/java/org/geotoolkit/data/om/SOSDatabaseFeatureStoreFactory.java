@@ -193,8 +193,8 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
     }
 
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public SOSDatabaseFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();
@@ -231,7 +231,7 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
     }
 
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public SOSDatabaseFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

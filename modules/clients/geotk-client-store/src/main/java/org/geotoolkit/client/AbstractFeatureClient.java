@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureClient extends AbstractFeatureStore implements Client{
+public abstract class AbstractFeatureClient extends AbstractFeatureStore {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
@@ -60,9 +60,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     }
 
     @Override
-    public abstract FeatureClientFactory getFactory();
-
-    @Override
     public ParameterValueGroup getConfiguration() {
         if(parameters != null){
             //defensive copy
@@ -74,7 +71,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc}
      */
-    @Override
     public URL getURL() {
         return serverURL;
     }
@@ -82,7 +78,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc}
      */
-    @Override
     public URI getURI() {
         try {
             return serverURL.toURI();
@@ -95,7 +90,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc}
      */
-    @Override
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
@@ -106,7 +100,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
         return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
     }
 
-    @Override
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
@@ -120,7 +113,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc }
      */
-    @Override
     public void setUserProperty(final String key,final Object value){
         userProperties.put(key, value);
     }
@@ -128,7 +120,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc }
      */
-    @Override
     public Object getUserProperty(final String key){
         return userProperties.get(key);
     }
@@ -136,7 +127,6 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore impleme
     /**
      * {@inheritDoc }
      */
-    @Override
     public Map<String, Object> getUserProperties() {
         return userProperties;
     }

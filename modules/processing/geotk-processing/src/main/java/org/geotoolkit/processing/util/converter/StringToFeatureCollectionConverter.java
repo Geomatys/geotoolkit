@@ -21,9 +21,9 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
+import org.geotoolkit.storage.DataStores;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -74,7 +74,7 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
             parameters.put(AbstractFileFeatureStoreFactory.PATH.getName().getCode(), URI.create(url));
 
-            final FeatureStore store = FeatureStoreFinder.open(parameters);
+            final FeatureStore store = (FeatureStore) DataStores.open(parameters);
 
             if(store == null){
                 throw new UnconvertibleObjectException("Invalid URL");

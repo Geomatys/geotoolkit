@@ -32,13 +32,13 @@ import org.opengis.util.GenericName;
  */
 public class OMFeatureTypes {
     
-    private static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
+    public static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
     //protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
 
-    protected static final GenericName ATT_DESC     = NamesExt.create(GML_311_NAMESPACE, "description");
-    protected static final GenericName ATT_NAME     = NamesExt.create(GML_311_NAMESPACE, "name");
-    protected static final GenericName ATT_SAMPLED  = NamesExt.create(OM_NAMESPACE, "sampledFeature");
-    protected static final GenericName ATT_POSITION = NamesExt.create(OM_NAMESPACE, "position");
+    public static final GenericName ATT_DESC     = NamesExt.create(GML_311_NAMESPACE, "description");
+    public static final GenericName ATT_NAME     = NamesExt.create(GML_311_NAMESPACE, "name");
+    public static final GenericName ATT_SAMPLED  = NamesExt.create(OM_NAMESPACE, "sampledFeature");
+    public static final GenericName ATT_POSITION = NamesExt.create(OM_NAMESPACE, "position");
 
     public static Map<GenericName, FeatureType> getFeatureTypes(final String name) {
         final Map<GenericName, FeatureType> types = new HashMap<>();

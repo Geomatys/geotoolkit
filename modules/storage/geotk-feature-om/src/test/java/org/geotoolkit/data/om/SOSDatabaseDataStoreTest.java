@@ -32,13 +32,13 @@ import java.util.Set;
 
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStores;
 
 import org.opengis.util.GenericName;
 
@@ -70,7 +70,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
             params.put(SOSDatabaseFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(SOSDatabaseFeatureStoreFactory.DERBYURL.getName().toString(), url);
 
-            store = FeatureStoreFinder.open(params);
+            store = (FeatureStore) DataStores.open(params);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";

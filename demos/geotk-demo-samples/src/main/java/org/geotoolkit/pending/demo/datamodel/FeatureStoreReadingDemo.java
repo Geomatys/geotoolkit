@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
@@ -20,6 +19,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStores;
 
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
@@ -33,7 +33,7 @@ public class FeatureStoreReadingDemo {
 
     public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, URISyntaxException {
         Demos.init();
-        
+
         //getting a datastore
         final FeatureStore store = createUsingParameterGroup();
 
@@ -88,7 +88,7 @@ public class FeatureStoreReadingDemo {
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
         parameters.put(pathId, FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
 
-        final FeatureStore store = FeatureStoreFinder.open(parameters);
+        final FeatureStore store = (FeatureStore) DataStores.open(parameters);
         return store;
     }
 
@@ -102,7 +102,7 @@ public class FeatureStoreReadingDemo {
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
         parameters.parameter(pathId).setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
         
-        final FeatureStore store = FeatureStoreFinder.open(parameters);
+        final FeatureStore store = (FeatureStore) DataStores.open(parameters);
         return store;
     }
 

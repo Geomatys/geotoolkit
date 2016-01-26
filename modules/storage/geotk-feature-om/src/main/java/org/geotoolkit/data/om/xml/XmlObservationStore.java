@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation.store.xml;
+package org.geotoolkit.data.om.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +23,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gml.GMLUtilities;
@@ -40,9 +52,12 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
-import org.geotoolkit.observation.AbstractObservationStore;
+import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;
-import static org.geotoolkit.observation.store.xml.XmlObservationStoreFactory.FILE_PATH;
+import org.geotoolkit.observation.ObservationStore;
+import org.geotoolkit.observation.ObservationWriter;
+import org.geotoolkit.data.om.OMFeatureTypes;
+import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
 
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
@@ -52,7 +67,11 @@ import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
@@ -69,20 +88,152 @@ import org.opengis.temporal.TemporalObject;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractObservationStore implements DataFileStore {
+public class XmlObservationStore extends AbstractFeatureStore implements DataFileStore,ObservationStore {
 
+    protected final Map<GenericName, FeatureType> types;
+    private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final Path xmlFile;
     
     public XmlObservationStore(final ParameterValueGroup params) throws IOException {
         super(params);
         URI uri = (URI) params.parameter(FILE_PATH.getName().toString()).getValue();
         xmlFile = IOUtilities.toPath(uri);
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filename(xmlFile));
+
     }
     
     public XmlObservationStore(final Path xmlFile) {
         super(null);
         this.xmlFile = xmlFile;
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filename(xmlFile));
     }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStores.getFactoryById(XmlObservationStoreFactory.NAME);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // FEATURE STORE ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Set<GenericName> getNames() throws DataStoreException {
+        return types.keySet();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
+        typeCheck(typeName);
+        return types.get(typeName);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void refreshMetaModel() {
+    }
+
+    @Override
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
+        final FeatureType sft = getFeatureType(query.getTypeName());
+        try {
+            return handleRemaining(new XmlFeatureReader(xmlFile,sft), query);
+        } catch (IOException | JAXBException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
+    static Object unmarshallObservationFile(final Path f) throws JAXBException, IOException {
+        try (InputStream in = Files.newInputStream(f)) {
+            final Unmarshaller um = SOSMarshallerPool.getInstance().acquireUnmarshaller();
+            Object obj = um.unmarshal(in);
+            if (obj instanceof JAXBElement) {
+                obj = ((JAXBElement) obj).getValue();
+            }
+            if (obj != null) {
+                return obj;
+            }
+            throw new JAXBException("the observation file does not contain a valid O&M object");
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // OBSERVATION STORE ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     @Override
     public Set<GenericName> getProcedureNames() {
@@ -110,7 +261,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     
     @Override
     public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) {
-        LOGGER.warning("XMLObservation store does not allow to override sensor ID");
+        getLogger().warning("XMLObservation store does not allow to override sensor ID");
         return getResults(sensorIDs);
     }
     
@@ -266,7 +417,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             SOSMarshallerPool.getInstance().recycle(um);
             return obj;
         } catch (IOException | JAXBException ex) {
-            LOGGER.log(Level.WARNING, "Error while reading  file", ex);
+            getLogger().log(Level.WARNING, "Error while reading  file", ex);
         }
         return null;
     }
@@ -330,4 +481,29 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
         final Object obj = readFile();
         return new XmlObservationReader(Arrays.asList(obj));
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationFilter getFilter() {
+        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationWriter getWriter() {
+        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
+        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    }
+
 }

@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -56,6 +55,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.data.om.OMFeatureTypes.*;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -83,7 +83,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(SOSDatabaseFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(SOSDatabaseFeatureStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{

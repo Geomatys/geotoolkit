@@ -18,8 +18,8 @@ package org.geotoolkit.data.mapinfo;
 
 import java.util.Iterator;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -37,8 +37,7 @@ public class MIFFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFactory() {
 
-        final Iterator<FeatureStoreFactory> ite = FeatureStoreFinder.getAllFactories(null).iterator();
-
+        final Iterator<FeatureStoreFactory> ite = DataStores.getAllFactories(FeatureStoreFactory.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof MIFFeatureStoreFactory){

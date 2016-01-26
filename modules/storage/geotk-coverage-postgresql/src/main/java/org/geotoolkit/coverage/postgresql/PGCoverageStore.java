@@ -32,12 +32,12 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -98,7 +98,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
      */
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactoryById(PGCoverageStoreFactory.NAME);
+        return (CoverageStoreFactory) DataStores.getFactoryById(PGCoverageStoreFactory.NAME);
     }
 
     @Override

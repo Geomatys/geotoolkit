@@ -15,20 +15,22 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.observation.file;
+package org.geotoolkit.data.om.xml;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
-import org.geotoolkit.observation.ObservationStore;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -39,10 +41,10 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class FileObservationStoreFactory extends AbstractObservationStoreFactory {
+public class XmlObservationStoreFactory extends AbstractObservationStoreFactory implements FeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "observationFile";
+    public static final String NAME = "observationXmlFile";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -53,7 +55,6 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     }
     
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
     
     /**
      * url to the file.
@@ -66,7 +67,7 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
             .create(URI.class, null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("ObservationFileParameters").createGroup(
+            new ParameterBuilder().addName("ObservationXmlFileParameters").createGroup(
                 IDENTIFIER,NAMESPACE,FILE_PATH);
     
     @Override
@@ -80,19 +81,24 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     }
 
     @Override
-    public ObservationStore open(ParameterValueGroup params) throws DataStoreException {
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.SENSOR, true, true, true);
+    }
+
+    @Override
+    public XmlObservationStore open(ParameterValueGroup params) throws DataStoreException {
         try {
-            return new FileObservationStore(params);
-        } catch (IOException | URISyntaxException e) {
+            return new XmlObservationStore(params);
+        } catch (IOException e) {
             throw new DataStoreException(e.getLocalizedMessage(), e);
         }
     }
 
     @Override
-    public ObservationStore create(ParameterValueGroup params) throws DataStoreException {
+    public XmlObservationStore create(ParameterValueGroup params) throws DataStoreException {
         try {
-            return new FileObservationStore(params);
-        } catch (IOException | URISyntaxException e) {
+            return new XmlObservationStore(params);
+        } catch (IOException e) {
             throw new DataStoreException(e.getLocalizedMessage(), e);
         }
     }

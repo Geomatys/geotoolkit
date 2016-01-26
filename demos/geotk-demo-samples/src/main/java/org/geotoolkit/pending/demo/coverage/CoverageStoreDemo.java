@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -16,6 +15,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
@@ -37,7 +37,7 @@ public class CoverageStoreDemo {
         Parameters.getOrCreate(FileCoverageStoreFactory.PATH, params).setValue(dataResources.toUri());
         Parameters.getOrCreate(FileCoverageStoreFactory.TYPE, params).setValue("jpg-wf");
 
-        final CoverageStore store = CoverageStoreFinder.open(params);
+        final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();

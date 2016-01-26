@@ -8,7 +8,6 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -64,11 +63,13 @@ import javax.measure.unit.Unit;
 import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 
@@ -744,20 +745,15 @@ public class Styles {
     // SAMPLE DATA ///////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    public static MapContext createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException {
+    public static MapContext createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        Map<String,Serializable> params;
-        File shape;
         FeatureStore store;
         FeatureCollection fs;
-        File gridFile;
 
-        params = new HashMap<String,Serializable>();
-        params.put( "path", JAbstractMapPane.class.getResource("/data/world/Countries.shp").toURI() );
-        store = FeatureStoreFinder.open(params);
+        store = new ShapefileFeatureStore(JAbstractMapPane.class.getResource("/data/world/Countries.shp").toURI());
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
@@ -770,20 +766,15 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException {
+    public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        Map<String,Serializable> params;
-        File shape;
         FeatureStore store;
         FeatureCollection fs;
-        File gridFile;
 
-        params = new HashMap<String,Serializable>();
-        params.put( "path", JAbstractMapPane.class.getResource("/data/world/city.shp").toURI() );
-        store = FeatureStoreFinder.open(params);
+        store = new ShapefileFeatureStore(JAbstractMapPane.class.getResource("/data/world/city.shp").toURI());
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));

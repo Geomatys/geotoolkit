@@ -18,9 +18,9 @@ package org.geotoolkit.sos;
 
 import java.util.Iterator;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
-import static org.junit.Assert.fail;
+import org.geotoolkit.storage.DataStores;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 /**
  * Server tests.
@@ -28,16 +28,15 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSClientFactoryTest extends org.geotoolkit.test.TestBase {
-
-    public OSMTMSClientFactoryTest() {
+public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
+    
+    public SOSClientFactoryTest() {
     }
 
     @Test
     public void testFactory() {
 
-        final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
-
+        final Iterator<ClientFactory> ite = DataStores.getAllFactories(ClientFactory.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof SOSClientFactory){
