@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,31 +16,35 @@
  */
 package org.geotoolkit.processing.coverage.bandcombine;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.parameter.ParameterValueGroup;
+
+import org.apache.sis.util.ArgumentChecks;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.parameter.ParameterValueGroup;
-import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.utility.parameter.ParametersExt;
-import org.opengis.coverage.Coverage;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridGeometry;
+
+import static org.geotoolkit.processing.coverage.bandcombine.BandCombineDescriptor.*;
 
 /**
+ * Combine each first slice of each {@link Coverage} given in parameters into one
+ * other, where each bands from each internal source {@link RenderedImage} are merged into single image.
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
@@ -82,9 +86,9 @@ public class BandCombineProcess extends AbstractProcess {
 
         // PARAMETERS CHECK ////////////////////////////////////////////////////
         final Coverage[] inputCoverage = (Coverage[]) Parameters.getOrCreate(IN_COVERAGES, inputParameters).getValue();
-        if(inputCoverage.length==0){
+        if (inputCoverage.length == 0) {
             throw new ProcessException("No coverage to combine", this, null);
-        }else if(inputCoverage.length==1){
+        } else if (inputCoverage.length == 1) {
             //nothing to do
             Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(inputCoverage[0]);
             return;
@@ -94,11 +98,14 @@ public class BandCombineProcess extends AbstractProcess {
             // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
             final StringBuilder sb = new StringBuilder();
             final RenderedImage[] images = new RenderedImage[inputCoverage.length];
-            final SampleDimension[] sds = new SampleDimension[inputCoverage.length];
+            final List<GridSampleDimension> sds = new ArrayList<>();
 
             for (int i = 0; i < inputCoverage.length; i++) {
                 final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
-                sds[i] = gridCoverage2D.getSampleDimension(0);
+
+                final GridSampleDimension[] gsd = gridCoverage2D.getSampleDimensions();
+                if (gsd != null) sds.addAll(Arrays.asList(gsd));
+
                 images[i] = gridCoverage2D.getRenderedImage();
                 sb.append(String.valueOf(gridCoverage2D.getName()));
             }
@@ -109,34 +116,20 @@ public class BandCombineProcess extends AbstractProcess {
             final Process process = imageCombineDesc.createProcess(params);
             RenderedImage resultImage = (RenderedImage)process.call().parameter("result").getValue();
 
-////
-////            // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
-////            //TODO try to reuse java colormodel if possible
-////            //extract grayscale min/max from sample dimension
             final GridCoverage2D firstCoverage = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[0]);
-
-////            final SampleDimension gridSample = firstCoverage.getSampleDimension(0);
-            final GridGeometry gridGeometry = firstCoverage.getGridGeometry();
-////            final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
-////                    resultImage.getSampleModel().getDataType(),
-////                    resultImage.getSampleModel().getNumBands(),0,
-////                    gridSample.getMinimumValue(), gridSample.getMaximumValue());
-////            resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<>());
-
+            final GridGeometry gridGeometry    = firstCoverage.getGridGeometry();
 
             // REBUILD COVERAGE ////////////////////////////////////////////////////
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName(sb.toString());
             gcb.setRenderedImage(resultImage);
             gcb.setGridGeometry(gridGeometry);
-            gcb.setSampleDimensions(sds);
+            gcb.setSampleDimensions(sds.toArray(new GridSampleDimension[sds.size()]));
             final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
-
 
             Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
         } catch (CoverageStoreException e) {
             throw new ProcessException(e.getMessage(),this, e);
         }
     }
-
 }
