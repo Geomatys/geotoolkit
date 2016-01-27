@@ -66,18 +66,22 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
-
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -86,17 +90,11 @@ import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.geotoolkit.resources.Errors;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.util.FactoryException;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.image.replace.ReplaceProcess;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.resources.Errors;
 import org.w3c.dom.Node;
 
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 
 /**
  * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
@@ -1064,33 +1062,7 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
-        final BufferedImage image = readLayer(getLayerIndex(imageIndex), param);
-
-        //if the image contains floats or double, datas are already in geophysic type
-        //we must replace noData values by NaN.
-        final int dataType = image.getSampleModel().getDataType();
-        if (DataBuffer.TYPE_FLOAT == dataType || DataBuffer.TYPE_DOUBLE == dataType) {
-            final SpatialMetadata metadata = getImageMetadata(imageIndex);
-            if (metadata != null) {
-                final DimensionAccessor accessor = new DimensionAccessor(metadata);
-                if (accessor.childCount() == 1) {
-                    accessor.selectChild(0);
-                    Double noDatas = accessor.getAttributeAsDouble("realFillValue");
-                    if (noDatas != null) {
-                        final double[][][] nodatas = new double[1][2][1];
-                        nodatas[0][0][0] = noDatas;
-                        Arrays.fill(nodatas[0][1], Double.NaN);
-                        final ReplaceProcess process = new ReplaceProcess(image, nodatas);
-                        try {
-                            process.call();
-                         } catch (ProcessException ex) {
-                            throw new IOException(ex.getMessage(),ex);
-                        }
-                    }
-                }
-            }
-        }
-        return image;
+        return readLayer(getLayerIndex(imageIndex), param);
     }
 
     /**
