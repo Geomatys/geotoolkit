@@ -1,3 +1,2 @@
-org.geotoolkit.data.om.SOSDatabaseFeatureStoreFactory
 org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory
 org.geotoolkit.data.om.xml.XmlObservationStoreFactory

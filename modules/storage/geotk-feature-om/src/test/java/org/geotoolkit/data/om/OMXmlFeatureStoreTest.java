@@ -54,6 +54,7 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
 
             final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/observation1.xml");
             final Map params = new HashMap<>();
+            params.put(XmlObservationStoreFactory.IDENTIFIER.getName().toString(), "observationXmlFile");
             params.put(XmlObservationStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
 
             store = (FeatureStore) DataStores.open(params);
