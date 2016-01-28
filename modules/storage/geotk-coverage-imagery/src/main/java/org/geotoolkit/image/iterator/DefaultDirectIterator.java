@@ -257,7 +257,7 @@ abstract class DefaultDirectIterator extends PixelIterator {
      */
     @Override
     public int getY() {
-        return crMinY + dataCursor / scanLineStride;
+        return crMinY + (dataCursor - bandOffsets[band]) / scanLineStride;
     }
 
     /**
