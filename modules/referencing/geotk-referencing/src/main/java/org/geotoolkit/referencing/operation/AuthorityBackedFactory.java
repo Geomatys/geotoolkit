@@ -833,9 +833,10 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             final AuthorityFactory factory, final boolean isOptional)
     {
         if (LOGGER.isLoggable(level)) {
+            final Citation authority = factory.getAuthority();
             final LogRecord record = Loggings.format(level,
                     Loggings.Keys.CantCreateCoordinateOperation_1,
-                    factory.getAuthority().getTitle());
+                    (authority != null) ? authority.getTitle() : "unnamed");
             record.setSourceClassName(AuthorityBackedFactory.class.getName());
             record.setSourceMethodName("createFromDatabase");
             if (isOptional) {
