@@ -1010,6 +1010,9 @@
         <configuration>
           <aggregate>true</aggregate>
           <showSuccess>false</showSuccess>
+          <systemPropertyVariables>
+            <java.naming.factory.initial>org.geotoolkit.internal.io.JNDI</java.naming.factory.initial>
+          </systemPropertyVariables>
         </configuration>
         <reportSets> <!-- Workaround for http://jira.codehaus.org/browse/SUREFIRE-257 -->
           <reportSet>
@@ -1068,7 +1071,7 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-  </repository>
+    </repository>
   </repositories>
 
   <pluginRepositories>

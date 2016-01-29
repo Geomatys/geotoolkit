@@ -51,6 +51,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 
 import org.apache.sis.referencing.CRS;
+import static javax.naming.Context.INITIAL_CONTEXT_FACTORY;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
@@ -171,7 +172,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
          * and we should preserve this advantage in order to reduce the risk of contention.
          */
         CoordinateOperationAuthorityFactory factory = authorityFactory;
-        if (factory == null) {
+        if (factory == null) try {
             /*
              * Factory creation at this stage will happen only if null hints were specified at
              * construction time, which explain why it is correct to use {@link FactoryFinder}
@@ -181,6 +182,32 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             noForce(hints);
 // TODO     authorityFactory = factory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
             authorityFactory = factory = (CoordinateOperationAuthorityFactory) CRS.getAuthorityFactory("EPSG");
+        } catch (ClassCastException e) {
+            String ds;
+            try {
+                ds = String.valueOf(org.geotoolkit.internal.io.JNDI.getEPSG());
+            } catch (Exception ignore) {
+                ds = ignore.toString();
+            }
+            String jndi;
+            try {
+                jndi = String.valueOf(((javax.naming.Context) javax.naming.InitialContext.doLookup("java:comp/env")).lookup("jdbc/SpatialMetadata"));
+            } catch (Exception ignore) {
+                jndi = ignore.toString();
+            }
+            String sis;
+            try {
+                sis = String.valueOf(org.apache.sis.internal.metadata.sql.Initializer.getDataSource());
+            } catch (Exception ignore) {
+                sis = ignore.toString();
+            }
+            throw new FactoryException("Missing EPSG factory. Configuration is:\n"
+                    + "  - \"SIS_DATA\" environment variable: " + System.getenv("SIS_DATA") + "\n"
+                    + "  - \"derby.system.home\" property: " + System.getProperty("derby.system.home") + "\n"
+                    + "  - \"" + INITIAL_CONTEXT_FACTORY + "\" property: " + System.getProperty(INITIAL_CONTEXT_FACTORY) + "\n"
+                    + "  - Value of file \"DataSource.properties\": " + ds + "\n"
+                    + "  - Value of JNDI \"java:comp/env/jdbc/SpatialMetadata\": " + jndi + "\n"
+                    + "  - Value of Apache SIS Initializer.getDataSource(): " + sis + "\n", e);
         }
         return factory;
     }

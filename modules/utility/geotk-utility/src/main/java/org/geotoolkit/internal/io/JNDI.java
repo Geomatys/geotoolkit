@@ -83,7 +83,7 @@ public final class JNDI implements Context, InitialContextFactory {
     /**
      * Returns the EPSG data source.
      */
-    private static synchronized DataSource getEPSG() throws IOException {
+    public static synchronized DataSource getEPSG() throws IOException {
         if (EPSG == null) {
             final Properties properties = Installation.EPSG.getDataSource();
             if (properties != null) {

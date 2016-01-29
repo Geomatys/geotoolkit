@@ -65,6 +65,10 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
  * @module
  */
 public final class Envelopes extends Static {
+    static {
+        org.geotoolkit.internal.io.JNDI.install();
+    }
+
     /**
      * Do not allow instantiation of this class.
      */

@@ -91,6 +91,10 @@ import org.apache.sis.internal.system.DefaultFactories;
  */
 @Deprecated
 public class FactoryFinder extends Static {
+    static {
+        org.geotoolkit.internal.io.JNDI.install();
+    }
+
     /**
      * Do not allow instantiation of this class.
      */
