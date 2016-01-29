@@ -17,13 +17,12 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 import org.opengis.util.FactoryException;
 import org.geotoolkit.internal.sql.Dialect;
-
 import org.apache.sis.test.DependsOn;
 
 import org.junit.*;
@@ -49,8 +48,8 @@ public final strictfp class AutomaticInstallationTest {
      * classpath, the Derby driver should be given precedence.
      */
     @Test
-    public void testDefaultURL() {
-        final String url = ThreadedEpsgFactory.getDefaultURL();
+    public void testDefaultURL() throws IOException {
+        final String url = EpsgInstaller.getDefaultURL(false);
         assertTrue(url, url.startsWith("jdbc:derby:"));
     }
 
@@ -61,12 +60,12 @@ public final strictfp class AutomaticInstallationTest {
      * @throws SQLException Should never happen.
      */
     @Test
-    public void testDefaultURL_HSQL() throws SQLException {
+    public void testDefaultURL_HSQL() throws IOException, SQLException {
         final Driver derbyDriver = DriverManager.getDriver("jdbc:derby:EPSG");
         assertNotNull(derbyDriver);
         DriverManager.deregisterDriver(derbyDriver);
         try {
-            final String url = ThreadedEpsgFactory.getDefaultURL();
+            final String url = EpsgInstaller.getDefaultURL(false);
             assertTrue(url, url.startsWith(Dialect.HSQL.protocol));
         } finally {
             DriverManager.registerDriver(derbyDriver);

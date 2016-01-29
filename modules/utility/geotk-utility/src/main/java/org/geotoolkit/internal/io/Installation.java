@@ -41,9 +41,6 @@ import org.apache.sis.internal.storage.IOUtilities;
  * shift over United States.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
- *
- * @since 3.00
  * @module
  */
 public enum Installation {
@@ -295,7 +292,7 @@ public enum Installation {
     public Object toFileOrURL(final Class<?> caller, final String path) throws IOException {
         final Object uof = IOUtilities.toFileOrURL(path, null);
         if (uof instanceof URL) {
-            return (URL) uof;
+            return uof;
         }
         File file = (File) uof;
         if (!file.isAbsolute()) {

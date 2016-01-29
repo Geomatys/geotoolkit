@@ -44,6 +44,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -82,6 +83,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public final class CRS extends Static {
+    static {
+        JNDI.install();
+    }
+
     /**
      * A factory for default (non-lenient) operations.
      */

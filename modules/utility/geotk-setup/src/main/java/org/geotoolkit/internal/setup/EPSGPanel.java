@@ -22,16 +22,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Properties;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
 import org.opengis.util.FactoryException;
-
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.referencing.factory.epsg.EpsgInstaller.DEFAULT_SCHEMA;
@@ -77,8 +75,13 @@ final class EPSGPanel extends DatabasePanel {
      */
     @Override
     Field[] getFields(final Vocabulary resources) {
-        final JComboBox<String> url = new JComboBox<>(new String[] {
-            ThreadedEpsgFactory.getDefaultURL(),
+        String jdbcURL = null;
+        try {
+            jdbcURL = EpsgInstaller.getDefaultURL(false);
+        } catch (IOException e) {
+            // Should never happen when 'create' is false.
+        }
+        final JComboBox<String> url = new JComboBox<>(new String[] {jdbcURL,
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
             "jdbc:postgresql://host/database",
             "jdbc:odbc:EPSG"

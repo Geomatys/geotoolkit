@@ -50,13 +50,6 @@ public final class VerticalDatumTypes extends Static {
     public static final VerticalDatumType ELLIPSOIDAL = VerticalDatumType.valueOf("ELLIPSOIDAL");
 
     /**
-     * A vertical datum for orthometric heights that are measured along the plumb line.
-     * <p>
-     * Identifier {@code CS_DatumType.CS_VD_Orthometric}
-     */
-    public static final VerticalDatumType ORTHOMETRIC = VerticalDatumType.valueOf("ORTHOMETRIC");
-
-    /**
      * Returns the list of {@code VerticalDatumType}s. This method delegates to
      * {@link VerticalDatumType#values()}, but is declared in this class in order
      * to ensure that the constants declared above are included in the returned set.

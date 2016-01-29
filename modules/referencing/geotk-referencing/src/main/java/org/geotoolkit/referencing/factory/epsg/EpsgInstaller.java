@@ -30,17 +30,15 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Callable;
-
 import org.opengis.util.FactoryException;
-
+import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
-
 import org.geotoolkit.internal.sql.Dialect;
 import org.apache.sis.util.NullArgumentException;
-
 import org.apache.sis.util.logging.Logging;
+
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
@@ -283,7 +281,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      */
     private Connection getConnection(final boolean create) throws IOException, SQLException {
         if (databaseURL == null) {
-            databaseURL = ThreadedEpsgFactory.getDefaultURL(create);
+            databaseURL = getDefaultURL(create);
         }
         final Connection connection;
         if (user == null) {
@@ -292,6 +290,49 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             connection = DriverManager.getConnection(databaseURL, user, password);
         }
         return connection;
+    }
+
+    /**
+     * Returns the default JDBC URL to use for connection to the EPSG embedded database.
+     * The returned URL expects an existing database, unless the {@code create} parameter
+     * is {@code true} in which case the URL allows database creation.
+     *
+     * @param  create {@code true} if this method should create the database directory if
+     *         it does not already exist, or {@code false} otherwise.
+     * @return The default JDBC URL to use for the connection to the EPSG database.
+     * @throws IOException If the database directory can not be created.
+     */
+    public static String getDefaultURL(boolean create) throws IOException {
+        File directory;
+        if (create) {
+            directory = Installation.EPSG.validDirectory(true);
+        } else {
+            directory = Installation.EPSG.directory(true);
+        }
+        String driver  = "derby";
+        if (!Dialect.DERBY.isDriverRegistered()) {
+            /*
+             * If the Dervy driver is not found, looks for the HSQL driver.
+             * If it is not found neither, we will keep the Derby driver as
+             * the default one.
+             */
+            try {
+                Class.forName(Dialect.HSQL.driverClass);
+                directory = new File(directory, "HSQL");
+                driver = "hsqldb";
+                create = false;
+            } catch (ClassNotFoundException e) {
+                // Ignore - we will stay with the Derby driver.
+            }
+        }
+        final StringBuilder buffer = new StringBuilder("jdbc:").append(driver).append(':')
+                .append(directory.getPath().replace(File.separatorChar, '/'))
+                .append('/').append(EPSG_VERSION);
+        if (create) {
+            // Allow the creation of the database only if the needed scripts are available.
+            buffer.append(";create=true");
+        }
+        return buffer.toString();
     }
 
     /**

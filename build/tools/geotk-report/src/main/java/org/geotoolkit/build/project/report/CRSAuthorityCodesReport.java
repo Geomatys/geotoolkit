@@ -37,14 +37,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.test.report.AuthorityCodesReport;
-
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
