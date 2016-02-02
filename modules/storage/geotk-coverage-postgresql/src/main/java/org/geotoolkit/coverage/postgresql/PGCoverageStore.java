@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,7 +88,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     public synchronized EPSGFactory getEPSGFactory() throws FactoryException {
         if (epsgfactory == null) {
-            epsgfactory = new EPSGFactory(source, null, null, null, null, null, null, null);
+            epsgfactory = new EPSGFactory(Collections.singletonMap("dataSource", source));
         }
         return epsgfactory;
     }

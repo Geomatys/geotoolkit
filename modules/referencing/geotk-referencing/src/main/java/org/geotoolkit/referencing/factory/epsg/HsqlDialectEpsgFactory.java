@@ -46,7 +46,7 @@ final class HsqlDialectEpsgFactory extends SQLTranslator {
      * Constructs an authority factory using the given metadata.
      */
     public HsqlDialectEpsgFactory(final DatabaseMetaData metadata) throws SQLException {
-        super(metadata);
+        super(metadata, null, null);
     }
 
     /**

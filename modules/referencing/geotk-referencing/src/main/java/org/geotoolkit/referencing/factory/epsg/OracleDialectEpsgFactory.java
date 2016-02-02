@@ -35,7 +35,7 @@ final class OracleDialectEpsgFactory extends SQLTranslator {
      * Constructs an authority factory for the given metadata.
      */
     public OracleDialectEpsgFactory(final DatabaseMetaData metadata) throws SQLException {
-        super(metadata);
+        super(metadata, null, null);
     }
 
     /**

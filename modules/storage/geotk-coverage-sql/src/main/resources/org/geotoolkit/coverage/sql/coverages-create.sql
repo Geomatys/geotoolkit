@@ -400,7 +400,7 @@ COMMENT ON CONSTRAINT "enforce_srid_verticalOrdinates" ON "GridGeometries" IS
 --------------------------------------------------------------------------------------------------
 
 CREATE FUNCTION "ComputeDefaultExtent"() RETURNS "trigger"
-    AS $$
+    AS $BODY$
   BEGIN
     IF NEW."horizontalExtent" IS NULL THEN
       NEW."horizontalExtent" := st_Transform(st_Affine(st_GeometryFromText(
@@ -409,7 +409,7 @@ CREATE FUNCTION "ComputeDefaultExtent"() RETURNS "trigger"
     END IF;
     RETURN NEW;
   END;
-$$
+$BODY$
     LANGUAGE plpgsql;
 
 ALTER FUNCTION "ComputeDefaultExtent"() OWNER TO geoadmin;

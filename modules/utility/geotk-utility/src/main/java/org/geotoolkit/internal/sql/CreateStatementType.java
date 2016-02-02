@@ -21,10 +21,10 @@ import org.apache.sis.util.CharSequences;
 
 
 /**
- * The type of a SQL {@code CREATE} statement. The {@link #fromSQL(CharSequence)}
- * method tries to infer the enum from a given SQL statement.
+ * The type of a SQL {@code CREATE} statement.
+ * The {@link #fromSQL(CharSequence)} method tries to infer the enumeration value from a given SQL statement.
  *
- * @author Martin Desruisseaux (Geomatys)
+ * @author  Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.16
@@ -53,9 +53,9 @@ public enum CreateStatementType {
 
     /**
      * A {@code CREATE ... FUNCTION} statement.
-     * <p>
-     * Implementation note: must be declared before {@link #LANGUAGE}, because a function
-     * creation statement often contains a {@code LANGUAGE} keyword after it.
+     *
+     * <p>Implementation note: must be declared before {@link #LANGUAGE}, because a function
+     * creation statement often contains a {@code LANGUAGE} keyword after it.</p>
      */
     FUNCTION,
 
@@ -85,8 +85,8 @@ public enum CreateStatementType {
                  * Found the first word. Verify that this word is "CREATE" followed
                  * by a space. The hard-coded constant 6 is the length of "CREATE".
                  */
-                if (CharSequences.regionMatches(statement, i, "CREATE") && (i += 6) < length &&
-                        Character.isWhitespace(statement.charAt(i)))
+                if (CharSequences.regionMatches(statement, i, "CREATE") && (i += 6) < length
+                        && Character.isWhitespace(statement.charAt(i)))
                 {
                     for (final CreateStatementType candidate : values()) {
                         final int p = CharSequences.indexOf(statement, candidate.name(), i, statement.length());
