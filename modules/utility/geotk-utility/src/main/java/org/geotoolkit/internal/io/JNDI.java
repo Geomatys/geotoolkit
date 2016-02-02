@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.internal.io;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.io.IOException;
 import javax.sql.DataSource;
@@ -29,10 +31,14 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
+import javax.naming.InitialContext;
+import javax.naming.event.EventContext;
+import javax.naming.event.NamingEvent;
+import javax.naming.event.NamingListener;
+import javax.naming.event.ObjectChangeListener;
 import org.apache.sis.internal.metadata.sql.Initializer;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
-import javax.naming.InitialContext;
 
 
 /**
@@ -41,7 +47,7 @@ import javax.naming.InitialContext;
  * @author Martin Desruisseaux (Geomatys)
  * @module
  */
-public final class JNDI implements Context, InitialContextFactory {
+public final class JNDI implements EventContext, InitialContextFactory {
     /**
      * Invoked from {@link org.geotoolkit.lang.Setup} for setting a pseudo-JNDI environment.
      */
@@ -61,9 +67,20 @@ public final class JNDI implements Context, InitialContextFactory {
     }
 
     /**
+     * The last {@code JNDI} instance created. Considered as the unique JNDI instance.
+     */
+    private static volatile JNDI instance;
+
+    /**
      * Data source for the EPSG database, or {@code null} if none.
      */
     private static DataSource EPSG;
+
+    /**
+     * Listeners to notify when {@link #EPSG} changed.
+     * Must be a static list, because JNDI creates new {@code Context} instances on various method calls.
+     */
+    private static final List<ObjectChangeListener> listeners = new ArrayList<>();
 
     /**
      * Sets the data source for the EPSG database.
@@ -75,7 +92,15 @@ public final class JNDI implements Context, InitialContextFactory {
         if (Initializer.hasJNDI()) {
             final Context env = (Context) InitialContext.doLookup("java:comp/env");
             if (!(env instanceof JNDI)) {
-                env.bind("jdbc/SpatialMetadata", source);
+                env.bind(Initializer.JNDI, source);
+            }
+        }
+        final JNDI instance = JNDI.instance;
+        if (instance != null) {
+            final ObjectChangeListener[] ls = listeners.toArray(new ObjectChangeListener[listeners.size()]);
+            final NamingEvent event = new NamingEvent(instance, NamingEvent.OBJECT_CHANGED, null, null, null);
+            for (final ObjectChangeListener listener : ls) {
+                listener.objectChanged(event);
             }
         }
     }
@@ -104,6 +129,7 @@ public final class JNDI implements Context, InitialContextFactory {
      * Invoked by JNDI through reflection for creating the {@link InitialContextFactory}.
      */
     public JNDI() {
+        instance = this;
     }
 
     /**
@@ -128,7 +154,7 @@ public final class JNDI implements Context, InitialContextFactory {
     public Object lookup(final String name) throws NamingException {
         switch (name) {
             case "java:comp/env": return this;
-            case "jdbc/SpatialMetadata": {
+            case Initializer.JNDI: {
                 final DataSource ds;
                 try {
                     ds = getEPSG();
@@ -220,7 +246,28 @@ public final class JNDI implements Context, InitialContextFactory {
     }
 
     @Override
-    public void close() throws NamingException {
+    public void addNamingListener(String target, int scope, NamingListener listener) {
+        if (listener instanceof ObjectChangeListener && Initializer.JNDI.equals(target)) {
+            synchronized (JNDI.class) {
+                listeners.add((ObjectChangeListener) listener);
+            }
+        }
+    }
+
+    @Override
+    public void removeNamingListener(NamingListener listener) {
+        synchronized (JNDI.class) {
+            listeners.remove(listener);
+        }
+    }
+
+    @Override
+    public boolean targetMustExist() {
+        return false;
+    }
+
+    @Override
+    public void close() {
     }
 
     /**
@@ -242,5 +289,10 @@ public final class JNDI implements Context, InitialContextFactory {
     @Override public void                             destroySubcontext(Name name)               throws NamingException {       destroySubcontext(name.toString());}
     @Override public Name                             composeName      (Name name, Name prefix)  throws NamingException {
         return getNameParser(name).parse(composeName(name.toString(), prefix.toString()));
+    }
+
+    @Override
+    public void addNamingListener(Name target, int scope, NamingListener l) throws NamingException {
+        addNamingListener(target.toString(), scope, l);
     }
 }
