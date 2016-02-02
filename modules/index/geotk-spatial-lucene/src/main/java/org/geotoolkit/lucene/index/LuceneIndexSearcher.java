@@ -42,12 +42,13 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
+import org.geotoolkit.index.IndexingException;
+import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
-import org.geotoolkit.lucene.SearchingException;
+import org.geotoolkit.index.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
-import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.index.SpatialQuery;
 
 
 /**
@@ -311,12 +312,13 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * This method proceed a lucene search and returns a list of ID.
      *
-     * @param spatialQuery The lucene query string with spatials filters.
+     * @param spatialQueryI The lucene query string with spatials filters.
      *
      * @return A List of metadata identifiers.
      * @throws SearchingException
      */
-    public Set<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
+    public Set<String> doSearch(final SpatialQuery spatialQueryI) throws SearchingException {
+        org.geotoolkit.lucene.filter.SpatialQuery spatialQuery = (org.geotoolkit.lucene.filter.SpatialQuery) spatialQueryI;
         try {
             final long start = System.currentTimeMillis();
             final Set<String> results = new LinkedHashSet<>();
@@ -367,7 +369,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
             LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
             final Filter filter = spatialQuery.getSpatialFilter();
-            final int operator  = spatialQuery.getLogicalOperator();
+            final LogicalFilterType operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();
             String sorted = "";
             if (sort != null) {
@@ -378,13 +380,13 @@ public class LuceneIndexSearcher extends IndexLucene {
                 f = '\n' + filter.toString();
             }
             String operatorValue = "";
-            if (!(operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null))) {
+            if (!(operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null))) {
                 operatorValue = '\n' + SerialChainFilter.valueOf(operator);
             }
             LOGGER.log(logLevel, "Searching for: " + query.toString(field) + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
 
             // simple query with an AND
-            if (operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null)) {
+            if (operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null)) {
                 final TopDocs docs;
                 if (sort != null) {
                     docs = searcher.search(query, filter, maxRecords, sort);
@@ -396,7 +398,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
 
             // for a OR we need to perform many request
-            } else if (operator == SerialChainFilter.OR) {
+            } else if (operator == LogicalFilterType.OR) {
                 final TopDocs hits1;
                 final TopDocs hits2;
                 if (sort != null) {
@@ -414,7 +416,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
 
             // for a NOT we need to perform many request
-            } else if (operator == SerialChainFilter.NOT) {
+            } else if (operator == LogicalFilterType.NOT) {
                 final TopDocs hits1;
                 if (sort != null) {
                     hits1 = searcher.search(query, filter, maxRecords, sort);
@@ -446,13 +448,13 @@ public class LuceneIndexSearcher extends IndexLucene {
             // if we have some subQueries we execute it separely and merge the result
             if (spatialQuery.getSubQueries().size() > 0) {
 
-                if (operator == SerialChainFilter.OR && query.equals(SIMPLE_QUERY)) {
+                if (operator == LogicalFilterType.OR && query.equals(SIMPLE_QUERY)) {
                     results.clear();
                 }
                 
                 for (SpatialQuery sub : spatialQuery.getSubQueries()) {
                     final Set<String> subResults = doSearch(sub);
-                    if (operator == SerialChainFilter.AND) {
+                    if (operator == LogicalFilterType.AND) {
                         final Set<String> toRemove   = new HashSet<>();
                         for (String r : results) {
                             if (!subResults.contains(r)) {
@@ -460,7 +462,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                             }
                         }
                         results.removeAll(toRemove);
-                    } else if (operator == SerialChainFilter.OR){
+                    } else if (operator == LogicalFilterType.OR){
                         results.addAll(subResults);
                         
                     } else {

@@ -15,18 +15,20 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.lucene;
+package org.geotoolkit.index;
 
 import org.geotoolkit.util.Exceptions;
 
+
 /**
- * Exceptions thrown by lucene indexing should be instances of this type.
- * 
- * @author Adrian Custer (Geomatys)
+ * Exceptions thrown by lucene searching should be instances of this type.
+ *
+ * @author Guilhem Legal (Geomatys)
  * @module pending
  * @since 0.3
+ *
  */
-public class IndexingException extends Exception {
+public class SearchingException extends Exception {
 
     /**
      * Allow for cross-version identity of these exceptions.
@@ -35,23 +37,23 @@ public class IndexingException extends Exception {
 
     /**
      * Construct an exception from an explanation of the cause.
-     * 
-     * @param message User understandable explanation of the cause of the 
+     *
+     * @param message User understandable explanation of the cause of the
      *                  exception.
      */
-    public IndexingException(final String message) {
+    public SearchingException(final String message) {
         super(message);
         assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
-     * Construct an indexing exception from a lower level exception. 
-     * 
-     * @param message User understandable explanation of the cause of the 
+     * Construct an indexing exception from a lower level exception.
+     *
+     * @param message User understandable explanation of the cause of the
      *                  exception.
      * @param cause The preceding exception.
      */
-    public IndexingException(final String message, final Throwable cause) {
+    public SearchingException(final String message, final Throwable cause) {
         super(message, cause);
         assert Exceptions.isValidMessage(message) : message;
     }
