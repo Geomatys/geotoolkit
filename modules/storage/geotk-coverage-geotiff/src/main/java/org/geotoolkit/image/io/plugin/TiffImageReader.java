@@ -54,6 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -64,19 +66,22 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
-
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -85,17 +90,11 @@ import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.geotoolkit.resources.Errors;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.util.FactoryException;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.image.replace.ReplaceProcess;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.resources.Errors;
 import org.w3c.dom.Node;
 
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 
 /**
  * An image reader for uncompressed TIFF files or RGB images. This image reader duplicates the works
@@ -260,6 +259,10 @@ public class TiffImageReader extends SpatialImageReader {
      * The offsets of each tiles in the current image.
      */
     private long[] tileOffsets;
+    /**
+     * The size of each tile in bytes.
+     */
+    private long[] tileByteCounts;
 
     /**
      * The cached return value of {@link #getRawDataType(int)} for the current image.
@@ -1059,33 +1062,7 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
-        final BufferedImage image = readLayer(getLayerIndex(imageIndex), param);
-
-        //if the image contains floats or double, datas are already in geophysic type
-        //we must replace noData values by NaN.
-        final int dataType = image.getSampleModel().getDataType();
-        if (DataBuffer.TYPE_FLOAT == dataType || DataBuffer.TYPE_DOUBLE == dataType) {
-            final SpatialMetadata metadata = getImageMetadata(imageIndex);
-            if (metadata != null) {
-                final DimensionAccessor accessor = new DimensionAccessor(metadata);
-                if (accessor.childCount() == 1) {
-                    accessor.selectChild(0);
-                    Double noDatas = accessor.getAttributeAsDouble("realFillValue");
-                    if (noDatas != null) {
-                        final double[][][] nodatas = new double[1][2][1];
-                        nodatas[0][0][0] = noDatas;
-                        Arrays.fill(nodatas[0][1], Double.NaN);
-                        final ReplaceProcess process = new ReplaceProcess(image, nodatas);
-                        try {
-                            process.call();
-                         } catch (ProcessException ex) {
-                            throw new IOException(ex.getMessage(),ex);
-                        }
-                    }
-                }
-            }
-        }
-        return image;
+        return readLayer(getLayerIndex(imageIndex), param);
     }
 
     /**
@@ -1257,6 +1234,7 @@ public class TiffImageReader extends SpatialImageReader {
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
                     final Map<String, Object> toObj   =  headProperties.get(TileOffsets);
+                    final Map<String, Object> tbcObj  =  headProperties.get(TileByteCounts);
 
                     /*
                      * Declare the image as valid only if the mandatory information are present.
@@ -1306,6 +1284,7 @@ public class TiffImageReader extends SpatialImageReader {
                         tileWidth   = (int) ((twObj == null) ? -1 : ((long[]) twObj.get(ATT_VALUE))[0]);
                         tileHeight  = (int) ((thObj == null) ? -1 : ((long[]) thObj.get(ATT_VALUE))[0]);
                         if (toObj  != null)  tileOffsets = (long[]) toObj.get(ATT_VALUE);
+                        if (tbcObj != null)  tileByteCounts = (long[]) tbcObj.get(ATT_VALUE);
 
                         ensureDefined(tileWidth,   "tileWidth");
                         ensureDefined(tileHeight,  "tileHeight");
@@ -1319,7 +1298,6 @@ public class TiffImageReader extends SpatialImageReader {
                             //-- check it's possible to find a correct value
                             //-- planar configuration --//
 
-                            final Map<String, Object> tbcObj   =  headProperties.get(TileByteCounts);
                             final int tileByteCounts = (int) ((tbcObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
 
                             final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
@@ -1595,12 +1573,14 @@ public class TiffImageReader extends SpatialImageReader {
             case Compression: { //-- Compression.
                 assert count == 1 : "with tiff compression tag, count should be equal 1.";
                 compression = (int) (imageStream.readShort() & 0xFFFF);
-                if (compression != 1 && compression != 32773 && compression != 5) { // '1' stands for "uncompressed". // '32 773' stands for packbits compression
+                if (compression != 1 && compression != 32773 && compression != 5 && compression != 8) {
+                    // '1' stands for "uncompressed".
+                    // '8' stands for "Deflate".
+                    // '32 773' stands for packbits compression
                     final Object nameCompress;
                     switch (compression) {
                         case 6:  nameCompress = "JPEG";      break;
                         case 7:  nameCompress = "JPEG";      break;
-                        case 8:  nameCompress = "Deflate";   break;
                         default: nameCompress = compression; break;
                     }
                     throw new UnsupportedImageFormatException(error(Errors.Keys.IllegalParameterValue_2,
@@ -2095,6 +2075,13 @@ public class TiffImageReader extends SpatialImageReader {
             } else {
                 assert tileOffsets != null;
                 readFromTilesLZW(image.getRaster(), param, srcRegion, dstRegion);
+            }
+        } else if (compression == 8) {
+            if (stripOffsets != null) {
+                readFromStripDeflate(image.getRaster(), param, srcRegion, dstRegion);
+            } else {
+                assert tileOffsets != null;
+                readFromTilesDeflate(image.getRaster(), param, srcRegion, dstRegion);
             }
         } else {
             //-- by strips
@@ -2781,6 +2768,22 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
        }
+    }
+
+    /**
+     * Process to the image reading, and stores the pixels in the given raster.<br/>
+     * Process fill raster from informations stored in stripOffset made.<br/>
+     * Method adapted to read data from Deflate(tag value 8) compression.
+     *
+     * @param  raster    The raster where to store the pixel values.
+     * @param  param     Parameters used to control the reading process, or {@code null}.
+     * @param  srcRegion The region to read in source image.
+     * @param  dstRegion The region to write in the given raster.
+     * @throws IOException If an error occurred while reading the image.
+     */
+    private void readFromStripDeflate(final WritableRaster raster, final ImageReadParam param,
+            final Rectangle srcRegion, final Rectangle dstRegion) throws IOException {
+        throw new IOException("Deflate strip tiff not supported.");
     }
 
     /**
@@ -3538,6 +3541,283 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Processes to the image reading, and stores the pixels in the given raster.
+     *
+     * @param  raster    The raster where to store the pixel values.
+     * @param  param     Parameters used to control the reading process, or {@code null}.
+     * @param  srcRegion The region to read in source image.
+     * @param  dstRegion The region to write in the given raster.
+     * @throws IOException If an error occurred while reading the image.
+     */
+    private void readFromTilesDeflate(final WritableRaster raster, final ImageReadParam param,
+            final Rectangle srcRegion, final Rectangle dstRegion) throws IOException
+    {
+        clearAbortRequest();
+        final int numBands = raster.getNumBands();
+        checkReadParamBandSettings(param, samplesPerPixel, numBands);
+        final int[]      sourceBands;
+        final int[] destinationBands;
+        final int sourceXSubsampling;
+        final int sourceYSubsampling;
+        if (param != null) {
+            sourceBands        = param.getSourceBands();
+            destinationBands   = param.getDestinationBands();
+            sourceXSubsampling = param.getSourceXSubsampling();
+            sourceYSubsampling = param.getSourceYSubsampling();
+        } else {
+            sourceBands        = null;
+            destinationBands   = null;
+            sourceXSubsampling = 1;
+            sourceYSubsampling = 1;
+        }
+        if (sourceBands != null || destinationBands != null) {
+            throw new IIOException("Source and target bands not yet supported.");
+        }
+        final DataBuffer dataBuffer    = raster.getDataBuffer();
+        final int[] bankOffsets        = dataBuffer.getOffsets();
+        final int dataType             = dataBuffer.getDataType();
+        final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
+
+        //-- planar configuration --//
+        final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
+        short pC = 1;
+        /*
+         * If samples per pixel = 1, planar configuration has no impact.
+         */
+        if (planarConfig != null && samplesPerPixel > 1) {
+            pC = ((short[]) planarConfig.get(ATT_VALUE)) [0];
+        }
+        final int pixelLength = (pC == 1) ? samplesPerPixel : 1;
+        final int planarDenum = (pC == 2) ? samplesPerPixel : 1;
+
+        //-- predictor study ---//
+        final Map<String, Object> predictor = (headProperties.get(Predictor));
+        final short predic    = (predictor != null) ? (short) ((long[]) predictor.get(ATT_VALUE)) [0] : 1;
+        //-- array which represent a pixel to permit horizontal differencing if exist --//
+        final long[] prediPix = new long[pixelLength];
+
+        //-- fillOrder --//
+        final Map<String, Object> fillOrder = headProperties.get(FillOrder);
+        short fO = 1;
+        if (fillOrder != null) {
+            fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
+        }
+        //-- adapt imageStream in function of fill order value --//
+        final ImageInputStream rasterStream = getImageInputStream(fO == 2);
+
+        //-- tile index from source area --//
+        final int minTileX = srcRegion.x / tileWidth;
+        final int minTileY = srcRegion.y / tileHeight;
+        final int maxTileX = (srcRegion.x + srcRegion.width  + tileWidth  - 1) / tileWidth;
+        final int maxTileY = (srcRegion.y + srcRegion.height + tileHeight - 1) / tileHeight;
+
+        //-- tile number from source image dimension --//
+        final int numXTile = (imageWidth + tileWidth - 1) / tileWidth;
+        final int numYTile = (imageHeight + tileHeight - 1) / tileHeight;
+
+        //-- srcRegion max coordinates --//
+        final int srcRegionMaxX = srcRegion.x + srcRegion.width;
+        final int srcRegionMaxY = srcRegion.y + srcRegion.height;
+
+        final long bitpersampl = bitsPerSample[0];
+
+        final int sourceScanTileStride     = tileWidth * pixelLength;
+        final int sourceScanTileByteStride = (tileWidth * (int)bitpersampl)/ Byte.SIZE;
+
+        //-- Inflate decompressor
+        final Inflater inflater              = new Inflater(false);
+        final int unCompressedTileByteLength = sourceScanTileByteStride * tileHeight;
+        final byte[] decompressedData        = new byte[unCompressedTileByteLength];
+
+
+        for (int bank = 0; bank < bankOffsets.length; bank++) {
+            /*
+             * Get the underlying array of the image DataBuffer in which to write the data.
+             */
+            final Object targetArray;
+            switch (dataType) {
+                case DataBuffer.TYPE_BYTE   : targetArray = ((DataBufferByte)   dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_USHORT : targetArray = ((DataBufferUShort) dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_SHORT  : targetArray = ((DataBufferShort)  dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_INT    : targetArray = ((DataBufferInt)    dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_FLOAT  : targetArray = ((DataBufferFloat)  dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_DOUBLE : targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
+                default: throw new AssertionError(dataType);
+            }
+
+            final int targetRegionOffset = bankOffsets[bank] + dstRegion.y * targetScanlineStride + dstRegion.x * samplesPerPixel;
+
+            for (int s = 0; s < samplesPerPixel; s += pixelLength) {
+                final int tileIndexOffset = s * numXTile * numYTile;
+                for (int ty = minTileY; ty < maxTileY; ty++) {
+
+                    final int rowTileIndexOffset = ty * numXTile;
+                    final int interMinY          = Math.max(srcRegion.y, ty * tileHeight);
+                    final int interMaxY          = Math.min(srcRegionMaxY, (ty + 1) * tileHeight);
+
+                    final int yOffset = (((interMinY - srcRegion.y) % sourceYSubsampling) == 0) ? 0 : (sourceYSubsampling - ((interMinY - srcRegion.y)) % sourceYSubsampling);
+                    if (yOffset >= tileHeight || (interMinY + yOffset) >= interMaxY) continue;
+                    final int rowSampleOffset = (interMinY + yOffset - ty * tileHeight) * sourceScanTileStride;
+                    final int targetRowOffset = ((interMinY - srcRegion.y + sourceYSubsampling - 1) / sourceYSubsampling) * targetScanlineStride;
+
+         nextTile : for (int tx = minTileX; tx < maxTileX; tx++) {
+
+                        //-- define first byte file position to read --//
+                        final int tileIndex = tileIndexOffset + rowTileIndexOffset + tx;
+                        long currentBuffPos = tileOffsets[tileIndex];
+                        rasterStream.seek(currentBuffPos);
+                        assert rasterStream.getBitOffset() == 0;
+
+                        //-- define intersection between srcRegion and current tile --//
+                        final int interMinX       = Math.max(srcRegion.x, tx * tileWidth);
+                        final int interMaxX       = Math.min(srcRegionMaxX, (tx + 1) * tileWidth);
+
+                        //-- source offset in x direction --//
+                        final int sourceColOffset = (interMinX - srcRegion.x) % sourceXSubsampling == 0 ? 0 : (sourceXSubsampling - ((interMinX - srcRegion.x) % sourceXSubsampling));
+                        //-- in case where subsampling is more longer than tilewidth --//
+                        if (sourceColOffset >= tileWidth || (interMinX + sourceColOffset) >= interMaxX) continue nextTile;
+                        final int maxSampleXPos = (interMaxX - tx * tileWidth) * pixelLength;
+                        //-- target begin position --//
+                        int targetOffset = targetRegionOffset + targetRowOffset + ((interMinX - srcRegion.x + sourceXSubsampling - 1) / sourceXSubsampling) * samplesPerPixel + s;
+                        int targetPos    = targetOffset;
+
+                       /*
+                        * With LZW compression we must read all byte to build appropriate LZW map container.
+                        * We define to positions "posRef" and "maxRowRefPos" where "posRef" represent
+                        * index of current sample which will be written in source array and "maxRowRefPos" the last exclusive written sample.
+                        */
+                        int posRef = rowSampleOffset + (interMinX + sourceColOffset - tx * tileWidth) * pixelLength;
+
+                        int nextPosRef         = posRef + sourceYSubsampling * sourceScanTileStride;
+                        int maxRowRefPos       = rowSampleOffset + maxSampleXPos;
+                        final int maxSamplePos = (interMaxY - ty * tileHeight - 1) * sourceScanTileStride + maxSampleXPos;
+                        int samplePos          = 0;
+
+                        //-- current LZW array index --//
+                        //-- precedently iteration LZW code --//
+                        int hdb              = 0;
+                        Arrays.fill(prediPix, 0);
+
+                        //-- bytePos must read throught all file byte per byte --//
+                        int bytePos = 0;
+                        int b       = 0;
+
+                        /*
+                         * Long container use to build a sample,
+                         * because each sample is read byte per byte regardless their bit size.
+                         */
+                        long dataContainer = 0;
+                        int maskCount      = 0;
+
+                        //-- decode datas
+                        final byte[] data = new byte[(int)tileByteCounts[tileIndex]];
+                        rasterStream.readFully(data);
+                        inflate(inflater, data, decompressedData);
+
+                        for (int i = 0; i < unCompressedTileByteLength; i++) {
+                            //-- build sample in relation with bits per samples --//
+                            final long val = decompressedData[i] & 0x000000FFL;
+                            dataContainer  = dataContainer | (val << maskCount);
+                            maskCount     += Byte.SIZE;
+
+                            //-- if a sample is built --//
+                            if (maskCount == bitpersampl) {
+                                //-- add in precedently array before insertion --//
+                                //-- if horizontal differencing add with precedently value --//
+                                prediPix[hdb] = (predic == 2) ? (prediPix[hdb] + dataContainer) : dataContainer;
+
+                                //prediPix[hdb] = dataContainer;
+                                if (++hdb == pixelLength) hdb = 0;
+
+                                //-- re-initialize datacontainer --//
+                                dataContainer = 0;
+                                maskCount     = 0;
+
+                                //-- write sample in target array if its necessary --//
+                                if (samplePos == posRef) {
+                                    switch (dataType) {
+                                        case DataBuffer.TYPE_BYTE   : ((byte[])targetArray)[targetPos] = (byte) (prediPix[b]); break;
+                                        case DataBuffer.TYPE_SHORT  :
+                                        case DataBuffer.TYPE_USHORT : ((short[])targetArray)[targetPos] = (short) (prediPix[b]); break;
+                                        case DataBuffer.TYPE_INT    : ((int[])targetArray)[targetPos] =  (int) (prediPix[b]); break;
+                                        case DataBuffer.TYPE_FLOAT  : ((float[])targetArray)[targetPos] = Float.intBitsToFloat((int) (prediPix[b])); break;
+                                        case DataBuffer.TYPE_DOUBLE : ((double[])targetArray)[targetPos] = Double.longBitsToDouble(prediPix[b]); break;
+                                        default: throw new AssertionError(dataType);
+                                    }
+                                    targetPos += planarDenum;
+                                    if (++b == pixelLength) {
+                                        posRef += (sourceXSubsampling - 1) * pixelLength;
+                                        b = 0;
+                                    }
+                                    posRef++;
+                                    //-- this if means : pass to the next destination image row --//
+                                    if (posRef >= maxRowRefPos) {
+                                        assert hdb == 0 : "hdb should be zero. hdb = "+hdb;
+
+                                        //-- begin source position writing --//
+                                        posRef      = nextPosRef;
+                                        nextPosRef += sourceYSubsampling * sourceScanTileStride;
+
+                                        //-- ending source position writing --//
+                                        maxRowRefPos += sourceYSubsampling * sourceScanTileStride;
+
+                                        //-- if it is unnecessary to finish to read current tile --//
+                                        if (posRef >= maxSamplePos) {
+                                            assert maxRowRefPos >= maxSamplePos : "maxRowrefpos = "+maxRowRefPos+" maxSamplepos = "+maxSamplePos;
+                                            continue nextTile;
+                                        }
+
+                                        //-- destination shifts --//
+                                        targetOffset += targetScanlineStride;
+                                        targetPos = targetOffset;
+
+                                    }
+                                }
+                                //-- shift by one when a sample was built --//
+                                samplePos++;
+                            }
+                            if (++bytePos == sourceScanTileByteStride) {
+                                //-- initialize predictor array --//
+                                Arrays.fill(prediPix, 0);
+                                bytePos = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        inflater.end();
+    }
+
+    /**
+     * Use {@link Inflater} to uncompress data from {@code inputCompressedDatas}
+     * and store results into destination {@code unCompressedDatas} byte array.<br>
+     * Moreover if an error occur during uncompression, the {@link Inflater#end() } method is called.
+     *
+     * @param inflater object to uncompress inflate/deflate datas
+     * @param inputCompressedDatas compressed data
+     * @param unCompressedDatas destination uncompressed datas
+     * @throws IOException if problem during uncompress
+     */
+    private void inflate(final Inflater inflater, final byte[] inputCompressedDatas, final byte[] unCompressedDatas)
+            throws IOException {
+        inflater.reset();
+        inflater.setInput(inputCompressedDatas);
+        final int tilesizeByte = unCompressedDatas.length;
+        try {
+            int nb = 0;
+            while ((nb < tilesizeByte)) {
+                final int readByte = inflater.inflate(unCompressedDatas, nb, tilesizeByte - nb);
+                if (readByte <= 0) break;
+                nb += readByte;
+            }
+        } catch (DataFormatException ex) {
+            inflater.end();
+            throw new IOException(ex);
         }
     }
 

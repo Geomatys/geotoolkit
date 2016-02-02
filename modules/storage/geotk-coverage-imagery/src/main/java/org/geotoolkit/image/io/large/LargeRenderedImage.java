@@ -37,6 +37,9 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.util.Disposable;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
 
 /**
  * Define "Large" {@link RenderedImage} which is an image with a large size.<br/>
@@ -202,7 +205,6 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         tmpReadParam.setSourceRegion(new Rectangle(0, 0, 1, 1));
         final BufferedImage tmpImage = imageReader.read(imageIndex, tmpReadParam);
         cm = tmpImage.getColorModel();
-        sm = tmpImage.getSampleModel();
 
         if (readParam != null) {
             if (readParam.getSourceRenderSize() != null) {
@@ -225,6 +227,11 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             this.height      = imageReader.getHeight(imageIndex);
             sourceReadParam = null;
         }
+
+        //-- build a more appropriate SampleModel for this LargeRenderedImage.
+        final SampleModel tmpSm      = tmpImage.getSampleModel();
+        final PlanarConfiguration pC = PlanarConfiguration.valueOf(ImageUtils.getPlanarConfiguration(tmpSm));
+        sm = ImageUtils.createSampleModel(pC, SampleType.valueOf(tmpSm.getDataType()), width, height, tmpSm.getNumBands());
 
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance();
         this.tileGridXOffset = 0;
