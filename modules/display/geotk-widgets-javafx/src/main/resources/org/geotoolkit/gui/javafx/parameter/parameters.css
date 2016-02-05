@@ -43,6 +43,10 @@ Component hierarchy for FXParameterGroupPane should be :
     Author     : Alexis Manin (Geomatys)
 */
 
+* {
+    -fx-odd-background: derive(-fx-control-inner-background, -7%);
+}
+
 .infobutton {
     -fx-alignment:CENTER;
     -fx-graphic-text-gap:0;
@@ -118,6 +122,11 @@ Component hierarchy for FXParameterGroupPane should be :
 }
 
 //TREETABLE PARAMETERS EDITOR
+
+.tree-table-cell {
+    -fx-border-width:0;
+}
+
 .tree-table-row-cell {
     -fx-background-color: -fx-table-cell-border-color, -fx-control-inner-background;
     -fx-background-insets: 0, 0 0 1 0;
@@ -130,7 +139,7 @@ Component hierarchy for FXParameterGroupPane should be :
 }
 
 .tree-table-row-cell:odd {
-    -fx-background-color: -fx-table-cell-border-color, derivate(-fx-control-inner-background,-80%);
+    -fx-background-color: -fx-table-cell-border-color, -fx-odd-background;
     -fx-background-insets: 0, 0 0 1 0;
 }
 
@@ -139,6 +148,28 @@ Component hierarchy for FXParameterGroupPane should be :
     -fx-background-insets: 0, 1, 2;
 }
 
+.dragged-over {
+    -fx-background-color: derive(-fx-control-inner-background, -20%);
+}
+
+.dragged-over:odd {
+    -fx-background-color: derive(-fx-odd-background, -20%);
+}
+
+.dragged-above {
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 40%, derive(-fx-control-inner-background, -20%), -fx-control-inner-background);
+}
+
+.dragged-above:odd {
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 40%, derive(-fx-odd-background, -20%), -fx-odd-background);    
+}
+.dragged-below {
+    -fx-background-color: linear-gradient(from 50% 100% to 50% 60%, derive(-fx-control-inner-background, -20%), -fx-control-inner-background);
+}
+
+.dragged-below:odd {
+    -fx-background-color: linear-gradient(from 50% 100% to 50% 60%, derive(-fx-odd-background, -20%), -fx-odd-background);
+}
 
 /*
 

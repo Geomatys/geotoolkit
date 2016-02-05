@@ -112,6 +112,7 @@
     <module>geotk-coverage-bil</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
+    <module>geotk-coverage-landsat</module>
     <module>geotk-coverage-netcdf</module>
     <module>geotk-coverage-postgresql</module>
     <module>geotk-coverage-xml</module>

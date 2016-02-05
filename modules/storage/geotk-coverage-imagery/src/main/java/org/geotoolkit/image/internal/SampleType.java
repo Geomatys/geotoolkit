@@ -21,15 +21,15 @@ import java.awt.image.DataBuffer;
 
 /**
  * Define internaly {@link ColorModel} data type.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public enum SampleType {
     /**
      * Data type {@link Byte}.
      */
-    Byte, 
-    
+    Byte,
+
     /**
      * Data type {@link Short}.
      */
@@ -43,13 +43,13 @@ public enum SampleType {
     /**
      * Data type {@link Integer}.
      */
-    Integer, 
-    
+    Integer,
+
     /**
      * Data type {@link Float}.
      */
-    Float, 
-    
+    Float,
+
     /**
      * Data type {@link Double}.
      */
@@ -71,6 +71,73 @@ public enum SampleType {
             case DataBuffer.TYPE_FLOAT : return Float;
             case DataBuffer.TYPE_DOUBLE : return Double;
             case DataBuffer.TYPE_UNDEFINED: //fall through
+            default: return null;
+        }
+    }
+
+    /**
+     * Mapping between {@link org.geotoolkit.image.internal.SampleType} enum and
+     * {@link java.awt.image.SampleModel#getDataType()}.
+     *
+     * @param sampleType enum from {@link SampleType} constantes.
+     * @return {@link DataBuffer#*} or {@link DataBuffer#TYPE_UNDEFINED} if unknow {@link SampleType}.
+     */
+    public static int valueOf(final SampleType sampleType) {
+        switch (sampleType) {
+            case Byte : return DataBuffer.TYPE_BYTE;
+            case Short : return DataBuffer.TYPE_SHORT;
+            case UShort : return DataBuffer.TYPE_USHORT;
+            case Integer : return DataBuffer.TYPE_INT;
+            case Float : return DataBuffer.TYPE_FLOAT;
+            case Double : return DataBuffer.TYPE_DOUBLE;
+            default : return DataBuffer.TYPE_UNDEFINED;
+        }
+    }
+
+    /**
+     * Mapping between bits per sample and sample format with {@link SampleType}.<br><br>
+     * expected bitPerSamples values : <br>
+     * - 8(Byte)<br>
+     * - 16(Short or UShort)<br>
+     * - 32 (Int or Float)<br>
+     * - 64 (Double)<br><br>
+     *
+     * expected sampleFormat values : <br>
+     * - 1 for unsigned integer datas<br>
+     * - 2 for signed integer datas<br>
+     * - 3 for IEEE floating point<br><br>
+     *
+     * Example : <br>
+     * UShort data : bitspersample = 16, sampleFormat = 1<br>
+     * Float data  : bitspersample = 32, sampleformat = 3<br>
+     *
+     * Note : for bitpersample = 8, and bitspersample = 64, sampleFormat is ignored
+     * the only available {@link SampleType} are respectively {@link SampleType#Byte} and {@link SampleType#Double}.
+     * Moreover for each unknow combination bitPerSample, sampleFormat this method return {@code null}.
+     *
+     *
+     * @param bitPerSample bitPerSample bit number by sample.
+     * @param sampleFormat integer to define floating, signed or unsigned type data.
+     * @return {@link org.geotoolkit.image.internal.SampleType} or null if type undefined.
+     */
+    public static SampleType valueOf(final int bitPerSample, final int sampleFormat) {
+        switch (bitPerSample) {
+            case 8 : return Byte;
+            case 16 : {
+                switch (sampleFormat) {
+                    case 1 : return UShort;
+                    case 2 : return Short;
+                    default : return null;
+                }
+            }
+            case 32 : {
+                switch (sampleFormat) {
+                    case 2 : return Integer;
+                    case 3 : return Float;
+                    default : return null;
+                }
+            }
+            case 64: return Double;
             default: return null;
         }
     }

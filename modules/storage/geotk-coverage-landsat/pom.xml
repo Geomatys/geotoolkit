@@ -19,12 +19,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-coverage-geotiff</artifactId>
+    <artifactId>geotk-coverage-landsat</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage Geotiff</name>
+    <name>Coverage Landsat</name>
 
     <description>
-    Datasource created to read geotiff files
+    Coverage Reader for Landsat images type
     </description>
 
     <licenses>
@@ -41,9 +41,9 @@
   <!-- =========================================================== -->
     <developers>
         <developer>
-            <name>Johann Sorel (Geomatys)</name>
-            <id>jsorel</id>
-            <email>sorel.johann@geomatys.fr</email>
+            <name>Remi Marechal (Geomatys)</name>
+            <id>rmarechal</id>
+            <email>remi.marechal@geomatys.fr</email>
             <roles>
                 <role>module maintainer</role>
                 <role>Java Developer</role>
@@ -63,29 +63,8 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-imagery</artifactId>
+            <artifactId>geotk-coverage-store</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_codec</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

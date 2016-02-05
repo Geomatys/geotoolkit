@@ -57,6 +57,8 @@ import org.geotoolkit.internal.jdk8.JDK8;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -519,8 +521,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             final ColorModel colMod = getColorModel();
             if (colMod != null && planarConfiguration != -1) {
                 //-- we can directly create sample model, attributs have already been checked.
-                sampleModel = ImageUtils.createSampleModel((short) planarConfiguration, colorModel);
-//                sampleType  = sampleModel.getDataType();
+                sampleModel = ImageUtils.createSampleModel(PlanarConfiguration.valueOf(planarConfiguration),
+                                                           SampleType.valueOf(bitPerSample, sampleFormat),
+                                                           1, 1, nbBands);
             }
             //-- else do nothing case where unmarshall old pyramid. older comportement.
         }
