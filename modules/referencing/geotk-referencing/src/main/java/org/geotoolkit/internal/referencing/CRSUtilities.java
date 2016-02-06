@@ -65,8 +65,6 @@ public final class CRSUtilities extends Static {
     /**
      * Version of the embedded database. This string must be updated when
      * the SQL scripts in the {@code geotk-epsg} module are updated.
-     *
-     * @see http://www.geotoolkit.org/build/tools/geotk-epsg-pack/index.html
      */
     public static final String EPSG_VERSION = "7.09";
 

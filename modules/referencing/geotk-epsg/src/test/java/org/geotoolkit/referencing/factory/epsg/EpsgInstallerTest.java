@@ -46,51 +46,6 @@ import static org.junit.Assert.*;
  */
 public final strictfp class EpsgInstallerTest {
     /**
-     * Tests the creation of an EPSG database on Derby.
-     *
-     * @throws FactoryException Should never happen.
-     * @throws SQLException Should never happen.
-     */
-    @Test
-    @Ignore
-    public void testCreationOnDerby() throws FactoryException, SQLException {
-        final EpsgInstaller installer = new EpsgInstaller();
-        installer.setDatabase("jdbc:derby:memory:EPSG;create=true");
-        boolean success = false;
-        try {
-            assertFalse("Database exists?", installer.exists());
-            final EpsgInstaller.Result result = installer.call();
-            assertTrue(result.numRows > 0);
-            assertTrue("Database exists?", installer.exists());
-            /*
-             * At this point the EPSG database has been fully created.
-             * Now test the creation of a few CRS objects from it.
-             */
-            try (Connection connection = DriverManager.getConnection("jdbc:derby:memory:EPSG")) {
-//              final AnsiDialectEpsgFactory factory = new AnsiDialectEpsgFactory(null, connection);
-//              factory.setSchema("EPSG", true);
-//              factory.useOriginalTableNames();
-//              assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
-//              assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
-//              factory.dispose(false);
-            }
-            success = true;
-        } finally {
-            try {
-                DriverManager.getConnection("jdbc:derby:memory:EPSG;shutdown=true");
-                fail("Expected a SQLException.");
-            } catch (SQLException e) {
-                // This is the expected exception.
-                if (success) {
-                    // Perform this check only in case of success, in order to avoid
-                    // hiding the failure cause if an exception occurred in the test.
-                    assertEquals(e.getLocalizedMessage(), "08006", e.getSQLState());
-                }
-            }
-        }
-    }
-
-    /**
      * Tests the creation of an EPSG database on HSQL. The test is available in two modes:
      * the database can be created in memory only, or it can be created on disk. We perform
      * the test on disk only occasionally.

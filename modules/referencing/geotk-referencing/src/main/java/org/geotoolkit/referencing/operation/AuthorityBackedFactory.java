@@ -57,6 +57,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
 import static org.geotoolkit.factory.Factory.EMPTY_HINTS;
 import static org.geotoolkit.referencing.factory.ReferencingFactory.LOGGER;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
