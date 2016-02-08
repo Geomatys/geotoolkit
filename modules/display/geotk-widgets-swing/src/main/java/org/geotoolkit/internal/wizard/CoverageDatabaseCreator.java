@@ -43,7 +43,6 @@ import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.apache.sis.util.Classes;
@@ -190,7 +189,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
         setProperty(properties, ConfigurationKey.URL,      getLoggingService().getUrl());
         setProperty(properties, ConfigurationKey.USER,     login.getUserName());
         setProperty(properties, ConfigurationKey.PASSWORD, new String(login.getPassword()));
-        setProperty(properties, ConfigurationKey.SCHEMA,   epsg ? EpsgInstaller.DEFAULT_SCHEMA : wizard.schema.getText());
+        setProperty(properties, ConfigurationKey.SCHEMA,   epsg ? "EPSG" : wizard.schema.getText());
         File file = (epsg ? Installation.EPSG : Installation.COVERAGES).validDirectory(true);
         file = new File(file, Installation.DATASOURCE_FILE);
         try (OutputStream out = new FileOutputStream(file)) {

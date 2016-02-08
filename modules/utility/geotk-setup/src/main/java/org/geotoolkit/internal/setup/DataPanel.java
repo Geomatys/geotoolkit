@@ -35,7 +35,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.concurrent.ExecutionException;
 
-import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.Installation;
@@ -178,11 +177,7 @@ final class DataPanel extends JComponent {
                     boolean found = false;
                     switch (item) {
                         case EPSG: {
-                            try {
-                                found = epsgPanel.installer().exists();
-                            } catch (FactoryException ex) {
-                                failure = ex;
-                            }
+                            found = false; // TODO epsgPanel.installer().exists();
                             break;
                         }
                         case NADCON: {
@@ -282,7 +277,7 @@ final class DataPanel extends JComponent {
         protected Object doInBackground() throws Exception {
             switch (item) {
                 case EPSG: {
-                    epsgPanel.installer().call();
+// TODO             epsgPanel.installer().call();
                     break;
                 }
                 case NADCON: {

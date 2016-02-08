@@ -64,7 +64,6 @@ import org.geotoolkit.internal.sql.PostgisInstaller;
 import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.swing.DocumentChangeListener;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 
 
 /**
@@ -309,7 +308,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 }
                 schemas = new String[] {
                     PostgisInstaller.DEFAULT_SCHEMA,
-                    EpsgInstaller.DEFAULT_SCHEMA,
+                    "EPSG",
                     CoverageDatabaseInstaller.METADATA_SCHEMA,
                     schema
                 };

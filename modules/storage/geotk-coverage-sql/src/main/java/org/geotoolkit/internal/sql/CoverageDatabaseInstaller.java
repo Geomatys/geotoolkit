@@ -31,7 +31,7 @@ import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.StringBuilders;
 import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 
 
 /**
@@ -209,11 +209,9 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
          * Creates the epsg schema.
          */
         if (createEPSG) {
-            progress(40, EpsgInstaller.DEFAULT_SCHEMA);
-            final EpsgInstaller epsg = new EpsgInstaller();
-            epsg.setDatabase(getConnection());
-            epsg.setSchema(EpsgInstaller.DEFAULT_SCHEMA);
-            epsg.call();
+            progress(40, "epsg");
+            final EPSGFactory installer = new EPSGFactory(null);    // TODO: specify the DataSource.
+            installer.install(getConnection());
         }
         /*
          * Creates the metadata schema.
