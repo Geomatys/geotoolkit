@@ -1,3 +1,10 @@
+---
+---    Copyright International Association of Oil and Gas Producers (IOGP)
+---    See  http://www.epsg.org/TermsOfUse  (a copy is in META-INF/LICENSE).
+---
+---    This file has been modified for the needs of Apache SIS project.
+---
+
 ALTER TABLE epsg_coordoperation ADD CONSTRAINT fk_uom_code_target_coord_diff FOREIGN KEY
 ( uom_code_target_coord_diff ) REFERENCES epsg_unitofmeasure ( uom_code )
 ON UPDATE RESTRICT ON DELETE RESTRICT;

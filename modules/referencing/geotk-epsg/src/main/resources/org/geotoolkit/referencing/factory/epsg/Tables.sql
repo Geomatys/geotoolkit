@@ -1,3 +1,10 @@
+---
+---    Copyright International Association of Oil and Gas Producers (IOGP)
+---    See  http://www.epsg.org/TermsOfUse  (a copy is in META-INF/LICENSE).
+---
+---    This file has been modified for the needs of Apache SIS project.
+---
+
 CREATE TABLE epsg_alias (
 alias_code                                         INTEGER NOT NULL,
 object_table_name                                  VARCHAR(80) NOT NULL,
