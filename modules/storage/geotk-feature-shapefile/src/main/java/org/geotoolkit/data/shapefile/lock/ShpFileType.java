@@ -24,6 +24,7 @@ import java.net.URL;
  * Enumerates the known types of files associated with a shapefile.
  * 
  * @author jesse
+ * @author Johann Sorel (Geomatys)
  */
 public enum ShpFileType {
 
@@ -56,7 +57,11 @@ public enum ShpFileType {
     /**
      * the .shp.xml file, it contains the metadata about the shapefile
      */
-    SHP_XML("shp.xml");
+    SHP_XML("shp.xml"),
+    /**
+     * the .cpg file, it contains the dbf character encoding as a single string.
+     */
+    CPG("cpg");
 
     public final String extension;
     public final String extensionWithPeriod;

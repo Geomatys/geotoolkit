@@ -118,7 +118,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
             .addName(Bundle.formatInternational(Bundle.Keys.charset))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.charset_remarks))
             .setRequired(false)
-            .create(Charset.class, Charset.forName("ISO-8859-1"));
+            .create(Charset.class, null);
 
     /**
      * Optional - load in memory the quadtree if exist.
