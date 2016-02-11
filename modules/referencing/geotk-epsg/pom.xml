@@ -31,12 +31,12 @@
   <licenses>
     <license>
       <name>EPSG terms of use</name>
-      <url>http://www.epsg-registry.org/help/xml/Terms_Of_Use.html</url>
+      <url>http://www.epsg.org/TermsOfUse</url>
       <distribution>manual</distribution>
     </license>
     <license>
-      <name>Lesser General Public License (LGPL)</name>
-      <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -49,7 +49,7 @@
     <developer>
       <name>Martin Desruisseaux</name>
       <id>desruisseaux</id>
-      <email>martin.desruisseaux@geomatys.fr</email>
+      <email>martin.desruisseaux@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
@@ -62,34 +62,12 @@
 
 
   <!-- ===========================================================
-           JAR packaging
-       =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>org.geotoolkit.internal.referencing.EpsgCreatorCommands</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-
-  <!-- ===========================================================
            Dependency Management
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-referencing</artifactId>
     </dependency>
   </dependencies>
 </project>

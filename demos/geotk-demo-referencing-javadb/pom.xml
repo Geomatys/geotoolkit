@@ -16,6 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-referencing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
             <version>${project.version}</version>
         </dependency>
