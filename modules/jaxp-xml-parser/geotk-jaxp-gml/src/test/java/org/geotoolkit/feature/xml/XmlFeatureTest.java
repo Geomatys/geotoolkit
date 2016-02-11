@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
+import java.io.FileInputStream;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -202,9 +203,12 @@ public class XmlFeatureTest {
         writer.write(simpleFeatureFull, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
 
     @Test
@@ -216,9 +220,12 @@ public class XmlFeatureTest {
         writer.write(simpleFeatureFull, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature321.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        org.apache.sis.test.Assert.assertXmlEquals(expResult, temp,
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        org.apache.sis.test.Assert.assertXmlEquals(expResult, result,
                 "http://www.w3.org/2000/xmlns:*",
                 "http://www.w3.org/2001/XMLSchema-instance:schemaLocation"
         );
@@ -233,9 +240,12 @@ public class XmlFeatureTest {
         writer.write(featureWithAttributes, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithAttribute.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
 
     @Test
@@ -247,9 +257,12 @@ public class XmlFeatureTest {
         writer.write(featureWithObject, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithObjectProperty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
 
     @Test
@@ -262,13 +275,15 @@ public class XmlFeatureTest {
         writer.write(featureEmpty, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
 
         final Expression exp = new DefaultPropertyName("/identifier/_value");
         Object v = exp.evaluate(featureEmpty);
-        DomCompare.compare(expResult, temp);
+        DomCompare.compare(expResult, result);
     }
 
     @Test
@@ -281,11 +296,13 @@ public class XmlFeatureTest {
         writer.write(featureNil, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureWithNil.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
-
 
     @Test
     public void testWriteSimpleFeatureElement() throws JAXBException, IOException, XMLStreamException,
@@ -293,9 +310,9 @@ public class XmlFeatureTest {
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
-        Element result = writer.write(simpleFeatureFull, false);
+        Element r = writer.write(simpleFeatureFull, false);
 
-        Source source = new DOMSource(result.getOwnerDocument());
+        Source source = new DOMSource(r.getOwnerDocument());
 
         // Prepare the output file
         Result resultxml = new StreamResult(temp);
@@ -305,9 +322,12 @@ public class XmlFeatureTest {
         xformer.transform(source, resultxml);
 
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureDom.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
 
     @Test
@@ -429,9 +449,12 @@ public class XmlFeatureTest {
         writer.write(featureComplex, temp);
         writer.dispose();
 
+        String result    = FileUtilities.getStringFromStream(new FileInputStream(temp));
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        DomCompare.compare(expResult, result);
     }
 
     @Test

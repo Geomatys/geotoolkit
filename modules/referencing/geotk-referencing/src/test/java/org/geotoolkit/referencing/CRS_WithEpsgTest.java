@@ -33,11 +33,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
-import org.apache.sis.util.Version;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
@@ -169,26 +167,6 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         assertEquals("With scan allowed, should find the CRS.", "EPSG:4230",
                      org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(crs, true));
         assertEquals(Integer.valueOf(4230), org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true));
-    }
-
-    /**
-     * Tests {@link IdentifiedObjects#lookupIdentifier} in the URN namespace.
-     * Also test the HTTP namespace by opportunity.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void testLookupIdentifierWithURN() throws FactoryException {
-        final Version version = CRS.getVersion("EPSG");
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-        assertEquals("http://www.opengis.net/gml/srs/epsg.xml#4326",
-                org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.HTTP_OGC, crs, false));
-        assertEquals("NOTE: This test assumes that the EPSG database version " + EPSG_VERSION +
-                " is used. It should be the case if the embedded database is used (geotk-epsg)." +
-                " If that module is upgrated with a newer version of the EPSG database, please" +
-                " update this test.",
-                "urn:ogc:def:crs:epsg:" + (version != null ? version : EPSG_VERSION) + ":4326",
-                org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false));
     }
 
     /**

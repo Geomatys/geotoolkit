@@ -18,10 +18,7 @@
 package org.geotoolkit.test;
 
 import java.io.*;
-import java.text.Format;
-import java.text.ParseException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.zip.CRC32;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
@@ -44,14 +41,6 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 public strictfp class Commons {
-    /**
-     * The version of the EPSG database used. Please update this field if the version of
-     * the embedded EPSG database provided in the {@code "geotk-epsg"} module is updated.
-     *
-     * @since 3.11
-     */
-    public static final String EPSG_VERSION = "7.9";
-
     /**
      * The character to be substituted to {@code '"'} in {@link #printAsJavaCode}.
      */
@@ -83,25 +72,6 @@ public strictfp class Commons {
         }
         assertEquals("Premature end of iteration.", strings.length, i);
         return strings;
-    }
-
-    /**
-     * Returns the single element from the given collection. If the given collection is null
-     * or does not contains exactly one element, then an {@link AssertionError} is thrown.
-     *
-     * @param  <E> The type of collection elements.
-     * @param  collection The collection from which to get the singleton.
-     * @return The singleton element from the collection.
-     *
-     * @since 3.19
-     */
-    public static <E> E getSingleton(final Iterable<? extends E> collection) {
-        assertNotNull("Null collection.", collection);
-        final Iterator<? extends E> it = collection.iterator();
-        assertTrue("The collection is empty.", it.hasNext());
-        final E element = it.next();
-        assertFalse("The collection has more than one element.", it.hasNext());
-        return element;
     }
 
     /**
@@ -155,26 +125,6 @@ public strictfp class Commons {
     }
 
     /**
-     * Formats the given value using the given formatter, and parses the text back to its value.
-     * If the parsed value is not equal to the original one, an {@link AssertionError} is thrown.
-     *
-     * @param  formatter The formatter to use for formatting and parsing.
-     * @param  value The value to format.
-     * @return The formatted value.
-     */
-    public static String formatAndParse(final Format formatter, final Object value) {
-        final String text = formatter.format(value);
-        final Object parsed;
-        try {
-            parsed = formatter.parseObject(text);
-        } catch (ParseException e) {
-            throw new AssertionError(e);
-        }
-        assertEquals("Parsed text not equal to the original value", value, parsed);
-        return text;
-    }
-
-    /**
      * Decodes as plain text a string encoded by {@link #printAsJavaCode}.
      *
      * @param  text The text encoded by {@link #printAsJavaCode}.
@@ -214,29 +164,6 @@ public strictfp class Commons {
         } catch (IOException e) {
             System.err.println(e);
             file.delete();
-        }
-    }
-
-    /**
-     * Reads the first object found in the given file. If the given file can not be read,
-     * then this method throws an {@link AssertionError} - which will typically be reported
-     * as a JUnit test failure.
-     * <p>
-     * This method is typically used in order to inspect the object saved by
-     * {@link #serializeToSurefireDirectory(Class, Object)} after a test failure.
-     *
-     * @param  file The file from which to read an object.
-     * @return The first object read from the given file.
-     *
-     * @since 3.19
-     */
-    public static Object deserialize(final String file) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            return in.readObject();
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        } catch (ClassNotFoundException e) {
-            throw new NoClassDefFoundError(e.getLocalizedMessage());
         }
     }
 }

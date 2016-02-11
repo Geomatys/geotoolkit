@@ -50,6 +50,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.metadata.NameMeaning;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -176,17 +177,17 @@ public final class CRS extends Static {
      * @throws FactoryRegistryException if no {@link CRSAuthorityFactory} implementation
      *         was found for the specified authority.
      *
-     * @see Hints#VERSION
-     *
      * @category factory
      * @since 2.4
      */
     public static Version getVersion(final String authority) throws FactoryRegistryException {
-        ensureNonNull("authority", authority);
-        if ("EPSG".equalsIgnoreCase(authority)) {
-            return new Version("7.9");   // TODO: fetch information from database.
+        final String version;
+        try {
+            version = NameMeaning.getVersion(org.apache.sis.referencing.CRS.getAuthorityFactory(authority).getAuthority());
+        } catch (FactoryException e) {
+            throw new FactoryRegistryException(e.getLocalizedMessage(), e);
         }
-        return null;
+        return (version != null) ? new Version(version) : null;
     }
 
     /**

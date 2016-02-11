@@ -59,6 +59,11 @@
       <artifactId>geotk-coverage-sql</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 

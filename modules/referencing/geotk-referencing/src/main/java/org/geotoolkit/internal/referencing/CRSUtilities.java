@@ -63,30 +63,6 @@ import static java.util.Collections.singletonMap;
  */
 public final class CRSUtilities extends Static {
     /**
-     * Version of the embedded database. This string must be updated when
-     * the SQL scripts in the {@code geotk-epsg} module are updated.
-     */
-    public static final String EPSG_VERSION = "7.09";
-
-    /**
-     * Number of {@link org.geotoolkit.referencing.cs.AxisRangeType} values.
-     * This is defined in order to avoid creating a useless array of enumeration
-     * just for determining its length.
-     *
-     * @since 3.20
-     */
-    public static final int AXIS_RANGE_COUNT = 2;
-
-    /**
-     * Mask to apply on the {@link org.geotoolkit.referencing.cs.AxisRangeType} ordinate
-     * value in order to have the "opposite" enum. The opposite of {@code POSITIVE_LONGITUDE}
-     * is {@code SPANNING_ZERO_LONGITUDE}, and conversely.
-     *
-     * @since 3.20
-     */
-    public static final int AXIS_RANGE_RECIPROCAL_MASK = 1;
-
-    /**
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
