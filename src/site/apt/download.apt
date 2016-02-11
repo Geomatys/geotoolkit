@@ -140,7 +140,6 @@ Downloading Geotoolkit.org Binaries
 | <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>\     | • Java 7\                 |
 |                                        | • geotk-metadata-sql.jar\          | • Java Advanced Imaging   |
 |                                        | • geotk-coverage-sql.jar\          |                           |
-|                                        | • geotk-epsg-javadb.jar\           |                           |
 |                                        | • derby.jar\                       |                           |
 |                                        | • derbyLocale_*.jar\               |                           |
 |                                        | • postgresql.jar                   |                           |

@@ -175,7 +175,7 @@
   <properties>
     <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
     <sis.version>0.7-jdk7-SNAPSHOT</sis.version>
-    <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
+    <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>4.10.4</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -466,7 +466,7 @@
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>2.2.8</version>
+        <version>2.3.3</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
