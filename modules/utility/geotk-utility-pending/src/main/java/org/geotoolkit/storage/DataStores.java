@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -68,59 +69,18 @@ public final class DataStores extends Static {
      * @return The set of factories for the given conditions.
      */
     private static synchronized <T extends DataStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
+        final Set<T> results = new HashSet<>();
         final Iterator<DataStoreFactory> factories = loader.iterator();
-        return new LazySet<T>(new Iterator<T>() {
-            /**
-             * The next factory to be returned by the {@link #next()} method, or {@code null}
-             * if not yet computed. This field is set by the {@link #hasNext()} method.
-             */
-            private T next;
-
-            /**
-             * Returns {@code true} if there is more factories to return.
-             * This implementation fetches immediately the next factory.
-             */
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean hasNext() {
-                if (next != null) {
-                    return true;
+        
+        while (factories.hasNext()) {
+            final DataStoreFactory candidate = factories.next();
+            if (type == null || type.isInstance(candidate)) {
+                if (all || candidate.availability().pass()) {
+                    results.add((T)candidate);
                 }
-                synchronized (DataStores.class) {
-                    while (factories.hasNext()) {
-                        final DataStoreFactory candidate = factories.next();
-                        if (type == null || type.isInstance(candidate)) {
-                            if (all || candidate.availability().pass()) {
-                                next = (T) candidate;
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
             }
-
-            /**
-             * Returns the next element in the iteration.
-             */
-            @Override
-            public T next() {
-                if (hasNext()) {
-                    final T n = next;
-                    next = null; // Tells to hasNext() that it will need to fetch a new element.
-                    return n;
-                }
-                throw new NoSuchElementException("No more elements.");
-            }
-
-            /**
-             * Unsupported operation, since this iterator is read-only.
-             */
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Can not remove elements from this iterator.");
-            }
-        });
+        }
+        return results;
     }
 
     /**
