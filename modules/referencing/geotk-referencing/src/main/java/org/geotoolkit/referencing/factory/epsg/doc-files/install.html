@@ -18,28 +18,14 @@
   <h2><a name="Derby">Derby (a.k.a. JavaDB)</a></h2>
   <h3>Requirements</h3>
   <ul>
+    <li>Make sure that the <code>$SIS_DATA</code> environment variable is defined
+      and contains the path to an existing directory. That directory may be initially empty.</li>
     <li>Make sure that the <code>geotk-epsg.jar</code> files are on the classpath.
       The <code>derby.jar</code> is not needed if JavaDB is distributed with the JDK.</li>
   </ul>
   <h3>Steps</h3>
-  <p>None. Just having the above JAR files on the classpath should cause an automatic
-  installation in the <code>$HOME/Geotoolkit.org/EPSG</code> directory, where <code>$HOME</code>
-  is the user home directory (the exact location may vary on different platforms).</p>
-
-
-  <hr>
-  <h2><a name="HSQL">HSQL</a></h2>
-  <h3>Requirements</h3>
-  <ul>
-    <li>Make sure that the <code>hsql.jar</code> and <code>geotk-epsg.jar</code> files
-        are on the classpath.</li>
-    <li>Make sure that the <code>derby.jar</code> file is <strong>not</strong> on the
-        classpath, otherwise the Derby database will have precedence over the HSQL database.</li>
-  </ul>
-  <h3>Steps</h3>
-  <p>None. Just having the above JAR files on the classpath should cause an automatic
-  installation in the <code>$HOME/Geotoolkit.org/EPSG</code> directory, where <code>$HOME</code>
-  is the user home directory (the exact location may vary on different platforms).</p>
+  <p>None. Just filling the above conditions should cause an automatic installation in the
+    <code>$SIS_DATA/Databases/SpatialMetadata</code> directory.</p>
 
 
 
@@ -65,19 +51,8 @@
     <li>Click on the <cite>Select...</cite> button and select your
     <code>EPSG_<var>version</var>.mdb</code> file.</li>
 
-    <li>Run <a href="http://www.geotoolkit.org/modules/utility/geotk-setup/index.html">geotk-setup</a>.
-    Click on the "<cite>EPSG</cite>" tab. Click on the "<cite>Use a specific database</cite>" radio button.
-    In the URL combo box, select "<code>jdbc:odbc:EPSG</code>". Finally click on the "<cite>Apply</cite>" button.</li>
+    <li>(TODO)</li>
   </ol>
-
-  <p>The last step should have created an <code>EPSG/DataSource.properties</code> file in the Geotoolkit data
-  directory (see <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
-  for more information) with the following content:</p>
-  <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
-<pre>#
-# Connection parameters to the EPSG database.
-#
-URL = jdbc:odbc:EPSG</pre></td></tr></table></blockquote>
 
 
   <hr>
@@ -88,39 +63,20 @@ URL = jdbc:odbc:EPSG</pre></td></tr></table></blockquote>
   </ul>
   <h3>Steps</h3>
   <ol>
-    <li><p>Creates an initially empty PostgreSQL database. The following lines creates a "Geotoolkit"
-    role and a "Referencing" database on the local host using the UTF-8 encoding. If an other role,
-    host or database name is wanted, just replace <code>Geotoolkit</code>, <code>localhost</code>
-    and <code>Referencing</code> respectively in the lines below.</p>
-    <blockquote><pre>createuser --createdb Geotoolkit
-createdb --username=Geotoolkit --host=localhost --encoding=UTF-8 Referencing "CRS definitions"
-createlang plpgsql --dbname=Referencing --username=Geotoolkit</pre></blockquote></li>
+    <li><p>Creates an initially empty PostgreSQL database. The following lines creates a "geoadmin" role
+        and a "SpatialMetadata" database on the local host using the UTF-8 encoding. If an other role,
+        host or database name is wanted, just replace <code>geoadmin</code>, <code>localhost</code>
+        and <code>SpatialMetadata</code> respectively in the lines below.</p>
 
-    <li><p>Run <a href="http://www.geotoolkit.org/modules/referencing/geotk-epsg/index.html">geotk-epsg</a>
-    as below:</p>
-    <blockquote><pre>java -jar geotk-epsg.jar create jdbc:postgresql://localhost/Referencing Geotoolkit --schema=epsg</pre></blockquote></li>
+    <blockquote><pre>createuser --createdb geoadmin
+createdb --username=geoadmin --host=localhost --encoding=UTF-8 SpatialMetadata "Spatial Metadata for Apache SIS"
+createlang plpgsql --dbname=SpatialMetadata --username=geoadmin</pre></blockquote></li>
+
+    <li>(TODO)</li>
 
     <li><p>Cleanup:</p>
-    <blockquote><pre>vacuumdb --full --analyze --username Geotoolkit --host localhost Referencing
-psql -c 'ALTER USER \"Geotoolkit\" WITH NOCREATEDB' Referencing</pre></blockquote></li>
-
-    <li><p>Run <a href="http://www.geotoolkit.org/modules/utility/geotk-setup/index.html">geotk-setup</a>.
-        Click on the "<cite>EPSG</cite>" tab. Click on the "<cite>Use a specific database</cite>"
-        radio button. In the URL field, type "<code>jdbc:postgresql://localhost/Referencing</code>".
-        In the user field, type "<code>Geotoolkit</code>". Finally click on the "<cite>Apply</cite>"
-        button.</p></li>
+    <blockquote><pre>vacuumdb --full --analyze --username geoadmin --host localhost SpatialMetadata
+psql -c 'ALTER USER \"geouser\" WITH NOCREATEDB' Referencing</pre></blockquote></li>
   </ol>
-  <p>If the <code>geotk-setup</code> graphical application can not be executed, an alternative is
-  to store manually an <code>EPSG/DataSource.properties</code> file in the Geotoolkit data directory
-  (see <code><a href="../ThreadedEpsgFactory.html#CONFIGURATION_FILE">CONFIGURATION_FILE</a></code>
-  for more information) with the following content (to be adapted to your actual configuration):</p>
-  <blockquote><table border="1" cellpadding="6" bgcolor="lightgray"><tr><td>
-<pre>#
-# Connection parameters to the EPSG database.
-#
-URL  = jdbc:postgresql://localhost/Referencing
-user = Geotoolkit</pre></td></tr></table></blockquote>
-
-  <p>Alternatively you can also register a JNDI datasource with the <code>"jdbc/EPSG"</code> name.</p>
   </BODY>
 </HTML>
