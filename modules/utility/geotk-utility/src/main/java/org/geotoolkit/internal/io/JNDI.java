@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.internal.io;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -32,13 +35,18 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.event.EventContext;
 import javax.naming.event.NamingEvent;
 import javax.naming.event.NamingListener;
 import javax.naming.event.ObjectChangeListener;
 import org.apache.sis.internal.metadata.sql.Initializer;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -52,8 +60,23 @@ public final class JNDI implements EventContext, InitialContextFactory {
      * Invoked from {@link org.geotoolkit.lang.Setup} for setting a pseudo-JNDI environment.
      */
     public static void install() {
+        //define at least the derby folder if not set
+        boolean reload = false;
+        if(System.getenv("SIS_DATA") == null && System.getProperty("derby.system.home") == null){
+            final File path = Installation.EPSG.directory(true);
+            System.setProperty("derby.system.home", path.getPath());
+            reload = true;
+        }
         if (!Initializer.hasJNDI()) {
             System.setProperty(INITIAL_CONTEXT_FACTORY, JNDI.class.getName());
+            reload = true;
+        }
+        if (reload) {
+            try {
+                ((MultiAuthoritiesFactory) CRS.getAuthorityFactory(null)).reload();
+            } catch (FactoryException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
     }
 
@@ -77,6 +100,12 @@ public final class JNDI implements EventContext, InitialContextFactory {
     private static DataSource EPSG;
 
     /**
+     * Explicitly set datasource called by {@link #setEPSG}.
+     *
+     */
+    private static DataSource overrideEPSG;
+
+    /**
      * Listeners to notify when {@link #EPSG} changed.
      * Must be a static list, because JNDI creates new {@code Context} instances on various method calls.
      */
@@ -88,11 +117,21 @@ public final class JNDI implements EventContext, InitialContextFactory {
      * @param source Data source for the EPSG database, or {@code null} if none.
      */
     public static synchronized void setEPSG(final DataSource source) throws NamingException {
+        if(overrideEPSG==null && source==null){
+            //datasource has not been override
+            return;
+        }
+
+        overrideEPSG = source;
         EPSG = source;
         if (Initializer.hasJNDI()) {
             final Context env = (Context) InitialContext.doLookup("java:comp/env");
             if (!(env instanceof JNDI)) {
-                env.bind(Initializer.JNDI, source);
+                try{
+                    env.bind(Initializer.JNDI, source);
+                }catch(NameAlreadyBoundException ex){
+                    Logging.getLogger("org.geotoolkit.referencing").log(Level.CONFIG, ex.getMessage(), ex);
+                }
             }
         }
         final JNDI instance = JNDI.instance;
