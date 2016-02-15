@@ -75,6 +75,10 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 public abstract class AbstractCoordinateOperationFactory
         extends org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory
 {
+    static {
+        org.geotoolkit.internal.io.JNDI.install();
+    }
+
     /**
      * The identifier for an identity operation.
      */

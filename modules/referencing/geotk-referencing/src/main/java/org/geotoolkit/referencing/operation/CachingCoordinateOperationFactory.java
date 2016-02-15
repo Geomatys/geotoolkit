@@ -180,13 +180,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
      * Returns a backing factory from the specified hints.
      */
     private static CoordinateOperationFactory getBackingFactory(final Hints hints) {
-        for (final CoordinateOperationFactory candidate : FactoryFinder.getCoordinateOperationFactories(hints)) {
-            if (!(candidate instanceof CachingCoordinateOperationFactory)
-                && !candidate.getClass().getName().startsWith("org.apache.sis."))   // TODO: temporary patch.
-            {
-                return candidate;
-            }
-        }
+        // TODO
         return new AuthorityBackedFactory();
     }
 

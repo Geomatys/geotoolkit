@@ -41,9 +41,6 @@ import org.apache.sis.internal.storage.IOUtilities;
  * shift over United States.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
- *
- * @since 3.00
  * @module
  */
 public enum Installation {
@@ -66,19 +63,13 @@ public enum Installation {
     TESTS(null, null, "Tests"),
 
     /**
-     * The grid shift file location for NADCON transform.
+     * Where to store the metadata database used by SIS. Used only if the user did not set the
+     * {@code SIS_DATA} environment variable or the {@code "derby.system.home"} property.
      */
-    NADCON("org/geotoolkit/referencing/operation/transform", "NADCON", "NADCON"),
+    SIS("org/geotoolkit/metadata", "SIS", "Databases"),
 
     /**
-     * The grid shift file location for NTv2 transforms, including RGF93.
-     *
-     * @since 3.12
-     */
-    NTv2("org/geotoolkit/referencing/operation/transform", "NTv2", "NTv2"),
-
-    /**
-     * The EPSG database, or parameters required for a connection to a distant EPSG database.
+     * The parameters required for a connection to a distant EPSG database.
      */
     EPSG("org/geotoolkit/referencing/factory", "EPSG", "EPSG"),
 
@@ -295,7 +286,7 @@ public enum Installation {
     public Object toFileOrURL(final Class<?> caller, final String path) throws IOException {
         final Object uof = IOUtilities.toFileOrURL(path, null);
         if (uof instanceof URL) {
-            return (URL) uof;
+            return uof;
         }
         File file = (File) uof;
         if (!file.isAbsolute()) {

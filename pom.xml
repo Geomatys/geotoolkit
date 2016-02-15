@@ -173,15 +173,15 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0.0-MC0007</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.7-jdk7-MC0023</sis.version>
-    <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
+    <geoapi.version>4.0.0-MC0008</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.7-jdk7-MC0024</sis.version>
+    <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>4.10.4</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <sis.build.helper>0.7-jdk7-MC0023</sis.build.helper>
+    <sis.build.helper>0.7-jdk7-MC0024</sis.build.helper>
   </properties>
 
 
@@ -466,7 +466,7 @@
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>2.2.8</version>
+        <version>2.3.3</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
@@ -1010,6 +1010,9 @@
         <configuration>
           <aggregate>true</aggregate>
           <showSuccess>false</showSuccess>
+          <systemPropertyVariables>
+            <java.naming.factory.initial>org.geotoolkit.internal.io.JNDI</java.naming.factory.initial>
+          </systemPropertyVariables>
         </configuration>
         <reportSets> <!-- Workaround for http://jira.codehaus.org/browse/SUREFIRE-257 -->
           <reportSet>
@@ -1068,7 +1071,7 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-  </repository>
+    </repository>
   </repositories>
 
   <pluginRepositories>

@@ -48,7 +48,6 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -63,7 +62,7 @@ import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.Equirectangular;
@@ -87,7 +86,6 @@ import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.DatumFactory;
@@ -95,7 +93,6 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.cs.CSFactory;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Conversion;
@@ -128,17 +125,8 @@ final class GeoTiffCRSReader {
      */
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
 
-    /** Default hints for axis order management */
-    private static final Hints DEFAULT_HINTS = new Hints(
-        Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-
-
-    /** Default factories for various purposes. */
-    private static final AllAuthoritiesFactory DEFAULT_ALLAUTHORITIES_FACTORY =
-            AllAuthoritiesFactory.getInstance(DEFAULT_HINTS);
-
     /** EPSG factories for various purposes. */
-    private final AllAuthoritiesFactory allAuthoritiesFactory;
+    private final GeodeticAuthorityFactory epsgFactory;
 
     /** EPSG Factory for creating {@link GeodeticDatum}objects. */
     private final DatumFactory datumObjFactory;
@@ -148,32 +136,17 @@ final class GeoTiffCRSReader {
     /** Group Factory for creating {@link ProjectedCRS} objects. */
     private final ReferencingFactoryContainer factories;
 
-    /** CS Factory for creating {@link CoordinateSystem} objects. */
-    private final CSFactory csFactory;
-
-    /**
-     * {@link Hints} to control the creation of the factories for this
-     * {@link GeoTiffMetadata2CRSAdapter} object.
-     */
-    private Hints hints;
-
-
-    public GeoTiffCRSReader(final Hints hints){
-        final Hints tempHints = hints != null ? new Hints(hints) : DEFAULT_HINTS;
-
-        this.hints = (Hints) tempHints.clone();
-        allAuthoritiesFactory = hints != null ?  AllAuthoritiesFactory.getInstance(this.hints):
-            DEFAULT_ALLAUTHORITIES_FACTORY;
+    public GeoTiffCRSReader() {
+        try {
+            epsgFactory = (GeodeticAuthorityFactory) org.apache.sis.referencing.CRS.getAuthorityFactory("EPSG");
+        } catch (FactoryException e) {
+            throw new IllegalStateException(e);
+        }
 
         // factory = new ThreadedEpsgFactory(hints);
-        datumObjFactory = FactoryFinder.getDatumFactory(this.hints);
-        crsFactory = FactoryFinder.getCRSFactory(this.hints);
-        csFactory = FactoryFinder.getCSFactory(this.hints);
-        tempHints.put(Hints.DATUM_AUTHORITY_FACTORY, allAuthoritiesFactory);
-        tempHints.put(Hints.CS_FACTORY, csFactory);
-        tempHints.put(Hints.CRS_FACTORY, crsFactory);
-        tempHints.put(Hints.MATH_TRANSFORM_FACTORY, mtFactory);
-        factories = ReferencingFactoryContainer.instance(tempHints);
+        datumObjFactory = FactoryFinder.getDatumFactory(null);
+        crsFactory = FactoryFinder.getCRSFactory(null);
+        factories = ReferencingFactoryContainer.instance(null);
     }
 
     /**
@@ -469,7 +442,7 @@ final class GeoTiffCRSReader {
 
         } else {
             parameters = null;
-            projection = (Conversion) allAuthoritiesFactory.createCoordinateOperation("EPSG:"+projCode);
+            projection = (Conversion) epsgFactory.createCoordinateOperation(String.valueOf(projCode));
 
         }
 
@@ -1097,7 +1070,7 @@ final class GeoTiffCRSReader {
                         throw new IOException("Invalid user-defined prime meridian spec.",nfe);
                     }
                 } else {
-                    pm = allAuthoritiesFactory.createPrimeMeridian("EPSG:"+ pmCode);
+                    pm = epsgFactory.createPrimeMeridian(String.valueOf(pmCode));
                 }
             } else {
                 pm = CommonCRS.WGS84.primeMeridian();
@@ -1163,7 +1136,7 @@ final class GeoTiffCRSReader {
              */
             // we are going to use the provided EPSG code
             try {
-                datum = (GeodeticDatum) (allAuthoritiesFactory.createDatum("EPSG:"+datumCode));
+                datum = (GeodeticDatum) (epsgFactory.createDatum(String.valueOf(datumCode)));
             } catch (FactoryException fe) {
                 throw new IOException(fe.getLocalizedMessage(), fe);
             } catch (ClassCastException cce) {
@@ -1236,7 +1209,7 @@ final class GeoTiffCRSReader {
             // /////////////////////////////////////////////////////////////////////
             // EPSG STANDARD ELLIPSOID
             // /////////////////////////////////////////////////////////////////////
-            return allAuthoritiesFactory.createEllipsoid("EPSG:"+ellipsoidKey);
+            return epsgFactory.createEllipsoid(String.valueOf(ellipsoidKey));
         } catch (FactoryException fe) {
             throw new IOException(fe.getLocalizedMessage(), fe);
         }
@@ -1289,7 +1262,7 @@ final class GeoTiffCRSReader {
         } else {
             try {
                 // using epsg code for this unit
-                return allAuthoritiesFactory.createUnit("EPSG:"+unitCode);
+                return epsgFactory.createUnit(String.valueOf(unitCode));
             } catch (FactoryException fe) {
                 throw new IOException(fe);
             }

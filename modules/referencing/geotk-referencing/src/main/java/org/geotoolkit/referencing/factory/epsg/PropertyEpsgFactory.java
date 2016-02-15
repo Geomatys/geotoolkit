@@ -31,8 +31,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.io.TableWriter;
@@ -134,7 +133,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *         the factory is only considered not {@linkplain #availability available}.
      */
     public PropertyEpsgFactory() throws IOException {
-        this(EMPTY_HINTS);
+        this(null);
     }
 
     /**
@@ -188,18 +187,6 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
     }
 
     /**
-     * Invoked by {@code FactoryRegistry} on registration. The default implementation
-     * declares that this factory should give precedence to {@link ThreadedEpsgFactory}
-     * and {@link LongitudeFirstEpsgFactory}.
-     */
-    @Override
-    protected void setOrdering(final Organizer organizer) {
-        super.setOrdering(organizer);
-        organizer.after(ThreadedEpsgFactory.class, true);
-        organizer.after(LongitudeFirstEpsgFactory.class, false);
-    }
-
-    /**
      * Prints a list of codes that duplicate the ones provided by {@link ThreadedEpsgFactory}.
      * This is used in order to check the content of the {@value #FILENAME} file (or whatever
      * property file used as backing store for this factory) from the command line.
@@ -217,15 +204,13 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * @since 2.4
      */
     public Set<String> reportDuplicates(final PrintWriter out) throws FactoryException {
-        final AbstractAuthorityFactory sqlFactory =
-                (AbstractAuthorityFactory) AuthorityFactoryFinder.getCRSAuthorityFactory(
-                "EPSG", new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
+        final GeodeticAuthorityFactory sqlFactory = (GeodeticAuthorityFactory) org.apache.sis.referencing.CRS.getAuthorityFactory("EPSG");
         final Vocabulary resources = Vocabulary.getResources(null);
         out.println(resources.getLabel(Vocabulary.Keys.CompareWith));
         try {
             final IndentedLineWriter w = new IndentedLineWriter(out);
             w.setIndentation(4);
-            w.write(sqlFactory.getBackingStoreDescription());
+            w.write(sqlFactory.getAuthority().getTitle().toString());
             w.flush();
         } catch (IOException e) {
             // Should never happen, since we are writing to a PrintWriter.

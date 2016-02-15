@@ -1744,6 +1744,7 @@ search: for (int j=0; j<targets.size(); j++) {
      */
     protected CoordinateOperation createFromDatabase(final CoordinateReferenceSystem sourceCRS,
                                                      final CoordinateReferenceSystem targetCRS)
+            throws FactoryException
     {
         return null;
     }

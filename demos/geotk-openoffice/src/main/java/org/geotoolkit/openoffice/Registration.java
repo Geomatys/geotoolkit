@@ -34,8 +34,6 @@ import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.comp.loader.FactoryHelper;
 import com.sun.star.registry.XRegistryKey;
 
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
-
 
 /**
  * The registration of all formulas provided in this package.
@@ -47,9 +45,6 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
  * is the work of this {@code Registration} class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 3.09 (derived from 2.2)
  * @module
  */
 public final class Registration implements FilenameFilter {
@@ -108,16 +103,17 @@ public final class Registration implements FilenameFilter {
              * Note: do not reach this code before all Pack200 files have been unpacked.
              * Remainder: no GeoAPI or Geotk classes in any method signature of this class!
              */
-            try {
-                final EpsgInstaller installer = new EpsgInstaller();
-                if (!installer.exists()) {
-                    installer.call();
-                }
-            } catch (Throwable e) {
-                unexpectedException(EpsgInstaller.class, "call", e);
-                // Ignore. A new attempt to create the EPSG database will be performed
-                // when first needed, and the user may see the error at that time.
-            }
+            // TODO: to be re-enabled after the migration to SIS.
+//            try {
+//                final EpsgInstaller installer = new EpsgInstaller();
+//                if (!installer.exists()) {
+//                    installer.call();
+//                }
+//            } catch (Throwable e) {
+//                unexpectedException(EpsgInstaller.class, "call", e);
+//                // Ignore. A new attempt to create the EPSG database will be performed
+//                // when first needed, and the user may see the error at that time.
+//            }
         }
     }
 

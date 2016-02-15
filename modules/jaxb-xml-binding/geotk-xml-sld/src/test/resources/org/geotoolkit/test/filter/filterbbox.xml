@@ -7,7 +7,7 @@
         </ogc:PropertyIsEqualTo>
         <ogc:BBOX>
             <ogc:PropertyName>sf:attribut.Géométrie</ogc:PropertyName>
-            <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG:4326">
+            <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG::4326">
                 <gml:lowerCorner>34.0 15.0</gml:lowerCorner>
                 <gml:upperCorner>40.0 19.0</gml:upperCorner>
             </gml:Envelope>

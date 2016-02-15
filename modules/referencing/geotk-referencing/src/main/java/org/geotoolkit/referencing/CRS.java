@@ -18,14 +18,10 @@
 package org.geotoolkit.referencing;
 
 import java.util.Set;
-import java.util.Map;
 import java.util.List;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.event.ChangeEvent;
@@ -45,18 +41,19 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.metadata.NameMeaning;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -87,24 +84,9 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public final class CRS extends Static {
-    /**
-     * The CRS factory to use for parsing WKT. Will be fetched when first needed
-     * are stored for avoiding indirect synchronization lock in {@link #parseWKT}.
-     */
-    private static volatile CRSFactory crsFactory;
-
-    /**
-     * A factory for CRS creation as specified by the authority, which may have
-     * (<var>latitude</var>, <var>longitude</var>) axis order. Will be created
-     * only when first needed.
-     */
-    private static volatile CRSAuthorityFactory standardFactory;
-
-    /**
-     * A factory for CRS creation with (<var>longitude</var>, <var>latitude</var>) axis order.
-     * Will be created only when first needed.
-     */
-    private static volatile CRSAuthorityFactory xyFactory;
+    static {
+        JNDI.install();
+    }
 
     /**
      * A factory for default (non-lenient) operations.
@@ -115,12 +97,6 @@ public final class CRS extends Static {
      * A factory for default lenient operations.
      */
     private static volatile CoordinateOperationFactory lenientFactory;
-
-    /**
-     * The default value for {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER},
-     * or {@code null} if not yet determined.
-     */
-    private static volatile Boolean defaultOrder;
 
     /**
      * The default value for {@link Hints#LENIENT_DATUM_SHIFT},
@@ -135,12 +111,8 @@ public final class CRS extends Static {
         Factories.addChangeListener(new ChangeListener() {
             @Override public void stateChanged(ChangeEvent e) {
                 synchronized (CRS.class) {
-                    crsFactory      = null;
-                    standardFactory = null;
-                    xyFactory       = null;
                     strictFactory   = null;
                     lenientFactory  = null;
-                    defaultOrder    = null;
                     defaultLenient  = null;
                 }
             }
@@ -159,79 +131,6 @@ public final class CRS extends Static {
     ////        FACTORIES, CRS CREATION AND INSPECTION        ////
     ////                                                      ////
     //////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the CRS factory. This is used mostly for WKT parsing.
-     */
-    private static CRSFactory getCRSFactory() {
-        CRSFactory factory = crsFactory;
-        if (factory == null) {
-            synchronized (CRS.class) {
-                // Double-checked locking - was a deprecated practice before Java 5.
-                // Is okay since Java 5 provided that the variable is volatile.
-                factory = crsFactory;
-                if (factory == null) {
-                    crsFactory = factory = FactoryFinder.getCRSFactory(null);
-                }
-            }
-        }
-        return factory;
-    }
-
-    /**
-     * Returns the CRS authority factory used by the {@link #decode(String,boolean) decode} methods.
-     * This factory {@linkplain org.geotoolkit.referencing.factory.CachingAuthorityFactory uses a cache},
-     * scans over {@linkplain org.geotoolkit.referencing.factory.AllAuthoritiesFactory all factories} and
-     * uses additional factories as {@linkplain org.geotoolkit.referencing.factory.FallbackAuthorityFactory
-     * fallbacks} if there is more than one {@linkplain AuthorityFactoryFinder#getCRSAuthorityFactories
-     * registered factory} for the same authority.
-     * <p>
-     * This factory can be used as a kind of <cite>system-wide</cite> factory for all authorities.
-     * However for more determinist behavior, consider using a more specific factory (as returned
-     * by {@link AuthorityFactoryFinder#getCRSAuthorityFactory}) when the authority is known.
-     *
-     * @param  longitudeFirst {@code true} if axis order should be forced to
-     *         (<var>longitude</var>, <var>latitude</var>), {@code false} if no order should be
-     *         forced (i.e. the standard specified by the authority is respected), or {@code null}
-     *         for the {@linkplain Hints#getSystemDefault system default}.
-     * @return The CRS authority factory.
-     * @throws FactoryRegistryException if the factory can't be created.
-     *
-     * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
-     *
-     * @category factory
-     * @since 2.3
-     */
-    public static CRSAuthorityFactory getAuthorityFactory(Boolean longitudeFirst)
-            throws FactoryRegistryException
-    {
-        // No need to synchronize; this is not a big deal if 'defaultOrder' is computed twice.
-        if (longitudeFirst == null) {
-            longitudeFirst = defaultOrder;
-            if (longitudeFirst == null) {
-                longitudeFirst = Boolean.TRUE.equals(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-                defaultOrder = longitudeFirst;
-            }
-        }
-        CRSAuthorityFactory factory = (longitudeFirst) ? xyFactory : standardFactory;
-        if (factory == null) synchronized (CRS.class) {
-            // Double-checked locking - was a deprecated practice before Java 5.
-            // Is okay since Java 5 provided that the variables are volatile.
-            factory = (longitudeFirst) ? xyFactory : standardFactory;
-            if (factory == null) try {
-                factory = DefaultAuthorityFactory.create(longitudeFirst);
-                if (longitudeFirst) {
-                    xyFactory = factory;
-                } else {
-                    standardFactory = factory;
-                }
-            } catch (NoSuchElementException exception) {
-                // No factory registered in FactoryFinder.
-                throw new FactoryNotFoundException(null, exception);
-            }
-        }
-        return factory;
-    }
 
     /**
      * Returns the coordinate operation factory used by
@@ -278,28 +177,17 @@ public final class CRS extends Static {
      * @throws FactoryRegistryException if no {@link CRSAuthorityFactory} implementation
      *         was found for the specified authority.
      *
-     * @see Hints#VERSION
-     *
      * @category factory
      * @since 2.4
      */
     public static Version getVersion(final String authority) throws FactoryRegistryException {
-        ensureNonNull("authority", authority);
-        Object candidate = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
-        final Set<Factory> guard = new HashSet<>();
-        while (candidate instanceof Factory) {
-            final Factory factory = (Factory) candidate;
-            if (!guard.add(factory)) {
-                break; // Safety against never-ending recursivity.
-            }
-            final Map<RenderingHints.Key,?> hints = factory.getImplementationHints();
-            final Object version = hints.get(Hints.VERSION);
-            if (version instanceof Version) {
-                return (Version) version;
-            }
-            candidate = hints.get(Hints.CRS_AUTHORITY_FACTORY);
+        final String version;
+        try {
+            version = NameMeaning.getVersion(org.apache.sis.referencing.CRS.getAuthorityFactory(authority).getAuthority());
+        } catch (FactoryException e) {
+            throw new FactoryRegistryException(e.getLocalizedMessage(), e);
         }
-        return null;
+        return (version != null) ? new Version(version) : null;
     }
 
     /**
@@ -346,25 +234,18 @@ public final class CRS extends Static {
      * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.factory.MultiAuthoritiesFactory#getAuthorityCodes(Class)}.
      */
+    @Deprecated
     public static Set<String> getSupportedCodes(final String authority) { // LGPL
         ensureNonNull("authority", authority);
-        return DefaultAuthorityFactory.getSupportedCodes(authority);
-    }
-
-    /**
-     * Returns the set of the authority identifiers supported by registered authority factories.
-     * This method search only for {@linkplain CRSAuthorityFactory CRS authority factories}.
-     *
-     * @param  returnAliases If {@code true}, the set will contain all identifiers for each
-     *         authority. If {@code false}, only the first one
-     * @return The set of supported authorities. May be empty, but never null.
-     *
-     * @category factory
-     * @since 2.3.1
-     */
-    public static Set<String> getSupportedAuthorities(final boolean returnAliases) {
-        return DefaultAuthorityFactory.getSupportedAuthorities(returnAliases);
+        try {
+            return org.apache.sis.referencing.CRS.getAuthorityFactory(authority)
+                    .getAuthorityCodes(CoordinateReferenceSystem.class);
+        } catch (FactoryException e) {
+            throw new RuntimeException(e);  // TODO
+        }
     }
 
     /**
@@ -421,12 +302,14 @@ public final class CRS extends Static {
      * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory
+     *
+     * @deprecated Moved to {@link org.apache.sis.referencing.CRS#forCode(String)}.
      */
+    @Deprecated
     public static CoordinateReferenceSystem decode(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        ensureNonNull("code", code);
-        return getAuthorityFactory(null).createCoordinateReferenceSystem(code);
+        return org.apache.sis.referencing.CRS.forCode(code);
     }
 
     /**
@@ -454,12 +337,19 @@ public final class CRS extends Static {
      *
      * @category factory
      * @since 2.3
+     *
+     * @deprecated "Longitude first factory" no longer supported. Use a standard factory instead,
+     *             and invoke AbstractCRS.forConvention(AxesConvention) if desired.
      */
+    @Deprecated
     public static CoordinateReferenceSystem decode(String code, final boolean longitudeFirst)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        ensureNonNull("code", code);
-        return getAuthorityFactory(longitudeFirst).createCoordinateReferenceSystem(code);
+        CoordinateReferenceSystem crs = org.apache.sis.referencing.CRS.forCode(code);
+        if (longitudeFirst) {
+            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+        }
+        return crs;
     }
 
     /**
@@ -485,8 +375,7 @@ public final class CRS extends Static {
      */
     @Deprecated
     public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
-        ensureNonNull("wkt", wkt);
-        return getCRSFactory().createFromWKT(wkt);
+        return org.apache.sis.referencing.CRS.fromWKT(wkt);
     }
 
     /**

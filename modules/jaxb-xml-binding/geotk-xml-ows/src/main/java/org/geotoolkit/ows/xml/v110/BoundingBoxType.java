@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -121,7 +121,7 @@ public class BoundingBoxType implements BoundingBox {
             final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();
             if (crss != null) {
                 try {
-                    crs = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true);
+                    crs = org.apache.sis.referencing.IdentifiedObjects.lookupURN(crss,null);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception while creating OWS BoundingBox from opengis one", ex);
                 }

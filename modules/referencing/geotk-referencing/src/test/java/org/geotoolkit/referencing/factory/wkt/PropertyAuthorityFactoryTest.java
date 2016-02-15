@@ -18,11 +18,9 @@
 package org.geotoolkit.referencing.factory.wkt;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.io.IOException;
-import java.awt.RenderingHints;
 import javax.measure.unit.NonSI;
 import javax.measure.converter.ConversionException;
 
@@ -74,10 +72,6 @@ public final strictfp class PropertyAuthorityFactoryTest {
         /*
          * Tests the factory when we didn't asked for any hint.
          */
-        Map<RenderingHints.Key, ?> hints = factory.getImplementationHints();
-        assertNull(hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        assertNull(hints.get(Hints.FORCE_STANDARD_AXIS_DIRECTIONS));
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(1, factory.getAuthorityCodes(null).size());
         CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("42101");
         CoordinateSystem cs = crs.getCoordinateSystem();
@@ -90,10 +84,6 @@ public final strictfp class PropertyAuthorityFactoryTest {
          */
         Hints userHints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         factory = new PropertyAuthorityFactory(userHints, resources, Citations.EPSG);
-        hints = factory.getImplementationHints();
-        assertNull(hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        assertNull(hints.get(Hints.FORCE_STANDARD_AXIS_DIRECTIONS));
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(1, factory.getAuthorityCodes(null).size());
 //      assertSame(crs, factory.createCoordinateReferenceSystem("42101"));
         /*
@@ -125,10 +115,6 @@ public final strictfp class PropertyAuthorityFactoryTest {
         /*
          * Tests the factory when we didn't asked for any hint.
          */
-        Map<RenderingHints.Key, ?> hints = factory.getImplementationHints();
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_DIRECTIONS));
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(3, factory.getAuthorityCodes(null).size());
         CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("3035");
         assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
@@ -154,10 +140,6 @@ public final strictfp class PropertyAuthorityFactoryTest {
          */
         Hints userHints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         factory = new PropertyAuthorityFactory(userHints, resources, Citations.EPSG);
-        hints = factory.getImplementationHints();
-        assertEquals(Boolean.TRUE,  hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        assertEquals(Boolean.TRUE,  hints.get(Hints.FORCE_STANDARD_AXIS_DIRECTIONS));
-        assertEquals(Boolean.FALSE, hints.get(Hints.FORCE_STANDARD_AXIS_UNITS));
         assertEquals(3, factory.getAuthorityCodes(null).size());
         crs = factory.createCoordinateReferenceSystem("3035");
         assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());

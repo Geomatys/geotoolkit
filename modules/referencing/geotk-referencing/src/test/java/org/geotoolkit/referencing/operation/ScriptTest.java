@@ -23,7 +23,6 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 
-import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
 import static org.junit.Assume.assumeTrue;
 
 
@@ -49,7 +48,7 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
      */
     @Before
     public void ensureEpsgAvailable() {
-        assumeTrue(isEpsgFactoryAvailable());
+        assumeTrue(false /*isEpsgFactoryAvailable()*/);
     }
 
     /**

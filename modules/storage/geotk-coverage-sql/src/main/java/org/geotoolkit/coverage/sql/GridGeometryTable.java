@@ -44,8 +44,8 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 
@@ -118,9 +118,9 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      */
     public int getSRID(final CoordinateReferenceSystem crs) throws FactoryException {
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
-        final AbstractAuthorityFactory factory = (AbstractAuthorityFactory) database.getCRSAuthorityFactory();
-        final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
-        final Identifier srid = IdentifiedObjects.getIdentifier(finder.find(crs), Citations.POSTGIS);
+        final GeodeticAuthorityFactory factory = (GeodeticAuthorityFactory) database.getCRSAuthorityFactory();
+        final IdentifiedObjectFinder finder = factory.newIdentifiedObjectFinder();
+        final Identifier srid = IdentifiedObjects.getIdentifier(finder.findSingleton(crs), Citations.POSTGIS);
         if (srid == null) {
             return 0;
         }

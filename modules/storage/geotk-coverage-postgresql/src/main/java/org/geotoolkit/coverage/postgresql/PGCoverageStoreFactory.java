@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.sis.storage.DataStoreException;
@@ -32,7 +34,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -43,6 +45,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
@@ -178,7 +182,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
     }
-    
+
     @Override
     public CharSequence getDescription() {
         return Bundle.formatInternational(Bundle.Keys.description);
@@ -188,7 +192,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public CharSequence getDisplayName() {
         return Bundle.formatInternational(Bundle.Keys.title);
     }
-    
+
     @Override
     public PGCoverageStore open(ParameterValueGroup params) throws DataStoreException {
 
@@ -231,14 +235,15 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         final String user       = (String) params.parameter(USER.getName().getCode()).getValue();
         final String password   = (String) params.parameter(PASSWORD.getName().getCode()).getValue();
 
-        final EpsgInstaller installer = new EpsgInstaller();
-        installer.setDatabase(dbURL, user, password);
+        final DataSource ds = new AuthenticatedDataSource(new DefaultDataSource(dbURL), user, password, null);
+        final Map<String,Object> properties = new HashMap<>();
+        properties.put("dataSource", ds);
 
         PGCoverageStore store = null;
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try {
+        try (final EPSGFactory installer = new EPSGFactory(properties)) {
             store = open(params);
             cnx = store.getDataSource().getConnection();
             rs = cnx.getMetaData().getSchemas();
@@ -255,7 +260,9 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
             // Only creates this schema if not present.
             if (!epsgExists) {
-                installer.call();
+                try (Connection c = ds.getConnection()) {
+                    installer.install(c);
+                }
             }
 
             String sql = FileUtilities.getStringFromStream(PGCoverageStoreFactory.class

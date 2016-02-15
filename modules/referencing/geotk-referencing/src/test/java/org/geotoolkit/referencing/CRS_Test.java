@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Set;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.util.FactoryException;
@@ -59,36 +58,6 @@ import static java.util.Collections.singletonMap;
  * @since 3.00
  */
 public final strictfp class CRS_Test extends ReferencingTestBase {
-    /**
-     * Tests the {@link CRS#getSupportedAuthorities} method.
-     */
-    @Test
-    public void testSupportedAuthorities() {
-        final Set<String> withoutAlias = CRS.getSupportedAuthorities(false);
-        assertTrue (withoutAlias.contains("CRS"));
-        assertTrue (withoutAlias.contains("AUTO2"));
-        assertTrue (withoutAlias.contains("urn:ogc:def"));
-        assertTrue (withoutAlias.contains("http://www.opengis.net"));
-        assertFalse(withoutAlias.contains("AUTO"));
-        assertFalse(withoutAlias.contains("urn:x-ogc:def"));
-
-        final Set<String> withAlias = CRS.getSupportedAuthorities(true);
-        assertTrue (withAlias.containsAll(withoutAlias));
-        assertFalse(withoutAlias.containsAll(withAlias));
-        assertTrue (withAlias.contains("AUTO"));
-        assertTrue (withAlias.contains("urn:x-ogc:def"));
-    }
-
-    /**
-     * Tests simple decode.
-     *
-     * @throws FactoryException Should never happen.
-     */
-    @Test
-    public void testDecode() throws FactoryException {
-        assertSame(CommonCRS.WGS84.normalizedGeographic(), CRS.decode("WGS84(DD)"));
-    }
-
     /**
      * Tests simple WKT parsing.
      *

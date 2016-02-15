@@ -22,11 +22,8 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import java.io.IOException;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
@@ -55,14 +52,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.datum.Datum;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.util.FactoryException;
 
-import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -620,36 +612,7 @@ public final class GeoTiffCRSWriter {
         }
 
         //search for an IdentifiedObject with the same definition
-        if(candidate instanceof CoordinateReferenceSystem){
-            return org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode((CoordinateReferenceSystem) candidate, true);
-        }else if(candidate instanceof Datum){
-            final DatumAuthorityFactory factory = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
-            if(factory instanceof AbstractAuthorityFactory){
-                final AbstractAuthorityFactory auth = (AbstractAuthorityFactory) factory;
-                final IdentifiedObjectFinder finder = auth.getIdentifiedObjectFinder(Datum.class);
-                final String code = finder.findIdentifier(candidate);
-                if(code != null){
-                    return Integer.valueOf(code);
-                }
-            }
-        }else if(candidate instanceof CoordinateOperation){
-            final CoordinateOperationAuthorityFactory factory = AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory("EPSG", null);
-            if(factory instanceof AbstractAuthorityFactory){
-                final AbstractAuthorityFactory auth = (AbstractAuthorityFactory) factory;
-                final IdentifiedObjectFinder finder = auth.getIdentifiedObjectFinder(CoordinateOperation.class);
-                try {
-                    final String code = finder.findIdentifier(candidate);
-                    if(code != null){
-                        return Integer.valueOf(code);
-                    }
-                } catch (IllegalArgumentException e) {
-                    // TODO: Workaround for a problem in "Ordnance Survey National Transformation" not yet fixed.
-                    Logging.recoverableException(null, GeoTiffCRSWriter.class, "getEPSGCode", e);
-                }
-            }
-        }
-
-        return null;
+        return org.apache.sis.referencing.IdentifiedObjects.lookupEPSG(candidate);
     }
 
     private static double value(final ParameterValueGroup parameters, final ParameterDescriptor desc){

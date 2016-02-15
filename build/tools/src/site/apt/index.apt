@@ -5,7 +5,4 @@
 
 Tools for Geotk maintenance
 
-  This directory contains tools (not Maven plugins) for Geotk maintenance.
-  The main tools are:
-
-  * {{{./geotk-epsg-pack/index.html}EPSG pack}} to be used when upgrading the EPSG database.
+  This directory contains tools (not Maven plugins) for Geotk tests and maintenance.

@@ -106,3 +106,7 @@ mvn install
    subsequently the command can be run with the <<<--offline>>> parameter if there is no network
    connection. {{{http://maven.apache.org/}Maven}} provides a powerful build tool for the
    management of Java language projects.
+
+   Maven projects can be opened in major IDEs like Eclipse, NetBeans or IntelliJ.
+
+[images/icon_IntelliJIDEA.png]

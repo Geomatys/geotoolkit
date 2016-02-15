@@ -24,11 +24,11 @@ import java.io.BufferedWriter;
 import java.awt.geom.Point2D;
 import java.util.concurrent.CountDownLatch;
 import java.util.Map;
-
 import org.apache.sis.math.Statistics;
-
 import org.apache.sis.util.Classes;
-import org.junit.*;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static org.junit.Assume.assumeNotNull;
 
 
@@ -65,7 +65,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
      * Creates a test suite for the default database.
      */
     public StressTest() {
-        super(ThreadedEpsgFactory.class);
+        super();
     }
 
     /**

@@ -28,16 +28,6 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-epsg</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-epsg-javadb</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-widgets-swing</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -200,13 +190,13 @@
             <artifactId>postgresql</artifactId>
             <version>9.3-1101-jdbc41</version> <!-- Note that setenv.sh needs to declare the same version number. -->
         </dependency>
-        
+
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-mapinfo</artifactId>
             <version>${project.version}</version>
         </dependency>
-    
+
         <!-- JAI -->
     <dependency>
       <groupId>javax.media</groupId>
@@ -223,7 +213,7 @@
       <artifactId>jai_imageio</artifactId>
       <!--version>${jai-io.version}</version-->
     </dependency>
-    
+
     </dependencies>
 
 </project>

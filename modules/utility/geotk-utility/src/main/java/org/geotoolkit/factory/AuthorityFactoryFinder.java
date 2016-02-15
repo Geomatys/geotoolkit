@@ -18,21 +18,15 @@
 package org.geotoolkit.factory;
 
 import java.util.Set;
-import java.util.LinkedHashSet;
-import javax.imageio.spi.ServiceRegistry;
-
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
+import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
 
-import org.geotoolkit.lang.Configuration;
-import org.apache.sis.metadata.iso.citation.Citations;
-
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -49,18 +43,12 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
- *
- * @since 2.1
- * @level basic
  * @module
+ *
+ * @deprecated Will be replaced by a more standard dependency injection mechanism.
  */
+@Deprecated
 public final class AuthorityFactoryFinder extends FactoryFinder {
-    /**
-     * The authority names. Will be created only when first needed.
-     */
-    static Set<String> authorityNames;
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -73,40 +61,10 @@ public final class AuthorityFactoryFinder extends FactoryFinder {
      * @return The set of all currently registered authorities.
      */
     public static Set<String> getAuthorityNames() {
-        synchronized (FactoryFinder.class) {
-            /*
-             * IMPORTANT: Return the same Set instance (unmodifiable) as long as there is no change
-             * in the list of registered factories, and create a new instance in case of changes.
-             * 'add/removeAuthorityFactory(...)' and 'scanForPlugins()' methods reset 'authorityNames'
-             * to null, which will cause the creation of a new Set instance. Some implementations like
-             * AllAuthoritiesFactory rely on this behavior as a way to be notified of registration
-             * changes for clearing their cache.
-             */
-            if (authorityNames == null) {
-                authorityNames = new LinkedHashSet<>();
-                final Hints hints = org.geotoolkit.factory.Factory.EMPTY_HINTS;
-loop:           for (int i=0; ; i++) {
-                    final Set<? extends AuthorityFactory> factories;
-                    switch (i) {
-                        case 0:  factories = getCRSAuthorityFactories(hints);                 break;
-                        case 1:  factories = getCSAuthorityFactories(hints);                  break;
-                        case 2:  factories = getDatumAuthorityFactories(hints);               break;
-                        case 3:  factories = getCoordinateOperationAuthorityFactories(hints); break;
-                        default: break loop;
-                    }
-                    for (final AuthorityFactory factory : factories) {
-                        final Citation authority = factory.getAuthority();
-                        if (authority != null) {
-                            authorityNames.add(Citations.getIdentifier(authority));
-                            for (final Identifier id : authority.getIdentifiers()) {
-                                authorityNames.add(id.getCode());
-                            }
-                        }
-                    }
-                }
-                authorityNames = unmodifiableOrCopy(authorityNames);
-            }
-            return authorityNames;
+        try {
+            return ((MultiAuthoritiesFactory) CRS.getAuthorityFactory(null)).getCodeSpaces();
+        } catch (FactoryException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -123,17 +81,21 @@ loop:           for (int i=0; ; i++) {
      * @param  key       The hint key to use for searching an implementation.
      * @return The first authority factory that matches the supplied hints.
      * @throws FactoryRegistryException if no implementation was found or can be created for the
-     *         specfied interface.
+     *         specified interface.
      */
     private static <T extends AuthorityFactory> T getAuthorityFactory(
             final Class<T> category, final String authority, Hints hints, final Hints.ClassKey key)
             throws FactoryRegistryException
     {
         hints = mergeSystemHints(hints);
-        ServiceRegistry.Filter filter = (ServiceRegistry.Filter) hints.remove(FILTER_KEY);
-        filter = new AuthorityFilter(authority, filter);
-        synchronized (FactoryFinder.class) {
-            return getServiceRegistry().getServiceProvider(category, filter, hints, key);
+        final Object factory = hints.get(key);
+        if (category.isInstance(factory)) {
+            return (T) factory;
+        }
+        try {
+            return ((MultiAuthoritiesFactory) CRS.getAuthorityFactory(null)).getAuthorityFactory(category, authority, null);
+        } catch (FactoryException e) {
+            throw new FactoryRegistryException(e.getMessage(), e);
         }
     }
 
@@ -156,19 +118,6 @@ loop:           for (int i=0; ; i++) {
             throws FactoryRegistryException
     {
         return getAuthorityFactory(DatumAuthorityFactory.class, authority, hints, Hints.DATUM_AUTHORITY_FACTORY);
-    }
-
-    /**
-     * Returns a set of all available implementations for the {@link DatumAuthorityFactory}
-     * interface.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available datum authority factory implementations.
-     *
-     * @category Referencing
-     */
-    public static Set<DatumAuthorityFactory> getDatumAuthorityFactories(final Hints hints) {
-        return getFactories(DatumAuthorityFactory.class, hints, Hints.DATUM_AUTHORITY_FACTORY);
     }
 
     /**
@@ -196,18 +145,6 @@ loop:           for (int i=0; ; i++) {
             throws FactoryRegistryException
     {
         return getAuthorityFactory(CSAuthorityFactory.class, authority, hints, Hints.CS_AUTHORITY_FACTORY);
-    }
-
-    /**
-     * Returns a set of all available implementations for the {@link CSAuthorityFactory} interface.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available coordinate system authority factory implementations.
-     *
-     * @category Referencing
-     */
-    public static Set<CSAuthorityFactory> getCSAuthorityFactories(final Hints hints) {
-        return getFactories(CSAuthorityFactory.class, hints, Hints.CS_AUTHORITY_FACTORY);
     }
 
     /**
@@ -248,22 +185,6 @@ loop:           for (int i=0; ; i++) {
     }
 
     /**
-     * Returns a set of all available implementations for the {@link CRSAuthorityFactory} interface.
-     * This set can be used to list the available codes known to all authorities. In the event that
-     * the same code is understood by more then one authority, user may assume both are close enough,
-     * or make use of this set directly rather than use the {@link org.geotoolkit.referencing.CRS#decode}
-     * convenience method.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available coordinate reference system authority factory implementations.
-     *
-     * @category Referencing
-     */
-    public static Set<CRSAuthorityFactory> getCRSAuthorityFactories(final Hints hints) {
-        return getFactories(CRSAuthorityFactory.class, hints, Hints.CRS_AUTHORITY_FACTORY);
-    }
-
-    /**
      * Returns the first implementation of {@link CoordinateOperationAuthorityFactory} matching
      * the specified hints. If no implementation matches, a new one is created if possible or an
      * exception is thrown otherwise. If more than one implementation is registered and an
@@ -283,155 +204,5 @@ loop:           for (int i=0; ; i++) {
     {
         return getAuthorityFactory(CoordinateOperationAuthorityFactory.class, authority, hints,
                 Hints.COORDINATE_OPERATION_AUTHORITY_FACTORY);
-    }
-
-    /**
-     * Returns a set of all available implementations for the
-     * {@link CoordinateOperationAuthorityFactory} interface.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available coordinate operation authority factory implementations.
-     *
-     * @category Referencing
-     */
-    public static Set<CoordinateOperationAuthorityFactory>
-            getCoordinateOperationAuthorityFactories(final Hints hints)
-    {
-        return getFactories(CoordinateOperationAuthorityFactory.class, hints,
-                Hints.COORDINATE_OPERATION_AUTHORITY_FACTORY);
-    }
-
-    /**
-     * Sets a pairwise ordering between two authorities. If one or both authorities are not
-     * currently registered, or if the desired ordering is already set, nothing happens
-     * and {@code false} is returned.
-     * <p>
-     * The example below said that EPSG {@linkplain AuthorityFactory authority factories}
-     * are preferred over ESRI ones:
-     *
-     * {@preformat java
-     *     FactoryFinder.setAuthorityOrdering("EPSG", "ESRI");
-     * }
-     *
-     * @param  authority1 The preferred authority.
-     * @param  authority2 The authority to which {@code authority1} is preferred.
-     * @return {@code true} if the ordering was set for at least one category.
-     *
-     * @see #setVendorOrdering(String, String)
-     */
-    @Configuration
-    public static boolean setAuthorityOrdering(final String authority1, final String authority2) {
-        final AuthorityFilter filter1 = new AuthorityFilter(authority1, null);
-        final AuthorityFilter filter2 = new AuthorityFilter(authority2, null);
-        final boolean changed;
-        synchronized (FactoryFinder.class) {
-            changed = getServiceRegistry().setOrdering(AuthorityFactory.class, filter1, filter2);
-        }
-        if (changed) {
-            Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
-        }
-        return changed;
-    }
-
-    /**
-     * Unsets a pairwise ordering between two authorities. If one or both authorities are not
-     * currently registered, or if the desired ordering is already unset, nothing happens
-     * and {@code false} is returned.
-     *
-     * @param  authority1 The preferred authority.
-     * @param  authority2 The vendor to which {@code authority1} is preferred.
-     * @return {@code true} if the ordering was unset for at least one category.
-     *
-     * @see #unsetVendorOrdering(String, String)
-     */
-    @Configuration
-    public static boolean unsetAuthorityOrdering(final String authority1, final String authority2) {
-        final AuthorityFilter filter1 = new AuthorityFilter(authority1, null);
-        final AuthorityFilter filter2 = new AuthorityFilter(authority2, null);
-        final boolean changed;
-        synchronized (FactoryFinder.class) {
-            changed = getServiceRegistry().unsetOrdering(AuthorityFactory.class, filter1, filter2);
-        }
-        if (changed) {
-            Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
-        }
-        return changed;
-    }
-
-    /**
-     * A filter for factories provided for a given authority.
-     */
-    private static final class AuthorityFilter implements ServiceRegistry.Filter {
-        /**
-         * The authority to filter.
-         */
-        private final String authority;
-
-        /**
-         * A user-provided filter, or {@code null} if none.
-         */
-        private final ServiceRegistry.Filter filter;
-
-        /**
-         * Constructs a filter for the given authority.
-         */
-        public AuthorityFilter(final String authority, final ServiceRegistry.Filter filter) {
-            this.authority = authority;
-            this.filter    = filter;
-        }
-
-        /**
-         * Returns {@code true} if the specified provider is for the {@link #authority}.
-         * The user provided filter (if any) is also applied.
-         */
-        @Override
-        public boolean filter(final Object provider) {
-            if (authority != null) {
-                final Citation declared = ((AuthorityFactory) provider).getAuthority();
-                if (Citations.identifierMatches(declared, authority)) {
-                    return (filter == null) || filter.filter(provider);
-                }
-            }
-            // If the user didn't specified an authority name, then the factory to use must
-            // be specified explicitly through a hint (e.g. Hints.CRS_AUTHORITY_FACTORY).
-            return false;
-        }
-    }
-
-    /**
-     * Programmatic addition of authority factories.
-     * Needed for user managed, not plug-in managed, authority factory.
-     * Also useful for test cases.
-     *
-     * @param authority The authority factory to add.
-     */
-    @Configuration
-    public static void addAuthorityFactory(final AuthorityFactory authority) {
-        synchronized (FactoryFinder.class) {
-            authorityNames = null;
-            final boolean needScan = (registry == null);
-            final FactoryRegistry registry = getServiceRegistry();
-            if (needScan) {
-                registry.scanForPlugins();
-            }
-            registry.registerServiceProvider(authority);
-        }
-        Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
-    }
-
-    /**
-     * Programmatic removal of authority factories.
-     * Needed for user managed, not plug-in managed, authority factory.
-     * Also useful for test cases.
-     *
-     * @param authority The authority factory to remove.
-     */
-    @Configuration
-    public static void removeAuthorityFactory(final AuthorityFactory authority) {
-        synchronized (FactoryFinder.class) {
-            authorityNames = null;
-            getServiceRegistry().deregisterServiceProvider(authority);
-        }
-        Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
     }
 }

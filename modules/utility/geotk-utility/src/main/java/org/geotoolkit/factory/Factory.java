@@ -804,7 +804,10 @@ public abstract class Factory {
     private static String format(final Factory factory) {
         String name = Classes.getShortClassName(factory);
         if (factory instanceof AuthorityFactory) {
-            name = name + "[\"" + ((AuthorityFactory) factory).getAuthority().getTitle() + "\"]";
+            final Citation authority = ((AuthorityFactory) factory).getAuthority();
+            if (authority != null) {
+                name = name + "[\"" + authority.getTitle() + "\"]";
+            }
         }
         return name;
     }
