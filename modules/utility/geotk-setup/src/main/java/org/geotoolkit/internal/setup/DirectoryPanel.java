@@ -222,7 +222,7 @@ final class DirectoryPanel extends JComponent {
         items = new Item[] {
             new Item(c, resources.getLabel (Vocabulary.Keys.RootDirectory),          Installation.ROOT_DIRECTORY),
             new Item(c, resources.getString(Vocabulary.Keys.Data_1, "EPSG") + ':',   Installation.EPSG),
-            new Item(c, resources.getString(Vocabulary.Keys.Data_1, "NADCON") + ':', Installation.NADCON),
+//          new Item(c, resources.getString(Vocabulary.Keys.Data_1, "NADCON") + ':', Installation.NADCON),
             new Item(c, resources.getLabel (Vocabulary.Keys.GriddedData),            Installation.COVERAGES)
         };
     }

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Properties;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.DataSource;
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -60,12 +59,17 @@ public final class JNDI implements EventContext, InitialContextFactory {
      * Invoked from {@link org.geotoolkit.lang.Setup} for setting a pseudo-JNDI environment.
      */
     public static void install() {
-        //define at least the derby folder if not set
+        // define at least the derby folder if not set
         boolean reload = false;
-        if(System.getenv("SIS_DATA") == null && System.getProperty("derby.system.home") == null){
-            final File path = Installation.EPSG.directory(true);
-            System.setProperty("derby.system.home", path.getPath());
-            reload = true;
+        if (System.getProperty("derby.system.home") == null) {
+            final File path = Installation.SIS.directory(true);
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+            if (path.isDirectory()) {
+                System.setProperty("derby.system.home", path.getPath());
+                reload = true;
+            }
         }
         if (!Initializer.hasJNDI()) {
             System.setProperty(INITIAL_CONTEXT_FACTORY, JNDI.class.getName());
@@ -75,7 +79,7 @@ public final class JNDI implements EventContext, InitialContextFactory {
             try {
                 ((MultiAuthoritiesFactory) CRS.getAuthorityFactory(null)).reload();
             } catch (FactoryException ex) {
-                throw new IllegalStateException(ex);
+                throw new IllegalStateException(ex);        // Should never happen.
             }
         }
     }

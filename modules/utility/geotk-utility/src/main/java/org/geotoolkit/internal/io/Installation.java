@@ -63,19 +63,13 @@ public enum Installation {
     TESTS(null, null, "Tests"),
 
     /**
-     * The grid shift file location for NADCON transform.
+     * Where to store the metadata database used by SIS. Used only if the user did not set the
+     * {@code SIS_DATA} environment variable or the {@code "derby.system.home"} property.
      */
-    NADCON("org/geotoolkit/referencing/operation/transform", "NADCON", "NADCON"),
+    SIS("org/geotoolkit/metadata", "SIS", "Databases"),
 
     /**
-     * The grid shift file location for NTv2 transforms, including RGF93.
-     *
-     * @since 3.12
-     */
-    NTv2("org/geotoolkit/referencing/operation/transform", "NTv2", "NTv2"),
-
-    /**
-     * The EPSG database, or parameters required for a connection to a distant EPSG database.
+     * The parameters required for a connection to a distant EPSG database.
      */
     EPSG("org/geotoolkit/referencing/factory", "EPSG", "EPSG"),
 

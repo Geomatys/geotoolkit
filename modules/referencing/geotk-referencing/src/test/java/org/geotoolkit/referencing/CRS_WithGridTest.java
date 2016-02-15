@@ -20,15 +20,12 @@ package org.geotoolkit.referencing;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.internal.io.Installation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.DirectPosition2D;
-
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
@@ -37,9 +34,6 @@ import static org.junit.Assume.assumeTrue;
  * Tests the combination of EPSG database with grids like NADCON.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.00
  */
 @DependsOn(CRS_WithEpsgTest.class)
 public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
@@ -51,7 +45,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Test
     @Ignore
     public void testNADCON() throws Exception {
-        assumeTrue(Installation.NADCON.directory(true).isDirectory());
+        assumeTrue(false /*Installation.NADCON.directory(true).isDirectory()*/);
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final MathTransform tr;
@@ -81,7 +75,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Test
     @Ignore
     public void testNTF() throws Exception {
-        assumeTrue(Installation.NADCON.directory(true).isDirectory());
+        assumeTrue(false /*Installation.NADCON.directory(true).isDirectory()*/);
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993
