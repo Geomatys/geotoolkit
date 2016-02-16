@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class ScriptRunnerTest {
+public final strictfp class ScriptRunnerTest extends org.geotoolkit.test.TestBase {
     /**
      * The runner that doesn't read any file, but keep trace of what was intended to be
      * read and their order.

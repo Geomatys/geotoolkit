@@ -65,14 +65,14 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneTest {
+public class LuceneTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final FilterFactory2 FF = new DefaultFilterFactory2();
     private static final CoordinateReferenceSystem WGS84;
     private static final double TOLERANCE = 0.001;
-    
+
     static{
         try {
             WGS84 = CRS.decode("CRS:84");
@@ -95,7 +95,7 @@ public class LuceneTest {
             FileUtilities.deleteDirectory(directory);
         }
         directory.mkdir();
-        
+
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();

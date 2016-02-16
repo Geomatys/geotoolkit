@@ -53,22 +53,22 @@ import org.opengis.util.GenericName;
 
 /**
  * Pyramid store read and write tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractPyramidalModelStoreTest {
+public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
 
     private CoverageStore store;
     private DirectPosition corner;
     private CoordinateReferenceSystem crs;
-    
+
     //RGBA reference
     private PyramidalCoverageReference rgbaCoverageRef;
     private ColorModel rgbaColorModel;
-    
+
     //Float 1 band reference
     private PyramidalCoverageReference float1bCoverageRef;
     private ColorModel float1bColorModel;
@@ -89,11 +89,11 @@ public abstract class AbstractPyramidalModelStoreTest {
         final GenericName rgbaName = NamesExt.create("rgba");
         rgbaCoverageRef = (PyramidalCoverageReference) store.create(rgbaName);
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
-        
+
         //define the coverage informations
         rgbaColorModel = createRGBA(Color.RED).getColorModel();
-//        rgbaCoverageRef.setColorModel(rgbaColorModel);//-- temporary in comment in attempt to update TiffImageReader 
-        
+//        rgbaCoverageRef.setColorModel(rgbaColorModel);//-- temporary in comment in attempt to update TiffImageReader
+
         corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 100);
         corner.setOrdinate(1, 20);
@@ -128,18 +128,18 @@ public abstract class AbstractPyramidalModelStoreTest {
         rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 1, 2, createRGBA(Color.LIGHT_GRAY));
         rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 2, 2, createRGBA(Color.WHITE));
         rgbaCoverageRef.writeTile(rgbaPyramid.getId(), rgbaMosaic2.getId(), 3, 2, createRGBA(Color.BLACK));
-        
+
         ////////////////////////////////////////////////////////////////////////
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         final GenericName float1bName = NamesExt.create("float1b");
         float1bCoverageRef = (PyramidalCoverageReference) store.create(float1bName);
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
-        
+
         //define the coverage informations
         float1bColorModel = createFloat(1.1f).getColorModel();
 //        float1bCoverageRef.setColorModel(float1bColorModel);//-- temporary in comment in attempt to update TiffImageReader
-        
+
         corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 100);
         corner.setOrdinate(1, 20);
@@ -174,7 +174,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 1, 2, createFloat(-10.10f));
         float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 2, 2, createFloat(-11.11f));
         float1bCoverageRef.writeTile(float1bPyramid.getId(), float1bMosaic2.getId(), 3, 2, createFloat(-12.12f));
-        
+
 
         return store;
     }
@@ -189,7 +189,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         }
         return buffer;
     }
-    
+
     private static BufferedImage createRGBA(final Color color){
         final BufferedImage buffer = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = buffer.createGraphics();
@@ -212,7 +212,7 @@ public abstract class AbstractPyramidalModelStoreTest {
 
         //check defined color model
         //testColorModel(rgbaColorModel, rgbaCoverageRef.getColorModel());
-        
+
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
         assertTrue(CRS.equalsIgnoreMetadata(crs,  covcrs));
@@ -229,7 +229,7 @@ public abstract class AbstractPyramidalModelStoreTest {
 
         //check defined color model, do not test the colorspace
         //testColorModel(rgbaColorModel, img.getColorModel());
-        
+
         assertEquals(4*10,img.getWidth());
         assertEquals(3*10,img.getHeight());
 
@@ -245,7 +245,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         }
 
     }
-    
+
     /**
      * Read the full RGBA image.
      * @throws Exception
@@ -260,8 +260,8 @@ public abstract class AbstractPyramidalModelStoreTest {
 
         //check defined color model, do not test the colorspace
         //testColorModel(float1bColorModel, float1bCoverageRef.getColorModel());
-        
-        
+
+
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
         assertTrue(CRS.equalsIgnoreMetadata(crs,  covcrs));
@@ -275,7 +275,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         //check tile aggregation
         final RenderedImage img = coverage.getRenderedImage();
         final Raster raster = img.getData();
-        
+
         //check defined color model, do not test the colorspace
         //testColorModel(float1bColorModel, img.getColorModel());
 
@@ -361,7 +361,7 @@ public abstract class AbstractPyramidalModelStoreTest {
             assertEquals(edm.hasAlpha(), cdm.hasAlpha());
             assertEquals(edm.isAlphaPremultiplied(), cdm.isAlphaPremultiplied());
             assertEquals(edm.getTransferType(), cdm.getTransferType());
-            
+
         }else if(expected instanceof ComponentColorModel){
             final ComponentColorModel edm = (ComponentColorModel) expected;
             final ComponentColorModel cdm = (ComponentColorModel) candidate;
@@ -370,11 +370,11 @@ public abstract class AbstractPyramidalModelStoreTest {
             assertEquals(edm.isAlphaPremultiplied(), cdm.isAlphaPremultiplied());
             assertEquals(edm.getTransparency(), cdm.getTransparency());
             assertEquals(edm.getTransferType(), cdm.getTransferType());
-            
+
         }else{
             assertEquals(float1bColorModel, candidate);
         }
     }
-    
+
 
 }

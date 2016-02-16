@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.06 (derived from 2.5)
  */
-public final strictfp class SpatialImageReaderTest {
+public final strictfp class SpatialImageReaderTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link DataBuffer#TYPE_FLOAT}. The converter should be the identity one
      * except for pad values which should be replaced by NaN, provided that this

@@ -29,37 +29,37 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SVGTest {
-    
+public class SVGTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testRenderingImage() throws URISyntaxException, Exception{
-        
+
         final SVGGraphicFactory factory = new SVGGraphicFactory();
         final URI uri = SVGTest.class.getResource("/org/geotoolkit/svg/test.svg").toURI();
-        
+
         final BufferedImage image = factory.getImage(uri, "image/svg", 20f, null);
-        
+
         assertEquals(Color.RED.getRGB(), image.getRGB(2, 2));
         assertEquals(Color.GREEN.getRGB(), image.getRGB(18, 2));
         assertEquals(Color.BLUE.getRGB(), image.getRGB(2, 18));
         assertEquals(Color.BLACK.getRGB(), image.getRGB(18, 18));
-        
+
     }
-    
+
     @Test
     public void testRenderingPosition() throws URISyntaxException, Exception{
-        
+
         final SVGGraphicFactory factory = new SVGGraphicFactory();
         final URI uri = SVGTest.class.getResource("/org/geotoolkit/svg/test.svg").toURI();
-        
+
         final BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
         factory.renderImage(uri, "image/svg", 20f, image.createGraphics(), new Point2D.Double(10, 10), null);
-        
+
         assertEquals(Color.RED.getRGB(), image.getRGB(2, 2));
         assertEquals(Color.GREEN.getRGB(), image.getRGB(18, 2));
         assertEquals(Color.BLUE.getRGB(), image.getRGB(2, 18));
         assertEquals(Color.BLACK.getRGB(), image.getRGB(18, 18));
-        
+
     }
-    
+
 }

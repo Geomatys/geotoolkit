@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetLegendGraphicTest {
+public class GetLegendGraphicTest extends org.geotoolkit.test.TestBase {
     public GetLegendGraphicTest() {}
 
     /**

@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class FilterConverterTest {
+public class FilterConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

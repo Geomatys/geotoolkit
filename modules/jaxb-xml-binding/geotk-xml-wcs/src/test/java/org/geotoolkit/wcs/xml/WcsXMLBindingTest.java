@@ -52,7 +52,7 @@ import org.geotoolkit.wcs.xml.v200.ExtensionType;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WcsXMLBindingTest {
+public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static final MarshallerPool pool = WCSMarshallerPool.getInstance();
     private Marshaller   marshaller;
@@ -142,7 +142,7 @@ public class WcsXMLBindingTest {
                            "</wcs:GetCoverage>" + '\n' ;
         assertXmlEquals(expResult, result, "xmlns:*");
     }
-    
+
     @Test
     public void marshallingTest200() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
@@ -158,7 +158,7 @@ public class WcsXMLBindingTest {
         param.setTiling(true);
         ObjectFactory facto = new ObjectFactory();
         getCoverage.setExtension(new ExtensionType(facto.createParameters(param)));
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(getCoverage, sw);
 
@@ -176,21 +176,21 @@ public class WcsXMLBindingTest {
                            "            <geotiff:tileheight>12</geotiff:tileheight>\n" +
                            "            <geotiff:tilewidth>15</geotiff:tilewidth>\n" +
                            "        </geotiff:parameters>\n" +
-                           "    </wcs:Extension>\n" +         
+                           "    </wcs:Extension>\n" +
                            "    <wcs:CoverageId>test</wcs:CoverageId>" + '\n' +
                            "    <wcs:format>image/geotiff</wcs:format>" + '\n' +
                            "</wcs:GetCoverage>" + '\n' ;
         assertXmlEquals(expResult, result, "xmlns:*");
-        
+
         final org.geotoolkit.wcs.xml.v200.GetCoverageType unmarshalled = (org.geotoolkit.wcs.xml.v200.GetCoverageType)((JAXBElement) unmarshaller.unmarshal(new StringReader(expResult))).getValue();
         assertEquals(getCoverage, unmarshalled);
-        
-        
+
+
         final org.geotoolkit.gml.xml.v321.RangeSetType rangeSet = new org.geotoolkit.gml.xml.v321.RangeSetType();
         final FileType ft = new FileType();
         ft.setMimeType("image/tiff");
         final String ext = ".tif";
-        ft.setRangeParameters(new AssociationRoleType("cid:grey" + ext, 
+        ft.setRangeParameters(new AssociationRoleType("cid:grey" + ext,
                                                       "http://www.opengis.net/spec/GMLCOV_geotiff-coverages/1.0/conf/geotiff-coverage",
                                                       "fileReference"));
         ft.setFileReference("cid:grey" + ext);
@@ -198,7 +198,7 @@ public class WcsXMLBindingTest {
         final AbstractDiscreteCoverageType cov = new AbstractDiscreteCoverageType(new CoverageDescriptionType(), rangeSet);
         final org.geotoolkit.gmlcov.xml.v100.ObjectFactory factory = new org.geotoolkit.gmlcov.xml.v100.ObjectFactory();
         JAXBElement jb = factory.createGridCoverage(cov);
-        
+
         sw = new StringWriter();
         marshaller.marshal(jb, sw);
 

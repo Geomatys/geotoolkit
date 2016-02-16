@@ -32,8 +32,8 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class AbsoluteTest extends AbstractProcessTest{
-   
+public class AbsoluteTest extends AbstractProcessTest {
+
 
     public AbsoluteTest() {
         super("absolute");
@@ -57,5 +57,5 @@ public class AbsoluteTest extends AbstractProcessTest{
 
         assertEquals(new Double(2.6), result);
     }
-    
+
 }

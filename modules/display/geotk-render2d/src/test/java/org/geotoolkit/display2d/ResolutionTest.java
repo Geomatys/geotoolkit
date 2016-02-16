@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Remi Marechal (Geomatys).
  */
-public abstract class ResolutionTest {
+public abstract class ResolutionTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Tested {@link Resolution} Object.

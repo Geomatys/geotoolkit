@@ -65,12 +65,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.geotoolkit.project</groupId>
-            <artifactId>geotk-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-store</artifactId>
             <version>${project.version}</version>

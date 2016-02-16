@@ -28,8 +28,8 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class ReferenceToFeatureConverterTest {
-    
+public class ReferenceToFeatureConverterTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testJSONConversion() throws IOException {
         Feature feature = ConvertersTestUtils.initAndRunInputConversion(
@@ -43,5 +43,5 @@ public class ReferenceToFeatureConverterTest {
         ConvertersTestUtils.assertFeatureIsValid(feature);
 
     }
-    
+
 }

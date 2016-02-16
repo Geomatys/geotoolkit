@@ -73,7 +73,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.rmi.CORBA.Tie;
 
 //constellation
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
@@ -126,27 +125,10 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class SmlXMLBindingTest {
+public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private ObjectFactory sml100Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
-
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     /**
      * Test simple Record Marshalling.

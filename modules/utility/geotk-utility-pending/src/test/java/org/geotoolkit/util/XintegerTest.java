@@ -17,10 +17,6 @@
 package org.geotoolkit.util;
 
 import java.text.ParseException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -30,25 +26,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XintegerTest {
+public class XintegerTest extends org.geotoolkit.test.TestBase {
 
     public XintegerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -72,7 +52,7 @@ public class XintegerTest {
         assertEquals(123456, XInteger.parseIntSigned(str2, 21, 27) );
         assertEquals(123456, XInteger.parseIntSigned(str2, 28, 34) );
         assertEquals(123456, XInteger.parseIntSigned(str2, 35, 41) );
-        
+
         assertEquals(123456, XInteger.parseIntUnsigned(str2, 0, 6) );
         assertEquals(123456, XInteger.parseIntUnsigned(str2, 7, 13) );
         assertEquals(123456, XInteger.parseIntUnsigned(str2, 14, 20) );

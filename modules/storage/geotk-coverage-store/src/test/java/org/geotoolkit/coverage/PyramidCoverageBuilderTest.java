@@ -45,7 +45,7 @@ import org.opengis.referencing.datum.PixelInCell;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class PyramidCoverageBuilderTest {
+public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();

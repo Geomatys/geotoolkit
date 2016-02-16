@@ -61,7 +61,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class VisitorTest {
+public class VisitorTest extends org.geotoolkit.test.TestBase {
 
     public VisitorTest() {
     }

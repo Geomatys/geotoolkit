@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ReaderTest {
+public class ReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final double DELTA = 0.000001;

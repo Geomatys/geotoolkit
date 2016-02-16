@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -42,7 +42,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultClockTimeTest {
+public class DefaultClockTimeTest extends org.geotoolkit.test.TestBase {
 
     private ClockTime clockTime1;
     private ClockTime clockTime2;
@@ -53,7 +53,7 @@ public class DefaultClockTimeTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties); 
+        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties);
         Number[] clck1 = {8, 16, 25};
         Number[] clck2 = {15, 55, 1};
         clockTime1 = new DefaultClockTime(frame, null, clck1);

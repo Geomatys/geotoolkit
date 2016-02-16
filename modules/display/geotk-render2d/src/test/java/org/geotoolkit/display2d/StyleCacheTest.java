@@ -61,7 +61,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StyleCacheTest {
+public class StyleCacheTest extends org.geotoolkit.test.TestBase {
 
     private final MutableStyleFactory SF = new DefaultStyleFactory();
     private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -96,7 +96,7 @@ public class StyleCacheTest {
 
         stroke = SF.stroke(Color.WHITE, 0.20d, new float[]{1,3,1});
         cached = CachedStroke.cache(stroke);
-        
+
     }
 
     @Test

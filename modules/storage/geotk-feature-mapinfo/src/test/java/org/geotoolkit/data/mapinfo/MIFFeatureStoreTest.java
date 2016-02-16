@@ -40,9 +40,6 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -56,24 +53,12 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MIFFeatureStoreTest {
+public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
     private final File tempDir;
 
     public MIFFeatureStoreTest() throws IOException {
         tempDir = Files.createTempDirectory("mifMidTests").toFile();
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
     }
 
     @After
@@ -94,9 +79,9 @@ public class MIFFeatureStoreTest {
     }
 
     /**
-     * Tet store creation.
-     * 
-     * @throws Exception 
+     * Test store creation.
+     *
+     * @throws Exception
      */
     @Test
     public void testCreate() throws Exception{
@@ -107,11 +92,11 @@ public class MIFFeatureStoreTest {
         final FeatureStoreFactory ff = FeatureStoreFinder.getFactoryById("MIF-MID");
         final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, "url").setValue(f.toURI().toURL());
-        
+
         //create new store from scratch
         final FeatureStore ds = ff.create(params);
         assertNotNull(ds);
-        
+
         //create a feature type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
@@ -120,10 +105,10 @@ public class MIFFeatureStoreTest {
         ftb.add("stringProp", String.class);
         ftb.add("geometryProp", Point.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType featureType = ftb.buildFeatureType();
-        
+
         ds.createFeatureType(featureType.getName(), featureType);
         assertEquals(1, ds.getNames().size());
-        
+
         GenericName name = ds.getNames().iterator().next();
 
 

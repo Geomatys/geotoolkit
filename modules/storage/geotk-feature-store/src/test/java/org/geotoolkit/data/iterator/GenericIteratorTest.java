@@ -74,7 +74,7 @@ import static junit.framework.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericIteratorTest {
+public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
     protected static final FeatureFactory AF = FeatureFactory.LENIENT;
 
@@ -180,7 +180,7 @@ public class GenericIteratorTest {
 
             f = ite.next();
             final String id = f.getIdentifier().getID();
-                        
+
             if(id1.equals(id)){
                 mask |= 1<<0;
             }else if(id2.equals(id)){
@@ -193,7 +193,7 @@ public class GenericIteratorTest {
         if(mask!=7){
             fail("missing features in iterations");
         }
-        
+
     }
 
     @Test
@@ -338,10 +338,10 @@ public class GenericIteratorTest {
         while(retyped.hasNext()){
             f = retyped.next();
             final String id = f.getIdentifier().getID();
-            
+
             assertEquals(3, f.getProperties().size());
             assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
-            
+
             if(id1.equals(id)){
                 mask |= 1<<0;
                 assertEquals(GF.createPoint(new Coordinate(0, 3)).toString(), f.getProperty("att_geom").getValue().toString());
@@ -357,7 +357,7 @@ public class GenericIteratorTest {
         if(mask!=7){
             fail("missing features in iterations");
         }
-        
+
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
@@ -486,9 +486,9 @@ public class GenericIteratorTest {
         while(retyped.hasNext()){
             f = retyped.next();
             final String id = f.getIdentifier().getID();
-            
+
             assertEquals(1, f.getProperties().size());
-            
+
             if(id1.equals(id)){
                 mask |= 1<<0;
                 assertEquals(3d, (Double)f.getProperty("att_double").getValue(), DELTA);
@@ -504,7 +504,7 @@ public class GenericIteratorTest {
         if(mask!=7){
             fail("missing features in iterations");
         }
-        
+
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);

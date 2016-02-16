@@ -47,7 +47,7 @@ import org.geotoolkit.wps.io.WPSSchema;
  *
  * @author Quentin Boileau
  */
-public class ExecuteTest {
+public class ExecuteTest extends org.geotoolkit.test.TestBase {
 
     private static String EPSG_VERSION;
 

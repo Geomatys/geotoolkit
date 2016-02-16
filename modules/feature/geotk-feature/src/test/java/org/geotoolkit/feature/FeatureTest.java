@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeatureTest {
+public class FeatureTest extends org.geotoolkit.test.TestBase {
 
     private static final LenientFeatureFactory FF = new LenientFeatureFactory();
     private static final GeometryFactory GF = new GeometryFactory();

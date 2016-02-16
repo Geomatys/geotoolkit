@@ -50,7 +50,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Alexis MANIN (geomatys)
  */
-public abstract class AbstractSimpleFeatureTest {
+public abstract class AbstractSimpleFeatureTest extends org.geotoolkit.test.TestBase {
 
     /**
      * A boolean to tell if we test a validating or a lenient factory.

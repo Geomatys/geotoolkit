@@ -48,7 +48,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GraduationTest {
+public class GraduationTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Sanity test, only ensure the rendering is successfull without errors not the final result.
@@ -84,7 +84,7 @@ public class GraduationTest {
 
         final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
         Assert.assertNotNull(img);
-        
+
     }
 
 }

@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class HarvestTest {
+public class HarvestTest extends org.geotoolkit.test.TestBase {
     public HarvestTest() {}
 
     /**

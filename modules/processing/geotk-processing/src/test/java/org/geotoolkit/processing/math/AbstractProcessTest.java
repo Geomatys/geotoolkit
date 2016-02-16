@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class AbstractProcessTest {
+public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 
     private static final String factory = "math";
     private String process;

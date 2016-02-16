@@ -28,10 +28,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
-public class OWCTest {
+public class OWCTest extends org.geotoolkit.test.TestBase {
     private static final org.w3._2005.atom.ObjectFactory OBJ_ATOM_FACT = new org.w3._2005.atom.ObjectFactory();
     private static final org.geotoolkit.owc.xml.v10.ObjectFactory OBJ_OWC_FACT = new org.geotoolkit.owc.xml.v10.ObjectFactory();
     private static final org.geotoolkit.georss.xml.v100.ObjectFactory OBJ_GEORSS_FACT = new org.geotoolkit.georss.xml.v100.ObjectFactory();

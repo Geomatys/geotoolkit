@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class SortByConverterTest {
+public class SortByConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

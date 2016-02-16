@@ -26,17 +26,17 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class DoubleArrayToStringConverterTest {
+public class DoubleArrayToStringConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {
-        
+
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(double[].class, String.class);
-        
+
         double[] input = new double[] { 10.5, 5.55, 90.4, 6.0, 70.0};
         String output = (String)converter.convert(input, null);
         assertEquals("10.5,5.55,90.4,6.0,70.0", output);
-        
+
         output = (String)converter.convert(new double[0], null);
         assertEquals("", output);
     }

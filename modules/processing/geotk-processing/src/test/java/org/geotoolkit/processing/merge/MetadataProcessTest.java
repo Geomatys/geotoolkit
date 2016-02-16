@@ -40,7 +40,7 @@ import java.net.URISyntaxException;
  * @author Johann Sorel (Geomatys)
  * @author Benjamin Garcia (Geomatys)
  */
-public class MetadataProcessTest {
+public class MetadataProcessTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void mergeTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException, JAXBException {

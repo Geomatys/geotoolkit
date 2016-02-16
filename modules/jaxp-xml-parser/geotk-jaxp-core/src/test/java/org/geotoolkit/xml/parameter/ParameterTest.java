@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  *
  * @author Samuel Andrés
  */
-public class ParameterTest {
+public class ParameterTest extends org.geotoolkit.test.TestBase {
 
     private static final String WRITTING_FILE =
             "src/test/resources/org/geotoolkit/xml/parameter/parameterWriting.xml";

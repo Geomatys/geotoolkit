@@ -40,18 +40,18 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class ContainTest extends AbstractProcessTest{
+public class ContainTest extends AbstractProcessTest {
 
-   
+
     public ContainTest() {
         super("contain");
     }
 
     @Test
     public void testContain() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -60,11 +60,11 @@ public class ContainTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom1 = fact.createPolygon(ring, null) ;
-        
+
         final Geometry geom2 = fact.createPoint(new Coordinate(4, 5)) ;
-      
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "contain");
 
@@ -75,17 +75,17 @@ public class ContainTest extends AbstractProcessTest{
 
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-        
+
         final Boolean expected = geom1.contains(geom2);
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
     @Test
     public void testContainCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -94,17 +94,17 @@ public class ContainTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom1 = fact.createPolygon(ring, null) ;
-        
+
         CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
         JTS.setCRS(geom1, crs1);
-        
+
         Geometry geom2 = fact.createPoint(new Coordinate(4, 5)) ;
-      
+
         CoordinateReferenceSystem crs2 = CRS.decode("EPSG:2154");
         JTS.setCRS(geom2, crs2);
-        
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "contain");
 
@@ -115,13 +115,13 @@ public class ContainTest extends AbstractProcessTest{
 
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-       
+
         MathTransform mt = CRS.findMathTransform(crs2, crs1);
         geom2 = JTS.transform(geom2, mt);
-        
+
         final Boolean expected = geom1.contains(geom2);
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
 }

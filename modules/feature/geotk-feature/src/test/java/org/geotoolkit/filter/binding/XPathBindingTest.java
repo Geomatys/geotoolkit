@@ -38,7 +38,7 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XPathBindingTest {
+public class XPathBindingTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

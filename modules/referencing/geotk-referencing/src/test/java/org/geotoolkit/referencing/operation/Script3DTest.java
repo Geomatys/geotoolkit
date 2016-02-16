@@ -38,7 +38,7 @@ import org.junit.*;
  * @todo Not yet enabled because the hook to {@code DefaultCoordinateOperationFactory}
  *       are not yet there.
  */
-public final strictfp class Script3DTest {
+public final strictfp class Script3DTest extends org.geotoolkit.test.TestBase {
     /**
      * Runs the specified test script.
      *

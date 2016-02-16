@@ -22,7 +22,6 @@ import java.util.List;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -37,7 +36,6 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.sampling.xml.v100.ObjectFactory;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
 import javax.xml.bind.JAXBContext;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
@@ -50,9 +48,8 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class SamplingXMLBindingTest {
+public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
 
-    private static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.fra");
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;

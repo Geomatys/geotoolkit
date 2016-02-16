@@ -45,7 +45,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.16
  */
-public final strictfp class ReferencingFactoryContainerTest {
+public final strictfp class ReferencingFactoryContainerTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link ReferencingFactoryContainer#toGeodetic3D}.
      *

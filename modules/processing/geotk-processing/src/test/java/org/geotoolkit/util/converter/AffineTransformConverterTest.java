@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class AffineTransformConverterTest {
+public class AffineTransformConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

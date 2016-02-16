@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final strictfp class ColorMapTest {
+public final strictfp class ColorMapTest extends org.geotoolkit.test.TestBase {
     /**
      * The grid sample dimension to be used for testing purpose.
      */

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class LazyListTest {
+public final strictfp class LazyListTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests with random integer values.
      */

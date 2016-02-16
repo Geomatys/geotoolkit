@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * @author Martin Desruisseaux (Geomatys)
  * @module
  */
-public final strictfp class ReaderTest {
+public final strictfp class ReaderTest extends org.geotoolkit.test.TestBase {
     /**
      * Convenience method for testing {@link Reader#unescape(CharSequence, int, int)}.
      */

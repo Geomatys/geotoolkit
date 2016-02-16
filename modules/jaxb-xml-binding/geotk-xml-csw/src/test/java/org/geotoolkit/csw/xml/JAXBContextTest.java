@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXBContextTest {
+public class JAXBContextTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() throws JAXBException {

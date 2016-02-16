@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShpFilesTest {
+public class ShpFilesTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testCaseURL() throws Exception {
@@ -48,7 +48,7 @@ public class ShpFilesTest {
     private void assertCorrectCase(final boolean uppercase)
             throws MalformedURLException {
         String base = "http://someURL.com/file.";
-        
+
         String shp = SHP.extension.toLowerCase();
         String dbf = DBF.extension.toLowerCase();
         String shx = SHX.extension.toLowerCase();
@@ -58,9 +58,9 @@ public class ShpFilesTest {
             dbf = dbf.toUpperCase();
             shx = shx.toUpperCase();
         }
-        
+
         ShpFiles files = new ShpFiles(base+shp);
-        
+
         URL shpURL = files.getURL(SHP);
         URL dbfURL = files.getURL(DBF);
         URL shxURL = files.getURL(SHX);
@@ -68,11 +68,11 @@ public class ShpFilesTest {
         assertEquals(base + dbf, dbfURL.toExternalForm());
         assertEquals(base + shx, shxURL.toExternalForm());
     }
-    
+
     @Test
     public void testCaseFile() throws Exception {
         Map<ShpFileType, File> files = createFiles("testCaseFile", ShpFileType.values(), true);
-        
+
         String fileName = files.get(SHP).getPath();
         fileName = fileName.substring(0, fileName.length()-4)+".shp";
         ShpFiles shpFiles = new ShpFiles(fileName);
@@ -84,7 +84,7 @@ public class ShpFilesTest {
         assertEquals(files.get(DBF).toURI().toURL().toExternalForm(), dbfURL.toExternalForm());
         assertEquals(files.get(SHX).toURI().toURL().toExternalForm(), shxURL.toExternalForm());
     }
-    
+
     protected static Map<ShpFileType, File> createFiles(final String string,
             final ShpFileType[] values, final boolean uppercase) throws IOException {
         Map<ShpFileType, File> files = new HashMap<ShpFileType, File>();

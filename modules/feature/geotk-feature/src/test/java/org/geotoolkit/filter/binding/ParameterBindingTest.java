@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ParameterBindingTest {
+public class ParameterBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testGetter(){
@@ -42,7 +42,7 @@ public class ParameterBindingTest {
         param.parameter("age").setValue(45);
         param.parameter("name").setValue("marcel");
         param.parameter("human").setValue(true);
-        
+
         final Binding accessor = Bindings.getBinding(ParameterValueGroup.class, "age");
         assertNotNull(accessor);
 

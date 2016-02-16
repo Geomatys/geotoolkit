@@ -95,7 +95,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ColorModelTest {
+public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();

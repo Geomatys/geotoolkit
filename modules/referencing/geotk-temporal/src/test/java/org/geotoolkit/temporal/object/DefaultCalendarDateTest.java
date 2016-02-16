@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -40,7 +40,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultCalendarDateTest {
+public class DefaultCalendarDateTest extends org.geotoolkit.test.TestBase {
 
     private CalendarDate calendarDate1;
     private CalendarDate calendarDate2;
@@ -51,9 +51,9 @@ public class DefaultCalendarDateTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties); 
-        
-        
+        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties);
+
+
 //        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
         int[] cal1 = {1981, 6, 25};
         int[] cal2 = {2000, 1, 1};

@@ -26,7 +26,6 @@ import org.opengis.referencing.operation.ConcatenatedOperation;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.Transformation;
 
-import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.operation.transform.MathTransformTestCase;
@@ -44,14 +43,6 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.0
  */
 public abstract strictfp class TransformTestBase extends MathTransformTestCase {
-    /**
-     * Ensures that the {@link TestBase} class has been initialized. We don't really
-     * need to flush the output; this is just a lazy way to ensure class initialization.
-     */
-    static {
-        TestBase.flushVerboseOutput();
-    }
-
     /**
      * The datum factory to use for testing.
      */

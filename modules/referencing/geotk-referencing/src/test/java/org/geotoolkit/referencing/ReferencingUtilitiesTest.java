@@ -38,7 +38,7 @@ import org.opengis.geometry.MismatchedDimensionException;
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys)
  */
-public class ReferencingUtilitiesTest {
+public class ReferencingUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.0000001;
 
@@ -64,20 +64,20 @@ public class ReferencingUtilitiesTest {
 
     /**
      * Test {@link ReferencingUtilities#toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) }.
-     * @throws TransformException 
+     * @throws TransformException
      */
     @Test
     public void toTransformTest() throws TransformException{
 
         //-- test expected results
-        
+
         final AffineTransform2D base = new AffineTransform2D(new AffineTransform(2, 0, 0, 3, 5, 7));
 
         final Map<Integer, double[]> axisValues = new HashMap<Integer, double[]>();
         axisValues.put(0, new double[0]);
         axisValues.put(3, new double[]{-14});
         axisValues.put(4, new double[]{9,10,11});
-        
+
         MathTransform trs = ReferencingUtilities.toTransform(1, base, axisValues, 5);
 
         assertEquals(5, trs.getSourceDimensions());
@@ -91,8 +91,8 @@ public class ReferencingUtilitiesTest {
         assertEquals(11.5, coords[2],  DELTA);
         assertEquals(-12.5, coords[3], DELTA);
         assertEquals(10.5, coords[4],  DELTA);
-        
-        
+
+
         //-- test fails
         //-- null pointer
         try {
@@ -101,7 +101,7 @@ public class ReferencingUtilitiesTest {
         } catch(NullPointerException ex) {
             //-- expected comportement
         }
-        
+
         //-- null pointer
         try {
             trs = ReferencingUtilities.toTransform(1, base, null, 5);
@@ -109,7 +109,7 @@ public class ReferencingUtilitiesTest {
         } catch(NullPointerException ex) {
             //-- expected comportement
         }
-        
+
         //-- bad firstBaseOrdinate
         try {
             trs = ReferencingUtilities.toTransform(1, base, axisValues, 2);
@@ -117,7 +117,7 @@ public class ReferencingUtilitiesTest {
         } catch(IllegalArgumentException ex) {
             //-- expected comportement
         }
-        
+
         //-- bad targetDimension
         try {
             trs = ReferencingUtilities.toTransform(0, base, axisValues, 1);
@@ -125,7 +125,7 @@ public class ReferencingUtilitiesTest {
         } catch(MismatchedDimensionException ex) {
             //-- expected comportement
         }
-        
+
         //-- missing dimension information
         axisValues.remove(3);
         try {

@@ -22,10 +22,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -36,26 +32,10 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WeakListenerTest {
+public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 
 
     public WeakListenerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**

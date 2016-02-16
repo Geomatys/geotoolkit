@@ -34,7 +34,7 @@ import org.apache.sis.test.DependsOn;
  * @since 2.3
  */
 @DependsOn(HintsTest.class)
-public final strictfp class FactoryTest {
+public final strictfp class FactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * A key for testing purpose.
      */

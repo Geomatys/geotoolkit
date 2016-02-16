@@ -37,28 +37,28 @@ import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Image band combine test.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class BandCombineTest {
- 
+public class BandCombineTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void combineTest() throws Exception{
-        
+
         final RenderedImage img1 = create(BufferedImage.TYPE_3BYTE_BGR, Color.RED, Color.BLACK);
         final RenderedImage img2 = create(BufferedImage.TYPE_4BYTE_ABGR, Color.BLUE, Color.GREEN);
         final RenderedImage img3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
-        
-        
+
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("images").setValue(new RenderedImage[]{img1,img2,img3});
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result image
         final RenderedImage outImage = (RenderedImage) result.parameter("result").getValue();
         final SampleModel outSampleModel = outImage.getSampleModel();
@@ -66,7 +66,7 @@ public class BandCombineTest {
         assertEquals(100, outImage.getHeight());
         assertEquals(10, outSampleModel.getNumBands());
         assertEquals(DataBuffer.TYPE_BYTE, outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final int[] sample = new int[10];
@@ -82,15 +82,15 @@ public class BandCombineTest {
                 }
             }
         }
-        
+
     }
-    
+
     @Test
     public void rgbCombineText() throws NoSuchIdentifierException, ProcessException{
         final int WIDTH = 10;
         final int HEIGHT = 10;
         final int SIZE = WIDTH*HEIGHT;
-        
+
         final byte[] redTable = new byte[SIZE];
         final byte[] greenTable = new byte[SIZE];
         final byte[] blueTable = new byte[SIZE];
@@ -130,25 +130,25 @@ public class BandCombineTest {
         BufferedImage blue = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
         blue.setData(raster);
 
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("images").setValue(new RenderedImage[]{red,green,blue});
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result image
         final RenderedImage outImage = (RenderedImage) result.parameter("result").getValue();
         assertNotNull(outImage);
 
         //expect a rgb color model
-        
+
     }
-    
-    
+
+
     private static RenderedImage create(int type, Color color1, Color color2){
         final BufferedImage inputImage = new BufferedImage(100, 100, type);
         final Graphics2D g = inputImage.createGraphics();
@@ -158,5 +158,5 @@ public class BandCombineTest {
         g.fillRect(0, 50, 100, 50);
         return inputImage;
     }
-    
+
 }

@@ -28,11 +28,11 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TokenParserTest {
-    
+public class TokenParserTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testReader() throws XMLStreamException, IOException{
-        
+
         final TokenParser parser = new TokenParser(null, null);
         parser.setInput(TokenParserTest.class.getResource("/org/geotoolkit/ignrm/token.xml"));
         final Token token = parser.read();
@@ -40,5 +40,5 @@ public class TokenParserTest {
         assertEquals("gppkey",token.getName());
         assertEquals("gC2UZGUr_JJi5Nm7QKN5hQG06pEAAAAAAAH",token.value);
     }
-       
+
 }

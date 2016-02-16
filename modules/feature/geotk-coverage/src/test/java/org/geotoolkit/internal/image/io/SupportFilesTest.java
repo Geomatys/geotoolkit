@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final strictfp class SupportFilesTest {
+public final strictfp class SupportFilesTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests a file for which no TFW file is defined. {@code SupportFiles} should propose as
      * a fallback the {@code "ttw"} extension, which is built from the "first letter + last

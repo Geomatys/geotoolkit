@@ -41,7 +41,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API.*;
  *
  * @since 3.08
  */
-public final strictfp class SpatialImageReadParamTest {
+public final strictfp class SpatialImageReadParamTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the API enumeration.
      */

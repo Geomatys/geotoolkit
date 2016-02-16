@@ -106,7 +106,7 @@ import org.opengis.style.Stroke;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PortrayalServiceTest {
+public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     private static final double EPS = 0.000000001d;
 
@@ -498,7 +498,7 @@ public class PortrayalServiceTest {
 
     /**
      * Test that a large graphic outside the map area is still rendered.
-     * 
+     *
      */
     @Test
     public void testMarginRendering() throws Exception{
@@ -509,10 +509,10 @@ public class PortrayalServiceTest {
         symbols.add(mark);
         final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(8), LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
         final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
-        
+
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-        
-        
+
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.add("geom", Point.class,crs);
@@ -521,28 +521,28 @@ public class PortrayalServiceTest {
         final Point pt = GF.createPoint(new Coordinate(12, 5));
         JTS.setCRS(pt, crs);
         feature.setPropertyValue("geom", pt);
-        
-        final FeatureCollection col = FeatureStoreUtilities.collection(feature);        
+
+        final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0, 10);
         env.setRange(1, 0, 10);
-        
+
         final CanvasDef cdef = new CanvasDef(new Dimension(10, 10), Color.WHITE);
         final SceneDef sdef = new SceneDef(context);
         final ViewDef vdef = new ViewDef(env);
-        
+
         final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
-        
+
         assertEquals(Color.BLACK.getRGB(), img.getRGB(9, 5));
         assertEquals(Color.BLACK.getRGB(), img.getRGB(8, 5));
-        assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));        
+        assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));
     }
 
-    
+
     private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 

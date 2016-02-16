@@ -43,7 +43,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-public final strictfp class ScaledColorSpaceTest {
+public final strictfp class ScaledColorSpaceTest extends org.geotoolkit.test.TestBase {
     /**
      * Random number generator for this test.
      */

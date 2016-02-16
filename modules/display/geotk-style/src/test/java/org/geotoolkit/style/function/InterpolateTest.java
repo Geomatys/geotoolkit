@@ -28,8 +28,6 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.opengis.filter.FilterFactory;
@@ -43,17 +41,9 @@ import org.geotoolkit.feature.type.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InterpolateTest {
+public class InterpolateTest extends org.geotoolkit.test.TestBase {
 
     public InterpolateTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Test

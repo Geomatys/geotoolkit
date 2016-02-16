@@ -27,10 +27,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import org.geotoolkit.xml.MockReader.Person;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -39,25 +35,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaxStreamReaderTest {
+public class StaxStreamReaderTest extends org.geotoolkit.test.TestBase {
 
     public StaxStreamReaderTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -103,15 +83,15 @@ public class StaxStreamReaderTest {
         validate(instance.read());
         instance.dispose();
     }
-    
+
     @Test
     public void testReadingFromDom() throws Exception {
-        
+
         final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
         final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
-        final Document document = constructeur.parse(StaxStreamReaderTest.class.getResourceAsStream("/org/geotoolkit/xml/sample.xml"));        
+        final Document document = constructeur.parse(StaxStreamReaderTest.class.getResourceAsStream("/org/geotoolkit/xml/sample.xml"));
         final Source src = new DOMSource(document);
-        
+
         //this test requiere and advanced Stax library, here we use WoodStox stream reader.
         final XMLInputFactory XMLfactory = new WstxInputFactory();
         final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
@@ -121,7 +101,7 @@ public class StaxStreamReaderTest {
         validate(instance.read());
         instance.dispose();
     }
-    
+
 
     public static void validate(final Person person){
         assertNotNull(person);

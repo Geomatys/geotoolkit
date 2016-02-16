@@ -52,7 +52,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  * @since 3.06
  */
 @DependsOn(MetadataNodeAccessorTest.class)
-public final strictfp class MetadataProxyTest {
+public final strictfp class MetadataProxyTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the proxy with some properties defined under the {@code "ImageDescription"} node
      * without children.

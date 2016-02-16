@@ -17,12 +17,17 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.util.Date;
+import java.util.Locale;
 import java.io.File;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import org.apache.sis.util.Utilities;
@@ -65,6 +70,11 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
      * The {@code "rootDirectory"} property, or {@code null} if undefined.
      */
     private static String rootDirectory;
+
+    /**
+     * Date parser, created when first needed.
+     */
+    private transient DateFormat dateFormat;
 
     /**
      * For subclass constructors only.
@@ -182,5 +192,37 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
     public static void assertEqualsApproximatively(final Object expected, final Object actual) {
         assertTrue(Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
         assertTrue(Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
+    }
+
+    /**
+     * Returns the date format.
+     */
+    private DateFormat getDateFormat() {
+        DateFormat df = dateFormat;
+        if (df == null) {
+            dateFormat = df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            df.setLenient(false);
+        }
+        return df;
+    }
+
+    /**
+     * Parses the date for the given string using the {@code "yyyy-MM-dd HH:mm:ss"} pattern
+     * in UTC timezone.
+     *
+     * @param  date The date as a {@link String}.
+     * @return The date as a {@link Date}.
+     *
+     * @since 3.15
+     */
+    protected final synchronized Date date(final String date) {
+        assertNotNull("A date must be specified", date);
+        final DateFormat dateFormat = getDateFormat();
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new AssertionError(e);
+        }
     }
 }

@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Server tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSWServerFactoryTest {
-    
+public class CSWServerFactoryTest extends org.geotoolkit.test.TestBase {
+
     public CSWServerFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof CSWClientFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

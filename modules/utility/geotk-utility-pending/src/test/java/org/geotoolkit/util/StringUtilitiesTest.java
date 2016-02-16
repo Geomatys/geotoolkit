@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class StringUtilitiesTest {
+public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private final static String encodedStr = "CRS%3dCRS%3a84%26BBOX%3d-180.0%2c-90.0%2c180.0%2c90.0%26FORMAT%3dimage%2fpng%26LAYERS%3dnamespace%3aorbites";
     private final static String decodedStr = "CRS=CRS:84&BBOX=-180.0,-90.0,180.0,90.0&FORMAT=image/png&LAYERS=namespace:orbites";

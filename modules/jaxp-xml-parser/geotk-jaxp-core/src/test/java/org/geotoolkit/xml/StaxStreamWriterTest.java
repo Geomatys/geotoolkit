@@ -34,10 +34,6 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.geotoolkit.xml.MockReader.Person;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,25 +42,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaxStreamWriterTest {
+public class StaxStreamWriterTest extends org.geotoolkit.test.TestBase {
 
     public StaxStreamWriterTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -94,7 +74,7 @@ public class StaxStreamWriterTest {
         validate(file);
         if(file.exists()) file.delete();
     }
-    
+
     @Test
     public void testWritingToDom() throws Exception {
         //this test requiere and advanced Stax library, here we use WoodStox stream reader.
@@ -106,16 +86,16 @@ public class StaxStreamWriterTest {
         if(file.exists()) file.delete();
 
         final Result res = new DOMResult(document);
-        
+
         final MockWriter instance = new MockWriter();
         instance.setOutput(res);
         instance.write();
         instance.dispose();
 
-        
+
         //check by reading it back
         final Source src = new DOMSource(document);
-        
+
         final XMLInputFactory XMLfactory = new WstxInputFactory();
         final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
 
@@ -124,7 +104,7 @@ public class StaxStreamWriterTest {
         StaxStreamReaderTest.validate(mr.read());
         mr.dispose();
     }
-    
+
     @Test
     public void testWritingFromStaxWriter() throws Exception {
         final File file = new File("src/test/resources/org/geotoolkit/xml/sampleOutput.xml");

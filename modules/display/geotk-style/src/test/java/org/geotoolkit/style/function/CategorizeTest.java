@@ -27,8 +27,6 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.opengis.filter.FilterFactory;
@@ -41,17 +39,9 @@ import org.geotoolkit.feature.type.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CategorizeTest {
+public class CategorizeTest extends org.geotoolkit.test.TestBase {
 
     public CategorizeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Test

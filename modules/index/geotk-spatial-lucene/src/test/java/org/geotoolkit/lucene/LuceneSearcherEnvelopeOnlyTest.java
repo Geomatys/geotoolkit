@@ -72,7 +72,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneSearcherEnvelopeOnlyTest {
+public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FilterFactory2 FF = new DefaultFilterFactory2();

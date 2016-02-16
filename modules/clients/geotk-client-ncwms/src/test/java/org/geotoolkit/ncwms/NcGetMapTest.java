@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetMapTest {
+public class NcGetMapTest extends org.geotoolkit.test.TestBase {
     public NcGetMapTest() {}
 
     /**

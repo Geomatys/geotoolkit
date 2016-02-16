@@ -63,7 +63,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class TrackTest {
+public class TrackTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/track.kml";

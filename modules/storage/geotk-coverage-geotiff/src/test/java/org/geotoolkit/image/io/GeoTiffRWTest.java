@@ -62,7 +62,7 @@ import static org.junit.Assert.*;
  *
  * TODO : Debug ignored tests.
  */
-public class GeoTiffRWTest {    // LGPL
+public class GeoTiffRWTest extends org.geotoolkit.test.TestBase {    // LGPL
 
     private final File tempDir;
 

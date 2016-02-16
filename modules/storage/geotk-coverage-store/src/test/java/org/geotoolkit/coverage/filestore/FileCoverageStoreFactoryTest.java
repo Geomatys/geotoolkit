@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Tests for FileCoverageStore
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileCoverageStoreFactoryTest {
-    
+public class FileCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public FileCoverageStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-                
+
         final Set<CoverageStoreFactory> set = CoverageStoreFinder.getAllFactories(null);
-        
+
         boolean found = false;
         for(CoverageStoreFactory fact : set){
             if(fact instanceof FileCoverageStoreFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

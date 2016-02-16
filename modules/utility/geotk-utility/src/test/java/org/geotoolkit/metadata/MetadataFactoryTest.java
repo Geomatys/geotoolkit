@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.03
  */
-public final strictfp class MetadataFactoryTest {
+public final strictfp class MetadataFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * The metadata factory.
      */

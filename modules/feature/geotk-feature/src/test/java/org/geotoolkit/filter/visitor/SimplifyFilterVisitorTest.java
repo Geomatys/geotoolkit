@@ -32,7 +32,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SimplifyFilterVisitorTest {
+public class SimplifyFilterVisitorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testIdRegroup(){

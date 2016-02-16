@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class IOUtilitiesTest {
+public final strictfp class IOUtilitiesTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link IOUtilities#commonParent} method.
      */

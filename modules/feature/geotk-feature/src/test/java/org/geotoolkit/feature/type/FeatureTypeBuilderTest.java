@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeatureTypeBuilderTest {
+public class FeatureTypeBuilderTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testFactoryUse(){

@@ -33,7 +33,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.0
  */
-public final strictfp class DisjointSetTest {
+public final strictfp class DisjointSetTest extends org.geotoolkit.test.TestBase {
      /**
       * Tests the set.
       */

@@ -24,9 +24,9 @@ public class ShpFilesLockingTest {
 
     @Before
     public void setUp() throws Exception {
-        getClass().getClassLoader().setDefaultAssertionStatus(true);        
+        getClass().getClassLoader().setDefaultAssertionStatus(true);
     }
-    
+
     @After
     public void tearDown() throws Exception {
         Runtime.getRuntime().runFinalization();

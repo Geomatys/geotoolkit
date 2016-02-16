@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONWriteTest {
+public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final WKTReader WKT_READER = new WKTReader();

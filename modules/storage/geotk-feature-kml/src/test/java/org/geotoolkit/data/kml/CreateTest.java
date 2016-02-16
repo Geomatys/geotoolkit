@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
  * @author Samuel Andrés
  * @module pending
  */
-public class CreateTest {
+public class CreateTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/create.kml";

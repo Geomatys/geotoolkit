@@ -13,14 +13,14 @@ import org.geotoolkit.feature.type.FeatureTypeFactory;
 public class DefaultFeatureTypeTest extends AbstractComplexFeatureTypeTest {
 
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
-    
+
     public DefaultFeatureTypeTest(){
-        
+
     }
-    
+
     @Override
     public FeatureTypeFactory getFeatureTypeFactory() {
         return FTF;
     }
-    
+
 }

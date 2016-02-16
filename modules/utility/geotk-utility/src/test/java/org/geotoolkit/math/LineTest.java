@@ -32,7 +32,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.0
  */
-public final strictfp class LineTest {
+public final strictfp class LineTest extends org.geotoolkit.test.TestBase {
     /**
      * Tolerance factor for comparisons.
      */

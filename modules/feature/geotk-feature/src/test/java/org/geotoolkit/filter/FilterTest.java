@@ -40,7 +40,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FilterTest {
+public class FilterTest extends org.geotoolkit.test.TestBase {
 
 
     public FilterTest() {

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class CRSConverterTest {
+public class CRSConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

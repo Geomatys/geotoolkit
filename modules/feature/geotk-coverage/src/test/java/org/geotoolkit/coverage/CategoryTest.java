@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final strictfp class CategoryTest {
+public final strictfp class CategoryTest extends org.geotoolkit.test.TestBase {
     /**
      * Random number generator for this test.
      */

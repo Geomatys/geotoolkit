@@ -47,7 +47,7 @@ import org.geotoolkit.gml.xml.v311.TimeInstantType;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class GmlXMLBindingTest {
+public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     /**
      * GML namespace for this class.

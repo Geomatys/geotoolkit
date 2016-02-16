@@ -37,7 +37,7 @@ import org.w3c.dom.Text;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class RecordPropertyTypeTest {
+public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

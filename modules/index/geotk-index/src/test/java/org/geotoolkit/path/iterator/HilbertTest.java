@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @author Rémi Marechal(Geomatys).
  */
-public abstract class HilbertTest {
+public abstract class HilbertTest extends org.geotoolkit.test.TestBase {
 
     final boolean brid = true;
     final int dimension;

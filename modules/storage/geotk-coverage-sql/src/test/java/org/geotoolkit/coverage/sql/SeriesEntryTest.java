@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-public final strictfp class SeriesEntryTest {
+public final strictfp class SeriesEntryTest extends org.geotoolkit.test.TestBase {
     /**
      * Returns a dummy series for the given root and path.
      */

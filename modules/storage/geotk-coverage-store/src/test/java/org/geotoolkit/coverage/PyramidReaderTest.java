@@ -35,7 +35,7 @@ import org.apache.sis.referencing.CommonCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidReaderTest {
+public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final float DELTA = 0.000000001f;
 
@@ -70,7 +70,7 @@ public class PyramidReaderTest {
         final GeneralGridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
         final GridEnvelope gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS();
-        
+
         final GridCoverage result = ref1.acquireReader().read(0, null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
@@ -89,7 +89,7 @@ public class PyramidReaderTest {
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(1));
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(2));
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(3));
-        Assert.assertEquals(111,highCorner.getCoordinateValue(0)); //28 * 4 -1 
+        Assert.assertEquals(111,highCorner.getCoordinateValue(0)); //28 * 4 -1
         Assert.assertEquals(38, highCorner.getCoordinateValue(1)); //13 * 3 -1
         Assert.assertEquals(1,  highCorner.getCoordinateValue(2)); // 2 slices
         Assert.assertEquals(2,  highCorner.getCoordinateValue(3)); // 3 slices
@@ -108,7 +108,7 @@ public class PyramidReaderTest {
         Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 10.5}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 1, 2} , 0, buffer, 0, 1);
         Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 21}, buffer, DELTA);
-        
+
         //we must obtain the same results with the gridToCrs from the reader
         gridToCrsReader.transform(new double[]{0, 0, 0, 0} , 0, buffer, 0, 1);
         Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, -4.5},buffer, DELTA);

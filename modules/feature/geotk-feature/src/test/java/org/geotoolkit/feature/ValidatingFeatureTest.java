@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.junit.Ignore;
-import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 
 /**

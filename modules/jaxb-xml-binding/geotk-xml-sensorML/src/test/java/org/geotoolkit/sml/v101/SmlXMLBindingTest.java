@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.sml.v101;
 
-import org.w3c.dom.Element;
 import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 //constellation
-import javax.imageio.metadata.IIOMetadataNode;
 import org.geotoolkit.sml.xml.v101.Classifier;
 import org.geotoolkit.sml.xml.v101.DataSourceType;
 import org.geotoolkit.sml.xml.v101.DataDefinition;
@@ -91,7 +89,7 @@ import org.w3c.dom.Node;
  * @author guilhem
  * @module pending
  */
-public class SmlXMLBindingTest {
+public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private ObjectFactory sml101Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v101.ObjectFactory swe101Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();

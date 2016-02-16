@@ -39,24 +39,24 @@ import org.junit.Test;
  *
  * @author Guilhem Legal
  */
-public class XMLBindingTest {
-    
+public class XMLBindingTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testUnmarshallingExecute() throws JAXBException, IOException {
         File f = FileUtilities.getFileFromResource("xml/executeRequest.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
         final Object obj = u.unmarshal(f);
         Assert.assertTrue(obj instanceof Execute);
-        
+
         Execute request = (Execute) obj;
         Assert.assertEquals(2, request.getDataInputs().getInput().size());
-        
+
         final InputType in1 = request.getDataInputs().getInput().get(0);
-        
+
         Assert.assertNotNull(in1.getData().getComplexData());
-        
+
         ComplexDataType complex = in1.getData().getComplexData();
-        
+
         for (Object o : complex.getContent()) {
             if (!(o instanceof String)) {
                 if (o instanceof JAXBElement) {
@@ -66,23 +66,23 @@ public class XMLBindingTest {
             }
         }
     }
-    
+
     @Test
     public void testUnmarshallingExecute2() throws JAXBException, IOException {
         File f = FileUtilities.getFileFromResource("xml/executeRequest2.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
         final Object obj = u.unmarshal(f);
         Assert.assertTrue(obj instanceof Execute);
-        
+
         Execute request = (Execute) obj;
         Assert.assertEquals(2, request.getDataInputs().getInput().size());
-        
+
         final InputType in1 = request.getDataInputs().getInput().get(0);
-        
+
         Assert.assertNotNull(in1.getData().getComplexData());
-        
+
         ComplexDataType complex = in1.getData().getComplexData();
-        
+
         for (Object o : complex.getContent()) {
             if (!(o instanceof String)) {
                 if (o instanceof JAXBElement) {
@@ -92,23 +92,23 @@ public class XMLBindingTest {
             }
         }
     }
-    
+
     @Test
     public void testUnmarshallingExecute3() throws JAXBException, IOException {
         File f = FileUtilities.getFileFromResource("xml/executeRequest3.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
         final Object obj = u.unmarshal(f);
         Assert.assertTrue(obj instanceof Execute);
-        
+
         Execute request = (Execute) obj;
         Assert.assertEquals(2, request.getDataInputs().getInput().size());
-        
+
         final InputType in1 = request.getDataInputs().getInput().get(0);
-        
+
         Assert.assertNotNull(in1.getData().getComplexData());
-        
+
         ComplexDataType complex = in1.getData().getComplexData();
-        
+
         for (Object o : complex.getContent()) {
             if (!(o instanceof String)) {
                 if (o instanceof JAXBElement) {
@@ -118,32 +118,32 @@ public class XMLBindingTest {
             }
         }
     }
-    
+
     @Test
     public void testUnmarshallingExecute4() throws JAXBException, IOException {
         File f = FileUtilities.getFileFromResource("xml/executeRequest4.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
         final Object obj = u.unmarshal(f);
         Assert.assertTrue(obj instanceof Execute);
-        
+
         Execute request = (Execute) obj;
         Assert.assertEquals(1, request.getDataInputs().getInput().size());
-        
+
         final InputType in1 = request.getDataInputs().getInput().get(0);
-        
+
         Assert.assertNotNull(in1.getReference());
-        
+
         InputReferenceType reference = in1.getReference();
-        
+
         Assert.assertTrue("Bad type: " + reference.getBody().getClass(), reference.getBody() instanceof Execute);
-        
+
     }
-    
+
     @Test
     public void testMarshallingExecute4() throws JAXBException, IOException {
         final Execute executeBody = new Execute();
         executeBody.setIdentifier(new CodeType("integrated execute"));
-        
+
         final Execute executeRoot = new Execute();
         DataInputsType dataInput = new DataInputsType();
         InputType input = new InputType();
@@ -152,11 +152,11 @@ public class XMLBindingTest {
         input.setReference(ref);
         dataInput.getInput().add(input);
         executeRoot.setDataInputs(dataInput);
-        
-        
+
+
         Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
         m.marshal(executeRoot, System.out);
-        
+
     }
-    
+
 }

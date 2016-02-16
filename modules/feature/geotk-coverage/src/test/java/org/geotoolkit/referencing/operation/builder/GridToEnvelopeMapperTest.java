@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-public final strictfp class GridToEnvelopeMapperTest {
+public final strictfp class GridToEnvelopeMapperTest extends org.geotoolkit.test.TestBase {
     /**
      * Tolerance factor for the comparison of floating point numbers.
      */

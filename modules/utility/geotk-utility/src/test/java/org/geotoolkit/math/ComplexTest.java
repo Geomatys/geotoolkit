@@ -30,7 +30,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 3.00
  */
-public final strictfp class ComplexTest {
+public final strictfp class ComplexTest extends org.geotoolkit.test.TestBase {
     /**
      * Tolerance factor for comparisons.
      */

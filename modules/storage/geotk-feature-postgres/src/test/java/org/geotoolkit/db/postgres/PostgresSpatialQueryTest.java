@@ -50,21 +50,21 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PostgresSpatialQueryTest {
-    
-    
+public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
+
+
     private PostgresFeatureStore store;
-    
+
     public PostgresSpatialQueryTest(){
     }
-    
+
     private static ParameterValueGroup params;
-    
+
     /**
-     * <p>Find JDBC connection parameters in specified file at 
+     * <p>Find JDBC connection parameters in specified file at
      * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
      * If properties file doesn't find all tests are skipped.</p>
-     * 
+     *
      * <p>To lunch tests user should create file with this architecture<br/>
      * for example : <br/>
      * database   = junit    (table name)<br/>
@@ -74,27 +74,27 @@ public class PostgresSpatialQueryTest {
      * password   = postgres (user password)<br/>
      * simpletype = false <br/>
      * namespace  = no namespace</p>
-     * @throws IOException 
+     * @throws IOException
      */
     @BeforeClass
     public static void beforeClass() throws IOException {
         String path = System.getProperty("user.home");
-        path += "/.geotoolkit.org/test-pgfeature.properties";        
+        path += "/.geotoolkit.org/test-pgfeature.properties";
         final File f = new File(path);
-        Assume.assumeTrue(f.exists());        
+        Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
         params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
-    
+
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
             store.close();
         }
-        
+
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
@@ -102,31 +102,31 @@ public class PostgresSpatialQueryTest {
         }
         assertTrue(store.getNames().isEmpty());
         store.close();
-        
+
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         assertTrue(store.getNames().isEmpty());
     }
-    
+
     /**
      * Test reading envelope on a table with no geometry field.
      */
     @Test
     public void noGeomEnvelopeQuery() throws DataStoreException, VersioningException{
         reload(true);
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("nogeomtable");
         ftb.add("field", String.class);
         FeatureType ft = ftb.buildFeatureType();
-        
+
         store.createFeatureType(ft.getName(), ft);
-        
+
         //test env reading all fields
         Envelope env = store.getEnvelope(QueryBuilder.all(ft.getName()));
         assertNull(env);
-        
+
         //test env reading no fields
         final QueryBuilder qb = new QueryBuilder(ft.getName());
         qb.setProperties(new String[0]);
@@ -134,25 +134,25 @@ public class PostgresSpatialQueryTest {
         env = store.getEnvelope(qb.buildQuery());
         assertNull(env);
     }
-    
+
     /**
      * Test reading envelope on a table with no geometry or id field.
      */
     @Test
     public void noGeomNoIdEnvelopeQuery() throws DataStoreException, VersioningException, SQLException{
         reload(true);
-        
+
         final Connection cnx = store.getDataSource().getConnection();
         cnx.createStatement().executeUpdate("CREATE TABLE \"noGeomNoIdTable\" (field VARCHAR(255));");
-        
+
         store.refreshMetaModel();
-        
+
         final FeatureType ft = store.getFeatureType("noGeomNoIdTable");
-        
+
         //test env reading all fields
         Envelope env = store.getEnvelope(QueryBuilder.all(ft.getName()));
         assertNull(env);
-        
+
         //test env reading no fields
         final QueryBuilder qb = new QueryBuilder(ft.getName());
         qb.setProperties(new String[0]);
@@ -160,6 +160,6 @@ public class PostgresSpatialQueryTest {
         env = store.getEnvelope(qb.buildQuery());
         assertNull(env);
     }
-    
-    
+
+
 }

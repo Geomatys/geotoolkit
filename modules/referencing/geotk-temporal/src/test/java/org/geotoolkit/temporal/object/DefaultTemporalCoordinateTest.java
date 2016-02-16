@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultTemporalCoordinateTest {
+public class DefaultTemporalCoordinateTest extends org.geotoolkit.test.TestBase {
 
     private TemporalCoordinate temporalCoordinate1;
     private TemporalCoordinate temporalCoordinate2;

@@ -38,7 +38,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ISOGeomTest {
+public class ISOGeomTest extends org.geotoolkit.test.TestBase {
 
     public ISOGeomTest() {
     }

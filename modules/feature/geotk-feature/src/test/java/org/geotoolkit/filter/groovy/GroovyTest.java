@@ -41,7 +41,7 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GroovyTest {
+public class GroovyTest extends org.geotoolkit.test.TestBase {
 
     public GroovyTest() {
     }
@@ -95,7 +95,7 @@ public class GroovyTest {
         result = gvFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
         assert(result == 10);
 
-        
+
     }
 
     @Test

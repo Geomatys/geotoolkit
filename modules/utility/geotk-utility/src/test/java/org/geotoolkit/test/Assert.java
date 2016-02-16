@@ -38,9 +38,6 @@ import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
  * Assertion methods used by the Geotk project in addition of the JUnit, GeoAPI and SIS assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.22
- *
- * @since 3.16 (derived from 3.00)
  */
 public strictfp class Assert extends org.apache.sis.test.Assert {
     /**

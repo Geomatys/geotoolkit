@@ -63,7 +63,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCVersioningTest {
+public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     private static final double DELTA = 0.00000001;

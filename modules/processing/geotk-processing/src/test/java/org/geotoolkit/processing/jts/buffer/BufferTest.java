@@ -40,27 +40,27 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class BufferTest extends AbstractProcessTest{
+public class BufferTest extends AbstractProcessTest {
 
-   
+
     public BufferTest() {
         super("buffer");
     }
 
     @Test
     public void testBuffer() throws NoSuchIdentifierException, ProcessException, FactoryException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final Geometry geom = fact.createPoint(new Coordinate(0, 0));
         final double distance = 1.5;
         final int segments = 5;
         final int capStype = BufferOp.CAP_SQUARE;
-        
+
         CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
         JTS.setCRS(geom, crs1);
-       
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "buffer");
 
@@ -73,12 +73,12 @@ public class BufferTest extends AbstractProcessTest{
 
         //result
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
-       
-        
+
+
         final Geometry expected = geom.buffer(distance, segments, capStype);
-        
+
         assertTrue(expected.equals(result));
         assertTrue(crs1.equals(JTS.findCoordinateReferenceSystem(result)));
     }
-    
+
 }

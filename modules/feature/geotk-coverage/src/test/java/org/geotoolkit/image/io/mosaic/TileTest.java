@@ -32,7 +32,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.5
  */
-public final strictfp class TileTest {
+public final strictfp class TileTest extends org.geotoolkit.test.TestBase {
     /**
      * Ensures that the tiles size is stored as unsigned short.
      *

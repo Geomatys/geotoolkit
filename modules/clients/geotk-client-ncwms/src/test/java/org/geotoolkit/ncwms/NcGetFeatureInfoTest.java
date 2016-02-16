@@ -23,12 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.wms.v111.GetFeatureInfo111;
-import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
 
 
@@ -37,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetFeatureInfoTest {
+public class NcGetFeatureInfoTest extends org.geotoolkit.test.TestBase {
     public NcGetFeatureInfoTest() {}
 
     /**

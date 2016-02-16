@@ -56,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Alexis MANIN (geomatys)
  *
  */
-public abstract class AbstractSimpleFeatureTypeTest  {
+public abstract class AbstractSimpleFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
     MockInternationalString descriptionSample;
 

@@ -68,7 +68,7 @@ import static org.junit.Assert.assertTrue;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DimapAccessorTest {
+public class DimapAccessorTest extends org.geotoolkit.test.TestBase {
 
     private final Element docSample;
     private final Element docMapping;

@@ -92,11 +92,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-conformance</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>java3d</groupId>
       <artifactId>vecmath</artifactId>
     </dependency>

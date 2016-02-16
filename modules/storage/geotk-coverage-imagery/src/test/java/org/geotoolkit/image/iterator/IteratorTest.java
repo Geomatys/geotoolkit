@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public abstract class IteratorTest {
+public abstract class IteratorTest extends org.geotoolkit.test.TestBase {
 
     /**
      * {@code PixelIterator} which will be tested.
@@ -784,7 +784,7 @@ public abstract class IteratorTest {
             //ok
         }
     }
-    
+
     /**
      * Test catching exception with another next() method call, after have already traveled all the image.
      */

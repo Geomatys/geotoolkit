@@ -37,7 +37,7 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WmtsXmlBindingTest {
+public class WmtsXmlBindingTest extends org.geotoolkit.test.TestBase {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
@@ -62,8 +62,6 @@ public class WmtsXmlBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void unmarshallingTest() throws JAXBException {

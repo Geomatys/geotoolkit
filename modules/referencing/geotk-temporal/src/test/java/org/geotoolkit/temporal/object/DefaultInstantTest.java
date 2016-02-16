@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -37,7 +37,7 @@ import org.opengis.temporal.Period;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultInstantTest {
+public class DefaultInstantTest extends org.geotoolkit.test.TestBase {
 
     private Instant instant1;
     private Instant instant2;
@@ -50,7 +50,7 @@ public class DefaultInstantTest {
         properties1.put(IdentifiedObject.NAME_KEY, name1);
         cal.set(2000, 1, 1);
         instant1  = new DefaultInstant(properties1, cal.getTime());
-        
+
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "position 2");
         final Map<String, Object> properties2 = new HashMap<>();
         properties2.put(IdentifiedObject.NAME_KEY, name2);

@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @moduel pending
  */
-public class WriterTest {
+public class WriterTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -167,7 +167,7 @@ public class WriterTest {
         assertEquals(track1.toString(), reader.next().toString());
         assertEquals(track2.toString(), reader.next().toString());
         assertFalse(reader.hasNext());
-        
+
         reader.dispose();
 
         if(f.exists())f.delete();

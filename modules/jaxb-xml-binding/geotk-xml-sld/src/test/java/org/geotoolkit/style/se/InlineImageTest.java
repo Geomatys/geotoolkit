@@ -3,7 +3,6 @@ package org.geotoolkit.style.se;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import javax.measure.unit.NonSI;
 import javax.swing.Icon;
@@ -27,30 +26,30 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class InlineImageTest {
-    
+public class InlineImageTest extends org.geotoolkit.test.TestBase {
+
     public static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
     public static final MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(null);
-    
+
     @Test
     public void readImage() throws Exception{
-        
+
         final BufferedImage image = new BufferedImage(20, 10, BufferedImage.TYPE_INT_ARGB);
-        
+
         final String geometry = null;
         final ExternalGraphic external = SF.externalGraphic(new ImageIcon(image), Collections.EMPTY_LIST);
-        final Graphic graphic = SF.graphic(Collections.singletonList((GraphicalSymbol)external), 
+        final Graphic graphic = SF.graphic(Collections.singletonList((GraphicalSymbol)external),
                 LITERAL_ONE_FLOAT, LITERAL_ONE_FLOAT, LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
         final PointSymbolizer ips = SF.pointSymbolizer("",geometry,DEFAULT_DESCRIPTION,NonSI.PIXEL, graphic);
         final MutableStyle style = SF.style(ips);
-        
+
         final File f = File.createTempFile("sld", ".xml");
         f.deleteOnExit();
-        
+
         final StyleXmlIO io = new StyleXmlIO();
         io.writeStyle(f, style, Specification.StyledLayerDescriptor.V_1_1_0);
-        
-        
+
+
         final MutableStyle result = io.readStyle(f, Specification.SymbologyEncoding.V_1_1_0);
         final Symbolizer s = result.featureTypeStyles().get(0).rules().get(0).symbolizers().get(0);
         assertTrue(s instanceof PointSymbolizer);
@@ -61,7 +60,7 @@ public class InlineImageTest {
         assertNotNull(ri);
         assertEquals(20,ri.getIconWidth());
         assertEquals(10,ri.getIconHeight());
-        
+
     }
-    
+
 }

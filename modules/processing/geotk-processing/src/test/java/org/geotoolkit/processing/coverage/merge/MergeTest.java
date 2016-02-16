@@ -44,13 +44,13 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MergeTest {
-    
+public class MergeTest extends org.geotoolkit.test.TestBase {
+
     private static final double DELTA = 0.000001;
-    
+
     @Test
     public void mergeTest() throws NoSuchAuthorityCodeException, FactoryException, ProcessException{
-        
+
         //first image, CRS:84, 3 bytes, 4x scale
         final BufferedImage inputImage1 = new BufferedImage(1440, 720, BufferedImage.TYPE_3BYTE_BGR);
         final Graphics2D g = inputImage1.createGraphics();
@@ -63,7 +63,7 @@ public class MergeTest {
         gcb1.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb1.setEnvelope(-180,-90,+180,+90);
         final GridCoverage2D inCoverage1 = (GridCoverage2D) gcb1.build();
-        
+
         //second image, EPSG:4326, 1 float, 2x scale
         final float[][] data = new float[720][360];
         for(int x=0;x<360;x++){
@@ -76,24 +76,24 @@ public class MergeTest {
         gcb2.setCoordinateReferenceSystem(CRS.decode("EPSG:4326"));
         gcb2.setEnvelope(-90,-180,+90,+180);
         final GridCoverage2D inCoverage2 = (GridCoverage2D) gcb2.build();
-        
-        
+
+
         //call the merge process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "merge");
         assertNotNull(desc);
-        
+
         final GeneralEnvelope penv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         penv.setRange(0, -45, 45);
         penv.setRange(1, -45, 45);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("coverages").setValue(new Coverage[]{inCoverage1,inCoverage2});
         params.parameter("envelope").setValue(penv);
         params.parameter("resolution").setValue(1);
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result coverage
         final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
@@ -101,14 +101,14 @@ public class MergeTest {
         assertEquals(penv.getMinimum(1), outCoverage.getEnvelope().getMinimum(1), DELTA);
         assertEquals(penv.getMaximum(0), outCoverage.getEnvelope().getMaximum(0), DELTA);
         assertEquals(penv.getMaximum(1), outCoverage.getEnvelope().getMaximum(1), DELTA);
-        
+
         final RenderedImage outImage = outCoverage.getRenderedImage();
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(90, outImage.getWidth());
         assertEquals(90, outImage.getHeight());
         assertEquals(4, outSampleModel.getNumBands());
         assertEquals(DataBuffer.TYPE_FLOAT, outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final float[] sample = new float[4];
@@ -118,7 +118,7 @@ public class MergeTest {
                 //TODO check pixels
             }
         }
-        
+
     }
-    
+
 }

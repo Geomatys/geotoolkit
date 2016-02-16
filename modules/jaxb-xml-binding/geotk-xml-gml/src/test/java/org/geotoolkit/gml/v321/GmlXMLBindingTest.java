@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class GmlXMLBindingTest {
+public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

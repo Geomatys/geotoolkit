@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MokSymbolizerTest {
+public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();

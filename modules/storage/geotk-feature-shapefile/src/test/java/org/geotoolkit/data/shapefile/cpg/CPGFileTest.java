@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CPGFileTest {
+public class CPGFileTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test reading a shapefile with an UTF-8 cpg file.
