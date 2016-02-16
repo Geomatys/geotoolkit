@@ -27,7 +27,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.operation.AuthorityBackedFactory;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
@@ -55,20 +54,9 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
     private final CoordinateOperationFactory opFactory;
 
     /**
-     * Creates a test suite for the MS-Access database.
+     * Creates a test suite.
      */
     public OperationFactoryTest() {
-        this(ThreadedEpsgFactory.class);
-    }
-
-    /**
-     * Creates a test suite for the given factory type.
-     * This is used for the test suite in other modules.
-     *
-     * @param type The class of the factory being tested.
-     */
-    protected OperationFactoryTest(final Class<? extends AbstractAuthorityFactory> type) {
-        super(type);
         opFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(null);
     }
 

@@ -17,10 +17,7 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.concurrent.ExecutionException;
@@ -47,17 +44,14 @@ import javax.swing.SwingWorker;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.util.Classes;
-import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.FastComboBox;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.Window;
 import org.geotoolkit.gui.swing.WindowCreator;
@@ -69,9 +63,6 @@ import org.geotoolkit.gui.swing.WindowCreator;
  * and a info button displaying the CRS {@linkplain PropertiesSheet properties sheet}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
- *
- * @since 2.3
  * @module
  */
 @SuppressWarnings("serial")
@@ -169,23 +160,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * @since 2.4
      */
     public AuthorityCodesComboBox(final String authority) throws FactoryRegistryException {
-        this(FallbackAuthorityFactory.create(CRSAuthorityFactory.class,
-             filter(AuthorityFactoryFinder.getCRSAuthorityFactories(null), authority)));
-    }
-
-    /**
-     * Returns a collection containing only the factories of the specified authority.
-     */
-    private static Collection<CRSAuthorityFactory> filter(
-            final Collection<? extends CRSAuthorityFactory> factories, final String authority)
-    {
-        final List<CRSAuthorityFactory> filtered = new ArrayList<>();
-        for (final CRSAuthorityFactory factory : factories) {
-            if (Citations.identifierMatches(factory.getAuthority(), authority)) {
-                filtered.add(factory);
-            }
-        }
-        return filtered;
+        this(AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null));
     }
 
     /**

@@ -16,9 +16,14 @@
  */
 package org.geotoolkit.processing.referencing.createdb;
 
+import java.util.Collections;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
@@ -38,17 +43,19 @@ public class CreateDBProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
-       
+
         final String dbURL      = (String) inputParameters.parameter(CreateDBDescriptor.DBURL.getName().getCode()).getValue();
         final String user       = (String) inputParameters.parameter(CreateDBDescriptor.USER.getName().getCode()).getValue();
         final String password   = (String) inputParameters.parameter(CreateDBDescriptor.PASSWORD.getName().getCode()).getValue();
 
-        final EpsgInstaller installer = new EpsgInstaller();
-        installer.setDatabase(dbURL, user, password);
+        final DefaultDataSource ds = new DefaultDataSource(dbURL);
         try {
-            installer.call();
-        } catch (FactoryException ex) {
-            throw  new ProcessException(ex.getMessage(), this, ex);
+            final EPSGFactory installer = new EPSGFactory(Collections.singletonMap("dataSource", ds));
+            try (Connection c = ds.getConnection(user, password)) {
+                installer.install(c);
+            }
+        } catch (FactoryException | SQLException | IOException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

@@ -22,7 +22,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.Commons;
 import org.opengis.test.CalculationType;
 import org.opengis.test.referencing.TransformTestCase;
 import org.apache.sis.internal.system.DataDirectory;
@@ -131,7 +130,7 @@ public final strictfp class RGF93TransformTest extends TransformTestCase {
     @org.junit.Ignore
     public void testTransform() throws FactoryException, TransformException {
         assumeDataExists(DataDirectory.DATUM_CHANGES, "gr3df97a.txt");
-        assumeTrue(Commons.isEpsgFactoryAvailable());
+        assumeTrue(false /*Commons.isEpsgFactoryAvailable()*/);
         /*
          * Get the transform, which will use the NTv2 grid since
          * we are transforming between two-dimensional CRS.

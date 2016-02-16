@@ -17,16 +17,11 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import org.opengis.referencing.IdentifiedObject;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-
+import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -42,57 +37,25 @@ import org.junit.*;
  */
 public abstract strictfp class EpsgFactoryTestBase extends ReferencingTestBase {
     /**
-     * {@code true} for a given type if we have been able to fetch its factory, {@code false}
-     * if we failed, or {@code null} if we didn't tried yet. This is used in order to avoid
-     * asking for the connection again.
-     */
-    private static final Map<Class<? extends AbstractAuthorityFactory>, Boolean> status = new HashMap<>();
-
-    /**
-     * The class of the factory being tested.
-     */
-    private final Class<? extends AbstractAuthorityFactory> type;
-
-    /**
      * The factory to test, or {@code null} if we can't connect to the
      * database for the platform the test are running on.
      */
-    protected AbstractAuthorityFactory factory;
+    protected GeodeticAuthorityFactory factory;
 
     /**
      * Creates a new abstract test base.
-     *
-     * @param type The class of the factory being tested.
      */
-    protected EpsgFactoryTestBase(final Class<? extends AbstractAuthorityFactory> type) {
-        this.type = type;
+    protected EpsgFactoryTestBase() {
     }
 
     /**
-     * Gets the factory which will be used for the tests. This method fetches the factory
-     * from {@link AuthorityFactoryFinder} for the type given to the constructor. If no
-     * factory is found for that type, then {@link #factory} is left to {@code null}.
+     * Gets the factory which will be used for the tests.
      */
     @Before
-    public final void initialize() {
-        synchronized (status) {
-            final Boolean state = status.get(type);
-            if (Boolean.FALSE.equals(state)) {
-                // A previous attempt failed to get the factory. Don't try again.
-                return;
-            }
-            Boolean success = Boolean.FALSE;
-            final Hints hints = new Hints(Hints.CRS_AUTHORITY_FACTORY, type);
-            try {
-                factory = (AbstractAuthorityFactory) AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
-                success = Boolean.TRUE;
-            } catch (FactoryNotFoundException exception) {
-                if (Boolean.TRUE.equals(state)) {
-                    // It worked in a previous attempt, so it should not fail now...
-                    throw exception;
-                }
-            }
-            status.put(type, success);
+    public final void initialize() throws FactoryException {
+        factory = (GeodeticAuthorityFactory) CRS.getAuthorityFactory("EPSG");
+        if (!(factory instanceof EPSGFactory)) {
+            factory = null;
         }
     }
 

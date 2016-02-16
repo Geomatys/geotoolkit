@@ -53,7 +53,10 @@ import org.geotoolkit.internal.Listeners;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Will be replaced by a more standard dependency injection mechanism.
  */
+@Deprecated
 public final class Factories extends Static {
     /**
      * Object to inform about hints changes.

@@ -102,7 +102,6 @@
   <modules>
     <module>geotk-referencing</module>
     <module>geotk-epsg</module>
-    <module>geotk-epsg-javadb</module>
     <module>geotk-temporal</module>
     <module>geotk-referencing-sis-fragment</module>
   </modules>

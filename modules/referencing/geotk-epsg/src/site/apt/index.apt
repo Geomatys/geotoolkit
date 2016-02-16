@@ -13,24 +13,3 @@ EPSG database
   using the EPSG database once created - the core referencing module alone is sufficient.
   However having this module unconditionally in the classpath - in case the local database
   needs to be created - doesn't hurt.
-
-  While the primary purpose of this module is to create the local database when first needed,
-  it can also be used for populating an external database, for example on a server running
-  {{{http://www.postgresql.org}PostgreSQL}}. This is done by running the following from the
-  command line:
-
--------------------------------------------------------------------
-java -jar geotk-epsg create <URL to the database> <user> <password>
--------------------------------------------------------------------
-
-  In order to get the referencing module to use that database, a <<<DataSource.properties>>>
-  file must be presents in the Geotoolkit configuration directory with the following content:
-
--------------------------------------------------------------------
-#
-# Connection parameters to the EPSG database.
-#
-URL      = <URL to the database>
-user     = <user>
-password = <password>
--------------------------------------------------------------------

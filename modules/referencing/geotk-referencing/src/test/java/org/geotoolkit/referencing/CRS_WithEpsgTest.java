@@ -17,16 +17,10 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Set;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.sql.Connection;
-import java.sql.SQLException;
 import javax.measure.converter.ConversionException;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -39,21 +33,13 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
-import org.apache.sis.util.Version;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.sql.DefaultDataSource;
-import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
-import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
-import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
-import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 import org.apache.sis.referencing.IdentifiedObjects;
 
 import org.apache.sis.test.DependsOn;
@@ -62,7 +48,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
 import static org.geotoolkit.referencing.Assert.*;
-import static org.geotoolkit.referencing.Commons.*;
+import static org.geotoolkit.test.Commons.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static java.util.Collections.singletonMap;
 
@@ -87,7 +73,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
      */
     @Before
     public void ensureEpsgAvailable() {
-        assumeTrue(isEpsgFactoryAvailable());
+        assumeTrue(false /*isEpsgFactoryAvailable()*/);
     }
 
     /**
@@ -154,113 +140,9 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         } catch (AssertionError failure) {
             // A debugging help in case of test failure.
             System.err.println(">>> INFORMATION ON TEST FAILURE");
-            OrderedAxisAuthorityFactoryTest.printCurrentFactoryList();
             throw failure;
         } finally {
             assertEquals(Boolean.TRUE, Hints.removeSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        }
-    }
-
-    /**
-     * Tests EPSG:3035 from with various system hints. In some cases we will attempt to fetch
-     * from the EPSG database, and in other cases from the {@code epsg.properties} file.
-     *
-     * @throws FactoryException Should never happen.
-     *
-     * @since 3.05
-     */
-    @Test
-    public void testSystemPropertyToFactoryKind() throws FactoryException {
-        final AtomicBoolean askedConnection = new AtomicBoolean();
-        final DefaultDataSource dummy = new DefaultDataSource("jdbc:dummy") {
-            @Override public Connection getConnection() throws SQLException {
-                askedConnection.set(true);
-                return super.getConnection();
-            }
-
-            @Override public Connection getConnection(String username, String password) throws SQLException {
-                askedConnection.set(true);
-                return super.getConnection(username, password);
-            }
-        };
-        /*
-         * The following loop is executed four time. The first execution uses the default
-         * configuration, which includes both factories.  The second and third executions
-         * ask only for the factory backed by the properties file.  The last execution is
-         * back to the initial state.
-         */
-        try {
-            for (int stage=0; stage<4; stage++) {
-                askedConnection.set(false);
-                boolean foundDatabase   = false;
-                boolean foundProperties = false;
-                boolean foundFallback   = false;
-                for (final AuthorityFactory factory : ((DefaultAuthorityFactory)
-                        CRS.getAuthorityFactory(false)).backingStore.getFactories())
-                {
-                    foundDatabase   |= (factory instanceof ThreadedEpsgFactory);
-                    foundProperties |= (factory instanceof PropertyEpsgFactory);
-                    foundFallback   |= (factory instanceof FallbackAuthorityFactory);
-                }
-                assertFalse("Should never found ThreadedEpsgFactory alone. If this factory is available, then it " +
-                        "should be together with PropertyEpsgFactory in a FallbackAuthorityFactory.", foundDatabase);
-                switch (stage) {
-                    /*
-                     * Tests to perform when PropertyEpsgFactory is alone. The other
-                     * factory (ThreadedEpsgFactory) has been excluded either directly
-                     * (case 1), or indirectly through an invalid JDBC URL (case 2).
-                     */
-                    case 1:
-                    case 2: {
-                        assertTrue ("PropertyEpsgFactory should be available directly.", foundProperties);
-                        assertFalse("Expected no fallback, only PropertyEpsgFactory.",   foundFallback);
-                        break;
-                    }
-                    /*
-                     * Tests to perform when both PropertyEpsgFactory and ThreadedEpsgFactory
-                     * are available. They should form a FallbackAuthorityFactory chain.
-                     */
-                    case 0:
-                    case 3: {
-                        assertFalse("Should not found PropertyEpsgFactory alone, since it should be " +
-                                "part of FallbackAuthorityFactory.", foundProperties);
-                        assertTrue("Expected a FallbackAuthorityFactory containing both " +
-                                "ThreadedEpsgFactory and PropertyEpsgFactory", foundFallback);
-                        break;
-                    }
-                }
-                assertEquals("Should have attempted to get a connection from the dummy database.",
-                        (stage == 2), askedConnection.get());
-                /*
-                 * Gets the EPSG:3035 CRS object. The EPSG code should be available even if not
-                 * explicitly declared in the properties file, because it should have been added
-                 * automatically by PropertyEpsgFactory when needed.
-                 */
-                final CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-                assertEquals("3035", IdentifiedObjects.getIdentifier(crs, Citations.EPSG).getCode());
-                /*
-                 * Modifies the configuration depending on the next stage to be tested.
-                 */
-                switch (stage) {
-                    case 0: {
-                        assertNull(Hints.putSystemDefault(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class));
-                        break;
-                    }
-                    case 1: {
-                        assertEquals(PropertyEpsgFactory.class, Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY));
-                        assertNull(Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, dummy));
-                        break;
-                    }
-                    case 2: {
-                        assertEquals(dummy, Hints.removeSystemDefault(Hints.EPSG_DATA_SOURCE));
-                        break;
-                    }
-                }
-            }
-        } finally {
-            // In case of failure, make sure that we restore the system in its expected state.
-            Hints.removeSystemDefault(Hints.CRS_AUTHORITY_FACTORY);
-            Hints.removeSystemDefault(Hints.EPSG_DATA_SOURCE);
         }
     }
 
@@ -285,26 +167,6 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         assertEquals("With scan allowed, should find the CRS.", "EPSG:4230",
                      org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(crs, true));
         assertEquals(Integer.valueOf(4230), org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true));
-    }
-
-    /**
-     * Tests {@link IdentifiedObjects#lookupIdentifier} in the URN namespace.
-     * Also test the HTTP namespace by opportunity.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void testLookupIdentifierWithURN() throws FactoryException {
-        final Version version = CRS.getVersion("EPSG");
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-        assertEquals("http://www.opengis.net/gml/srs/epsg.xml#4326",
-                org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.HTTP_OGC, crs, false));
-        assertEquals("NOTE: This test assumes that the EPSG database version " + EPSG_VERSION +
-                " is used. It should be the case if the embedded database is used (geotk-epsg)." +
-                " If that module is upgrated with a newer version of the EPSG database, please" +
-                " update this test.",
-                "urn:ogc:def:crs:epsg:" + (version != null ? version : EPSG_VERSION) + ":4326",
-                org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false));
     }
 
     /**
@@ -371,113 +233,6 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         assertNotNull(authority);
         assertEquals("EPSG Geodetic Parameter Dataset", authority.getTitle().toString(Locale.US));
         assertTrue(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
-
-        // Tests the modified factory.
-        factory   = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        authority = factory.getAuthority();
-        assertNotNull(authority);
-        assertTrue(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
-    }
-
-    /**
-     * Tests the vendor name.
-     */
-    @Test
-    public void testVendor() {
-        CRSAuthorityFactory factory;
-        Citation vendor;
-
-        factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        vendor  = factory.getVendor();
-        assertNotNull(vendor);
-        assertEquals("Geotoolkit.org", vendor.getTitle().toString(Locale.US));
-        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(vendor, "EPSG"));
-    }
-
-    /**
-     * Tests the amount of codes available.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void testCodes() throws FactoryException {
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
-        assertNotNull(codes);
-        assertTrue(codes.size() >= 3000);
-    }
-
-    /**
-     * Tests "WGS 84" geographic CRS.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void test4326() throws FactoryException {
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
-        assertTrue(crs instanceof GeographicCRS);
-        assertEquals("EPSG:4326", IdentifiedObjects.getIdentifierOrName(crs));
-        assertSame(crs, factory.createObject("EPSG:4326"));
-        /*
-         * Tests using lower-case code. This is also a test using the CRS.decode(...)
-         * convenience method instead than direct use of the factory. The result should
-         * be the same, thanks to the caching performed by ReferencingObjectFactory.
-         */
-        assertEquals("EPSG:4326", IdentifiedObjects.getIdentifierOrName(CRS.decode("epsg:4326")));
-        assertSame(crs, CRS.decode("epsg:4326", true));
-    }
-
-    /**
-     * Tests NAD83 geographic CRS.
-     * UDIG requires this to work.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void test4269() throws FactoryException {
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
-        assertTrue(crs instanceof GeographicCRS);
-        assertEquals("EPSG:4269", IdentifiedObjects.getIdentifierOrName(crs));
-        assertSame(crs, factory.createObject("EPSG:4269"));
-        /*
-         * Tests using lower-case code. This is also a test using the CRS.decode(...)
-         * convenience method instead than direct use of the factory. The result should
-         * be the same, thanks to the caching performed by ReferencingObjectFactory.
-         */
-        assertEquals("EPSG:4269", IdentifiedObjects.getIdentifierOrName(CRS.decode("epsg:4269")));
-        assertSame(crs, CRS.decode("epsg:4269", true));
-        /*
-         * The domain of validity is declared in the EPSG:4269 CRS, which declare an x axis
-         * in the opposite direction than WGS84. We need to ensure that this particularity
-         * has been handled.
-         */
-        final Envelope envelope = CRS.getEnvelope(crs);
-        assertNotNull(envelope);
-        assertTrue(envelope.getMinimum(0) < envelope.getMaximum(0));
-        assertTrue(envelope.getMinimum(1) < envelope.getMaximum(1));
-    }
-
-    /**
-     * Tests "NAD83 / UTM zone 10N".
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void test26910() throws FactoryException {
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
-        assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:26910", IdentifiedObjects.getIdentifierOrName(crs));
-        assertSame(crs, factory.createObject("EPSG:26910"));
-        /*
-         * Tests using lower-case code. This is also a test using the CRS.decode(...)
-         * convenience method instead than direct use of the factory. The result should
-         * be the same, thanks to the caching performed by ReferencingObjectFactory.
-         */
-        assertEquals("EPSG:26910", IdentifiedObjects.getIdentifierOrName(CRS.decode("epsg:26910")));
-        assertSame(crs, CRS.decode("epsg:26910", true));
     }
 
     /**

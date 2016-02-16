@@ -96,11 +96,6 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-epsg</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>
     </dependency>

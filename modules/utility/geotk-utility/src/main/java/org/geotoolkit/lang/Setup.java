@@ -30,6 +30,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.ShutdownHook;
+import org.geotoolkit.internal.io.JNDI;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.resources.Errors;
@@ -83,7 +84,7 @@ import org.geotoolkit.resources.Errors;
  *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter.Spi.registerDefaults}(null)</code></li>
  *     </ul></td>
  *     <td>
- *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.</li>
+ *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.
  *     </td>
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio-netcdf}</td>
@@ -196,6 +197,7 @@ public final class Setup extends Static {
         } else {
             MonolineFormatter.install();
         }
+        JNDI.install();
         /*
          * Following are normally not needed, since the factory registry scans automatically
          * the classpath when first needed. However some factories may have been unregistered
@@ -222,6 +224,7 @@ public final class Setup extends Static {
     public static synchronized void shutdown() {
         if (state != 2) {
             state = 2;
+            JNDI.uninstall();
             for (final SetupService service : ServiceLoader.load(SetupService.class)) {
                 service.shutdown();
             }

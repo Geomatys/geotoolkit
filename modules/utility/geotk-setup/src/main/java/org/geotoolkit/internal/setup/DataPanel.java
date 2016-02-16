@@ -29,25 +29,17 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.ByteOrder;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.concurrent.ExecutionException;
-
-import org.opengis.util.FactoryException;
-
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.io.Installation;
 
 
 /**
  * The panel displaying available data and giving the opportunity to download them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
- *
- * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
@@ -129,6 +121,8 @@ final class DataPanel extends JComponent {
             c.insets.top = c.insets.bottom = 2;
             c.weightx = 1; c.fill = GridBagConstraints.BOTH;
             c.gridx = 1; add(state, c);
+
+            download.setEnabled(false);     // TODO
         }
         addComponentListener(new LoadWhenShown());
     }
@@ -178,27 +172,23 @@ final class DataPanel extends JComponent {
                     boolean found = false;
                     switch (item) {
                         case EPSG: {
-                            try {
-                                found = epsgPanel.installer().exists();
-                            } catch (FactoryException ex) {
-                                failure = ex;
-                            }
+//                          found = epsgPanel.installer().exists();
                             break;
                         }
                         case NADCON: {
-                            final File directory = Installation.NADCON.directory(true);
-                            if (new File(directory, "conus.las").isFile() &&
-                                new File(directory, "conus.los").isFile())
-                            {
-                                found = true;
-                            }
+//                          final File directory = Installation.NADCON.directory(true);
+//                          if (new File(directory, "conus.las").isFile() &&
+//                              new File(directory, "conus.los").isFile())
+//                          {
+//                              found = true;
+//                          }
                             break;
                         }
                         case RGF93: {
-                            final File directory = Installation.NTv2.directory(true);
-                            if (new File(directory, "ntf_r93.gsb").isFile()) {
-                                found = true;
-                            }
+//                          final File directory = Installation.NTv2.directory(true);
+//                          if (new File(directory, "ntf_r93.gsb").isFile()) {
+//                              found = true;
+//                          }
                             break;
                         }
                     }
@@ -282,23 +272,23 @@ final class DataPanel extends JComponent {
         protected Object doInBackground() throws Exception {
             switch (item) {
                 case EPSG: {
-                    epsgPanel.installer().call();
+// TODO             epsgPanel.installer().call();
                     break;
                 }
                 case NADCON: {
-                    final File directory = Installation.NADCON.validDirectory(true);
-                    unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);
+//                  final File directory = Installation.NADCON.validDirectory(true);
+//                  unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);
                     break;
                 }
                 case RGF93: {
-                    final File directory = Installation.NTv2.validDirectory(true);
-                    String url = "http://lambert93.ign.fr/fileadmin/files/" + "ntf_r93.gsb";
-                    if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
-                        final int split = url.lastIndexOf('.');
-                        url = new StringBuilder(url.length() + 2).append(url, 0, split)
-                                .append("_b").append(url, split, url.length()).toString();
-                    }
-                    copy(new URL(url), new File(directory, "ntf_r93.gsb"));
+//                  final File directory = Installation.NTv2.validDirectory(true);
+//                  String url = "http://lambert93.ign.fr/fileadmin/files/" + "ntf_r93.gsb";
+//                  if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
+//                      final int split = url.lastIndexOf('.');
+//                      url = new StringBuilder(url.length() + 2).append(url, 0, split)
+//                              .append("_b").append(url, split, url.length()).toString();
+//                  }
+//                  copy(new URL(url), new File(directory, "ntf_r93.gsb"));
                     break;
                 }
             }

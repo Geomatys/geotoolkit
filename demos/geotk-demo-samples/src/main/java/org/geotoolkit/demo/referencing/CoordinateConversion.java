@@ -29,10 +29,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
  *   <li>{@code geotk-epsg} module (only for {@link #geographicToProjected()})</li>
  *   <li>JavaDB or Derby (only for {@link #geographicToProjected()})</li>
  * </ul>
- * <p>
- * For convenience, all the above requirements can be replaced by a single dependency toward
- * the {@code geotk-epsg-javadb} module, which will bring everything else through transitive
- * dependencies.
  */
 public class CoordinateConversion {
     /**

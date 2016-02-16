@@ -343,6 +343,7 @@ public class GeoTiffRWTest {    // LGPL
     }
 
     @Test
+    @Ignore
     public void test17() throws Exception {
         final CoordinateReferenceSystem sourceCRS = CRS.parseWKT(
                  "    PROJCS[\"Mercator_1SP\","
@@ -689,6 +690,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.parseWKT("PROJCS[\"NAD83 / Calif
     }
 
     @Test
+    @Ignore
     public void test30() throws Exception {
         final CoordinateReferenceSystem sourceCRS = CRS.parseWKT("PROJCS[\"Transverse_Mercator\","
         +"    GEOGCS[\"NAD27\","

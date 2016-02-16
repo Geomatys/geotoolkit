@@ -17,18 +17,14 @@
  */
 package org.geotoolkit.referencing.factory.wkt;
 
+import java.util.concurrent.TimeUnit;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
-
-import org.geotoolkit.factory.Hints;
-import org.apache.sis.util.Disposable;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
-import org.geotoolkit.referencing.factory.NoSuchFactoryException;
+import org.apache.sis.referencing.factory.ConcurrentAuthorityFactory;
+import org.apache.sis.referencing.factory.UnavailableFactoryException;
 
 
 /**
@@ -40,12 +36,9 @@ import org.geotoolkit.referencing.factory.NoSuchFactoryException;
  * CRS definitions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
- *
- * @since 3.10
  * @module
  */
-final class CachingPostgisFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory, Disposable {
+final class CachingPostgisFactory extends ConcurrentAuthorityFactory<DirectPostgisFactory> implements CRSAuthorityFactory {
     /**
      * Provides connection to the PostGIS database.
      */
@@ -60,11 +53,10 @@ final class CachingPostgisFactory extends ThreadedAuthorityFactory implements CR
      * @param userHints An optional set of hints, or {@code null} for the default ones.
      * @param datasource Provides connection to the PostGIS database.
      */
-    CachingPostgisFactory(final Hints userHints, final DataSource datasource) {
-        super(userHints, 10, 2);
+    CachingPostgisFactory(final DataSource datasource) {
+        super(DirectPostgisFactory.class, 10, 2);
         this.datasource = datasource;
-        WKTParsingAuthorityFactory.copyRelevantHints(userHints, hints);
-        setTimeout(2000); // Intentionally short timeout (2 seconds).
+        setTimeout(2, TimeUnit.SECONDS);
     }
 
     /**
@@ -74,27 +66,23 @@ final class CachingPostgisFactory extends ThreadedAuthorityFactory implements CR
      * after the timeout.
      *
      * @return The backing store to uses in {@code createXXX(...)} methods.
-     * @throws NoSuchFactoryException if the backing store has not been found.
+     * @throws UnavailableFactoryException if the backing store has not been found.
      * @throws FactoryException if the creation of backing store failed for an other reason.
      */
     @Override
-    protected AbstractAuthorityFactory createBackingStore() throws FactoryException {
-        final Hints localHints = EMPTY_HINTS.clone();
-        synchronized (this) {
-            localHints.putAll(hints);
-        }
+    protected DirectPostgisFactory newDataAccess() throws FactoryException {
         final Connection connection;
         try {
             connection = datasource.getConnection();
         } catch (SQLException e) {
             if ("08001".equals(e.getSQLState())) {
                 // Connection failed (typically because the server is unknown).
-                throw new NoSuchFactoryException(e);
+                throw new UnavailableFactoryException(e.getMessage(), e);
             }
             throw new FactoryException(e);
         }
         try {
-            return new DirectPostgisFactory(localHints, connection);
+            return new DirectPostgisFactory(null, connection);
         } catch (SQLException e) {
             try {
                 connection.close();
@@ -103,16 +91,5 @@ final class CachingPostgisFactory extends ThreadedAuthorityFactory implements CR
             }
             throw new FactoryException(e);
         }
-    }
-
-    /**
-     * Closes all JDBC connections created by this factory. This method is provided because
-     * instances of this class are typically created explicitly, rather than being registered
-     * in a {@code FactoryRegistry}. In such case, the user needs to dispose it explicitly as
-     * well. This method is accessible through the {@link Disposable} interface.
-     */
-    @Override
-    public void dispose() {
-        dispose(false);
     }
 }

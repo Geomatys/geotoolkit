@@ -1,3 +1,10 @@
+---
+---    Copyright International Association of Oil and Gas Producers (IOGP)
+---    See  http://www.epsg.org/TermsOfUse  (a copy is in META-INF/LICENSE).
+---
+---    This file has been modified for the needs of Apache SIS project.
+---
+
 CREATE TABLE epsg_alias (
 alias_code                                         INTEGER NOT NULL,
 object_table_name                                  VARCHAR(80) NOT NULL,
@@ -24,7 +31,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_area PRIMARY KEY ( area_code ) );
 
 CREATE TABLE epsg_change (
@@ -58,7 +65,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinateaxisname PRIMARY KEY ( coord_axis_name_code ) );
 
 CREATE TABLE epsg_coordinatereferencesystem (
@@ -78,8 +85,8 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-show_crs                                           SMALLINT NOT NULL,
-deprecated                                         SMALLINT NOT NULL,
+show_crs                                           BOOLEAN NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinatereferencesystem PRIMARY KEY ( coord_ref_sys_code ) );
 
 CREATE TABLE epsg_coordinatesystem (
@@ -92,7 +99,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(50) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinatesystem PRIMARY KEY ( coord_sys_code ) );
 
 CREATE TABLE epsg_coordoperation (
@@ -114,8 +121,8 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-show_operation                                     SMALLINT NOT NULL,
-deprecated                                         SMALLINT NOT NULL,
+show_operation                                     BOOLEAN NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinate_operation PRIMARY KEY ( coord_op_code ) );
 
 CREATE TABLE epsg_coordoperationmethod (
@@ -129,7 +136,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinate_operationmethod PRIMARY KEY ( coord_op_method_code ) );
 
 CREATE TABLE epsg_coordoperationparam (
@@ -140,7 +147,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_coordinate_operationparamet PRIMARY KEY ( parameter_code ) );
 
 CREATE TABLE epsg_coordoperationparamusage (
@@ -180,7 +187,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_datum PRIMARY KEY ( datum_code ) );
 
 CREATE TABLE epsg_deprecation (
@@ -206,7 +213,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_ellipsoid PRIMARY KEY ( ellipsoid_code ) );
 
 CREATE TABLE epsg_namingsystem (
@@ -217,7 +224,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_namingsystem PRIMARY KEY ( naming_system_code ) );
 
 CREATE TABLE epsg_primemeridian (
@@ -230,7 +237,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_primemeridian PRIMARY KEY ( prime_meridian_code ) );
 
 CREATE TABLE epsg_supersession (
@@ -255,7 +262,7 @@ information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,
 change_id                                          VARCHAR(255),
-deprecated                                         SMALLINT NOT NULL,
+deprecated                                         BOOLEAN NOT NULL,
 CONSTRAINT pk_unitofmeasure PRIMARY KEY ( uom_code ) );
 
 CREATE TABLE epsg_versionhistory (

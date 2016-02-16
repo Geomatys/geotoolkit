@@ -27,7 +27,6 @@ import java.util.Comparator;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,8 +36,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.referencing.NamedIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -61,7 +59,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *       old Web Map Services (WMS). Note that latest WMS specifications require the respect
  *       of axis order as declared in the EPSG database, which is (<var>latitude</var>,
  *       <var>longitude</var>).</li>
- *   <li>{@code urn:ogc:def:crs:EPSG:4326} - understood to match the EPSG database axis order
+ *   <li>{@code urn:ogc:def:crs:EPSG::4326} - understood to match the EPSG database axis order
  *       in all cases, no matter the WMS version.</li>
  *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
  * </ul>
@@ -192,23 +190,24 @@ public final class IdentifiedObjects extends Static {
      *
      * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
      * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.IdentifiedObjects}.
      */
+    @Deprecated
     public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
             throws FactoryException
     {
         if (object == null) {
             return null;
         }
-        /*
-         * We perform the search using the 'xyFactory' because our implementation of
-         * IdentifiedObjectFinder should be able to inspect both the (x,y) and (y,x)
-         * axis order using this factory.
-         */
-        final AbstractAuthorityFactory xyFactory = (AbstractAuthorityFactory) CRS.getAuthorityFactory(true);
-        final IdentifiedObjectFinder finder = xyFactory.getIdentifiedObjectFinder(object.getClass());
-        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
-        finder.setFullScanAllowed(fullScan);
-        return finder.findIdentifier(object);
+        IdentifiedObjectFinder f = org.apache.sis.referencing.IdentifiedObjects.newFinder(null);
+        f.setSearchDomain(fullScan ? IdentifiedObjectFinder.Domain.ALL_DATASET : IdentifiedObjectFinder.Domain.DECLARATION);
+        for (final IdentifiedObject o : f.find(object)) {
+            final String i = org.apache.sis.referencing.IdentifiedObjects.toString(
+                    org.apache.sis.referencing.IdentifiedObjects.getIdentifier(o, null));
+            if (i != null) return i;
+        }
+        return null;
     }
 
     /**
@@ -235,7 +234,10 @@ public final class IdentifiedObjects extends Static {
      * @throws FactoryException If an unexpected failure occurred during the search.
      *
      * @category information
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.IdentifiedObjects}.
      */
+    @Deprecated
     public static String lookupIdentifier(final Citation authority, final IdentifiedObject object,
             final boolean fullScan) throws FactoryException
     {
@@ -247,22 +249,18 @@ public final class IdentifiedObjects extends Static {
         if (id != null) {
             return id.getCode();
         }
-        final DefaultAuthorityFactory df = (DefaultAuthorityFactory) CRS.getAuthorityFactory(true);
-        for (final AuthorityFactory factory : df.backingStore.getFactories()) {
-            if (!org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), authority)) {
-                continue;
+        if (authority == org.geotoolkit.metadata.Citations.URN_OGC) {
+            String urn = org.apache.sis.referencing.IdentifiedObjects.lookupURN(object, null);
+            if (urn != null) {
+                urn = urn.toLowerCase();
             }
-            if (!(factory instanceof AbstractAuthorityFactory)) {
-                continue;
-            }
-            final AbstractAuthorityFactory f = (AbstractAuthorityFactory) factory;
-            final IdentifiedObjectFinder finder = f.getIdentifiedObjectFinder(object.getClass());
-            finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
-            finder.setFullScanAllowed(fullScan);
-            final String code = finder.findIdentifier(object);
-            if (code != null) {
-                return code;
-            }
+            return urn;
+        }
+        IdentifiedObjectFinder f = org.apache.sis.referencing.IdentifiedObjects.newFinder(null);
+        f.setSearchDomain(fullScan ? IdentifiedObjectFinder.Domain.ALL_DATASET : IdentifiedObjectFinder.Domain.DECLARATION);
+        for (final IdentifiedObject o : f.find(object)) {
+            final Identifier i = org.apache.sis.referencing.IdentifiedObjects.getIdentifier(o, authority);
+            if (i != null) return i.getCode();
         }
         return null;
     }
@@ -282,7 +280,10 @@ public final class IdentifiedObjects extends Static {
      * @throws FactoryException If an unexpected failure occurred during the search.
      *
      * @category information
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.IdentifiedObjects}.
      */
+    @Deprecated
     public static Integer lookupEpsgCode(final IdentifiedObject object, final boolean fullScan)
             throws FactoryException
     {

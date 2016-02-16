@@ -38,7 +38,6 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.AngleFormat;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
@@ -175,8 +174,11 @@ public final class Referencing extends Formulas implements XReferencing {
      * Returns the CRS authority factory.
      */
     private CRSAuthorityFactory crsFactory() {
-        if (crsFactory == null) {
-            crsFactory = CRS.getAuthorityFactory(null);
+        if (crsFactory == null) try {
+            crsFactory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
+        } catch (FactoryException e) {
+            // Should never happen.
+            throw new RuntimeException(e);  // TODO
         }
         return crsFactory;
     }

@@ -44,13 +44,12 @@ import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
+import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.parameter.ParameterFormat;
 import static org.geotoolkit.referencing.IdentifiedObjects.NAME_COMPARATOR;
@@ -133,13 +132,17 @@ final class ReferencingAction {
      * Returns the CRS authority factory to use.
      */
     private CRSAuthorityFactory getCRSAuthorityFactory() {
-        CRSAuthorityFactory factory = CRS.getAuthorityFactory(cmd.forcexy);
+        CRSAuthorityFactory factory;
+        try {
+            factory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
+        } catch (FactoryException e) {
+            throw new RuntimeException(e);  // TODO
+        }
         final String authority = cmd.authority;
         if (authority != null) {
             final CRSAuthorityFactory first;
-            final Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, cmd.forcexy);
             try {
-                first = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, hints);
+                first = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
             } catch (FactoryNotFoundException e) {
                 final PrintWriter err = cmd.err;
                 err.println(e.getLocalizedMessage());
@@ -147,7 +150,7 @@ final class ReferencingAction {
                 err.flush();
                 return factory;
             }
-            factory = FallbackAuthorityFactory.create(CRSAuthorityFactory.class, first, factory);
+            factory = first; //FallbackAuthorityFactory.create(CRSAuthorityFactory.class, first, factory);
         }
         return factory;
     }
@@ -216,7 +219,7 @@ final class ReferencingAction {
         table.nextColumn();
         table.write(bold(Vocabulary.Keys.Note));
         table.writeHorizontalSeparator();
-        for (AuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(HINTS)) {
+        for (AuthorityFactory factory : Collections.singleton(AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", HINTS))) {  // TODO: iterate over all factories.
             final Citation authority = factory.getAuthority();
             final Iterator<? extends Identifier> identifiers = authority.getIdentifiers().iterator();
             if (!identifiers.hasNext()) {
@@ -230,10 +233,10 @@ final class ReferencingAction {
             table.write(identifiers.next().getCode());
             table.nextColumn();
             table.write(authority.getTitle().toString().trim());
-            if (factory instanceof AbstractAuthorityFactory) {
+            if (factory instanceof DirectAuthorityFactory) {
                 String description;
                 try {
-                    description = ((AbstractAuthorityFactory) factory).getBackingStoreDescription();
+                    description = ((DirectAuthorityFactory) factory).getBackingStoreDescription();
                 } catch (FactoryException e) {
                     description = e.getLocalizedMessage();
                 }
@@ -268,8 +271,11 @@ final class ReferencingAction {
         final String authority = cmd.authority;
         if (authority != null) {
             factory = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, HINTS);
-        } else {
-            factory = CRS.getAuthorityFactory(cmd.forcexy);
+        } else try {
+            factory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
+        } catch (FactoryException e) {
+            e.printStackTrace();    // TODO
+            return;
         }
         final TableWriter table = new TableWriter(cmd.out);
         table.writeHorizontalSeparator();
@@ -517,7 +523,7 @@ final class ReferencingAction {
             return;
         }
         final Hints hints = new Hints(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class);
-        for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(hints)) {
+        for (final CRSAuthorityFactory factory : Collections.singleton(AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints))) {     // TODO: iterate over all authorities.
             if (!(factory instanceof PropertyEpsgFactory)) {
                 continue;
             }

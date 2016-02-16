@@ -22,13 +22,11 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
-import java.awt.RenderingHints;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -43,7 +41,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.factory.GeodeticObjectFactory;
@@ -155,50 +152,6 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         super(userHints);
         ensureNonNull("definitions", definitions);
         this.definitions = definitions;
-        copyRelevantHints(userHints, hints);
-    }
-
-    /**
-     * Copies only the relevant hints from {@code userHints} into the given {@code hints} map.
-     */
-    static void copyRelevantHints(final Hints userHints, final Map<RenderingHints.Key, Object> hints) {
-        Boolean forceXY = Boolean.FALSE;
-        if (userHints != null) {
-            forceXY = (Boolean) userHints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER);
-            if (forceXY == null) {
-                forceXY = (Boolean) userHints.get(Hints.FORCE_STANDARD_AXIS_DIRECTIONS);
-                if (forceXY == null) {
-                    forceXY = Boolean.FALSE;  // By default AXIS elements in WKT are honored.
-                }
-            }
-        }
-        /*
-         * The two first hints must be set to the same value because current ReferencingParser
-         * implementation can not handle them in different way. The last hint is inconditional
-         * because units are always taken in account - the WKT format specifies them outside the
-         * AXIS[...] elements and includes them in the enclosing GEOCS or PROJCS element instead.
-         */
-        hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, forceXY);
-        hints.put(Hints.FORCE_STANDARD_AXIS_DIRECTIONS,   forceXY);
-        hints.put(Hints.FORCE_STANDARD_AXIS_UNITS,  Boolean.FALSE);
-    }
-
-    /**
-     * Returns whatever this factory is ready for use. The factory is considered ready if
-     * the map given at construction time is not empty and the factory has not yet been
-     * {@linkplain #dispose disposed}.
-     *
-     * @since 3.03
-     */
-    @Override
-    public ConformanceResult availability() {
-        return new Availability() {
-            @Override public Boolean pass() {
-                synchronized (WKTParsingAuthorityFactory.this) {
-                    return Boolean.TRUE.equals(super.pass()) && !definitions.isEmpty();
-                }
-            }
-        };
     }
 
     /**
@@ -546,19 +499,6 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      */
     Comparable<?> getPrimaryKey(Class<? extends IdentifiedObject> type, String code) throws FactoryException {
         return trimAuthority(code);
-    }
-
-    /**
-     * Returns a finder which can be used for looking up unidentified objects.
-     *
-     * @throws FactoryException if the finder can not be created.
-     */
-    @Override
-    public synchronized IdentifiedObjectFinder getIdentifiedObjectFinder(
-            final Class<? extends IdentifiedObject> type) throws FactoryException
-    {
-        final Parser parser = getParser();
-        return super.getIdentifiedObjectFinder(type);
     }
 
     /**

@@ -37,6 +37,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.apache.sis.test.TestUtilities;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -119,14 +120,14 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
             "│               │   ├───direction=“east”\n" +
             "│               │   ├───minimumValue=“6.0”\n" +
             "│               │   ├───maximumValue=“70.0”\n" +
-            "│               │   └───unit=“deg”\n" +
+            "│               │   └───unit=“°”\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:lat”\n" +
             "│               │   ├───axisAbbrev=“φ”\n" +
             "│               │   ├───direction=“north”\n" +
             "│               │   ├───minimumValue=“68.0”\n" +
             "│               │   ├───maximumValue=“81.0”\n" +
-            "│               │   └───unit=“deg”\n" +
+            "│               │   └───unit=“°”\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:depth”\n" +
             "│               │   ├───axisAbbrev=“d”\n" +
@@ -168,7 +169,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         prepareImageReader(true);
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(this.reader);
-        assertEquals("temp", getSingleton(reader.getCoverageNames()).toString());
+        assertEquals("temp", TestUtilities.getSingleton(reader.getCoverageNames()).toString());
         final GridCoverage2D coverage = reader.read(0, null);
         reader.dispose(); // Dispose also the NetcdfImageReader.
         //

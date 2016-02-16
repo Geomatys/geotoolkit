@@ -71,7 +71,6 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
      * Creates a new authority factory.
      */
     public IGNF() {
-        super(EMPTY_HINTS);
         crsMap.put("MILLER", "Miller_Cylindrical");
         codes = Collections.unmodifiableSet(crsMap.keySet());
     }

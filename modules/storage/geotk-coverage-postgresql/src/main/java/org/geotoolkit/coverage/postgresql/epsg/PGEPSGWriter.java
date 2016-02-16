@@ -25,12 +25,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
+import org.opengis.metadata.Identifier;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -44,9 +44,8 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.coverage.postgresql.epsg.PGEPSGQueries.*;
 import org.geotoolkit.referencing.EPSGWriter;
 import org.apache.sis.referencing.datum.AbstractDatum;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.apache.sis.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.SingleCRS;
@@ -60,6 +59,8 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.factory.sql.EPSGFactory;
 
 /**
  * EPSG Writer.
@@ -70,9 +71,9 @@ public class PGEPSGWriter implements EPSGWriter {
 
     private final PGCoverageStore store;
     private final DataSource source;
-    private final ThreadedEpsgFactory factory;
+    private final EPSGFactory factory;
 
-    public PGEPSGWriter(final PGCoverageStore store) throws SQLException {
+    public PGEPSGWriter(final PGCoverageStore store) throws FactoryException {
         this.store = store;
         this.source = store.getDataSource();
         this.factory = store.getEPSGFactory();
@@ -100,10 +101,9 @@ public class PGEPSGWriter implements EPSGWriter {
     }
 
     private String searchSimilar(Class clazz, IdentifiedObject candidate) throws FactoryException{
-        final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(clazz);
-        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
-        final String code = finder.findIdentifier(candidate);
-        return code;
+        final IdentifiedObjectFinder finder = factory.newIdentifiedObjectFinder();
+        final Identifier id = IdentifiedObjects.getIdentifier(finder.findSingleton(candidate), null);
+        return (id != null) ? id.getCode() : null;
     }
 
     @Override

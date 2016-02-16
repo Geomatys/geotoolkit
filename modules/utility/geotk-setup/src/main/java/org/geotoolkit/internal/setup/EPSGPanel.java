@@ -21,20 +21,13 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Properties;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import org.opengis.util.FactoryException;
-
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.referencing.factory.epsg.EpsgInstaller.DEFAULT_SCHEMA;
 
 /**
  * The panel displaying a configuration form for the connection parameters to the current
@@ -78,7 +71,6 @@ final class EPSGPanel extends DatabasePanel {
     @Override
     Field[] getFields(final Vocabulary resources) {
         final JComboBox<String> url = new JComboBox<>(new String[] {
-            ThreadedEpsgFactory.getDefaultURL(),
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
             "jdbc:postgresql://host/database",
             "jdbc:odbc:EPSG"
@@ -86,27 +78,9 @@ final class EPSGPanel extends DatabasePanel {
         url.setEditable(true);
         return new Field[] {
             new Field("URL",      Vocabulary.Keys.Url,      resources, url, null),
-            new Field("schema",   Vocabulary.Keys.Schema,   resources, new JTextField(DEFAULT_SCHEMA), DEFAULT_SCHEMA),
+            new Field("schema",   Vocabulary.Keys.Schema,   resources, new JTextField("epsg"), "epsg"),
             new Field("user",     Vocabulary.Keys.User,     resources, new JTextField(), null),
             new Field("password", Vocabulary.Keys.Password, resources, new JPasswordField(), null)
         };
-    }
-
-    /**
-     * Returns an installer for the EPSG database. This method must be invoked from the
-     * Swing thread. However the installer can (and should) be used from a background thread.
-     *
-     * @since 3.05
-     */
-    final EpsgInstaller installer() throws FactoryException {
-        final Properties settings = getSettings();
-        final EpsgInstaller install = new EpsgInstaller();
-        if (!settings.isEmpty()) {
-            install.setDatabase(settings.getProperty("URL"),
-                                settings.getProperty("user"),
-                                settings.getProperty("password"));
-            install.setSchema(  settings.getProperty("schema"));
-        }
-        return install;
     }
 }
