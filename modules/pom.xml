@@ -59,6 +59,17 @@
       <artifactId>geoapi-conformance</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Force database drivers in tests for all modules -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
