@@ -41,7 +41,7 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class CDATATest {
+public class CDATATest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test that the marshall and unmarshall operations works when

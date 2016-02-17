@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShpXmlFileReaderTest {
+public class ShpXmlFileReaderTest extends org.geotoolkit.test.TestBase {
     ShpXmlFileReader reader;
 
     @Before

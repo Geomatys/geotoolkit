@@ -29,13 +29,9 @@ import static java.lang.StrictMath.*;
 
 /**
  * Inherits JUnit assertions methods, and adds Geotk-specific assertion methods. The methods
- * defined in this class requires Geotk-specific API (otherwise they would be defined in the
- * {@code geotk-test} module).
+ * defined in this class requires Geotk-specific API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.19 (derived from 3.00)
  */
 public strictfp final class Assert extends org.geotoolkit.test.Assert {
     /**

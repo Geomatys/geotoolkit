@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @author sorel
  */
-public class OSMXMLReaderTest {
+public class OSMXMLReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000001;
 

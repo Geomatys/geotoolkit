@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class AtomAuthorTest {
+public class AtomAuthorTest extends org.geotoolkit.test.TestBase {
 
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/atom/author.atom";
@@ -93,7 +93,7 @@ public class AtomAuthorTest {
         params.add(URI.create("c:est:une:uri"));
         params.add("Prénom Nom");
         params.add(atomFactory.createAtomEmail("mon.email@serveur.net"));
-        
+
         AtomPersonConstruct author = atomFactory.createAtomPersonConstruct(params);
 
         File temp = File.createTempFile("testAtomAuthor",".atom");

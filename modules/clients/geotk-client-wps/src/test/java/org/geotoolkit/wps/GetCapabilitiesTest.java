@@ -33,7 +33,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @author Quentin Boileau
  */
-public class GetCapabilitiesTest {
+public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
     public GetCapabilitiesTest() {}
 
     /**

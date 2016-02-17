@@ -31,10 +31,6 @@ import org.geotoolkit.data.kml.model.LookAt;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.geotoolkit.feature.Feature;
@@ -47,29 +43,13 @@ import org.xml.sax.SAXException;
  * @author Samuel Andrés
  * @module pending
  */
-public class LookAtTest {
+public class LookAtTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/lookAt.kml";
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public LookAtTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

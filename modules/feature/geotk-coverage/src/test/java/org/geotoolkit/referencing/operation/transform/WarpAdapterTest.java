@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.15 (derived from 2.1)
  */
-public final strictfp class WarpAdapterTest {
+public final strictfp class WarpAdapterTest extends org.geotoolkit.test.TestBase {
     /**
      * Tolerance factor for floating point comparisons.
      */

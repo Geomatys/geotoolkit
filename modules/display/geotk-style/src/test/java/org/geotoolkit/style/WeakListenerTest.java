@@ -21,10 +21,6 @@ import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.style.SemanticType;
@@ -37,27 +33,11 @@ import org.apache.sis.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WeakListenerTest {
+public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     public WeakListenerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**

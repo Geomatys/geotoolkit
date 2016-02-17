@@ -41,7 +41,7 @@ import static java.util.Collections.singleton;
  * @author Martin Desruisseaux (Geomatys)
  * @module
  */
-public strictfp final class WriterTest {
+public strictfp final class WriterTest extends org.geotoolkit.test.TestBase {
     /**
      * The JSON string of the metadata object to be used in this test.
      */

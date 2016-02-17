@@ -30,7 +30,7 @@ import org.junit.BeforeClass;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class NMEAFileTest {
+public class NMEAFileTest extends org.geotoolkit.test.TestBase {
     @BeforeClass
     public static void setTimeZone() {
         TimeZone.setDefault(TimeZone.getTimeZone("CET"));

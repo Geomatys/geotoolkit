@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class GeometryConverterTest {
+public class GeometryConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

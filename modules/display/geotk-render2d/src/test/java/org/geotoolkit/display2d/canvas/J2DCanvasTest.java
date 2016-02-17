@@ -47,7 +47,7 @@ import org.apache.sis.referencing.CommonCRS;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class J2DCanvasTest {
+public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
 
     public J2DCanvasTest() {
     }

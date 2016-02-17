@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -45,7 +45,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultClockTest {
+public class DefaultClockTest extends org.geotoolkit.test.TestBase {
 
     private Clock clock1;
     private Clock clock2;
@@ -53,22 +53,22 @@ public class DefaultClockTest {
 
     @Before
     public void setUp() {
-        
+
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
         TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
-         
+
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
         TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
-        
+
         Number[] clockTime1 = {0, 0, 0};
         Number[] clockTime2 = {12, 0, 0.0};
-        
+
         ClockTime clocktime1 = FACTORY.createClockTime(frame1, null, clockTime1);
         ClockTime clocktime2 = FACTORY.createClockTime(frame2, null, clockTime2);
-        
+
         ClockTime utcReference1 = FACTORY.createClockTime(frame1, null, clockTime1);
         ClockTime utcReference2 = FACTORY.createClockTime(frame2, null, clockTime2);
-        
+
         clock1 = FACTORY.createClock(name1, new DefaultExtent(), new SimpleInternationalString("clock1 reference event"), clocktime1, utcReference1);
         clock2 = FACTORY.createClock(name2, new DefaultExtent(), new SimpleInternationalString("clock2 reference event"), clocktime2, utcReference2);
     }

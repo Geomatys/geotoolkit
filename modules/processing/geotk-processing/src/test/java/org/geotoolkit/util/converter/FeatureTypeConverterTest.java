@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class FeatureTypeConverterTest {
+public class FeatureTypeConverterTest extends org.geotoolkit.test.TestBase {
 
 
     @Test

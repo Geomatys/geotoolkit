@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GetMapTest {
+public class GetMapTest extends org.geotoolkit.test.TestBase {
 
     @BeforeClass
     public static void init() {

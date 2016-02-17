@@ -27,7 +27,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LEStreamTest {
+public class LEStreamTest extends org.geotoolkit.test.TestBase {
 
     private static final float DELTA = 0.0000001f;
     private static final byte[] DATA = new byte[]{

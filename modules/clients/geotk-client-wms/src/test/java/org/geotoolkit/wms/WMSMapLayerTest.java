@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSMapLayerTest {
+public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
 
     private final WebMapClient SERVER_111;
     private final WebMapClient SERVER_130;

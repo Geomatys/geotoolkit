@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.19
  */
-public final strictfp class DefaultCitationTest {
+public final strictfp class DefaultCitationTest extends org.geotoolkit.test.TestBase {
     /**
      * Ensures that the identifier collection, when marshalled, does not include the ISBN
      * and ID codes.

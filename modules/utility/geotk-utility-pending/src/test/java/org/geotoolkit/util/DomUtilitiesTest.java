@@ -33,11 +33,11 @@ import org.w3c.dom.Element;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DomUtilitiesTest {
+public class DomUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void writeTest() throws ParserConfigurationException, IOException, TransformerException{
-        
+
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder builder = factory.newDocumentBuilder();
         final Document document = builder.newDocument();
@@ -59,12 +59,12 @@ public class DomUtilitiesTest {
         personne.appendChild(age);
 
         document.appendChild(root);
-        
+
         File f = File.createTempFile("test", ".xml");
         f.deleteOnExit();
-        
+
         DomUtilities.write(document, f);
-        
+
     }
 
 }

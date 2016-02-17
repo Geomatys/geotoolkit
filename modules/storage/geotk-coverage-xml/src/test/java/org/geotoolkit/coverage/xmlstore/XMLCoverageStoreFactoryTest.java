@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Tests for XMLCoverageStore
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMLCoverageStoreFactoryTest {
-    
+public class XMLCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public XMLCoverageStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-                
+
         final Set<CoverageStoreFactory> set = CoverageStoreFinder.getAllFactories(null);
-        
+
         boolean found = false;
         for(CoverageStoreFactory fact : set){
             if(fact instanceof XMLCoverageStoreFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

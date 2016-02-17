@@ -44,7 +44,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  * @since 3.06
  */
 @DependsOn(SpatialMetadataFormatTest.class)
-public final strictfp class MetadataNodeAccessorTest {
+public final strictfp class MetadataNodeAccessorTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the accessor with some properties defined under the {@code "ImageDescription"} node.
      */

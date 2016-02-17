@@ -26,45 +26,45 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
  * Test FIDFixVisitor
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class FIDFixVisitorTest {
-    
+public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testReplacement1(){
-        
+
         Filter filter = FF.equals(FF.property("@id"),FF.literal("river.1"));
-        
+
         FIDFixVisitor visitor = new FIDFixVisitor();
         filter = (Filter) filter.accept(visitor, null);
-        
+
         assertNotNull(filter);
         assertTrue(filter instanceof Id);
-        
+
         Id fid = (Id) filter;
-        
+
         assertEquals(1, fid.getIdentifiers().size());
         assertEquals("river.1", fid.getIdentifiers().iterator().next().getID());
-        
+
     }
-    
+
     @Test
     public void testReplacement2(){
-        
+
         Filter filter = FF.equals(FF.literal("river.1"),FF.property("@id"));
-        
+
         FIDFixVisitor visitor = new FIDFixVisitor();
         filter = (Filter) filter.accept(visitor, null);
-        
+
         assertNotNull(filter);
         assertTrue(filter instanceof Id);
-        
+
         Id fid = (Id) filter;
-        
+
         assertEquals(1, fid.getIdentifiers().size());
         assertEquals("river.1", fid.getIdentifiers().iterator().next().getID());
-        
+
     }
-    
+
 }

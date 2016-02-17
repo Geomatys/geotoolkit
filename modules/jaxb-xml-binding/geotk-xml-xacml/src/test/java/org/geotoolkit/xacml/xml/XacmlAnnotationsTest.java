@@ -34,8 +34,8 @@ import static org.junit.Assert.*;
  * @author Cédric Briançon
  * @module pending
  */
-public class XacmlAnnotationsTest {
-     private Logger logger = Logging.getLogger("org.geotoolkit.xacml.xml");
+public class XacmlAnnotationsTest extends org.geotoolkit.test.TestBase {
+    private Logger logger = Logging.getLogger("org.geotoolkit.xacml.xml");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

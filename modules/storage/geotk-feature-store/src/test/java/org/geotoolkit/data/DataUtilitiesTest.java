@@ -35,7 +35,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataUtilitiesTest {
+public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private final FeatureStore store;
     private final GenericName name1;

@@ -27,7 +27,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public abstract class InterpolationTest {
+public abstract class InterpolationTest extends org.geotoolkit.test.TestBase {
 
     protected static final double TOLERANCE = 1E-9;
 

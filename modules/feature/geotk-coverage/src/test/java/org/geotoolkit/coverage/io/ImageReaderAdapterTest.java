@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * @since 3.14
  */
 @DependsOn(ImageCoverageReaderTest.class)
-public final strictfp class ImageReaderAdapterTest {
+public final strictfp class ImageReaderAdapterTest extends org.geotoolkit.test.TestBase {
     /**
      * The precision for comparison of sample values. The values in this test file
      * have 3 significant digits, so the precision is set to the next digit.

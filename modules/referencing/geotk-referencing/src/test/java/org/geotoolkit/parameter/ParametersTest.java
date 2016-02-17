@@ -40,7 +40,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  *
  * @since 3.05
  */
-public final strictfp class ParametersTest {
+public final strictfp class ParametersTest extends org.geotoolkit.test.TestBase {
     /**
      * Constructs a descriptor for a mandatory parameter in a range of integer values.
      *

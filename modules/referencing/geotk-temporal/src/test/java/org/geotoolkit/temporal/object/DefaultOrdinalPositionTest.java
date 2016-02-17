@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -44,7 +44,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultOrdinalPositionTest {
+public class DefaultOrdinalPositionTest extends org.geotoolkit.test.TestBase {
 
     private OrdinalPosition ordinalPosition1;
     private OrdinalPosition ordinalPosition2;
@@ -57,7 +57,7 @@ public class DefaultOrdinalPositionTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         TemporalReferenceSystem frame = FACTORY.createTemporalReferenceSystem(name, new DefaultExtent());
-        
+
         cal.set(500, 0, 1);
         Date beginning1 = cal.getTime();
         cal.set(1000, 0, 1);
@@ -68,7 +68,7 @@ public class DefaultOrdinalPositionTest {
         cal.set(2000, 0, 1);
         Date end2 = cal.getTime();
         OrdinalEra ordinalEra2 = FACTORY.createOrdinalEra(new SimpleInternationalString("ordinal era 2"), beginning2, end2, null);
-        
+
         ordinalPosition1 = FACTORY.createOrdinalPosition(frame, IndeterminateValue.UNKNOWN, ordinalEra1);
         ordinalPosition2 = FACTORY.createOrdinalPosition(frame, IndeterminateValue.AFTER, ordinalEra2);
     }

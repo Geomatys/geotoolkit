@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class MapUtilitiesTest {
+public class MapUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     public MapUtilitiesTest() {
     }

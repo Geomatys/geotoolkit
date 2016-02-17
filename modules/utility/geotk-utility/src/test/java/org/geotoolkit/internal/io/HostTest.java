@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.11
  */
-public final strictfp class HostTest {
+public final strictfp class HostTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests JDBC URL.
      */

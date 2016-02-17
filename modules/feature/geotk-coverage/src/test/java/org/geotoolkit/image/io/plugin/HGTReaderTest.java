@@ -43,7 +43,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class HGTReaderTest {
+public class HGTReaderTest extends org.geotoolkit.test.TestBase {
 
     private static Path TEMP_DIR;
     private static Path TEMP_IMG;

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -37,7 +37,7 @@ import org.opengis.temporal.Period;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultPeriodTest {
+public class DefaultPeriodTest extends org.geotoolkit.test.TestBase {
 
     private Period period1;
     private Period period2;
@@ -47,7 +47,7 @@ public class DefaultPeriodTest {
         NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Period");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
-        
+
         Calendar cal = Calendar.getInstance();
         cal.set(1995, 1, 1);
         Instant begining1 = new DefaultInstant(properties, cal.getTime());
@@ -84,7 +84,7 @@ public class DefaultPeriodTest {
         NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Beginning");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
-        
+
         Instant result = period1.getBeginning();
         Instant newInstant = new DefaultInstant(properties, new Date());
         ((DefaultPeriod) period1).setBegining(newInstant);
@@ -108,7 +108,7 @@ public class DefaultPeriodTest {
         NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Ending");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
-        
+
         Instant result = period1.getEnding();
         Instant newInstant = new DefaultInstant(properties, new Date());
         ((DefaultPeriod) period1).setEnding(newInstant);

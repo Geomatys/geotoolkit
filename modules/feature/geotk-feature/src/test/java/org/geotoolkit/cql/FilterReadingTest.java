@@ -74,7 +74,7 @@ import org.opengis.filter.temporal.TOverlaps;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FilterReadingTest {
+public class FilterReadingTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
     private final FilterFactory2 FF = new DefaultFilterFactory2();
@@ -153,7 +153,7 @@ public class FilterReadingTest {
                 ),
                 filter);
     }
-    
+
     @Test
     public void testOrAnd2() throws CQLException {
         final Geometry geom =  GF.createPolygon(
@@ -167,8 +167,8 @@ public class FilterReadingTest {
                     }),
                 new LinearRing[0]
                 );
-        
-        
+
+
         final String cql = "NOT (INTERSECTS(BoundingBox, ENVELOPE(10, 20, 40, 30)) OR CONTAINS(BoundingBox, POINT(12.1 28.9))) AND BBOX(BoundingBox, 10,20,30,40)";
         final Object obj = CQL.parseFilter(cql);
         assertTrue(obj instanceof Filter);
@@ -185,7 +185,7 @@ public class FilterReadingTest {
                 ),
                 filter);
     }
-    
+
     @Test
     public void testNot() throws CQLException {
         final String cql = "NOT att = 15";
@@ -325,7 +325,7 @@ public class FilterReadingTest {
         final PropertyIsLike filter = (PropertyIsLike) obj;
         assertEquals(FF.like(FF.property("att"),"%hello_", "%", "_", "\\",false), filter);
     }
-    
+
     @Test
     public void testPropertyIsNull() throws CQLException {
         final String cql = "att IS NULL";
@@ -469,9 +469,9 @@ public class FilterReadingTest {
         assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
         final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
         assertTrue(baseGeometryPoint.equalsExact(filtergeo));
-        
+
     }
-    
+
     @Test
     public void testEquals() throws CQLException {
         final String cql = "EQUALS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";

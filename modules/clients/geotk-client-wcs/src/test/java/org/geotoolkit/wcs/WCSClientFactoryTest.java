@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Server tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WCSClientFactoryTest {
-    
+public class WCSClientFactoryTest extends org.geotoolkit.test.TestBase {
+
     public WCSClientFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof WCSClientFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

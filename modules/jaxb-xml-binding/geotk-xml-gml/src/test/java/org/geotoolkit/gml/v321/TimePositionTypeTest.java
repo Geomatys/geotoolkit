@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimePositionTypeTest {
+public class TimePositionTypeTest extends org.geotoolkit.test.TestBase {
 
     private static final Date date = new Date( (System.currentTimeMillis()/ 1000) * 1000); // remove ms
 

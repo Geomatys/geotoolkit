@@ -174,11 +174,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-metadata</artifactId>
       <type>test-jar</type>
@@ -188,14 +183,6 @@
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-referencing</artifactId>
       <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Following is useful only for those who customize
-         their EPSG database connection parameters. -->
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

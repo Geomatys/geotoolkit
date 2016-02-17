@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Factory tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PostgresFeatureStoreFactoryTest {
-    
+public class PostgresFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public PostgresFeatureStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<FeatureStoreFactory> ite = FeatureStoreFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof PostgresFeatureStoreFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

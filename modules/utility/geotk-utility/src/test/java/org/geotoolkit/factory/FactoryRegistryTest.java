@@ -35,7 +35,7 @@ import org.apache.sis.test.DependsOn;
  * @since 2.1
  */
 @DependsOn(FactoryTest.class)
-public final strictfp class FactoryRegistryTest {
+public final strictfp class FactoryRegistryTest extends org.geotoolkit.test.TestBase {
     /**
      * Ensures that class {@link Hints} is loaded before {@link DummyFactory}.
      * It is not needed for normal execution, but Maven seems to mess with class loaders.

@@ -31,7 +31,6 @@ import com.vividsolutions.jts.io.WKTReader;
 import java.awt.geom.PathIterator;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSMultiLineStringJ2D;
-import org.geotoolkit.display2d.primitive.jts.JTSPointIterator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PathIteratorTest {
+public class PathIteratorTest extends org.geotoolkit.test.TestBase {
 
     private static double DELTA = 0.000000001d;
     public static final GeometryFactory GF = new GeometryFactory();

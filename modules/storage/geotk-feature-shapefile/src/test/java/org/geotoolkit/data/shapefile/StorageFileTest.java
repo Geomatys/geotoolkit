@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.junit.After;
 
-public class StorageFileTest {
+public class StorageFileTest extends org.geotoolkit.test.TestBase {
 
     private ShpFiles shpFiles1;
     private ShpFiles shpFiles2;
@@ -60,7 +60,7 @@ public class StorageFileTest {
             shpFiles2.delete();
         }
     }
-    
+
     @Test
     public void testReplaceOriginal() throws Exception {
         final ShpFiles files1 = shpFiles1;
@@ -108,7 +108,7 @@ public class StorageFileTest {
 
         final AccessManager locker1 = shpFiles1.createLocker();
         final AccessManager locker2 = shpFiles2.createLocker();
-        
+
         StorageFile storagePRJ1 = locker1.getStorageFile(PRJ);
         StorageFile storageSHP1 = locker1.getStorageFile(SHP);
         StorageFile storagePRJ2 = locker2.getStorageFile(PRJ);
@@ -124,7 +124,7 @@ public class StorageFileTest {
         writeData(storagePRJ2, sPRJ2);
         writeData(storageSHP2, sSHP2);
 
-        
+
         locker1.disposeReaderAndWriters();
         locker2.disposeReaderAndWriters();
         locker1.replaceStorageFiles();
@@ -139,10 +139,10 @@ public class StorageFileTest {
 
     @Test
     public void testCompareTo() throws IOException {
-        
+
         final AccessManager locker1 = shpFiles1.createLocker();
         final AccessManager locker2 = shpFiles2.createLocker();
-        
+
         StorageFile storagePRJ1 = locker1.getStorageFile(PRJ);
         StorageFile storageSHP1 = locker1.getStorageFile(SHP);
         StorageFile storagePRJ2 = locker2.getStorageFile(PRJ);
@@ -159,7 +159,7 @@ public class StorageFileTest {
         assertFalse(array[0].compareTo(array[1]) == 0);
         assertFalse(array[2].compareTo(array[3]) == 0);
         assertFalse(array[1].compareTo(array[2]) == 0);
-        
+
         locker1.replaceStorageFiles();
         locker2.replaceStorageFiles();
     }

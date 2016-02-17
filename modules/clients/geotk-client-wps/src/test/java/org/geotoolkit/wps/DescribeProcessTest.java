@@ -40,7 +40,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @author Quentin Boileau
  */
-public class DescribeProcessTest {
+public class DescribeProcessTest extends org.geotoolkit.test.TestBase {
     public DescribeProcessTest() {}
 
     /**

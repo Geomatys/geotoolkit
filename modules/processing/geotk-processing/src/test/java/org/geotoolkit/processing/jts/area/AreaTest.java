@@ -36,18 +36,18 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class AreaTest extends AbstractProcessTest{
+public class AreaTest extends AbstractProcessTest {
 
-   
+
     public AreaTest() {
         super("area");
     }
 
     @Test
     public void testArea() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -56,11 +56,11 @@ public class AreaTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom = fact.createPolygon(ring, null) ;
-      
-        
-        
+
+
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "area");
 
@@ -70,11 +70,11 @@ public class AreaTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
-        
+
+
         final Double expected = (Double) geom.getArea();
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
 }

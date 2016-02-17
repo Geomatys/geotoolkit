@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class FloorTest extends AbstractProcessTest{
+public class FloorTest extends AbstractProcessTest {
 
 
     public FloorTest() {
@@ -57,5 +57,5 @@ public class FloorTest extends AbstractProcessTest{
 
         assertEquals(new Double(24.0), result);
     }
-    
+
 }

@@ -60,7 +60,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class SoundCueTest {
+public class SoundCueTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/soundCue.kml";

@@ -50,7 +50,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class LegendSizeTest {
+public class LegendSizeTest extends org.geotoolkit.test.TestBase {
 
     private static final LegendTemplate NO_MARGIN_TEMPLATE = new DefaultLegendTemplate(
             new DefaultBackgroundTemplate(new BasicStroke(0), Color.BLACK, Color.RED, new Insets(0, 0, 0, 0), 0),
@@ -165,43 +165,43 @@ public class LegendSizeTest {
         // Polygon layer, glyph size : w30, h24
         final MapLayer leaf1 = MapBuilder.createEmptyMapLayer();
         leaf1.setStyle(SF.style(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER));
-        
+
         final MapLayer leaf2 = MapBuilder.createEmptyMapLayer();
         leaf2.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-        
+
         final MapItem node1 = MapBuilder.createItem();
         node1.setName("bouh");
         node1.items().add(leaf1);
         node1.items().add(leaf2);
-                
+
         final MapItem node2 = MapBuilder.createItem();
         node2.items().add(leaf1);
-        
+
         final MapContext context = MapBuilder.createContext();
         context.items().add(node1);
         context.items().add(node2);
-        
+
         Dimension dim = DefaultLegendService.legendPreferredSize(NO_MARGIN_TEMPLATE, context);
-        
+
         // We've got 3 glyph vertically aligned, no margin, no title and no insets between them.
         final int glyphHeight = 24;
         final int glyphWidth = 30;
         assertEquals(glyphWidth, dim.width);
         assertEquals(glyphHeight*3, dim.height);
-        
+
         // A new template to test legend estimation using titles and left insets to reflect tree structure.
         final int leftInset = 10;
         final DefaultBackgroundTemplate backTemplate = new DefaultBackgroundTemplate(
                 new BasicStroke(0), Color.BLACK, Color.RED, new Insets(0, leftInset, 0, 0), 0);
         final LegendTemplate titleTemplate = new DefaultLegendTemplate(
-                backTemplate, 
-                NO_MARGIN_TEMPLATE.getGapSize(), 
-                NO_MARGIN_TEMPLATE.getGlyphSize(), 
+                backTemplate,
+                NO_MARGIN_TEMPLATE.getGapSize(),
+                NO_MARGIN_TEMPLATE.getGlyphSize(),
                 NO_MARGIN_TEMPLATE.getRuleFont(),
                 true,
                 NO_MARGIN_TEMPLATE.getLayerFont(),
                 true);
-                
+
         // Same test than above, but here we've got titles and left insets.
         dim = DefaultLegendService.legendPreferredSize(titleTemplate, context);
         // Get text pixel size.
@@ -211,22 +211,22 @@ public class LegendSizeTest {
         final int fontHeight = font.getHeight();
         final int fontWidth = font.stringWidth(node1.getName());
         final int gap = (int) titleTemplate.getGapSize();
-        
-        final int legendHeight = 
+
+        final int legendHeight =
                 // node1
                 fontHeight + gap // title
                 + glyphHeight + gap // leaf1
                 + glyphHeight + gap // leaf2
                 // node2
                 + glyphHeight; // leaf1
-        
-        /* Inset multiply 3 times because : 
+
+        /* Inset multiply 3 times because :
          * <-Inset->MapContext
          *          <-Inset->node1
          *                   <-Inset->leaf1
          * ...
          */
-        final int legendWidth  = leftInset*3 + Math.max(fontWidth, glyphWidth); 
+        final int legendWidth  = leftInset*3 + Math.max(fontWidth, glyphWidth);
         assertEquals("Legend width", legendWidth, dim.width);
         assertEquals("Legend height", legendHeight, dim.height);
     }

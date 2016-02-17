@@ -14,10 +14,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.storage.DataStoreException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -28,7 +24,7 @@ import static org.junit.Assert.*;
  *
  * @author geoadmin
  */
-public class MemoryWritingTest {
+public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
 
     private final FeatureType type;
     private final MemoryFeatureStore store;
@@ -44,22 +40,6 @@ public class MemoryWritingTest {
 
         store.createFeatureType(type.getName(), type);
 
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

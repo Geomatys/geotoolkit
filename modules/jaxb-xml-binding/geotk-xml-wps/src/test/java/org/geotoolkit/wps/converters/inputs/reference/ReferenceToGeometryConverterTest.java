@@ -28,8 +28,8 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class ReferenceToGeometryConverterTest {
-    
+public class ReferenceToGeometryConverterTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testJSONConversion() throws IOException {
         Geometry geometry = ConvertersTestUtils.initAndRunInputConversion(ReferenceType.class,

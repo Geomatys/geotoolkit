@@ -39,11 +39,11 @@ import static org.junit.Assert.*;
  * @author Johann Sorel
  * @module pending
  */
-public class StyleModelTest {
+public class StyleModelTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static double DELTA = 0d;
-    
+    private static final double DELTA = 0d;
+
     public StyleModelTest() {
     }
 
@@ -84,7 +84,7 @@ public class StyleModelTest {
         assertEquals(2, model.getChildCount(root));
         assertEquals(symbol1, model.getChild(root, 0));
         assertEquals(symbol2, model.getChild(root, 1));
-        
+
         rule.symbolizers().remove(symbol1);
         assertEquals(1, model.getChildCount(root));
         assertEquals(symbol2, model.getChild(root, 0));
@@ -109,7 +109,7 @@ public class StyleModelTest {
         assertEquals(2, model.getChildCount(root));
         assertEquals(symbol1, model.getChild(root, 0));
         assertEquals(symbol2, model.getChild(root, 1));
-        
+
     }
 
     @Test
@@ -257,7 +257,7 @@ public class StyleModelTest {
         assertEquals(fts3, model.getChild(root, 2));
         assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
         assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
-        
+
         rule1.symbolizers().add(symbol1);
         assertEquals(3, model.getChildCount(root));
         assertEquals(fts1, model.getChild(root, 0));
@@ -278,7 +278,7 @@ public class StyleModelTest {
         assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
         assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
         assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
-        
+
         fts2.semanticTypeIdentifiers().add(SemanticType.ANY);
         fts2.semanticTypeIdentifiers().add(SemanticType.POINT);
         fts2.semanticTypeIdentifiers().add(SemanticType.LINE);

@@ -39,57 +39,57 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ChainProcessTest {
- 
-    private Chain createSimpleChain(){        
+public class ChainProcessTest extends org.geotoolkit.test.TestBase {
+
+    private Chain createSimpleChain(){
         //produce a chain equivalent to :  ($1 + 10) / $2
         final Chain chain = new Chain("myChain");
         int id = 1;
-        
+
         //input/out/constants parameters
         final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
-        final Parameter b = chain.addInputParameter("b", Double.class, "desc",1,1,null);   
-        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);       
-        final Constant c = chain.addConstant(id++, Double.class, 10d);        
-        
+        final Parameter b = chain.addInputParameter("b", Double.class, "desc",1,1,null);
+        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);
+        final Constant c = chain.addConstant(id++, Double.class, 10d);
+
         //chain blocks
         final ElementProcess add = chain.addProcessElement(id++, "demo", "add");
-        final ElementProcess divide = chain.addProcessElement(id++, "demo", "divide");        
-        
+        final ElementProcess divide = chain.addProcessElement(id++, "demo", "divide");
+
         //execution flow links
         chain.addFlowLink(BEGIN.getId(), add.getId());
         chain.addFlowLink(add.getId(), divide.getId());
         chain.addFlowLink(divide.getId(), END.getId());
-        
+
         //data flow links
         chain.addDataLink(BEGIN.getId(), a.getCode(), add.getId(), "first");
         chain.addDataLink(c.getId(), "", add.getId(), "second");
         chain.addDataLink(add.getId(), "result", divide.getId(), "first");
         chain.addDataLink(BEGIN.getId(), b.getCode(), divide.getId(), "second");
         chain.addDataLink(divide.getId(), "result", END.getId(), r.getCode());
-        
+
         return chain;
     }
-    
-    private Chain createBranchChain(){        
+
+    private Chain createBranchChain(){
         //produce a chain equivalent to :  (($a+10) > 20) ? *10 : /10
         final Chain chain = new Chain("branchChain");
         int id = 1;
-        
+
         //input/out/constants parameters
         final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
-        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);       
-        final Constant c10 = chain.addConstant(id++, Double.class, 10d);        
-        
+        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);
+        final Constant c10 = chain.addConstant(id++, Double.class, 10d);
+
         //chain blocks
         final ElementProcess add = chain.addProcessElement(id++, "demo", "add");
-        final ElementProcess multi = chain.addProcessElement(id++, "demo", "multiply");  
-        final ElementProcess divide = chain.addProcessElement(id++, "demo", "divide");        
+        final ElementProcess multi = chain.addProcessElement(id++, "demo", "multiply");
+        final ElementProcess divide = chain.addProcessElement(id++, "demo", "divide");
         final ElementCondition condition = chain.addConditionElement(id++);
         condition.getInputs().add(new Parameter("value", Double.class, "", 1, 1));
         condition.setSyntax("CQL");
         condition.setExpression("value > 20");
-                
+
         //execution flow links
         chain.addFlowLink(BEGIN.getId(), add.getId());
         chain.addFlowLink(add.getId(), condition.getId());
@@ -97,7 +97,7 @@ public class ChainProcessTest {
         final FlowLink fail = chain.addFlowLink(condition.getId(), divide.getId()); condition.getFailed().add(fail);
         chain.addFlowLink(divide.getId(), END.getId());
         chain.addFlowLink(multi.getId(), END.getId());
-        
+
         //data flow links
         chain.addDataLink(c10.getId(), "",    add.getId(), "second");
         chain.addDataLink(c10.getId(), "",  multi.getId(), "second");
@@ -108,126 +108,126 @@ public class ChainProcessTest {
         chain.addDataLink(add.getId(), "result",    divide.getId(), "first");
         chain.addDataLink(divide.getId(), "result", END.getId(), r.getCode());
         chain.addDataLink(multi.getId(),  "result", END.getId(), r.getCode());
-        
+
         return chain;
     }
-    
+
     @Test
     public void testSimpleChain() throws ProcessException{
-        
+
         final Chain chain = createSimpleChain();
-        
+
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
-        
+
         //create a process descriptor to use it like any process.
         final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
-        
-        //input params 
+
+        //input params
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(15d);
         input.parameter("b").setValue(2d);
-        
+
         final Process process = desc.createProcess(input);
         final ParameterValueGroup result = process.call();
-        
+
         assertEquals(12.5d, result.parameter("r").doubleValue(),0.000001);
-        
+
     }
-        
+
     @Test
     public void testSimpleXmlRW() throws ProcessException, JAXBException, IOException{
-        
+
         final Chain before = createSimpleChain();
-        
+
         final File f = File.createTempFile("chain", ".xml");
         before.write(f);
-        
+
         final Chain chain = Chain.read(f);
-        
+
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
-        
+
         //create a process descriptor to use it like any process.
         final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
-        
-        //input params 
+
+        //input params
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(15d);
         input.parameter("b").setValue(2d);
-        
+
         final Process process = desc.createProcess(input);
         final ParameterValueGroup result = process.call();
-        
+
         assertEquals(12.5d, result.parameter("r").doubleValue(),0.000001);
-        
+
     }
-    
+
     @Test
     public void testBranchChain() throws ProcessException{
-        
+
         final Chain chain = createBranchChain();
-        
+
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
-        
+
         //create a process descriptor to use it like any process.
         final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
-        
+
         //input params , condition evaluates to TRUE----------------------------
         ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(15d);
-        
+
         Process process = desc.createProcess(input);
         ParameterValueGroup result = process.call();
-        
+
         assertEquals(250d, result.parameter("r").doubleValue(),0.000001);
-        
+
         //input params , condition evaluates to FALSE---------------------------
         input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(-5d);
-        
+
         process = desc.createProcess(input);
         result = process.call();
-        
+
         assertEquals(0.5d, result.parameter("r").doubleValue(),0.000001);
-        
+
     }
-    
+
     @Test
     public void testBranchXmlRW() throws ProcessException, JAXBException, IOException{
-        
+
         final Chain before = createBranchChain();
-        
+
         final File f = File.createTempFile("chain", ".xml");
         before.write(f);
-        
+
         final Chain chain = Chain.read(f);
-        
+
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
-        
+
         //create a process descriptor to use it like any process.
         final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
-        
+
         //input params , condition evaluates to TRUE----------------------------
         ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(15d);
-        
+
         Process process = desc.createProcess(input);
         ParameterValueGroup result = process.call();
-        
+
         assertEquals(250d, result.parameter("r").doubleValue(),0.000001);
-        
+
         //input params , condition evaluates to FALSE---------------------------
         input = desc.getInputDescriptor().createValue();
         input.parameter("a").setValue(-5d);
-        
+
         process = desc.createProcess(input);
         result = process.call();
-        
+
         assertEquals(0.5d, result.parameter("r").doubleValue(),0.000001);
-        
+
     }
-    
+
 }

@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final strictfp class PaletteFactoryTest {
+public final strictfp class PaletteFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the argument check performed by constructor.
      */

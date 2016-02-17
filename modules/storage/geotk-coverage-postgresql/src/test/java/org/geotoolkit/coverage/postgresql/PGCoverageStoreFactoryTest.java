@@ -24,27 +24,27 @@ import org.junit.Test;
 
 /**
  * Factory tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PGCoverageStoreFactoryTest {
-    
+public class PGCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public PGCoverageStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof PGCoverageStoreFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

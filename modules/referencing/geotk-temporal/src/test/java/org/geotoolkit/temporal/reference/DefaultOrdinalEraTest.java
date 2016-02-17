@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -34,16 +34,16 @@ import org.opengis.temporal.OrdinalEra;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultOrdinalEraTest {
+public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
 
     private OrdinalEra ordinalEra1;
     private OrdinalEra ordinalEra2;
     private Calendar cal = Calendar.getInstance();
     private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
-    
+
     @Before
     public void setUp() {
-        
+
         cal.set(1900, 1, 1);
         Date beginning1 = cal.getTime();
         cal.set(2000, 1, 1);

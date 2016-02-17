@@ -41,7 +41,7 @@ import static org.geotoolkit.test.image.ImageTestBase.getLocallyInstalledFile;
  *
  * @since 3.20 (derived from 3.08)
  */
-public final strictfp class NetcdfAxisTest {
+public final strictfp class NetcdfAxisTest extends org.geotoolkit.test.TestBase {
     /**
      * Small tolerance factor for floating point comparison.
      */

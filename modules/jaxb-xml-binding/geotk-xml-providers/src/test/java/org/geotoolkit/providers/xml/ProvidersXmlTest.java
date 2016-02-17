@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon
  */
-public class ProvidersXmlTest {
+public class ProvidersXmlTest extends org.geotoolkit.test.TestBase {
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller marshaller;

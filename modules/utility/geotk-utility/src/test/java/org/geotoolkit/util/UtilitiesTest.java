@@ -30,7 +30,7 @@ import static java.lang.Double.NaN;
  *
  * @since 2.5
  */
-public final strictfp class UtilitiesTest {
+public final strictfp class UtilitiesTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link Utilities#equals(double, double)}.
      */

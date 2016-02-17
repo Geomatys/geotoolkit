@@ -84,7 +84,7 @@ import org.opengis.referencing.IdentifiedObject;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WmsXmlBindingTest {
+public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
    @BeforeClass
    public static void setTimeZone() {
        TimeZone.setDefault(TimeZone.getTimeZone("CET"));

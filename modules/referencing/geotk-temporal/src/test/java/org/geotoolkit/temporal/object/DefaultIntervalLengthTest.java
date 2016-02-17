@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultIntervalLengthTest {
+public class DefaultIntervalLengthTest extends org.geotoolkit.test.TestBase {
 
     private IntervalLength intervalLength1;
     private IntervalLength intervalLength2;

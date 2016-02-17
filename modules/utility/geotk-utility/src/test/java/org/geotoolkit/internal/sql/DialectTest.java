@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.20 (derived from 3.10)
  */
-public final strictfp class DialectTest {
+public final strictfp class DialectTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link Dialect#createURL(File)} method for the HSQL database.
      *

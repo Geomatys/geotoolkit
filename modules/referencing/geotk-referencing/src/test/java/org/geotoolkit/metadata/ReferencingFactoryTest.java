@@ -48,7 +48,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 3.03
  */
 @DependsOn(FactoryMethodTest.class)
-public final strictfp class ReferencingFactoryTest {
+public final strictfp class ReferencingFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * The metadata factory.
      */

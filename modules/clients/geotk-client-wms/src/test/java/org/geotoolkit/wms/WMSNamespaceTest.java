@@ -32,11 +32,11 @@ import static org.junit.Assert.*;
 
 /**
  * check proper namespace parsing.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSNamespaceTest {
+public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
 
     private final WebMapClient SERVER_111;
     private final WebMapClient SERVER_130;
@@ -51,27 +51,27 @@ public class WMSNamespaceTest {
      */
     @Test
     public void test_v111_GetNames() throws DataStoreException{
-        
+
         final Set<GenericName> names = SERVER_111.getNames();
-        
+
         assertEquals(3, names.size());
         assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
         assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
-        
+
     }
-    
+
     /**
      * This test proper namespace parsing in v1.3.0
      */
     @Test
     public void test_v130_GetNames() throws DataStoreException{
-        
+
         final Set<GenericName> names = SERVER_130.getNames();
-        
+
         assertEquals(3, names.size());
         assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
         assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
-        
+
     }
 
 

@@ -30,8 +30,8 @@ import org.junit.Test;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JTSISOtransformTest {
-    
+public class JTSISOtransformTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void polygonToISOTest() throws Exception {
         GeometryFactory fact = new GeometryFactory();
@@ -41,19 +41,19 @@ public class JTSISOtransformTest {
         coordinates[2] = new Coordinate(1, 1);
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
-        
+
         LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
         Polygon poly = new Polygon(linear, null, fact);
         poly.setSRID(2154);
-        
+
         AbstractGeometry gml = JTStoGeometry.toGML("3.2.1", poly);
         final Geometry geom = GeometrytoJTS.toJTS(gml);
-        
+
          //System.out.println(geom);
         System.out.println("SRID:"+ geom.getSRID());
-        
+
     }
-    
+
     @Test
     public void multiPolygonToISOTest() throws Exception {
         GeometryFactory fact = new GeometryFactory();
@@ -63,34 +63,34 @@ public class JTSISOtransformTest {
         coordinates[2] = new Coordinate(1, 1);
         coordinates[3] = new Coordinate(1, 0);
         coordinates[4] = new Coordinate(0, 0);
-        
+
         LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
         Polygon poly = new Polygon(linear, null, fact);
         poly.setSRID(2154);
-        
+
         final Coordinate[] coordinates2 = new Coordinate[5];
         coordinates2[0] = new Coordinate(10, 10);
         coordinates2[1] = new Coordinate(10, 11);
         coordinates2[2] = new Coordinate(11, 11);
         coordinates2[3] = new Coordinate(11, 10);
         coordinates2[4] = new Coordinate(10, 10);
-        
+
         LinearRing linear2 = new GeometryFactory().createLinearRing(coordinates2);
         Polygon poly2 = new Polygon(linear2, null, fact);
         poly2.setSRID(2154);
-        
+
         Polygon[] polygons = new Polygon[2];
         polygons[0] = poly;
         polygons[1] = poly2;
-        
+
         MultiPolygon m = new MultiPolygon(polygons, fact);
         m.setSRID(2154);
-        
+
         AbstractGeometry gml = JTStoGeometry.toGML("3.2.1", m);
         final Geometry geom = GeometrytoJTS.toJTS(gml);
-        
+
         //System.out.println(geom);
         System.out.println("SRID:"+ geom.getSRID());
-        
+
     }
 }

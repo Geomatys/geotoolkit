@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CalculatedLineStringAttributeTest {
+public class CalculatedLineStringAttributeTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001d;
     private final FeatureFactory FF = FeatureFactory.LENIENT;

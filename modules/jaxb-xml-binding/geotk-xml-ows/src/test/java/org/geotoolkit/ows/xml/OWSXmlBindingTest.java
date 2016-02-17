@@ -46,7 +46,7 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class OWSXmlBindingTest {
+public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 

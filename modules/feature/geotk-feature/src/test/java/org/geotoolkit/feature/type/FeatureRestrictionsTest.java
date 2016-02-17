@@ -33,39 +33,39 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeatureRestrictionsTest {
+public class FeatureRestrictionsTest extends org.geotoolkit.test.TestBase {
 
     private static final FilterFactory FF = new DefaultFilterFactory2();
-    
+
     public FeatureRestrictionsTest() {
     }
 
     @Test
     public void testEqualsRestriction(){
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-        ftb.setName("test");        
+        ftb.setName("test");
         atb.setName("name");
         atb.setBinding(String.class);
         atb.addRestriction(FF.equals(FF.property("."), FF.literal("correct")));
         ftb.add(atb.buildType(), NamesExt.create("name"), null, 1, 1, false, null);
-        
+
         final FeatureType ft = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(ft, "-1");
         feature.getProperty("name").setValue("fail");
-        
+
         try{
             feature.validate();
             fail("Validation should have failed.");
         }catch(Exception ex){
             //fails , ok
         }
-        
+
         feature.getProperty("name").setValue("correct");
         feature.validate();
         //should be ok
-        
+
     }
-    
+
 }

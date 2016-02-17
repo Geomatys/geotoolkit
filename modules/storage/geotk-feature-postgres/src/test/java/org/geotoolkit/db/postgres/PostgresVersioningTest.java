@@ -65,13 +65,13 @@ import org.opengis.filter.identity.FeatureId;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PostgresVersioningTest {
-    
+public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
+
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FeatureType FTYPE_SIMPLE;
     private static final CoordinateReferenceSystem CRS_4326;
-    
+
     static{
         try {
             CRS_4326 = CRS.decode("EPSG:4326",true);
@@ -80,7 +80,7 @@ public class PostgresVersioningTest {
         } catch (FactoryException ex) {
             throw new RuntimeException("Failed to load CRS");
         }
-        
+
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("boolean",  Boolean.class);
@@ -88,21 +88,21 @@ public class PostgresVersioningTest {
         ftb.add("point",    Point.class, CRS_4326);
         ftb.add("string",   String.class);
         FTYPE_SIMPLE = ftb.buildFeatureType();
-        
+
     }
-    
+
     private PostgresFeatureStore store;
-    
+
     public PostgresVersioningTest(){
     }
-    
+
     private static ParameterValueGroup params;
-    
+
     /**
-     * <p>Find JDBC connection parameters in specified file at 
+     * <p>Find JDBC connection parameters in specified file at
      * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
      * If properties file doesn't find all tests are skipped.</p>
-     * 
+     *
      * <p>To lunch tests user should create file with this architecture<br/>
      * for example : <br/>
      * database   = junit    (table name)<br/>
@@ -112,27 +112,27 @@ public class PostgresVersioningTest {
      * password   = postgres (user password)<br/>
      * simpletype = false <br/>
      * namespace  = no namespace</p>
-     * @throws IOException 
+     * @throws IOException
      */
     @BeforeClass
     public static void beforeClass() throws IOException {
         String path = System.getProperty("user.home");
-        path += "/.geotoolkit.org/test-pgfeature.properties";        
+        path += "/.geotoolkit.org/test-pgfeature.properties";
         final File f = new File(path);
-        Assume.assumeTrue(f.exists());        
+        Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
         params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
-    
+
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
             store.close();
         }
-        
+
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
@@ -140,17 +140,17 @@ public class PostgresVersioningTest {
         }
         assertTrue(store.getNames().isEmpty());
         store.close();
-        
+
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         assertTrue(store.getNames().isEmpty());
-        
+
         //delete historisation functions, he must create them himself
         store.dropHSFunctions();
-        
+
     }
-    
+
     @Test
     public void testSimpleTypeVersioning() throws DataStoreException, VersioningException {
         reload(true);
@@ -163,35 +163,35 @@ public class PostgresVersioningTest {
         Version v3;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
+
         //create table
-        final FeatureType refType = FTYPE_SIMPLE;        
-        store.createFeatureType(refType.getName(), refType);        
+        final FeatureType refType = FTYPE_SIMPLE;
+        store.createFeatureType(refType.getName(), refType);
         assertEquals(1, store.getNames().size());
-        
+
         assertNotNull(store.getQueryCapabilities());
         assertTrue(store.getQueryCapabilities().handleVersioning());
-        
-        
+
+
         //get version control
         final VersionControl vc = store.getVersioning(refType.getName());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
-        assertTrue(vc.isVersioned());        
+        assertTrue(vc.isVersioned());
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         //check the version table is not visible in the feature types
         store.refreshMetaModel();
         final Set<GenericName> names = store.getNames();
         assertEquals(1, names.size());
-        
-        
+
+
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
@@ -199,15 +199,15 @@ public class PostgresVersioningTest {
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         store.addFeatures(refType.getName(), Collections.singleton(feature));
-                
+
         //we should have one version
         versions = vc.list();
-        assertEquals(1, versions.size());        
+        assertEquals(1, versions.size());
         version = versions.get(0);
         Date date = version.getDate();
-        
+
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -217,12 +217,12 @@ public class PostgresVersioningTest {
             assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
             assertEquals(14,                feature.getProperty("integer").getValue());
             assertEquals(firstPoint,        feature.getProperty("point").getValue());
-            assertEquals("someteststring",  feature.getProperty("string").getValue());        
+            assertEquals("someteststring",  feature.getProperty("string").getValue());
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         //ensure normal reading is correct with version-------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -237,15 +237,15 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
-        
+
+
         ////////////////////////////////////////////////////////////////////////
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
@@ -254,17 +254,17 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
         updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        
+
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         //we should have two versions
         versions = vc.list();
-        assertEquals(2, versions.size());        
+        assertEquals(2, versions.size());
         v1 = versions.get(0);
         v2 = versions.get(1);
         //should be ordered starting from the oldest
         assertTrue(v1.getDate().compareTo(v2.getDate()) < 0);
-        
+
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -278,7 +278,7 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         //ensure normal reading is correct with version-------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -293,7 +293,7 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         //ensure reading a previous version works ------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -308,7 +308,7 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         //ensure reading a previous version using not exact date----------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -323,42 +323,42 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
-        
+
         store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, store.getCount(qb.buildQuery()));
-        
+
         //we should have three versions
         versions = vc.list();
-        assertEquals(3, versions.size());        
+        assertEquals(3, versions.size());
         v1 = versions.get(0);
         v2 = versions.get(1);
         v3 = versions.get(2);
         //should be ordered starting from the oldest
         assertTrue(v2.getDate().compareTo(v1.getDate()) > 0);
         assertTrue(v3.getDate().compareTo(v2.getDate()) > 0);
-        
+
         //ensure we have nothing if no version set -----------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-                
+
         //ensure we have nothing if latest version set -------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v3.getLabel());
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         //ensure we have nothing with date after deletion ----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionDate(new Date(v3.getDate().getTime()+400));
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         //ensure reading version 1 works ---------------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -373,7 +373,7 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         //ensure reading version 2 works ---------------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -388,28 +388,28 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
         ////////////////////////////////////////////////////////////////////////
         //drop versioning //////////////////////////////////////////////////////
-        
+
         vc.dropVersioning();
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         //ensure we have no record----------------------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
     }
-    
+
     /**
      * Check versions are created on each call on the session.
-     * 
+     *
      * @throws DataStoreException
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Test
     public void testVersioningSynchrone() throws DataStoreException, VersioningException{
@@ -420,19 +420,19 @@ public class PostgresVersioningTest {
         FeatureId fid;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
-        final FeatureType refType = FTYPE_SIMPLE;        
-        store.createFeatureType(refType.getName(), refType);        
+
+        final FeatureType refType = FTYPE_SIMPLE;
+        store.createFeatureType(refType.getName(), refType);
         final VersionControl vc = store.getVersioning(refType.getName());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         final Session session = store.createSession(false);
-        
+
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
@@ -440,34 +440,34 @@ public class PostgresVersioningTest {
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         session.addFeatures(refType.getName(), Collections.singleton(feature));
-                
+
         //we should have one version
         versions = vc.list();
-        assertEquals(1, versions.size());        
+        assertEquals(1, versions.size());
         version = versions.get(0);
         Date date = version.getDate();
-        
+
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = session.getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feature = ite.next();  
+            feature = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
-        
+
+
         ////////////////////////////////////////////////////////////////////////
         //make an update 1 /////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
@@ -475,13 +475,13 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");        
+        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
         session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //make an update 2 /////////////////////////////////////////////////////
         final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
@@ -489,25 +489,25 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
         updates.put(feature.getProperty("integer").getDescriptor(), -89);
         updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");        
+        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");
         session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         //we should have three versions
         versions = vc.list();
         assertEquals(3, versions.size());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
-        
+
         session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, session.getCount(qb.buildQuery()));
-        
+
         //we should have four versions
         versions = vc.list();
         assertEquals(4, versions.size());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
@@ -515,21 +515,21 @@ public class PostgresVersioningTest {
         feature.getProperty("boolean").setValue(Boolean.FALSE);
         feature.getProperty("integer").setValue(22);
         feature.getProperty("point").setValue(fourthPoint);
-        feature.getProperty("string").setValue("fourthupdateString");        
+        feature.getProperty("string").setValue("fourthupdateString");
         session.addFeatures(refType.getName(), Collections.singleton(feature));
-        
+
         //we should have five versions
         versions = vc.list();
         assertEquals(5, versions.size());
-        
-        
+
+
     }
-    
+
     /**
      * Check versions are created only on session commit calls.
-     * 
+     *
      * @throws DataStoreException
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     @Test
     public void testVersioningASynchrone() throws DataStoreException, VersioningException{
@@ -540,19 +540,19 @@ public class PostgresVersioningTest {
         FeatureId fid;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
-        final FeatureType refType = FTYPE_SIMPLE;        
-        store.createFeatureType(refType.getName(), refType);        
+
+        final FeatureType refType = FTYPE_SIMPLE;
+        store.createFeatureType(refType.getName(), refType);
         final VersionControl vc = store.getVersioning(refType.getName());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         final Session session = store.createSession(true);
-        
+
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
@@ -560,40 +560,40 @@ public class PostgresVersioningTest {
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         session.addFeatures(refType.getName(), Collections.singleton(feature));
-                
+
         //we should have 0 version
         versions = vc.list();
         assertEquals(0, versions.size());
-        
+
         session.commit(); // <-- creates a version
-        
+
         //we should have 1 version
         versions = vc.list();
-        assertEquals(1, versions.size());        
+        assertEquals(1, versions.size());
         version = versions.get(0);
         Date date = version.getDate();
-        
+
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = session.getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feature = ite.next();  
+            feature = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
-        
+
+
         ////////////////////////////////////////////////////////////////////////
         //make 2 updates at the time ///////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
@@ -601,31 +601,31 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");        
+        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
         session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         //we should have 1 version
         versions = vc.list();
         assertEquals(1, versions.size());
-        
+
         final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
         updates = new HashMap<PropertyDescriptor, Object>();
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
         updates.put(feature.getProperty("integer").getDescriptor(), -89);
         updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");        
+        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");
         session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         //we should have 1 version
         versions = vc.list();
         assertEquals(1, versions.size());
-        
+
         session.commit();  // <-- creates a version
-        
+
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         //ensure we read the latest --------------------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -639,50 +639,50 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
-        
+
+
         ////////////////////////////////////////////////////////////////////////
         // make delete + insert at the same time ///////////////////////////////
-        
+
         session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, session.getCount(qb.buildQuery()));
-        
+
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
-        
+
         session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, session.getCount(qb.buildQuery()));
-        
+
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.FALSE);
         feature.getProperty("integer").setValue(22);
         feature.getProperty("point").setValue(fourthPoint);
-        feature.getProperty("string").setValue("fourthupdateString");        
+        feature.getProperty("string").setValue("fourthupdateString");
         session.addFeatures(refType.getName(), Collections.singleton(feature));
-        
+
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         session.commit();  // <-- creates a version
-        
+
         //we should have three versions
         versions = vc.list();
         assertEquals(3, versions.size());
-        
+
         //ensure we read the latest --------------------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -696,9 +696,9 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
-        
+
     }
-    
+
     @Test
     public void testTrimVersioning() throws DataStoreException, VersioningException {
         reload(true);
@@ -710,56 +710,56 @@ public class PostgresVersioningTest {
         Version v2;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
+
         //create table
-        final FeatureType refType = FTYPE_SIMPLE;        
-        store.createFeatureType(refType.getName(), refType);        
+        final FeatureType refType = FTYPE_SIMPLE;
+        store.createFeatureType(refType.getName(), refType);
         assertEquals(1, store.getNames().size());
-        
+
         //get version control
         final VersionControl vc = store.getVersioning(refType.getName());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
-        
+
         //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
-        assertTrue(vc.isVersioned());        
+        assertTrue(vc.isVersioned());
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         store.addFeatures(refType.getName(), Collections.singleton(feature));
-        
+
         //we should have one version
         versions = vc.list();
-        assertEquals(1, versions.size());       
-        
+        assertEquals(1, versions.size());
+
         // get identifier
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feature = ite.next();     
+            feature = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-                
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
+
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
         final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
@@ -767,16 +767,16 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
         updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        
+
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
+
         //make a 2nd update ///////////////////////////////////////////////////////
         final Point thirdPoint = GF.createPoint(new Coordinate(145, -221));
         final Map<PropertyDescriptor,Object> updates2 = new HashMap<PropertyDescriptor, Object>();
@@ -784,21 +784,21 @@ public class PostgresVersioningTest {
         updates2.put(feature.getProperty("integer").getDescriptor(), 150);
         updates2.put(feature.getProperty("point").getDescriptor(), thirdPoint);
         updates2.put(feature.getProperty("string").getDescriptor(), "secondtextupdated");
-        
+
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates2);
-        
+
         //get all versions organized in increase dates order.
         versions = vc.list();
         assertEquals(3, versions.size());
         v0 = versions.get(0);
         v1 = versions.get(1);
         v2 = versions.get(2);
-        
-        /* first trim between v1 date and v2 date (named middle date) to verify 
+
+        /* first trim between v1 date and v2 date (named middle date) to verify
          * deletion of first version and update v1 date at trim date.*/
         final Date middle = new Date((v1.getDate().getTime() + v2.getDate().getTime()) >> 1);
         vc.trim(middle);
-        
+
         versions = vc.list();
         assertEquals(2, versions.size());
         //ensure version 0 does not exist
@@ -811,11 +811,11 @@ public class PostgresVersioningTest {
         } catch(FeatureStoreRuntimeException ex) {
             //ok
         }
-        
+
         //ensure version v1 begin at middle date.
         assertEquals(vc.list().get(0).getDate().getTime(), middle.getTime());
-        
-        /* second trim at exactely the begining of the third version to verify, 
+
+        /* second trim at exactely the begining of the third version to verify,
          * deletion of second version and third version existence.*/
         vc.trim(v2);
         versions = vc.list();
@@ -832,8 +832,8 @@ public class PostgresVersioningTest {
         }
         //ensure version v2 begin time doesn't change.
         assertEquals(vc.list().get(0).getDate().getTime(), v2.getDate().getTime());
-        
-        /* third trim just after v3 version date, to verify that v3 
+
+        /* third trim just after v3 version date, to verify that v3
          * version date become trim date */
         final long lastDate = v2.getDate().getTime()+400;
         vc.trim(new Date(lastDate));
@@ -842,7 +842,7 @@ public class PostgresVersioningTest {
         //ensure version v2 begin time become lastDate.
         assertEquals(vc.list().get(0).getDate().getTime(), lastDate);
     }
-    
+
     @Test
     public void testRevertVersioning() throws DataStoreException, VersioningException {
         reload(true);
@@ -854,56 +854,56 @@ public class PostgresVersioningTest {
         Version v2;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
+
         //create table
-        final FeatureType refType = FTYPE_SIMPLE;        
-        store.createFeatureType(refType.getName(), refType);        
+        final FeatureType refType = FTYPE_SIMPLE;
+        store.createFeatureType(refType.getName(), refType);
         assertEquals(1, store.getNames().size());
-        
+
         //get version control
         final VersionControl vc = store.getVersioning(refType.getName());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
-        
+
         //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
-        assertTrue(vc.isVersioned());        
+        assertTrue(vc.isVersioned());
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         store.addFeatures(refType.getName(), Collections.singleton(feature));
-        
+
         //we should have one version
         versions = vc.list();
-        assertEquals(1, versions.size());       
-        
+        assertEquals(1, versions.size());
+
         // get identifier
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feature = ite.next();     
+            feature = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-                
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
+
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
         final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
@@ -911,38 +911,38 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
         updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        
+
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
+
         //make a remove ///////////////////////////////////////////////////////
         store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
-        
+
         //ensure test table is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         //get all versions organized in increase dates order.
         versions = vc.list();
         assertEquals(3, versions.size());
         v0 = versions.get(0);
         v1 = versions.get(1);
         v2 = versions.get(2);
-        
-        /* first revert between v1 date and v2 date (named middle date) to verify 
+
+        /* first revert between v1 date and v2 date (named middle date) to verify
          * re - insertion of feature in the original base and update v2 ending date become null.*/
         final Date middle = new Date((v1.getDate().getTime() + v2.getDate().getTime()) >> 1);// =/2
         vc.revert(middle);
         versions = vc.list();
         assertEquals(2, versions.size());
-        
+
         //ensure version v2 does not exist
         qb.reset();
         qb.setTypeName(refType.getName());
@@ -953,12 +953,12 @@ public class PostgresVersioningTest {
         } catch(FeatureStoreRuntimeException ex) {
             //ok
         }
-        
+
         //ensure test table contain feature from version 1
         qb.reset();
         qb.setTypeName(refType.getName());
         assertFalse(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         Feature featV1;
         Feature feat;
         // feature from test base result.
@@ -966,35 +966,35 @@ public class PostgresVersioningTest {
         qb.setTypeName(refType.getName());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feat = ite.next();     
+            feat = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         // feature from version v1.
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            featV1 = ite.next();     
+            featV1 = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         assertTrue(feat.getProperty("boolean").equals(featV1.getProperty("boolean")));
         assertTrue(feat.getProperty("integer").equals(featV1.getProperty("integer")));
         assertTrue(feat.getProperty("point").equals(featV1.getProperty("point")));
         assertTrue(feat.getProperty("string").equals(featV1.getProperty("string")));
-                
-        /* second revert at v0 begin date to verify update roll back, and verify 
+
+        /* second revert at v0 begin date to verify update roll back, and verify
          * feature update from history table into original base.*/
         vc.revert(v0.getDate());
         versions = vc.list();
         assertEquals(1, versions.size());
-        
+
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
@@ -1004,41 +1004,41 @@ public class PostgresVersioningTest {
         } catch(FeatureStoreRuntimeException ex) {
             //ok
         }
-        
+
         //ensure test table contain feature from version 1
         qb.reset();
         qb.setTypeName(refType.getName());
         assertFalse(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // feature from test base result.
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feat = ite.next();     
+            feat = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         // feature from version v1.
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v0.getLabel());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            featV1 = ite.next();     
+            featV1 = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-        
+
         assertTrue(feat.getProperty("boolean").equals(featV1.getProperty("boolean")));
         assertTrue(feat.getProperty("integer").equals(featV1.getProperty("integer")));
         assertTrue(feat.getProperty("point").equals(featV1.getProperty("point")));
         assertTrue(feat.getProperty("string").equals(featV1.getProperty("string")));
     }
-    
+
     @Test
     public void testDistinctSchema() throws DataStoreException, VersioningException, FileNotFoundException, IOException {
         reload(true);
@@ -1050,109 +1050,109 @@ public class PostgresVersioningTest {
         Version v2;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
-        
-        final FeatureType refType = FTYPE_SIMPLE;     
-        
+
+        final FeatureType refType = FTYPE_SIMPLE;
+
         // ------------------- initialize public2 schema --------------------
         /// creation 2eme table
         PostgresFeatureStore store2;
         final ParameterValueGroup params2  = params.clone();
         params2.parameter("schema").setValue("public2");
         store2 = (PostgresFeatureStore) FeatureStoreFinder.open(params2);
-        
-        //-------------- create schema in public2 schema --------------------   
+
+        //-------------- create schema in public2 schema --------------------
         try{
             store2.getFactory().create(params2);
         } catch (Exception ex) {
             //schema public2 already exist
         }
-        
+
         for(GenericName n : store2.getNames()) {
             VersionControl vc = store2.getVersioning(n);
             vc.dropVersioning();
             store2.deleteFeatureType(n);
         }
         assertTrue(store2.getNames().isEmpty());
-        
-        
+
+
         //delete historisation functions, he must create them himself
         store2.dropHSFunctions();
-        
-        
+
+
         //-------------- create table in public schema --------------------
-        store.createFeatureType(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);
         assertEquals(1, store.getNames().size());
         assertTrue(store2.getNames().isEmpty());
-        
+
         //get version control
         final VersionControl vcP1 = store.getVersioning(refType.getName());
         assertNotNull(vcP1);
         assertTrue(vcP1.isEditable());
         assertFalse(vcP1.isVersioned());
-        
+
         //-------------------- start versioning in public schema ---------------
         vcP1.startVersioning();
-        assertTrue(vcP1.isVersioned());        
+        assertTrue(vcP1.isVersioned());
         versions = vcP1.list();
         assertTrue(versions.isEmpty());
-        
+
         //--------------------- table creation in public2 schema ---------------
         store2.createFeatureType(refType.getName(), refType);
         assertEquals(1, store2.getNames().size());
-        
+
         //get version control
         final VersionControl vcP2 = store2.getVersioning(refType.getName());
         assertNotNull(vcP2);
         assertTrue(vcP2.isEditable());
         assertFalse(vcP2.isVersioned());
-        
+
         //-------------------- start versioning in public schema ---------------
         vcP2.startVersioning();
-        assertTrue(vcP2.isVersioned());        
+        assertTrue(vcP2.isVersioned());
         versions = vcP2.list();
         assertTrue(versions.isEmpty());
-        
-        /* insert, update and delete some elements in public schema and verify 
+
+        /* insert, update and delete some elements in public schema and verify
          * public2 schema stay empty, to verify the 2th schema are actions distincts.*/
-        
+
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
         feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");        
+        feature.getProperty("string").setValue("someteststring");
         store.addFeatures(refType.getName(), Collections.singleton(feature));
-        
+
         // ensure test table in public2 schema is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
-        
+
         //make an update ///////////////////////////////////////////////////////
-        
+
         // get feature to update
         // get identifier
         qb.reset();
         qb.setTypeName(refType.getName());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
-            feature = ite.next();     
+            feature = ite.next();
             fid = feature.getIdentifier();
         }finally{
             ite.close();
         }
-                
+
         try {
             //wait a bit just to have some space between version dates
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             fail(ex.getMessage());
         }
-        
+
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
         final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
@@ -1160,48 +1160,48 @@ public class PostgresVersioningTest {
         updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
         updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
-        
+
         // ensure test table in public2 schema is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
-        
+
         //make a remove ///////////////////////////////////////////////////////
         store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
-        
+
         // ensure test table in public2 schema is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
-        
+
         //get all versions organized in increase dates order.
         versions = vcP1.list();
         assertEquals(3, versions.size());
         v0 = versions.get(0);
         v1 = versions.get(1);
         v2 = versions.get(2);
-        
+
         vcP1.revert(v1.getDate());
         // ensure test table in public2 schema is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
-        
+
         vcP1.trim(v1.getDate());
         // ensure test table in public2 schema is empty
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-        
+
         // ensure history test table in public2 schema is empty
         assertTrue(vcP2.list().isEmpty());
     }

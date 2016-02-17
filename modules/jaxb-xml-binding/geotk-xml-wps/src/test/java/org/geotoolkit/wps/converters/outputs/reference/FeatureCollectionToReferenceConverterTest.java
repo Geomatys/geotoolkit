@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Theo Zozime
  */
-public class FeatureCollectionToReferenceConverterTest {
+public class FeatureCollectionToReferenceConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testJSONConversion() throws DataStoreException, MalformedURLException, IOException, URISyntaxException, FactoryException {

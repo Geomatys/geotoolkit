@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09 (derived from 3.00).
  */
-public final strictfp class StringsTest {
+public final strictfp class StringsTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link Strings#isJavaIdentifier}.
      */

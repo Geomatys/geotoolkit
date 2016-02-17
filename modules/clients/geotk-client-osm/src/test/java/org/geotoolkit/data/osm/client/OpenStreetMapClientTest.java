@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OpenStreetMapClientTest {
+public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
 
     private final OpenStreetMapClient server;
 

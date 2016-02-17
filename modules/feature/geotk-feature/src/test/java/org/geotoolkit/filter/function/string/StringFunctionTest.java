@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.filter.function.string;
 
-
-import org.geotoolkit.test.Commons;
 import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
@@ -32,7 +30,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StringFunctionTest {
+public class StringFunctionTest extends org.geotoolkit.test.TestBase {
 
 
     public StringFunctionTest() {

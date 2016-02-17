@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.client;
 
-import org.geotoolkit.client.RequestsUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.opengis.geometry.Envelope;
@@ -29,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Legal Guilhem (Geomatys)
  */
-public class RequestsUtilitiesTest {
+public class RequestsUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

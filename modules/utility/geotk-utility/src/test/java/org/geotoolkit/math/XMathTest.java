@@ -29,7 +29,7 @@ import static org.geotoolkit.math.XMath.roll;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class XMathTest {
+public final strictfp class XMathTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link XMath#roll} method.
      */

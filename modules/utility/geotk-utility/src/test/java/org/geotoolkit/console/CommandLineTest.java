@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class CommandLineTest {
+public final strictfp class CommandLineTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests with all arguments set.
      */

@@ -34,7 +34,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-public final strictfp class WKTFormatTest {
+public final strictfp class WKTFormatTest extends org.geotoolkit.test.TestBase {
     /**
      * Parses a coordinate operation.
      *

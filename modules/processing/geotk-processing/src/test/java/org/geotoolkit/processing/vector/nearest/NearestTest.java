@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class NearestTest extends AbstractProcessTest{
+public class NearestTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -100,7 +100,7 @@ public class NearestTest extends AbstractProcessTest{
     private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
-        
+
         final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
@@ -144,7 +144,7 @@ public class NearestTest extends AbstractProcessTest{
     private static FeatureCollection buildResultList() throws FactoryException {
 
         type = createSimpleType();
-      
+
         final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4");

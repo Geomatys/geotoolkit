@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class ComplexToFeatureCollectionConverterTest {
+public class ComplexToFeatureCollectionConverterTest extends org.geotoolkit.test.TestBase {
 
 
     /**

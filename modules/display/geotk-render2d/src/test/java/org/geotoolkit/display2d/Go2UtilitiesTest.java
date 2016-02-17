@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class Go2UtilitiesTest {
+public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.0000001d;
 

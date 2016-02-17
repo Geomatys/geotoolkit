@@ -30,7 +30,7 @@ import org.opengis.coverage.Coverage;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class WPSIOTest {
+public class WPSIOTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void isSupportedClass() throws UnconvertibleObjectException {

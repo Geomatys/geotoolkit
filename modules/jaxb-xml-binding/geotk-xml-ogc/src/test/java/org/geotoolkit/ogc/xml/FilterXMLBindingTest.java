@@ -66,7 +66,7 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class FilterXMLBindingTest {
+public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
@@ -148,8 +148,8 @@ public class FilterXMLBindingTest {
         sw = new StringWriter();
         marshaller.marshal(filter2, sw);
         result = sw.toString();
-        
-        expResult = 
+
+        expResult =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\" xmlns:ns8=\"http://www.opengis.net/gml\">\n" +
                 "  <fes:BBOX>\n" +
@@ -160,7 +160,7 @@ public class FilterXMLBindingTest {
                 "    </ns8:Envelope>\n" +
                 "  </fes:BBOX>\n" +
                 "</fes:Filter>";
-        
+
         assertXmlEquals(expResult, result, "xmlns:*");
 
         /*--------------------------------------------*/
@@ -190,16 +190,16 @@ public class FilterXMLBindingTest {
         sw = new StringWriter();
         marshaller.marshal(filter3, sw);
         result = sw.toString();
-        
-        expResult = 
+
+        expResult =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
                 "  <fes:BBOX>\n" +
                 "    <fes:ValueReference>boundingBox</fes:ValueReference>$test</fes:BBOX>\n" +
                 "</fes:Filter>";
-        
+
         assertXmlEquals(expResult, result, "xmlns:*");
-        
+
 
         TimeAfterType filterAfter = new TimeAfterType("boundingBox", "$test");
         org.geotoolkit.ogc.xml.v200.FilterType filter4 = new org.geotoolkit.ogc.xml.v200.FilterType(filterAfter);
@@ -207,16 +207,16 @@ public class FilterXMLBindingTest {
         sw = new StringWriter();
         marshaller.marshal(filter4, sw);
         result = sw.toString();
-        
-        expResult = 
+
+        expResult =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<fes:Filter xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
                 "  <fes:After>\n" +
                 "    <fes:ValueReference>boundingBox</fes:ValueReference>$test</fes:After>\n" +
                 "</fes:Filter>";
-        
+
         assertXmlEquals(expResult, result, "xmlns:*");
-        
+
 
         final org.geotoolkit.gml.xml.v321.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
         final org.geotoolkit.ogc.xml.v200.ObjectFactory fesFactory = new org.geotoolkit.ogc.xml.v200.ObjectFactory();
@@ -233,12 +233,12 @@ public class FilterXMLBindingTest {
         upper.setExpression(fesFactory.createLiteral(upplit));
         pes.setUpperBoundary(upper);
         org.geotoolkit.ogc.xml.v200.FilterType filter5 = new org.geotoolkit.ogc.xml.v200.FilterType(pes);
-        
+
         sw = new StringWriter();
         marshaller.marshal(filter5, sw);
         result = sw.toString();
-        
-        expResult = 
+
+        expResult =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<fes:Filter xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:fes=\"http://www.opengis.net/fes/2.0\">\n" +
                 "  <fes:PropertyIsBetween>\n" +
@@ -259,7 +259,7 @@ public class FilterXMLBindingTest {
                 "    </fes:UpperBoundary>\n" +
                 "  </fes:PropertyIsBetween>\n" +
                 "</fes:Filter>";
-        
+
         assertXmlEquals(expResult, result, "xmlns:*");
     }
 
@@ -390,9 +390,9 @@ public class FilterXMLBindingTest {
 
         assertEquals(expResult2.getTemporalOps().getValue(), result2.getTemporalOps().getValue());
         assertEquals(expResult2, result2);
-        
-        
-        xml = 
+
+
+        xml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<fes:Filter xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmi=\"http://www.isotc211.org/2005/gmi\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ns8=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:fes=\"http://www.opengis.net/fes/2.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\">\n" +
             "  <fes:PropertyIsBetween>\n" +
@@ -400,7 +400,7 @@ public class FilterXMLBindingTest {
             "    <fes:LowerBoundary>\n" +
             "      <fes:Literal><gml:TimeInstant>\n" +
             "          <gml:timePosition>2002</gml:timePosition>\n" +
-            "        </gml:TimeInstant></fes:Literal>\n" + 
+            "        </gml:TimeInstant></fes:Literal>\n" +
             "    </fes:LowerBoundary>\n" +
             "    <fes:UpperBoundary>\n" +
             "      <fes:Literal><gml:TimeInstant>\n" +
@@ -434,7 +434,7 @@ public class FilterXMLBindingTest {
 
         assertTrue(result3.getComparisonOps().getValue() instanceof PropertyIsBetweenType);
         PropertyIsBetweenType resPes = (PropertyIsBetweenType) result3.getComparisonOps().getValue();
-        
+
         assertEquals(expPes.getUpperBoundary(), resPes.getUpperBoundary());
         assertEquals(expPes.getLowerBoundary(), resPes.getLowerBoundary());
         assertEquals(expPes, resPes);

@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Theo Zozime
  */
-public class FeatureToComplexConverterTest {
+public class FeatureToComplexConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testJSONConversion() throws DataStoreException, IOException, URISyntaxException, FactoryException {

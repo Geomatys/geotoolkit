@@ -36,16 +36,16 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Test reformat process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class ReformatTest {
-    
+public class ReformatTest extends org.geotoolkit.test.TestBase {
+
     private static final double DELTA = 0.00000001;
-    
+
     @Test
     public void testIntToDouble() throws NoSuchIdentifierException, ProcessException{
-        
+
         final BufferedImage inputImage = new BufferedImage(100, 20, BufferedImage.TYPE_3BYTE_BGR);
         final Graphics2D g = inputImage.createGraphics();
         g.setColor(Color.RED);
@@ -56,19 +56,19 @@ public class ReformatTest {
         g.fillRect(0, 10, 50, 10);
         g.setColor(Color.BLACK);
         g.fillRect(50, 10, 50, 10);
-        
+
         final SampleModel inSampleModel = inputImage.getSampleModel();
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "reformat");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("image").setValue(inputImage);
         params.parameter("datatype").setValue(DataBuffer.TYPE_DOUBLE);
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result coverage
         final RenderedImage outImage = (RenderedImage) result.parameter("result").getValue();
         final SampleModel outSampleModel = outImage.getSampleModel();
@@ -77,7 +77,7 @@ public class ReformatTest {
         assertEquals(inSampleModel.getNumBands(), outSampleModel.getNumBands());
         assertEquals(DataBuffer.TYPE_DOUBLE, outSampleModel.getDataType());
         assertFalse(inSampleModel.getDataType() == outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final double[] sample = new double[3];
@@ -95,7 +95,7 @@ public class ReformatTest {
                 }
             }
         }
-        
+
     }
 
     @Test

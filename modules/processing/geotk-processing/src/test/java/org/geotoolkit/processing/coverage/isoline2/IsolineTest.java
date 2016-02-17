@@ -43,15 +43,15 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IsolineTest {
-    
+public class IsolineTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void test() throws Exception{
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(new float[][]{
@@ -62,8 +62,8 @@ public class IsolineTest {
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
-        
-        
+
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
@@ -75,17 +75,17 @@ public class IsolineTest {
         for(Feature f : col){
             System.out.println(f);
         }
-        
-        
+
+
     }
-    
+
     @Test
     public void test2() throws Exception{
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(new float[][]{
@@ -96,8 +96,8 @@ public class IsolineTest {
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
-        
-        
+
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
@@ -109,16 +109,16 @@ public class IsolineTest {
         for(Feature f : col){
             System.out.println(f);
         }
-        
+
     }
-    
+
     @Test
     public void test3() throws Exception{
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(new float[][]{
@@ -130,8 +130,8 @@ public class IsolineTest {
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
-        
-        
+
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
@@ -143,7 +143,7 @@ public class IsolineTest {
         for(Feature f : col){
             System.out.println(f);
         }
-                
+
     }
 
 

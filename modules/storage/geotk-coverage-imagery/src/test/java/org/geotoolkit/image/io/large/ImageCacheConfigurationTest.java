@@ -8,7 +8,7 @@ import java.util.Properties;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class ImageCacheConfigurationTest {
+public class ImageCacheConfigurationTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void readMemorySize() {

@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class AvgTest extends AbstractProcessTest{
+public class AvgTest extends AbstractProcessTest {
 
 
     public AvgTest() {
@@ -43,11 +43,11 @@ public class AvgTest extends AbstractProcessTest{
     public void testSum() throws NoSuchIdentifierException, ProcessException {
 
         // Inputs first
-        final Double[] set = {new Double(15.5), 
-                              new Double(10.02), 
-                              new Double(1.43), 
-                              new Double(-3.03), 
-                              new Double(4.53), 
+        final Double[] set = {new Double(15.5),
+                              new Double(10.02),
+                              new Double(1.43),
+                              new Double(-3.03),
+                              new Double(4.53),
                               new Double(-6.21)};
 
         // Process
@@ -59,8 +59,8 @@ public class AvgTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(3.7066, result.doubleValue(), 0.0001);
     }
-    
+
 }

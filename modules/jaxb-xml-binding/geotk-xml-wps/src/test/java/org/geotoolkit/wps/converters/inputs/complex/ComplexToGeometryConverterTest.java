@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Théo Zozime
  */
-public class ComplexToGeometryConverterTest {
+public class ComplexToGeometryConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testJSONConversion() throws IOException {
@@ -39,7 +39,7 @@ public class ComplexToGeometryConverterTest {
                                                     WPSMimeType.APP_GEOJSON.val(),
                                                     WPSEncoding.UTF8.getValue(),
                                                     null);
-        
+
         ConvertersTestUtils.assertGeometryIsValid(geometry);
     }
 }

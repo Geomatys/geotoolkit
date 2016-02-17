@@ -39,7 +39,7 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class SkosXmlBindingTest {
+public class SkosXmlBindingTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.skos");
 

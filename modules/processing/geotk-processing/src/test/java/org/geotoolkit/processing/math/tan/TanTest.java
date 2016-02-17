@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class TanTest extends AbstractProcessTest{
+public class TanTest extends AbstractProcessTest {
 
 
     public TanTest() {
@@ -57,5 +57,5 @@ public class TanTest extends AbstractProcessTest{
 
         assertEquals(0.7445, result.doubleValue(), 0.0001);
     }
-    
+
 }

@@ -41,10 +41,6 @@ import org.geotoolkit.data.kml.model.StyleMap;
 import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.xml.KmlReader;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.geotoolkit.feature.Feature;
@@ -57,28 +53,12 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class StyleMapTest {
+public class StyleMapTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/styleMap.kml";
 
     public StyleMapTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -160,7 +140,7 @@ public class StyleMapTest {
             assertEquals(0, coordinate.z, DELTA);
 
         }
-        
+
     }
 
     @Test

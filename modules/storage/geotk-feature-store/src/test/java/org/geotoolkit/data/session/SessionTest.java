@@ -62,7 +62,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SessionTest{
+public class SessionTest extends org.geotoolkit.test.TestBase {
 
     private static final double TOLERANCE = 1e-7;
 
@@ -144,7 +144,7 @@ public class SessionTest{
         final GenericName name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;
-        
+
         //create an asynchrone session
         final Session session = store.createSession(true);
 

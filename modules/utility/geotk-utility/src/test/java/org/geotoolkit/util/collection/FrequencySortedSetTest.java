@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final strictfp class FrequencySortedSetTest {
+public final strictfp class FrequencySortedSetTest extends org.geotoolkit.test.TestBase {
     /**
      * A simple case with only two elements, the first one being omitted.
      */

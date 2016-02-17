@@ -23,7 +23,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
  * @author Quentin Boileau
  * @module pending
  */
-public class RetypeTest extends AbstractProcessTest{
+public class RetypeTest extends AbstractProcessTest {
 
     public RetypeTest() {
         super("retype");

@@ -1,7 +1,7 @@
 ///*
 // *    Geotoolkit - An Open Source Java GIS Toolkit
 // *    http://www.geotoolkit.org
-// * 
+// *
 // *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
 // *    (C) 2009, Geomatys
 // *
@@ -35,7 +35,7 @@
 // * @author Mehdi Sidhoum (Geomatys)
 // * @module pending
 // */
-//public class DefaultPositionTest {
+//public class DefaultPositionTest extends org.geotoolkit.test.TestBase {
 //
 //    private Position position1;
 //    private Position position2;

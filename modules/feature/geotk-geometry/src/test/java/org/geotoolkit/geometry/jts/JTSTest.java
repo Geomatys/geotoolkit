@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class JTSTest {
+public class JTSTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -75,8 +75,8 @@ public class JTSTest {
         assertEquals(crs, values.get(HintsPending.JTS_GEOMETRY_CRS));
 
     }
-    
-    
+
+
     @Test
     public void testCCW(){
 
@@ -88,14 +88,14 @@ public class JTSTest {
             new Coordinate(28, 30),
             new Coordinate(50, 27)
                 });
-        
+
         final Polygon poly = GF.createPolygon(ring, null);
         final Geometry returnedGeom = JTS.ensureCounterClockWise(poly);
         assertTrue(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
-        
+
     }
-    
-    
+
+
      @Test
     public void testCW(){
 
@@ -107,15 +107,15 @@ public class JTSTest {
             new Coordinate(25, 15),
             new Coordinate(50, 27)
                 });
-        
+
         final Polygon poly = GF.createPolygon(ring, null);
-        
+
         final Geometry returnedGeom = JTS.ensureClockWise(poly);
-        
+
         assertFalse(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
-        
+
     }
-     
+
      @Test
     public void testCCW3D(){
 
@@ -127,14 +127,14 @@ public class JTSTest {
             new Coordinate(0, 10, 0),
             new Coordinate(10, 0, 0)
                 });
-        
+
         final Polygon poly = GF.createPolygon(ring, null);
         final Geometry returnedGeom = JTS.ensureCounterClockWise3D(poly);
         assertTrue(JTS.isCCW3D(returnedGeom.getCoordinates()));
-        
+
     }
-    
-    
+
+
      @Test
     public void testCW3D(){
 
@@ -146,10 +146,10 @@ public class JTSTest {
             new Coordinate(10, 0, 10),
             new Coordinate(10, 0, 0)
                 });
-        
+
         final Polygon poly = GF.createPolygon(ring, null);
         final Geometry returnedGeom = JTS.ensureClockWise3D(poly);
         assertFalse(JTS.isCCW3D(returnedGeom.getCoordinates()));
-        
+
     }
 }

@@ -36,30 +36,30 @@ import static org.geotoolkit.test.Assert.*;
 
 /**
  * Test mapfile reader
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ReaderTest {
+public class ReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     public ReaderTest() {
     }
 
     @Test
     public void testIsEqualTo() throws IOException {
-        
+
         final URL resource = ReaderTest.class.getResource("/org/geotoolkit/mapfile/sample.map");
         final MapfileReader reader = new MapfileReader();
         reader.setInput(resource);
-        
+
         final Feature feature = reader.read();
         assertNotNull(feature);
         assertEquals(MapfileTypes.MAP, feature.getType());
-        
-                
+
+
 //check values
 //╔════════════════════════════════════════════════════╤══════════════════════════════════════════════════════════╗
 //║ name                                               │  value                                                   ║
@@ -77,7 +77,7 @@ public class ReaderTest {
         assertEquals("fonts.lst",                       feature.getProperty("FONTSET").getValue());
         assertEquals(new Color(150, 180, 200),          feature.getProperty("IMAGECOLOR").getValue());
         assertEquals("png",                             feature.getProperty("IMAGETYPE").getValue());
-        
+
 //║   ├─{http://mapserver.org}LAYER[0]                 │                                                          ║
 //║   │   ├─{http://mapserver.org}CLASS                │                                                          ║
 //║   │   │   └─{http://mapserver.org}STYLE            │                                                          ║
@@ -92,11 +92,11 @@ public class ReaderTest {
 //║   │   ├─{http://mapserver.org}STATUS               │ ON                                                       ║
 //║   │   └─{http://mapserver.org}TYPE                 │ LINE                                                     ║
         final Collection<Property> layers = feature.getProperties("LAYER");
-        assertEquals(2, layers.size());        
-        
+        assertEquals(2, layers.size());
+
         ComplexAttribute layer = (ComplexAttribute) layers.iterator().next();
         assertEquals(MapfileTypes.LAYER,                layer.getType());
-        assertEquals(9,                                 layer.getProperties().size()); 
+        assertEquals(9,                                 layer.getProperties().size());
         assertEquals("data/boundaries.shp",             layer.getProperty("DATA").getValue());
         assertEquals("default",                         layer.getProperty("GROUP").getValue());
         assertEquals(9.9999999999E10d ,                 layer.getProperty("MAXSCALEDENOM").getValue());
@@ -105,19 +105,19 @@ public class ReaderTest {
         assertEquals("null\"+init=epsg:4326\"",         layer.getProperty("PROJECTION").getValue());
         assertEquals("ON",                              layer.getProperty("STATUS").getValue());
         assertEquals("LINE",                            layer.getProperty("TYPE").getValue());
-                
-        ComplexAttribute clazz = (ComplexAttribute) layer.getProperty("CLASS");    
+
+        ComplexAttribute clazz = (ComplexAttribute) layer.getProperty("CLASS");
         assertEquals(MapfileTypes.CLASS,                clazz.getType());
-        assertEquals(1,                                 clazz.getProperties().size()); 
-        
-        ComplexAttribute style = (ComplexAttribute) clazz.getProperty("STYLE");    
-        assertEquals(MapfileTypes.STYLE,                style.getType());        
-        assertEquals(2,                                 style.getProperties().size()); 
+        assertEquals(1,                                 clazz.getProperties().size());
+
+        ComplexAttribute style = (ComplexAttribute) clazz.getProperty("STYLE");
+        assertEquals(MapfileTypes.STYLE,                style.getType());
+        assertEquals(2,                                 style.getProperties().size());
         assertEquals(FF.literal("#CDCBC6"),             style.getProperty("COLOR").getValue());
-        assertEquals(FF.literal(0.5),                   style.getProperty("WIDTH").getValue());  
-                
-        
-        
+        assertEquals(FF.literal(0.5),                   style.getProperty("WIDTH").getValue());
+
+
+
 //║   ├─{http://mapserver.org}LAYER[1]                 │                                                          ║
 //║   │   ├─{http://mapserver.org}CLASS                │                                                          ║
 //║   │   │   ├─{http://mapserver.org}EXPRESSION       │ 'continents'                                             ║
@@ -148,7 +148,7 @@ public class ReaderTest {
         ite.next();
         layer = (ComplexAttribute) ite.next();
         assertEquals(MapfileTypes.LAYER,                layer.getType());
-        assertEquals(12,                                layer.getProperties().size()); 
+        assertEquals(12,                                layer.getProperties().size());
         assertEquals(FF.property("type"),               layer.getProperty("CLASSITEM").getValue());
         assertEquals("host=server dbname=osm user=me password=secret port=5432",layer.getProperty("CONNECTION").getValue());
         assertEquals("postgis",                         layer.getProperty("CONNECTIONTYPE").getValue());
@@ -160,28 +160,28 @@ public class ReaderTest {
         assertEquals("places0",                         layer.getProperty("NAME").getValue());
         assertEquals("ON",                              layer.getProperty("STATUS").getValue());
         assertEquals("ANNOTATION",                      layer.getProperty("TYPE").getValue());
-                
-        clazz = (ComplexAttribute) layer.getProperty("CLASS");    
+
+        clazz = (ComplexAttribute) layer.getProperty("CLASS");
         assertEquals(MapfileTypes.CLASS,                clazz.getType());
-        assertEquals(2,                                 clazz.getProperties().size()); 
+        assertEquals(2,                                 clazz.getProperties().size());
         assertEquals("continents",                      clazz.getProperty("EXPRESSION").getValue());
-        
-        ComplexAttribute label = (ComplexAttribute) clazz.getProperty("LABEL");    
-        assertEquals(MapfileTypes.LABEL,                label.getType());        
-        assertEquals(10,                                label.getProperties().size()); 
+
+        ComplexAttribute label = (ComplexAttribute) clazz.getProperty("LABEL");
+        assertEquals(MapfileTypes.LABEL,                label.getType());
+        assertEquals(10,                                label.getProperties().size());
         assertEquals(4,                                 label.getProperty("BUFFER").getValue());
-        assertEquals(SF.literal(new Color(100,100,100)),label.getProperty("COLOR").getValue());  
-        assertEquals("utf-8",                           label.getProperty("ENCODING").getValue());  
-        assertEquals("scb",                             label.getProperty("FONT").getValue());  
-        assertEquals(SF.literal(Color.WHITE),           label.getProperty("OUTLINECOLOR").getValue());  
-        assertEquals(1,                                 label.getProperty("OUTLINEWIDTH").getValue());  
-        assertEquals(false,                             label.getProperty("PARTIALS").getValue());  
-        assertEquals("cc",                              label.getProperty("POSITION").getValue());  
+        assertEquals(SF.literal(new Color(100,100,100)),label.getProperty("COLOR").getValue());
+        assertEquals("utf-8",                           label.getProperty("ENCODING").getValue());
+        assertEquals("scb",                             label.getProperty("FONT").getValue());
+        assertEquals(SF.literal(Color.WHITE),           label.getProperty("OUTLINECOLOR").getValue());
+        assertEquals(1,                                 label.getProperty("OUTLINEWIDTH").getValue());
+        assertEquals(false,                             label.getProperty("PARTIALS").getValue());
+        assertEquals("cc",                              label.getProperty("POSITION").getValue());
         assertEquals(FF.literal(8),                     label.getProperty("SIZE").getValue());
-        assertEquals("TRUETYPE",                        label.getProperty("TYPE").getValue());  
-        
-        
-        
+        assertEquals("TRUETYPE",                        label.getProperty("TYPE").getValue());
+
+
+
 //║   ├─{http://mapserver.org}MAXSIZE                  │ 4000                                                     ║
 //║   ├─{http://mapserver.org}PROJECTION               │ null"init=epsg:3857"                                     ║
 //║   ├─{http://mapserver.org}SIZE                     │ 800 800                                                  ║
@@ -190,20 +190,20 @@ public class ReaderTest {
         assertEquals("null\"init=epsg:3857\"",          feature.getProperty("PROJECTION").getValue());
         assertEquals("800 800",                         feature.getProperty("SIZE").getValue());
         assertEquals("meters",                          feature.getProperty("UNITS").getValue());
-        
-        
+
+
 //║   ├─{http://mapserver.org}WEB                      │                                                          ║
 //║   │   ├─{http://mapserver.org}IMAGEPATH            │ /opt/mapserver/htdocs/tmp/                               ║
 //║   │   ├─{http://mapserver.org}IMAGEURL             │ /tmp                                                     ║
 //║   │   └─{http://mapserver.org}METADATA             │ null"ows_enable_request" "*"                             ║
 //╚════════════════════════════════════════════════════╧══════════════════════════════════════════════════════════╝
-        ComplexAttribute web = (ComplexAttribute) feature.getProperty("WEB");    
-        assertEquals(MapfileTypes.WEB,                  web.getType());        
-        assertEquals(3,                                 web.getProperties().size()); 
+        ComplexAttribute web = (ComplexAttribute) feature.getProperty("WEB");
+        assertEquals(MapfileTypes.WEB,                  web.getType());
+        assertEquals(3,                                 web.getProperties().size());
         assertEquals("/opt/mapserver/htdocs/tmp/",      web.getProperty("IMAGEPATH").getValue());
-        assertEquals("/tmp",                            web.getProperty("IMAGEURL").getValue());  
-        assertEquals("null\"ows_enable_request\" \"*\"",web.getProperty("METADATA").getValue());  
-        
+        assertEquals("/tmp",                            web.getProperty("IMAGEURL").getValue());
+        assertEquals("null\"ows_enable_request\" \"*\"",web.getProperty("METADATA").getValue());
+
     }
 
 }

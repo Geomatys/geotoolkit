@@ -53,7 +53,7 @@ import static org.apache.sis.test.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class SweXMLBindingTest {
+public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

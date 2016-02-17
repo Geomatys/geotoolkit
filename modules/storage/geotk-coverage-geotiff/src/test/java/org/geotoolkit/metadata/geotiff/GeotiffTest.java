@@ -55,18 +55,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class GeotiffTest {
-    
+public class GeotiffTest extends org.geotoolkit.test.TestBase {
+
     /**
      * Temporary directory where test file are written.
      */
     private final File directory;
-    
+
     /**
      * Needed writer to test multiple no Data writing.
      */
     private final TiffImageWriter writer = new TiffImageWriter(null);
-    
+
     /**
      * Needed Reader to test multiple no Data reading.
      */
@@ -76,7 +76,7 @@ public class GeotiffTest {
         directory = new File(System.getProperty("java.io.tmpdir")+"/geotiffTest/");
         directory.mkdirs();
     }
-    
+
     /**
      * Close Reader / Writer.
      */
@@ -86,7 +86,7 @@ public class GeotiffTest {
         reader.dispose();
         cleanFiles();
     }
-    
+
     /**
      * Improve Reader / Writer to write and read multiple noData values.
      * Test noData with 2 values out of sample interval boundary,
@@ -98,7 +98,7 @@ public class GeotiffTest {
      */
     @Test
     public void noDataTest() throws IOException {
-        
+
         final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.Byte, 3);
         final IIOMetadataNode root       = new IIOMetadataNode(TAG_GEOTIFF_IFD);
         final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(root);
@@ -110,39 +110,39 @@ public class GeotiffTest {
         stack.setNoData("254.0");
         stack.setNoData("255.0");
         stack.flush();
-        
+
         final File filTest = File.createTempFile("multipleNodata", "tiff", directory);
         filTest.mkdirs();
         writer.setOutput(filTest);
         final IIOImage img = new IIOImage(testedImg, null, new IIOTiffMetadata(root));
         writer.write(img);
         writer.dispose();
-        
+
         reader.setInput(filTest);
         SpatialMetadata sm = reader.getImageMetadata(0);
         reader.dispose();
-        
+
         final DimensionAccessor dimAccess    = new DimensionAccessor(sm);
         final List<GridSampleDimension> sDim = dimAccess.getGridSampleDimensions();
         assertEquals("gridSampleDimension number", 3, sDim.size());
-        
+
         final GridSampleDimension gsd   = sDim.get(0);
         final List<Category> categories = gsd.getCategories();
-        
+
         assertEquals("categories number", 7, categories.size());
-        
+
         //-- expected number range array
         //-- [0 ; 0], [1 ; 1], ]1 ; 128[, [128 ; 128], ]128 ; 254[, [254 ; 254], [255 ; 255]
         //-- in category specification all getted value are inclusive
-        //-- expected array become : 
+        //-- expected array become :
         final double[] expectedArray = new double[]{0,   0, //-- 7 categories
-                                                    1,   1, 
-                                                    2,   127, 
-                                                    128, 128, 
-                                                    129, 253, 
-                                                    254, 254, 
-                                                    255, 255}; 
-        
+                                                    1,   1,
+                                                    2,   127,
+                                                    128, 128,
+                                                    129, 253,
+                                                    254, 254,
+                                                    255, 255};
+
         final double[] foundArray = new double[14];
         int fAId = 0;
         for (final Category cat : categories) {
@@ -152,59 +152,59 @@ public class GeotiffTest {
         }
         assertArrayEquals(expectedArray, foundArray, 1E-12);
     }
-    
+
     /**
      * Improve Reader / Writer to write and read date in tiff format.
-     * 
-     * @throws IOException if problem during 
+     *
+     * @throws IOException if problem during
      */
     @Test
     public void temporalTest() throws IOException {
-        
+
         final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.Byte, 3);
-        
-        //-- temporal CRS 
+
+        //-- temporal CRS
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, "TemporalReferenceSystem");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(org.opengis.referencing.IdentifiedObject.NAME_KEY, name);
-        
+
         final CoordinateReferenceSystem crsSource = new DefaultCompoundCRS(properties, CommonCRS.WGS84.geographic(), CommonCRS.Temporal.JAVA.crs());
-        
+
         final SpatialMetadata sm = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
-        
+
         final ReferencingBuilder builder = new ReferencingBuilder(sm);
                 builder.setCoordinateReferenceSystem(crsSource);
-        
-        
+
+
         final long time = System.currentTimeMillis();
-        
+
         final double[] origin = new double[]{-45, -45, time};
         final double[] envMax = new double[]{45, 45, System.currentTimeMillis()};
         final int[] high = new int[]{1, 1, 1};
-        
+
         final GridDomainAccessor accessor = new GridDomainAccessor(sm);
         accessor.setRectifiedGridDomain(origin, envMax, null, high, null, false);
         accessor.setSpatialRepresentation(origin, envMax, null, PixelOrientation.UPPER_LEFT);
-        
+
         final File filTest = File.createTempFile("dateTest", "tiff", directory);
         filTest.mkdirs();
         writer.setOutput(filTest);
         final IIOImage img = new IIOImage(testedImg, null, sm);
         writer.write(img);
         writer.dispose();
-        
+
         reader.setInput(filTest);
         SpatialMetadata readerMeth = reader.getImageMetadata(0);
         reader.dispose();
-        
+
         final GridDomainAccessor gda = new GridDomainAccessor(readerMeth);
         final double[] outDate       = gda.getAttributeAsDoubles("origin", false);
         //-- date truncated at second and time exprimate in milli second
         //-- tolerance at 1000 to avoid milli second from truncature.
         assertEquals(time, outDate[2], 1E3);
-        
+
     }
-    
+
     /**
      * Clean temporary directory from generated files test.
      */

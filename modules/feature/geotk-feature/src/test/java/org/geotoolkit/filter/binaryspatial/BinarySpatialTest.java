@@ -44,7 +44,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class BinarySpatialTest {
+public class BinarySpatialTest extends org.geotoolkit.test.TestBase {
 
     private final Geometry GEOM_DISTANCE_1;
     private final Geometry GEOM_DISTANCE_3;
@@ -52,7 +52,7 @@ public class BinarySpatialTest {
     private final Geometry GEOM_CONTAINS;
     private final Geometry GEOM_CROSSES;
     private final Geometry GEOM_TOUCHES;
-    
+
     public BinarySpatialTest() {
         Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(5, 1);
@@ -132,7 +132,7 @@ public class BinarySpatialTest {
 
         contains = FF.contains(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
         assertFalse(contains.evaluate(CANDIDATE_1));
-        
+
     }
 
     @Test
@@ -146,7 +146,7 @@ public class BinarySpatialTest {
 
         crosses = FF.crosses(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
         assertFalse(crosses.evaluate(CANDIDATE_1));
-        
+
     }
 
     @Test
@@ -157,7 +157,7 @@ public class BinarySpatialTest {
         assertTrue(within.evaluate(CANDIDATE_1));
 
         within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
-        assertFalse(within.evaluate(CANDIDATE_1));        
+        assertFalse(within.evaluate(CANDIDATE_1));
     }
 
     @Test
@@ -261,5 +261,5 @@ public class BinarySpatialTest {
         assertTrue(within.evaluate(CANDIDATE_1));
 
     }
-    
+
 }

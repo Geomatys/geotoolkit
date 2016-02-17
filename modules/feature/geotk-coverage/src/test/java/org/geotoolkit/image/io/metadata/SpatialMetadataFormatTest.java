@@ -65,7 +65,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.04
  */
-public final strictfp class SpatialMetadataFormatTest {
+public final strictfp class SpatialMetadataFormatTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the elements in the stream metadata format instance.
      *

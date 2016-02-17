@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -40,7 +40,7 @@ import org.opengis.temporal.OrdinalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultOrdinalReferenceSystemTest {
+public class DefaultOrdinalReferenceSystemTest extends org.geotoolkit.test.TestBase {
 
     private OrdinalReferenceSystem ordinalReferenceSystem1;
     private OrdinalReferenceSystem ordinalReferenceSystem2;
@@ -60,7 +60,7 @@ public class DefaultOrdinalReferenceSystemTest {
         Date end2 = cal.getTime();
         seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("old Era"), beginning1, end1, null));
         seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("new Era"), beginning2, end2, null));
-        
+
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
         ordinalReferenceSystem1 = FACTORY.createOrdinalReferenceSystem(name1, new DefaultExtent(), seq);

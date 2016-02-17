@@ -31,7 +31,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-public final strictfp class ProgressWindowTest {
+public final strictfp class ProgressWindowTest extends org.geotoolkit.test.TestBase {
     /**
      * Set to {@code true} if windows should be visible.
      */

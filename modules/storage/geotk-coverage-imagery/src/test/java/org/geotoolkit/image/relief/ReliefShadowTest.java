@@ -29,43 +29,43 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class ReliefShadowTest {
+public class ReliefShadowTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Source image.
      */
     private final BufferedImage sourceImage;
-    
+
     /**
      * Source image iterator.
      */
     private final PixelIterator srcIter;
-    
+
     /**
      * source Digital Elevation Model.
      */
     private final BufferedImage mnt;
-    
+
     /**
      * source Digital Elevation Model iterator.
      */
     private final PixelIterator mntIter;
-    
+
     public ReliefShadowTest() {
         sourceImage = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY);
         srcIter     = PixelIteratorFactory.createDefaultWriteableIterator(sourceImage, sourceImage);
         mnt     = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY);
-        mntIter = PixelIteratorFactory.createDefaultWriteableIterator(mnt, mnt);        
+        mntIter = PixelIteratorFactory.createDefaultWriteableIterator(mnt, mnt);
     }
-    
+
     @Test
     public void angle0Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(0, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y<5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -78,7 +78,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-360, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -91,15 +91,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle45Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(45, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y<5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -112,7 +112,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-315, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -125,15 +125,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle90Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(90, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -146,7 +146,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-270, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -159,15 +159,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle135Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(135, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -180,7 +180,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-225, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -193,15 +193,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle180Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(180, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -214,7 +214,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-180, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -227,15 +227,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle225Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(225, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -248,7 +248,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-135, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -261,15 +261,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle270Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(270, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -282,7 +282,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert               = new ReliefShadow(-90, 45, 0);
         final RenderedImage resultInvert          = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -296,15 +296,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void angle315Test() {
         initTest(2,2,128);
-        
+
         final ReliefShadow rf         = new ReliefShadow(315, 45, 0);
         final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -317,7 +317,7 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         final ReliefShadow rfInvert         = new ReliefShadow(-45, 45, 0);
         final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
@@ -330,15 +330,15 @@ public class ReliefShadowTest {
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
-    
+
     @Test
     public void altitudeTest() {
         initTest(2, 2, 2);
-        
+
         ReliefShadow rf         = new ReliefShadow(45, 45, 0);
         RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -351,12 +351,12 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         initTest(2, 2, 3);
         rf        = new ReliefShadow(45, 45, 0);
         result    = rf.getRelief(sourceImage, mnt, 1);
         pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -369,12 +369,12 @@ public class ReliefShadowTest {
                 }
             }
         }
-        
+
         initTest(2, 2, 2);
         rf        = new ReliefShadow(45, 22.5, 0);
         result    = rf.getRelief(sourceImage, mnt, 1);
         pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -388,15 +388,15 @@ public class ReliefShadowTest {
             }
         }
     }
-    
+
     @Test
     public void twoPikesTest() {
         initTest(0, 2, 1, 2, 2, 1);
-        
+
         ReliefShadow rf         = new ReliefShadow(90, 22.5, 0);
         RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
-        
+
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 5; x++) {
                 pixResult.moveTo(x, y, 0);
@@ -410,11 +410,11 @@ public class ReliefShadowTest {
             }
         }
     }
-    
+
     /**
      * Create two appropriates images to this test suite.
-     * 
-     * @param coordinates pikes coordinates in DEM. 
+     *
+     * @param coordinates pikes coordinates in DEM.
      */
     private void initTest(int ...coordinates) {
         // fill src images with white color
@@ -422,13 +422,13 @@ public class ReliefShadowTest {
         while (srcIter.next()) {
             srcIter.setSample(255);
         }
-        
+
         // fill mnt at 0 altitude
         mntIter.rewind();
         while (mntIter.next()) {
             mntIter.setSample(0);
         }
-        
+
         for (int p = 0; p < coordinates.length; p += 3) {
             mntIter.moveTo(coordinates[p], coordinates[p+1], 0);
             mntIter.setSample(coordinates[p+2]);

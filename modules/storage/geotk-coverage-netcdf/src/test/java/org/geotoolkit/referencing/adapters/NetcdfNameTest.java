@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.20
  */
-public final strictfp class NetcdfNameTest {
+public final strictfp class NetcdfNameTest extends org.geotoolkit.test.TestBase {
     /**
      * Scans all operation methods provided by Geotk, and compares the projection and
      * parameter names with the one declared in the {@code geoapi-netcdf} module. We

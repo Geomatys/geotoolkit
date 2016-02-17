@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetRecordByIdTest {
+public class GetRecordByIdTest extends org.geotoolkit.test.TestBase {
     public GetRecordByIdTest() {}
 
     /**

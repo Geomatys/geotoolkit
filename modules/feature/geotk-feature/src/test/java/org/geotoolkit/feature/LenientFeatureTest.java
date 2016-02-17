@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -20,7 +20,6 @@ package org.geotoolkit.feature;
 
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.junit.Ignore;
-import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 
 /**
@@ -31,12 +30,12 @@ public class LenientFeatureTest extends AbstractComplexFeatureTest{
 
     protected static final LenientFeatureFactory FF = new LenientFeatureFactory();
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
-    
+
     public LenientFeatureTest() {
         super(false);
-    }   
-    
-    
+    }
+
+
     @Override
     public FeatureFactory getFeatureFactory() {
         return FF;
@@ -46,7 +45,7 @@ public class LenientFeatureTest extends AbstractComplexFeatureTest{
     public FeatureTypeFactory getFeatureTypeFactory() {
         return FTF;
     }
-    
+
     @Ignore("Problems with validation, does not check for attributes with the same id")
     @Override
     public void testCreateComplexAttribute() {
@@ -57,5 +56,5 @@ public class LenientFeatureTest extends AbstractComplexFeatureTest{
     @Override
     public void testCreateComplexFeature() {
         //super.testCreateComplexFeature();
-    }   
+    }
 }

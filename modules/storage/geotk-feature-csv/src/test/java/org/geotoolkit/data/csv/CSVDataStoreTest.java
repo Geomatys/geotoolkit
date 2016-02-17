@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVDataStoreTest {
+public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
 
     public CSVDataStoreTest() {
     }
@@ -83,7 +83,7 @@ public class CSVDataStoreTest {
                 (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.URLP.getName().getCode(),
                 f.toURL()));
         assertNotNull(ds);
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.add("integerProp", Integer.class);

@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 import org.opengis.util.FactoryException;
 
 /**
- * Test static TreeX methods.<br/><br/>
+ * Test static TreeX methods.
  *
  * Intersect test is already effectuate by tree test suite.
  *

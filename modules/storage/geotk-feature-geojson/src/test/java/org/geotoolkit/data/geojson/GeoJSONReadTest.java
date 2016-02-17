@@ -24,7 +24,7 @@ import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONReadTest {
+public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void readPointTest() throws DataStoreException {

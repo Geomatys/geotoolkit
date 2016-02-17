@@ -26,20 +26,20 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class StringToFloatArrayConverterTest {
+public class StringToFloatArrayConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {
-        
+
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(String.class, float[].class);
-        
+
         float[] expected = new float[] { 10.5f, 5.55f, 90.4f, 6.0f, 70.0f};
         float[] output = (float[])converter.convert("10.5, 5.55, 90.4, 6, 70.0", null);
         assertArrayEquals(expected, output, 0.0f);
-        
+
         output = (float[])converter.convert("   ", null);
         assertArrayEquals(new float[0], output, 0.0f);
-        
+
         boolean fail = false;
         try {
             output = (float[])converter.convert("Some random text", null);

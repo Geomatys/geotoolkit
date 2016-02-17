@@ -34,7 +34,7 @@ import static org.geotoolkit.internal.InternalUtilities.*;
  *
  * @since 3.18 (derived from 3.00)
  */
-public final strictfp class InternalUtilitiesTest {
+public final strictfp class InternalUtilitiesTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link InternalUtilities#getSeparator} method.
      */

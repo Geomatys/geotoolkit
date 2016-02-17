@@ -31,7 +31,7 @@ import org.apache.sis.test.DependsOn;
  * @since 2.4
  */
 @DependsOn(FactoryRegistryTest.class)
-public final strictfp class FactoryIteratorProviderTest {
+public final strictfp class FactoryIteratorProviderTest extends org.geotoolkit.test.TestBase {
     /**
      * The registry to use for testing purpose.
      */

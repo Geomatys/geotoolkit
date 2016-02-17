@@ -69,15 +69,7 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XmlFeatureTest {
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{

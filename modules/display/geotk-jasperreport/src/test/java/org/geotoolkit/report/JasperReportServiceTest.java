@@ -67,7 +67,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @modul pending
  */
-public class JasperReportServiceTest {
+public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 

@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class CoverageUtilitiesTest {
+public class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private static final double EPSI = 1E-8;
 

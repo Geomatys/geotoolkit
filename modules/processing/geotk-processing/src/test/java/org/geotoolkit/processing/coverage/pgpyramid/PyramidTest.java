@@ -56,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidTest {
+public class PyramidTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Just test there is no error on this simple case.

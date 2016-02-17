@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final strictfp class GridGeometryTest {
+public final strictfp class GridGeometryTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the construction with an identity transform.
      */

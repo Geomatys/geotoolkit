@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit;
+package org.geotoolkit.test;
 
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.test.Validators;

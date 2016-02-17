@@ -34,11 +34,11 @@ import static org.junit.Assert.*;
 
 /**
  * Test calculated expression attribut.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CalculatedExpressionAttributeTest {
+public class CalculatedExpressionAttributeTest extends org.geotoolkit.test.TestBase {
 
     private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 

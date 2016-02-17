@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class LinearInterpolator1DTest {
+public class LinearInterpolator1DTest extends org.geotoolkit.test.TestBase {
 
     private double[] antecedent, values;
 

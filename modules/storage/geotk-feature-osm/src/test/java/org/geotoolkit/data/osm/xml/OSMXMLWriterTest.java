@@ -46,9 +46,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMXMLWriterTest {
-
-    private static final double DELTA = 0.000000001;
+public class OSMXMLWriterTest extends org.geotoolkit.test.TestBase {
 
     public OSMXMLWriterTest() {
     }

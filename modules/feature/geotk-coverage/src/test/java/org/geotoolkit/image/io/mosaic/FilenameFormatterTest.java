@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final strictfp class FilenameFormatterTest {
+public final strictfp class FilenameFormatterTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the creation of a pattern.
      */

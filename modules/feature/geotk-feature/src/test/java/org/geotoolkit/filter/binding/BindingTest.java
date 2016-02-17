@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class BindingTest {
+public class BindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testList(){
