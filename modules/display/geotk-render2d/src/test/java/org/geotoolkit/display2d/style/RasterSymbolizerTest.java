@@ -54,84 +54,84 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class RasterSymbolizerTest {
-    
+public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
+
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     /**
      * Check proper image reprojection in UTM
      */
     @Ignore
     @Test
     public void UTM32632Test() throws Exception{
-        
-        final BufferedImage img = new BufferedImage(120, 90, BufferedImage.TYPE_INT_ARGB);        
+
+        final BufferedImage img = new BufferedImage(120, 90, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.GREEN);
         g2d.fillRect(0, 0, 120, 90);
-        
+
          //set it's envelope
         final GeneralEnvelope gridEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         gridEnv.setRange(0, 0, 120);
         gridEnv.setRange(1, 0, 90);
-        
+
         //create the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(gridEnv);
         gcb.setName("myCoverage");
         gcb.setRenderedImage(img);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-                        
-        
-        
-        
+
+
+
+
         final MapContext context = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32632"));
         env.setRange(0, -2574823.6832217844, 5487970.783439655);
         env.setRange(1, 4289777.45228916, 1.0491927042028729E7);
-        
-        final Hints hints = new Hints();        
+
+        final Hints hints = new Hints();
         final SceneDef scenedef = new SceneDef(context,hints);
         final ViewDef viewdef = new ViewDef(env);
         final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), Color.WHITE);
-        
+
         final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
         ImageIO.write(buffer, "PNG", new File("test.png"));
-        
+
         //We should obtain a green triangle crossing the image looking like this :
         //
         // |\
         // |_\
         //we can't test the shape so we test we found more and more green pixels on each line
-        
+
         //we expect to have a blue label at the center of the image
         final int[] pixel = new int[4];
         final int[] green = new int[]{0,255,0,255};
-        
+
         int nbGreen = 0;
-        
+
         final Raster raster = buffer.getData();
         for(int y=0; y<800;y++){
             int nb = 0;
-            
+
             for(int x=0;x<800;x++){
                 raster.getPixel(x, y, pixel);
                 if(Arrays.equals(green, pixel)){
                     nb++;
                 }
             }
-            
+
             assertTrue("expected at least one green pixel", nb>0);
             assertTrue(nb >= nbGreen);
             nbGreen = nb;
-        }   
-        
+        }
+
     }
-    
-    
+
+
 }

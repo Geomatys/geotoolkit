@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16
  */
-public final strictfp class SeaWaterTest {
+public final strictfp class SeaWaterTest extends org.geotoolkit.test.TestBase {
     /**
      * The values to tests in the following order:
      * <p>

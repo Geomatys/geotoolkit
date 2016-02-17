@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-public final strictfp class LocalizationGridTest {
+public final strictfp class LocalizationGridTest extends org.geotoolkit.test.TestBase {
     /**
      * Random number generator for this test.
      */

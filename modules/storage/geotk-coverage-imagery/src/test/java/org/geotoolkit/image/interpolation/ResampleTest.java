@@ -43,7 +43,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class ResampleTest {
+public class ResampleTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Expected result about neighbor interpolation.

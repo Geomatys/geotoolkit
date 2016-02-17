@@ -37,8 +37,8 @@ import org.opengis.util.FactoryException;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class XMLPyramidTest {
-    
+public class XMLPyramidTest extends org.geotoolkit.test.TestBase {
+
     /**
      * Temporary file to test XML binding.
      */
@@ -47,7 +47,7 @@ public class XMLPyramidTest {
         if (TEMP_FILE == null) TEMP_FILE = File.createTempFile("XMLPyramid", "");
         return TEMP_FILE;
     }
-    
+
     /**
      * Test CRS.
      */
@@ -56,7 +56,7 @@ public class XMLPyramidTest {
         if (CRS_TEST == null) CRS_TEST = CRS.decode("EPSG:3395");
         return CRS_TEST;
     }
-    
+
     /**
      * Marshall object to read and write into XML format.
      */
@@ -66,10 +66,10 @@ public class XMLPyramidTest {
         if (POOL == null) POOL = new MarshallerPool(JAXBContext.newInstance(XMLPyramid.class), null);
         return POOL;
     }
-    
+
     /**
      * Save the coverage reference in the file.
-     * 
+     *
      * @throws DataStoreException
      */
     synchronized void save(XMLOldPyramid pyram) throws JAXBException, IOException {
@@ -79,7 +79,7 @@ public class XMLPyramidTest {
         marshaller.marshal(pyram, getMainfile());
         pool.recycle(marshaller);
     }
-    
+
     /**
      * Read the given file and return an XMLCoverageReference.
      *
@@ -96,11 +96,11 @@ public class XMLPyramidTest {
         pool.recycle(unmarshaller);
         return pyramid;
     }
-    
+
     /**
      * Test XmlPyramid XML binding with internal serialized and Wkt1 formatting CRS.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testOldVersion() throws Exception {
@@ -109,11 +109,11 @@ public class XMLPyramidTest {
         XMLPyramid newPyram = read(getMainfile());
         Assert.assertTrue(CRS.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
     }
-    
+
     /**
      * Test XmlPyramid XML binding with only internal serialized CRS.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testOldSerializedVersion() throws Exception {
@@ -122,11 +122,11 @@ public class XMLPyramidTest {
         final XMLPyramid newPyram = read(getMainfile());
         Assert.assertTrue(CRS.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
     }
-    
+
     /**
      * Test XmlPyramid XML binding, with only internal Wkt1 formatting CRS.
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     //TODO: delete ignore annotation
     @Ignore

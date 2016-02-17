@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -49,7 +48,7 @@ import org.opengis.referencing.datum.PixelInCell;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GridCoverageStackTest {
+public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
 

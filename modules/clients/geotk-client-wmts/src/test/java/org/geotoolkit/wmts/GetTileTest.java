@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class GetTileTest {
+public class GetTileTest extends org.geotoolkit.test.TestBase {
     public GetTileTest() {}
 
     /**

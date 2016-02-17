@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultNameTest {
+public class DefaultNameTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test of isGlobal method, of class DefaultName.
@@ -55,7 +55,7 @@ public class DefaultNameTest {
         name = NamesExt.create(uri, local);
         assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        
+
     }
 
     /**

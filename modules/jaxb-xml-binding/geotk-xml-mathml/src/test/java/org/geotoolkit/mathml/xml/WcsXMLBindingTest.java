@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.mathml.xml;
 
-import java.util.Arrays;
-import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -33,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WcsXMLBindingTest {
+public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;

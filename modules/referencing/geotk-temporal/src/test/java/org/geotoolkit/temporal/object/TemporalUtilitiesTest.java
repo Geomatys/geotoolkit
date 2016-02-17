@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,11 +28,11 @@ import static org.junit.Assert.*;
 import static java.util.Calendar.*;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TemporalUtilitiesTest implements Test {
+public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase implements Test {
 
     @Override
     public Class<? extends Throwable> expected() {

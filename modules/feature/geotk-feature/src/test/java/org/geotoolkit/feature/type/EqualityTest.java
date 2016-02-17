@@ -40,7 +40,7 @@ import java.util.Date;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class EqualityTest {
+public class EqualityTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Custom factory where types can be modified after they are created.

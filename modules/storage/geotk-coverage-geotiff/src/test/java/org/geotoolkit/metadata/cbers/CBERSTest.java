@@ -27,20 +27,20 @@ import org.xml.sax.SAXException;
 
 /**
  * Test read of CBERS xml nodes.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  * @module pending
  */
-public class CBERSTest {
-    
+public class CBERSTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void CBERSTest() throws URISyntaxException, ParserConfigurationException, IOException, SAXException {
 
         final File f = new File(CBERSTest.class.getResource("/org/geotoolkit/metadata/cbers/CBERS_2B_CCD1XS_20080708_094_109_L2_BAND2.xml").toURI());
         final Metadata meta = CBERS.toMetadata(f);
-        
+
         assertNotNull(meta);
         System.out.println(meta.toString());
     }
-    
+
 }

@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @DependsOn(CategoryListTest.class)
-public final strictfp class SampleDimensionTest {
+public final strictfp class SampleDimensionTest extends org.geotoolkit.test.TestBase {
     /**
      * The categories making the sample dimension to test.
      */

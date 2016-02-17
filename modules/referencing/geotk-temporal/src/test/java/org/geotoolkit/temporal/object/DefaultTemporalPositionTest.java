@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -35,7 +35,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultTemporalPositionTest {
+public class DefaultTemporalPositionTest extends org.geotoolkit.test.TestBase {
 
     private TemporalPosition temporalPosition1;
     private TemporalPosition temporalPosition2;
@@ -45,7 +45,7 @@ public class DefaultTemporalPositionTest {
     public void setUp() {
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-        
+
         TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
         TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
         temporalPosition1 = FACTORY.createTemporalPosition(frame1, IndeterminateValue.UNKNOWN);

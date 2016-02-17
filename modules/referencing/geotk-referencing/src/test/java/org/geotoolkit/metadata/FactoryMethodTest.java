@@ -45,7 +45,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  *
  * @since 3.03
  */
-public final strictfp class FactoryMethodTest {
+public final strictfp class FactoryMethodTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the obtention of a factory method.
      */

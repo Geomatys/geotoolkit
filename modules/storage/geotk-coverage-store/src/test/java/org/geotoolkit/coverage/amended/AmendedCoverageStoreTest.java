@@ -49,7 +49,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AmendedCoverageStoreTest {
+public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
     private static final ImageCRS IMAGECRS;
     static {
@@ -91,7 +91,7 @@ public class AmendedCoverageStoreTest {
 
     /**
      * Test override crs.
-     * 
+     *
      * @throws DataStoreException
      */
     @Test
@@ -147,7 +147,7 @@ public class AmendedCoverageStoreTest {
         assertEquals(IMAGECRS, coverage.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 20), decoratedRef.getGridGeometry(0).getGridToCRS());
 
-        
+
     }
 
     /**

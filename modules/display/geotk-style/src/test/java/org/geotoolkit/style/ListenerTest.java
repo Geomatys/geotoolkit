@@ -27,10 +27,6 @@ import java.util.List;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.measure.NumberRange;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,29 +42,13 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ListenerTest {
+public class ListenerTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = new DefaultFilterFactory2();
     private static double DELTA = 0d;
 
     public ListenerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

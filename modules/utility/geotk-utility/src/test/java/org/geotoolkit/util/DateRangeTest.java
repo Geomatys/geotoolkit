@@ -18,6 +18,11 @@
 package org.geotoolkit.util;
 
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.test.TestBase;
 
@@ -34,6 +39,43 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.20
  */
 public final strictfp class DateRangeTest extends TestBase {
+    /**
+     * Date parser, created when first needed.
+     */
+    private transient DateFormat dateFormat;
+
+    /**
+     * Returns the date format.
+     */
+    private DateFormat getDateFormat() {
+        DateFormat df = dateFormat;
+        if (df == null) {
+            dateFormat = df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            df.setLenient(false);
+        }
+        return df;
+    }
+
+    /**
+     * Parses the date for the given string using the {@code "yyyy-MM-dd HH:mm:ss"} pattern
+     * in UTC timezone.
+     *
+     * @param  date The date as a {@link String}.
+     * @return The date as a {@link Date}.
+     *
+     * @since 3.15
+     */
+    protected final synchronized Date date(final String date) {
+        assertNotNull("A date must be specified", date);
+        final DateFormat dateFormat = getDateFormat();
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     /**
      * Tests {@link DateRange#union(Range)}.
      */

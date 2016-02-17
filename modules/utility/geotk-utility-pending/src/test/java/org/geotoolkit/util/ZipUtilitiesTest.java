@@ -28,10 +28,6 @@ import java.util.zip.Checksum;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -40,27 +36,11 @@ import static org.junit.Assert.*;
  *
  * @author Samuel Andrés
  */
-public class ZipUtilitiesTest {
+public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private final static Checksum CHECKSUM = new Adler32();
 
     public ZipUtilitiesTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

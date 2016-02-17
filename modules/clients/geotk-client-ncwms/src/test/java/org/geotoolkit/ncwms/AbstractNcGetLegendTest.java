@@ -18,7 +18,6 @@ package org.geotoolkit.ncwms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.awt.Dimension;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,7 +26,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class AbstractNcGetLegendTest {
+public class AbstractNcGetLegendTest extends org.geotoolkit.test.TestBase {
     public AbstractNcGetLegendTest() {}
 
     /**

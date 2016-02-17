@@ -33,7 +33,7 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AliasOperationTest {
+public class AliasOperationTest extends org.geotoolkit.test.TestBase {
 
     private static final FeatureType TYPE;
     static {

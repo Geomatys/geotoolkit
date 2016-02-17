@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class AddTest extends AbstractProcessTest{
+public class AddTest extends AbstractProcessTest {
 
 
     public AddTest() {
@@ -56,8 +56,8 @@ public class AddTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(new Double(32.8), result);
     }
-    
+
 }

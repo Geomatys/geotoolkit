@@ -16,10 +16,6 @@ import java.util.Iterator;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.DefaultData;
 import org.geotoolkit.index.quadtree.QuadTree;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,27 +24,11 @@ import static org.junit.Assert.*;
  *
  * @author jsorel
  */
-public class FileSystemNodeTest {
+public class FileSystemNodeTest extends org.geotoolkit.test.TestBase {
 
     public static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII", Integer.class, Long.class);
 
     public FileSystemNodeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**

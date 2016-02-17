@@ -86,13 +86,6 @@
         <version>${project.version}</version>
     </dependency>
 
-    <!-- Following is useful only for those who customize
-         their EPSG database connection parameters. -->
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>

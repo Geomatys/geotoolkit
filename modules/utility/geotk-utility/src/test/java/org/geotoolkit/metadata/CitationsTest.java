@@ -41,7 +41,7 @@ import static org.apache.sis.test.Assert.*;
  * @since 2.2
  */
 @DependsOn(DefaultCitationTest.class)
-public final strictfp class CitationsTest {
+public final strictfp class CitationsTest extends org.geotoolkit.test.TestBase {
     /**
      * Makes sure that {@link Citations} constants are immutable.
      */

@@ -48,7 +48,7 @@ import org.opengis.filter.spatial.Intersects;
 import static org.junit.Assert.*;
 
 
-public class FeatureFilterTest {
+public class FeatureFilterTest extends org.geotoolkit.test.TestBase {
 
     private static final FilterFactory2 FF = new DefaultFilterFactory2();
 

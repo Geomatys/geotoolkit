@@ -27,47 +27,47 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class RequestTest {
-   
+public class RequestTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testGetTokenURL() throws MalformedURLException{
-        
+
         final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
-        
+
         final GetTokenRequest request =server.createGetToken();
         request.setKey("AAAAABBBBB");
-        
+
         final String url = request.getURL().toString();
         assertTrue(url.startsWith("http://test.com/getToken?"));
         assertTrue(url.contains("key=AAAAABBBBB"));
         assertTrue(url.contains("output=xml"));
     }
-    
+
     @Test
     public void testGetConfigURL() throws MalformedURLException{
-        
+
         final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
-        
+
         final GetConfigRequest request = server.createGetConfig();
         request.setKey("AAAAABBBBB");
-        
+
         final String url = request.getURL().toString();
         assertTrue(url.startsWith("http://test.com/getConfig?"));
         assertTrue(url.contains("key=AAAAABBBBB"));
         assertTrue(url.contains("output=xml"));
     }
-    
+
     @Test
     public void testgReleaseTokenURL() throws MalformedURLException{
-        
+
         final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
-        
+
         final ReleaseTokenRequest request = server.createReleaseToken();
         request.setToken(new Token(server, "aaa", "gppkey", "123456"));
-        
+
         final String url = request.getURL().toString();
         assertTrue(url.startsWith("http://test.com/releaseToken?"));
         assertTrue(url.contains("gppkey=123456"));
     }
-    
+
 }

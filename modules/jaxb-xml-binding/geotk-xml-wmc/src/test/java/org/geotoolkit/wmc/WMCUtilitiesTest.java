@@ -14,8 +14,8 @@ import org.junit.BeforeClass;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class WMCUtilitiesTest {
-    
+public class WMCUtilitiesTest extends org.geotoolkit.test.TestBase {
+
     public WMCUtilitiesTest() {
     }
 

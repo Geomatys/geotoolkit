@@ -51,7 +51,7 @@ import static org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory.FILENA
  * @since 3.00
  */
 @DependsOn(WKTFormatTest.class)
-public final strictfp class PropertyAuthorityFactoryTest {
+public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * The filename of the property file having no {@code AXIS} declaration.
      */

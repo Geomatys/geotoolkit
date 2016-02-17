@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class PyramidalModelStoreNDTest {
+public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
 
@@ -252,14 +252,14 @@ public abstract class PyramidalModelStoreNDTest {
         param.setEnvelope(createEnvelope(corner_long, +180,          //-- dim 0 (long)
                                                  -90, corner_lat,    //-- dim 1 (lat)
                                          corner_v[0], corner_v[0])); //-- dim 2 (vertical)
-        param.setResolution(0.5, 
+        param.setResolution(0.5,
                             0.5,
                             1);
-        
+
         GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
         checkCoverage(coverage, 40, 30, colors[0][1], corner_long, -160,
                                                                75, corner_lat,
-                                                      corner_v[0], -14); //-- -14 = corner_v[0] - 1 unity. 
+                                                      corner_v[0], -14); //-- -14 = corner_v[0] - 1 unity.
         ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical -15

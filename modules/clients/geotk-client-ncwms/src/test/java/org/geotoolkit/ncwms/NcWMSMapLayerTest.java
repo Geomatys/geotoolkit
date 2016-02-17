@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public class NcWMSMapLayerTest {
+public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
 
     private final NcWebMapClient SERVER_111;
     private final NcWebMapClient SERVER_130;

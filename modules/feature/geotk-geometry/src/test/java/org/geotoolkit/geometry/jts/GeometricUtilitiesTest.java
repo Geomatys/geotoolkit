@@ -31,16 +31,16 @@ import org.junit.Test;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GeometricUtilitiesTest {
-    
+public class GeometricUtilitiesTest extends org.geotoolkit.test.TestBase {
+
     private static final GeometryFactory GF = new GeometryFactory();
-    
+
     @Test
     public void envelopeToJTSSmallTest(){
         GeneralEnvelope env;
         Geometry expected;
         Geometry result;
-        
+
         //we should have the same result whatever method used
         env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -30, 50);
@@ -60,19 +60,19 @@ public class GeometricUtilitiesTest {
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.CONTIGUOUS);
         assertTrue(result.equalsExact(expected));
     }
-    
+
     @Test
     public void envelopeToJTSLargeTest(){
-        
+
         GeneralEnvelope env;
         Geometry expected;
         Geometry result;
-        
+
         //we should have the same result whatever method used
         env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -160, 170);
         env.setRange(1, -70, 80);
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-160, -70),
                     new Coordinate(-160,  80),
@@ -81,7 +81,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate(-160, -70) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-160, -70),
                     new Coordinate(-160,  80),
@@ -97,19 +97,19 @@ public class GeometricUtilitiesTest {
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.CONTIGUOUS);
         assertTrue(result.equalsExact(expected));
     }
-    
+
     @Test
     public void envelopeToJTSWorldTest(){
-        
+
         GeneralEnvelope env;
         Geometry expected;
         Geometry result;
-        
+
         //we should have the same result whatever method used
         env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, -90),
                     new Coordinate(-180,  90),
@@ -118,7 +118,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate(-180, -90) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, -90),
                     new Coordinate(-180,  90),
@@ -136,18 +136,18 @@ public class GeometricUtilitiesTest {
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.CONTIGUOUS);
         assertTrue(result.equalsExact(expected));
     }
-        
+
     @Test
     public void envelopeToJTSMeridianOverlapsTest(){
-        
+
         GeneralEnvelope env;
         Geometry expected;
         Geometry result;
-        
+
         env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 170, 190);
         env.setRange(1, 30, 40);
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate( 170, 30),
                     new Coordinate( 170, 40),
@@ -156,7 +156,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate( 170, 30) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, 30),
                     new Coordinate(-180, 40),
@@ -169,7 +169,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate(-180, 30) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.EXPAND);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createMultiPolygon(new Polygon[]{
             GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, 30),
@@ -186,7 +186,7 @@ public class GeometricUtilitiesTest {
             });
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.SPLIT);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate( 170, 30),
                     new Coordinate( 170, 40),
@@ -196,18 +196,18 @@ public class GeometricUtilitiesTest {
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.CONTIGUOUS);
         assertTrue(result.equalsExact(expected));
     }
-        
+
     @Test
     public void envelopeToJTSMeridianWrapAroundTest(){
-        
+
         GeneralEnvelope env;
         Geometry expected;
         Geometry result;
-        
+
         env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 170, -170);
         env.setRange(1, 30, 40);
-        
+
         //geotoolkit makes an automatic correction here when using the getMin/getMax methods
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, 30),
@@ -217,7 +217,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate(-180, 30) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, 30),
                     new Coordinate(-180, 40),
@@ -230,7 +230,7 @@ public class GeometricUtilitiesTest {
                     new Coordinate(-180, 30) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.EXPAND);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createMultiPolygon(new Polygon[]{
             GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate(-180, 30),
@@ -247,7 +247,7 @@ public class GeometricUtilitiesTest {
             });
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.SPLIT);
         assertTrue(result.equalsExact(expected));
-        
+
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
                     new Coordinate( 170, 30),
                     new Coordinate( 170, 40),
@@ -256,8 +256,8 @@ public class GeometricUtilitiesTest {
                     new Coordinate( 170, 30) }));
         result = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.CONTIGUOUS);
         assertTrue(result.equalsExact(expected));
-        
+
     }
-    
-    
+
+
 }

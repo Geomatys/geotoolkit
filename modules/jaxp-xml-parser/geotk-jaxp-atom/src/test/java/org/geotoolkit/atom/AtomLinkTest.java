@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class AtomLinkTest {
+public class AtomLinkTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/atom/link.atom";
 
@@ -93,7 +93,7 @@ public class AtomLinkTest {
         assertEquals(link.getHreflang(),"HREFLANG-hqls5");
         assertEquals(link.getTitle(),"TITLE");
         assertEquals(link.getLength(),"LENGTH");
-     
+
      }
 
      @Test

@@ -26,17 +26,17 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class IntegeArrayToStringConverterTest {
+public class IntegeArrayToStringConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {
-        
+
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(int[].class, String.class);
-        
+
         int[] input = new int[] { 10, 5, 90, 6, 70};
         String output = (String)converter.convert(input, null);
         assertEquals("10,5,90,6,70", output);
-        
+
         output = (String)converter.convert(new int[0], null);
         assertEquals("", output);
     }

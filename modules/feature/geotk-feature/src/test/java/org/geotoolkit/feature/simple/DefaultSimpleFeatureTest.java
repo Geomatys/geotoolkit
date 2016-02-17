@@ -35,7 +35,7 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
 import org.opengis.feature.MismatchedFeatureException;
 
-public class DefaultSimpleFeatureTest {
+public class DefaultSimpleFeatureTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final double DELTA = 0.0000001;

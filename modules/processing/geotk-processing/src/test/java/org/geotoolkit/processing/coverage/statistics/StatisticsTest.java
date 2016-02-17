@@ -37,7 +37,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author bgarcia (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class StatisticsTest {
+public class StatisticsTest extends org.geotoolkit.test.TestBase {
 
     private GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
     private GridCoverageBuilder gcb = new GridCoverageBuilder();

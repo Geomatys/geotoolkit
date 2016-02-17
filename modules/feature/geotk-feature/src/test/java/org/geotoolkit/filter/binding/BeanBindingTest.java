@@ -26,17 +26,17 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class BeanBindingTest {
+public class BeanBindingTest extends org.geotoolkit.test.TestBase {
 
     public static class Person{
-        
+
         private int age;
         private String name;
         private boolean human;
 
         public Person() {
         }
-        
+
         public Person(int age, String name, boolean human) {
             this.age = age;
             this.name = name;
@@ -84,11 +84,11 @@ public class BeanBindingTest {
         public void setHuman(boolean human) {
             this.human = human;
         }
-        
-        
-        
+
+
+
     }
-    
+
     @Test
     public void testGetter(){
         final Person person = new Person(45,"marcel",true);

@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class TreesTest {
+public final strictfp class TreesTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the formatting as a tree.
      */

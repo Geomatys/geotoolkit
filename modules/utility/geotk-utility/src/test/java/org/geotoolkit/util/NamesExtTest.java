@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class NamesExtTest {
+public class NamesExtTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void createFromQName(){
@@ -34,7 +34,7 @@ public class NamesExtTest {
         GenericName gn = NamesExt.create(new QName(null, "test"));
         assertEquals(null,NamesExt.getNamespace(gn));
         assertEquals("test",gn.tip().toString());
-        
+
         gn = NamesExt.create(new QName("", "test"));
         assertEquals(null,NamesExt.getNamespace(gn));
         assertEquals("test",gn.tip().toString());

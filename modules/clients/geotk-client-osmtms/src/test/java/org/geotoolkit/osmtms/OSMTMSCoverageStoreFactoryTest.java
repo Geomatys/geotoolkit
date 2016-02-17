@@ -24,28 +24,28 @@ import org.junit.Test;
 
 /**
  * Coverage store tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSCoverageStoreFactoryTest {
-    
+public class OSMTMSCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public OSMTMSCoverageStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
-        
+
+
         final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof OSMTMSClientFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

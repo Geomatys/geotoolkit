@@ -54,15 +54,7 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XmlFeatureTypeTest {
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
     private static void removeGMLBaseTypes(List<FeatureType> types){
         for(int i=types.size()-1;i>=0;i--){

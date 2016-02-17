@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -40,7 +40,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultTemporalCoordinateSystemTest {
+public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.TestBase {
 
     private TemporalCoordinateSystem temporalCoordinateSystem1;
     private TemporalCoordinateSystem temporalCoordinateSystem2;
@@ -56,7 +56,7 @@ public class DefaultTemporalCoordinateSystemTest {
         cal.set(2000, 1, 1);
         temporalCoordinateSystem1 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), cal.getTime(), NonSI.DAY);
         temporalCoordinate1 = FACTORY.createTemporalCoordinate(temporalCoordinateSystem1, null, 50785.48);
-        
+
         cal.set(1981, 6, 25);
         temporalCoordinateSystem2 = FACTORY.createTemporalCoordinateSystem(name2, new DefaultExtent(), cal.getTime(), NonSI.WEEK);
         temporalCoordinate2 = FACTORY.createTemporalCoordinate(temporalCoordinateSystem2, null, 285);

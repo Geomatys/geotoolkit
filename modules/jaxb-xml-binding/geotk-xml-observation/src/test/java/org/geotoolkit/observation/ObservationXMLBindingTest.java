@@ -22,9 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -63,7 +61,7 @@ import org.apache.sis.xml.XML;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class ObservationXMLBindingTest {
+public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;

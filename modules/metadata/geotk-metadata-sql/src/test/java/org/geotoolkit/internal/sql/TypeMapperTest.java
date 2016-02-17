@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09
  */
-public final strictfp class TypeMapperTest {
+public final strictfp class TypeMapperTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link TypeMapper#toJavaType(int)}.
      */

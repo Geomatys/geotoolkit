@@ -37,7 +37,7 @@ import org.opengis.filter.MatchAction;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class BinaryComparisonTest {
+public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 
     public BinaryComparisonTest() {
     }

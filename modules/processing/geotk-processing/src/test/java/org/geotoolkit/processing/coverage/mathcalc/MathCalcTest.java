@@ -56,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MathCalcTest {
+public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
     private static final float DELTA = 0.000000001f;
 

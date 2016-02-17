@@ -34,13 +34,13 @@ import org.opengis.util.GenericName;
 
 /**
  * Coverage store event tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCoverageStoreEventTest {
+public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test.TestBase {
 
     protected abstract CoverageStore createStore() throws Exception ;
-    
+
     /**
      * Check events
      */

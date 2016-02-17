@@ -38,16 +38,16 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Test reformat process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class ReformatTest {
-    
+public class ReformatTest extends org.geotoolkit.test.TestBase {
+
     private static final double DELTA = 0.00000001;
-    
+
     @Test
     public void testIntToDouble() throws NoSuchIdentifierException, ProcessException{
-        
+
         final BufferedImage inputImage = new BufferedImage(100, 20, BufferedImage.TYPE_3BYTE_BGR);
         final Graphics2D g = inputImage.createGraphics();
         g.setColor(Color.RED);
@@ -58,29 +58,29 @@ public class ReformatTest {
         g.fillRect(0, 10, 50, 10);
         g.setColor(Color.BLACK);
         g.fillRect(50, 10, 50, 10);
-        
+
         final SampleModel inSampleModel = inputImage.getSampleModel();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(inputImage);
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setEnvelope(0,0,500,30);
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "reformat");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("coverage").setValue(inCoverage);
         params.parameter("datatype").setValue(DataBuffer.TYPE_DOUBLE);
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result coverage
         final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
         assertEquals(inCoverage.getCoordinateReferenceSystem(), outCoverage.getCoordinateReferenceSystem());
         assertEquals(inCoverage.getGridGeometry(), outCoverage.getGridGeometry());
-        
+
         final RenderedImage outImage = outCoverage.getRenderedImage();
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(inputImage.getWidth(), outImage.getWidth());
@@ -88,7 +88,7 @@ public class ReformatTest {
         assertEquals(inSampleModel.getNumBands(), outSampleModel.getNumBands());
         assertEquals(DataBuffer.TYPE_DOUBLE, outSampleModel.getDataType());
         assertFalse(inSampleModel.getDataType() == outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final double[] sample = new double[3];
@@ -106,7 +106,7 @@ public class ReformatTest {
                 }
             }
         }
-        
+
     }
-    
+
 }

@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @version 4.0
  * @since   4.0
  */
-public strictfp class GridCombineIteratorTest {
+public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Current tolerance.

@@ -27,18 +27,16 @@ import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Not;
 
 /**
  * Test writing in CQL filters.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FilterWritingTest {
+public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     private final FilterFactory2 FF = new DefaultFilterFactory2();
     private final GeometryFactory GF = new GeometryFactory();

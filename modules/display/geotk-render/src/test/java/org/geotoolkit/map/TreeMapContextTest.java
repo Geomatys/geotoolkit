@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TreeMapContextTest {
+public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 

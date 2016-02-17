@@ -30,10 +30,10 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TreeManagerTest {
+public class TreeManagerTest extends org.geotoolkit.test.TestBase {
 
     public static File directory = new File("TreeManagerTest");
-    
+
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (directory.exists()) {

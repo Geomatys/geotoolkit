@@ -35,10 +35,6 @@ import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
@@ -48,28 +44,11 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class AdministrativeAreaTest {
+public class AdministrativeAreaTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/xal/administrativeArea.xml";
 
     public AdministrativeAreaTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

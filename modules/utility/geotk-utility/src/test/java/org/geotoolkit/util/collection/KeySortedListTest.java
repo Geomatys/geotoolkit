@@ -35,7 +35,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.2
  */
-public final strictfp class KeySortedListTest {
+public final strictfp class KeySortedListTest extends org.geotoolkit.test.TestBase {
     /**
      * Inserts random floating point numbers into the list. The key is the integer part of the
      * floating point number. This means that the number should be sorted in such a way that

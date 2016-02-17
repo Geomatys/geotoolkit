@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 /**
  * Testing filters used on ISO/JTS geometries.
  */
-public class FeatureFilterSpatialTest {
+public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
 
     private static final FilterFactory FF = new DefaultFilterFactory2();
 

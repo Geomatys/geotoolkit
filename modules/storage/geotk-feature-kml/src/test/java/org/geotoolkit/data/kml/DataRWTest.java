@@ -26,10 +26,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.FeatureFactory;
 import org.xml.sax.SAXException;
@@ -39,29 +35,13 @@ import org.xml.sax.SAXException;
  * @author Samuel Andrés
  * @module pending
  */
-public class DataRWTest {
+public class DataRWTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/dataRW.xml";
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public DataRWTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

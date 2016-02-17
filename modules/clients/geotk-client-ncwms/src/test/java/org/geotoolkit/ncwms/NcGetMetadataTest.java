@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.ncwms;
 
-import org.geotoolkit.ncwms.v130.NcGetLegend130;
-import org.geotoolkit.ncwms.v111.NcGetLegend111;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetMetadataTest {
+public class NcGetMetadataTest extends org.geotoolkit.test.TestBase {
     public NcGetMetadataTest() {}
 
     /**

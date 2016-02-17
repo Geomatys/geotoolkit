@@ -73,7 +73,7 @@ import org.opengis.util.FactoryException;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneSearcherTest {
+public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FilterFactory2 FF = new DefaultFilterFactory2();

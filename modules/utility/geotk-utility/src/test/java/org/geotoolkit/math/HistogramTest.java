@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class HistogramTest {
+public class HistogramTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001;
 

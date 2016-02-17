@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class AbstractProcessTest {
+public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 
     private static final String factory = GroovyProcessingRegistry.NAME;
     private String process;

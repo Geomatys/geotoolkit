@@ -69,7 +69,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class CoverageImageTest {
+public class CoverageImageTest extends org.geotoolkit.test.TestBase {
 
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final double EPSILON = 1E-9;

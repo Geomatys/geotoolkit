@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -35,7 +35,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultTemporalGeometricPrimitiveTest {
+public class DefaultTemporalGeometricPrimitiveTest extends org.geotoolkit.test.TestBase {
 
     private TemporalGeometricPrimitive temporalGeomericPrimitive1;
     private TemporalGeometricPrimitive temporalGeomericPrimitive2;
@@ -43,7 +43,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
 
     @Before
     public void setUp() {
-        
+
 //        cal.set(1981, 6, 25);
 //        Date date = cal.getTime();
 //

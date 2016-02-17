@@ -33,7 +33,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 3.05
  */
-public final strictfp class PrjFilesTest {
+public final strictfp class PrjFilesTest extends org.geotoolkit.test.TestBase {
     /**
      * The {@code WGS84} CRS as WKT on a single line.
      */

@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Theo Zozime
  */
-public class ComplexToFeatureConverterTest {
+public class ComplexToFeatureConverterTest extends org.geotoolkit.test.TestBase {
 
 
     /**
@@ -39,10 +39,10 @@ public class ComplexToFeatureConverterTest {
     public void testJSONConversion() throws IOException {
         Feature feature = ConvertersTestUtils.initAndRunInputConversion(
                                                         ComplexDataType.class,
-                                                        Feature.class, 
+                                                        Feature.class,
                                                         "/inputs/feature.json",
-                                                        WPSMimeType.APP_GEOJSON.val(), 
-                                                        WPSEncoding.UTF8.getValue(), 
+                                                        WPSMimeType.APP_GEOJSON.val(),
+                                                        WPSEncoding.UTF8.getValue(),
                                                         null);
 
         // Test the result feature

@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShpFileTypesTest {
+public class ShpFileTypesTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testToFileBase() {
@@ -46,7 +46,7 @@ public class ShpFileTypesTest {
         }
 
     }
-    
+
     /**
      * Check special caracters are not erased.
      */
@@ -55,11 +55,11 @@ public class ShpFileTypesTest {
 
         final File file = new File("++t--++est.shp");
         final URL url = file.toURI().toURL();
-        
+
         final String str = ShpFileType.SHP.toBase(url);
         assertTrue(str.contains("++t--++est"));
     }
-    
+
 
     private void assertToURLBase(final ShpFileType type) throws MalformedURLException {
         String urlString = "file://c:/shapefiles/file1." + type.extension;

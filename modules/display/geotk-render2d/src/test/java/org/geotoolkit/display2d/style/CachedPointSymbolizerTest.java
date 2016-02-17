@@ -46,22 +46,22 @@ import org.opengis.style.Stroke;
  *
  * @author Johann Sorel (geomatys)
  */
-public class CachedPointSymbolizerTest {
-    
+public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
+
     private static final float DELTA = 0.0000001f;
-    
+
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    
+
     @Test
     public void testMargin(){
-        
+
         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
         final RenderingContext2D ctx = new RenderingContext2D(canvas);
         final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         canvas.prepareContext(ctx, img.createGraphics(), new Rectangle(1, 1));
-        
+
         {// NO ANCHOR, NO DISPLACEMENT
             final List<GraphicalSymbol> symbols = new ArrayList<>();
             final Stroke stroke = SF.stroke(Color.BLACK, 2);
@@ -75,7 +75,7 @@ public class CachedPointSymbolizerTest {
             final float margin = cached.getMargin(null, ctx);
             assertEquals(8f,margin,DELTA); // 12/2 + 2*2(stroke width)
         }
-        
+
         {//NO ANCHOR
             final List<GraphicalSymbol> symbols = new ArrayList<>();
             final Stroke stroke = SF.stroke(Color.BLACK, 2);
@@ -89,7 +89,7 @@ public class CachedPointSymbolizerTest {
             final float margin = cached.getMargin(null, ctx);
             assertEquals(23f,margin,DELTA); // 12/2 + 2*2(stroke width) + 15(disp)
         }
-        
+
         {
             final List<GraphicalSymbol> symbols = new ArrayList<>();
             final Stroke stroke = SF.stroke(Color.BLACK, 2);
@@ -103,7 +103,7 @@ public class CachedPointSymbolizerTest {
             final float margin = cached.getMargin(null, ctx);
             assertEquals(23f+19.2f,margin,DELTA); // 12/2 + 2*2(stroke width) + 15(disp) + 16*(1.7-0.5)
         }
-        
+
     }
-    
+
 }

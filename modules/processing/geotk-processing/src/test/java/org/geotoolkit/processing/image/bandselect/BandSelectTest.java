@@ -34,31 +34,31 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandSelectTest {
- 
+public class BandSelectTest extends org.geotoolkit.test.TestBase {
+
     @Test
     @Ignore
     public void selectTest() throws Exception{
-        
+
         final BufferedImage inputImage = new BufferedImage(100, 100, BufferedImage.TYPE_4BYTE_ABGR);
         final Graphics2D g = inputImage.createGraphics();
         g.setColor(new Color(100, 30, 50));
         g.fillRect(0, 0, 50, 100);
         g.setColor(new Color(80, 200, 10));
         g.fillRect(50, 0, 50, 100);
-        
+
         final SampleModel inSampleModel = inputImage.getSampleModel();
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandselect");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("image").setValue(inputImage);
         params.parameter("bands").setValue(new int[]{0,2});
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result image
         final RenderedImage outImage = (RenderedImage) result.parameter("result").getValue();
         final SampleModel outSampleModel = outImage.getSampleModel();
@@ -66,7 +66,7 @@ public class BandSelectTest {
         assertEquals(inputImage.getHeight(), outImage.getHeight());
         assertEquals(2, outSampleModel.getNumBands());
         assertEquals(inSampleModel.getDataType(), outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final int[] sample = new int[2];
@@ -82,7 +82,7 @@ public class BandSelectTest {
                 }
             }
         }
-        
+
     }
-    
+
 }

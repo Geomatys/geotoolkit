@@ -28,17 +28,17 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TokenInformationParserTest {
-    
+public class TokenInformationParserTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void testReader() throws XMLStreamException, IOException{
-        
+
         final TokenInformationParser parser = new TokenInformationParser();
         parser.setInput(TokenParserTest.class.getResource("/org/geotoolkit/ignrm/config.xml"));
         final TokenInformation token = parser.read();
 
         assertEquals(1200,token.getTokenTimeOut());
-        
+
     }
-    
+
 }

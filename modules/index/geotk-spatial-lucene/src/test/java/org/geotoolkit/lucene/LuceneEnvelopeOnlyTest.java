@@ -75,7 +75,7 @@ import org.opengis.util.FactoryException;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneEnvelopeOnlyTest {
+public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final GeometryFactory GF = new GeometryFactory();
@@ -107,7 +107,7 @@ public class LuceneEnvelopeOnlyTest {
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
-        
+
         final Directory FSDirectory  = LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]);
         final IndexReader reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
@@ -1068,7 +1068,7 @@ public class LuceneEnvelopeOnlyTest {
          /*
          * case 8: another line
          *
-        
+
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
@@ -2680,7 +2680,7 @@ public class LuceneEnvelopeOnlyTest {
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentEnvelope(docu, null));
         indexer.destroy();
-        
+
         reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
         searcher = new IndexSearcher(reader);
 

@@ -94,8 +94,8 @@
       <groupId>org.opengis</groupId>
       <artifactId>geoapi-pending</artifactId>
     </dependency>
-    
-    <!-- TEST DEPENDENCIES--> 
+
+    <!-- TEST DEPENDENCIES-->
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_core</artifactId>

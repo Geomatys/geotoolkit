@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
  * @author Christophe Mourette
  * @module pending
  */
-public class GroovyTest extends AbstractProcessTest{
+public class GroovyTest extends AbstractProcessTest {
 
 
     public GroovyTest() {
@@ -57,8 +57,8 @@ public class GroovyTest extends AbstractProcessTest{
 
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-       
+
         assertTrue(result);
     }
-    
+
 }

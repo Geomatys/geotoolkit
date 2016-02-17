@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -55,7 +55,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultCalendarEraTest {
+public class DefaultCalendarEraTest extends org.geotoolkit.test.TestBase {
 
     private CalendarEra calendarEra1;
     private CalendarEra calendarEra2;
@@ -67,34 +67,34 @@ public class DefaultCalendarEraTest {
     public void setUp() {
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Julian calendar");
         frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
-        
+
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Babylonian calendar");
         frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
-        
+
         int[] calendarDate1 = {1900, 1, 1};
         int[] calendarDate2 = {400, 1, 1};
-        
+
         CalendarDate referenceDate1 = FACTORY.createCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
         CalendarDate referenceDate2 = FACTORY.createCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
-        
+
         JulianDate julianReference = FACTORY.createJulianDate(frame1, IndeterminateValue.NOW, 123456789);//new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
-        
+
         cal.set(1900, 0, 1);
         Instant begining1 = FACTORY.createInstant(cal.getTime());
-       
+
         cal.set(2000, 9, 17);
         Instant ending1 = FACTORY.createInstant(cal.getTime());
-        
+
         cal.set(2000, 1, 1);
         Instant begining2 = FACTORY.createInstant(cal.getTime());
-        
+
         cal.set(2012, 1, 1);
         Instant ending2 = FACTORY.createInstant(cal.getTime());
 
         //-- map period
         Period epochOfUse1 = FACTORY.createPeriod(begining1, ending1);
         Period epochOfUse2 = FACTORY.createPeriod(begining2, ending2);
-        
+
         calendarEra1 = FACTORY.createCalendarEra(new SimpleInternationalString("Cenozoic"), new SimpleInternationalString("no event for Cenozoic"), referenceDate1, julianReference, epochOfUse1);
         calendarEra2 = FACTORY.createCalendarEra(new SimpleInternationalString("Mesozoic"), new SimpleInternationalString("no event for Mesozoic"), referenceDate2, julianReference, epochOfUse2);
     }

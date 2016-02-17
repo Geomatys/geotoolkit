@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -30,7 +30,7 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultPeriodDurationTest {
+public class DefaultPeriodDurationTest extends org.geotoolkit.test.TestBase {
 
     private PeriodDuration periodDuration1;
     private PeriodDuration periodDuration2;

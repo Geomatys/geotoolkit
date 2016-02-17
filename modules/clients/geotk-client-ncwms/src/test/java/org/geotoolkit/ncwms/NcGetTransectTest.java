@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  *
  * @author Olivier Terral (Geomatys)
  */
-public class NcGetTransectTest {
+public class NcGetTransectTest extends org.geotoolkit.test.TestBase {
     public NcGetTransectTest() {}
 
     /**

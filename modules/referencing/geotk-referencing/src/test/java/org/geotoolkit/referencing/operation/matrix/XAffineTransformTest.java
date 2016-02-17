@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-public final strictfp class XAffineTransformTest {
+public final strictfp class XAffineTransformTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link XAffineTransform#roundIfAlmostInteger} method.
      */

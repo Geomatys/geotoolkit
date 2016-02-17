@@ -43,7 +43,7 @@ import static org.apache.sis.test.TestUtilities.getSingleton;
  *
  * @since 3.03
  */
-public final strictfp class MetadataWriterTest {
+public final strictfp class MetadataWriterTest extends org.geotoolkit.test.TestBase {
     /**
      * The data source providing connections to the database.
      */

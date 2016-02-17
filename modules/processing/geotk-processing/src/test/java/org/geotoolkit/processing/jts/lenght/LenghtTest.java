@@ -34,18 +34,18 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class LenghtTest extends AbstractProcessTest{
+public class LenghtTest extends AbstractProcessTest {
 
-   
+
     public LenghtTest() {
         super("lenght");
     }
 
     @Test
     public void testLenght() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -54,9 +54,9 @@ public class LenghtTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom1 = fact.createPolygon(ring, null) ;
-        
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "lenght");
 
@@ -66,10 +66,10 @@ public class LenghtTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-        
+
         final Double expected = geom1.getLength();
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
 }

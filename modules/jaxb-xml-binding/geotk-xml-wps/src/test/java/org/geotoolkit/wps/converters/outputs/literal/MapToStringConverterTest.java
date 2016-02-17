@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class MapToStringConverterTest {
+public class MapToStringConverterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testConvert() {
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(Map.class, String.class);

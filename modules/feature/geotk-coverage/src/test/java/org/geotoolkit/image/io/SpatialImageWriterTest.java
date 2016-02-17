@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final strictfp class SpatialImageWriterTest {
+public final strictfp class SpatialImageWriterTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link RectIter}.
      *

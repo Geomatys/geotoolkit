@@ -29,7 +29,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.5
  */
-public final strictfp class FractionTest {
+public final strictfp class FractionTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link Fraction#floor} method.
      */

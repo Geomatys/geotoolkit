@@ -55,9 +55,19 @@
       <artifactId>jsr-275</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-test</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Force database drivers in tests for all modules -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -247,6 +247,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         if (file.exists()){
             file.deleteOnExit();
         }
+
+        file = new File("test.cpg");
+        if (file.exists()){
+            file.deleteOnExit();
+        }
     }
 
     @Test
@@ -282,6 +287,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
 
         file = new File("test.prj");
+        if( file.exists()){
+            file.deleteOnExit();
+        }
+        file = new File("test.cpg");
         if( file.exists()){
             file.deleteOnExit();
         }

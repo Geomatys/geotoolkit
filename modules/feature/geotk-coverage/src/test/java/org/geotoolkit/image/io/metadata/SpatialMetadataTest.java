@@ -49,7 +49,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  * @since 3.06
  */
 @DependsOn(MetadataProxyTest.class)
-public final strictfp class SpatialMetadataTest {
+public final strictfp class SpatialMetadataTest extends org.geotoolkit.test.TestBase {
     /**
      * The warning level to use in this test. We set them to FINE in order to avoid
      * polluting the console output during Maven build. In order to see the warnings,

@@ -25,27 +25,27 @@ import org.junit.Test;
 
 /**
  * Factory tests.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MIFFeatureStoreFactoryTest {
-    
+public class MIFFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
+
     public MIFFeatureStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
+
         final Iterator<FeatureStoreFactory> ite = FeatureStoreFinder.getAllFactories(null).iterator();
-        
+
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof MIFFeatureStoreFactory){
                 found = true;
             }
         }
-        
+
         if(!found){
             fail("Factory not found");
         }

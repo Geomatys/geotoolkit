@@ -44,7 +44,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  *
  * @since 2.0
  */
-public final strictfp class CoordinateFormatTest {
+public final strictfp class CoordinateFormatTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests formatting of a 4-dimensional coordinate. The same format is configured in many
      * ways, and the same sequence of ordinate values is formatted in those different ways.

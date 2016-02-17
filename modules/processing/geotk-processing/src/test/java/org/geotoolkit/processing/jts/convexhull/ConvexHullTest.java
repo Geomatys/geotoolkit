@@ -38,18 +38,18 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class ConvexHullTest extends AbstractProcessTest{
+public class ConvexHullTest extends AbstractProcessTest {
 
-   
+
     public ConvexHullTest() {
         super("convexHull");
     }
 
     @Test
     public void testConvexHull() throws NoSuchIdentifierException, ProcessException, FactoryException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -58,12 +58,12 @@ public class ConvexHullTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom = fact.createPolygon(ring, null) ;
-        
+
         CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
         JTS.setCRS(geom, crs1);
-      
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "convexHull");
 
@@ -73,11 +73,11 @@ public class ConvexHullTest extends AbstractProcessTest{
 
         //result
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
-        
+
         final Geometry expected = geom.convexHull();
-        
+
         assertTrue(expected.equals(result));
         assertTrue(crs1.equals(JTS.findCoordinateReferenceSystem(result)));
     }
-    
+
 }

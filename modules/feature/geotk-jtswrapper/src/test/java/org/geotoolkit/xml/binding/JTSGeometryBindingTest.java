@@ -66,7 +66,7 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JTSGeometryBindingTest {
+public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logger.getAnonymousLogger();
 

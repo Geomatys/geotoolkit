@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @author Fabien BERNARD (Geomatys)
  */
-public class NcGetTimeseriesTest {
+public class NcGetTimeseriesTest extends org.geotoolkit.test.TestBase {
     public NcGetTimeseriesTest() {}
 
     /**

@@ -67,18 +67,18 @@ import static org.geotoolkit.style.StyleConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TextSymbolizerTest {
-    
+public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
+
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     /**
      * Render a label at check it is correctly located in the image.
      */
     @Test
     public void pointLabelTest() throws Exception{
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.add("geom", Point.class, CRS.decode("CRS:84"));
@@ -86,9 +86,9 @@ public class TextSymbolizerTest {
         final FeatureType type = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(type, "1");
         feature.getProperty("geom").setValue(GF.createPoint(new Coordinate(0, 0)));
-        
+
         final FeatureCollection collection = FeatureStoreUtilities.collection(feature);
-        
+
         //text symbolizer style
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
@@ -105,44 +105,44 @@ public class TextSymbolizerTest {
         final Fill fill = SF.fill(Color.BLUE);
 
         final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
-        final MutableStyle style = SF.style(symbol);        
+        final MutableStyle style = SF.style(symbol);
         final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
-        
+
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        
+
         final Hints hints = new Hints();
         hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
-        
+
         final SceneDef scenedef = new SceneDef(context,hints);
         final ViewDef viewdef = new ViewDef(env);
         final CanvasDef canvasdef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
-        
+
         final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
         //ImageIO.write(buffer, "PNG", new File("test.png"));
-        
+
         //we expect to have a blue label at the center of the image
         final int[] pixel = new int[4];
         final int[] blue = new int[]{0,0,255,255};
-        
+
         final Raster raster = buffer.getData();
         boolean found = false;
         for(int x=160; x<200;x++){
             //should be exactly at the center
             raster.getPixel(x, 90, pixel);
-            
+
             if(Arrays.equals(blue, pixel)){
                 found = true;
             }
         }
-        
-        assertTrue("label not found",found);        
-        
+
+        assertTrue("label not found",found);
+
     }
-    
-    
+
+
 }

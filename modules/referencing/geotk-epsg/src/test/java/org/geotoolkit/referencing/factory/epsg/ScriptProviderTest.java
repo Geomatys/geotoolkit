@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class ScriptProviderTest {
+public final strictfp class ScriptProviderTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests fetching the resources.
      *

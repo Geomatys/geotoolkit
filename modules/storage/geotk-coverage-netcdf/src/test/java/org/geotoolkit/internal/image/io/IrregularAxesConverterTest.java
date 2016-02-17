@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.15
  */
-public final strictfp class IrregularAxesConverterTest {
+public final strictfp class IrregularAxesConverterTest extends org.geotoolkit.test.TestBase {
     /**
      * A {@link DiscreteCoordinateSystemAxis} implementation used for this test.
      */

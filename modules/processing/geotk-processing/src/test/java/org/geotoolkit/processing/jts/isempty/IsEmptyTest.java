@@ -34,18 +34,18 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class IsEmptyTest extends AbstractProcessTest{
+public class IsEmptyTest extends AbstractProcessTest {
 
-   
+
     public IsEmptyTest() {
         super("isEmpty");
     }
 
     @Test
     public void testIsEmpty() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
         final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
            new Coordinate(0.0, 0.0),
@@ -54,9 +54,9 @@ public class IsEmptyTest extends AbstractProcessTest{
            new Coordinate(5.0, 0.0),
            new Coordinate(0.0, 0.0)
         });
-        
+
         final Geometry geom1 = fact.createPolygon(ring, null) ;
-        
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "isEmpty");
 
@@ -66,10 +66,10 @@ public class IsEmptyTest extends AbstractProcessTest{
 
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-       
+
         final Boolean expected = geom1.isEmpty();
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
 }

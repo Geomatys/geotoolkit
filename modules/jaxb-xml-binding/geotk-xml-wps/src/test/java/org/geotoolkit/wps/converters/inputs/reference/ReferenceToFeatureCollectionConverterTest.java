@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Théo Zozime
  */
-public class ReferenceToFeatureCollectionConverterTest {
+public class ReferenceToFeatureCollectionConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testJSONConversion() throws IOException {

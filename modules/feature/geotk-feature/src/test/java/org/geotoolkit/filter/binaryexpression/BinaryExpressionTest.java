@@ -30,7 +30,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class BinaryExpressionTest {
+public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
 
 
     public BinaryExpressionTest() {

@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class VectorTest {
+public final strictfp class VectorTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link SequenceVector}.
      */

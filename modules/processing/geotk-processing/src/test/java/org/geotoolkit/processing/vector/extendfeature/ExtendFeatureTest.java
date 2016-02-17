@@ -24,7 +24,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
  * @author Quentin Boileau
  * @module pending
  */
-public class ExtendFeatureTest extends AbstractProcessTest{
+public class ExtendFeatureTest extends AbstractProcessTest {
 
     public ExtendFeatureTest() {
         super("extendfeature");

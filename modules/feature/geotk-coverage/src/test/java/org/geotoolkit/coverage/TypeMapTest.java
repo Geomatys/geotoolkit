@@ -32,7 +32,7 @@ import static org.opengis.coverage.SampleDimensionType.*;
  *
  * @since 3.10
  */
-public final strictfp class TypeMapTest {
+public final strictfp class TypeMapTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests {@link TypeMap#getSampleDimensionType}
      */

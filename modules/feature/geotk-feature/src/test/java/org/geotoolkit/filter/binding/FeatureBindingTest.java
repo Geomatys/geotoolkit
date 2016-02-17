@@ -38,7 +38,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeatureBindingTest {
+public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
 
     public FeatureBindingTest() {
     }
@@ -46,10 +46,10 @@ public class FeatureBindingTest {
     @Test
     public void testFactories(){
         final Binding[] factories = Bindings.getBindings();
-        
+
         int xpathFactory = -1;
         int defaultFactory = -1;
-        
+
         for(int i=0;i<factories.length;i++){
             if(factories[i] instanceof XPathBinding){
                 xpathFactory = i;
@@ -57,14 +57,14 @@ public class FeatureBindingTest {
                 defaultFactory = i;
             }
         }
-        
+
         assertTrue(xpathFactory != -1);
         assertTrue(defaultFactory != -1);
         assertTrue(defaultFactory < xpathFactory);
-        
-        
+
+
     }
-        
+
     @Test
     public void testSimpleFeatureFlatAccessor() {
 
@@ -208,7 +208,7 @@ public class FeatureBindingTest {
         assertTrue(val instanceof Collection);
         Collection col = (Collection) val;
         assertEquals(2, col.size());
-        
+
     }
 
     @Test
@@ -252,16 +252,16 @@ public class FeatureBindingTest {
 
     @Test
     public void testAttributeAccessor(){
-        
+
         Binding accessor = Bindings.getBinding(Attribute.class, ".");
         assertNotNull(accessor);
         Property prop = FEATURE_1.getProperty("testGeometry");
         Object att = accessor.get(prop, ".", Geometry.class);
         assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
-        
+
         att = accessor.get(prop, ".", Property.class);
         assertEquals(FEATURE_1.getDefaultGeometryProperty(), att);
-        
+
     }
-    
+
 }

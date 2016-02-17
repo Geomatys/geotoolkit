@@ -74,6 +74,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.feature.Feature;
@@ -130,7 +131,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      */
     public ShapefileFeatureStore(final URL url, final String namespace)
             throws DataStoreException,MalformedURLException {
-        this(url, namespace, false, DEFAULT_STRING_CHARSET);
+        this(url, namespace, false, null);
     }
 
     /**
@@ -160,6 +161,16 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         shpFiles = new ShpFiles(url);
 
+        //search for a .cpg file which contains the character encoding
+        if(dbfCharset == null && shpFiles.exists(CPG)){
+            try {
+                final ReadableByteChannel channel = shpFiles.getReadChannel(CPG);
+                dbfCharset = CpgFiles.read(channel);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+
         if(dbfCharset == null){
             dbfCharset = DEFAULT_STRING_CHARSET;
         }
@@ -179,7 +190,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP, params).setValue(url);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);
+        if(dbfCharset!=null){
+            Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);
+        }
         return params;
     }
 
@@ -461,6 +474,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             final StorageFile shxStoragefile = locker.getStorageFile(SHX);
             final StorageFile dbfStoragefile = locker.getStorageFile(DBF);
             final StorageFile prjStoragefile = locker.getStorageFile(PRJ);
+            final StorageFile cpgStoragefile = locker.getStorageFile(CPG);
 
             final FileChannel shpChannel = shpStoragefile.getWriteChannel();
             final FileChannel shxChannel = shxStoragefile.getWriteChannel();
@@ -524,6 +538,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             } else {
                 getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
             }
+
+            //write dbf encoding .cpg
+            CpgFiles.write(dbfCharset, cpgStoragefile.getFile());
 
             locker.disposeReaderAndWriters();
             locker.replaceStorageFiles();

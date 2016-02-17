@@ -26,20 +26,20 @@ import org.junit.Test;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class StringToIntegerArrayConverterTest {
+public class StringToIntegerArrayConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testConversion() throws UnconvertibleObjectException  {
-        
+
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(String.class, int[].class);
-        
+
         int[] expected = new int[] {10, 5, 90, 6, 70};
         int[] output = (int[])converter.convert("10, 5, 90, 6, 70", null);
         assertArrayEquals(expected, output);
-        
+
         output = (int[])converter.convert("   ", null);
         assertArrayEquals(new int[0], output);
-        
+
         boolean fail = false;
         try {
             output = (int[])converter.convert("Some random text", null);
@@ -47,7 +47,7 @@ public class StringToIntegerArrayConverterTest {
             fail = true;
         }
         assertTrue(fail);
-        
+
         fail = false;
         try {
             output = (int[])converter.convert("10.0, 5.6, 90, 6, 70", null);

@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final strictfp class VectorPairTest {
+public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase {
     /**
      * Tests the {@link VectorPair#omitColinearPoints} method.
      */

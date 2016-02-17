@@ -25,10 +25,10 @@ import static org.junit.Assert.*;
 
 /**
  * Testing class for GetCapabilities requests, in version 1.0.0
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
-public class GetCapabilitiesTest {
+public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
     public GetCapabilitiesTest() {}
 
 

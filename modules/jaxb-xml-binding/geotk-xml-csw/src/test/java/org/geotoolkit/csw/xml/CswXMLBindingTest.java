@@ -87,7 +87,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class CswXMLBindingTest {
+public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
    @BeforeClass
    public static void setTimeZone() {
        TimeZone.setDefault(TimeZone.getTimeZone("CET"));

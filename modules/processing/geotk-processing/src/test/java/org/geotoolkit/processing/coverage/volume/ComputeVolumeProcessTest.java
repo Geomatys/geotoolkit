@@ -60,7 +60,7 @@ import org.opengis.referencing.datum.PixelInCell;
  *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class ComputeVolumeProcessTest {
+public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test tolerance.

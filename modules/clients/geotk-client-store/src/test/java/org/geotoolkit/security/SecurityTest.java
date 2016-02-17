@@ -26,16 +26,16 @@ import static org.junit.Assert.*;
 
 /**
  * Basic authentication test.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class SecurityTest {
-    
+public class SecurityTest extends org.geotoolkit.test.TestBase {
+
     public static AtomicInteger INC = new AtomicInteger();
-    
+
     @Test
     public void testHeader() throws MalformedURLException{
-        
+
         //check it is called
         final ClientSecurity security = new BasicAuthenticationSecurity("me", "mypass"){
 
@@ -47,20 +47,20 @@ public class SecurityTest {
 
         };
 
-        final MockClient server = new MockClient(security);        
+        final MockClient server = new MockClient(security);
         final MockRequest request = server.createRequest();
-            
+
         try {
             request.getResponseStream();
-        } catch (IOException ex) {      
+        } catch (IOException ex) {
             ex.printStackTrace();
             //url is fake, this error will happen but it's not what we are testing
         }
 
         //test.com has 1 inderection level
         assertEquals(2, INC.get());
-        
-        
+
+
     }
-    
+
 }

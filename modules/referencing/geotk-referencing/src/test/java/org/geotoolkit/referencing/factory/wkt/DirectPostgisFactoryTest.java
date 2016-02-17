@@ -57,7 +57,7 @@ import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
  * @since 3.10
  */
 @DependsOn(WKTFormatTest.class)
-public final strictfp class DirectPostgisFactoryTest {
+public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * Gets the connection parameters to the coverage database.
      */

@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class SosXMLBindingTest {
+public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;
@@ -95,10 +95,10 @@ public class SosXMLBindingTest {
                            "</sos:InsertObservationResponse>\n" ;
         final ExtendedDOMComparator comparator = new ExtendedDOMComparator(expResult, result);
         comparator.compare();
-        
+
         final GetObservationType go = new GetObservationType();
         go.getExtension().add("responseMode: out-of-band");
-        
+
         marshaller.marshal(go, sw);
 
         System.out.println(sw.toString());

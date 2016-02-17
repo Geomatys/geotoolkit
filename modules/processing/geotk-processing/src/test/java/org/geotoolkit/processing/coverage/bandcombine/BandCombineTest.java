@@ -38,36 +38,36 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandCombineTest {
- 
+public class BandCombineTest extends org.geotoolkit.test.TestBase {
+
     @Test
     public void combineTest() throws Exception{
-        
+
         final GridCoverage2D cov1 = create(BufferedImage.TYPE_3BYTE_BGR, Color.RED, Color.BLACK);
         final GridCoverage2D cov2 = create(BufferedImage.TYPE_4BYTE_ABGR, Color.BLUE, Color.GREEN);
         final GridCoverage2D cov3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
-        
-        
+
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "bandcombine");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("coverages").setValue(new Coverage[]{cov1,cov2,cov3});
-        
+
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
-        
+
         //check result coverage
         final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
-        
+
         final RenderedImage outImage = outCoverage.getRenderedImage();
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(100, outImage.getWidth());
         assertEquals(100, outImage.getHeight());
         assertEquals(10, outSampleModel.getNumBands());
         assertEquals(DataBuffer.TYPE_BYTE, outSampleModel.getDataType());
-        
+
         //check values
         final Raster outRaster = outImage.getData();
         final int[] sample = new int[10];
@@ -83,9 +83,9 @@ public class BandCombineTest {
                 }
             }
         }
-        
+
     }
-    
+
     private static GridCoverage2D create(int type, Color color1, Color color2){
         final BufferedImage inputImage = new BufferedImage(100, 100, type);
         final Graphics2D g = inputImage.createGraphics();
@@ -93,7 +93,7 @@ public class BandCombineTest {
         g.fillRect(0, 0, 100, 50);
         g.setColor(color2);
         g.fillRect(0, 50, 100, 50);
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(inputImage);
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
@@ -101,5 +101,5 @@ public class BandCombineTest {
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
         return inCoverage;
     }
-    
+
 }

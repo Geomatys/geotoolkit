@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class FeatureTypeUtilsTest {
+public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void writeReadFTTest() throws Exception {

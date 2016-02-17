@@ -28,7 +28,6 @@ import java.awt.image.WritableRaster;
 
 import javax.media.jai.RenderedOp;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedImageAdapter;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -54,7 +53,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @DependsOn(SampleDimensionTest.class)
-public final strictfp class SampleTranscoderTest {
+public final strictfp class SampleTranscoderTest extends org.geotoolkit.test.TestBase {
     /**
      * Small value for comparisons. Remind: transformed values are stored in a new image
      * using the {@code float} data type. So we can't expected as much precision than with

@@ -18,16 +18,8 @@
 package org.geotoolkit.style;
 
 import java.awt.Color;
-import java.util.Date;
-
 import org.opengis.filter.expression.Literal;
-
 import org.apache.sis.util.ObjectConverters;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -37,25 +29,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ColorTest {
+public class ColorTest extends org.geotoolkit.test.TestBase {
 
     public ColorTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -64,11 +40,11 @@ public class ColorTest {
         final String str = "#D2787034";
         final Color result = ObjectConverters.convert(str, Color.class);
         assertNotNull(result);
-        
+
         final Color c = new Color(120,112,52,210);
         final MutableStyleFactory SF = new DefaultStyleFactory();
         final Literal l = SF.literal(c);
-        
+
         assertTrue(l.getValue() instanceof Color);
         final Color res = l.evaluate(null, Color.class);
         assertEquals(c, res);

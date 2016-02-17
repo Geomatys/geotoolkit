@@ -34,10 +34,6 @@ import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.geotoolkit.feature.Feature;
@@ -52,29 +48,12 @@ import static java.util.Collections.*;
  * @author Samuel Andrés
  * @module pending
  */
-public class MetadataTest {
+public class MetadataTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/metadata.kml";
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public MetadataTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

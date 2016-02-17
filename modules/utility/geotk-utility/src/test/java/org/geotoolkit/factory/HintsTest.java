@@ -37,7 +37,7 @@ import static org.apache.sis.test.Assert.*;
  *
  * @since 2.4
  */
-public final strictfp class HintsTest {
+public final strictfp class HintsTest extends org.geotoolkit.test.TestBase {
     /**
      * Makes sure that J2SE 1.4 assertions are enabled.
      */

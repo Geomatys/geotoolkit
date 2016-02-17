@@ -92,11 +92,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-conformance</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>java3d</groupId>
       <artifactId>vecmath</artifactId>
     </dependency>
@@ -136,16 +131,6 @@
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_codec</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

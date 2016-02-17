@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class BoundaryTest extends AbstractProcessTest{
+public class BoundaryTest extends AbstractProcessTest {
 
 
     public BoundaryTest() {

@@ -24,48 +24,48 @@ import static org.junit.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class QueryParserTest {
+public class QueryParserTest extends org.geotoolkit.test.TestBase {
 
-    
+
     @Test
     public void BBOXTest() throws Exception {
-        
+
         String s = "Title:*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "metafile:doc");
-        
+
         s = "Title:* +MetadataStandardName:earthsciences";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "metafile:doc +MetadataStandardName:earthsciences");
-        
+
         s = "MetadataStandardName:earthsciences +Title:*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "MetadataStandardName:earthsciences +metafile:doc");
-        
+
         s = "Title:* +MetadataStandardName:earthsciences +bla:*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "metafile:doc +MetadataStandardName:earthsciences +metafile:doc");
-        
+
         s = "Title:*lit +MetadataStandardName:earthsciences +bla:*blo +title:lip*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "Title:*lit +MetadataStandardName:earthsciences +bla:*blo +title:lip*");
-        
+
         s = "Title:*lit +test:* +MetadataStandardName:earthsciences +bla:*blo +title:lip* +id:*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "Title:*lit +metafile:doc +MetadataStandardName:earthsciences +bla:*blo +title:lip* +metafile:doc");
-        
+
         s = "test:* +Title:*lit +MetadataStandardName:earthsciences +bla:*blo +title:lip* +id:*";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "metafile:doc +Title:*lit +MetadataStandardName:earthsciences +bla:*blo +title:lip* +metafile:doc");
-        
+
         s = "test:(*) +Title:(*lit) +MetadataStandardName:earthsciences +bla:(*blo) +title:(lip*) +id:(*)";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "metafile:doc +Title:(*lit) +MetadataStandardName:earthsciences +bla:(*blo) +title:(lip*) +metafile:doc");
-        
+
         s = "(Title:(*))";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "(metafile:doc)");
-        
+
         s = "(Title:*)";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "(metafile:doc)");
-        
+
         s = "(Title:* AND prout:*lop)";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "(metafile:doc AND prout:*lop)");
-        
+
         s = "(Title:li* AND prout:* AND fiou:loi)";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "(Title:li* AND metafile:doc AND fiou:loi)");
-        
+
         s = "(Title:*.ctd)";
         assertEquals(LuceneIndexSearcher.removeOnlyWildchar(s), "(Title:*.ctd)");
     }

@@ -53,7 +53,7 @@ import org.apache.sis.referencing.CommonCRS;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidWriterTest {
+public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
