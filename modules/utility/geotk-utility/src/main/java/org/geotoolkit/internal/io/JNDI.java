@@ -39,6 +39,7 @@ import javax.naming.event.EventContext;
 import javax.naming.event.NamingEvent;
 import javax.naming.event.NamingListener;
 import javax.naming.event.ObjectChangeListener;
+import javax.naming.OperationNotSupportedException;
 import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
@@ -121,8 +122,8 @@ public final class JNDI implements EventContext, InitialContextFactory {
      * @param source Data source for the EPSG database, or {@code null} if none.
      */
     public static synchronized void setEPSG(final DataSource source) throws NamingException {
-        if(overrideEPSG==null && source==null){
-            //datasource has not been override
+        if (overrideEPSG == null && source == null) {
+            // DataSource has not been override
             return;
         }
 
@@ -131,9 +132,9 @@ public final class JNDI implements EventContext, InitialContextFactory {
         if (Initializer.hasJNDI()) {
             final Context env = (Context) InitialContext.doLookup("java:comp/env");
             if (!(env instanceof JNDI)) {
-                try{
+                try {
                     env.bind(Initializer.JNDI, source);
-                }catch(NameAlreadyBoundException ex){
+                } catch (NameAlreadyBoundException | OperationNotSupportedException ex) {
                     Logging.getLogger("org.geotoolkit.referencing").log(Level.CONFIG, ex.getMessage(), ex);
                 }
             }
