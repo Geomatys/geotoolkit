@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.fix;
 
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -61,7 +62,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
      */
     private long bufferStart = Long.MIN_VALUE;
 
-    public IndexedFidReader(final URL fixUrl, final ReadableByteChannel fixChannel,
+    public IndexedFidReader(final URI fixUrl, final ReadableByteChannel fixChannel,
             final RecordNumberTracker reader) throws IOException {
         this.reader = reader;
 
@@ -79,7 +80,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         buffer.position(buffer.limit());
     }
 
-    private void getHeader(final URL fixUrl) throws IOException {
+    private void getHeader(final URI fixUrl) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
         ShapefileReader.fill(buffer, readChannel);
 
@@ -102,7 +103,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
         this.removes = buffer.getInt();
         if (removes > count/2 ) {
             try {
-                IOUtilities.toFile(fixUrl, ENCODING).deleteOnExit();
+                IOUtilities.toFile(fixUrl.toURL(), ENCODING).deleteOnExit();
             } finally {
             }
         }

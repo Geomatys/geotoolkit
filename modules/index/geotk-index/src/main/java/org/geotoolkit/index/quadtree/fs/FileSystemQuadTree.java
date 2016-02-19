@@ -20,11 +20,12 @@ package org.geotoolkit.index.quadtree.fs;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
@@ -36,9 +37,13 @@ import org.geotoolkit.index.quadtree.StoreException;
  */
 public class FileSystemQuadTree extends QuadTree {
 
+    @Deprecated
     public static FileSystemQuadTree load(final File file) throws IOException, StoreException{
-        final FileInputStream fis = new FileInputStream(file);
-        final FileChannel channel = fis.getChannel();
+       return load(file.toPath());
+    }
+
+    public static FileSystemQuadTree load(final Path file) throws IOException, StoreException{
+        final FileChannel channel = FileChannel.open(file, StandardOpenOption.READ);
 
         final IndexHeader header = new IndexHeader(channel);
         final ByteOrder order = header.getByteOrder();
@@ -47,16 +52,14 @@ public class FileSystemQuadTree extends QuadTree {
         channel.read(buf);
         buf.flip();
 
-        return new FileSystemQuadTree(buf.getInt(), buf.getInt(), fis, channel, order);
+        return new FileSystemQuadTree(buf.getInt(), buf.getInt(), channel, order);
     }
 
-    private final FileInputStream fis;
     private final FileChannel channel;
 
-    public FileSystemQuadTree(final int numShapes, final int maxDepth, final FileInputStream fis, 
-                              final FileChannel channel, final ByteOrder order) throws IOException{
+    public FileSystemQuadTree(final int numShapes, final int maxDepth, final FileChannel channel,
+                              final ByteOrder order) throws IOException{
         super(numShapes,maxDepth);
-        this.fis = fis;
         this.channel = channel;
         setRoot(FileSystemIndexStore.readNode(channel, order));
     }
@@ -76,7 +79,6 @@ public class FileSystemQuadTree extends QuadTree {
         super.close();
         try {
             channel.close();
-            fis.close();
         } catch (IOException e) {
             throw new StoreException(e);
         }

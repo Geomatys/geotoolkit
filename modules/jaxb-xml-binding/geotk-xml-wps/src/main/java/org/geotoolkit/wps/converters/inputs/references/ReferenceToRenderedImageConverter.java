@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -71,11 +71,10 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
 
             //decode form base64 stream
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
-                final String encodedImage = FileUtilities.getStringFromStream(stream);
+                final String encodedImage = IOUtilities.toString(stream);
                 final byte[] byteData = Base64.decode(encodedImage.trim());
                 if (byteData != null && byteData.length > 0) {
-                    final InputStream is = new ByteArrayInputStream(byteData);
-                    if (is != null) {
+                    try (InputStream is = new ByteArrayInputStream(byteData)) {
                         imageStream = ImageIO.createImageInputStream(is);
                     }
                 }

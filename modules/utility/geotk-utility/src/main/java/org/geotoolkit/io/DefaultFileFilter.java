@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.io;
 
+import org.geotoolkit.nio.PosixPathMatcher;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -27,6 +29,7 @@ import java.util.regex.Pattern;
  * A {@link FileFilter} implementation using Unix-style wildcards.
  * A pattern is given to the constructor, which can contains the
  * {@code "*"} and {@code "?"} wildcards.
+ * Use {@link PosixPathMatcher} matcher using NIO API instead if you're not in swing context
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

@@ -17,23 +17,20 @@
 
 package org.geotoolkit.xml;
 
-import java.io.ByteArrayInputStream;
+import java.io.*;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
 import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.Node;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
+
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -146,6 +143,9 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
 
         if(input instanceof File){
             sourceStream = new FileInputStream((File)input);
+            input = sourceStream;
+        }else if(input instanceof Path){
+            sourceStream = Files.newInputStream((Path)input, StandardOpenOption.READ);
             input = sourceStream;
         }else if(input instanceof URL){
             sourceStream = ((URL)input).openStream();

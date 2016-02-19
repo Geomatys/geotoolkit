@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.index.tree.star;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
@@ -26,56 +26,56 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * {@link StarRTree} implementation which store all Nodes from Tree and others informations,
- * on hard drive at specified emplacement define by user. 
+ * on hard drive at specified emplacement define by user.
  *
  * @author Rémi Marechal (Geomatys).
  * @see StarRTree
  */
 public class FileStarRTree<E> extends StarRTree<E> {
-    
+
     /**
-     * Create a new {@link StarRTree} implementation which store Tree architecture on hard drive.<br/><br/>
-     * 
+     * Create a new {@link StarRTree} implementation which store Tree architecture into stream at {@link Path} location.<br/><br/>
+     *
      * Note : the default buffer length which read and write on hard drive  is 4096 {@code Byte}.
-     * 
+     *
      * @param outPut File which contain path where Tree information will be stored.
      * @param maxElements maximum children value permit per Node.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param treeEltMap object which store tree identifier and data.
-     * @throws StoreIndexException 
+     * @throws StoreIndexException
      * @throws IOException if problem during head file writing.
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
+    public FileStarRTree(final Path outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
         super(new TreeAccessFile(outPut, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
-    
+
     /**
-     * Create a new {@link StarRTree} implementation which store Tree architecture on hard drive.<br/><br/>
-     * 
+     * Create a new {@link StarRTree} implementation which store Tree architecture into stream at {@link Path} location.<br/><br/>
+     *
      * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
      * User may increase reading and writing performance in function of the owned memory.
-     * 
+     *
      * @param outPut File which contain path where Tree information will be stored.
      * @param maxElements maximum children value permit per Node.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param treeEltMap object which store tree identifier and data.
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
      * @throws StoreIndexException
-     * @throws IOException 
+     * @throws IOException
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
+    public FileStarRTree(final Path outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
         super(new TreeAccessFile(outPut, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
-    
+
     /**
      * Open a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
-     * 
+     *
      * Note : the default buffer length which read and write on hard drive is 4096 {@code Byte}.
-     * 
+     *
      * @param input File already filled by old {@link StarRTree} implementation.
      * @param treeEltMap object which store tree identifier and data.
      * @throws IOException if problem during head reading from already filled file.
@@ -84,16 +84,16 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
+    public FileStarRTree(final Path input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
         super(new TreeAccessFile(input, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     }
-    
+
     /**
      * Open a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
-     * 
+     *
      * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
      * User may increase reading and writing performance in function of the owned memory.
-     * 
+     *
      * @param input File already filled by old {@link StarRTree} implementation.
      * @param treeEltMap object which store tree identifier and data.
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
@@ -103,7 +103,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
+    public FileStarRTree(final Path input, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
         super(new TreeAccessFile(input, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
-    } 
+    }
 }

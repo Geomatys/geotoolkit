@@ -17,18 +17,17 @@
 
 package org.geotoolkit.data.osm;
 
-import java.net.URL;
+import java.net.URI;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -61,7 +60,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("OSMMemoryParameters").createGroup(IDENTIFIER,URLP);
+            new ParameterBuilder().addName("OSMMemoryParameters").createGroup(IDENTIFIER, PATH);
 
     @Override
     public Identification getIdentification() {
@@ -86,9 +85,9 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -96,7 +95,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         }
         final String name = path.substring(slash, dot);
         try {
-            return new OSMMemoryFeatureStore(params,IOUtilities.toFile(url, null));
+            return new OSMMemoryFeatureStore(params, IOUtilities.toPath(uri));
         } catch (Exception ex) {
             throw new DataStoreException(ex);
         }

@@ -91,8 +91,7 @@ public class GeometryArrayToReferenceConverter extends AbstractReferenceOutputCo
             }
             else
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
-        }
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             throw new UnconvertibleObjectException("Unable to find the reference file");
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex);

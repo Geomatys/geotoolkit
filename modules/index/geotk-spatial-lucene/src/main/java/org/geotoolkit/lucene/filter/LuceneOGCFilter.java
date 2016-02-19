@@ -17,19 +17,19 @@
 package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.*;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.AtomicReader;
-import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.DocsEnum;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.util.BitDocIdSet;
 import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.DocIdBitSet;
+import org.apache.lucene.util.FixedBitSet;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.SpatialFilterType;
@@ -103,7 +103,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
      * {@inheritDoc }
      */
     @Override
-    public DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws IOException {
+    public DocIdSet getDocIdSet(final LeafReaderContext ctx, final Bits b) throws IOException {
 
         boolean treeSearch     = false;
         boolean reverse        = false;
@@ -199,8 +199,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
             LOGGER.finer("Null R-tree in spatial search");
         }
 
-        final AtomicReader reader = ctx.reader();
-        final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
+        final LeafReader reader = ctx.reader();
+        final BitDocIdSet set = new BitDocIdSet(new FixedBitSet(reader.maxDoc()));
         final DocsEnum termDocs = reader.termDocsEnum(META_FIELD);
         int n = termDocs.nextDoc();
         while (n != DocsEnum.NO_MORE_DOCS){
@@ -209,15 +209,15 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
             final String id     = doc.get(IDENTIFIER_FIELD_NAME);
             final boolean match = treeMatching.contains(id);
             if (treeSearch && reverse && !match) {
-                set.getBitSet().set(docId);
+                set.bits().set(docId);
 
             } else if (!treeSearch || match) {
                 if (envelopeOnly && !distanceFilter) {
-                    set.getBitSet().set(docId);
+                    set.bits().set(docId);
                 } else {
                     final Document geoDoc = reader.document(docId, GEOMETRY_FIELDS);
                     if (filter.evaluate(geoDoc)) {
-                        set.getBitSet().set(docId);
+                        set.bits().set(docId);
                     }
                 }
             }
@@ -232,7 +232,28 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     }
 
     @Override
-    public String toString() {
+    public String toString(String s) {
         return "[LuceneOGCFilter] " + filter.toString();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof LuceneOGCFilter) {
+            LuceneOGCFilter that = (LuceneOGCFilter) obj;
+            return Objects.equals(this.filter, that.filter) &&
+                   Objects.equals(this.filterType, that.filterType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.filterType);
+        hash = 79 * hash + Objects.hashCode(this.filter);
+        return hash;
     }
 }

@@ -30,9 +30,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -284,7 +284,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final BasicLink bl = iconStyle.getIcon();
             if (bl != null) {
                 if (bl.getHref() != null) {
-                    final File img = new File(bl.getHref());
+                    final URL img = new URL(bl.getHref());
                     final BufferedImage buff = ImageIO.read(img);
                     graphic.drawImage(buff, 0, 4, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
                 }
@@ -864,9 +864,10 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final Graphics2D graphic = context2d.getGraphics();
 
             // Display image
-            final BufferedImage image = ImageIO.read(new File(
-                    ((Icon) groundOverlay.getProperty(
-                    KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref()));
+            final Property iconProperty = groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName());
+            final Icon icon = (Icon) iconProperty.getValue();
+            final URL iconURL = new URL(icon.getHref());
+            final BufferedImage image = ImageIO.read(iconURL);
             final LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
                     KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
 
@@ -907,8 +908,8 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
             this.portrayCommonAbstractOverlay(screenOverlay);
 
-            final File img = new File(
-                    ((Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref());
+            Icon icon = (Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+            final URL img = new URL(icon.getHref());
             context2d.switchToDisplayCRS();
 
             final BufferedImage image = ImageIO.read(img);
@@ -1082,7 +1083,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                 if (iconStyle != null) {
                     graphic.setColor(iconStyle.getColor());
                     final BasicLink icon = iconStyle.getIcon();
-                    final File img = new File(icon.getHref());
+                    final URL img = new URL(icon.getHref());
                     final BufferedImage image = ImageIO.read(img);
                     com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) point;
                     final double[] tab = new double[]{p.getX(), p.getY()};

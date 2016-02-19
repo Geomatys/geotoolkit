@@ -17,18 +17,23 @@
  */
 package org.geotoolkit.data.shapefile.lock;
 
+import org.geotoolkit.nio.IOUtilities;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
+import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
 
@@ -40,10 +45,15 @@ import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
  */
 public final class StorageFile implements Comparable<StorageFile> {
     private final ShpFiles shpFiles;
-    private final File tempFile;
+    private final Path tempFile;
     private final ShpFileType type;
 
+    @Deprecated
     StorageFile(final ShpFiles shpFiles, final File tempFile, final ShpFileType type) {
+       this(shpFiles, tempFile.toPath(), type);
+    }
+
+    StorageFile(final ShpFiles shpFiles, final Path tempFile, final ShpFileType type) {
         this.shpFiles = shpFiles;
         this.tempFile = tempFile;
         this.type = type;
@@ -54,12 +64,13 @@ public final class StorageFile implements Comparable<StorageFile> {
      * 
      * @return the storage file
      */
-    public File getFile() {
+    public Path getFile() {
         return tempFile;
     }
 
     public FileChannel getWriteChannel() throws IOException {
-        return new RandomAccessFile(tempFile, "rw").getChannel();
+        return FileChannel.open(tempFile, READ, CREATE, WRITE);
+//        return new RandomAccessFile(tempFile, "rw").getChannel();
     }
 
     /**
@@ -83,7 +94,7 @@ public final class StorageFile implements Comparable<StorageFile> {
      * @throws IOException
      */
     static void replaceOriginals( final StorageFile... storageFiles ) throws IOException {
-        SortedSet<StorageFile> files = new TreeSet<StorageFile>(Arrays.asList(storageFiles));
+        SortedSet<StorageFile> files = new TreeSet<>(Arrays.asList(storageFiles));
 
         ShpFiles currentShpFiles = null;
         for( StorageFile storageFile : files ) {
@@ -92,65 +103,38 @@ public final class StorageFile implements Comparable<StorageFile> {
                 currentShpFiles = storageFile.shpFiles;
             }
 
-            final File storage = storageFile.getFile();
+            final Path storage = storageFile.getFile();
 
-            final URL url = storageFile.getSrcURLForWrite();
+            final URI url = storageFile.getSrcURLForWrite();
             try {
-                File dest = toFile(url);
+                Path dest = toPath(url);
 
                 if (storage.equals(dest))
                     return;
 
-                if (dest.exists()) {
-                    if (!dest.delete()){
-                        LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
-                    }
+                try {
+                    Files.deleteIfExists(dest);
+                } catch (IOException ex) {
+                    LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
                 }
 
-                if (storage.exists() && !storage.renameTo(dest)) {
-                    LOGGER.finer("Unable to rename temporary file to the file: "+dest+" when attempting to replace with temporary copy");
-                    
-                    copyFile(storage, url, dest);
-                    if (!storage.delete()) {
-                        storage.deleteOnExit();
+                if (Files.exists(storage)) {
+                    try {
+                        Files.move(storage, dest, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException | UnsupportedOperationException e) {
+                        LOGGER.log(Level.FINER, "Unable to replace temporary file to the file: " + dest +
+                                " when attempting to replace with temporary copy", e);
+                        IOUtilities.copy(storage, dest, StandardCopyOption.REPLACE_EXISTING);
                     }
                 }
             } finally {
-                if (storage.exists()) {
-                    storage.delete();
-                }
-            }
-        }
-
-    }
-
-    private static void copyFile( final File storage, final URL url, final File dest ) throws FileNotFoundException,
-            IOException {
-        FileChannel in = null;
-        FileChannel out = null;
-        try {
-            in = new FileInputStream(storage).getChannel();
-            out = new FileOutputStream(dest).getChannel();
-
-            // magic number for Windows, 64Mb - 32Kb)
-            int maxCount = (64 * 1024 * 1024) - (32 * 1024);
-            long size = in.size();
-            long position = 0;
-            while( position < size ) {
-                position += in.transferTo(position, maxCount, out);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
+                Files.deleteIfExists(storage);
             }
         }
     }
 
-    private URL getSrcURLForWrite() {
-        return shpFiles.getURL(type);
+    private URI getSrcURLForWrite() {
+        return shpFiles.getURI(type);
     }
 
     /**
@@ -170,7 +154,7 @@ public final class StorageFile implements Comparable<StorageFile> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ": " + tempFile.getName();
+        return getClass().getSimpleName() + ": " + tempFile.getFileName().toString();
     }
 
 }

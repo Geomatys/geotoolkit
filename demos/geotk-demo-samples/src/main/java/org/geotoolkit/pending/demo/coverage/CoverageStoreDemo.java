@@ -1,7 +1,9 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
-import java.io.File;
+import java.nio.file.Path;
+
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
@@ -29,10 +31,10 @@ public class CoverageStoreDemo {
         WorldFileImageReader.Spi.registerDefaults(null);
         WorldFileImageWriter.Spi.registerDefaults(null);
 
-        final File input = new File("data");
+        Path dataResources = IOUtilities.getResourceAsPath("data");
 
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(FileCoverageStoreFactory.PATH, params).setValue(input.toURI().toURL());
+        Parameters.getOrCreate(FileCoverageStoreFactory.PATH, params).setValue(dataResources.toUri());
         Parameters.getOrCreate(FileCoverageStoreFactory.TYPE, params).setValue("jpg-wf");
 
         final CoverageStore store = CoverageStoreFinder.open(params);

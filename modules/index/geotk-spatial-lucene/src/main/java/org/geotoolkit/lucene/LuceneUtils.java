@@ -24,8 +24,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,6 +43,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.opengis.filter.Filter;
 import org.opengis.filter.spatial.*;
@@ -60,7 +61,7 @@ public class LuceneUtils {
 
     public static final GeometryFactory GF = new GeometryFactory();
 
-    public static Directory getAppropriateDirectory(final File indexDirectory) throws IOException {
+    public static Directory getAppropriateDirectory(final Path indexDirectory) throws IOException {
 
         // for windows
         if (System.getProperty("os.name", "").startsWith("Windows")) {
@@ -113,7 +114,7 @@ public class LuceneUtils {
                 bound = getReprojectedEnvelope(e, treeCrs);
             }
         }
-        System.out.println("OBTAINED REPROJECTED ENV:" + bound);
+        LOGGER.log(Level.FINER, "OBTAINED REPROJECTED ENV:{0}", bound);
         return bound;
     }
 
@@ -209,6 +210,9 @@ public class LuceneUtils {
         return new NamedEnvelope(Envelopes.transform(bound, crs), id);
     }
 
+    public static Polygon getPolygon(final org.opengis.geometry.Envelope env){
+        return getPolygon(env.getMinimum(0), env.getMaximum(0), env.getMinimum(1), env.getMaximum(1), env.getCoordinateReferenceSystem());
+    }
     /**
      * Return a JTS polygon from bounding box coordinate.
      *
@@ -216,9 +220,9 @@ public class LuceneUtils {
      * @param maxx maximal X coordinate.
      * @param miny minimal Y coordinate.
      * @param maxy maximal Y coordinate.
-     * @param srid coordinate spatial reference identifier.
+     * @param crs coordinate spatial reference.
      */
-    public static Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
+    public static Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final CoordinateReferenceSystem crs){
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
         new Coordinate(0, 0),
@@ -239,17 +243,17 @@ public class LuceneUtils {
         crds[3].y = miny;
         crds[4].x = minx;
         crds[4].y = miny;
-        poly.setSRID(srid);
+        JTS.setCRS(poly, crs);
         return poly;
     }
-
-    public static Polygon[] getPolygons(final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
+    
+    public static Polygon[] getPolygons(final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final CoordinateReferenceSystem crs) {
         final List<Polygon> polygonList = new ArrayList<>();
         for (int i = 0; i < minx.size(); i++) {
             if (Double.isNaN(minx.get(i)) || Double.isNaN(maxx.get(i)) || Double.isNaN(miny.get(i)) || Double.isNaN(maxy.get(i))) {
                 LOGGER.info("skip NaN envelope");
             } else {
-                polygonList.add(LuceneUtils.getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid));
+                polygonList.add(LuceneUtils.getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i), crs));
             }
         }
         return polygonList.toArray(new Polygon[polygonList.size()]);

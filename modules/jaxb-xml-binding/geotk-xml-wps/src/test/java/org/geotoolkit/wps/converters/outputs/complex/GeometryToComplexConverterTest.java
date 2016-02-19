@@ -65,7 +65,7 @@ public class GeometryToComplexConverterTest extends org.geotoolkit.test.TestBase
 
         String geoJsonContent = ((GeoJSONType) complex.getContent().get(0)).getContent();
         Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJsonContent);
-        Geometry geometry = getGeometry(tmpFilePath.toFile());
+        Geometry geometry = getGeometry(tmpFilePath);
 
         ConvertersTestUtils.assertGeometryIsValid(geometry);
     }
@@ -77,9 +77,8 @@ public class GeometryToComplexConverterTest extends org.geotoolkit.test.TestBase
      * @throws IOException
      * @throws FactoryException
      */
-    private static Geometry getGeometry(File jsonFile) throws IOException, FactoryException {
-        final GeoJSONParser parser = new GeoJSONParser();
-        final GeoJSONObject geoJsonObject = parser.parse(jsonFile);
+    private static Geometry getGeometry(Path jsonFile) throws IOException, FactoryException {
+        final GeoJSONObject geoJsonObject = GeoJSONParser.parse(jsonFile);
 
         if (!(geoJsonObject instanceof GeoJSONGeometry))
             fail();

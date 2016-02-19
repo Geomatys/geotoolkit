@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.metadata.cbers;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -77,7 +77,7 @@ public class CBERS {
      * @param cbersData Metadata
      * @return ISO19115 Metadata
      */
-    public static Metadata toMetadata(File cbersData) throws ParserConfigurationException, IOException, SAXException{
+    public static Metadata toMetadata(Path cbersData) throws ParserConfigurationException, IOException, SAXException{
         final DefaultMetadata metadata = new DefaultMetadata();
         //Initialisation of DOM document.
         Document doc = DomUtilities.read(cbersData);
@@ -133,7 +133,7 @@ public class CBERS {
          * element or default value to use.
          */
         //MI_Metadata/fileIdentifier : FileName
-        String fileName = cbersData.getName();
+        String fileName = cbersData.getFileName().toString();
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         isoData.setFileIdentifier(fileName);
 

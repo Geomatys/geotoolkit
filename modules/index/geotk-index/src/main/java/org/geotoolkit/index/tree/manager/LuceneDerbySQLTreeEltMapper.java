@@ -17,9 +17,9 @@
 
 package org.geotoolkit.index.tree.manager;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.sql.Connection;
@@ -74,16 +74,16 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
         }
     }
 
-    static DataSource getDataSource(File directory) {
+    static DataSource getDataSource(Path directory) {
 
-        final String dbUrl = "jdbc:derby:" + directory.getPath() + "/treemap-db;";
+        final String dbUrl = "jdbc:derby:" + directory.toString()+ "/treemap-db;";
         LOGGER.log(Level.INFO, "connecting to datasource {0}", dbUrl);
         return new DefaultDataSource(dbUrl);
 
     }
 
-    public static TreeElementMapper createTreeEltMapperWithDB(File directory) throws SQLException, IOException {
-        final String dbUrl = "jdbc:derby:" + directory.getPath() + "/treemap-db;create=true;";
+    public static TreeElementMapper createTreeEltMapperWithDB(Path directory) throws SQLException, IOException {
+        final String dbUrl = "jdbc:derby:" + directory.toString() + "/treemap-db;create=true;";
         LOGGER.log(Level.INFO, "creating datasource {0}", dbUrl);
         final DataSource source = new DefaultDataSource(dbUrl);
         // Establish connection and create schema if does not exist.

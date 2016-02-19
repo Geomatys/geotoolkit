@@ -19,6 +19,8 @@ package org.geotoolkit.image.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageIO;
@@ -75,13 +77,13 @@ public final strictfp class XImageIOTest extends ImageTestBase {
         XImageIO.close(reader);
         reader.dispose();
 
-        final File tmp = TemporaryFile.createTempFile("TEST", ".png", null);
+        final Path tmp = TemporaryFile.createTempFile("TEST", ".png", null);
         try {
             final ImageWriter writer = XImageIO.getWriterBySuffix(tmp, image);
             writer.write(image);
             XImageIO.close(writer);
             writer.dispose();
-            assertTrue("The created file should not be empty.", tmp.length() > 0);
+            assertTrue("The created file should not be empty.", Files.size(tmp) > 0);
         } finally {
             assertTrue(TemporaryFile.delete(tmp));
         }

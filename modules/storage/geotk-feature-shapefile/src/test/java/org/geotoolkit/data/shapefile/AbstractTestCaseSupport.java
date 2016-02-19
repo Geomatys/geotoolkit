@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -183,32 +184,32 @@ public abstract class AbstractTestCaseSupport {
         assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "shp")).canRead());
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "shx")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "prj")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "fix")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "qix")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "grx")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         try {
             assertTrue(ShapeTestData.copy(AbstractTestCaseSupport.class, sibling(name, "shp.xml")).canRead());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore: this file is optional.
         }
         File copy = ShapeTestData.copy(AbstractTestCaseSupport.class, name);

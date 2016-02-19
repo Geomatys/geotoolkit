@@ -225,7 +225,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                  * Create the series if it does not exist. Note that new series
                  * may be created if the entries are in different directories.
                  */
-                final String directory = (entry.path != null) ? entry.path.getPath() : "";
+                final String directory = (entry.path != null) ? entry.path.toString() : "";
                 final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
                 specificSeries = seriesTable.getEntry(seriesID);
                 /*

@@ -62,17 +62,17 @@ public class ServiceTest extends AbstractTestCaseSupport {
     @Test
     public void testShapefileDataStore() throws Exception {
         HashMap params = new HashMap();
-        params.put("url", ShapeTestData.url(TEST_FILE));
+        params.put("path", ShapeTestData.url(TEST_FILE).toURI());
         FeatureStore ds = FeatureStoreFinder.open(params);
         assertNotNull(ds);
-        params.put("url", ShapeTestData.url(TEST_FILE).toString());
+        params.put("path", ShapeTestData.url(TEST_FILE).toURI().toString());
         assertNotNull(ds);
     }
 
     @Test
     public void testBadURL() {
         HashMap params = new HashMap();
-        params.put("url", "aaa://bbb.ccc");
+        params.put("path", "aaa://bbb.ccc");
         try {
             ShapefileFeatureStoreFactory f = new ShapefileFeatureStoreFactory();
             f.open(params);

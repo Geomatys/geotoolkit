@@ -17,18 +17,20 @@
  */
 package org.geotoolkit.image.io;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileInputStream;
 import javax.imageio.spi.ImageWriterSpi;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -38,7 +40,7 @@ import org.geotoolkit.resources.Errors;
  * <p>
  * The output type can be any of the types documented in the
  * {@linkplain org.geotoolkit.image.io.StreamImageWriter.Spi provider} javadoc. The {@link File}
- * object can be obtained by a call to {@link #getOutputFile()}, which handles the various output
+ * object can be obtained by a call to {@link #getOutputPath()}, which handles the various output
  * types as below:
  * <p>
  * <ul>
@@ -68,10 +70,10 @@ public abstract class FileImageWriter extends StreamImageWriter {
      * already a {@link File} object. Otherwise this is a {@code File} derived from the
      * output URL, URI or Path if possible, or a temporary file otherwise.
      */
-    private File outputFile;
+    private Path outputPath;
 
     /**
-     * {@code true} if {@link #outputFile} is a temporary file.
+     * {@code true} if {@link #outputPath} is a temporary file.
      */
     private boolean isTemporary;
 
@@ -87,7 +89,7 @@ public abstract class FileImageWriter extends StreamImageWriter {
     /**
      * Returns the encoding used for {@linkplain URL} {@linkplain #output output}s.
      * The default implementation returns {@code "UTF-8"} in all cases. Subclasses
-     * can override this method if {@link #getOutputFile()} should convert {@link URL}
+     * can override this method if {@link #getOutputPath()} should convert {@link URL}
      * to {@link File} objects using a different encoding.
      *
      * @return The encoding used for URL outputs.
@@ -105,38 +107,34 @@ public abstract class FileImageWriter extends StreamImageWriter {
      * @throws IOException If the output can not be converted to a file, or a failure
      *         occurred while creating a temporary file.
      */
-    protected File getOutputFile() throws IOException {
-        if (outputFile != null) {
-            return outputFile;
+    protected Path getOutputPath() throws IOException {
+        if (outputPath != null) {
+            return outputPath;
         }
         final Object output = this.output;
         if (output == null) {
             throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NoImageOutput));
         }
         if (output instanceof String) {
-            outputFile = new File((String) output);
-            return outputFile;
+            return Paths.get((String) output);
         }
         if (output instanceof File) {
-            outputFile = (File) output;
-            return outputFile;
+            return ((File) output).toPath();
         }
         if (output instanceof Path) {
-            outputFile = ((Path) output).toFile();
-            return outputFile;
+            return (Path) output;
         }
         if (output instanceof URI) {
-            final URI targetURI = (URI) output;
-            if (targetURI.getScheme().equalsIgnoreCase("file")) {
-                outputFile = new File(targetURI);
-                return outputFile;
-            }
+            return Paths.get((URI) output);
         }
         if (output instanceof URL) {
-            final URL targetURL = (URL) output;
-            if (targetURL.getProtocol().equalsIgnoreCase("file")) {
-                outputFile = IOUtilities.toFile(targetURL, getURLEncoding());
-                return outputFile;
+            try {
+                final URL sourceURL = (URL) output;
+                outputPath = Paths.get(sourceURL.toURI());
+                return outputPath;
+            } catch (URISyntaxException e) {
+                //forward exception
+                throw new IOException(e);
             }
         }
         /*
@@ -144,13 +142,13 @@ public abstract class FileImageWriter extends StreamImageWriter {
          * the first declared image suffix (e.g. "png"), or "tmp" if there is no declared
          * suffix. The "FIW" prefix stands for "FileImageWriter".
          */
-        outputFile = TemporaryFile.createTempFile("FIW", XImageIO.getFileSuffix(originatingProvider), null);
+        outputPath = TemporaryFile.createTempFile("FIW", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
-        return outputFile;
+        return outputPath;
     }
 
     /**
-     * Returns {@code true} if the file given by {@link #getOutputFile()} is a temporary file.
+     * Returns {@code true} if the file given by {@link #getOutputPath()} is a temporary file.
      *
      * @return {@code true} if the output file is a temporary one.
      */
@@ -178,24 +176,24 @@ public abstract class FileImageWriter extends StreamImageWriter {
      */
     @Override
     protected void close() throws IOException {
-        final File file = outputFile;
-        outputFile = null;
+        final Path path = outputPath;
+        outputPath = null;
         if (isTemporary) try {
             isTemporary = false;
             final OutputStream out = getOutputStream();
-            try (InputStream in = new FileInputStream(file)) {
-                org.geotoolkit.internal.io.IOUtilities.copy(in, out);
+            try (InputStream in = Files.newInputStream(path)) {
+                IOUtilities.copy(in, out);
             }
             out.flush();
             // Do not close the 'out' stream. Let the super.close() method decides what
             // it needs to close (it depends if the stream was specified by the user or
             // created under the hood by the writer).
         } finally {
-            // Delete the temporary file before to close the stream in order to make sure that
+            // Delete the temporary path before to close the stream in order to make sure that
             // it is deleted even if super.close() failed. In extreme cases, this may also free
             // some disk space needed by super.close() for completing its work.
-            if (!TemporaryFile.delete(file)) {
-                file.deleteOnExit();
+            if (!TemporaryFile.delete(path.toFile())) {
+                path.toFile().deleteOnExit();
             }
             super.close();
         } else {

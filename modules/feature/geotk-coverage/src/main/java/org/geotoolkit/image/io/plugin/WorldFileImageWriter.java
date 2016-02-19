@@ -43,7 +43,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;

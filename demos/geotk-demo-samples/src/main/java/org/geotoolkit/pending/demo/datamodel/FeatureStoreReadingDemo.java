@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.datamodel;
 
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class FeatureStoreReadingDemo {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException {
+    public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, URISyntaxException {
         Demos.init();
         
         //getting a datastore
@@ -80,24 +81,26 @@ public class FeatureStoreReadingDemo {
         }
     }
 
-    private static FeatureStore createUsingMap() throws DataStoreException{
+    private static FeatureStore createUsingMap() throws DataStoreException, URISyntaxException {
 
         //we must know the parameters
         final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
-        parameters.put("url", FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
+        String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
+        parameters.put(pathId, FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;
     }
 
-    private static FeatureStore createUsingParameterGroup() throws DataStoreException{
+    private static FeatureStore createUsingParameterGroup() throws DataStoreException, URISyntaxException {
 
         //find out how to describe things
         System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
         System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        parameters.parameter("url").setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
+        String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
+        parameters.parameter(pathId).setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
         
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;

@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.metadata.cbers;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.opengis.metadata.Metadata;
 import org.xml.sax.SAXException;
@@ -35,21 +36,20 @@ public class CBERSExtension extends GeoTiffExtension{
     private static final String BASE_NAME = "CBERS";
 
     private Boolean hasMetadata = null;
-    private File metaFile = null;
+    private Path metaFile = null;
     private Metadata cbersMeta = null;
 
     @Override
     public boolean isPresent(Object input) {
         try {
-            input = IOUtilities.tryToFile(input);
-            if(!(input instanceof File)) return false;
+            if (IOUtilities.canProcessAsPath(input)) {
+                Path inputPath = IOUtilities.toPath(input);
 
-            final File file = (File) input;
-            final String name = file.getName();
+                final String name = inputPath.getFileName().toString();
 
-            //all cbers files start with the same prefix
-            if(!name.startsWith(BASE_NAME)) return false;
-
+                //all cbers files start with the same prefix
+                if (name.startsWith(BASE_NAME)) return true;
+            }
 
         } catch (IOException ex) {
             //not a file, no cbers metadata available
@@ -62,31 +62,32 @@ public class CBERSExtension extends GeoTiffExtension{
     public SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
 
         //NOTE : we don't extract anything from this metadata format yet
+        // FIXME Why ?
         if(true) return metadata;
         
         if(hasMetadata == null){
             //get the metadata file
-            Object input = IOUtilities.tryToFile(reader.getInput());
-            if(!(input instanceof File)){
+            final Object input = reader.getInput();
+            if (IOUtilities.canProcessAsPath(input)) {
+                Path inputPath = IOUtilities.toPath(input);
+
+                final String name = inputPath.getFileName().toString();
+                final int index = name.lastIndexOf('.');
+                if (index <= 0) {
+                    hasMetadata = false;
+                    return metadata;
+                }
+
+                metaFile = IOUtilities.changeExtension(inputPath, "xml");
+                if (!Files.exists(metaFile)) {
+                    metaFile = IOUtilities.changeExtension(inputPath, "XML");
+                }
+                hasMetadata = Files.exists(metaFile);
+
+            } else {
                 hasMetadata = false;
                 return metadata;
             }
-
-            final File file = (File) input;
-            final String name = file.getName();
-
-            final int index = name.lastIndexOf('.');
-            if(index<=0){
-                hasMetadata = false;
-                return metadata;
-            }
-
-            String parent = file.getAbsoluteFile().getParent();
-            metaFile = new File(parent, name.substring(0, index)+".xml");
-            if(!metaFile.exists()){
-                metaFile = new File(parent, name.substring(0, index)+".XML");
-            }
-            hasMetadata = metaFile.exists();
         }
 
         if(hasMetadata && cbersMeta==null){

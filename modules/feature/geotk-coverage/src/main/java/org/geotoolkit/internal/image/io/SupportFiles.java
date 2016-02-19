@@ -22,6 +22,8 @@ import javax.imageio.IIOException;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -84,15 +86,17 @@ public final class SupportFiles extends Static {
      * <p>
      * If all the above fail, then the returned file is the one with the given extension.
      *
-     * @param  file The image file.
+     * TODO use NIO glob pattern and DirectoryStream
+     *
+     * @param  file The image file path.
      * @param  extension The wanted extension in lower cases and without the dot separator.
      * @param  isTFW {@code true} if this method is invoked for the TFW file.
-     * @return the file with the given extension.
+     * @return the file Path with the given extension.
      */
     @SuppressWarnings("fallthrough")
-    private static File toSupportFile(final File file, final String extension, final boolean isTFW) {
-        final File parent = file.getParentFile();
-        final StringBuilder buffer = new StringBuilder(file.getName());
+    private static Path toSupportFile(final Path file, final String extension, final boolean isTFW) {
+        final Path parent = file.getParent();
+        final StringBuilder buffer = new StringBuilder(file.getFileName().toString());
         int base = buffer.lastIndexOf(".");
         final String currentExtension;
         if (base >= 0) {
@@ -102,7 +106,7 @@ public final class SupportFiles extends Static {
             currentExtension = "";
             base = buffer.append('.').length();
         }
-        File fallback = file;           // To be used only if no existing file is found.
+        Path fallback = file;           // To be used only if no existing file is found.
         String[] specialCases = null;   // To be used only if the standard cases didn't worked.
         int specialCaseIndex = 0;
 attmpt: for (int caseNumber=0; ; caseNumber++) {
@@ -197,8 +201,8 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                     break attmpt;
                 }
             }
-            final File candidate = new File(parent, buffer.toString());
-            if (candidate.isFile()) {
+            final Path candidate = parent.resolve(buffer.toString());
+            if (Files.isRegularFile(candidate)) {
                 return candidate;
             }
             buffer.setLength(base);
@@ -212,18 +216,18 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
     }
 
     /**
-     * Returns a new file or URL equivalent to the given {@link String}, {@link File}, {@link URL}
+     * Returns a new file or URL equivalent to the given {@link Path}, {@link String}, {@link File}, {@link URL}
      * or {@link URI} argument, with its extension replaced by the given one. The given extension
      * shall be all lowercase and without leading dot character.
      * <p>
      * The {@code "tfw"} extension is handled especially, in that {@code "tfw} will actually be
      * used only as a fallback if no file exist with the extension for <cite>World File</cite>.
      * <p>
-     * While not mandatory, it is recommended to invoke {@link IOUtilities#tryToFile(Object)}
+     * While not mandatory, it is recommended to invoke {@link org.geotoolkit.nio.IOUtilities#tryToPath(Object)}
      * before this method in order to increase the chances to pass a {@link File} argument.
      * This allows us to check if the file exists.
      *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  path The path as a {@link Path}, {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @param  extension The new extension, in lower cases and without leading dot.
      * @return The path with the new extension, or {@code null} if the given path was null.
      * @throws IOException If the given object is not recognized, or attempt to replace it
@@ -237,10 +241,13 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (isTFW) {
                 extension = toSuffixTFW(path);
             }
-            if (path instanceof File) {
-                return toSupportFile((File) path, extension, isTFW);
+            if (path instanceof Path) {
+                return toSupportFile((Path) path, extension, isTFW);
             }
-            final Object renamed = org.geotoolkit.internal.io.IOUtilities.changeExtension(path, extension);
+            if (path instanceof File) {
+                return toSupportFile(((File) path).toPath(), extension, isTFW).toFile();
+            }
+            final Object renamed = org.geotoolkit.nio.IOUtilities.changeExtension(path, extension);
             if (renamed != null) {
                 return renamed;
             }
@@ -318,13 +325,13 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      * @throws IOException If an error occurred while parsing the file, including
      *         errors while parsing the numbers.
      */
-    public static AffineTransform parseTFW(File file) throws IOException {
+    public static AffineTransform parseTFW(Path file) throws IOException {
         file = toSupportFile(file, toSuffixTFW(file), true);
-        if (!file.isFile()) {
+        if (!Files.isRegularFile(file)) {
             // Formats our own error message instead of the JSE one in order to localize it.
-            throw new FileNotFoundException(Errors.format(Errors.Keys.FileDoesNotExist_1, file.getName()));
+            throw new FileNotFoundException(Errors.format(Errors.Keys.FileDoesNotExist_1, file.getFileName().toString()));
         }
-        return parseTFW(new FileInputStream(file), file.getName());
+        return parseTFW(Files.newInputStream(file), file.getFileName().toString());
     }
 
     /**

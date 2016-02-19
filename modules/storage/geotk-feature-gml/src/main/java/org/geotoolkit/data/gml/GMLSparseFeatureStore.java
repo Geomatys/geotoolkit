@@ -19,16 +19,14 @@ package org.geotoolkit.data.gml;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
@@ -64,7 +62,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
-    private final File file;
+    private final Path file;
     private FeatureType featureType;
     private final Map<String,String> schemaLocations = new HashMap<>();
     private String gmlVersion = "3.2.1";
@@ -74,35 +72,29 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     private Boolean longitudeFirst;
 
     public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
-        this(f,null,null);
+        this(f.toPath(),null,null);
     }
 
+    @Deprecated
     public GMLSparseFeatureStore(final File f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
+        this(toParameters(f.toPath(),xsd,typeName));
+    }
+
+    public GMLSparseFeatureStore(final Path f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
         this(toParameters(f,xsd,typeName));
     }
 
     public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(GMLFeatureStoreFactory.URLP.getName().toString()).getValue();
-        try {
-            this.file = new File(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
-
-        final String path = url.toString();
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
-        int dot = path.indexOf('.', slash);
-        if (dot < 0) {
-            dot = path.length();
-        }
+        final URI uri = (URI) params.parameter(GMLFeatureStoreFactory.PATH.getName().toString()).getValue();
+        this.file = Paths.get(uri);
         this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
-    private static ParameterValueGroup toParameters(final File f,String xsd, String typeName) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(final Path f,String xsd, String typeName) throws MalformedURLException{
         final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(GMLFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(GMLFeatureStoreFactory.SPARSE, params).setValue(true);
         if(xsd!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD, params).setValue(xsd);
         if(typeName!=null) Parameters.getOrCreate(GMLFeatureStoreFactory.XSD_TYPE_NAME, params).setValue(typeName);
@@ -143,12 +135,21 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
                 reader.setReadEmbeddedFeatureType(true);
                 try {
-                    FeatureReader ite = reader.readAsStream(file.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"))[0]);
-                    featureType = ite.getFeatureType();
-                    schemaLocations.putAll(reader.getSchemaLocations());
+                    if (Files.isDirectory(file)) {
+                        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(file, "*.gml")) {
+                            final Iterator<Path> gmlPaths = directoryStream.iterator();
+                            // get first gml file only
+                            if (gmlPaths.hasNext()) {
+                                final Path gmlPath = gmlPaths.next();
+                                FeatureReader ite = reader.readAsStream(gmlPath);
+                                featureType = ite.getFeatureType();
+                                schemaLocations.putAll(reader.getSchemaLocations());
+                            }
+                        }
+                    }
                 } catch (IOException | XMLStreamException ex) {
-                    throw new DataStoreException(ex.getMessage(),ex);
-                } finally{
+                    throw new DataStoreException(ex.getMessage(), ex);
+                } finally {
                     reader.dispose();
                 }
             }
@@ -177,8 +178,8 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{file};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{file};
     }
 
     @Override
@@ -239,16 +240,27 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         protected final JAXPStreamFeatureReader xmlReader;
         protected FeatureReader featureReader;
         protected Feature currentFeature = null;
-        protected File currentFile = null;
+        protected Path currentFile = null;
         protected Feature nextFeature = null;
-        protected final File[] files;
-        protected int index=-1;
+        protected final DirectoryStream<Path> gmlPathsStream;
 
-        public ReadIterator(FeatureType type, File folder) {
+        /**
+         * @deprecated
+         */
+        @Deprecated
+        public ReadIterator(FeatureType type, File folder) throws DataStoreException {
+            this(type, folder.toPath());
+        }
+
+        public ReadIterator(FeatureType type, Path folder) throws DataStoreException {
             this.type = type;
             this.xmlReader = new JAXPStreamFeatureReader(type);
             this.xmlReader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
-            this.files = folder.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"));
+            try {
+                this.gmlPathsStream = Files.newDirectoryStream(folder, ".gml");
+            } catch (IOException e) {
+                throw new DataStoreException(e.getLocalizedMessage(), e);
+            }
         }
 
         @Override
@@ -268,7 +280,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 currentFile = null;
                 throw new NoSuchElementException("No more features");
             }
-            currentFile = files[index];
+            currentFile = gmlPathsStream.iterator().next();
             nextFeature = null;
             return currentFeature;
         }
@@ -294,12 +306,10 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
             while(nextFeature==null){
                 if(featureReader==null){
                     //get the next file
-                    index++;
-                    if(index>=files.length){
-                        return;
+                    if (gmlPathsStream.iterator().hasNext()) {
+                        xmlReader.reset();
+                        featureReader = xmlReader.readAsStream(gmlPathsStream.iterator().hasNext());
                     }
-                    xmlReader.reset();
-                    featureReader = xmlReader.readAsStream(files[index]);
                 }
 
                 if(featureReader.hasNext()){
@@ -313,13 +323,25 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         @Override
         public void close() {
             xmlReader.dispose();
+            try {
+                gmlPathsStream.close();
+            } catch (IOException e) {
+                getLogger().log(Level.WARNING, "Unable to close stream on directory : "+e.getLocalizedMessage(), e);
+            }
         }
 
     }
 
     private class WriterIterator extends ReadIterator implements FeatureWriter{
+        /**
+         * @deprecated
+         */
+        @Deprecated
+        public WriterIterator(FeatureType type, File folder) throws DataStoreException {
+            super(type, folder.toPath());
+        }
 
-        public WriterIterator(FeatureType type, File folder) {
+        public WriterIterator(FeatureType type, Path folder) throws DataStoreException {
             super(type, folder);
         }
 
@@ -340,7 +362,11 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
             if(currentFile==null){
                 throw new IllegalStateException("No current feature to remove.");
             }
-            currentFile.delete();
+            try {
+                Files.delete(currentFile);
+            } catch (IOException e) {
+                throw new FeatureStoreRuntimeException("Unable to delete GML file "+currentFile.toAbsolutePath().toString(), e);
+            }
         }
 
         @Override
@@ -351,7 +377,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
 
             if(currentFile==null){
                 //append mode
-                currentFile = new File(file,currentFeature.getIdentifier().getID()+".gml");
+                currentFile = file.resolve(currentFeature.getIdentifier().getID()+".gml");
             }
 
             //write feature

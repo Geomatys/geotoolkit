@@ -32,13 +32,14 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.
@@ -86,35 +87,46 @@ public final class FeatureTypeUtils extends Static {
     /**
      * Write a FeatureType in output File.
      * @param ft
-     * @param ouptut
+     * @param output
      * @throws IOException
      */
-    public static void writeFeatureType(FeatureType ft, File ouptut) throws IOException, DataStoreException {
+    @Deprecated
+    public static void writeFeatureType(FeatureType ft, File output) throws IOException, DataStoreException {
+        writeFeatureType(ft, output.toPath());
+    }
+    /**
+     * Write a FeatureType in output File.
+     * @param ft
+     * @param output
+     * @throws IOException
+     */
+    public static void writeFeatureType(FeatureType ft, Path output) throws IOException, DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
-        ArgumentChecks.ensureNonNull("outputFile", ouptut);
+        ArgumentChecks.ensureNonNull("outputFile", output);
 
         if (ft.getGeometryDescriptor() == null) {
             throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
         }
 
-        JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(ouptut,
-                JsonEncoding.UTF8).useDefaultPrettyPrinter();
+        try (OutputStream outStream = Files.newOutputStream(output, CREATE, WRITE, TRUNCATE_EXISTING);
+             JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(outStream, JsonEncoding.UTF8)) {
 
-        //start write feature collection.
-        writer.writeStartObject();
-        writer.writeStringField(TITLE, ft.getName().tip().toString());
-        writer.writeStringField(TYPE, OBJECT);
-        writer.writeStringField(JAVA_TYPE, "FeatureType");
-        if (ft.getDescription() != null) {
-            writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
+            writer.useDefaultPrettyPrinter();
+            //start write feature collection.
+            writer.writeStartObject();
+            writer.writeStringField(TITLE, ft.getName().tip().toString());
+            writer.writeStringField(TYPE, OBJECT);
+            writer.writeStringField(JAVA_TYPE, "FeatureType");
+            if (ft.getDescription() != null) {
+                writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
+            }
+
+            writeGeometryType(ft.getGeometryDescriptor(), writer);
+            writeProperties(ft, writer);
+
+            writer.writeEndObject();
+            writer.flush();
         }
-
-        writeGeometryType(ft.getGeometryDescriptor(), writer);
-        writeProperties(ft, writer);
-
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
     }
 
     public static void writeFeatureTypes(List<FeatureType> fts, OutputStream output) throws IOException, DataStoreException {
@@ -320,57 +332,69 @@ public final class FeatureTypeUtils extends Static {
      * @return FeatureType
      * @throws IOException
      */
+    @Deprecated
     public static FeatureType readFeatureType(File input) throws IOException, DataStoreException {
-        JsonParser parser = GeoJSONParser.FACTORY.createParser(input);
+        return readFeatureType(input.toPath());
+    }
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+    /**
+     * Read a FeatureType from an input File.
+     * @param input file to read
+     * @return FeatureType
+     * @throws IOException
+     */
+    public static FeatureType readFeatureType(Path input) throws IOException, DataStoreException {
 
-        parser.nextToken(); // {
+        try (InputStream stream = Files.newInputStream(input);
+             JsonParser parser = GeoJSONParser.FACTORY.createParser(stream)) {
 
-        String ftName = null;
-        InternationalString description = null;
-        List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
-        GeometryDescriptor geometryDescriptor = null;
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
-        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            parser.nextToken(); // {
 
-            final String currName = parser.getCurrentName();
-            switch (currName) {
-                case TITLE:
-                    ftName = parser.nextTextValue();
-                    break;
-                case JAVA_TYPE:
-                    String type = parser.nextTextValue();
-                    if (!"FeatureType".equals(type)) {
-                        throw new DataStoreException("Invalid JSON schema : " + input.getName());
-                    }
-                    break;
-                case PROPERTIES:
-                    propertyDescriptors = readProperties(parser, ftb, adb);
-                    break;
-                case GEOMETRY:
-                    geometryDescriptor = readGeometry(parser, adb);
-                    break;
-                case DESCRIPTION:
-                    description = new SimpleInternationalString(parser.nextTextValue());
-                    break;
+            String ftName = null;
+            InternationalString description = null;
+            List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
+            GeometryDescriptor geometryDescriptor = null;
+
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+
+                final String currName = parser.getCurrentName();
+                switch (currName) {
+                    case TITLE:
+                        ftName = parser.nextTextValue();
+                        break;
+                    case JAVA_TYPE:
+                        String type = parser.nextTextValue();
+                        if (!"FeatureType".equals(type)) {
+                            throw new DataStoreException("Invalid JSON schema : " + input.getFileName().toString());
+                        }
+                        break;
+                    case PROPERTIES:
+                        propertyDescriptors = readProperties(parser, ftb, adb);
+                        break;
+                    case GEOMETRY:
+                        geometryDescriptor = readGeometry(parser, adb);
+                        break;
+                    case DESCRIPTION:
+                        description = new SimpleInternationalString(parser.nextTextValue());
+                        break;
+                }
             }
-        }
 
-        if (ftName != null && geometryDescriptor != null) {
-            propertyDescriptors.add(geometryDescriptor);
-            ftb.reset();
-            ftb.setName(ftName);
-            ftb.setDescription(description);
-            ftb.setProperties(propertyDescriptors);
-            ftb.setDefaultGeometry(geometryDescriptor.getName());
-        } else {
-            throw new DataStoreException("FeatureType name or default geometry not found in JSON schema");
+            if (ftName != null && geometryDescriptor != null) {
+                propertyDescriptors.add(geometryDescriptor);
+                ftb.reset();
+                ftb.setName(ftName);
+                ftb.setDescription(description);
+                ftb.setProperties(propertyDescriptors);
+                ftb.setDefaultGeometry(geometryDescriptor.getName());
+            } else {
+                throw new DataStoreException("FeatureType name or default geometry not found in JSON schema");
+            }
+            return ftb.buildFeatureType();
         }
-
-        parser.close();
-        return ftb.buildFeatureType();
     }
 
     private static GeometryDescriptor readGeometry(JsonParser parser, AttributeDescriptorBuilder adb)

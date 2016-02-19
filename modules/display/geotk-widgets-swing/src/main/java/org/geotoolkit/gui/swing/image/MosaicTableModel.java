@@ -309,7 +309,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             final File file = files[i];
             final List<Tile> tiles;
             try {
-                tiles = TileManagerFactory.DEFAULT.listTiles(provider, file);
+                tiles = TileManagerFactory.DEFAULT.listTiles(provider, file.toPath());
             } catch (Exception e) {
                 if (progress != null) {
                     /*

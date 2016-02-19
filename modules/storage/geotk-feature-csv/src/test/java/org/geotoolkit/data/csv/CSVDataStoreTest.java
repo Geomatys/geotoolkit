@@ -33,6 +33,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,8 +44,6 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.FileUtilities;
 import static org.junit.Assert.*;
 
 /**
@@ -80,7 +79,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         f.deleteOnExit();
 
         final FeatureStore ds = FeatureStoreFinder.open(
-                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.URLP.getName().getCode(),
+                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.PATH.getName().getCode(),
                 f.toURL()));
         assertNotNull(ds);
 
@@ -194,7 +193,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         f.setPropertyValue("age", 36);
         store.addFeatures(ft.getName(), Collections.singleton(f));
 
-        String str = FileUtilities.getStringFromFile(file);
+        String str = IOUtilities.toString(file.toPath());
         assertEquals("name(String);comment(String);age(Integer)\n" +
                     "hubert;\"someone from the \"\"big fisher\"\" corp,\n" +
                     "a good guy and\n" +

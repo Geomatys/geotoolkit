@@ -17,10 +17,11 @@
 package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
@@ -34,14 +35,14 @@ public class QuadTreeDirectory {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
-    private static final String D00 = "/00";
-    private static final String D01 = "/01";
-    private static final String D10 = "/10";
-    private static final String D11 = "/11";
+    private static final String D00 = "00";
+    private static final String D01 = "01";
+    private static final String D10 = "10";
+    private static final String D11 = "11";
 
     private final int nbrElementX;
     private final int nbrElementY;
-    private final String treeRootPath;
+    private final Path treeRootPath;
     private final String extension;
     private final boolean isDeleteOnExit;
 
@@ -54,7 +55,7 @@ public class QuadTreeDirectory {
      * @param extension extension format of element will be stocked. May be null.
      * @param isDeleteOnExit true if user want delete all tree directory at end of JVM else false.
      */
-    public QuadTreeDirectory(final String treeRootPath, final int nbrElementX, final int nbrElementY, final String extension, final boolean isDeleteOnExit) throws IOException {
+    public QuadTreeDirectory(final Path treeRootPath, final int nbrElementX, final int nbrElementY, final String extension, final boolean isDeleteOnExit) throws IOException {
         ArgumentChecks.ensureNonNull("Quad-tree root file.", treeRootPath);
         ArgumentChecks.ensureStrictlyPositive("Quad-tree X axis dimension", nbrElementX);
         ArgumentChecks.ensureStrictlyPositive("Quad-tree Y axis dimension", nbrElementY);
@@ -66,7 +67,7 @@ public class QuadTreeDirectory {
         this.isDeleteOnExit = isDeleteOnExit;
         // Check if given path is valid, because if it's not, the all quad-tree is compromised.
         createDirectory(treeRootPath);
-        create4rchitecture(new StringBuilder(treeRootPath), nbrElementX, nbrElementY);
+        create4rchitecture(treeRootPath, nbrElementX, nbrElementY);
         LOGGER.log(Level.FINE, "Quad-tree have been successfully initialized for path" + treeRootPath);
     }
 
@@ -75,75 +76,36 @@ public class QuadTreeDirectory {
      *
      * @return root directory
      */
-    public String getTreeRootPath() {
+    public Path getTreeRootPath() {
         return treeRootPath;
     }
 
-    private void create4rchitecture(final StringBuilder strBuilder, int numXTiles, int numYTiles) throws IOException {
+    private void create4rchitecture(final Path path, int numXTiles, int numYTiles) throws IOException {
         LOGGER.log(Level.FINE, "Begin creation of an entire quadTree level");
+        createDirectory(path);
         if (numXTiles <= 2 && numYTiles <= 2) return;
 
-        final int pathLength = strBuilder.length();
         final int nxt = (numXTiles + 1) / 2;
         final int nyt = (numYTiles + 1) / 2;
 
         if (numXTiles <= 2) {
             //cut in height
             //create 2 directories
-            strBuilder.append(D00);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, numXTiles, nyt);
-
-            strBuilder.setLength(pathLength);
-
-            strBuilder.append(D01);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, numXTiles, numYTiles-nyt);
-            strBuilder.setLength(pathLength);
+            create4rchitecture(path.resolve(D00), numXTiles, nyt); //00
+            create4rchitecture(path.resolve(D01), numXTiles, numYTiles - nyt); //01
 
         } else if (numYTiles <= 2) {
-
             //cut in width
             //create 2 directories
-            strBuilder.append(D00);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, nxt, numYTiles);
-
-            strBuilder.setLength(pathLength);
-
-            strBuilder.append(D10);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, numXTiles-nxt, numYTiles);
-
-            strBuilder.setLength(pathLength);
+            create4rchitecture(path.resolve(D00), nxt, numYTiles); //00
+            create4rchitecture(path.resolve(D10), numXTiles - nxt, numYTiles); //10
 
         } else {
-
             //create 4 directories
-            strBuilder.append(D00);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, nxt, nyt);
-
-            strBuilder.setLength(pathLength);
-
-            strBuilder.append(D10);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, numXTiles-nxt, nyt);
-
-            strBuilder.setLength(pathLength);
-
-            strBuilder.append(D01);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, nxt, numYTiles-nyt);
-
-            strBuilder.setLength(pathLength);
-
-            strBuilder.append(D11);
-            createDirectory(strBuilder.toString());
-            create4rchitecture(strBuilder, numXTiles-nxt, numYTiles-nyt);
-
-            strBuilder.setLength(pathLength);
-
+            create4rchitecture(path.resolve(D00), nxt, nyt); //00
+            create4rchitecture(path.resolve(D10), numXTiles-nxt, nyt); //10
+            create4rchitecture(path.resolve(D01), nxt, numYTiles-nyt); //01
+            create4rchitecture(path.resolve(D11), numXTiles-nxt, numYTiles-nyt); //11
             LOGGER.log(Level.FINE, "QuadTree level finely created.");
         }
     }
@@ -151,20 +113,18 @@ public class QuadTreeDirectory {
     /**
      * Create directory at place define by StringBuilder path.A verification is done to be sure that folder has been
      */
-    private void createDirectory(final String path) throws IOException {
-        File f = new File(path);
-
-        if (f.isFile()) {
+    private void createDirectory(final Path path) throws IOException {
+        if (Files.isRegularFile(path)) {
             throw new IOException("Current path represents a file, but a directory is needed here : "+path);
         }
         // If not exists, we try to create directory.
-        if (!f.exists()) {
-            f.mkdirs();
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
             if (isDeleteOnExit) {
-                f.deleteOnExit();
+                IOUtilities.deleteOnExit(path);
             }
         }
-        checkDirectory(f);
+        checkDirectory(path);
     }
 
     /**
@@ -175,7 +135,7 @@ public class QuadTreeDirectory {
      * @return appropriate path of element at X, Y position.
      */
     public String getPath(int x, int y) {
-        return getPath(new StringBuilder(treeRootPath), 0, 0, nbrElementX-1, nbrElementY-1, x, y);
+        return getPath(new StringBuilder(treeRootPath.toString()), 0, 0, nbrElementX-1, nbrElementY-1, x, y);
     }
 
     private String getPath(StringBuilder path, int mintx, int minty, int maxtx, int maxty, int tileX, int tileY) {
@@ -192,6 +152,7 @@ public class QuadTreeDirectory {
         final int demx = mintx + dx / 2 + 1;
         final int demy = minty + dy / 2 + 1;
 
+        path.append("/");
         if (dx <= 1) {
             //2 sub-directories in height.
             if (intersect(mintx, minty, maxtx, demy-1, tileX, tileY)) {
@@ -233,20 +194,20 @@ public class QuadTreeDirectory {
         return (tx >= minx) && (tx <= maxx) && (ty >= miny) && (ty <= maxy);
     }
 
-    private final void checkDirectory(final File toCheck) throws IOException {
-        final String path = toCheck.getAbsolutePath();
-        if (toCheck.isFile()) {
+    private final void checkDirectory(final Path toCheck) throws IOException {
+        final Path path = toCheck.toAbsolutePath();
+        if (Files.isRegularFile(toCheck)) {
             throw new IOException("Current path represents a file, but a directory is needed here : "+path);
         }
-        if (!toCheck.exists()) {
-            final File parent = getExistingParent(toCheck);
-            if (parent != null && !parent.canWrite()) {
-                throw new IOException("Cannot create folder : "+path+", because application does not possess writing authorisation on parent folder : "+ parent.getAbsolutePath());
+        if (Files.notExists(toCheck)) {
+            final Path parent = getExistingParent(toCheck);
+            if (parent != null && Files.isWritable(parent)) {
+                throw new IOException("Cannot create folder : "+path+", because application does not possess writing authorisation on parent folder : "+ parent.toString());
             } else {
                 throw new IOException("Cannot create folder : "+path+" for some unknown reason");
             }
         }
-        if (!toCheck.canWrite() || ! toCheck.canRead()) {
+        if (!Files.isWritable(toCheck) || !Files.isReadable(toCheck)) {
             throw new IOException("Given directory ("+ path +") for Quad-tree does not possess sufficient rights.");
         }
     }
@@ -257,9 +218,9 @@ public class QuadTreeDirectory {
      * @param child The file to search parent for.
      * @return the first exising parent folder of the given file, or null if we cannot find any.
      */
-    private File getExistingParent(File child) {
-        final File parent = child.getParentFile();
-        if (parent != null && !parent.exists()) {
+    private Path getExistingParent(Path child) {
+        final Path parent = child.getParent();
+        if (parent != null && Files.notExists(parent)) {
             return getExistingParent(parent);
         }
         return parent;
@@ -276,8 +237,7 @@ public class QuadTreeDirectory {
     /**
      * Delete root directory recursively.
      */
-    void cleanDirectory() {
-        final File rootDir = new File(treeRootPath);
-        FileUtilities.deleteDirectory(rootDir);
+    void cleanDirectory() throws IOException {
+        IOUtilities.deleteRecursively(treeRootPath);
     }
 }

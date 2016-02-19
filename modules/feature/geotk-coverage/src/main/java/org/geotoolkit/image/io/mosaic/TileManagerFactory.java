@@ -17,6 +17,11 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -24,12 +29,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.io.InvalidClassException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -38,6 +37,7 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
@@ -74,7 +74,7 @@ public class TileManagerFactory extends Factory {
     /**
      * Creates tile managers from the specified object, which may be {@code null}. If non-null, the
      * object shall be an instance of {@code TileManager[]}, {@code TileManager}, {@code Tile[]},
-     * {@code Collection<Tile>} or {@link File}.
+     * {@code Collection<Tile>}, {@link Path}. or {@link File}.
      *
      * @param  tiles The tiles, or {@code null}.
      * @return The tile managers, or {@code null} if {@code tiles} was null.
@@ -90,8 +90,10 @@ public class TileManagerFactory extends Factory {
         final TileManager[] managers;
         if (tiles == null) {
             managers = null;
+        } else if (tiles instanceof Path) {
+            managers = create((Path) tiles);
         } else if (tiles instanceof File) {
-            managers = create((File) tiles);
+            managers = create(((File) tiles).toPath());
         } else if (tiles instanceof TileManager[]) {
             managers = ((TileManager[]) tiles).clone();
         } else if (tiles instanceof TileManager) {
@@ -121,11 +123,11 @@ public class TileManagerFactory extends Factory {
      * Creates a tile manager from the given file or directory.
      * <p>
      * <ul>
-     *   <li>If the argument {@linkplain File#isFile() is a file} having the {@code ".serialized"}
+     *   <li>If the argument {@linkplain Files#isRegularFile(Path, LinkOption...)} is a file} having the {@code ".serialized"}
      *       suffix, then this method deserializes the object in the given file and passes it to
      *       {@link #createFromObject(Object)}.</li>
-     *   <li>If the given argument {@linkplain File#isDirectory() is a directory}, then this
-     *       method delegates to {@link #create(File, FileFilter, ImageReaderSpi)} which scan
+     *   <li>If the given argument {@linkplain Files#isDirectory(Path, LinkOption...)} is a directory}, then this
+     *       method delegates to {@link #create(Path, PathMatcher, ImageReaderSpi)} which scan
      *       all image files found in the directory.</li>
      *   <li>Otherwise an {@link IOException} is thrown.</li>
      * </ul>
@@ -136,14 +138,15 @@ public class TileManagerFactory extends Factory {
      *
      * @since 3.15
      */
-    public TileManager[] create(final File file) throws IOException {
-        if (file.isFile()) {
-            final String suffix = file.getName();
+    public TileManager[] create(final Path file) throws IOException {
+        if (Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
+            final String suffix = file.getFileName().toString();
             if (!suffix.endsWith(".serialized")) {
                 throw new IOException(Errors.format(Errors.Keys.UnknownFileSuffix_1, suffix));
             }
             final Object manager;
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            try (InputStream fin = Files.newInputStream(file);
+                 ObjectInputStream in = new ObjectInputStream(fin)) {
                 try {
                     manager = in.readObject();
                 } catch (ClassNotFoundException cause) {
@@ -153,7 +156,7 @@ public class TileManagerFactory extends Factory {
                 }
             }
             return setSourceFile(createFromObject(manager), file);
-        } else if (file.isDirectory()) {
+        } else if (Files.isDirectory(file, LinkOption.NOFOLLOW_LINKS)) {
             return create(file, null, null);
         } else {
             throw new IOException(Errors.format(Errors.Keys.NotADirectory_1, file));
@@ -162,7 +165,7 @@ public class TileManagerFactory extends Factory {
 
     /**
      * Creates tile managers from the files found in the given directory. This method scans
-     * also the sub-directories recursively if the given file filter accepts directories.
+     * also the sub-directories recursively if the given file matcher accepts directories.
      * <p>
      * First, this method fetches the list of all filtered files in the directory and sub-directories.
      * Then this method invokes the {@link #listTiles(ImageReaderSpi, File[])} method for converting
@@ -172,34 +175,33 @@ public class TileManagerFactory extends Factory {
      * typically with the {@code ".tfw"} extension. Finally this method builds the tiles manager
      * using the {@link #create(Collection)} method.
      * <p>
-     * If the file filter is null, a default file filter will be created from the given SPI.
+     * If the file matcher is null, a default file matcher will be created from the given SPI.
      * If the given SPI is null, a SPI will be inferred automatically for each image files
      * found in the directory.
      *
      * @param  directory  The directory to scan.
-     * @param  filter     An optional file filter, or {@code null} for a default filter.
+     * @param  matcher     An optional file matcher, or {@code null} for a default matcher.
      * @param  spi        An optional image provider, or {@code null} for auto-detect.
      * @return A tile manager created from the tiles in the given directory.
      * @throws IOException If the given file is not a directory, or an I/O operation failed.
      *
      * @since 3.15
      */
-    public TileManager[] create(final File directory, FileFilter filter, final ImageReaderSpi spi)
+    public TileManager[] create(final Path directory, PathMatcher matcher, final ImageReaderSpi spi)
             throws IOException
     {
-        if (filter == null) {
-            filter = new ImageFileFilter(spi);
+        if (matcher == null) {
+            matcher = new ImagePathMatcher(spi);
         }
-        final ArrayList<File> files = new ArrayList<>();
-        listFiles(directory, filter, files);
-        return setSourceFile(create(listTiles(spi, files.toArray(new File[files.size()]))), directory);
+        final List<Path> files = listFiles(directory, matcher);
+        return setSourceFile(create(listTiles(spi, files.toArray(new Path[files.size()]))), directory);
     }
 
     /**
-     * Invokes {@link TileManager#setSourceFile(File)} for all managers in the given array.
+     * Invokes {@link TileManager#setSourceFile(Path)} for all managers in the given array.
      * Returns the given array for convenience.
      */
-    private static TileManager[] setSourceFile(final TileManager[] managers, final File file) {
+    private static TileManager[] setSourceFile(final TileManager[] managers, final Path file) {
         for (final TileManager manager : managers) {
             manager.setSourceFile(file);
         }
@@ -210,27 +212,19 @@ public class TileManagerFactory extends Factory {
      * Gets the files in the given directory and all sub-directories.
      *
      * @param  directory  The directory to scan.
-     * @param  filter     An optional file filter, or {@code null}.
-     * @param  files      The collection to fill with new files.
+     * @param  matcher     An optional file matcher, or {@code null}.
      * @return The files.
      *
      * @since 3.15
      */
-    private static void listFiles(final File directory, final FileFilter filter,
-            final ArrayList<File> files) throws IOException
-    {
-        final File[] list = directory.listFiles(filter);
-        if (list == null) {
+    private static List<Path> listFiles(final Path directory, final PathMatcher matcher) throws IOException {
+        if (!Files.isDirectory(directory)) {
             throw new IOException(Errors.format(Errors.Keys.NotADirectory_1, directory));
         }
-        files.ensureCapacity(files.size() + list.length);
-        for (final File file : list) {
-            if (file.isDirectory()) {
-                listFiles(file, filter, files);
-            } else {
-                files.add(file);
-            }
-        }
+
+        final PathFilterVisitor visitor = new PathFilterVisitor(matcher);
+        Files.walkFileTree(directory, visitor);
+        return visitor.getMatchedPaths();
     }
 
     /**
@@ -409,16 +403,16 @@ public class TileManagerFactory extends Factory {
      * to use (typically 0):
      *
      * {@preformat java
-     *     public List<Tile> listTiles(final ImageReaderSpi provider, final File... inputs) throws IOException {
+     *     public List<Tile> listTiles(final ImageReaderSpi provider, final Path... inputs) throws IOException {
      *         final List<Tile> tiles = new ArrayList<Tile>(inputs.length);
-     *         for (final File input : inputs) {
+     *         for (final Path input : inputs) {
      *             tiles.add(new Tile(provider, input, imageIndex));
      *         }
      *         return tiles;
      *     }
      * }
      *
-     * This method is invoked by {@link #create(File, FileFilter, ImageReaderSpi)}, so it can be
+     * This method is invoked by {@link #create(Path, PathMatcher, ImageReaderSpi)}, so it can be
      * overridden for controlling the tiles to be built when {@code TileManagerFactory} scans a
      * directory.
      *
@@ -433,49 +427,59 @@ public class TileManagerFactory extends Factory {
      *
      * @since 3.18
      */
-    public List<Tile> listTiles(final ImageReaderSpi provider, final File... inputs) throws IOException {
-        final TileReaderPool readers = new TileReaderPool();
-        final Set<ImageReaderSpi> providers = new HashSet<>();
-        final List<Tile> tiles = new ArrayList<>(inputs.length);
-        final AffineTransform scaledGridToCRS = new AffineTransform();
-        for (final File input : inputs) {
-            // Creates the tile for the first image, which usually have the maximal resolution.
-            // The Tile constructor will read the TFW file and infer a provider if the given
-            // 'provider' argument is null. If this is a new provider, then we need to declare
-            // it to the pool of image readers before to use it.
-            final Tile root = new Tile(provider, input, 0);
-            if (providers.add(root.getImageReaderSpi())) {
-                readers.setProviders(providers);
+    public List<Tile> listTiles(final ImageReaderSpi provider, final Path... inputs) throws IOException {
+        try (final TileReaderPool readers = new TileReaderPool()) {
+            final Set<ImageReaderSpi> providers = new HashSet<>();
+            final List<Tile> tiles = new ArrayList<>(inputs.length);
+            for (final Path input : inputs) {
+                tiles.addAll(toTiles(provider, readers, providers, input));
             }
-            final AffineTransform gridToCRS = root.getPendingGridToCRS(false);
-            final ImageReader reader = root.getImageReader(readers, true, true);
-            final int numImages = reader.getNumImages(false); // Result may be -1.
-            for (int index=0; index != numImages; index++) {  // Intentional use of !=, not <.
-                final int width, height;
-                try {
-                    width  = reader.getWidth(index);
-                    height = reader.getHeight(index);
-                } catch (IndexOutOfBoundsException e) {
-                    // As explained in ImageReader javadoc, this approach is sometime
-                    // more efficient than invoking reader.getNumImages(true) first.
-                    break;
-                }
-                final Tile tile;
-                if (index == 0) {
-                    tile = root;
-                } else {
-                    final Rectangle region = root.getRegion();
-                    scaledGridToCRS.setTransform(new AffineTransform(gridToCRS));
-                    scaledGridToCRS.scale(region.width  / (double) width,
-                                          region.height / (double) height);
-                    tile = new Tile(root.getImageReaderSpi(), input, index, region, scaledGridToCRS);
-                }
-                tile.setSize(width, height);
-                tiles.add(tile);
-            }
+            readers.dispose();
+            return tiles;
         }
-        readers.close();
-        readers.dispose();
+    }
+
+    private List<Tile> toTiles(ImageReaderSpi provider, TileReaderPool readers, Set<ImageReaderSpi> providers,
+                         Path input) throws IOException {
+
+        // Creates the tile for the first image, which usually have the maximal resolution.
+        // The Tile constructor will read the TFW file and infer a provider if the given
+        // 'provider' argument is null. If this is a new provider, then we need to declare
+        // it to the pool of image readers before to use it.
+        final List<Tile> tiles = new ArrayList<>();
+        final Tile root = new Tile(provider, input, 0);
+        if (providers.add(root.getImageReaderSpi())) {
+            readers.setProviders(providers);
+        }
+
+        final AffineTransform scaledGridToCRS = new AffineTransform();
+        final AffineTransform gridToCRS = root.getPendingGridToCRS(false);
+        final ImageReader reader = root.getImageReader(readers, true, true);
+        final int numImages = reader.getNumImages(false); // Result may be -1.
+        for (int index=0; index != numImages; index++) {  // Intentional use of !=, not <.
+            final int width, height;
+            try {
+                width  = reader.getWidth(index);
+                height = reader.getHeight(index);
+            } catch (IndexOutOfBoundsException e) {
+                // As explained in ImageReader javadoc, this approach is sometime
+                // more efficient than invoking reader.getNumImages(true) first.
+                break;
+            }
+            final Tile tile;
+            if (index == 0) {
+                tile = root;
+            } else {
+                final Rectangle region = root.getRegion();
+                scaledGridToCRS.setTransform(new AffineTransform(gridToCRS));
+                scaledGridToCRS.scale(region.width  / (double) width,
+                                      region.height / (double) height);
+                tile = new Tile(root.getImageReaderSpi(), input, index, region, scaledGridToCRS);
+            }
+            tile.setSize(width, height);
+            tiles.add(tile);
+        }
+        reader.dispose();
         return tiles;
     }
 }

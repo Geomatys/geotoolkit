@@ -23,6 +23,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -150,6 +153,12 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
             final BufferedOutputStream bout = new BufferedOutputStream(targetStream);
             output = bout;
         }
+        if(output instanceof Path){
+            targetStream = Files.newOutputStream((Path) output, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            final BufferedOutputStream bout = new BufferedOutputStream(targetStream);
+            output = bout;
+        }
+
 
         writer = toWriter(output);
     }

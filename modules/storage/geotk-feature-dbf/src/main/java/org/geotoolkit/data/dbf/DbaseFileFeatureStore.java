@@ -19,10 +19,13 @@ package org.geotoolkit.data.dbf;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,7 +42,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultFeature;
@@ -66,26 +69,29 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
-    private final File file;
+    private final Path file;
     private String name;
 
     private FeatureType featureType;
 
+    /**
+     * @deprecated use {@link #DbaseFileFeatureStore(Path, String)} instead
+     */
     public DbaseFileFeatureStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
+        this(f.toPath(), namespace);
+    }
+
+    public DbaseFileFeatureStore(final Path f, final String namespace) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace));
     }
 
     public DbaseFileFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
 
-        final URL url = (URL) params.parameter(DbaseFeatureStoreFactory.URLP.getName().toString()).getValue();
-        try {
-            this.file = new File(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        final URI uri = (URI) params.parameter(DbaseFeatureStoreFactory.PATH.getName().toString()).getValue();
+        this.file = Paths.get(uri);
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -94,10 +100,10 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         this.name = path.substring(slash, dot);
     }
 
-    private static ParameterValueGroup toParameters(final File f,
+    private static ParameterValueGroup toParameters(final Path f,
             final String namespace) throws MalformedURLException{
         final ParameterValueGroup params = DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(DbaseFeatureStoreFactory.URLP, params).setValue(f.toURI().toURL());
+        Parameters.getOrCreate(DbaseFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(DbaseFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         return params;
     }
@@ -115,7 +121,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
 
         try{
             RWLock.readLock().lock();
-            if(file.exists()){
+            if(Files.exists(file)){
                 featureType = readType();
             }
         }finally{
@@ -123,15 +129,13 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         }
     }
 
-    private File createWriteFile() throws MalformedURLException{
-        return (File) IOUtilities.changeExtension(file, "wdbf");
+    private Path createWriteFile() throws MalformedURLException{
+        return (Path) IOUtilities.changeExtension(file, "wdbf");
     }
 
     private FeatureType readType() throws DataStoreException{
-        RandomAccessFile raf = null;
-        try{
-            raf = new RandomAccessFile(file, "r");
-            final DbaseFileReader reader = new DbaseFileReader(raf.getChannel(), true, null);
+        try (SeekableByteChannel sbc = Files.newByteChannel(file, StandardOpenOption.READ)){
+            final DbaseFileReader reader = new DbaseFileReader(sbc, true, null);
             final DbaseFileHeader header = reader.getHeader();
             final String defaultNs = getDefaultNamespace();
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -140,15 +144,6 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
             return ftb.buildFeatureType();
         }catch(IOException ex){
             throw new DataStoreException(ex);
-        }finally{
-            if(raf != null){
-                try {
-                    raf.close();
-                } catch (IOException ex) {
-                    //we tryed
-                    getLogger().log(Level.WARNING, "Could not close file read stream",ex);
-                }
-            }
         }
     }
 
@@ -260,13 +255,12 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[] { this.file };
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[] { this.file };
     }
 
     private class DBFFeatureReader implements FeatureReader{
 
-        private final RandomAccessFile raf;
         protected final DbaseFileReader reader;
         protected final DefaultFeature reuse;
         protected final String[] attNames;
@@ -281,9 +275,8 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
                 reuse = null;
             }
 
-            try {
-                raf = new RandomAccessFile(file, "r");
-                reader = new DbaseFileReader(raf.getChannel(), true, null);
+            try (SeekableByteChannel sbc = Files.newByteChannel(file, StandardOpenOption.READ)){
+                reader = new DbaseFileReader(sbc, true, null);
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
@@ -349,7 +342,6 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
             RWLock.readLock().unlock();
             try {
                 reader.close();
-                raf.close();
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }

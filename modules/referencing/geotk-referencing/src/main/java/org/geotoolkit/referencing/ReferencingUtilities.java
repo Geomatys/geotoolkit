@@ -19,8 +19,8 @@ package org.geotoolkit.referencing;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -39,6 +39,7 @@ import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.operation.projection.Mercator;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 
 import org.opengis.geometry.DirectPosition;
@@ -65,7 +66,6 @@ import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.MismatchedDimensionException;
 
 
@@ -1055,8 +1055,8 @@ public final class ReferencingUtilities {
      * @throws IOException
      * @throws NumberFormatException
      */
-    public static AffineTransform readTransform(File f) throws IOException, NumberFormatException {
-        final String str = FileUtilities.getStringFromFile(f);
+    public static AffineTransform readTransform(Path f) throws IOException, NumberFormatException {
+        final String str = IOUtilities.toString(f);
         final String[] parts = str.split("\n");
         final double[] vals = new double[6];
         int idx=0;

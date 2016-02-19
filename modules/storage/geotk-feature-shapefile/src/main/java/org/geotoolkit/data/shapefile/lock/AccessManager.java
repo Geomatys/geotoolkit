@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.data.shapefile.lock;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -28,6 +28,9 @@ import java.nio.channels.FileLock;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -56,12 +59,12 @@ public final class AccessManager {
     private static class AccessEntry{
 
         final ShpFileType type;
-        final URL url;
+        final URI uri;
         final Closeable holder;
 
-        public AccessEntry(ShpFileType type, URL url, Closeable holder) {
+        public AccessEntry(ShpFileType type, URI uri, Closeable holder) {
             this.type = type;
-            this.url = url;
+            this.uri = uri;
             this.holder = holder;
         }
 
@@ -70,7 +73,7 @@ public final class AccessManager {
             final StringBuilder sb = new StringBuilder();
             sb.append(type.name())
             .append("\t").append(!holder.isClosed())
-            .append("\t").append(url)
+            .append("\t").append(uri)
             .append("\t").append(holder);
             return sb.toString();
         }
@@ -109,9 +112,9 @@ public final class AccessManager {
 
     public DbaseFileReader getDBFReader(final boolean memoryMapped, final Charset set) throws IOException{
 
-        final URL url = files.getURL(ShpFileType.DBF);
+        final URI uri = files.getURI(ShpFileType.DBF);
 
-        if (url == null) {
+        if (uri == null) {
             return null;
         }
 
@@ -119,18 +122,18 @@ public final class AccessManager {
             return null;
         }
 
-        final ReadableByteChannel rbc = toClosingChannel(files.getReadChannel(url),false);
+        final ReadableByteChannel rbc = toClosingChannel(files.getReadChannel(uri),false);
         final DbaseFileReader reader = new DbaseFileReader(rbc, memoryMapped, set);
-        readEntries.add(new AccessEntry(ShpFileType.DBF, url, reader));
+        readEntries.add(new AccessEntry(ShpFileType.DBF, uri, reader));
         return reader;
     }
 
     public ShapefileReader getSHPReader(final boolean strict, final boolean memoryMapped,
             final boolean read3D, final double[] resample) throws IOException, DataStoreException{
 
-        final URL shpUrl = files.getURL(ShpFileType.SHP);
+        final URI shpUrl = files.getURI(ShpFileType.SHP);
         final ReadableByteChannel shpChannel = toClosingChannel(files.getReadChannel(shpUrl),false);
-        final URL shxUrl = files.getURL(ShpFileType.SHX);
+        final URI shxUrl = files.getURI(ShpFileType.SHX);
         final ReadableByteChannel shxChannel;
         if (shxUrl == null || (files.isLocal() && !files.exists(shxUrl)) ) {
             //shx does not exist
@@ -147,7 +150,7 @@ public final class AccessManager {
     }
 
     public ShxReader getSHXReader(final boolean memoryMapped) throws IOException {
-        final URL shxUrl = files.getURL(ShpFileType.SHX);
+        final URI shxUrl = files.getURI(ShpFileType.SHX);
         if (shxUrl == null) {
             return null;
         }
@@ -163,7 +166,7 @@ public final class AccessManager {
     }
 
     public IndexedFidReader getFIXReader(final RecordNumberTracker tracker) throws IOException{
-        final URL url = files.getURL(ShpFileType.FIX);
+        final URI url = files.getURI(ShpFileType.FIX);
         final ReadableByteChannel rbc = toClosingChannel(files.getReadChannel(url),false);
         final IndexedFidReader reader = new IndexedFidReader(url,rbc, tracker);
         readEntries.add(new AccessEntry(ShpFileType.FIX, url, reader));
@@ -176,11 +179,11 @@ public final class AccessManager {
                     "Currently only local files are supported for writing");
         }
 
-        final URL url = files.getURL(ShpFileType.FIX);
+        final URI url = files.getURI(ShpFileType.FIX);
         ReadableByteChannel rbc = null;
         try {
             rbc = toClosingChannel(files.getReadChannel(url),true);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             rbc = storage.getWriteChannel();
         }
 
@@ -204,7 +207,7 @@ public final class AccessManager {
         if (baseName.length() < 3) { // min prefix length for createTempFile
             baseName = baseName + "___".substring(0, 3 - baseName.length());
         }
-        final File tmp = File.createTempFile(baseName, type.extensionWithPeriod);
+        final Path tmp = Files.createTempFile(baseName, type.extensionWithPeriod);
         final StorageFile tempFile = new StorageFile(files, tmp, type);
         tempFiles.add(tempFile);
         return tempFile;

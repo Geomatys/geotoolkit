@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.lucene.index;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -29,7 +30,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.sis.util.logging.Logging;
@@ -65,7 +65,7 @@ public abstract class IndexLucene {
     /**
      * This the File Directory if you would like to store the index in a File directory.
      */
-    private File fileDirectory;
+    private Path fileDirectory;
 
     /**
      * The global level of log.
@@ -87,7 +87,7 @@ public abstract class IndexLucene {
     * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new ClassicAnalyzer(Version.LATEST, new CharArraySet(Version.LATEST, new HashSet<String>(), true));
+        analyzer = new ClassicAnalyzer(new CharArraySet(new HashSet<String>(), true));
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null) {
-            this.analyzer = new ClassicAnalyzer(Version.LATEST, new CharArraySet(Version.LATEST, new HashSet<String>(), true));
+            this.analyzer = new ClassicAnalyzer(new CharArraySet(new HashSet<String>(), true));
         } else {
             this.analyzer = analyzer;
         }
@@ -121,7 +121,7 @@ public abstract class IndexLucene {
     /**
      * Returns a file directory of this index.
      */
-    public File getFileDirectory() {
+    public Path getFileDirectory() {
         return fileDirectory;
     }
 
@@ -130,7 +130,7 @@ public abstract class IndexLucene {
      *
      * @param aFileDirectory a FileDirectory object.
      */
-    public void setFileDirectory(final File aFileDirectory) {
+    public void setFileDirectory(final Path aFileDirectory) {
         fileDirectory = aFileDirectory;
     }
 
@@ -181,5 +181,26 @@ public abstract class IndexLucene {
             return rTree.toString();
         }
         return null;
+    }
+    
+    /**
+     * Return true if the specified file is a directory and if its name start
+     * with the serviceID + 'index-'.
+     *
+     * @param dir The current directory explored.
+     * @param name The name of the file.
+     * @return True if the specified file in the current directory match the
+     * conditions.
+     */
+    protected static boolean isIndexDir(final Path dir, String prefix) {
+        if (prefix == null) {
+            prefix = "";
+        }
+        String name = dir.getFileName().toString();
+        if ("all".equals(prefix)) {
+            return (name.contains("index-") && Files.isDirectory(dir));
+        } else {
+            return (name.startsWith(prefix + "index-") && Files.isDirectory(dir));
+        }
     }
 }

@@ -64,29 +64,23 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
   public static final CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET; 
 
   /** Builds an analyzer with the given stop words.
-   * @param matchVersion Lucene version to match See {@link
-   * <a href="#version">above</a>}
    * @param stopWords stop words */
-  public ClassicAnalyzer(Version matchVersion, CharArraySet stopWords) {
-    super(matchVersion, stopWords);
+  public ClassicAnalyzer(CharArraySet stopWords) {
+    super(stopWords);
   }
 
   /** Builds an analyzer with the default stop words ({@link
    * #STOP_WORDS_SET}).
-   * @param matchVersion Lucene version to match See {@link
-   * <a href="#version">above</a>}
    */
-  public ClassicAnalyzer(Version matchVersion) {
-    this(matchVersion, STOP_WORDS_SET);
+  public ClassicAnalyzer() {
+    this(STOP_WORDS_SET);
   }
 
   /** Builds an analyzer with the stop words from the given reader.
    * @see WordlistLoader#getWordSet(Reader, Version)
-   * @param matchVersion Lucene version to match See {@link
-   * <a href="#version">above</a>}
    * @param stopwords Reader to read stop words from */
-  public ClassicAnalyzer(Version matchVersion, Reader stopwords) throws IOException {
-    this(matchVersion, loadStopwordSet(stopwords, matchVersion));
+  public ClassicAnalyzer(Reader stopwords) throws IOException {
+    this(loadStopwordSet(stopwords));
   }
 
   /**
@@ -107,12 +101,12 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
   }
 
   @Override
-  protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-    final ClassicTokenizer src = new ClassicTokenizer(getVersion(), reader);
+  protected TokenStreamComponents createComponents(final String fieldName) {
+    final ClassicTokenizer src = new ClassicTokenizer();
     src.setMaxTokenLength(maxTokenLength);
     TokenStream tok = new ClassicFilter(src);
-    tok = new LowerCaseFilter(getVersion(), tok);
-    tok = new StopFilter(getVersion(), tok, stopwords);
+    tok = new LowerCaseFilter(tok);
+    tok = new StopFilter(tok, stopwords);
     return new TokenStreamComponents(src, tok) {
       @Override
       protected void setReader(final Reader reader) throws IOException {

@@ -2,6 +2,8 @@ package org.geotoolkit.data.geojson.utils;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParser;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.io.wkt.Convention;
@@ -10,26 +12,28 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.logging.Level;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
 
@@ -51,11 +55,9 @@ public final class GeoJSONUtils extends Static {
      */
     public static CoordinateReferenceSystem parseCRS(String href, String crsType) {
         String wkt = null;
-        try {
-            URI uri = new URI(href);
-            InputStream stream = uri.toURL().openStream();
-            wkt = FileUtilities.getStringFromStream(stream);
-        } catch (URISyntaxException | IOException e) {
+        try(InputStream stream = new URL(href).openStream()) {
+            wkt = IOUtilities.toString(stream);
+        } catch (IOException e) {
             GeoJSONParser.LOGGER.log(Level.WARNING, "Can't access to linked CRS "+href, e);
         }
 
@@ -154,15 +156,8 @@ public final class GeoJSONUtils extends Static {
      * @param file candidate
      * @return String
      */
-    public static String getNameWithoutExt(File file) {
-        String ext = extension(file);
-        String typeName;
-        if (ext != null) {
-            typeName = file.getName().replace("."+ext, "");
-        } else {
-            typeName = file.getName();
-        }
-        return typeName;
+    public static String getNameWithoutExt(Path file) {
+        return IOUtilities.filenameWithoutExtension(file);
     }
 
     /**
@@ -173,23 +168,7 @@ public final class GeoJSONUtils extends Static {
      * @return The filename extension in the given path, or an empty string if none.
      */
     public static String extension(final Object path) {
-        final String name;
-        final int base;
-        if (path instanceof File) {
-            name = ((File) path).getName();
-            base = 0;
-        } else {
-            if (path instanceof URL) {
-                name = ((URL) path).getPath();
-            } else if (path instanceof URI) {
-                name = ((URI) path).getPath();
-            } else {
-                name = path.toString();
-            }
-            base = name.lastIndexOf('/');
-        }
-        final int i = name.lastIndexOf('.');
-        return (i > base) ? name.substring(i+1).trim() : "";
+        return org.apache.sis.internal.storage.IOUtilities.extension(path);
     }
 
     /**
@@ -197,17 +176,29 @@ public final class GeoJSONUtils extends Static {
      * @param f output file
      * @throws IOException
      */
+    @Deprecated
     public static void writeEmptyFeatureCollection(File f) throws IOException {
-        JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(f, JsonEncoding.UTF8);
+        writeEmptyFeatureCollection(f.toPath());
+    }
 
-        //start write feature collection.
-        writer.writeStartObject();
-        writer.writeStringField(TYPE, FEATURE_COLLECTION);
-        writer.writeArrayFieldStart(FEATURES);
-        writer.writeEndArray();
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
+    /**
+     * Write an empty FeatureCollection in a file
+     * @param f output file
+     * @throws IOException
+     */
+    public static void writeEmptyFeatureCollection(Path f) throws IOException {
+
+        try (OutputStream outStream = Files.newOutputStream(f, CREATE, WRITE, TRUNCATE_EXISTING);
+             JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(outStream, JsonEncoding.UTF8)) {
+
+            //start write feature collection.
+            writer.writeStartObject();
+            writer.writeStringField(TYPE, FEATURE_COLLECTION);
+            writer.writeArrayFieldStart(FEATURES);
+            writer.writeEndArray();
+            writer.writeEndObject();
+            writer.flush();
+        }
     }
 
     /**
@@ -223,7 +214,7 @@ public final class GeoJSONUtils extends Static {
      * @param value
      * @param writer
      * @throws IOException
-     * @throws IllegalAttributeException
+     * @throws IllegalArgumentException
      */
     public static void writeValue(Object value, JsonGenerator writer) throws IOException, IllegalArgumentException {
 
@@ -279,5 +270,24 @@ public final class GeoJSONUtils extends Static {
             //fallback
             writer.writeString(String.valueOf(value));
         }
+    }
+
+    /**
+     * Compare {@link JsonLocation} equality without sourceRef test.
+     * @param loc1
+     * @param loc2
+     * @return
+     */
+    public static boolean equals(JsonLocation loc1, JsonLocation loc2) {
+        if (loc1 == null) {
+            return (loc2 == null);
+        }
+
+        return loc2 != null && (loc1.getLineNr() == loc2.getLineNr() &&
+                loc1.getColumnNr() == loc2.getColumnNr() &&
+                loc1.getByteOffset() == loc2.getByteOffset() &&
+                loc1.getCharOffset() == loc2.getCharOffset());
+
+
     }
 }

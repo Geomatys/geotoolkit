@@ -45,7 +45,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.apache.sis.util.Classes;
 

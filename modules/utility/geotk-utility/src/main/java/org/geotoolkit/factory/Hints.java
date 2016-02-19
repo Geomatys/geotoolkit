@@ -22,6 +22,9 @@ import javax.swing.event.ChangeListener; // For javadoc
 import java.io.File;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Map;
@@ -1144,8 +1147,8 @@ public class Hints extends RenderingHints {
     }
 
     /**
-     * Key for hints to be specified as a {@link File}.
-     * The file may also be specified as a {@link String} object.
+     * Key for hints to be specified as a {@link Path}.
+     * The file may also be specified as a {@link File} and {@link String} object.
      *
      * @author Martin Desruisseaux (IRD)
      * @author Jody Garnett (Refractions)
@@ -1162,12 +1165,12 @@ public class Hints extends RenderingHints {
         private final boolean writable;
 
         /**
-         * Creates a new key for {@link File} value.
+         * Creates a new key for {@link Path} value.
          *
          * @param writable {@code true} if write operations need to be allowed.
          */
         public FileKey(final boolean writable) {
-            super(File.class);
+            super(Path.class);
             this.writable = writable;
         }
 
@@ -1177,32 +1180,34 @@ public class Hints extends RenderingHints {
          * given to the constructor:
          * <p>
          * <ul>
-         *   <li>If {@code false}, then the file must exists and be {@linkplain File#canRead readable}.</li>
+         *   <li>If {@code false}, then the file must exists and be {@linkplain Files#isReadable(Path)}  readable}.</li>
          *   <li>If {@code true}, then there is a choice:<ul>
-         *       <li>If the file exists, it must be {@linkplain File#canWrite writeable}.</li>
-         *       <li>Otherwise the file must have a {@linkplain File#getParent parent} and
+         *       <li>If the file exists, it must be {@linkplain Files#isWritable(Path)} writeable}.</li>
+         *       <li>Otherwise the file must have a {@linkplain Path#getParent parent} and
          *           that parent must be writable.</li></ul></li>
          * </ul>
          */
         @Override
         public boolean isCompatibleValue(final Object value) {
-            final File file;
-            if (value instanceof File) {
-                file = (File) value;
+            final Path path;
+            if (value instanceof Path) {
+                path = (Path) value;
+            }else if (value instanceof File) {
+                path = ((File) value).toPath();
             } else if (value instanceof String) {
-                file = new File((String) value);
+                path = Paths.get((String) value);
             } else {
                 return false;
             }
             if (writable) {
-                if (file.exists()) {
-                    return file.canWrite();
+                if (Files.exists(path)) {
+                    return Files.isWritable(path);
                 } else {
-                    final File parent = file.getParentFile();
-                    return parent!=null && parent.canWrite();
+                    final Path parent = path.getParent();
+                    return parent!=null && Files.isWritable(parent);
                 }
             } else {
-                return file.canRead();
+                return Files.isReadable(path);
             }
         }
     }

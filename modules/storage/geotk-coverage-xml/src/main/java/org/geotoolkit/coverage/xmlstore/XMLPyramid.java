@@ -17,9 +17,9 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -108,8 +108,8 @@ public class XMLPyramid implements Pyramid {
         return id;
     }
 
-    public File getFolder(){
-        return new File(getPyramidSet().getRef().getFolder(),getId());
+    public Path getFolder(){
+        return getPyramidSet().getRef().getFolder().resolve(getId());
     }
 
     @Override

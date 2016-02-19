@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -180,6 +181,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             base = (URL) input;
         }else if(input instanceof URI){
             base =((URI)input).toURL();
+        }else if(input instanceof Path){
+            base =((Path)input).toUri().toURL();
         }else if(input instanceof File){
             base = ((File)input).toURI().toURL();
         }else{

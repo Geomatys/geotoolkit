@@ -218,7 +218,11 @@ public final class LargeCache implements TileCache {
 
         // Clear cache.
         if (lL != null) {
-            lL.removeTiles();
+            try {
+                lL.removeTiles();
+            } catch (IOException ex) {
+                throw new RuntimeException("Raster too large for remaining memory capacity", ex);
+            }
             updateLList();
         }
     }

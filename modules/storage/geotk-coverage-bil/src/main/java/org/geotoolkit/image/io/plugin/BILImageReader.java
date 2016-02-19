@@ -22,9 +22,10 @@ import java.awt.Dimension;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
@@ -32,7 +33,7 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.metadata.bil.HDRAccessor;
 
 /**
@@ -108,10 +109,10 @@ public class BILImageReader extends WorldFileImageReader {
             }
 
             final Object hdrpath = IOUtilities.changeExtension(source, "hdr");
-            final Object hdrfile = IOUtilities.tryToFile(hdrpath);
-            if(hdrfile instanceof File){
-                final File f = (File) hdrfile;
-                return f.exists();
+            final Object hdrfile = IOUtilities.tryToPath(hdrpath);
+            if(hdrfile instanceof Path){
+                final Path f = (Path) hdrfile;
+                return Files.exists(f);
             }
 
             return false;

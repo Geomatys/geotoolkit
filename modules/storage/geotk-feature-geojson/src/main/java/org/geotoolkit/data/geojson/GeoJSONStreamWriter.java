@@ -122,9 +122,7 @@ public class GeoJSONStreamWriter implements FeatureWriter {
         try {
             writer.writeFeature(edited);
             writer.flush();
-        } catch (IOException e) {
-            throw new FeatureStoreRuntimeException(e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new FeatureStoreRuntimeException(e.getMessage(), e);
         }
     }

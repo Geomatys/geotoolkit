@@ -17,12 +17,12 @@
 package org.geotoolkit.processing.io.delete;
 
 
-import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.internal.io.IOUtilities;
+import java.nio.file.Path;
+
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.processing.io.delete.DeleteDescriptor.*;
@@ -53,13 +53,13 @@ public class Delete extends AbstractProcess {
         getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.FALSE);
         
         try {
-            if(!(path instanceof File)){
-                path = IOUtilities.tryToFile(path);
+            if(!(path instanceof Path)){
+                path = IOUtilities.tryToPath(path);
             }
             
-            if(path instanceof File){
-                boolean result = FileUtilities.deleteDirectory((File)path);
-                getOrCreate(RESULT_OUT, outputParameters).setValue(result);
+            if(path instanceof Path){
+                IOUtilities.deleteRecursively((Path) path);
+                getOrCreate(RESULT_OUT, outputParameters).setValue(Boolean.TRUE);
             }else{
                 throw new IOException("Path is not a file.");
             }

@@ -17,8 +17,8 @@
 
 package org.geotoolkit.index.tree.manager;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +37,8 @@ import org.opengis.util.FactoryException;
  */
 public class AbstractRtreeManager {
 
-    protected static final Map<File, Tree<NamedEnvelope>> CACHED_TREES = new HashMap<>();
-    protected static final Map<File, List<Object>> TREE_OWNERS = new HashMap<>();
+    protected static final Map<Path, Tree<NamedEnvelope>> CACHED_TREES = new HashMap<>();
+    protected static final Map<Path, List<Object>> TREE_OWNERS = new HashMap<>();
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
@@ -54,7 +54,7 @@ public class AbstractRtreeManager {
         DEFAULT_CRS = crs;
     }
 
-    public static void close(final File directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
+    public static void close(final Path directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
         final List<Object> owners = TREE_OWNERS.get(directory);
         if (owners != null) {
             owners.remove(owner);

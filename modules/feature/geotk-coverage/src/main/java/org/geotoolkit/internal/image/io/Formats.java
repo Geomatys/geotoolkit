@@ -36,6 +36,7 @@ import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.factory.Factories;
 
 import org.geotoolkit.lang.Static;
@@ -232,8 +233,10 @@ attmpt: while (true) {
                             // it ourself. So let just create an other one.
                             callback.recoverableException(e);
                             ((ImageInputStream) inputOrStream).close();
-                            inputOrStream = stream = createImageInputStream(input);
-                            if (stream == null) {
+                            try {
+                                inputOrStream = stream = CoverageIO.createImageInputStream(input);
+                            } catch (IOException ioe) {
+                                e.addSuppressed(ioe);
                                 throw e;
                             }
                         }
@@ -293,9 +296,10 @@ attmpt: while (true) {
                      */
                     inputOrStream = stream;
                     if (stream == null) {
-                        stream = createImageInputStream(input);
-                        inputOrStream = stream;
-                        if (stream == null) {
+                        try {
+                            stream = CoverageIO.createImageInputStream(input);
+                            inputOrStream = stream;
+                        } catch (IOException ioe) {
                             if (!useSuffix) {
                                 break;
                             }
@@ -559,24 +563,6 @@ attmpt: while (true) {
             return fallback.createInputStreamInstance(input, false, ImageIO.getCacheDirectory());
         }
         return null;
-    }
-
-    /**
-     * Creates an image input stream for the given source. This method first delegates
-     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
-     * {@link CheckedImageInputStream} if assertions are enabled.
-     *
-     * @param  input The input for which an image input is desired.
-     * @return The image input stream, or {@code null}.
-     * @throws IOException If an error occurred while creating the stream.
-     *
-     * @since 3.14
-     */
-    private static ImageInputStream createImageInputStream(final Object input) throws IOException {
-        ImageInputStream in = ImageIO.createImageInputStream(input);
-        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
-               CheckedImageInputStream.wrap(in));
-        return in;
     }
 
     /**

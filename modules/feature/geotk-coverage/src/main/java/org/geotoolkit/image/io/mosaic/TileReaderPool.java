@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.io.Closeable;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -28,9 +29,10 @@ import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
 
@@ -43,7 +45,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
  * @since 3.18 (derived from 2.5)
  * @module
  */
-final class TileReaderPool {
+final class TileReaderPool implements Closeable, Disposable{
     /**
      * The locale to be given to the readers created by {@link #createReaderInstance(ImageReaderSpi)}.
      */
@@ -263,6 +265,7 @@ final class TileReaderPool {
      *
      * @throws IOException if error occurred while closing a stream.
      */
+    @Override
     public void close() throws IOException {
         for (final Map.Entry<ImageReader,Object> entry : readerInputs.entrySet()) {
             final ImageReader reader = entry.getKey();
@@ -282,6 +285,7 @@ final class TileReaderPool {
      * <p>
      * It is the caller responsibility to invoke {@link #close()} before this method.
      */
+    @Override
     public void dispose() {
         readerInputs.clear();
         for (final ImageReader reader : readers.values()) {

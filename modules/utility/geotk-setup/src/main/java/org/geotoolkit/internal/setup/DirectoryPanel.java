@@ -125,7 +125,7 @@ final class DirectoryPanel extends JComponent {
          * time, and when the preferences changed.
          */
         final void reload() {
-            automatic = config.directory(false).getPath();
+            automatic = config.directory(false).toString();
             final String user   = config.get(true);
             final String system = config.get(false);
             if (user != null) {

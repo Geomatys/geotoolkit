@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.observation.store.xml;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -66,14 +69,14 @@ import org.opengis.temporal.TemporalObject;
  */
 public class XmlObservationStore extends AbstractObservationStore implements DataFileStore {
 
-    private final File xmlFile;
+    private final Path xmlFile;
     
     public XmlObservationStore(final ParameterValueGroup params) {
         super(params);
-        xmlFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+        xmlFile = (Path) params.parameter(FILE_PATH.getName().toString()).getValue();
     }
     
-    public XmlObservationStore(final File xmlFile) {
+    public XmlObservationStore(final Path xmlFile) {
         super(null);
         this.xmlFile = xmlFile;
     }
@@ -251,15 +254,15 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     }
 
     private Object readFile() {
-        try {
+        try (InputStream fileStream = Files.newInputStream(xmlFile)){
             final Unmarshaller um = SOSMarshallerPool.getInstance().acquireUnmarshaller();
-            Object obj = um.unmarshal(xmlFile);
+            Object obj = um.unmarshal(fileStream);
             if (obj instanceof JAXBElement) {
                 obj = ((JAXBElement)obj).getValue();
             }
             SOSMarshallerPool.getInstance().recycle(um);
             return obj;
-        } catch (JAXBException ex) {
+        } catch (IOException | JAXBException ex) {
             LOGGER.log(Level.WARNING, "Error while reading  file", ex);
         }
         return null;
@@ -312,8 +315,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
      * {@inheritDoc }
      */
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{xmlFile};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{xmlFile};
     }
 
     /**

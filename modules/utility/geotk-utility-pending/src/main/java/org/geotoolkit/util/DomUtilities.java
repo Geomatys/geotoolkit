@@ -19,14 +19,12 @@ package org.geotoolkit.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.URI;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +45,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -154,19 +153,16 @@ public final class DomUtilities extends Static {
      * @return first element with tagName in parent node or null
      */
     public static List<Element> getListElements(final Element parent, final String tagName){
+        final NodeList lst = parent.getElementsByTagName(tagName);
+        List<Element> result = new ArrayList<>();
 
-
-            final NodeList lst = parent.getElementsByTagName(tagName);
-
-            List<Element> result = new ArrayList<Element>();
-            for(int i=0,n=lst.getLength();i<n;i++){
-                final Node child = lst.item(i);
-                if(child instanceof Element && tagName.equalsIgnoreCase(child.getNodeName())){
-                    result.add((Element) child);
-                }
+        for(int i=0,n=lst.getLength();i<n;i++){
+            final Node child = lst.item(i);
+            if(child instanceof Element && tagName.equalsIgnoreCase(child.getNodeName())){
+                result.add((Element) child);
             }
-            return result;
-
+        }
+        return result;
     }
 
     /**
@@ -178,19 +174,16 @@ public final class DomUtilities extends Static {
      * @return first element with tagName in parent node or null
      */
     public static List<Element> getListElementsNonRecusive(final Element parent, final String tagName){
+        final NodeList lst = parent.getChildNodes();
+        List<Element> result = new ArrayList<>();
 
-
-            final NodeList lst = parent.getChildNodes();
-
-            List<Element> result = new ArrayList<Element>();
-            for(int i=0,n=lst.getLength();i<n;i++){
-                final Node child = lst.item(i);
-                if(child instanceof Element && tagName.equalsIgnoreCase(child.getLocalName())){
-                    result.add((Element) child);
-                }
+        for(int i=0,n=lst.getLength();i<n;i++){
+            final Node child = lst.item(i);
+            if(child instanceof Element && tagName.equalsIgnoreCase(child.getLocalName())){
+                result.add((Element) child);
             }
-            return result;
-
+        }
+        return result;
     }
 
 
@@ -346,12 +339,7 @@ public final class DomUtilities extends Static {
      * Convert an object source to a stream.
      */
     private static OutputStream toOutputStream(final Object input) throws FileNotFoundException, IOException{
-
-        if(input instanceof File){
-            return new FileOutputStream((File)input);
-        }else{
-            throw new IOException("Can not handle input type : " + ((input!=null)?input.getClass() : input));
-        }
+        return IOUtilities.openWrite(input);
     }
 
     /**
@@ -359,25 +347,18 @@ public final class DomUtilities extends Static {
      */
     private static InputStream toInputStream(final Object input) throws FileNotFoundException, IOException{
 
-        if(input instanceof InputStream){
-            return (InputStream) input;
-        }else if(input instanceof File){
-            return new FileInputStream((File)input);
-        }else if(input instanceof URI){
-            return ((URI)input).toURL().openStream();
-        }else if(input instanceof URL){
-            return ((URL)input).openStream();
-        }else if(input instanceof String){
-            try{
+        //special case when input object is document itelf
+        if (input instanceof String) {
+            try {
                 //try to open it as a path
-                return new URL((String)input).openStream();
-            }catch(Exception ex){
+                final URL url = new URL((String) input);
+            } catch (MalformedURLException ex) {
                 //consider it's the document itself
                 return new ByteArrayInputStream(input.toString().getBytes());
             }
-        }else{
-            throw new IOException("Can not handle input type : " + ((input!=null)?input.getClass() : input));
         }
+
+        return IOUtilities.open(input);
     }
 
 }

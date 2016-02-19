@@ -19,6 +19,7 @@ package org.geotoolkit.sos.netcdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class NetCDFExtractor {
 
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID) throws NetCDFParsingException {
+    public static ExtractionResult getObservationFromNetCDF(final Path netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
         switch (analyze.featureType) {
             case TIMESERIES :
@@ -121,11 +122,26 @@ public class NetCDFExtractor {
         }
     }
 
+    /**
+     * @deprecated use {@link #analyzeResult(Path, String)} instead
+     */
     public static NCFieldAnalyze analyzeResult(final File netCDFFile, final String selectedBand) {
+        return analyzeResult(netCDFFile.toPath(), selectedBand);
+    }
+
+    /**
+     * Analyse NetCDF file.
+     *
+     * @param netCDFFile
+     * @param selectedBand
+     * @return
+     */
+    public static NCFieldAnalyze analyzeResult(final Path netCDFFile, final String selectedBand) {
         final NCFieldAnalyze analyze = new NCFieldAnalyze();
         try {
 
-            final NetcdfFile file = NetcdfFile.open(netCDFFile.getPath());
+            //TODO can fail if input path is not on local filesystem
+            final NetcdfFile file = NetcdfFile.open(netCDFFile.toString());
             analyze.file = file;
 
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
@@ -299,8 +315,9 @@ public class NetCDFExtractor {
     }
 
     public static boolean isObservationFile(final String nfilePath) {
+        NetcdfFile file = null;
         try {
-            final NetcdfFile file = NetcdfFile.open(nfilePath);
+            file = NetcdfFile.open(nfilePath);
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
                 final String value = ftAtt.getStringValue();

@@ -19,32 +19,32 @@ package org.geotoolkit.index.tree.hilbert;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
 import static org.junit.Assert.assertTrue;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.internal.tree.TreeUtilities.add;
 
 /**
- * Class to override some methods appropriate to HilbertRTree use. 
+ * Class to override some methods appropriate to HilbertRTree use.
  *
  * @author Remi Marechal (Geomatys)
  */
 abstract class HilbertTest extends AbstractTreeTest {
-    
+
     /**
      * Create a generic {@link HilbertRTree} test suite with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      */
     protected HilbertTest(final CoordinateReferenceSystem crs) throws IOException {
         super(crs);
     }
-    
+
     /**
      * Create a generic {@link HilbertRTree} test suite.
-     * 
+     *
      * @param tree HilbertRTree which will be test.
      */
     protected HilbertTest(final HilbertRTree tree) throws IOException {

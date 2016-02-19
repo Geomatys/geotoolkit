@@ -147,7 +147,7 @@ public class ExportItem extends TreeMenuItem {
                                 final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);
 
                                 //create output store
-                                final FeatureStore store = factory.createDataStore(file.toURI().toURL());
+                                final FeatureStore store = factory.createDataStore(file.toURI());
 
                                 //create output type
                                 store.createFeatureType(inType.getName(), inType);
@@ -162,7 +162,7 @@ public class ExportItem extends TreeMenuItem {
                                 store.close();
                             }
 
-                        } catch (MalformedURLException | DataStoreException ex) {
+                        } catch (DataStoreException ex) {
                             Loggers.DATA.log(Level.WARNING, ex.getMessage(),ex);
                             final Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
                             alert.showAndWait();

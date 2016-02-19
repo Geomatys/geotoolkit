@@ -5,8 +5,7 @@ package org.geotoolkit.pending.demo.datamodel.customdatastore;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,12 +41,8 @@ public class FishFeatureStore extends AbstractFeatureStore{
     public FishFeatureStore(ParameterValueGroup params) throws DataStoreException{
         super(params);
 
-        URL url = (URL) params.parameter(FishDatastoreFactory.URLP.getName().toString()).getValue();
-        try {
-            storage = new File(url.toURI());
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        URI uri = (URI) params.parameter(FishDatastoreFactory.PATH.getName().toString()).getValue();
+        storage = new File(uri);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(getDefaultNamespace(),"Fish");

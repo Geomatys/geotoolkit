@@ -29,7 +29,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -76,11 +76,10 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
         try {
             //decode form base64 stream
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
-                final String encodedImage = FileUtilities.getStringFromStream(stream);
+                final String encodedImage = IOUtilities.toString(stream);
                 final byte[] byteData = Base64.decode(encodedImage.trim());
                 if (byteData != null && byteData.length > 0) {
-                    final InputStream is = new ByteArrayInputStream(byteData);
-                    if (is != null) {
+                    try (InputStream is = new ByteArrayInputStream(byteData)) {
                         imageStream = ImageIO.createImageInputStream(is);
                     }
                 }

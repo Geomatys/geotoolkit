@@ -124,7 +124,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 schemaLocation.put(namespace, complex.getSchema());
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 

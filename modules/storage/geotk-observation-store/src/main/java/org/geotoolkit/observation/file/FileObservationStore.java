@@ -18,10 +18,15 @@
 package org.geotoolkit.observation.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
@@ -42,25 +47,34 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public class FileObservationStore extends AbstractObservationStore implements DataFileStore {
     
-    private final File dataFile;
+    private final Path dataFile;
     private final NCFieldAnalyze analyze;
     
-    public FileObservationStore(final ParameterValueGroup params) {
-        super(params);
-        dataFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
-        analyze = NetCDFExtractor.analyzeResult(dataFile, null);
-    }
-    
+    /**
+     * @deprecated use {@link #FileObservationStore(Path)} or {@link #FileObservationStore(ParameterValueGroup)} instead
+     */
+    @Deprecated
     public FileObservationStore(final File observationFile) {
+       this(observationFile.toPath());
+    }
+
+    public FileObservationStore(final Path observationFile) {
         super(null);
         dataFile = observationFile;
+        analyze = NetCDFExtractor.analyzeResult(dataFile, null);
+    }
+
+    public FileObservationStore(final ParameterValueGroup params) throws URISyntaxException, IOException {
+        super(params);
+        final URL url = (URL) params.parameter(FILE_PATH.getName().toString()).getValue();
+        this.dataFile = IOUtilities.toPath(url);
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
     }
 
     /**
      * @return the dataFile
      */
-    public File getDataFile() {
+    public Path getDataFile() {
         return dataFile;
     }
     
@@ -72,13 +86,7 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     }
     
     private String getProcedureID() {
-        String local;
-        if (dataFile.getName().indexOf('.') != -1) {
-            local = dataFile.getName().substring(0, dataFile.getName().lastIndexOf('.'));
-        } else {
-            local = dataFile.getName();
-        }
-        return local;
+        return IOUtilities.filenameWithoutExtension(dataFile);
     }
     
     @Override
@@ -139,8 +147,8 @@ public class FileObservationStore extends AbstractObservationStore implements Da
      * {@inheritDoc }
      */
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{dataFile};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{dataFile};
     }
 
     /**

@@ -1,7 +1,7 @@
 
 package org.geotoolkit.lucene;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,7 +21,7 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
 
     private final List<DocumentEnvelope> docs;
 
-    public DocumentIndexer(final File directory, final List<DocumentEnvelope> docs, final Analyzer analyzer) {
+    public DocumentIndexer(final Path directory, final List<DocumentEnvelope> docs, final Analyzer analyzer) {
         super("", directory, analyzer);
         this.docs = docs;
     }

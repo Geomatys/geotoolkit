@@ -99,7 +99,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("GMLParameters").createGroup(
-                IDENTIFIER,URLP,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST,NAMESPACE);
+                IDENTIFIER, PATH,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

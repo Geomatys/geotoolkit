@@ -25,7 +25,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -73,7 +72,7 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("CSVParameters").createGroup(
-                IDENTIFIER,URLP,NAMESPACE,SEPARATOR);
+                IDENTIFIER, PATH,NAMESPACE,SEPARATOR);
 
     @Override
     public Identification getIdentification() {

@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -415,7 +416,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         /*
          * Copies the information from the given reference to the fields in this widget.
          */
-        final File file = newReference.getFile();
+        final Path file = newReference.getFile();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
                 reference         = newReference; // Must be set first.
@@ -437,7 +438,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                     Logging.unexpectedException(null, NewGridCoverageReference.class, "getAlternativeFormats", e);
                     // Keep the current combo box content unchanged.
                 }
-                filename.setText(file.getName());
+                filename.setText(file.getFileName().toString());
                 format.setSelectedItem(newReference.format);
                 setSelectedCode(horizontalCRS, newReference.horizontalSRID);
                 setSelectedCode(verticalCRS,   newReference.verticalSRID);

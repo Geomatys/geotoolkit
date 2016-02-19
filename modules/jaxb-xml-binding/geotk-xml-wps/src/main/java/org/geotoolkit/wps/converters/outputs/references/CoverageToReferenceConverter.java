@@ -17,8 +17,12 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.UUID;
 import net.iharder.Base64;
@@ -26,7 +30,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSIO;
@@ -34,7 +38,9 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
-import org.opengis.coverage.Coverage;
+
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * Implementation of ObjectConverter to convert a {@link GridCoverage2D coverage} into a {@link OutputReferenceType reference}.
@@ -73,9 +79,6 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
-        if (!(source instanceof GridCoverage2D) || !(source instanceof Coverage)) {
-            throw new UnconvertibleObjectException("The output data is not an instance of GridCoverage2D.");
-        }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
@@ -101,25 +104,25 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
 
         try {
 
-            final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
+            final Path imageFile = Paths.get((String) params.get(TMP_DIR_PATH), randomFileName);
 
             if (encodingStr != null && encodingStr.equals(WPSEncoding.BASE64.getValue())) {
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                CoverageIO.write(source, formatName, baos);
-                baos.flush();
-                byte[] bytesOut = baos.toByteArray();
-                FileUtilities.stringToFile(imageFile, Base64.encodeBytes(bytesOut));
-                baos.close();
+                try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                    CoverageIO.write(source, formatName, baos);
+                    baos.flush();
+                    byte[] bytesOut = baos.toByteArray();
+                    IOUtilities.writeString(Base64.encodeBytes(bytesOut), imageFile);
+                }
 
             } else {
-                CoverageIO.write(source, formatName, imageFile);
+                try (OutputStream out = Files.newOutputStream(imageFile, StandardOpenOption.CREATE, WRITE, TRUNCATE_EXISTING)) {
+                    CoverageIO.write(source, formatName, out);
+                }
             }
 
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
 
-        } catch (IOException ex) {
-            throw new UnconvertibleObjectException("Error during writing the coverage in the output file.",ex);
-        } catch (CoverageStoreException ex) {
+        } catch (IOException | CoverageStoreException ex) {
             throw new UnconvertibleObjectException("Error during writing the coverage in the output file.",ex);
         }
 

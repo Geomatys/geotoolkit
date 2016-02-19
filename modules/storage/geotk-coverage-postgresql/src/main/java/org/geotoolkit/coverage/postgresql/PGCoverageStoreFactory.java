@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
@@ -38,7 +39,6 @@ import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -265,7 +265,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
                 }
             }
 
-            String sql = FileUtilities.getStringFromStream(PGCoverageStoreFactory.class
+            String sql = IOUtilities.toString(PGCoverageStoreFactory.class
                     .getResourceAsStream("/org/geotoolkit/coverage/postgresql/pgcoverage.sql"));
 
             stmt = cnx.createStatement();

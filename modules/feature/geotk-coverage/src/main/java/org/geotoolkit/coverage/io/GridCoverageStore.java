@@ -52,7 +52,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.internal.metadata.AxisDirections;
 import org.geotoolkit.referencing.CRS;

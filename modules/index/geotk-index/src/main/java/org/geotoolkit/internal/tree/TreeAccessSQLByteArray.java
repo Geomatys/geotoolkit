@@ -1,9 +1,9 @@
 
 package org.geotoolkit.internal.tree;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,15 +22,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class TreeAccessSQLByteArray extends TreeAccessByteArray {
 
     private final DataSource source;
-    private final File directory;
+    private final Path directory;
     
-    public TreeAccessSQLByteArray(final File directory, final DataSource source, int magicNumber, double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
+    public TreeAccessSQLByteArray(final Path directory, final DataSource source, int magicNumber, double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
         super(magicNumber, versionNumber, maxElements, crs);
         this.source = source;
         this.directory = directory;
     }
 
-    public TreeAccessSQLByteArray(final File directory,final DataSource source, byte[] data, int magicNumber, double versionNumber) throws IOException, ClassNotFoundException {
+    public TreeAccessSQLByteArray(final Path directory,final DataSource source, byte[] data, int magicNumber, double versionNumber) throws IOException, ClassNotFoundException {
         super(data, magicNumber, versionNumber);
         this.source = source;
         this.directory = directory;
@@ -40,9 +40,9 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         final byte[] array = getData();
         final Connection c = source.getConnection();
         final Statement dstmt  = c.createStatement();
-        dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\"");
+        dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
         
-        final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\" VALUES(?)");
+        final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\" VALUES(?)");
         stmt.setBytes(1, array);
         stmt.execute();
         stmt.close();
@@ -59,12 +59,12 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         } 
     }
     
-    public static byte[] getData(final File directory, final DataSource source) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static byte[] getData(final Path directory, final DataSource source) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] data = null;
         
         final Connection c = source.getConnection();
         final Statement stmt = c.createStatement();
-        final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\"");
+        final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getFileName().toString()) + "\".\"tree\"");
         if (rs.next()) {
             data = rs.getBytes("data");
         }

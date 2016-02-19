@@ -196,7 +196,7 @@ final class GridTileManager extends TileManager {
     @Override
     final Collection<Tile> getInternalTiles() {
         final FrequencySortedSet<Tile> tiles = new FrequencySortedSet<>();
-            for (OverviewLevel level=root; level!=null; level=level.getFinerLevel()) {
+        for (OverviewLevel level=root; level!=null; level=level.getFinerLevel()) {
             level.getInternalTiles(tiles);
         }
         return tiles;

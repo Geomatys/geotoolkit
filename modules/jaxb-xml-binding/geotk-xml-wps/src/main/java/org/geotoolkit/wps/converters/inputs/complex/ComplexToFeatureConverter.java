@@ -85,7 +85,7 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
             }
 
             try {
-                return WPSConvertersUtils.readFeatureFromJson(tmpFilePath.toUri().toURL());
+                return WPSConvertersUtils.readFeatureFromJson(tmpFilePath.toUri());
             } catch (MalformedURLException | DataStoreException ex) {
                 throw new UnconvertibleObjectException(ex);
             } catch (URISyntaxException | IOException ex) {

@@ -33,10 +33,14 @@ import java.io.InterruptedIOException;
 import javax.imageio.*; // Lot of them in this class.
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*; // Lot of them in this class.
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -51,6 +55,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
@@ -66,11 +71,10 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
-import org.geotoolkit.internal.image.io.IIOUtilities;
 
 
 /**
@@ -1074,12 +1078,14 @@ search: for (final Tile tile : tiles) {
          */
         final Runtime rt = Runtime.getRuntime(); rt.gc();
         final long maxInputSize = rt.maxMemory() - (rt.totalMemory() - rt.freeMemory());
-        final int bitPerPixels = IIOUtilities.bitsPerPixel(input.getRawImageType(inputIndex));
+        final int bitPerPixels = bitsPerPixel(input.getRawImageType(inputIndex));
         /*
          * Checks the space available in the temporary directory, which
          * will contain the temporary uncompressed files for source tiles.
          */
-        long available = TemporaryFile.getSharedTemporaryDirectory().getUsableSpace();
+        final Path sharedTemporaryDirectory = TemporaryFile.getSharedTemporaryDirectory();
+        final FileStore fileStore = Files.getFileStore(sharedTemporaryDirectory);
+        long available = fileStore.getUsableSpace();
         long required = 4L * 1024 * 1024; // Arbitrary margin of 4 Mb.
         if (input instanceof MosaicImageReader) {
             boolean compressed = false;
@@ -1105,7 +1111,7 @@ search: for (final Tile tile : tiles) {
                  */
                 if (!compressed) {
                     for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
-                        if (IIOUtilities.guessCompressionRatio(spi) != 1) {
+                        if (guessCompressionRatio(spi) != 1) {
                             compressed = true;
                             break;
                         }
@@ -1126,7 +1132,7 @@ search: for (final Tile tile : tiles) {
              * Same tests than above, but in the case where the source is a single image
              * instead than a mosaic of source tiles.
              */
-            if (IIOUtilities.guessCompressionRatio(input.getOriginatingProvider()) == 1) {
+            if (guessCompressionRatio(input.getOriginatingProvider()) == 1) {
                 return false;
             }
             final int width  = input.getWidth (inputIndex);
@@ -1147,14 +1153,14 @@ search: for (final Tile tile : tiles) {
         final TileManager[] outputs = getOutput();
         if (outputs != null) {
             for (final TileManager tiles : outputs) {
-                final File root = tiles.rootDirectory();
+                final Path root = tiles.rootDirectory();
                 if (root == null) {
                     continue; // Not a file - there is nothing we can do.
                 }
-                available = root.getUsableSpace();
+                available = Files.getFileStore(root).getUsableSpace();
                 long usage = tiles.diskUsage() * bitPerPixels / Byte.SIZE;
                 for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
-                    int ir = IIOUtilities.guessCompressionRatio(spi);
+                    int ir = guessCompressionRatio(spi);
                     if (ir != 0) {
                         usage /= ir;
                         break; // Use the first known format as the reference.
@@ -1333,8 +1339,10 @@ search: for (final Tile tile : tiles) {
         do {
             final Object candidate;
             if (createStream) {
-                stream = Tile.createImageInputStream(input);
-                if (stream == null) {
+                try {
+                    stream = CoverageIO.createImageInputStream(input);
+                } catch (IOException e) {
+                    //input not supported
                     continue;
                 }
                 candidate = stream;
@@ -1360,10 +1368,11 @@ search: for (final Tile tile : tiles) {
          * Before to give up, if the input is a file or a directory, try to open it has a mosaic.
          */
         Exception cause = null;
-        if (input instanceof File) {
+        if (input instanceof File || input instanceof Path) {
+            Path path = (input instanceof File) ? ((File) input).toPath() : (Path) input;
             TileManager[] managers = null;
             try {
-                managers = TileManagerFactory.DEFAULT.create((File) input);
+                managers = TileManagerFactory.DEFAULT.create(path);
             } catch (Exception e) { // Catch: IOException and RuntimeException
                 cause = e;
             }
@@ -1650,9 +1659,9 @@ search: for (final Tile tile : tiles) {
      */
     private void deleteTemporaryFiles() {
         for (final Iterator<RawFile> it=temporaryFiles.values().iterator(); it.hasNext();) {
-            final File file = it.next().file;
+            final Path file = it.next().file;
             if (!TemporaryFile.delete(file)) {
-                file.deleteOnExit();
+                IOUtilities.deleteOnExit(file);
             }
             it.remove();
         }
@@ -1680,6 +1689,57 @@ search: for (final Tile tile : tiles) {
 
     // It is not strictly necessary to override finalize() since ThreadPoolExecutor
     // already invokes shutdown() in its own finalize() method.
+
+    /**
+     * Guesses the compression ratio for the given image format. This is very approximative
+     * and used only in order to have some order of magnitude.
+     *
+     * @param  spi The image reader or writer provider.
+     * @return The inverse of a guess of compression ratio (1 is uncompressed), or 0 if unknown.
+     */
+    public static int guessCompressionRatio(final ImageReaderWriterSpi spi) {
+        if (spi != null) {
+            for (final String format : spi.getFormatNames()) {
+                if (format.equalsIgnoreCase("png")) {
+                    return 4;
+                }
+                if (format.equalsIgnoreCase("jpeg")) {
+                    return 8;
+                }
+                if (format.equalsIgnoreCase("tiff")) {
+                    // TIFF are uncompressed unless explicitly specified.
+                    return 1;
+                }
+                if (format.equalsIgnoreCase("bmp") || format.equalsIgnoreCase("raw")) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Guesses the number of bits per pixel for an image to be saved on the disk in the RAW format.
+     * Current implementation ignores the leading or trailing bits which could exists on each lines.
+     * If the information is unknown (which may happen with some JPEG readers), conservatively
+     * returns the size required for storing ARGB values using bytes.
+     *
+     * @param  type The color model and sample model of the image to be saved.
+     * @return Expected number of bits per pixel.
+     */
+    public static int bitsPerPixel(final ImageTypeSpecifier type) {
+        if (type != null) {
+            final SampleModel sm = type.getSampleModel();
+            if (sm != null) {
+                int size = 0;
+                for (final int s : sm.getSampleSize()) {
+                    size += s;
+                }
+                return size;
+            }
+        }
+        return 4 * Byte.SIZE;
+    }
 
     /**
      * Service provider for {@link MosaicImageWriter}. This service provider is not strictly

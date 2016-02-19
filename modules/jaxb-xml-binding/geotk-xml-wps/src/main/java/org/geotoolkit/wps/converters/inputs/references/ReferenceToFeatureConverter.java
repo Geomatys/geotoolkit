@@ -19,8 +19,8 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -108,10 +108,8 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
             }
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             try {
-                return WPSConvertersUtils.readFeatureFromJson(new URL(source.getHref()));
-            } catch (MalformedURLException | DataStoreException ex) {
-                throw new UnconvertibleObjectException(ex);
-            } catch (URISyntaxException | IOException ex) {
+                return WPSConvertersUtils.readFeatureFromJson(URI.create(source.getHref()));
+            } catch (DataStoreException | URISyntaxException | IOException ex) {
                 throw new UnconvertibleObjectException(ex);
             }
         }

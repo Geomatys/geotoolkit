@@ -150,7 +150,7 @@ public class TreeDemo {
             public void flush() throws IOException {
                 //do nothing
             }
-           
+
             @Override
 	    public Map<Integer, Envelope> getFullMap() throws IOException {
 		return new HashMap<>();
@@ -253,7 +253,7 @@ public class TreeDemo {
         /*
          * First, we make an RTree as if it has never been created before.
          */
-        Tree<Envelope> demoFileRTree = new FileStarRTree<Envelope>(treeFile, 4, DEMO_CRS, demoFileTreeEltMapper);
+        Tree<Envelope> demoFileRTree = new FileStarRTree<Envelope>(treeFile.toPath(), 4, DEMO_CRS, demoFileTreeEltMapper);
 
         /*
          * At this step the RTree is empty and we can fill it like previously.
@@ -288,11 +288,11 @@ public class TreeDemo {
         /*
          * First we open again TreeElementMapper.
          */
-        demoFileTreeEltMapper = new DemoFileTreeElementMapper(DEMO_CRS, treeELTMapperFile);
+        demoFileTreeEltMapper = new DemoFileTreeElementMapper(treeELTMapperFile, DEMO_CRS);
         /*
          * Then RTree.
          */
-        demoFileRTree = new FileStarRTree<Envelope>(treeFile, demoFileTreeEltMapper);
+        demoFileRTree = new FileStarRTree<Envelope>(treeFile.toPath(), demoFileTreeEltMapper);
 
         /*
          * At this step we can use search or remove action freely.

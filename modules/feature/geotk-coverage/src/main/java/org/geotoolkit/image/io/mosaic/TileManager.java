@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.Map;
 import java.util.Arrays;
@@ -26,21 +28,21 @@ import java.util.NoSuchElementException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
@@ -58,6 +60,9 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  * @module
  */
 public abstract class TileManager implements Serializable {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.mosaic");
+
     /**
      * For cross-version compatibility during serialization.
      */
@@ -93,7 +98,7 @@ public abstract class TileManager implements Serializable {
      *
      * @since 3.15
      */
-    private transient File sourceFile;
+    private transient Path sourceFile;
 
     /**
      * Creates a tile manager.
@@ -109,7 +114,7 @@ public abstract class TileManager implements Serializable {
      *
      * @since 3.15
      */
-    final synchronized void setSourceFile(final File file) {
+    final synchronized void setSourceFile(final Path file) {
         if (sourceFile != null) {
             throw new IllegalStateException();
         }
@@ -124,7 +129,7 @@ public abstract class TileManager implements Serializable {
      *
      * @since 3.15
      */
-    final synchronized File getSourceFile() {
+    final synchronized Path getSourceFile() {
         return sourceFile;
     }
 
@@ -455,48 +460,34 @@ public abstract class TileManager implements Serializable {
 
     /**
      * Returns the root directory of all tiles, or {@code null} if unknown. This method searches
-     * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
+     * for a common {@linkplain Path#getParent() parent directory} of every tiles.
      *
      * @return The root directory, or {@code null} if unknown.
      * @throws IOException If an I/O error occurred.
      *
      * @since 3.00
      */
-    final File rootDirectory() throws IOException {
-        File root = null;
-        for (final Tile tile : getInternalTiles()) {
+    final Path rootDirectory() throws IOException {
+        Path root = null;
+        for (final Tile tile : getTiles()) {
             Object input = tile.getInput();
-            File parent;
-            if (input instanceof String) {
-                /*
-                 * If the string begin with "file:", assume that this is a URL. This is required
-                 * for GridTileManager, which use patterns as Strings. We extract the parent
-                 * directory right there because the filename part may be a pattern without
-                 * meaning.
-                 */
-                final String path = (String) input;
-                if (!path.regionMatches(true, 0, "file:", 0, 5)) {
-                    continue;
+
+            if (IOUtilities.canProcessAsPath(input)) {
+                Path inputPath = IOUtilities.toPath(input);
+                Path parent = inputPath.getParent();
+                if (parent == null) {
+                    return Paths.get(".");
                 }
-                final URL url;
-                try {
-                    url = new URL(path);
-                } catch (MalformedURLException e) {
-                    continue;
+
+                if (root == null) {
+                    root = parent;
+                } else {
+                    root = IOUtilities.commonParent(root, parent);
                 }
-                parent = new File(url.getPath()).getParentFile();
-            } else if (input instanceof File) {
-                parent = ((File) input).getParentFile();
+
             } else {
-                continue; // Unknown type - look at the next tile.
-            }
-            if (parent == null) {
-                return new File(".");
-            }
-            if (root == null) {
-                root = parent;
-            } else {
-                root = IOUtilities.commonParent(root, parent);
+                // Unknown type - log and look at the next tile.
+                LOGGER.log(Level.WARNING, "Unsupported tile input instance of "+input.getClass().getName());
             }
         }
         return root;

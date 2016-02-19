@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.util.Utilities;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -35,7 +34,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Draft java api image reader for WKB, used in postGIS 2 but can be used elsewhere.

@@ -1,7 +1,7 @@
 
 package org.geotoolkit.pending.demo.processing;
 
-import java.net.URL;
+import java.net.URI;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
@@ -19,7 +19,7 @@ public class FeatureCopyDemo {
     public static void main(String[] args) throws Exception {
         
         final ParameterValueGroup shpParams = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(shpParams,"url").setValue(new URL("file:/...someshapefile"));
+        ParametersExt.getOrCreateValue(shpParams,"path").setValue(URI.create("file:/...someshapefile"));
         
         final FeatureStore source = FeatureStoreFinder.open(shpParams);
         

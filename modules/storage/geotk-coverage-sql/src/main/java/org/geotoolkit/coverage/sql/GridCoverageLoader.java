@@ -58,7 +58,7 @@ import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArraysExt;

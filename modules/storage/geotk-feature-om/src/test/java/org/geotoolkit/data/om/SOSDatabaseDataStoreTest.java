@@ -108,7 +108,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
 //
 //            File fdb = new File("TestOM");
 //            if(fdb.exists()){
-//                FileUtilities.deleteDirectory(fdb);
+//                IOUtilities.deleteRecursively(fdb.toPath());
 //            }
 //
 //            File dlog = new File("derby.log");

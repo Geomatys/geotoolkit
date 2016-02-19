@@ -55,13 +55,13 @@ public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, nb[2]);
     }
 
-    @Test
-    public void EncodeUrlTest() {
-        assertEquals(StringUtilities.encodeToUTF8URL(decodedStr), encodedStr);
-    }
-
-    @Test
-    public void DecodeUrlTest() {
-        assertEquals(StringUtilities.decodeUTF8URL(encodedStr), decodedStr);
-    }
+//    @Test
+//    public void EncodeUrlTest() {
+//        assertEquals(StringUtilities.encodeToUTF8URL(decodedStr), encodedStr);
+//    }
+//
+//    @Test
+//    public void DecodeUrlTest() {
+//        assertEquals(StringUtilities.decodeUTF8URL(encodedStr), decodedStr);
+//    }
 }

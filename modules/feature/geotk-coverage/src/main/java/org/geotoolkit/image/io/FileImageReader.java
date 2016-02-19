@@ -17,19 +17,19 @@
  */
 package org.geotoolkit.image.io;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import javax.imageio.spi.ImageReaderSpi;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 
 
@@ -39,7 +39,7 @@ import org.geotoolkit.internal.io.TemporaryFile;
  * <p>
  * The input type can be any of the types documented in the
  * {@linkplain org.geotoolkit.image.io.StreamImageReader.Spi provider} javadoc. The {@link File}
- * object can be obtained by a call to {@link #getInputFile()}, which handles the various input
+ * object can be obtained by a call to {@link #getInputPath()}, which handles the various input
  * types as below:
  * <p>
  * <ul>
@@ -69,10 +69,10 @@ public abstract class FileImageReader extends StreamImageReader {
      * already a {@link File} object. Otherwise this is a {@code File} derived from the
      * input URL, URI or Path if possible, or a temporary file otherwise.
      */
-    private File inputFile;
+    private Path inputPath;
 
     /**
-     * {@code true} if {@link #inputFile} is a temporary file.
+     * {@code true} if {@link #inputPath} is a temporary file.
      */
     private boolean isTemporary;
 
@@ -88,7 +88,7 @@ public abstract class FileImageReader extends StreamImageReader {
     /**
      * Returns the encoding used for {@linkplain URL} {@linkplain #input input}s.
      * The default implementation returns {@code "UTF-8"} in all cases. Subclasses
-     * can override this method if {@link #getInputFile()} should convert {@link URL}
+     * can override this method if {@link #getInputPath()} should convert {@link URL}
      * to {@link File} objects using a different encoding.
      *
      * @return The encoding used for URL inputs.
@@ -102,10 +102,10 @@ public abstract class FileImageReader extends StreamImageReader {
      *
      * @throws FileNotFoundException if the file is not found or can not be read.
      */
-    private void ensureFileExists(final File file) throws FileNotFoundException {
-        if (!file.isFile() || !file.canRead()) {
+    private void ensureFileExists(final Path path) throws FileNotFoundException {
+        if (!Files.isRegularFile(path) || !Files.isReadable(path)) {
             throw new FileNotFoundException(getErrorResources().getString(
-                    Errors.Keys.FileDoesNotExist_1, file));
+                    Errors.Keys.FileDoesNotExist_1, path));
         }
     }
 
@@ -117,66 +117,64 @@ public abstract class FileImageReader extends StreamImageReader {
      * @throws FileNotFoundException if the file is not found or can not be read.
      * @throws IOException if a copy was necessary but failed.
      */
-    protected File getInputFile() throws FileNotFoundException, IOException {
-        if (inputFile != null) {
-            ensureFileExists(inputFile);
-            return inputFile;
+    protected Path getInputPath() throws FileNotFoundException, IOException {
+        if (inputPath != null) {
+            ensureFileExists(inputPath);
+            return inputPath;
         }
         if (input instanceof String) {
-            inputFile = new File((String) input);
-            ensureFileExists(inputFile);
-            return inputFile;
+            inputPath = Paths.get((String) input);
+            ensureFileExists(inputPath);
+            return inputPath;
         }
         if (input instanceof File) {
-            inputFile = (File) input;
-            ensureFileExists(inputFile);
-            return inputFile;
+            inputPath = ((File) input).toPath();
+            ensureFileExists(inputPath);
+            return inputPath;
         }
         if (input instanceof Path) {
-            inputFile = ((Path) input).toFile();
-            ensureFileExists(inputFile);
-            return inputFile;
+            inputPath = (Path) input;
+            ensureFileExists(inputPath);
+            return inputPath;
         }
         if (input instanceof URI) {
-            final URI sourceURI = (URI) input;
-            if (sourceURI.getScheme().equalsIgnoreCase("file")) {
-                inputFile = new File(sourceURI);
-                ensureFileExists(inputFile);
-                return inputFile;
-            }
+            inputPath = Paths.get((URI) input);
+            ensureFileExists(inputPath);
+            return inputPath;
         }
         if (input instanceof URL) {
-            final URL sourceURL = (URL) input;
-            if (sourceURL.getProtocol().equalsIgnoreCase("file")) {
-                inputFile = IOUtilities.toFile(sourceURL, getURLEncoding());
-                ensureFileExists(inputFile);
-                return inputFile;
+            try {
+                final URL sourceURL = (URL) input;
+                inputPath = Paths.get(sourceURL.toURI());
+                ensureFileExists(inputPath);
+                return inputPath;
+            } catch (URISyntaxException e) {
+                //forward exception
+                throw new IOException(e);
             }
         }
         /*
-         * Can not convert the input directly to a file. Asks the input stream
-         * before to create the temporary file in case an exception is thrown.
+         * Can not convert the input directly to a path. Asks the input stream
+         * before to create the temporary path in case an exception is thrown.
          * Then creates a temporary file using the first declared image suffix
          * (e.g. "png"), or "tmp" if there is no declared suffix. The "FIR"
          * prefix stands for "FileImageReader".
          */
         final InputStream in = getInputStream();
-        inputFile = TemporaryFile.createTempFile("FIR", XImageIO.getFileSuffix(originatingProvider), null);
+        inputPath = TemporaryFile.createTempFile("FIR", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
-        try (OutputStream out = new FileOutputStream(inputFile)) {
-            org.geotoolkit.internal.io.IOUtilities.copy(in, out);
-        }
+        Files.copy(in, inputPath);
         /*
          * Do not close the input stream, because it may be a stream explicitly specified by the user.
          * The stream will be closed by the 'setInput', 'reset', 'close' or 'dispose' methods.
          */
-        return inputFile;
+        return inputPath;
     }
 
     /**
-     * Returns {@code true} if the file given by {@link #getInputFile()} is a temporary file.
+     * Returns {@code true} if the path given by {@link #getInputPath()} is a temporary file.
      *
-     * @return {@code true} if the input file is a temporary one.
+     * @return {@code true} if the input path is a temporary one.
      */
     protected boolean isTemporaryFile() {
         return isTemporary;
@@ -207,12 +205,12 @@ public abstract class FileImageReader extends StreamImageReader {
         try {
             super.close(); // Must close the stream before to delete the file.
         } finally {
-            final File file = inputFile;
-            if (file != null) {
-                inputFile = null;
+            final Path path = inputPath;
+            if (path != null) {
+                inputPath = null;
                 if (isTemporary) {
-                    if (!TemporaryFile.delete(file)) {
-                        file.deleteOnExit();
+                    if (!TemporaryFile.delete(path.toFile())) {
+                        inputPath.toFile().deleteOnExit();
                     }
                 }
             }

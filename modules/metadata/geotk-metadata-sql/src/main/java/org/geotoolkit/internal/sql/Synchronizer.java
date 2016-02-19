@@ -34,7 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;

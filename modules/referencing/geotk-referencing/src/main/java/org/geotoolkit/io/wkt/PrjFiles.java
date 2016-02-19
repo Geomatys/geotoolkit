@@ -22,6 +22,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -73,9 +75,22 @@ public final class PrjFiles extends Static {
      * @return The PRJ file content as a coordinate reference system.
      * @throws ContentFormatException If the content of the PRJ file is an invalid WKT.
      * @throws IOException If the parsing failed for an other raison.
+     * @deprecated use {@link #read(Path)} instead
      */
     public static CoordinateReferenceSystem read(final File file) throws ContentFormatException, IOException {
         return read(new FileInputStream(file), true);
+    }
+
+    /**
+     * Parses a PRJ file and returns its content as a coordinate reference system.
+     *
+     * @param  file The file to parse. It usually has the {@code ".prj"} suffix,
+     * @return The PRJ file content as a coordinate reference system.
+     * @throws ContentFormatException If the content of the PRJ file is an invalid WKT.
+     * @throws IOException If the parsing failed for an other raison.
+     */
+    public static CoordinateReferenceSystem read(final Path file) throws ContentFormatException, IOException {
+        return read(Files.newInputStream(file), true);
     }
 
     /**

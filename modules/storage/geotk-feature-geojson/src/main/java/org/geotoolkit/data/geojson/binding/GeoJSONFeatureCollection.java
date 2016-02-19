@@ -24,10 +24,12 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.geojson.utils.GeoJSONFeatureIterator;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONTypes;
+import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,15 +40,24 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
 
     private List<GeoJSONFeature> features = new ArrayList<>();
 
-    transient JsonLocation startIdx = null;
-    transient JsonLocation endIdx = null;
-    transient JsonLocation currentIdx = null;
+    transient JsonLocation currentPos = null;
     transient GeoJSONFeature current = null;
-    transient GeoJSONParser jsonParser;
+    transient int currentIdx = 0;
+    transient InputStream readStream;
     transient JsonParser parser;
 
-    public GeoJSONFeatureCollection() {
+    /**
+     * If current GeoJSONFeatureCollection is in lazy parsing mode,
+     * sourceInput should be not {@code null} and used to create {@link JsonParser object}
+     */
+    transient Path sourceInput = null;
+    transient JsonLocation startPos = null;
+    transient JsonLocation endPos = null;
+    transient Boolean lazyMode;
+
+    public GeoJSONFeatureCollection(Boolean lazyMode) {
         setType(GeoJSONTypes.FEATURE_COLLECTION);
+        this.lazyMode = lazyMode;
     }
 
     public List<GeoJSONFeature> getFeatures() {
@@ -57,18 +68,26 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
         this.features = features;
     }
 
-    public void setStartIdx(JsonLocation startIdx) {
-        this.startIdx = startIdx;
+    public void setStartPosition(JsonLocation startPos) {
+        this.startPos = startPos;
     }
 
-    public void setEndIdx(JsonLocation endIdx) {
-        this.endIdx = endIdx;
+    public void setEndPosition(JsonLocation endPos) {
+        this.endPos = endPos;
+    }
+
+    public void setSourceInput(Path input) {
+        this.sourceInput = input;
+    }
+
+    public Boolean isLazyMode() {
+        return lazyMode;
     }
 
     @Override
     public boolean hasNext() {
         try {
-            parse();
+            findNext();
             return current != null;
         } catch (IOException e) {
             throw new FeatureStoreRuntimeException(e.getMessage(), e);
@@ -78,7 +97,7 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
     @Override
     public GeoJSONFeature next() {
         try {
-            parse();
+            findNext();
             final GeoJSONFeature ob = current;
             current = null;
             if (ob == null) {
@@ -90,43 +109,49 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
         }
     }
 
-    private void parse() throws IOException {
+    /**
+     * Find next Feature from features list or as lazy parsing.
+     * @throws IOException
+     */
+    private void findNext() throws IOException {
         if (current != null) return;
-        if (startIdx == null || endIdx == null) return;
+        if (lazyMode) {
+            if (sourceInput == null || startPos == null || endPos == null) return;
 
-        if (parser == null) {
-            jsonParser = new GeoJSONParser();
-            Object sourceRef = startIdx.getSourceRef();
-            if (sourceRef instanceof File) {
-                parser = GeoJSONParser.FACTORY.createParser((File) sourceRef);
-            } else if (sourceRef instanceof InputStream) {
-                parser = GeoJSONParser.FACTORY.createParser((InputStream) sourceRef);
+            if (parser == null) {
+                readStream = Files.newInputStream(sourceInput);
+                parser = GeoJSONParser.FACTORY.createParser(readStream);
             }
-        }
 
-        //loop to FeatureCollection start
-        if (currentIdx == null) {
-            while (!startIdx.equals(currentIdx)) {
+            //loop to FeatureCollection start
+            if (currentPos == null) {
+                while (!GeoJSONUtils.equals(startPos, currentPos)) {
+                    parser.nextToken();
+                    currentPos = parser.getCurrentLocation();
+                }
+            }
+
+            current = null;
+
+            // set parser to feature object start
+            while (parser.getCurrentToken() != JsonToken.START_OBJECT && !GeoJSONUtils.equals(endPos, currentPos)) {
                 parser.nextToken();
-                currentIdx = parser.getCurrentLocation();
+                currentPos = parser.getCurrentLocation();
             }
-        }
 
-        current = null;
-
-
-        // set parser to feature object start
-        while (parser.getCurrentToken() != JsonToken.START_OBJECT && !currentIdx.equals(endIdx)) {
-            parser.nextToken();
-            currentIdx = parser.getCurrentLocation();
-        }
-
-        if (!currentIdx.equals(endIdx)) {
-            GeoJSONObject obj = jsonParser.parseGeoJSONObject(parser);
-            if (obj instanceof GeoJSONFeature) {
-                current = (GeoJSONFeature) obj;
+            if (!GeoJSONUtils.equals(endPos, currentPos)) {
+                GeoJSONObject obj = GeoJSONParser.parseGeoJSONObject(parser);
+                if (obj instanceof GeoJSONFeature) {
+                    current = (GeoJSONFeature) obj;
+                }
+                currentPos = parser.getCurrentLocation();
             }
-            currentIdx = parser.getCurrentLocation();
+        } else {
+            if (currentIdx < features.size()) {
+                current = features.get(currentIdx++);
+            } else {
+                current = null;
+            }
         }
     }
 
@@ -137,7 +162,16 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
 
     @Override
     public void close() {
-        if (parser != null) {
+        //close read stream
+        if (readStream != null) {
+            try {
+                readStream.close();
+            } catch (IOException e) {
+                throw new FeatureStoreRuntimeException(e.getMessage(), e);
+            }
+        }
+        //close parser
+        if (parser != null && !parser.isClosed()) {
             try {
                 parser.close();
             } catch (IOException e) {

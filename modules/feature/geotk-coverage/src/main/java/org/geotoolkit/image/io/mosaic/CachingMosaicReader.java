@@ -27,7 +27,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.image.io.RawFile;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 

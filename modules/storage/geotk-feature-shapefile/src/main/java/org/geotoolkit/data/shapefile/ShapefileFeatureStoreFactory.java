@@ -20,7 +20,7 @@ package org.geotoolkit.data.shapefile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
@@ -61,7 +61,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * not specified. For more information on the connection parameters please
  * review the following public Param constants.
  * <ul>
- * <li>{@link #URLP}
+ * <li>{@link #PATH}
  * <li>{@link #NAMESPACEP}
  * <li>{@link #CREATE_SPATIAL_INDEX}
  * <li>{@link #MEMORY_MAPPED}
@@ -133,7 +133,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ShapefileParameters").createGroup(
-                IDENTIFIER,URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
+                IDENTIFIER, PATH,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     @Override
     public Identification getIdentification() {
@@ -207,7 +207,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
 
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
@@ -231,7 +231,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         final ShpFiles shpFiles;
         try{
-            shpFiles = new ShpFiles(url, (loadQix == null) ? false : loadQix );
+            shpFiles = new ShpFiles(uri, (loadQix == null) ? false : loadQix );
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex.getMessage(),ex);
         }
@@ -258,14 +258,14 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         try {
             if (createIndex) {
-                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
             } else if (treeIndex != IndexType.NONE) {
-                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
             } else {
-                return new ShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
-            throw new DataStoreException("Url for shapefile malformed: " + url, mue);
+            throw new DataStoreException("Url for shapefile malformed: " + uri, mue);
         }
     }
 
@@ -274,7 +274,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
@@ -296,7 +296,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
             // this should not happen as false was the default
             isMemoryMapped = Boolean.FALSE;
         }
-        final ShpFiles shpFiles = new ShpFiles(url);
+        final ShpFiles shpFiles = new ShpFiles(uri);
 
         final boolean isLocal = shpFiles.isLocal();
         if (!isLocal || shpFiles.exists(ShpFileType.SHP)) {
@@ -308,12 +308,12 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
         try {
             if (createIndex) {
-                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
             } else {
-                return new ShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(uri, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
-            throw new DataStoreException("Url for shapefile malformed: " + url, mue);
+            throw new DataStoreException("Uri for shapefile malformed: " + uri, mue);
         }
     }
     

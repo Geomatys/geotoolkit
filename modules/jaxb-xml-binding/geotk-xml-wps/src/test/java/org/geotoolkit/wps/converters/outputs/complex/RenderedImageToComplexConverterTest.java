@@ -21,7 +21,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.util.FileUtilities;
+
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
@@ -54,7 +55,7 @@ public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTes
         
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/image_base64");
         assertNotNull(expectedStream);
-        String expectedString = FileUtilities.getStringFromStream(expectedStream);
+        String expectedString = IOUtilities.toString(expectedStream);
         expectedString = expectedString.trim();
         
         assertEquals(expectedString, encodedImage);

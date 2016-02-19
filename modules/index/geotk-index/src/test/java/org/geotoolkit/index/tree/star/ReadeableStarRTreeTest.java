@@ -35,7 +35,7 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
     /**
      * Create a generic StarRTree Test suite with file already filled by tree architecture
      * and a {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @param insert {@code true} to insert data into tree during test constructor else no insertion.
      * @throws IOException if problem during head reading from already filled file.
@@ -46,20 +46,20 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
         super(crs);
         final File inOutFile      = File.createTempFile("test", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
-        
+
         // data insertion
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
-        
-        // close 
+        tree = new FileStarRTree(inOutFile.toPath(), 4, crs, tEM);
+
+        // close
         if (insert) insert();
         tree.close();
         tEM.close();
         assertTrue(tree.isClosed());
         assertTrue(tEM.isClosed());
-        
+
         // open Tree from already filled files.
-        tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
-        tree = new FileStarRTree(inOutFile, tEM);
+        tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tree = new FileStarRTree(inOutFile.toPath(), tEM);
     }
 }

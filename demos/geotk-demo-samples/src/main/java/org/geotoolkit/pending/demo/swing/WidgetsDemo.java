@@ -4,6 +4,7 @@ package org.geotoolkit.pending.demo.swing;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public WidgetsDemo() throws DataStoreException {
+    public WidgetsDemo() throws DataStoreException, URISyntaxException {
         Demos.init();
 
         initComponents();
@@ -131,9 +132,9 @@ public class WidgetsDemo extends javax.swing.JFrame {
 
     }
 
-    private static FeatureCollection openShapeFile() throws DataStoreException {
+    private static FeatureCollection openShapeFile() throws DataStoreException, URISyntaxException {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put("url", PortrayalDemo.class.getResource("/data/world/Countries.shp"));
+        params.put("path", PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         final FeatureStore store = FeatureStoreFinder.open(params);
         final Session session = store.createSession(true);
@@ -224,7 +225,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
             public void run() {
                 try {
                     new WidgetsDemo().setVisible(true);
-                } catch (DataStoreException ex) {
+                } catch (DataStoreException | URISyntaxException ex) {
                     Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
                 }
             }

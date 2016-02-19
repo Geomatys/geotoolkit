@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.data;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -50,12 +50,12 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
     /**
      * url to the folder.
      */
-    public static final ParameterDescriptor<URL> URLFOLDER = new ParameterBuilder()
-            .addName("url")
-            .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
-            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
+    public static final ParameterDescriptor<URI> FOLDER_PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramPathAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramPathRemarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
 
     /**
      * recursively search folder.
@@ -93,21 +93,14 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
+        if(!(obj instanceof URI)){
             return false;
         }
 
-        final URL path = (URL)obj;
-        File pathFile;
-        try {
-            pathFile = new File(path.toURI());
-        } catch (URISyntaxException e) {
-            // Should not happen if the url is well-formed.
-            LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
-        }
-        return (pathFile.exists() && pathFile.isDirectory());
+        final URI path = (URI)obj;
+        Path pathFile = Paths.get(path);
+        return Files.isDirectory(pathFile);
     }
 
     /**
@@ -174,9 +167,9 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
                 break;
             }
         }
-        params.remove(AbstractFileFeatureStoreFactory.URLP);
+        params.remove(AbstractFileFeatureStoreFactory.PATH);
         params.add(0,identifierParam);
-        params.add(1,URLFOLDER);
+        params.add(1, FOLDER_PATH);
         params.add(2,RECURSIVE);
         params.add(3,EMPTY_DIRECTORY);
 

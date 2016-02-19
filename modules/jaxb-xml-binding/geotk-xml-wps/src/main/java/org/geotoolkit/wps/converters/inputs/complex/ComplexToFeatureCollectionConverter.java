@@ -85,7 +85,7 @@ public final class ComplexToFeatureCollectionConverter extends AbstractComplexIn
             }
 
             try {
-                return WPSConvertersUtils.readFeatureCollectionFromJson(tmpFilePath.toUri().toURL());
+                return WPSConvertersUtils.readFeatureCollectionFromJson(tmpFilePath.toUri());
             } catch (MalformedURLException | DataStoreException ex) {
                 throw new UnconvertibleObjectException(ex);
             } catch (URISyntaxException | IOException ex) {

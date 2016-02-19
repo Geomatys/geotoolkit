@@ -18,7 +18,7 @@ package org.geotoolkit.storage;
 
 import org.apache.sis.storage.DataStoreException;
 
-import java.io.File;
+import java.nio.file.Path;
 
 
 /**
@@ -33,5 +33,5 @@ public interface DataFileStore {
      * @return Files used by this store. Should never be {@code null}.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    File[] getDataFiles() throws DataStoreException;
+    Path[] getDataFiles() throws DataStoreException;
 }

@@ -23,14 +23,16 @@ import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.image.ComponentColorModel;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.image.io.Formats;
@@ -92,7 +94,7 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
      * The directory which will contains the target tiles.
      * If non-null, this directory will be cleared after the test.
      */
-    private File targetDirectory;
+    private Path targetDirectory;
 
     /**
      * Creates a new test suite.
@@ -107,12 +109,10 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
     @After
     public void clearTargetDirectory() {
         if (targetDirectory != null) {
-            final File[] files = targetDirectory.listFiles();
-            if (files != null) {
-                for (final File file : files) {
-                    assertTrue(file.getPath(), file.delete());
-                }
-                assertTrue(targetDirectory.getPath(), targetDirectory.delete());
+            try {
+                IOUtilities.deleteRecursively(targetDirectory);
+            } catch (IOException e) {
+                fail(e.getMessage());
             }
             targetDirectory = null;
         }
@@ -231,8 +231,8 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
      * which will create an image of 20 pixels height.
      */
     private MosaicBuilder builder(final int... subsamplings) throws IOException {
-        targetDirectory = new File(TemporaryFile.getSharedTemporaryDirectory(), "mosaic-test");
-        assertTrue(targetDirectory.mkdir());
+        targetDirectory = TemporaryFile.getSharedTemporaryDirectory().resolve("mosaic-test");
+        Files.createDirectory(targetDirectory);
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setUntiledImageBounds(new Rectangle(4*S, 2*S));
         builder.setTileDirectory(targetDirectory);
@@ -280,8 +280,8 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
         int i=0;
         final ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
         for (final String filename : files) {
-            final File file = new File(targetDirectory, filename);
-            assertTrue(filename, file.isFile());
+            final Path file = targetDirectory.resolve(filename);
+            assertTrue(filename, Files.isRegularFile(file));
             try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
                 assertNotNull("File not found", in);
                 reader.setInput(in);

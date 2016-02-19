@@ -26,11 +26,10 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
+import java.nio.file.Path;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
@@ -123,7 +122,7 @@ public class XMLMosaic implements GridMosaic {
     @XmlElement
     Boolean cacheTileState;
 
-    File folder;
+    Path folder;
 
     final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
 
@@ -202,8 +201,8 @@ public class XMLMosaic implements GridMosaic {
          * that we've got an old version of pyramid descriptor, or it is corrupted. In such cases, we must cache tile
          * state in order to retrieve existing ones.
          */
-        if (tileExist != null && tileExist.isEmpty() && getFolder().isDirectory()) {
-            try (DirectoryStream dStream = Files.newDirectoryStream(folder.toPath())) {
+        if (tileExist != null && tileExist.isEmpty() && Files.isDirectory(getFolder())) {
+            try (DirectoryStream dStream = Files.newDirectoryStream(folder)) {
                 if (dStream.iterator().hasNext()) {
                     cacheTileState = true;
                 }
@@ -293,7 +292,7 @@ public class XMLMosaic implements GridMosaic {
     }
 
     private static String updateCompletionString(BitSet input) throws IOException {
-        return Base64.encodeBytes(input.toByteArray(),Base64.GZIP);
+        return Base64.encodeBytes(input.toByteArray(), Base64.GZIP);
     }
 
     /**
@@ -325,14 +324,15 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-    public File getFolder() {
+    public Path getFolder() {
         if (folder == null) {
-            folder = new File(getPyramid().getFolder(), getId());
+            final Path pyramidDirectory = getPyramid().getFolder();
+            folder = pyramidDirectory.resolve(getId());
             // For retro-compatibility purpose.
-            if (!folder.isDirectory()) {
-                final File tmpFolder = new File(getPyramid().getFolder(), String.valueOf(scale));
-                if (tmpFolder.isDirectory()) {
-                    folder = tmpFolder;
+            if (!Files.isDirectory(folder)) {
+                final Path tmpFolder = pyramidDirectory.resolve(String.valueOf(scale));
+                if (Files.isDirectory(tmpFolder)) {
+                    this.folder = tmpFolder;
                 }
                 // Else, it must be a new pyramid, the mosaic directory will be created when the first tile will be written.
             }
@@ -397,7 +397,7 @@ public class XMLMosaic implements GridMosaic {
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(xAxis, minX, minX + spanX);
-        envelope.setRange(yAxis, maxY - spanY, maxY );
+        envelope.setRange(yAxis, maxY - spanY, maxY);
 
         return envelope;
     }
@@ -475,32 +475,42 @@ public class XMLMosaic implements GridMosaic {
      */
     @Override
     public Rectangle getDataArea() {
-        final File folder = getFolder();
-        final String[] tileFiles = folder.list();
-        if (tileFiles != null && tileFiles.length > 0) {
+        final Path folder = getFolder();
+
+        try (DirectoryStream<Path> tileStream = Files.newDirectoryStream(folder)) {
 
             Point start = new Point(gridWidth, gridHeight);
             Point end = new Point(0, 0);
-            Point currPos;
-            for (int i = 0; i < tileFiles.length; i++) {
-                currPos = parsePosition(tileFiles[i]);
+            Point currPos = null;
+            for (Path tile : tileStream) {
+                final String tileFileName = tile.getFileName().toString();
+                currPos = parsePosition(tileFileName);
                 start.x = Math.min(start.x, currPos.x);
                 start.y = Math.min(start.y, currPos.y);
                 end.x = Math.max(end.x, currPos.x);
                 end.y = Math.max(end.y, currPos.y);
             }
 
+            //no tiles in mosaic directory
+            //return null as documentation says
+            if (currPos == null) {
+                return null;
+            }
+
             assert end.x >= start.x;
             assert end.y >= start.y;
 
             return new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
+
+        } catch (IOException e) {
+           LOGGER.log(Level.FINE, "Data area compute failed "+e.getLocalizedMessage(), e);
+            //error with directory stream
+            return null;
         }
-        return null;
     }
 
     private Point parsePosition(String tileFile) {
-        int start = tileFile.lastIndexOf('/') + 1;
-        String posStr = tileFile.substring(start, tileFile.lastIndexOf('.'));
+        String posStr = tileFile.substring(0, tileFile.lastIndexOf('.'));
         String[] split = posStr.split("_");
         return new Point(Integer.valueOf(split[1]), Integer.valueOf(split[0]));
     }
@@ -515,53 +525,53 @@ public class XMLMosaic implements GridMosaic {
     }
 
     /**
-     * Returns the {@linkplain File file path} of tile at col and row index position.<br><br>
+     * Returns the {@linkplain Path file} of tile at col and row index position.<br><br>
      *
      * Moreover, this method check all possible path file suffix from pyramid SPI
      * and return the first that exist else return {@code null} if any exists.
      *
      * @param col mosaic column index.
      * @param row mosaic row index.
-     * @return {@linkplain File file path} of tile at col and row index position if exist, else return {@code null}.
+     * @return {@linkplain Path file} of tile at col and row index position if exist, else return {@code null}.
      * @throws DataStoreException if tile is not present at path file place.
      */
-    private File getTileFile(int col, int row) throws DataStoreException {
+    private Path getTileFile(int col, int row) throws DataStoreException {
         checkPosition(col, row);
-        for (File fil : getTileFiles(col, row)) {
-            if (fil.isFile()) return fil;
+        for (Path fil : getTileFiles(col, row)) {
+            if (Files.isRegularFile(fil)) return fil;
         }
         return null;
     }
 
     /**
-     * Return the first available tile path {@link File} use to write tile.<br>
+     * Return the first available tile path {@link Path} use to write tile.<br>
      *
-     * You may choose another suffix {@link File}, with travel {@link #getTileFiles(int, int) } results.
+     * You may choose another suffix {@link Path}, with travel {@link #getTileFiles(int, int) } results.
      *
      * @param col mosaic column index.
      * @param row mosaic row index.
-     * @return the first available tile path {@link File} use to write tile.
+     * @return the first available tile path {@link Path} use to write tile.
      * @throws DataStoreException
      */
-    private File getDefaultTileFile(int col, int row) throws DataStoreException {
-        final File fil = getTileFiles(col, row)[0];
+    private Path getDefaultTileFile(int col, int row) throws DataStoreException {
+        final Path fil = getTileFiles(col, row)[0];
 //        assert !fil.exists(): "created file should not exist : path : "+fil.getPath();
         return fil;
     }
 
     /**
-     * Returns all possible {@linkplain File files} from all suffix from reader spi.
+     * Returns all possible {@linkplain Path files} from all suffix from reader spi.
      *
      * @param col mosaic column index.
      * @param row mosaic row index.
-     * @return all possible {@linkplain File files} from all suffix from reader spi.
+     * @return all possible {@linkplain Path files} from all suffix from reader spi.
      * @throws DataStoreException if problem during get suffix.
      */
-    private File[] getTileFiles(int col, int row) throws DataStoreException {
+    private Path[] getTileFiles(int col, int row) throws DataStoreException {
         final String[] suffixx = getPyramid().getPyramidSet().getReaderSpi().getFileSuffixes();
-        final File[] fils = new File[suffixx.length];
+        final Path[] fils = new Path[suffixx.length];
         for (int i=0;i<suffixx.length;i++) {
-            fils[i] = (new File(getFolder(),row+"_"+col+"."+suffixx[i]));
+            fils[i] = getFolder().resolve(row+"_"+col+"."+suffixx[i]);
         }
         return fils;
     }
@@ -585,6 +595,13 @@ public class XMLMosaic implements GridMosaic {
     }
 
     void createTile(final int col, final int row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
+
+        try {
+            checkMosaicFolderExist();
+        } catch (IOException e) {
+            throw new DataStoreException("Unable to create mosaic folder "+e.getLocalizedMessage(), e);
+        }
+
         // No empty tile with cached tile state.
         if (tileExist != null && isEmpty(image.getData())) {
             bitsetLock.writeLock().lock();
@@ -598,22 +615,21 @@ public class XMLMosaic implements GridMosaic {
         }
 
         checkPosition(col, row);
-        File f = getTileFile(col, row);
-        if (f == null) f = getDefaultTileFile(col, row);
-        f.getParentFile().mkdirs();
+        Path tilePath = getTileFile(col, row);
+        if (tilePath == null) tilePath = getDefaultTileFile(col, row);
 
         ImageOutputStream out = null;
         try {
             final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
-            if(ArraysExt.contains(outTypes, File.class)){
+            if(ArraysExt.contains(outTypes, Path.class)){
                 //writer support files directly, let him handle it
-                writer.setOutput(f);
+                writer.setOutput(tilePath);
             }else{
-                out = ImageIO.createImageOutputStream(f);
+                out = ImageIO.createImageOutputStream(tilePath);
                 writer.setOutput(out);
             }
             if (out == null) {
-                out = ImageIO.createImageOutputStream(f);
+                out = ImageIO.createImageOutputStream(tilePath);
             }
             writer.write(image);
             if (tileExist != null) {
@@ -645,7 +661,13 @@ public class XMLMosaic implements GridMosaic {
     }
 
      void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
-
+         
+         try {
+             checkMosaicFolderExist();
+         } catch (IOException e) {
+             throw new DataStoreException("Unable to create mosaic folder "+e.getLocalizedMessage(), e);
+         }
+         
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
 
@@ -677,11 +699,10 @@ public class XMLMosaic implements GridMosaic {
                 final int tileIndex = getTileIndex(tx, ty);
                 checkPosition(tx, ty);
 
+                Path tilePath = getTileFile(tx, ty);
+                if (tilePath == null) tilePath = getDefaultTileFile(tx, ty);
 
-                File f = getTileFile(tx, ty);
-                if (f == null) f = getDefaultTileFile(tx, ty);
-                f.getParentFile().mkdirs();
-                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, tx, ty, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
+                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(tilePath, image, tx, ty, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
                 futurs.add(fut);
             }
         }
@@ -701,6 +722,19 @@ public class XMLMosaic implements GridMosaic {
         // TODO : Negative indices are allowed ?
         if(col < 0 || row < 0 || col >= getGridSize().width || row >=getGridSize().height){
             throw new PointOutsideCoverageException("Tile position is outside the grid : " + col + " " + row, new GeneralDirectPosition(col, row));
+        }
+    }
+
+    /**
+     * Check if a current mosaic folder exist. 
+     * If not create it.
+     * 
+     * @throws IOException
+     */
+    private void checkMosaicFolderExist() throws IOException {
+        final Path mosaicFolder = getFolder();
+        if (!Files.isDirectory(mosaicFolder)) {
+            Files.createDirectories(mosaicFolder);
         }
     }
 
@@ -791,7 +825,7 @@ public class XMLMosaic implements GridMosaic {
 
     private class TileWriter implements Runnable{
 
-        private final File f;
+        private final Path tilePath;
         private final RenderedImage image;
         private final int idx;
         private final int idy;
@@ -800,10 +834,10 @@ public class XMLMosaic implements GridMosaic {
         private final String formatName;
         private final ProgressMonitor monitor;
 
-        public TileWriter(File f, RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
-            ArgumentChecks.ensureNonNull("file", f);
+        public TileWriter(Path tilePath, RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
+            ArgumentChecks.ensureNonNull("file", tilePath);
             ArgumentChecks.ensureNonNull("image", image);
-            this.f = f;
+            this.tilePath = tilePath;
             this.image = image;
             this.idx = idx;
             this.idy = idy;
@@ -844,11 +878,11 @@ public class XMLMosaic implements GridMosaic {
                 writer = ImageIO.getImageWritersByFormatName(formatName).next();
 
                 final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
-                if (ArraysExt.contains(outTypes, File.class)) {
+                if (ArraysExt.contains(outTypes, Path.class)) {
                     //writer support files directly, let him handle it
-                    writer.setOutput(f);
+                    writer.setOutput(tilePath);
                 } else {
-                    out = ImageIO.createImageOutputStream(f);
+                    out = ImageIO.createImageOutputStream(tilePath);
                     writer.setOutput(out);
                 }
 
@@ -891,9 +925,7 @@ public class XMLMosaic implements GridMosaic {
                     }
                 }
             }
-
         }
-
     }
 
     /**
