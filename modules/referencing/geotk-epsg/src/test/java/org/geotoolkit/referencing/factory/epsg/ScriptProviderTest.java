@@ -46,7 +46,7 @@ public final strictfp class ScriptProviderTest extends org.geotoolkit.test.TestB
         assertTrue(provider.getLicense("text/html" ).toString().contains("IOGP"));
 
         final String[] names = provider.getScriptNames();
-        assertArrayEquals(new String[] {"Tables.sql", "Data.sql", "FKeys.sql"}, names);
+        assertArrayEquals(new String[] {"Prepare", "Tables.sql", "Data.sql", "FKeys.sql", "Finish"}, names);
         for (int i=0; i<names.length; i++) {
             try (final BufferedReader in = provider.getScriptContent(i)) {
                 // Just verify that we can read.

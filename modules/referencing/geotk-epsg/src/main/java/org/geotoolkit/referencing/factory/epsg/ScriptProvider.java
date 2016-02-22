@@ -40,7 +40,7 @@ public class ScriptProvider extends InstallationScriptProvider {
      * Creates a new script provider.
      */
     public ScriptProvider() {
-        super("Tables.sql", "Data.sql", "FKeys.sql");
+        super(PREPARE, "Tables.sql", "Data.sql", "FKeys.sql", FINISH);
     }
 
     /**

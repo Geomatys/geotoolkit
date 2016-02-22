@@ -3,11 +3,25 @@
 ---    See  http://www.epsg.org/TermsOfUse  (a copy is in ./LICENSE.txt).
 ---
 ---    This file has been modified for the needs of Apache SIS project.
+---    See org.apache.sis.referencing.factory.sql.EPSGDataFormatter for
+---    a description of those changes.
 ---
+
+
+--- This script depends on enumerated values defined in "EPSG_Prepare.sql" file of Apache SIS project.
+--- If those enumerations are not desired, they can be removed if the following replacements are done:
+---
+---        epsg_table_name    -->    VARCHAR(80)
+---        epsg_datum_kind    -->    VARCHAR(24)
+---        epsg_crs_kind      -->    VARCHAR(24)
+---        epsg_cs_kind       -->    VARCHAR(24)
+---
+--- Apache SIS will perform the above replacements automatically if this script is executed on another
+--- database than PostgreSQL.
 
 CREATE TABLE epsg_alias (
 alias_code                                         INTEGER NOT NULL,
-object_table_name                                  VARCHAR(80) NOT NULL,
+object_table_name                                  epsg_table_name NOT NULL,
 object_code                                        INTEGER NOT NULL,
 naming_system_code                                 INTEGER NOT NULL,
 alias                                              VARCHAR(80) NOT NULL,
@@ -72,7 +86,7 @@ CREATE TABLE epsg_coordinatereferencesystem (
 coord_ref_sys_code                                 INTEGER NOT NULL,
 coord_ref_sys_name                                 VARCHAR(80) NOT NULL,
 area_of_use_code                                   INTEGER NOT NULL,
-coord_ref_sys_kind                                 VARCHAR(24) NOT NULL,
+coord_ref_sys_kind                                 epsg_crs_kind NOT NULL,
 coord_sys_code                                     INTEGER,
 datum_code                                         INTEGER,
 source_geogcrs_code                                INTEGER,
@@ -92,7 +106,7 @@ CONSTRAINT pk_coordinatereferencesystem PRIMARY KEY ( coord_ref_sys_code ) );
 CREATE TABLE epsg_coordinatesystem (
 coord_sys_code                                     INTEGER NOT NULL,
 coord_sys_name                                     VARCHAR(254) NOT NULL,
-coord_sys_type                                     VARCHAR(24) NOT NULL,
+coord_sys_type                                     epsg_cs_kind NOT NULL,
 dimension                                          SMALLINT NOT NULL,
 remarks                                            VARCHAR(254),
 information_source                                 VARCHAR(254),
@@ -175,7 +189,7 @@ CONSTRAINT pk_coordinate_operationpath PRIMARY KEY ( concat_operation_code, sing
 CREATE TABLE epsg_datum (
 datum_code                                         INTEGER NOT NULL,
 datum_name                                         VARCHAR(80) NOT NULL,
-datum_type                                         VARCHAR(24) NOT NULL,
+datum_type                                         epsg_datum_kind NOT NULL,
 origin_description                                 VARCHAR(254),
 realization_epoch                                  SMALLINT,
 ellipsoid_code                                     INTEGER,
@@ -194,7 +208,7 @@ CREATE TABLE epsg_deprecation (
 deprecation_id                                     INTEGER,
 deprecation_date                                   DATE,
 change_id                                          DOUBLE PRECISION NOT NULL,
-object_table_name                                  VARCHAR(80),
+object_table_name                                  epsg_table_name,
 object_code                                        INTEGER,
 replaced_by                                        INTEGER,
 deprecation_reason                                 VARCHAR(254),
@@ -242,7 +256,7 @@ CONSTRAINT pk_primemeridian PRIMARY KEY ( prime_meridian_code ) );
 
 CREATE TABLE epsg_supersession (
 supersession_id                                    INTEGER,
-object_table_name                                  VARCHAR(80) NOT NULL,
+object_table_name                                  epsg_table_name NOT NULL,
 object_code                                        INTEGER NOT NULL,
 superseded_by                                      INTEGER,
 supersession_type                                  VARCHAR(50),
@@ -273,4 +287,3 @@ version_remarks                                    VARCHAR(254) NOT NULL,
 superceded_by                                      VARCHAR(10),
 supercedes                                         VARCHAR(10),
 CONSTRAINT pk_versionhistory PRIMARY KEY ( version_history_code ) );
-
