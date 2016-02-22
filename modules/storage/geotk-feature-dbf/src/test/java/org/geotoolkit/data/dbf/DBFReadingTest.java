@@ -52,7 +52,7 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
         final String ns = "http://test.com";
-        store = new DbaseFileFeatureStore(file, ns);
+        store = new DbaseFileFeatureStore(file.toPath(), ns);
 
         for(GenericName n : store.getNames()){
             FeatureType ft = store.getFeatureType(n);

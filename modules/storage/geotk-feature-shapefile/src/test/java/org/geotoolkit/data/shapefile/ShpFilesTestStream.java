@@ -240,8 +240,8 @@ public class ShpFilesTestStream {
     @Test
     public void testGetStorageFile() throws Exception {
         StorageFile prj = files.createLocker().getStorageFile(PRJ);
-        assertTrue(prj.getFile().getName().startsWith(typeName));
-        assertTrue(prj.getFile().getName().endsWith(".prj"));
+        assertTrue(prj.getFile().getFileName().toString().startsWith(typeName));
+        assertTrue(prj.getFile().getFileName().toString().endsWith(".prj"));
     }
 
     @Test

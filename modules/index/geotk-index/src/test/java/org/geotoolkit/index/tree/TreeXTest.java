@@ -55,7 +55,7 @@ public class TreeXTest extends TreeTest {
     public TreeXTest() throws StoreIndexException, IOException {
         treeFile = File.createTempFile("TreeX", "test", tempDir);
         tXEM = new TreeXElementMapperTest();
-        tree = new FileStarRTree(treeFile, 4, CRS_TEST, tXEM);
+        tree = new FileStarRTree(treeFile.toPath(), 4, CRS_TEST, tXEM);
         final GeneralEnvelope geTemp = new GeneralEnvelope(CRS_TEST);
         for(int z = 0; z <= 200; z += 20) {
             for(int y = 0; y <= 200; y += 20) {

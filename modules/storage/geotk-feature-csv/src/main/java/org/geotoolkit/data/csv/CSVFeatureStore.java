@@ -23,16 +23,13 @@ import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -50,25 +47,23 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.DefaultFeature;
-import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+
+import static java.nio.file.StandardOpenOption.*;
 import static org.geotoolkit.feature.FeatureUtilities.defaultProperty;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -94,6 +89,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class CSVFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
+    public static final Charset UTF8_ENCODING = Charset.forName("UTF-8");
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
@@ -103,7 +99,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     private final ReadWriteLock fileLock = new ReentrantReadWriteLock();
 
-    private final File file;
+    private final Path file;
     private String name;
     private final char separator;
 
@@ -113,7 +109,21 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     protected final Set<Identifier> updatedIds = new HashSet<>();
     protected final Set<Identifier> addedIds   = new HashSet<>();
 
+    /**
+     * @deprecated use {@link #CSVFeatureStore(Path, String, char)} instead
+     */
     public CSVFeatureStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
+        this(f.toPath(),namespace,separator,null);
+    }
+
+    /**
+     * @deprecated use {@link #CSVFeatureStore(Path, String, char, FeatureType)} instead
+     */
+    public CSVFeatureStore(final File f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+        this(f.toPath(), namespace, separator, ft);
+    }
+
+    public CSVFeatureStore(final Path f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
         this(f,namespace,separator,null);
     }
 
@@ -121,7 +131,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
      * Constructor forcing feature type, if the CSV does not have any header.
      *
      */
-    public CSVFeatureStore(final File f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
+    public CSVFeatureStore(final Path f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace, separator));
         if(ft!=null){
             this.featureType = ft;
@@ -132,15 +142,15 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(CSVFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(CSVFeatureStoreFactory.PATH.getName().toString()).getValue();
         try {
-            this.file = new File(url.toURI());
-        } catch (URISyntaxException ex) {
+            this.file = IOUtilities.toPath(uri);
+        } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
         this.separator = (Character) params.parameter(CSVFeatureStoreFactory.SEPARATOR.getName().toString()).getValue();
 
-        final String path = url.toString();
+        final String path = uri.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
@@ -150,10 +160,10 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     }
 
-    private static ParameterValueGroup toParameters(final File f,
+    private static ParameterValueGroup toParameters(final Path f,
             final String namespace, final Character separator) throws MalformedURLException{
         final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toURI().toURL());
+        Parameters.getOrCreate(CSVFeatureStoreFactory.PATH, params).setValue(f.toUri());
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(CSVFeatureStoreFactory.SEPARATOR, params).setValue(separator);
         return params;
@@ -168,8 +178,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         if(featureType == null) featureType = readType();
     }
 
-    private File createWriteFile() throws MalformedURLException{
-        return (File) IOUtilities.changeExtension(file, "wcsv");
+    private Path createWriteFile() throws MalformedURLException{
+        return (Path) IOUtilities.changeExtension(file, "wcsv");
     }
 
     private FeatureType readType() throws DataStoreException {
@@ -177,7 +187,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         fileLock.readLock().lock();
         try (final Scanner scanner = new Scanner(file)) {
             line = getNextLine(scanner);
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             getLogger().log(Level.INFO, ex.getLocalizedMessage());
             // File does not exists.
             return null;
@@ -306,10 +316,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         name = type.getName().tip().toString();
 
         fileLock.writeLock().lock();
-        try (final Writer output = new BufferedWriter(new FileWriter(file))) {
-
+        try (final Writer output = Files.newBufferedWriter(file, UTF8_ENCODING, CREATE, WRITE)) {
             output.write(createHeader(type));
-
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         } finally {
@@ -322,7 +330,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         if(QueryUtilities.queryAll(query)) {
             //Neither filter nor start index, just count number of lines to avoid reading features.
             fileLock.readLock().lock();
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            try (final BufferedReader reader = Files.newBufferedReader(file, UTF8_ENCODING)) {
                 long cnt = -1; //avoid counting the header line
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -382,10 +390,10 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         try {
             fileLock.writeLock().lock();
-            if (file.exists()) {
-                file.delete();
-                featureType = null;
-            }
+            Files.deleteIfExists(file);
+            featureType = null;
+        } catch (IOException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
         } finally {
             fileLock.writeLock().unlock();
         }
@@ -455,8 +463,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[] { this.file };
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[] { this.file };
     }
 
     private class CSVFeatureReader implements FeatureReader{
@@ -480,7 +488,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 scanner = new Scanner(file);
                 //skip the type line
                 scanner.nextLine();
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
             atts = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
@@ -566,7 +574,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         private final WKTWriter wktWriter = new WKTWriter(2);
         private final Writer writer;
-        private final File writeFile;
+        private final Path writeFile;
         private Feature edited = null;
         private Feature lastWritten = null;
         private boolean appendMode = false;
@@ -579,10 +587,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             tempLock.writeLock().lock();
             try{
                 writeFile = createWriteFile();
-                if (!writeFile.exists()) {
-                    writeFile.createNewFile();
-                }
-                writer = new BufferedWriter(new FileWriter(writeFile));
+                writer = Files.newBufferedWriter(writeFile, UTF8_ENCODING, CREATE, WRITE);
                 final String firstLine = createHeader(featureType);
                 writer.write(firstLine);
                 writer.write('\n');
@@ -700,8 +705,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             fileLock.writeLock().lock();
             tempLock.writeLock().lock();
             try {
-                file.delete();
-                writeFile.renameTo(file);
+                Files.move(writeFile, file, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new FeatureStoreRuntimeException(ex);
             } finally {
                 fileLock.writeLock().unlock();
                 tempLock.writeLock().unlock();

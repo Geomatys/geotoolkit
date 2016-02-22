@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.awt.Point;
 import java.awt.Dimension;
@@ -71,6 +73,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     static {
         INPUT_TYPES.add(String.class);
         INPUT_TYPES.add(File  .class);
+        INPUT_TYPES.add(Path.class);
         INPUT_TYPES.add(URL   .class);
         INPUT_TYPES.add(URI   .class);
     }
@@ -732,23 +735,36 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         final Object input;
         if (pattern.startsWith("File")) {
             input = new File(filename);
+        } else if (pattern.startsWith("Path")) {
+            input = Paths.get(filename);
         } else if (pattern.startsWith("URL")) {
             input = new URL(filename);
-        } else if (pattern.startsWith("URI")) try {
-            input = new URI(IOUtilities.encodeURI(filename));
-        } catch (URISyntaxException cause) { // Rethrown as an IOException subclass.
-            MalformedURLException e = new MalformedURLException(cause.getLocalizedMessage());
-            e.initCause(cause);
-            throw e;
+        } else if (pattern.startsWith("URI")) {
+            try {
+                input = new URI(IOUtilities.encodeURI(filename));
+            } catch (URISyntaxException cause) { // Rethrown as an IOException subclass.
+                MalformedURLException e = new MalformedURLException(cause.getLocalizedMessage());
+                e.initCause(cause);
+                throw e;
+            }
         } else {
             input = filename;
         }
-        assert INPUT_TYPES.contains(input.getClass()) : input;
+        assert isValidInput(input) : input;
         /*
          * Now creates the definitive tile. The tiles in the last
          * row or last column may be smaller than other tiles.
          */
         return new Tile(tile, input, getCellBounds(tileX, tileY));
+    }
+
+    private boolean isValidInput(Object input) {
+        for (Class<?> inputType : INPUT_TYPES) {
+            if (inputType.isAssignableFrom(input.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

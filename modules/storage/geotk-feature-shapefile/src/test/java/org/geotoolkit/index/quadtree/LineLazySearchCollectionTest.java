@@ -51,7 +51,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
     @Before
     public void setUp() throws Exception {
         file = copyShapefiles("shapes/streams.shp");
-        ds = new IndexedShapefileFeatureStore(file.toURI().toURL());
+        ds = new IndexedShapefileFeatureStore(file.toURI());
         ds.buildQuadTree(0);
         final Object[] v = openQuadTree(file);
         tree = (QuadTree) v[0];

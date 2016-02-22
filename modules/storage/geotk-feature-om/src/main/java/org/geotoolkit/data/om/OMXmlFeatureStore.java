@@ -19,6 +19,10 @@ package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,11 +45,11 @@ import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -67,10 +71,25 @@ import org.opengis.util.FactoryException;
  */
 public class OMXmlFeatureStore extends AbstractOMFeatureStore implements DataFileStore {
 
-    private final File source;
-    
+    private final Path source;
+
+    /**
+     *
+     * @param params
+     * @param source
+     * @deprecated
+     */
     public OMXmlFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params, FileUtilities.getFileName(source));
+        this(params, source.toPath());
+    }
+
+    /**
+     *
+     * @param params
+     * @param source
+     */
+    public OMXmlFeatureStore(final ParameterValueGroup params, final Path source) {
+        super(params, IOUtilities.filenameWithoutExtension(source));
         this.source = source;
     }
 
@@ -101,18 +120,23 @@ public class OMXmlFeatureStore extends AbstractOMFeatureStore implements DataFil
      * {@inheritDoc }
      */
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{source};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{source};
     }
     
-    private static Object unmarshallObservationFile(final File f) throws JAXBException {
+    private static Object unmarshallObservationFile(final Path f) throws JAXBException {
         final Unmarshaller um = SOSMarshallerPool.getInstance().acquireUnmarshaller();
-        Object obj = um.unmarshal(f);
-        if (obj instanceof JAXBElement) {
-            obj = ((JAXBElement)obj).getValue();
-        }
-        if (obj != null) {
-            return obj;
+        try (InputStream stream = Files.newInputStream(f)) {
+            Object obj = um.unmarshal(stream);
+            SOSMarshallerPool.getInstance().recycle(um);
+            if (obj instanceof JAXBElement) {
+                obj = ((JAXBElement) obj).getValue();
+            }
+            if (obj != null) {
+                return obj;
+            }
+        } catch (IOException e) {
+            throw new JAXBException(e.getLocalizedMessage(), e);
         }
         throw new JAXBException("the observation file does not contain a valid O&M object");
     }

@@ -26,6 +26,8 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*; // Lot of imports used in this class.
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -37,6 +39,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.io.TableWriter;
@@ -914,16 +917,10 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                  * Add the CRS, if the tile manager has been created from a directory or a file
                  * is associated with a PRJ file.
                  */
-                File file = manager.getSourceFile();
+                Path file = manager.getSourceFile();
                 if (file != null) {
-                    String name = file.getName();
-                    final int i = name.lastIndexOf('.');
-                    if (i > 0) { // Do not accept a leading point.
-                        name = name.substring(0, i);
-                    }
-                    name += ".prj";
-                    file = new File(file.getParent(), name);
-                    if (file.isFile()) {
+                    file = IOUtilities.changeExtension(file, "prj");
+                    if (Files.isRegularFile(file)) {
                         final ReferencingBuilder helper = new ReferencingBuilder(sp);
                         helper.setCoordinateReferenceSystem(PrjFiles.read(file));
                     }
@@ -1422,7 +1419,8 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     TileManager.class,
                     Tile[].class,
                     Collection.class,
-                    File.class // Not present in MosaicImageWriter.Spi.getOutputTypes()
+                    File.class, // Not present in MosaicImageWriter.Spi.getOutputTypes()
+                    Path.class // Not present in MosaicImageWriter.Spi.getOutputTypes()
                 };
             }
             return super.getInputTypes();
@@ -1450,15 +1448,15 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 }
                 return true;
             }
-            if (source instanceof File) {
-                File file = (File) source;
-                if (file.canRead()) {
-                    if (file.isFile()) {
+            if (source instanceof File || source instanceof Path) {
+                Path path = (source instanceof File) ? ((File) source).toPath() : (Path) source;
+                if (Files.isReadable(path)) {
+                    if (Files.isRegularFile(path)) {
                         // Maybe a future version could perform a deeper check.
-                        return TileManager.SERIALIZED_FILENAME.equals(file.getName());
-                    } else if (file.isDirectory()) {
-                        file = new File(file, TileManager.SERIALIZED_FILENAME);
-                        return file.isFile() && file.canRead();
+                        return TileManager.SERIALIZED_FILENAME.equals(path.getFileName().toString());
+                    } else if (Files.isDirectory(path)) {
+                        path = path.resolve(TileManager.SERIALIZED_FILENAME);
+                        return Files.isRegularFile(path) &&Files.isReadable(path);
                         /*
                          * While MosaicImageReader can work with a directory containing only
                          * the tiles with their TFW files (without "TileManager.serialized"),

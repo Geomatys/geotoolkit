@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.datamodel.shapefile;
 
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.data.FeatureStore;
@@ -14,22 +15,22 @@ import org.opengis.parameter.ParameterValueGroup;
 
 public class ShapefileDemo {
     
-    public static void main(String[] args) throws DataStoreException {
+    public static void main(String[] args) throws DataStoreException, URISyntaxException {
         Demos.init();
         
         //create using a Parameters object--------------------------------------
         System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
         
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP,parameters).setValue(
-                ShapefileDemo.class.getResource("/data/world/Countries.shp"));
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH,parameters).setValue(
+                ShapefileDemo.class.getResource("/data/world/Countries.shp").toURI());
         
         final FeatureStore store1 = FeatureStoreFinder.open(parameters);        
         
         
         //create using a Map----------------------------------------------------
         final Map<String,Serializable> map = new HashMap<String, Serializable>();
-        map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
+        map.put("path", ShapefileDemo.class.getResource("/data/world/Countries.shp").toURI());
         
         final FeatureStore store2 = FeatureStoreFinder.open(map);
         

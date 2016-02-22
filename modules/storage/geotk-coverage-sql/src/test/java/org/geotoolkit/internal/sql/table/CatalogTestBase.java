@@ -20,6 +20,8 @@ package org.geotoolkit.internal.sql.table;
 import java.util.Date;
 import java.util.Locale;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.sql.SQLException;
@@ -89,8 +91,8 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
      * Returns the file which should contain the configuration parameters.
      * This method does not test is the file exist.
      */
-    private static File getConfigurationFile() {
-        return new File(Installation.TESTS.directory(true), "coverage-sql.properties");
+    private static Path getConfigurationFile() {
+        return Installation.TESTS.directory(true).resolve("coverage-sql.properties");
     }
 
     /**
@@ -100,7 +102,7 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
      * @return {@code true} if the test is presumed executable.
      */
     protected static boolean canTest() {
-        return getConfigurationFile().isFile();
+        return Files.isRegularFile(getConfigurationFile());
     }
 
     /**
@@ -110,7 +112,7 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
      */
     protected static synchronized SpatialDatabase getDatabase() {
         if (database == null) try {
-            final File pf = getConfigurationFile();
+            final File pf = getConfigurationFile().toFile();
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
             final Properties properties = TestData.readProperties(pf);
             final PGSimpleDataSource ds = new PGSimpleDataSource();

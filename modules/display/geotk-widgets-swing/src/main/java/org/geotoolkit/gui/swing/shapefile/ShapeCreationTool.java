@@ -87,7 +87,8 @@ public class ShapeCreationTool extends JPanel {
 
             // Create a Map object used by our FeatureStore Factory
             // NOTE: file.toURI().toURL() is used because file.toURL() is deprecated
-            final Map<String, Serializable> map = Collections.singletonMap("url", (Serializable)file.toURI().toURL());
+            String pathIndentifier = ShapefileFeatureStoreFactory.PATH.getName().getCode();
+            final Map<String, Serializable> map = Collections.singletonMap(pathIndentifier, (Serializable)file.toURI());
 
             // Create the ShapefileFeatureStore from our factory based on our Map object
             final ShapefileFeatureStore myData = (ShapefileFeatureStore) factory.create(map);

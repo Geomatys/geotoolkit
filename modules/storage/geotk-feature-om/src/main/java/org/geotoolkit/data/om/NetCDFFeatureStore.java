@@ -19,34 +19,32 @@ package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import static org.geotoolkit.data.om.OMFeatureTypes.*;
-import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
-import static org.geotoolkit.data.om.AbstractOMFeatureStore.FF;
 import static org.geotoolkit.data.om.OMFeatureTypes.ATT_DESC;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -68,10 +66,25 @@ import org.opengis.util.FactoryException;
  */
 public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFileStore {
 
-    private final File source;
+    private final Path source;
 
+    /**
+     *
+     * @param params
+     * @param source
+     * @deprecated
+     */
     public NetCDFFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params, FileUtilities.getFileName(source));
+        this(params, source.toPath());
+    }
+
+    /**
+     *
+     * @param params
+     * @param source
+     */
+    public NetCDFFeatureStore(final ParameterValueGroup params, final Path source) {
+        super(params, IOUtilities.filenameWithoutExtension(source));
         this.source = source;
     }
 
@@ -102,8 +115,8 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{source};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{source};
     }
 
     ////////////////////////////////////////////////////////////////////////////

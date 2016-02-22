@@ -1,7 +1,7 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import net.iharder.Base64;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -10,8 +10,9 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * A converter to transform a File into ComplexOutput data for wps ExecuteResponse query.
@@ -51,9 +52,6 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
-        if (!(source instanceof File)) {
-            throw new UnconvertibleObjectException("The requested output data is not an instance of File.");
-        }
         if (params == null) {
             throw new UnconvertibleObjectException("Mandatory parameters are missing.");
         }
@@ -83,10 +81,10 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                     }
                     if (!schemaLocation.contains(tmpDir)) {
                         String schemaName = source.getName().replace("\\.[a-z]ml", "").concat(".xsd");
-                        File schemaDest = new File(tmpDir, schemaName);
+                        Path schemaDest = Paths.get(tmpDir, schemaName);
                         try {
-                            FileUtilities.copy(source, schemaDest);
-                            schemaLocation = schemaDest.getAbsolutePath();
+                            IOUtilities.copy(source.toPath(), schemaDest);
+                            schemaLocation = schemaDest.toAbsolutePath().toString();
                         } catch (IOException e) {
                             throw new UnconvertibleObjectException("Unexpected error on schema copy.", e);
                         }
@@ -104,22 +102,12 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                 throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
             }
 
-            FileInputStream stream = null;
-            try {
-                stream = new FileInputStream(source);
+            try (FileInputStream stream =new FileInputStream(source)) {
                 byte[] barray = new byte[(int) source.length()];
                 stream.read(barray);
                 complex.getContent().add(Base64.encodeBytes(barray));
             } catch (Exception ex) {
                 throw new UnconvertibleObjectException(ex.getMessage(), ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ioEx) {
-                        LOGGER.log(Level.WARNING, "Unable to close the stream for result file.", ioEx);
-                    }
-                }
             }
         }
 

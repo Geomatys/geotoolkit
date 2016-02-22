@@ -27,6 +27,8 @@ import java.awt.image.ImagingOpException;
 import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOException;
 
@@ -126,18 +128,18 @@ public abstract strictfp class ImageTestBase extends TestBase {
      * @since 3.19
      */
     public static File getLocallyInstalledFile(final String filename) {
-        File file;
+        Path file;
         try {
             final Class<?> c = Class.forName("org.geotoolkit.internal.io.Installation");
-            file = (File) c.getMethod("directory", Boolean.TYPE).invoke(c.getField("TESTS").get(null), Boolean.TRUE);
+            file = (Path) c.getMethod("directory", Boolean.TYPE).invoke(c.getField("TESTS").get(null), Boolean.TRUE);
         } catch (ReflectiveOperationException e) {
             throw new AssertionError(e);
         }
         if (filename != null) {
-            file = new File(file, filename);
+            file = file.resolve(filename);
         }
-        assumeTrue(file.canRead());
-        return file;
+        assumeTrue(Files.isReadable(file));
+        return file.toFile();
     }
 
     /**

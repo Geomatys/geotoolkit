@@ -18,6 +18,8 @@ package org.geotoolkit.index.tree;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,19 +32,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
-    
+public class FileTreeElementMapperTest extends ChannelTreeElementMapper<double[]> {
+
     final CoordinateReferenceSystem crs;
     final int boundLength;
 
     public FileTreeElementMapperTest(final CoordinateReferenceSystem crs, final File outPut) throws IOException {
-        super(outPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE)>>3);
-        this.crs = crs;
-        boundLength = crs.getCoordinateSystem().getDimension() << 1;
-    }
-    
-    public FileTreeElementMapperTest(final File input, final CoordinateReferenceSystem crs) throws IOException {
-        super(input);
+        super(Files.newByteChannel(outPut.toPath(), StandardOpenOption.CREATE, StandardOpenOption.READ,
+                StandardOpenOption.WRITE), 4096, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE)>>3);
         this.crs = crs;
         boundLength = crs.getCoordinateSystem().getDimension() << 1;
     }
@@ -51,7 +48,7 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
     protected boolean areEquals(double[] objectA, double[] objectB) {
         return Arrays.equals(objectA, objectB);
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -61,7 +58,7 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
         gE.setEnvelope(object);
         return gE;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -83,7 +80,7 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
         }
         return result;
     }
-    
+
     @Override
     public Map<Integer, double[]> getFullMap() throws IOException {
         return new HashMap<>();

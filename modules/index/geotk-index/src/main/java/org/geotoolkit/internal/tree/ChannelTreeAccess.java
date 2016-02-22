@@ -25,11 +25,11 @@ import java.nio.channels.Channel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Arrays;
 import org.apache.sis.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  * {@link TreeAccess} implementation.<br/>
@@ -43,40 +43,40 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      * Position in the tree file where CRS description should begin.
      */
     private static final int CRS_POSITION = 34;
-    
+
     /**
      * boundary table value length of each Node.
      */
     protected final int boundLength;
-    
+
     /**
-     * Length in Byte unit of a Node in file on hard disk. 
+     * Length in Byte unit of a Node in file on hard disk.
      */
     protected final int nodeSize;
-    
+
     /**
      * {@link FileChannel} position just after write or read file head.<br/>
      * Its also file position of first Node red or written.
      */
     protected final int beginPosition;
-    
+
     /**
      * ByteBuffer attributs use to read and write.
      */
     protected int writeBufferLimit;
     protected long currentBufferPosition;
     protected int rwIndex;
-    
+
     /**
      * {@link ByteBuffer} to read and write Node from file on hard disk.
      */
     protected final ByteBuffer byteBuffer;
-    
+
     /**
      * ByteBuffer Length.
      */
     protected final int bufferLength;
-    
+
     /**
      * {@link Channel} where {@link Node} architecture will be written.
      */
@@ -85,28 +85,28 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     //------------------------- Reading mode -----------------------------------
     /**
      * Build a {@link Tree} from a already filled {@link Channel}, in other words, open in reading mode.<br/><br/>
-     * 
+     *
      * @param byteChannel {@link SeekableByteChannel} to read already filled object.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
-     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
      * @throws IOException if problem during channel read / write action.
      */
-    protected ChannelTreeAccess(final SeekableByteChannel byteChannel, 
-            final int magicNumber, final double versionNumber, 
-            final int byteBufferLength, final int integerNumberPerNode) 
+    protected ChannelTreeAccess(final SeekableByteChannel byteChannel,
+            final int magicNumber, final double versionNumber,
+            final int byteBufferLength, final int integerNumberPerNode)
             throws IOException, ClassNotFoundException {
-        
+
         inOutChannel = byteChannel;
         final ByteBuffer magicOrderBuffer = ByteBuffer.allocate(5);//-- a stipuler en bigendian
 //        magicOrderBuffer.order(ByteOrder.BIG_ENDIAN);//-- stand by byte order comportement
-        
+
         inOutChannel.read(magicOrderBuffer);
         magicOrderBuffer.clear();
-        
+
         assert inOutChannel.position() == 5;
-        
+
         /*****************************  read head ******************************/
         //-- read magicNumber
         final int mgNumber = magicOrderBuffer.getInt();
@@ -130,19 +130,19 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
                     +"RTree implementation.";
             throw new IllegalArgumentException(messageError);
     }
-    
-        
+
+
         // read ByteOrder
         final boolean fbool = magicOrderBuffer.get() == 1;
         final ByteOrder bO  = (fbool) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;//-- stand by byte order comportement
-        
+
         //-- fin de l'entete dans le bon byteOrder
         final ByteBuffer headBuffer = ByteBuffer.allocate(33);
 //        headBuffer.order(bO);//-- stand by byte order comportement
         inOutChannel.read(headBuffer);
         headBuffer.clear();
         assert inOutChannel.position() == 38;
-        
+
         // read version number
         final double vN = headBuffer.getDouble();
         if (vN != versionNumber)
@@ -164,60 +164,60 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         // read CRS
         final int byteTabLength   = headBuffer.getInt();
         final byte[] crsByteArray = new byte[byteTabLength];
-        
+
         final ByteBuffer crsBuffer = ByteBuffer.wrap(crsByteArray);
 //        crsBuffer.order(bO);//-- stand by byte order comportement
-        
+
         inOutChannel.read(crsBuffer);
-        
+
         String wktCRS = new String(crsByteArray);
-        
+
         try {
             crs = CRS.fromWKT(wktCRS);
         } catch (FactoryException ex) {
             throw new IOException(ex);
         }
-        
+
         assert inOutChannel.position() == 38 + crsByteArray.length;
         /*****************************  end head ******************************/
-        
+
         this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
-        
+
         //-- nanbound
         nanBound = new double[boundLength];
         Arrays.fill(nanBound, Double.NaN);
-        
+
         /**
          * Node size : boundary weigth + Byte properties + n Integers.<br/><br/>
-         * 
+         *
          * see INT_NUMBER attribut.
          */
         nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
-        
+
         // buffer attributs
         final int div = byteBufferLength / nodeSize;
         this.bufferLength = div * nodeSize;
         byteBuffer = ByteBuffer.allocate(bufferLength);
 //        byteBuffer.order(bO);//-- stand by byte order comportement
-        
+
         beginPosition = (int) inOutChannel.position();
         currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
-        
-        // root 
+
+        // root
         inOutChannel.position(currentBufferPosition);
         inOutChannel.read(byteBuffer);
         inOutChannel.position(beginPosition);
         root = this.readNode(1);
         if (root.isEmpty()) root = null;
     }
-    
-    
+
+
     //----------------------- writing constructors -----------------------------
     /**
      * Build an empty {@link TreeAccess} and store {@link Node} architecture,
      * in other words, open in writing mode.
-     * 
+     *
      * @param byteChannel {@link SeekableByteChannel} to read already filled object.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
@@ -226,57 +226,57 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      * @param splitMade define tree node split made.
      * @param crs
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
-     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
-     * @throws IOException 
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
+     * @throws IOException
      */
-    protected ChannelTreeAccess(final SeekableByteChannel byteChannel, 
-            final int magicNumber,  final double versionNumber, final int maxElements, 
-            final int hilbertOrder, final SplitCase splitMade,  final CoordinateReferenceSystem crs, 
-            final int byteBufferLength, final int integerNumberPerNode) 
+    protected ChannelTreeAccess(final SeekableByteChannel byteChannel,
+            final int magicNumber,  final double versionNumber, final int maxElements,
+            final int hilbertOrder, final SplitCase splitMade,  final CoordinateReferenceSystem crs,
+            final int byteBufferLength, final int integerNumberPerNode)
             throws IOException {
-        
+
         this.crs          = crs;
         this.maxElement   = maxElements;
         this.boundLength  = crs.getCoordinateSystem().getDimension() << 1;
         this.hilbertOrder = hilbertOrder;
         this.splitMade    = splitMade;
-        
+
         //nanbound
         nanBound = new double[boundLength];
         Arrays.fill(nanBound, Double.NaN);
-        
+
         /**
          * Node size : boundary weight + Byte properties + n Integers.<br/><br/>
-         * 
+         *
          * see this.INT_NUMBER attribute.
          */
         nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
-        
+
         final int div = byteBufferLength / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
-        
+
         inOutChannel = byteChannel;
-        
+
         //-- current writing order
         final ByteOrder bO = ByteOrder.nativeOrder();
-        
+
         //-- magic number and byte order
         final ByteBuffer magicOrderBuffer = ByteBuffer.allocate(5);
 //        magicOrderBuffer.order(ByteOrder.BIG_ENDIAN);//-- stand by byte order comportement
         // write magicNumber
         magicOrderBuffer.putInt(magicNumber);
-        
+
         // write bytebuffer order
         magicOrderBuffer.put((byte)(bO == ByteOrder.LITTLE_ENDIAN ? 1 : 0));
         magicOrderBuffer.flip();
         inOutChannel.write(magicOrderBuffer);
         assert inOutChannel.position() == 5;
         //-------------------------------------------------------
-        
+
         //--------------------------- head ending ------------------------------
         final ByteBuffer headBuffer = ByteBuffer.allocate(33);
 //        headBuffer.order(bO);//-- stand by byte order comportement
-        
+
         /***************************  write head ******************************/
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         try (final ObjectOutputStream objOutput = new ObjectOutputStream(temp)) {
@@ -298,41 +298,41 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
             final String wktCRS = crs.toWKT();
             final byte[] crsByteArray = wktCRS.getBytes();
             headBuffer.putInt(crsByteArray.length);
-            
+
             //-- write head
             headBuffer.flip();
             inOutChannel.write(headBuffer);
             assert inOutChannel.position() == 38;
-            
+
             final ByteBuffer crsbuff = ByteBuffer.allocate(crsByteArray.length);
 //            crsbuff.order(bO);//-- stand by byte order comportement
             crsbuff.put(crsByteArray);
             crsbuff.flip();
             inOutChannel.write(crsbuff);//-- write all the crs array
-            
+
             assert inOutChannel.position() == (crsByteArray.length + 38);
-            
+
     }
         /*****************************  end head ******************************/
-        
+
         // ByteBuffer
         byteBuffer = ByteBuffer.allocate((int)bufferLength);
 //        byteBuffer.order(bO);//-- stand by byte order comportement
-    
+
         beginPosition         = (int) inOutChannel.position();
         currentBufferPosition = beginPosition;
         writeBufferLimit      = 0;
-        
-        // root 
+
+        // root
         root = null;
     }
-    
+
     /**
-     * Adjust buffer position relative to filechanel which contain data, 
+     * Adjust buffer position relative to filechanel which contain data,
      * and prepare bytebuffer position and limit for reading or writing action.
-     * 
-     * @param treeIdentifier 
-     * @throws IOException 
+     *
+     * @param treeIdentifier
+     * @throws IOException
      */
     protected void adjustBuffer(final int nodeID) throws IOException {
         assert inOutChannel.position() == currentBufferPosition;
@@ -345,26 +345,26 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
             while (writtenByte < writeBufferLimit) {
                 writtenByte += inOutChannel.write(byteBuffer);
             }
-            
+
             //-- define new appropriate window position
             final int div = (rwIndex - beginPosition) / bufferLength;
             currentBufferPosition = div * bufferLength + beginPosition;
             writeBufferLimit = 0;
-            
+
             //-- read current data
             byteBuffer.clear();
             inOutChannel.position(currentBufferPosition);
             inOutChannel.read(byteBuffer);
             byteBuffer.flip();
-            
-            //-- get back to appropriate position after reading 
+
+            //-- get back to appropriate position after reading
             inOutChannel.position(currentBufferPosition);
         }
         rwIndex -= currentBufferPosition;
         byteBuffer.limit(rwIndex + nodeSize);
         byteBuffer.position(rwIndex);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -396,7 +396,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
                 }
                 tabSearch[currentPosition++] = -child;
             }
-        } 
+        }
     }
 
     /**
@@ -462,16 +462,16 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         }
         inOutChannel.position(beginPosition);
         currentBufferPosition = beginPosition;
-        
+
         //-- fill buffer
         byteBuffer.clear();
         inOutChannel.read(byteBuffer);
         byteBuffer.flip();
         inOutChannel.position(beginPosition);
-        //-- 
+        //--
         writeBufferLimit = 0;
     }
-    
+
     /**
      * {@inheritDoc }
      * <br>
@@ -489,7 +489,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      */
     @Override
     public void flush() throws IOException {
-        
+
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
         inOutChannel.position(currentBufferPosition);
@@ -497,16 +497,16 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         while (writtenByte < writeBufferLimit) {
             writtenByte += inOutChannel.write(byteBuffer);
         }
-        
+
         // write nodeID
         byteBuffer.clear();
-        inOutChannel.position(22); 
+        inOutChannel.position(22);
         byteBuffer.putInt(nodeId);
         byteBuffer.putInt(treeIdentifier);
         byteBuffer.putInt(eltNumber);
         byteBuffer.flip();
         inOutChannel.write(byteBuffer);
-        
+
         //-- fill buffer
         inOutChannel.position(currentBufferPosition);
         byteBuffer.clear();
@@ -514,8 +514,8 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         byteBuffer.flip();
         inOutChannel.position(currentBufferPosition);
         writeBufferLimit = 0;
-        //-- 
-        
+        //--
+
         adjustBuffer(nodeId);
     }
 

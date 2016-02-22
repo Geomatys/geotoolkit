@@ -18,7 +18,6 @@ package org.geotoolkit.style.function;
 
 import java.awt.Color;
 import java.awt.image.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -185,8 +184,6 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
                     colors.add(new Color(icm.getRGB(i)));
                 }
 
-            } catch (FileNotFoundException ex) {
-                LOGGER.log(Level.WARNING, "Palette not found.", ex);
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Palette not found.", ex);
             }

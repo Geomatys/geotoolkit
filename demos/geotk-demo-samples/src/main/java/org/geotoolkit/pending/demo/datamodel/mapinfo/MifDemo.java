@@ -59,7 +59,7 @@ public class MifDemo {
             System.out.println(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
             final ParameterValueGroup parameters = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, parameters).setValue(dataLocation);
+            Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, parameters).setValue(dataLocation.toURI());
 
             // Initialize the store, and create a session to browse it's data.
             final FeatureStore store1 = FeatureStoreFinder.open(parameters);
@@ -67,7 +67,7 @@ public class MifDemo {
 
             // Create a mif featureStore for writing operation.
             final ParameterValueGroup writerParam = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, writerParam).setValue(destinationURL);
+            Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, writerParam).setValue(destinationURL.toURI());
             final MIFFeatureStore writingStore = new MIFFeatureStore(writerParam);
             //Here we get a function to set mid file attributes delimiter. MID file is a sort of CSV, and default
             // delimiter (which is \t) can be changed by user. Here I choose coma.

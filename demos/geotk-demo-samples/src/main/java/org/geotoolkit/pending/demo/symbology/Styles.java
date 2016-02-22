@@ -744,7 +744,7 @@ public class Styles {
     // SAMPLE DATA ///////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    public static MapContext createWorldContext(MutableStyle style) throws DataStoreException{
+    public static MapContext createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
@@ -756,7 +756,7 @@ public class Styles {
         File gridFile;
 
         params = new HashMap<String,Serializable>();
-        params.put( "url", JAbstractMapPane.class.getResource("/data/world/Countries.shp") );
+        params.put( "path", JAbstractMapPane.class.getResource("/data/world/Countries.shp").toURI() );
         store = FeatureStoreFinder.open(params);
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){
@@ -770,7 +770,7 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException{
+    public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
@@ -782,7 +782,7 @@ public class Styles {
         File gridFile;
 
         params = new HashMap<String,Serializable>();
-        params.put( "url", JAbstractMapPane.class.getResource("/data/world/city.shp") );
+        params.put( "path", JAbstractMapPane.class.getResource("/data/world/city.shp").toURI() );
         store = FeatureStoreFinder.open(params);
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){

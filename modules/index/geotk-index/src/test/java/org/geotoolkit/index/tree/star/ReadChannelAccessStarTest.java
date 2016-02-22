@@ -35,11 +35,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see TreeAccessByteArray
  */
 abstract class ReadChannelAccessStarTest extends AbstractTreeTest {
-    
+
     /**
      * Create a generic StarRTree Test suite with {@link TreeAccess} already filled by tree architecture
      * and a {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @param insert {@code true} to insert data into tree during test constructor else no insertion.
      * @throws IOException if problem during head reading from already filled file.
@@ -48,25 +48,25 @@ abstract class ReadChannelAccessStarTest extends AbstractTreeTest {
      */
     ReadChannelAccessStarTest(final CoordinateReferenceSystem crs, final boolean insert) throws IOException, StoreIndexException, ClassNotFoundException{
         super(crs);
-        
+
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
-        
+
         // data insertion
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
         final TreeAccessByteArray ta = new TreeAccessByteArray(TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, 4, crs);
         tree = new StarRTree<double[]>(ta, tEM);
-        
-        // close 
+
+        // close
         if (insert) insert();
         tree.close();
         tEM.close();
         assertTrue(tree.isClosed());
         assertTrue(tEM.isClosed());
-        
+
         final byte[] data = ta.getData();
-        
+
         // open Tree from already filled files.
-        tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
+        tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
         tree = new StarRTree(new TreeAccessByteArray(data, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER), tEM);
     }
 }

@@ -177,7 +177,7 @@
     <sis.version>0.7-jdk7-SNAPSHOT</sis.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
-    <lucene.version>4.10.4</lucene.version>
+    <lucene.version>5.2.1</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>

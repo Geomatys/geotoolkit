@@ -25,6 +25,7 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHX;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,12 +62,12 @@ public class ShpFilesTest extends org.geotoolkit.test.TestBase {
 
         ShpFiles files = new ShpFiles(base+shp);
 
-        URL shpURL = files.getURL(SHP);
-        URL dbfURL = files.getURL(DBF);
-        URL shxURL = files.getURL(SHX);
-        assertEquals(base+shp, shpURL.toExternalForm());
-        assertEquals(base + dbf, dbfURL.toExternalForm());
-        assertEquals(base + shx, shxURL.toExternalForm());
+        URI shpURL = files.getURI(SHP);
+        URI dbfURL = files.getURI(DBF);
+        URI shxURL = files.getURI(SHX);
+        assertEquals(base+shp, shpURL.toString());
+        assertEquals(base + dbf, dbfURL.toString());
+        assertEquals(base + shx, shxURL.toString());
     }
 
     @Test
@@ -77,12 +78,12 @@ public class ShpFilesTest extends org.geotoolkit.test.TestBase {
         fileName = fileName.substring(0, fileName.length()-4)+".shp";
         ShpFiles shpFiles = new ShpFiles(fileName);
 
-        URL shpURL = shpFiles.getURL(SHP);
-        URL dbfURL = shpFiles.getURL(DBF);
-        URL shxURL = shpFiles.getURL(SHX);
-        assertEquals(files.get(SHP).toURI().toURL().toExternalForm(), shpURL.toExternalForm());
-        assertEquals(files.get(DBF).toURI().toURL().toExternalForm(), dbfURL.toExternalForm());
-        assertEquals(files.get(SHX).toURI().toURL().toExternalForm(), shxURL.toExternalForm());
+        URI shpURL = shpFiles.getURI(SHP);
+        URI dbfURL = shpFiles.getURI(DBF);
+        URI shxURL = shpFiles.getURI(SHX);
+        assertEquals(files.get(SHP).toURI().toString(), shpURL.toString());
+        assertEquals(files.get(DBF).toURI().toString(), dbfURL.toString());
+        assertEquals(files.get(SHX).toURI().toString(), shxURL.toString());
     }
 
     protected static Map<ShpFileType, File> createFiles(final String string,

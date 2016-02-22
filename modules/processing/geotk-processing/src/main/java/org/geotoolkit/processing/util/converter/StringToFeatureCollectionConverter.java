@@ -16,18 +16,19 @@
  */
 package org.geotoolkit.processing.util.converter;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
+
+import java.io.Serializable;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation of ObjectConverter to convert a path to a file in a String to a
@@ -63,17 +64,15 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
     public FeatureCollection apply(final String s) throws UnconvertibleObjectException {
         if(s == null) throw new UnconvertibleObjectException("Empty FeatureCollection");
         try {
-            String url = new String();
+            String url;
             if(s.startsWith("file:")){
                 url = s;
             }else{
                 url = "file:"+s;
             }
 
-
-
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
-            parameters.put("url", new URL(url));
+            parameters.put(AbstractFileFeatureStoreFactory.PATH.getName().getCode(), URI.create(url));
 
             final FeatureStore store = FeatureStoreFinder.open(parameters);
 
@@ -94,8 +93,6 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             }
 
         } catch (DataStoreException ex) {
-            throw new UnconvertibleObjectException(ex);
-        } catch (MalformedURLException ex) {
             throw new UnconvertibleObjectException(ex);
         }
 

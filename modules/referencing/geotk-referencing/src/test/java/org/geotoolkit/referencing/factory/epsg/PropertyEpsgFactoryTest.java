@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.factory.epsg;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
@@ -77,7 +78,7 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
         } catch (IllegalArgumentException expected) {
             // This is the expected exception.
         }
-        String directory = new File(".").getAbsolutePath();
+        Path directory = new File(".").toPath();
         hints = new Hints(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class);
         hints.put(Hints.CRS_AUTHORITY_EXTRA_DIRECTORY, directory);
         // We can't do much more tests since the directory we have was arbitrary.

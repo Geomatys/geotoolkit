@@ -21,6 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import org.apache.sis.referencing.CRS;
 
 import org.apache.sis.util.ArgumentChecks;
@@ -32,7 +35,7 @@ import org.opengis.util.FactoryException;
 /**
  * {@link TreeAccess} implementation.<br/>
  * Store all {@link Node} architecture use by {@link Tree} on disk drive.
- * 
+ *
  * @author Rémi Maréchal (Geomatys).
  */
 public class TreeAccessFile extends ChannelTreeAccess {
@@ -48,14 +51,14 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * sibling ID<br/>
      * child ID<br/>
      * children number.
-     * 
+     *
      * @see HilbertTreeAccessFile#INT_NUMBER
      */
     private static final int INT_NUMBER = 4;
-    
+
     /**
-     * Build a {@link Tree} from a already filled {@link File}.<br/><br/>
-     * 
+     * Build a {@link Tree} from an already filled file at {@link Path} location.<br/><br/>
+     *
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
@@ -63,69 +66,71 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile(final File input, final int magicNumber, final double versionNumber, final int byteBufferLength)  throws IOException, ClassNotFoundException {
+    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber, final int byteBufferLength)  throws IOException, ClassNotFoundException {
         this(input, magicNumber, versionNumber, byteBufferLength, INT_NUMBER);
     }
-    
+
     /**
-     * Build a {@link Tree} from a already filled {@link File}.<br><br>
-     * 
+     * Build a {@link Tree} from an already filled file at {@link Path} location.<br><br>
+     *
      * Note : The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
-     * 
+     *
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber) throws IOException, ClassNotFoundException{
+    public TreeAccessFile(final Path input, final int magicNumber, final double versionNumber) throws IOException, ClassNotFoundException{
         this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
-    
+
     /**
-     * Build a {@link TreeAccess} from a already filled {@link File}.
-     * 
-     * @param input {@code File} which already contains {@link Node} architecture.
+     * Build a {@link TreeAccess} from an already filled file at {@link Path} location.
+     *
+     * @param input {@code Path} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
-     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    protected TreeAccessFile( final File input, final int magicNumber, final double versionNumber , 
+    protected TreeAccessFile(final Path input, final int magicNumber, final double versionNumber ,
             final int byteBufferLength, final int integerNumberPerNode) throws IOException, ClassNotFoundException {
-        super(getChannel(input), magicNumber, versionNumber, byteBufferLength, integerNumberPerNode);
+        super(Files.newByteChannel(input, StandardOpenOption.CREATE, StandardOpenOption.READ,
+                StandardOpenOption.WRITE),
+                magicNumber, versionNumber, byteBufferLength, integerNumberPerNode);
     }
-    
+
     /**
-     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.<br/><br/>
-     * 
+     *
      * Constructor only use by {@link BasicRTree} implementation.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param maxElements element number per cell.
      * @param splitMade define tree node split made.
-     * @param crs 
+     * @param crs
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
+    public TreeAccessFile(final Path outPut, final int magicNumber, final double versionNumber, final int maxElements,
             final SplitCase splitMade, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         this(outPut, magicNumber, versionNumber, maxElements, 0, splitMade, crs, byteBufferLength, INT_NUMBER);
     }
-    
+
     /**
-     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.<br/><br/>
-     * 
+     *
      * Constructor only use by {@link BasicRTree} implementation.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
@@ -134,34 +139,34 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @param crs
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
+    public TreeAccessFile(final Path outPut, final int magicNumber, final double versionNumber, final int maxElements,
              final SplitCase splitMade, final CoordinateReferenceSystem crs) throws IOException {
         this(outPut, magicNumber, versionNumber, maxElements, 0, splitMade, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
-    
+
     /**
-     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param maxElements element number per cell.
-     * @param crs 
+     * @param crs
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+    public TreeAccessFile(final Path outPut, final int magicNumber, final double versionNumber,
             final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         this(outPut, magicNumber, versionNumber, maxElements, 0, null, crs, byteBufferLength, INT_NUMBER);
     }
-    
+
     /**
-     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
@@ -169,32 +174,33 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @param crs
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+    public TreeAccessFile(final Path outPut, final int magicNumber, final double versionNumber,
             final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
         this(outPut, magicNumber, versionNumber, maxElements, 0, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
-    
+
     /**
-     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * Build and insert {@link Node} architecture in a file at {@link Path} location.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param maxElements element number per cell.
      * @param hilbertOrder
-     * @param crs 
+     * @param crs
      * @param splitMade define how to split a {@link Node}, only use by {@link BasicRTree}, may be {@code null} for other tree.
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
-     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
      * @throws IOException if problem during read or write Node.
      */
-    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
-            final int maxElements, final int hilbertOrder, final SplitCase splitMade, 
-            final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) 
+    protected TreeAccessFile(final Path outPut, final int magicNumber, final double versionNumber,
+            final int maxElements, final int hilbertOrder, final SplitCase splitMade,
+            final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode)
             throws IOException {
-        super(getChannel(outPut), magicNumber, versionNumber, maxElements, hilbertOrder, splitMade, crs, byteBufferLength, integerNumberPerNode);
+        super(Files.newByteChannel(outPut, StandardOpenOption.CREATE, StandardOpenOption.READ,
+                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING), magicNumber, versionNumber, maxElements, hilbertOrder, splitMade, crs, byteBufferLength, integerNumberPerNode);
     }
 
     /**
@@ -221,18 +227,7 @@ public class TreeAccessFile extends ChannelTreeAccess {
             throw new IOException(ex);
         }
     }
-    
-    /**
-     * Returns {@link SeekableByteChannel} from file stream.
-     * 
-     * @param inOutFile
-     * @return {@link SeekableByteChannel} from file stream.
-     * @throws FileNotFoundException 
-     */
-    private static SeekableByteChannel getChannel(final File inOutFile) throws FileNotFoundException {
-        return new RandomAccessFile(inOutFile, "rw").getChannel();
-    }
-//    
+//
 //    /**
 //     * Retrieve the CRS of the input tree.
 //     * @param treeFile The file containing the tree.

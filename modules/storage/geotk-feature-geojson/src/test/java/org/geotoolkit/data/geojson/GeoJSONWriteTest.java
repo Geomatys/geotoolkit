@@ -23,11 +23,12 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.*;
 import org.opengis.parameter.ParameterValueGroup;
 
-import javax.measure.unit.SI;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
-import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.URLP;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -53,16 +54,16 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
     @Test
     public void writeSimpleFTTest() throws Exception {
 
-        File pointFile = File.createTempFile("point", ".json");
+        Path pointFile = Files.createTempFile("point", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(pointFile.toURI().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(pointFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 
-        String typeName = pointFile.getName().replace(".json", "");
+        String typeName = pointFile.getFileName().toString().replace(".json", "");
 
         FeatureType validFeatureType = buildGeometryFeatureType(typeName, Point.class);
         FeatureType unvalidFeatureType = buildGeometryFeatureType("test", Point.class);
@@ -71,27 +72,24 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             store.createFeatureType(unvalidFeatureType.getName(), unvalidFeatureType);
             fail();
         } catch (DataStoreException ex) {
-
+            //normal exception
         }
 
         assertEquals(0, store.getNames().size());
 
         store.createFeatureType(validFeatureType.getName(), validFeatureType);
         assertEquals(1, store.getNames().size());
-        assertTrue(pointFile.exists());
+        assertTrue(Files.exists(pointFile));
 
         Point expectedPoint =GF.createPoint(new Coordinate(-105.01621, 39.57422));
-        FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName());
-        try{
+        try (FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName())) {
             Feature feature = fw.next();
             feature.getDefaultGeometryProperty().setValue(expectedPoint);
             feature.getProperty("type").setValue("simple");
             fw.write();
-        }finally{
-            fw.close();
         }
 
-        assertTrue(pointFile.exists());
+        assertTrue(Files.exists(pointFile));
 
         FeatureReader reader = store.getFeatureReader(QueryBuilder.all(validFeatureType.getName()));
         assertTrue(reader.hasNext());
@@ -102,28 +100,28 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         assertEquals(expectedPoint, geom.getValue());
         reader.close();
 
-        pointFile.delete();
+        Files.deleteIfExists(pointFile);
     }
 
     @Test
     public void writeAbstractGeometryTest() throws Exception {
 
-        File geomsFile = File.createTempFile("geoms", ".json");
+        Path geomsFile = Files.createTempFile("geoms", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(geomsFile.toURI().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(geomsFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 
-        String typeName = geomsFile.getName().replace(".json", "");
+        String typeName = geomsFile.getFileName().toString().replace(".json", "");
         FeatureType validFeatureType = buildGeometryFeatureType(typeName, Geometry.class);
         assertEquals(0, store.getNames().size());
 
         store.createFeatureType(validFeatureType.getName(), validFeatureType);
         assertEquals(1, store.getNames().size());
-        assertTrue(geomsFile.exists());
+        assertTrue(Files.exists(geomsFile));
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
         MultiPoint mpt = (MultiPoint)WKT_READER.read(PROPERTIES.getProperty("multipoint"));
@@ -133,8 +131,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         MultiPolygon mpoly = (MultiPolygon)WKT_READER.read(PROPERTIES.getProperty("multipolygon"));
         GeometryCollection coll = (GeometryCollection)WKT_READER.read(PROPERTIES.getProperty("geometrycollection"));
 
-        FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName());
-        try{
+        try (FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName())) {
             Feature feature = fw.next();
             feature.getProperty("type").setValue("Point");
             feature.getDefaultGeometryProperty().setValue(pt);
@@ -169,18 +166,15 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             feature.getProperty("type").setValue("GeometryCollection");
             feature.getDefaultGeometryProperty().setValue(coll);
             fw.write();
-        }finally{
-            fw.close();
         }
-        assertTrue(geomsFile.exists());
+        assertTrue(Files.exists(geomsFile));
 
         Session session = store.createSession(false);
         FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(validFeatureType.getName()));
 
         assertEquals(7, fcoll.size());
 
-        FeatureIterator ite = fcoll.iterator();
-        try {
+        try (FeatureIterator ite = fcoll.iterator()) {
             while (ite.hasNext()) {
                 Feature f = ite.next();
                 //System.out.println(f);
@@ -203,37 +197,34 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
                     assertTrue(coll.equalsExact(geom, 0.0000001));
                 }
             }
-        } finally {
-            ite.close();
         }
 
-        geomsFile.delete();
+        Files.deleteIfExists(geomsFile);
     }
 
     @Test
     public void writeComplexFeaturesTest() throws Exception {
-        File complexFile = File.createTempFile("complex", ".json");
+        Path complexFile = Files.createTempFile("complex", ".json");
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(URLP.getName().getCode()).setValue(complexFile.toURI().toURL());
+        param.parameter(PATH.getName().getCode()).setValue(complexFile.toUri());
 
         FeatureStore store = FeatureStoreFinder.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 
-        String typeName = complexFile.getName().replace(".json", "");
+        String typeName = complexFile.getFileName().toString().replace(".json", "");
 
         FeatureType complexFT = buildComplexFeatureType(typeName);
         assertEquals(0, store.getNames().size());
 
         store.createFeatureType(complexFT.getName(), complexFT);
         assertEquals(1, store.getNames().size());
-        assertTrue(complexFile.exists());
+        assertTrue(Files.exists(complexFile));
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
         Feature expected = null;
-        FeatureWriter fw = store.getFeatureWriterAppend(complexFT.getName());
-        try {
+        try (FeatureWriter fw = store.getFeatureWriterAppend(complexFT.getName())) {
             Feature feature = fw.next();
             feature.getProperty("longProp").setValue(100l);
             feature.getProperty("stringProp").setValue("Some String");
@@ -293,18 +284,15 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         } catch (Exception ex) {
             ex.printStackTrace();
             fail();
-        } finally{
-            fw.close();
         }
-        assertTrue(complexFile.exists());
+        assertTrue(Files.exists(complexFile));
 
         Session session = store.createSession(false);
         FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(complexFT.getName()));
 
         assertEquals(1, fcoll.size());
 
-        FeatureIterator ite = fcoll.iterator();
-        try {
+        try (FeatureIterator ite = fcoll.iterator()) {
             while (ite.hasNext()) {
                 Feature candidate = ite.next();
 
@@ -322,14 +310,12 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
                                 propFound = true;
                             }
                         }
-                        assertTrue("Property "+propName.tip().toString()+" not found.",propFound);
+                        assertTrue("Property " + propName.tip().toString() + " not found.", propFound);
                     }
                 }
             }
-        } finally {
-            ite.close();
         }
-        complexFile.delete();
+        Files.deleteIfExists(complexFile);
     }
 
     @Test
@@ -339,8 +325,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
 
-        FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4);
-        try {
+        try (FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
             feature.getProperty("type").setValue("feat1");
             feature.getDefaultGeometryProperty().setValue(pt);
@@ -351,8 +336,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             feature.getDefaultGeometryProperty().setValue(pt);
             fw.write();
 
-        } finally {
-            fw.close();
         }
 
         String outputJSON = baos.toString("UTF-8");
@@ -422,7 +405,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
 
-        FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4);
         double[][] array1 = new double[5][5];
         double[][] array2 = new double[5][5];
         for (int i = 0; i < 5; i++) {
@@ -432,7 +414,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             }
         }
 
-        try {
+        try (FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
             feature.getProperty("array").setValue(array1);
             feature.getDefaultGeometryProperty().setValue(pt);
@@ -443,8 +425,6 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             feature.getDefaultGeometryProperty().setValue(pt);
             fw.write();
 
-        } finally {
-            fw.close();
         }
 
         String outputJSON = baos.toString("UTF-8");

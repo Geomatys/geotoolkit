@@ -64,7 +64,7 @@ public class FeatureToComplexConverterTest extends org.geotoolkit.test.TestBase 
         // Write the json in a tmp file in order to be able to read it
         final Path tmpFilePath = WPSConvertersUtils.writeTempJsonFile(geoJson);
 
-        final Feature readFeature = WPSConvertersUtils.readFeatureFromJson(tmpFilePath.toUri().toURL());
+        final Feature readFeature = WPSConvertersUtils.readFeatureFromJson(tmpFilePath.toUri());
         ConvertersTestUtils.assertFeatureIsValid(readFeature);
     }
 }

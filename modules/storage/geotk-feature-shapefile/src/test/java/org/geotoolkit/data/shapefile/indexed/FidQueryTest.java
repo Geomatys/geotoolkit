@@ -18,6 +18,7 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import org.junit.Test;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,8 +73,8 @@ public class FidQueryTest extends FIDTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        final URL url = backshp.toURI().toURL();
-        ds = new IndexedShapefileFeatureStore(url, null, false, true, IndexType.QIX,null);
+        final URI uri = backshp.toURI();
+        ds = new IndexedShapefileFeatureStore(uri, null, false, true, IndexType.QIX,null);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.fix;
 
+import java.net.URI;
 import java.net.URL;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -61,7 +62,7 @@ public class IndexedFidWriter implements Closeable {
      * @param storageFile the storage file that will be written to.  It will NOT be closed.
      * @throws IOException
      */
-    public IndexedFidWriter(final URL fixUrl, final ReadableByteChannel readfixChannel, 
+    public IndexedFidWriter(final URI fixUrl, final ReadableByteChannel readfixChannel,
             final FileChannel writeChannel ) throws IOException {
         // Note do NOT assign storageFile so that it is closed because this method method requires that
         // the caller close the storage file.

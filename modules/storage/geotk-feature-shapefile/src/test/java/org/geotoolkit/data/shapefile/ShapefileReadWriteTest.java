@@ -183,7 +183,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     private void test(final String f, final Charset charset) throws Exception {
         copyShapefiles(f); // Work on File rather than URL from JAR.
         ShapefileFeatureStore s = new ShapefileFeatureStore(
-                TestData.url(AbstractTestCaseSupport.class, f), null, false, charset);
+                TestData.url(AbstractTestCaseSupport.class, f).toURI(), null, false, charset);
         GenericName typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         FeatureType type = s.getFeatureType(typeName);
@@ -205,7 +205,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         ShapefileFeatureStore shapefile;
         GenericName typeName = type.getName();
         Map params = new HashMap();
-        params.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), tmp.toURI().toURL());
+        params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), tmp.toURI().toURL());
         params.put(ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
         params.put(ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString(), charset);
 
@@ -224,7 +224,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         if (true) {
             // review open
-            ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI().toURL(), tmp.toString(), memorymapped, charset);
+            ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), tmp.toString(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
             FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 

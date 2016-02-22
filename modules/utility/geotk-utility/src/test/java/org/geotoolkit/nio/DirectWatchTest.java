@@ -1,4 +1,4 @@
-package org.geotoolkit.io;
+package org.geotoolkit.nio;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,10 +10,10 @@ import java.nio.file.*;
 import static org.apache.sis.test.Assert.assertTrue;
 
 /**
- * Test the {@link org.geotoolkit.io.DirectoryWatcher} component in NON-recursive mode.
+ * Test the {@link DirectoryWatcher} component in NON-recursive mode.
  *
  * As we are managing events, we cannot know when our test listener will receive information. Found solution is to
- * synchronize our listener and our test over the {@linkplain org.geotoolkit.io.DirectoryWatcherTest#results} list.
+ * synchronize our listener and our test over the {@linkplain DirectoryWatcherTest#results} list.
  *
  * @author Alexis Manin (Geomatys)
  */

@@ -7,7 +7,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.dom.LazyLoadElement;
@@ -19,7 +19,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.DirectoryStream;
@@ -52,7 +51,7 @@ public class DimapExtension extends GeoTiffExtension {
 
     @Override
     public SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
-        final File metadataFile = searchMetadataFile(reader.getInput());
+        final Path metadataFile = searchMetadataFile(reader.getInput());
 
         if (metadataFile == null)
             throw new IOException("Dimap metadata file not found.");
@@ -147,38 +146,36 @@ public class DimapExtension extends GeoTiffExtension {
      * @return File to metadata or null if not found.
      * @throws MalformedURLException
      */
-    private File searchMetadataFile(final Object input) throws IOException {
-        if (input instanceof File) {
-            final File file = (File) input;
-            final File parent = file.getAbsoluteFile().getParentFile();
+    private Path searchMetadataFile(final Object input) throws IOException {
+
+        if (IOUtilities.canProcessAsPath(input)) {
+            final Path inputPath = IOUtilities.toPath(input);
+            final Path parent = inputPath.toAbsolutePath().getParent();
 
             // filename.dim
-            final String pattern1 = ((File)IOUtilities.changeExtension(file, "dim")).getName();
+            final String pattern1 = IOUtilities.changeExtension(inputPath, "dim").getFileName().toString();
             final String pattern2 = "metadata.dim";
 
             // Quick search for "filename.dim"
-            final File candidate1 = new File(parent, pattern1);
-            if (candidate1.exists()) return candidate1;
+            final Path candidate1 = parent.resolve(pattern1);
+            if (Files.isRegularFile(candidate1)) return candidate1;
 
             // Quick search for "metadata.dim"
-            final File candidate2 = new File(parent, pattern2);
-            if (candidate2.exists()) return candidate2;
+            final Path candidate2 = parent.resolve(pattern2);
+            if (Files.isRegularFile(candidate2)) return candidate2;
 
             // Full directory scan.
             // Search file with name matching patterns IGNORING case
-            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(parent.toPath())) {
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(parent)) {
                 for (Path candidate : dirStream) {
                     if (pattern1.equalsIgnoreCase(candidate.getFileName().toString())) {
-                        return candidate.toFile();
+                        return candidate;
                     } else if (pattern2.equalsIgnoreCase(candidate.getFileName().toString())) {
-                        return candidate.toFile();
+                        return candidate;
                     }
                 }
             }
-
-            return null;
-        } else {
-            return null;
         }
+        return null;
     }
 }

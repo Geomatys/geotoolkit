@@ -25,7 +25,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -58,7 +58,7 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new ParameterBuilder().addName("GPXParameters").createGroup(IDENTIFIER,URLP);
+            new ParameterBuilder().addName("GPXParameters").createGroup(IDENTIFIER, PATH);
 
     @Override
     public Identification getIdentification() {

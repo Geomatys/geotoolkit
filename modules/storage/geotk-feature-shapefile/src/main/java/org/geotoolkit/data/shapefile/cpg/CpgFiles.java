@@ -16,14 +16,15 @@
  */
 package org.geotoolkit.data.shapefile.cpg;
 
-import java.io.File;
-import java.io.FileWriter;
+import org.geotoolkit.nio.IOUtilities;
+
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import org.geotoolkit.util.FileUtilities;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * CPG files utilities.
@@ -37,16 +38,13 @@ public final class CpgFiles {
 
     /**
      * Read charset from given stream.
-     * Given stream will be closed.
      *
      * @param in input channel
      * @return CharSet
      * @throws IOException
      */
     public static Charset read(ReadableByteChannel in) throws IOException{
-        final InputStream is = Channels.newInputStream(in);
-        final String str = FileUtilities.getStringFromStream(is).trim();
-        in.close();
+        final String str = IOUtilities.toString(Channels.newInputStream(in)).trim();
         return Charset.forName(str);
     }
 
@@ -57,8 +55,8 @@ public final class CpgFiles {
      * @param file output file.
      * @throws IOException
      */
-    public static void write(Charset cs, File file) throws IOException{
-        try (FileWriter cpgWriter = new FileWriter(file)) {
+    public static void write(Charset cs, Path file) throws IOException{
+        try (BufferedWriter cpgWriter = Files.newBufferedWriter(file, Charset.defaultCharset())) {
             cpgWriter.write(cs.name());
         }
     }

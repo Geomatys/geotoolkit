@@ -19,12 +19,17 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
 import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
@@ -46,6 +51,7 @@ class GeoJSONWriter implements Closeable, Flushable {
     }
 
     private final JsonGenerator writer;
+    private final OutputStream outputStream;
     private boolean first = true;
     private boolean prettyPrint = true;
 
@@ -55,12 +61,18 @@ class GeoJSONWriter implements Closeable, Flushable {
     private boolean isSingleFeature = false;
     private boolean isSingleGeometry = false;
 
+    @Deprecated
     GeoJSONWriter(File file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
+        this(file.toPath(), encoding, doubleAccuracy, prettyPrint);
+    }
+
+    GeoJSONWriter(Path file, JsonEncoding encoding, int doubleAccuracy, boolean prettyPrint) throws IOException {
         this.prettyPrint = prettyPrint;
+        this.outputStream = Files.newOutputStream(file, CREATE, WRITE, TRUNCATE_EXISTING);
         if (prettyPrint) {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(file, encoding).useDefaultPrettyPrinter();
+            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding).useDefaultPrettyPrinter();
         } else {
-            this.writer = GeoJSONParser.FACTORY.createGenerator(file, encoding);
+            this.writer = GeoJSONParser.FACTORY.createGenerator(outputStream, encoding);
         }
 
         COORD_FORMAT.setMaximumFractionDigits(doubleAccuracy);
@@ -68,6 +80,7 @@ class GeoJSONWriter implements Closeable, Flushable {
 
     GeoJSONWriter(OutputStream stream, JsonEncoding encoding,  int doubleAccuracy, boolean prettyPrint) throws IOException {
         this.prettyPrint = prettyPrint;
+        this.outputStream = null;
         if (prettyPrint) {
             this.writer = GeoJSONParser.FACTORY.createGenerator(stream, encoding).useDefaultPrettyPrinter();
         } else {
@@ -116,7 +129,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * Write GeoJSON with a single feature
      * @param feature
      * @throws IOException
-     * @throws IllegalAttributeException
+     * @throws IllegalArgumentException
      */
     void writeSingleFeature(Feature feature) throws IOException, IllegalArgumentException {
         assert(!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
@@ -137,7 +150,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param feature
      * @param single
      * @throws IOException
-     * @throws IllegalAttributeException
+     * @throws IllegalArgumentException
      */
     private void writeFeature(Feature feature, boolean single) throws IOException, IllegalArgumentException {
         if (!single) {
@@ -197,7 +210,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param fieldName
      * @param writeFieldName
      * @throws IOException
-     * @throws IllegalAttributeException
+     * @throws IllegalArgumentException
      */
     private void writeProperties(ComplexAttribute edited, String fieldName, boolean writeFieldName)
             throws IOException, IllegalArgumentException {
@@ -238,9 +251,7 @@ class GeoJSONWriter implements Closeable, Flushable {
         if (property instanceof ComplexAttribute) {
             writeProperties((ComplexAttribute) property, property.getName().tip().toString(), writeFieldName);
         } else {
-            if (property instanceof GeometryAttribute) {
-                //do nothing
-            } else {
+            if (!(property instanceof GeometryAttribute)) {
                 writeAttribute((Attribute) property, writeFieldName);
             }
         }
@@ -379,6 +390,9 @@ class GeoJSONWriter implements Closeable, Flushable {
     public void close() throws IOException {
         if (writer != null) {
             writer.close();
+        }
+        if (outputStream != null) {
+            outputStream.close();
         }
     }
 }

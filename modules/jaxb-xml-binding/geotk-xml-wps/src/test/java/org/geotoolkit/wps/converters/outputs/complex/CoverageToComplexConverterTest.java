@@ -15,14 +15,13 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.converters.outputs.complex;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
@@ -57,7 +56,7 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
 
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/coverage_base64");
         assertNotNull(expectedStream);
-        String expectedString = FileUtilities.getStringFromStream(expectedStream);
+        String expectedString = IOUtilities.toString(expectedStream);
         expectedString = expectedString.trim();
 
         assertEquals(expectedString, encodedCvg);

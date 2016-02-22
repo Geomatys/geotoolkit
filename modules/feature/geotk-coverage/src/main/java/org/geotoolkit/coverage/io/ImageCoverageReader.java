@@ -76,7 +76,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
@@ -318,7 +318,7 @@ public class ImageCoverageReader extends GridCoverageReader {
 
     /**
      * Sets the input source to the given object. The input is typically a
-     * {@link java.io.File}, {@link java.net.URL} or {@link String} object,
+     * {@link java.nio.file.Path}, {@link java.io.File}, {@link java.net.URL} or {@link String} object,
      * but other types (especially {@link ImageInputStream}) may be accepted
      * as well depending on the {@linkplain #imageReader image reader} implementation.
      * <p>

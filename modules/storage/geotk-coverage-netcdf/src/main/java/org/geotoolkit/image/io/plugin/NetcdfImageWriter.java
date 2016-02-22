@@ -165,7 +165,7 @@ public class NetcdfImageWriter extends FileImageWriter {
         if (output instanceof NetcdfFileWriteable) {
             ncFile = (NetcdfFileWriteable) output;
         } else {
-            ncFile = NetcdfFileWriteable.createNew(getOutputFile().getPath(), false);
+            ncFile = NetcdfFileWriteable.createNew(getOutputPath().toString(), false);
         }
         writeMetadata(metadata);
     }

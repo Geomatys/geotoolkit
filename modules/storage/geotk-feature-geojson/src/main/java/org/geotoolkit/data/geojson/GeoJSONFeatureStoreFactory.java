@@ -31,7 +31,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -68,7 +67,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("GeoJSONParameters").createGroup(
-                IDENTIFIER, URLP, NAMESPACE, COORDINATE_ACCURACY);
+                IDENTIFIER, PATH, NAMESPACE, COORDINATE_ACCURACY);
 
     @Override
     public Identification getIdentification() {

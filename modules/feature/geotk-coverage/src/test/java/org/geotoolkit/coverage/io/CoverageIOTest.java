@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.io.File;
 import java.io.IOException;
 import java.awt.geom.AffineTransform;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -29,7 +30,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -164,7 +165,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         assertFalse("The cache directory should not exist prior this test.", cacheDirectory.exists());
         try {
             for (int step=0; step<2; step++) {
-                final GridCoverageReader reader = CoverageIO.writeOrReuseMosaic(directory);
+                final GridCoverageReader reader = CoverageIO.writeOrReuseMosaic(directory.toPath());
                 assertEquals("Cache status: ", step == 0, ((MosaicCoverageReader) reader).saved);
 
                 final TileManager manager = (TileManager) reader.getInput();
@@ -172,8 +173,8 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
                              "a single tile of size 360x180 pixels.", 1, manager.getTiles().size());
                 verify(reader);
 
-                final File tile = (File) manager.getTiles().iterator().next().getInput();
-                image = ImageIO.read(tile);
+                final Path tile = (Path) manager.getTiles().iterator().next().getInput();
+                image = ImageIO.read(tile.toFile());
                 assertEquals("Width",  360, image.getWidth());
                 assertEquals("Height", 180, image.getHeight());
                 assertCurrentChecksumEquals("testInputMosaic", MosaicReadWriteTest.IMAGE_CHECKSUMS);

@@ -19,8 +19,8 @@
 package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -33,10 +33,10 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.util.GenericName;
 
 /**
@@ -51,9 +51,9 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
     static{
         try{
 
-            final File f = FileUtilities.getFileFromResource("org/geotoolkit/sql/observation1.xml");
+            final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/observation1.xml");
             final Map params = new HashMap<>();
-            params.put(OMXmlFeatureStoreFactory.FILE_PATH.getName().toString(), f);
+            params.put(OMXmlFeatureStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
 
             store = FeatureStoreFinder.open(params);
 
@@ -93,7 +93,7 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
 //
 //            File fdb = new File("TestOM");
 //            if(fdb.exists()){
-//                FileUtilities.deleteDirectory(fdb);
+//                IOUtilities.deleteRecursively(fdb.toPath());
 //            }
 //
 //            File dlog = new File("derby.log");

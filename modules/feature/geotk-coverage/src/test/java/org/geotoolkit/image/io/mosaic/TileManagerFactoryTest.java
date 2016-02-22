@@ -53,7 +53,7 @@ public final strictfp class TileManagerFactoryTest extends ImageTestBase {
      */
     @Test
     public void testCreateFromDirectory() throws IOException {
-        final TileManager[] managers = TileManagerFactory.DEFAULT.create(TestData.file(this, null));
+        final TileManager[] managers = TileManagerFactory.DEFAULT.create(TestData.file(this, null).toPath());
         assertEquals(1, managers.length);
         final AffineTransform gridToCRS = new AffineTransform(1, 0, 0, -1, -180, 90);
         for (final Tile tile : managers[0].getTiles()) {

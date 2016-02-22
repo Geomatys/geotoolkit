@@ -1,13 +1,15 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 import net.iharder.Base64;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,12 +45,11 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
             throw new UnconvertibleObjectException("Mandatory parameter is missing.");
         }
 
-        File result = null;
+        Path result = null;
         try {
         //Create a temp file
             final String fileName = UUID.randomUUID().toString();
-            final String suffix = ".tmp";
-            result = File.createTempFile(fileName, suffix);
+            result = Files.createTempFile(fileName, ".tmp");
 
             final List<Object> data = source.getContent();
             if (data.size() < 1) {
@@ -59,9 +60,8 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
 
                 final byte[] byteData = Base64.decode(rawData);
                 if (byteData != null && byteData.length > 0) {
-                    final ByteArrayInputStream is = new ByteArrayInputStream(byteData);
-                    if (is != null) {
-                        FileUtilities.buildFileFromStream(is, result);
+                    try (final ByteArrayInputStream is = new ByteArrayInputStream(byteData)) {
+                        IOUtilities.writeStream(is, result);
                     }
                 }
 
@@ -69,11 +69,11 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
                 if(rawData.startsWith("<![CDATA[") && rawData.endsWith("]]>")) {
                     rawData = rawData.substring(9, rawData.length()-3);
                 }
-                FileUtilities.stringToFile(result, rawData);
+                IOUtilities.writeString(rawData, result);
             }
         } catch (Exception ex) {
             throw new UnconvertibleObjectException(ex);
         }
-        return result;
+        return result.toFile();
     }
 }

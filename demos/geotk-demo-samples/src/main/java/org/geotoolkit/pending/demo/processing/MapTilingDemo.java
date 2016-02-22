@@ -3,6 +3,8 @@ package org.geotoolkit.pending.demo.processing;
 import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import javax.imageio.ImageIO;
@@ -121,10 +123,10 @@ public class MapTilingDemo {
 
     }
 
-    private static MapContext openData() throws DataStoreException, MalformedURLException {
+    private static MapContext openData() throws DataStoreException, URISyntaxException {
 
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).setValue(new URL("file:/home/jsorel/temp/bluemarble/bluemarble"));
+        params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).setValue(new URI("file:/home/jsorel/temp/bluemarble/bluemarble"));
 
         final CoverageStore store = CoverageStoreFinder.open(params);
 

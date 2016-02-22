@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Collections;
@@ -39,7 +41,7 @@ import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -373,6 +375,9 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                 if (derived instanceof File) {
                     return ((File) derived).isFile();
                 }
+                if (derived instanceof Path) {
+                    return Files.isRegularFile((Path) derived);
+                }
             }
             return false;
         }
@@ -390,7 +395,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         @Override
         public boolean canDecodeInput(Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
-                source = IOUtilities.tryToFile(source);
+                source = IOUtilities.tryToPath(source);
                 if (exists(source, "tfw") || exists(source, "prj")) {
                     return super.canDecodeInput(source);
                 }

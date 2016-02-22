@@ -1,11 +1,11 @@
-package org.geotoolkit.io;
+package org.geotoolkit.nio;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.EventObject;
 
 /**
- * An event raised by {@link org.geotoolkit.io.DirectoryWatcher} when a path has changed in a followed folder.
+ * An event raised by {@link DirectoryWatcher} when a path has changed in a followed folder.
  *
  * @author Alexis Manin (Geomatys)
  */

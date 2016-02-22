@@ -94,7 +94,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         int expectedCount = 0;
         final Set<String> expectedFids = new LinkedHashSet<String>();
         
-        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
+        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {
@@ -117,7 +117,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
     public void testFindAllFidsReverseOrder() throws Exception {
         int expectedCount = 0;
         final Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
-        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
+        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {

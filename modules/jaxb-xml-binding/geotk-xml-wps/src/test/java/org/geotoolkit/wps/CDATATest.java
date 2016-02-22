@@ -94,9 +94,8 @@ public class CDATATest extends org.geotoolkit.test.TestBase {
         String geoJsonContent = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(complex);
 
         // Check that the json is still readable by the GeoJSONParser
-        GeoJSONParser parser = new GeoJSONParser();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(geoJsonContent.getBytes());
-        GeoJSONObject geoJsonObject = parser.parse(byteArrayInputStream);
+        GeoJSONObject geoJsonObject = GeoJSONParser.parse(byteArrayInputStream);
         assertNotNull(geoJsonObject);
     }
 }

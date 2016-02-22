@@ -34,7 +34,7 @@ abstract class ReadeableHilbertRTreeTest extends HilbertTest {
     /**
      * Create a generic HilbertRTree Test suite with file already filled by tree architecture
      * and a {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link HilbertRTree} implementation.
@@ -45,15 +45,15 @@ abstract class ReadeableHilbertRTreeTest extends HilbertTest {
         final File inOutFile = File.createTempFile("test", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
-        
+        tree = new FileHilbertRTree(inOutFile.toPath(), 4, 2, crs, tEM);
+
         insert();
         tree.close();
         tEM.close();
         assertTrue(tree.isClosed());
         assertTrue(tEM.isClosed());
-        
-        tEM = new FileTreeElementMapperTest(treeMapperFile, crs);
-        tree = new FileHilbertRTree(inOutFile, tEM);
+
+        tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tree = new FileHilbertRTree(inOutFile.toPath(), tEM);
     }
 }

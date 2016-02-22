@@ -42,6 +42,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +66,8 @@ import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
+
+import static java.nio.file.StandardOpenOption.*;
 import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
@@ -69,6 +75,7 @@ import org.geotoolkit.image.io.WritableImageByteChannel;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -373,7 +380,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @param provider
      */
     public TiffImageWriter(final TiffImageWriter.Spi provider) {
-        super(provider);
+        super((provider != null) ? provider : new TiffImageWriter.Spi());
         ifdPosition     = new long[2];
         headProperties  = null;
         packBitArray    = new byte[8196];
@@ -3379,6 +3386,8 @@ public class TiffImageWriter extends SpatialImageWriter {
             final WritableByteChannel wBC;
             if (output instanceof String) {
                 wBC = new FileOutputStream((String) output).getChannel();
+            } else if (output instanceof Path) {
+                wBC = Files.newByteChannel((Path)output, CREATE, READ, WRITE);
             } else if (output instanceof File) {
                 wBC = new FileOutputStream((File)output).getChannel();
             } else if (output instanceof FileOutputStream) {
@@ -3458,7 +3467,9 @@ public class TiffImageWriter extends SpatialImageWriter {
         try {
             if (channel != null) {
                 channel.flush();
-                if (output instanceof File) channel.close();
+                if (IOUtilities.canProcessAsPath(output)) {
+                    channel.close();
+                }
             }
         } catch (IOException ex) {
             Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
@@ -3471,7 +3482,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     @Override
     public void setOutput(Object output) {
-        final Object out = (output instanceof String) ? new File((String) output) : output;
+        final Object out = (output instanceof String) ? Paths.get((String) output) : output;
         ifdPosition     = new long[2];
         headProperties  = null;
         packBitArray    = new byte[8196];
@@ -3482,7 +3493,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         try {
             if (channel != null) {
                 channel.flush();
-                if (this.output instanceof File) channel.close();
+                if (IOUtilities.canProcessAsPath(this.output)) channel.close();
             }
         } catch (IOException ex) {
             Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
@@ -3503,6 +3514,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     public static class Spi extends SpatialImageWriter.Spi {
 
        static final Class<?>[] TYPES = new Class<?>[] {
+               Path.class,
                File.class,
                //URI.class,
                //URL.class,

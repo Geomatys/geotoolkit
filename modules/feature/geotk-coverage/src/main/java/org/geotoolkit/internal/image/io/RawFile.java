@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.nio.file.Path;
 import java.util.Objects;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.imageio.ImageTypeSpecifier;
@@ -26,8 +26,9 @@ import javax.imageio.stream.ImageInputStream;
 import com.sun.media.imageio.stream.RawImageInputStream;
 
 import java.awt.Dimension;
+
+import org.geotoolkit.image.io.stream.PathImageInputStream;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.image.io.stream.FileImageInputStream;
 
 
 /**
@@ -48,7 +49,7 @@ public final class RawFile implements Serializable {
     /**
      * The temporary file.
      */
-    public final File file;
+    public final Path file;
 
     /**
      * The color and sample model of the RAW image.
@@ -71,7 +72,7 @@ public final class RawFile implements Serializable {
      * @param type   The color and sample model of the RAW image.
      * @param size   The image width and height, in pixels.
      */
-    public RawFile(final File file, final ImageTypeSpecifier type, final Dimension size) {
+    public RawFile(final Path file, final ImageTypeSpecifier type, final Dimension size) {
         this.file = file;
         this.type = type;
         this.size = size;
@@ -87,7 +88,7 @@ public final class RawFile implements Serializable {
      */
     public ImageInputStream getImageInputStream() throws IOException {
         ImageInputStream in;
-        in = new FileImageInputStream(file);
+        in = new PathImageInputStream(file);
         in = new RawImageInputStream(in, type, new long[1], new Dimension[] {size});
         return in;
     }

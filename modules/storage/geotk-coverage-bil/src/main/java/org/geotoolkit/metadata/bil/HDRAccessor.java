@@ -21,7 +21,7 @@ import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.lang.Static;
 
 /**

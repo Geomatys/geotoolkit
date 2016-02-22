@@ -28,6 +28,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.geotoolkit.test.TestBase;
 
@@ -132,17 +134,17 @@ public abstract strictfp class MosaicTestBase extends TestBase {
         /*
          * Creates the tiles to be used as sources for creating the mosaic.
          */
-        final File directory = new File("geodata"); // Dummy directory - will not be read.
+        final Path directory = Paths.get("geodata"); // Dummy directory - will not be read.
         final int S = SOURCE_SIZE; // For making reading easier below.
         sourceTiles = new Tile[] {
-            new Tile(spi, new File(directory, "A1.png"), 0, new Rectangle(0*S, 0, S, S)),
-            new Tile(spi, new File(directory, "B1.png"), 0, new Rectangle(1*S, 0, S, S)),
-            new Tile(spi, new File(directory, "C1.png"), 0, new Rectangle(2*S, 0, S, S)),
-            new Tile(spi, new File(directory, "D1.png"), 0, new Rectangle(3*S, 0, S, S)),
-            new Tile(spi, new File(directory, "A2.png"), 0, new Rectangle(0*S, S, S, S)),
-            new Tile(spi, new File(directory, "B2.png"), 0, new Rectangle(1*S, S, S, S)),
-            new Tile(spi, new File(directory, "C2.png"), 0, new Rectangle(2*S, S, S, S)),
-            new Tile(spi, new File(directory, "D2.png"), 0, new Rectangle(3*S, S, S, S))
+            new Tile(spi, directory.resolve("A1.png"), 0, new Rectangle(0*S, 0, S, S)),
+            new Tile(spi, directory.resolve("B1.png"), 0, new Rectangle(1*S, 0, S, S)),
+            new Tile(spi, directory.resolve("C1.png"), 0, new Rectangle(2*S, 0, S, S)),
+            new Tile(spi, directory.resolve("D1.png"), 0, new Rectangle(3*S, 0, S, S)),
+            new Tile(spi, directory.resolve("A2.png"), 0, new Rectangle(0*S, S, S, S)),
+            new Tile(spi, directory.resolve("B2.png"), 0, new Rectangle(1*S, S, S, S)),
+            new Tile(spi, directory.resolve("C2.png"), 0, new Rectangle(2*S, S, S, S)),
+            new Tile(spi, directory.resolve("D2.png"), 0, new Rectangle(3*S, S, S, S))
         };
         final TileManager[] sourceMosaic = builder.factory.create(sourceTiles);
         assertEquals(1, sourceMosaic.length);

@@ -24,16 +24,16 @@ import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
 
@@ -71,6 +70,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -112,13 +112,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     /**
      * Creates a new instance of ShapefileDataStore.
      *
-     * @param url The URL of the shp file to use for this DataSource.
+     * @param uri The URL of the shp file to use for this DataSource.
      *
      * @throws NullPointerException DOCUMENT ME!
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
      */
-    public ShapefileFeatureStore(final URL url) throws DataStoreException,MalformedURLException {
-        this(url, null);
+    public ShapefileFeatureStore(final URI uri) throws DataStoreException,MalformedURLException {
+        this(uri, null);
     }
 
     /**
@@ -126,12 +126,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * FeatureType - will have the correct value) You can call this with
      * namespace = null, but I suggest you give it an actual namespace.
      *
-     * @param url
+     * @param uri
      * @param namespace
      */
-    public ShapefileFeatureStore(final URL url, final String namespace)
+    public ShapefileFeatureStore(final URI uri, final String namespace)
             throws DataStoreException,MalformedURLException {
-        this(url, namespace, false, null);
+        this(uri, namespace, false, null);
     }
 
     /**
@@ -139,32 +139,31 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * FeatureType - will have the correct value) You can call this with
      * namespace = null, but I suggest you give it an actual namespace.
      *
-     * @param url
+     * @param uri
      * @param namespace
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
-    public ShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMapped,
+    public ShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
-        this(toParameter(url, namespace, useMemoryMapped, dbfCharset));
+        this(toParameter(uri, namespace, useMemoryMapped, dbfCharset));
     }
 
     public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
         super(params);
 
-        final URL url = (URL) params.parameter(
-                ShapefileFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI uri = (URI) params.parameter(
+                ShapefileFeatureStoreFactory.PATH.getName().toString()).getValue();
         final Boolean useMemoryMapped = (Boolean) params.parameter(
                 ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(
                 ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).getValue();
 
-        shpFiles = new ShpFiles(url);
+        shpFiles = new ShpFiles(uri);
 
         //search for a .cpg file which contains the character encoding
         if(dbfCharset == null && shpFiles.exists(CPG)){
-            try {
-                final ReadableByteChannel channel = shpFiles.getReadChannel(CPG);
+            try (ReadableByteChannel channel = shpFiles.getReadChannel(CPG)) {
                 dbfCharset = CpgFiles.read(channel);
             } catch (IOException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
@@ -184,10 +183,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         this.dbfCharset = dbfCharset;
     }
 
-    private static ParameterValueGroup toParameter(final URL url, final String namespace,
+    private static ParameterValueGroup toParameter(final URI uri, final String namespace,
             final boolean useMemoryMapped, Charset dbfCharset){
         final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.PATH, params).setValue(uri);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
         if(dbfCharset!=null){
@@ -476,49 +475,45 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             final StorageFile prjStoragefile = locker.getStorageFile(PRJ);
             final StorageFile cpgStoragefile = locker.getStorageFile(CPG);
 
-            final FileChannel shpChannel = shpStoragefile.getWriteChannel();
-            final FileChannel shxChannel = shxStoragefile.getWriteChannel();
+            try (FileChannel shpChannel = shpStoragefile.getWriteChannel();
+                 FileChannel shxChannel = shxStoragefile.getWriteChannel()) {
 
-            final ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel);
-            try {
-                // try to get the domain first
-                final org.opengis.geometry.Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
-                if (domain != null) {
-                    writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
-                } else {
-                    // try to reproject the single overall envelope keeping poles out of the way
-                    final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, CommonCRS.WGS84.normalizedGeographic());
-                    JTSEnvelope2D transformedBounds;
-                    if (crs != null) {
-                        try {
-                            transformedBounds = env.transform(crs, true);
-                        } catch (Throwable t) {
-                            if (getLogger().isLoggable(Level.WARNING)) {
-                                getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
-                            }
-                            transformedBounds = env;
-                            crs = null;
-                        }
+                try (ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel)) {
+                    // try to get the domain first
+                    final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
+                    if (domain != null) {
+                        writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                     } else {
-                        transformedBounds = env;
-                    }
+                        // try to reproject the single overall envelope keeping poles out of the way
+                        final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, CommonCRS.WGS84.normalizedGeographic());
+                        JTSEnvelope2D transformedBounds;
+                        if (crs != null) {
+                            try {
+                                transformedBounds = env.transform(crs, true);
+                            } catch (Throwable t) {
+                                if (getLogger().isLoggable(Level.WARNING)) {
+                                    getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
+                                }
+                                transformedBounds = env;
+                                crs = null;
+                            }
+                        } else {
+                            transformedBounds = env;
+                        }
 
-                    writer.writeHeaders(transformedBounds, shapeType, 0, 100);
+                        writer.writeHeaders(transformedBounds, shapeType, 0, 100);
+                    }
+                } finally {
+                    assert !shpChannel.isOpen();
+                    assert !shxChannel.isOpen();
                 }
-            } finally {
-                writer.close();
-                assert !shpChannel.isOpen();
-                assert !shxChannel.isOpen();
             }
 
             final DbaseFileHeader dbfheader = DbaseFileHeader.createDbaseHeader(schema);
             dbfheader.setNumRecords(0);
 
-            final WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel();
-            try {
+            try (WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel()) {
                 dbfheader.writeHeader(dbfChannel);
-            } finally {
-                dbfChannel.close();
             }
 
             if (crs != null) {
@@ -529,14 +524,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 format.setNameAuthority(Citations.ESRI);
                 format.setIndentation(WKTFormat.SINGLE_LINE);
                 final String s = format.format(crs);
-                final FileWriter prjWriter = new FileWriter(prjStoragefile.getFile());
-                try {
-                    prjWriter.write(s);
-                } finally {
-                    prjWriter.close();
-                }
+                IOUtilities.writeString(s, prjStoragefile.getFile(), Charset.forName("ISO-8859-1"));
             } else {
                 getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
+                Path prjFile = prjStoragefile.getFile();
+                Files.deleteIfExists(prjFile);
             }
 
             //write dbf encoding .cpg
@@ -591,23 +583,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         CoordinateReferenceSystem crs = null;
-        ReadableByteChannel channel = null;
 
         //read the projection
-        try{
-            channel = shpFiles.getReadChannel(PRJ);
-            crs = PrjFiles.read(channel, true);
-        }catch(IOException ex){
-            getLogger().log(Level.WARNING, ex.getMessage(),ex);
-            crs = null;
-        }finally{
-            //todo replace by ARM in JDK 1.7
-            if(channel!= null){
-                try {
-                    channel.close();
-                } catch (IOException ex) {
-                    getLogger().log(Level.WARNING, "failed to close pro channel.",ex);
-                }
+        if (shpFiles.exists(PRJ)) {
+            try (ReadableByteChannel channel = shpFiles.getReadChannel(PRJ)) {
+                crs = PrjFiles.read(channel, true);
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+                crs = null;
             }
         }
 
@@ -668,15 +651,15 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        final List<File> files = new ArrayList<>();
+    public Path[] getDataFiles() throws DataStoreException {
+        final List<Path> files = new ArrayList<>();
         for (final ShpFileType type : ShpFileType.values()) {
-            final File f = shpFiles.getFile(type);
-            if (f != null && f.exists()) {
+            final Path f = shpFiles.getPath(type);
+            if (f != null && Files.exists(f)) {
                 files.add(f);
             }
         }
-        return files.toArray(new File[0]);
+        return files.toArray(new Path[files.size()]);
     }
 
     ////////////////////////////////////////////////////////////////////////////

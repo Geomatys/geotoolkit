@@ -32,8 +32,8 @@ public class EmptyWritableStarRTree2D extends WritableStarRTreeTest {
         super(PredefinedCRS.CARTESIAN_2D);
         tree.close();
         tEM.close();
-        
+
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
+        tree = new FileStarRTree(inOutFile.toPath(), 4, crs, tEM);
     }
 }

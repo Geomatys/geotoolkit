@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.observation.file;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import static org.geotoolkit.observation.store.xml.XmlObservationUtils.*;
@@ -47,10 +48,10 @@ import org.opengis.temporal.TemporalPrimitive;
  */
 public class FileObservationReader implements ObservationReader {
 
-    private final File dataFile;
+    private final Path dataFile;
     private final NCFieldAnalyze analyze;
     
-    public FileObservationReader(final File dataFile, final NCFieldAnalyze analyze) {
+    public FileObservationReader(final Path dataFile, final NCFieldAnalyze analyze) {
         this.analyze = analyze;
         this.dataFile = dataFile;
     }
@@ -63,13 +64,7 @@ public class FileObservationReader implements ObservationReader {
     }
     
     private String getProcedureID() {
-        String local;
-        if (dataFile.getName().indexOf('.') != -1) {
-            local = dataFile.getName().substring(0, dataFile.getName().lastIndexOf('.'));
-        } else {
-            local = dataFile.getName();
-        }
-        return local;
+        return IOUtilities.filenameWithoutExtension(dataFile);
     }
 
     @Override

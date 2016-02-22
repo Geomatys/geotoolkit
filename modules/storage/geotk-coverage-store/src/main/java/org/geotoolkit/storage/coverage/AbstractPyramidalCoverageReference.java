@@ -48,8 +48,8 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.image.io.XImageIO;
 import org.opengis.util.GenericName;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -312,7 +312,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
                 throw new DataStoreException(ex.getMessage(),ex);
             } finally {
                 //dispose reader and substream
-                ImageIOUtilities.releaseReader(reader);
+                XImageIO.disposeSilently(reader);
             }
         }
 

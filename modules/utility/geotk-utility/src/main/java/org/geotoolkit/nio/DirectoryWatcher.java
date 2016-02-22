@@ -1,4 +1,4 @@
-package org.geotoolkit.io;
+package org.geotoolkit.nio;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;

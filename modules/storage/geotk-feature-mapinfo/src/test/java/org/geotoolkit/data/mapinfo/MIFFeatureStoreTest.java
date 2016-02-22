@@ -33,6 +33,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -91,8 +92,8 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
         final FeatureStoreFactory ff = FeatureStoreFinder.getFactoryById("MIF-MID");
         final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, "url").setValue(f.toURI().toURL());
-
+        ParametersExt.getOrCreateValue(params, MIFFeatureStoreFactory.PATH.getName().getCode()).setValue(f.toURI());
+        
         //create new store from scratch
         final FeatureStore ds = ff.create(params);
         assertNotNull(ds);

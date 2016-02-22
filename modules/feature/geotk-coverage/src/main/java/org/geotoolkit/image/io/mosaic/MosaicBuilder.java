@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      * The tile directory, or {@code null} for current directory.
      * It may be either a relative or absolute path.
      */
-    private File directory;
+    private Path directory;
 
     /**
      * The image reader provider. The initial value is {@code null}.
@@ -256,7 +257,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      *
      * @return The current tiles directory.
      */
-    public synchronized File getTileDirectory() {
+    public synchronized Path getTileDirectory() {
         return directory;
     }
 
@@ -265,8 +266,19 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      * path, or {@code null} (the default) for current directory.
      *
      * @param directory The new tiles directory.
+     * @deprecated use {@link #setTileDirectory(Path)}
      */
     public synchronized void setTileDirectory(final File directory) {
+        this.directory = directory.toPath();
+    }
+
+    /**
+     * Sets the directory where tiles will be read or written. May be a relative or absolute
+     * path, or {@code null} (the default) for current directory.
+     *
+     * @param directory The new tiles directory.
+     */
+    public synchronized void setTileDirectory(final Path directory) {
         this.directory = directory;
     }
 
@@ -771,8 +783,8 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
              */
             if (usePattern) {
                 String pattern = formatter.toString();
-                pattern = new File(directory, pattern).getPath();
-                pattern = "File:" + pattern;
+                final String dirPath = directory.toString();
+                pattern = "Path:" + dirPath + File.separator + pattern;
                 final Tile tile = new Tile(tileReaderSpi, pattern, 0, tileBounds, subsampling);
                 final OverviewLevel ol = new OverviewLevel(tile, imageBounds);
                 ol.createLinkedList(level, (level != 0) ? levels[level - 1] : null);
@@ -821,7 +833,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
                             }
                         }
                         Rectangle clippedBounds = tileBounds.intersection(imageBounds);
-                        File file = new File(directory, generateFilename(level, x, y));
+                        Path file = directory.resolve(generateFilename(level, x, y));
                         Tile tile = new Tile(tileReaderSpi, file, 0, clippedBounds, subsampling);
                         tiles.add(tile);
                     }

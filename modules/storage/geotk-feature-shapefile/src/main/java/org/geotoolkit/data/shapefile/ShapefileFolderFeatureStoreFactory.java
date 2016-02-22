@@ -24,15 +24,18 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PathFilterVisitor;
+import org.geotoolkit.nio.PosixPathMatcher;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.*;
+import java.util.EnumSet;
 import java.util.logging.Level;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -90,63 +93,38 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
             return false;
         }
 
-        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
+        final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
         if(!(obj instanceof URL)){
             return false;
         }
 
-        final URL path = (URL)obj;
-        File pathFile;
-        try {
-            pathFile = new File(path.toURI());
-        } catch (URISyntaxException e) {
-            // Should not happen if the url is well-formed.
-            LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
-        }
-
         final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
         final Boolean recursive = (Boolean) params.parameter(RECURSIVE.getName().toString()).getValue();
-        if (pathFile.exists() && pathFile.isDirectory()){
-            if(Boolean.TRUE.equals(emptyDirectory)){
-                return true;
+
+        final URL url = (URL)obj;
+        try {
+            Path path = IOUtilities.toPath(url);
+            if (Files.isDirectory(path)){
+                if(Boolean.TRUE.equals(emptyDirectory)){
+                    return true;
+                }
+                return containsShp(path, Boolean.TRUE.equals(recursive));
             }
-            return containsShp(pathFile, Boolean.TRUE.equals(recursive));
+        } catch (IOException e) {
+            // Should not happen if the url is well-formed.
+            LOGGER.log(Level.INFO, e.getLocalizedMessage());
         }
+
         return false;
     }
 
-    private static boolean containsShp(File folder, boolean recursive){
-        final File[] children = folder.listFiles();
-        for(File f : children){
-            if(f.isHidden()){//skip for hidden files
-                break;
-            }
-            if(f.isDirectory()){
-               if(recursive && containsShp(f, recursive)){
-                   return true;
-               }
-            }else if(f.getName().toLowerCase().endsWith(".shp")){
-                return true;
-            }
-        }
-        return false;
-    }
+    private static boolean containsShp(Path folder, boolean recursive) throws IOException {
 
+        int depth = recursive ? Integer.MAX_VALUE : 1;
+        PathFilterVisitor visitor = new PathFilterVisitor(new PosixPathMatcher("*.shp", Boolean.TRUE));
+        Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), depth, visitor);
 
-    //FileNameFilter implementation
-    public static class ExtentionFileNameFilter implements FilenameFilter{
-
-        private String ext;
-
-        public ExtentionFileNameFilter(String ext){
-            this.ext = ext.toLowerCase();
-        }
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.toLowerCase().endsWith(ext);
-        }
-
+        return !(visitor.getMatchedPaths().isEmpty());
     }
 
     @Override

@@ -45,7 +45,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Test
     @Ignore
     public void testNADCON() throws Exception {
-        assumeTrue(false /*Installation.NADCON.directory(true).isDirectory()*/);
+        assumeTrue(false /*Files.isDirectory(Installation.NADCON.directory(true))*/);
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final MathTransform tr;
@@ -75,7 +75,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     @Test
     @Ignore
     public void testNTF() throws Exception {
-        assumeTrue(false /*Installation.NADCON.directory(true).isDirectory()*/);
+        assumeTrue(false /*Files.isDirectory(Installation.NADCON.directory(true))*/);
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993

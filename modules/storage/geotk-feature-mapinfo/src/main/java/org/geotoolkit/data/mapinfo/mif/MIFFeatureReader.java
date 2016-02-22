@@ -25,6 +25,7 @@ import org.apache.sis.util.CharSequences;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
@@ -328,7 +329,7 @@ public class MIFFeatureReader implements FeatureReader {
     private void checkScanners() throws DataStoreException, IOException {
         if(readMif) {
             if(mifStream == null) {
-                mifStream = MIFUtils.openInConnection(master.getMIFPath());
+                mifStream = IOUtilities.open(master.getMIFPath());
             }
             if(mifScanner == null) {
                 mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
@@ -338,7 +339,7 @@ public class MIFFeatureReader implements FeatureReader {
 
         if(readMid) {
             if(midStream == null) {
-                midStream = MIFUtils.openInConnection(master.getMIDPath());
+                midStream = IOUtilities.open(master.getMIDPath());
             }
             if(midScanner == null) {
                 midScanner = new Scanner(midStream, MIFUtils.DEFAULT_CHARSET);

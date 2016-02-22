@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.filestore;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
@@ -45,11 +46,16 @@ public class FileCoverageReference extends RecyclingCoverageReference{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
-    private final File file;
+    private final Path file;
     private final int imageIndex;
     private ImageReaderSpi spi;
 
+    @Deprecated
     FileCoverageReference(FileCoverageStore store, GenericName name, File file, int imageIndex) {
+        this(store, name, file.toPath(), imageIndex);
+    }
+
+    FileCoverageReference(FileCoverageStore store, GenericName name, Path file, int imageIndex) {
         super(store,name);
         this.file = file;
         this.imageIndex = imageIndex;
@@ -64,7 +70,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
             return true;
         } catch (IOException ex) {
             //no writer found
-            LOGGER.log(Level.FINER, "No writer found for file : "+file.getAbsolutePath());
+            LOGGER.log(Level.FINER, "No writer found for file : "+file.toAbsolutePath().toString());
         }
         return false;
     }
@@ -73,8 +79,8 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     protected GridCoverageReader createReader() throws CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
-            final ImageReader ioreader = ((FileCoverageStore)store).createReader(file,spi);
-            if(spi==null){
+            final ImageReader ioreader = ((FileCoverageStore)store).createReader(file, spi);
+            if (spi == null) {
                 //format was on AUTO. keep the spi for futur reuse.
                 spi = ioreader.getOriginatingProvider();
             }
@@ -117,10 +123,10 @@ public class FileCoverageReference extends RecyclingCoverageReference{
 
     /**
      * Get the input image file used for this coverage.
-     * @return a {@link File} object which point to he image file of this coverage, or null if the input has not been
+     * @return a {@link Path} object which point to he image file of this coverage, or null if the input has not been
      * initialized.
      */
-    public File getInput() {
+    public Path getInput() {
         return file;
     }
 

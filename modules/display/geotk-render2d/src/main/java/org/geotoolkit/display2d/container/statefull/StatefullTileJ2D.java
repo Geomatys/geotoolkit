@@ -27,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.vecmath.Point3d;
+
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.TileReference;
@@ -47,7 +49,6 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.map.ElevationModel;
 import org.opengis.geometry.Envelope;
@@ -232,7 +233,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 LOGGER.log(Level.INFO, ex.getMessage());
                 return null;
             } finally {
-                ImageIOUtilities.releaseReader(reader);
+                XImageIO.disposeSilently(reader);
             }
         }
 

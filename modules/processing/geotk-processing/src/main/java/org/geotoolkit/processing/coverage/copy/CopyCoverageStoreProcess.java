@@ -20,6 +20,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -41,7 +42,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -308,7 +308,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                             throw new DataStoreException(ex);
                         }finally{
                             //dispose reader and substream
-                            ImageIOUtilities.releaseReader(inReader);
+                            XImageIO.disposeSilently(inReader);
                         }
                     }
 

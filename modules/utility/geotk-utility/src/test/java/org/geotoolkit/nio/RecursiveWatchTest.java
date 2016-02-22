@@ -1,4 +1,4 @@
-package org.geotoolkit.io;
+package org.geotoolkit.nio;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.apache.sis.test.Assert.assertTrue;
 
 /**
- * A test class to ensure recursive survey mechanism of {@link org.geotoolkit.io.DirectoryWatcher} is working properly.
+ * A test class to ensure recursive survey mechanism of {@link DirectoryWatcher} is working properly.
  *
  * @author Alexis Manin (Geomatys)
  */

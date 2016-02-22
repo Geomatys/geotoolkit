@@ -3,44 +3,41 @@ package org.geotoolkit.pending.demo.tree;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.FileTreeElementMapper;
+import org.geotoolkit.index.tree.ChannelTreeElementMapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Create a FileTreeElementMapper adapted for Tree demo.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
-final class DemoFileTreeElementMapper extends FileTreeElementMapper<Envelope>{
-    
+final class DemoFileTreeElementMapper extends ChannelTreeElementMapper<Envelope>{
+
     final private CoordinateReferenceSystem crs;
     final private int dimension;
-    
-    
+
+
     DemoFileTreeElementMapper(File output, final CoordinateReferenceSystem crs) throws IOException {
-        super(output, (crs.getCoordinateSystem().getDimension()*2*Double.SIZE) /8);
-        this.crs       = crs;
-        this.dimension = crs.getCoordinateSystem().getDimension();
-    }
-    
-    DemoFileTreeElementMapper(final CoordinateReferenceSystem crs, File input) throws IOException {
-        super(input);
+        super(Files.newByteChannel(output.toPath(), StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE), (crs.getCoordinateSystem().getDimension()*2*Double.SIZE) /8);
         this.crs       = crs;
         this.dimension = crs.getCoordinateSystem().getDimension();
     }
 
+
     @Override
     protected void writeObject(Envelope Object) throws IOException {
         /*
-         * To store element on hard drive we use a Databuffer where all 
-         * databuffer working has been already manage. 
+         * To store element on hard drive we use a Databuffer where all
+         * databuffer working has been already manage.
          * User should just write element what he need to define a data, from databuffer from superclass as below.
-         * 
-         * In this case, we travel all dimensions from envelope coordinate system and we write envelope coordinates. 
+         *
+         * In this case, we travel all dimensions from envelope coordinate system and we write envelope coordinates.
          */
         for (int d = 0; d < dimension; d++) {
             super.byteBuffer.putDouble(Object.getMinimum(d));

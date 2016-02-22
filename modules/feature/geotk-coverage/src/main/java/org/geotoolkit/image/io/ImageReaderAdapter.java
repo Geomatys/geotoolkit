@@ -22,6 +22,7 @@ import java.net.URL;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Set;
 import java.util.EnumSet;
@@ -50,7 +51,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.util.Strings;
@@ -250,7 +251,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         if (acceptStream) {
             in = ImageIO.createImageInputStream(input);
             if (in == null) {
-                final Object alternate = IOUtilities.tryToFile(input);
+                final Object alternate = IOUtilities.tryToPath(input);
                 if (alternate != input) {
                     in = ImageIO.createImageInputStream(alternate);
                 }
@@ -1095,6 +1096,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * different for writers.
          */
         static final Class<?>[] TYPES = new Class<?>[] {
+            Path.class,
             File.class,
             URI.class,
             URL.class,

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixPathMatcher;
 import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
@@ -33,8 +35,13 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -46,6 +53,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -69,11 +78,11 @@ public class MIFManager {
      * Mif file access
      */
     private String mifName;
-    private URL mifPath;
+    private URI mifPath;
     private Scanner mifScanner;
 
     /** Path to the MID file. */
-    private URL midPath;
+    private URI midPath;
 
     /**
      * Header tag values. See {@link MIFHeaderCategory} for tag description.
@@ -107,13 +116,13 @@ public class MIFManager {
     private ArrayList<FeatureType> mifChildTypes = new ArrayList<FeatureType>();
 
 
-    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, MalformedURLException, URISyntaxException {
+    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, IOException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file", mifFile);
-        mifPath = mifFile.toURI().toURL();
+        mifPath = mifFile.toURI();
         init();
     }
 
-    public MIFManager(URL mifFilePath) throws NullArgumentException, DataStoreException, MalformedURLException, URISyntaxException {
+    public MIFManager(URI mifFilePath) throws NullArgumentException, DataStoreException, IOException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file path", mifFilePath);
         mifPath = mifFilePath;
         init();
@@ -122,7 +131,7 @@ public class MIFManager {
     /**
      * Basic operations needed in both constructors.
      */
-    private void init() throws DataStoreException, MalformedURLException, URISyntaxException {
+    private void init() throws DataStoreException, IOException, URISyntaxException {
         final String mifStr = mifPath.getPath();
         int lastSeparatorIndex = mifStr.lastIndexOf(System.getProperty("file.separator"));
         mifName = mifStr.substring(lastSeparatorIndex+1);
@@ -192,26 +201,15 @@ public class MIFManager {
             getTypeNames();
         } catch (Exception e) {
             // Try to clear files before rewriting in it.
-            if (MIFUtils.isLocal(mifPath)) {
-                File f = new File(mifPath.toURI());
-                if (f.exists()) {
-                    boolean deleted = f.delete();
-                    if (!deleted) {
-                        throw new DataStoreException("MIF data already exists and can't be erased.");
-                    }
-                }
-            }
+            try {
+                Path mifPathObj = IOUtilities.toPath(mifPath);
+                Path midPathObj = IOUtilities.toPath(midPath);
 
-            if (MIFUtils.isLocal(midPath)) {
-                File f = new File(midPath.toURI());
-                if (f.exists()) {
-                    boolean deleted = f.delete();
-                    if (!deleted) {
-                        throw new DataStoreException("MID data already exists and can't be erased.");
-                    }
-                }
+                Files.deleteIfExists(mifPathObj);
+                Files.deleteIfExists(midPathObj);
+            } catch (IOException e1) {
+                throw new DataStoreException("Unable to erase MIF and MID files.", e1);
             }
-
             refreshMetaModel();
         }
 
@@ -345,11 +343,11 @@ public class MIFManager {
         return mifBaseType;
     }
 
-    public URL getMIFPath() {
+    public URI getMIFPath() {
         return mifPath;
     }
 
-    public URL getMIDPath() {
+    public URI getMIDPath() {
         return midPath;
     }
 
@@ -360,35 +358,40 @@ public class MIFManager {
      * @throws DataStoreException if the MIF path is malformed (because we use it to build MID path), or if there's no
      * valid file at built location.
      */
-    private void buildMIDPath() throws DataStoreException, MalformedURLException, URISyntaxException {
-        String midStr = null;
+    private void buildMIDPath() throws DataStoreException, IOException, URISyntaxException {
 
         // We try to retrieve the mid path using files, so we can use filter which don't care about case.
-        if (mifPath.getProtocol().contains("file")) {
-            final File mif = new File(mifPath.toURI());
-            final String mifName = mif.getName();
+        if (IOUtilities.canProcessAsPath(mifPath)) {
+            final Path mif = IOUtilities.toPath(mifPath);
+            final String mifName = mif.getFileName().toString();
 
-            File[] matchingFiles = null;
-            if (mif.exists()) {
-                matchingFiles = mif.getParentFile().listFiles(new FileFilter() {
+            final String midCandidate = mifName.replaceFirst("\\.(?i)mif$", "") + "\\.mid";
+            if (Files.exists(mif)) {
+
+                DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
                     @Override
-                    public boolean accept(File pathname) {
-                        Pattern patoche = Pattern.compile(mifName.replaceFirst("\\.(?i)mif$", "") + "\\.mid", Pattern.CASE_INSENSITIVE);
-                        Matcher match = patoche.matcher(pathname.getName());
-                        return match.matches();
+                    public boolean accept(Path entry) throws IOException {
+                        Pattern pattern = Pattern.compile(midCandidate, Pattern.CASE_INSENSITIVE);
+                        Matcher match = pattern.matcher(entry.getFileName().toString());
+                        return match.matches() && Files.isRegularFile(entry);
                     }
-                });
+                };
+
+                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(mif.getParent(), filter)) {
+                    Iterator<Path> iterator = dirStream.iterator();
+                    if (iterator.hasNext()) {
+                        midPath = iterator.next().toUri();
+                    }
+                }
             }
 
-            if (matchingFiles == null || matchingFiles.length < 1) {
-                midStr = mif.getAbsolutePath().replaceFirst("\\.(?i)mif$", "") + ".mid";
-            } else {
-                midStr = matchingFiles[0].getAbsolutePath();
+            if (midPath == null) {
+                midPath = IOUtilities.changeExtension(mif, "mid").toUri();
             }
 
         } else {
             final String mifStr = mifPath.getPath();
-
+            String midStr = null;
             if (mifStr.endsWith(".mif") || mifStr.endsWith(".MIF")) {
                 midStr = mifStr.substring(0, mifStr.length() - 4);
             } else {
@@ -401,9 +404,8 @@ public class MIFManager {
             } else if (mifStr.endsWith(".MIF")) {
                 midStr = midStr.concat(".MID");
             }
+            midPath = URI.create(midStr);
         }
-
-        midPath = new URL(mifPath.getProtocol(), mifPath.getHost(), mifPath.getPort(), midStr);
     }
 
 
@@ -427,7 +429,7 @@ public class MIFManager {
             }
 
             RWLock.readLock().lock();
-            mifStream = MIFUtils.openInConnection(mifPath);
+            mifStream = IOUtilities.open(mifPath);
             mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
 
             // A trigger to tell us if all mandatory categories have been parsed.
@@ -547,7 +549,7 @@ public class MIFManager {
             try {
                 mifScanner.close();
                 RWLock.readLock().lock();
-                mifScanner = new Scanner(MIFUtils.openInConnection(mifPath), MIFUtils.DEFAULT_CHARSET);
+                mifScanner = new Scanner(IOUtilities.open(mifPath), MIFUtils.DEFAULT_CHARSET);
                 buildDataTypes();
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
@@ -630,8 +632,8 @@ public class MIFManager {
 
         RWLock.writeLock().lock();
         try {
-            File mifFile = new File(mifPath.toURI());
-            File midFile = new File(midPath.toURI());
+            File mifFile = new File(mifPath);
+            File midFile = new File(midPath);
 
             if (mifFile.exists()) {
                 if (mifFile.delete()) {
@@ -717,12 +719,10 @@ public class MIFManager {
 
         // Writing pass, with datastore locking.
         OutputStreamWriter stream = null;
-        InputStream mifInput = null;
-        InputStream midInput = null;
         RWLock.writeLock().lock();
         try {
             // writing MIF header and geometries.
-            OutputStream out = MIFUtils.openOutConnection(mifPath);
+            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, TRUNCATE_EXISTING);
             stream = new OutputStreamWriter(out);
             stream.write(head);
         } catch (Exception e) {
@@ -754,14 +754,14 @@ public class MIFManager {
         RWLock.writeLock().lock();
         try {
             // writing MIF header and geometries.
-            OutputStream out = MIFUtils.openOutConnection(mifPath);
+            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, APPEND);
             stream = new OutputStreamWriter(out);
             mifInput = dataToWrite.getMIFTempStore();
             MIFUtils.write(mifInput, stream);
             stream.close();
 
             // MID writing
-            out = MIFUtils.openOutConnection(midPath);
+            out = IOUtilities.openWrite(midPath, CREATE, WRITE, APPEND);
             stream = new OutputStreamWriter(out);
             midInput = dataToWrite.getMIDTempStore();
             MIFUtils.write(midInput, stream);

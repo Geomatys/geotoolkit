@@ -54,7 +54,6 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -195,7 +194,7 @@ public class FXCRSTable extends ScrollPane{
     }
     
     private List<Code> getCodes() throws FactoryException{
-        final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
+        final CRSAuthorityFactory factory = org.apache.sis.referencing.CRS.getAuthorityFactory(null);
         final Set<String> strs = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
         final List<Code> codes = new ArrayList<>();
         for(String str : strs){

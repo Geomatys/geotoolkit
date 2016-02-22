@@ -24,8 +24,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
-import org.geotoolkit.index.tree.FileTreeElementMapper;
+import org.geotoolkit.index.tree.ChannelTreeElementMapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -34,54 +36,58 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * In this case stored data type is {@link NamedEnvelope}.
  *
  * @author Remi Marechal (Geomatys).
+ * @deprecated the Tree identifier will be stored directly into each relative Lucene data.
+ * This class will be deleted.
  */
-public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEnvelope> {
+@Deprecated
+public final class LuceneFileTreeEltMapper extends ChannelTreeElementMapper<NamedEnvelope> {
 
     /**
      * File name of file which store all {@link NamedEnvelope#id}.
      */
     private final static String ID_MAP_NAME = "idMap.bin";
-    
+
     /**
      * Mutual Coordinate Reference System from all stored NamedEnvelopes.
      */
     private final CoordinateReferenceSystem crs;
-    
+
     /**
      * CRS dimension.
      */
     private final int dim;
-    
+
     /**
      * Stream to read and write all {@link NamedEnvelope#id} at the mapIndex position.
      */
     private final RandomAccessFile idMapInOutStream;
-    
+
     /**
-     * Byte file position of first stored {@link NamedEnvelope#id}. 
+     * Byte file position of first stored {@link NamedEnvelope#id}.
      */
     private final int beginPosition;
-    
+
     /**
-     * Byte file position, just after last stored {@link NamedEnvelope#id}. 
+     * Byte file position, just after last stored {@link NamedEnvelope#id}.
      */
     private long idMapCurrentPosition;
-    
+
     /**
      * Create a new Tree Mapper adapted to Lucene Tree use case.
-     * 
-     * @param crs 
+     *
+     * @param crs
      * @param mapperOutPut path where to store all Tree data.
      * @throws IOException if pblem during head file writing.
      */
     public LuceneFileTreeEltMapper(final CoordinateReferenceSystem crs, final File mapperOutPut) throws IOException {
-        super(mapperOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Long.SIZE) >> 3);
+        super(Files.newByteChannel(mapperOutPut.toPath(), StandardOpenOption.CREATE, StandardOpenOption.READ,
+                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING), 4096, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Long.SIZE) >> 3);
         final File idMapOutPut = new File(mapperOutPut.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
-        
+
         // prepare to store idMapCurrentPosition during close() call.
         idMapInOutStream.writeLong(-1);
-        
+
         // write crs
         final ByteArrayOutputStream temp   = new ByteArrayOutputStream();
         final ObjectOutputStream objOutput = new ObjectOutputStream(temp);
@@ -96,16 +102,17 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         this.crs           = crs;
         this.idMapCurrentPosition = beginPosition;
     }
-    
+
     /**
-     * Build an approriate Tree Mapper from an already filled Mapper file. 
-     * 
+     * Build an approriate Tree Mapper from an already filled Mapper file.
+     *
      * @param mapperInput File path which contain already filled {@link File}.
      * @throws IOException if pblem during file head reading
      * @throws ClassNotFoundException if pblem during crs file head reading.
      */
-    public LuceneFileTreeEltMapper(final File mapperInput) throws IOException, ClassNotFoundException {
-        super(mapperInput);
+    public LuceneFileTreeEltMapper(final File mapperInput, CoordinateReferenceSystem crs) throws IOException, ClassNotFoundException {
+        super(Files.newByteChannel(mapperInput.toPath(), StandardOpenOption.CREATE, StandardOpenOption.READ,
+                StandardOpenOption.WRITE), 4096, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Long.SIZE) >> 3);
         final File idMapOutPut = new File(mapperInput.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         this.idMapCurrentPosition = idMapInOutStream.readLong();
@@ -121,7 +128,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         this.beginPosition                = (int) idMapInOutStream.getChannel().position();
         this.dim                          = crs.getCoordinateSystem().getDimension();
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -141,8 +148,8 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
 
     /**
      * {@inheritDoc }
-     * Moreover store {@link NamedEnvelope#id} in other file, which is in the same 
-     * parent directory as TreeMapper file.  
+     * Moreover store {@link NamedEnvelope#id} in other file, which is in the same
+     * parent directory as TreeMapper file.
      */
     @Override
     protected NamedEnvelope readObject() throws IOException {
@@ -150,7 +157,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         final FileChannel idChan = idMapInOutStream.getChannel();
         idChan.position(idPos);
         final String neID = idMapInOutStream.readUTF();
-        assert (neID != null) : "stored Named Envelope should not have a null identifier. Problem during identifier reading."; 
+        assert (neID != null) : "stored Named Envelope should not have a null identifier. Problem during identifier reading.";
         final int nbEnvelope = byteBuffer.getInt();
         final NamedEnvelope resultEnvelope = new NamedEnvelope(crs, neID, nbEnvelope);
         for (int d = 0; d < dim; d++) {
@@ -191,7 +198,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      */
     @Override
     public void clear() throws IOException {
-        super.clear(); 
+        super.clear();
         idMapInOutStream.getChannel().position(beginPosition);
         idMapCurrentPosition = beginPosition;
     }
@@ -216,7 +223,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      */
     @Override
     public void close() throws IOException {
-        super.close(); 
+        super.close();
         idMapInOutStream.getChannel().position(0);
         idMapInOutStream.writeLong(idMapCurrentPosition);
         idMapInOutStream.close();

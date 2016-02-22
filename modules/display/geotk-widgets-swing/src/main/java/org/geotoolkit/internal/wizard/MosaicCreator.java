@@ -19,10 +19,10 @@ package org.geotoolkit.internal.wizard;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.logging.Level;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import javax.imageio.ImageWriter;
 import javax.imageio.event.IIOWriteProgressListener;
@@ -40,6 +40,8 @@ import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.resources.Wizards;
+
+import static java.nio.file.StandardOpenOption.*;
 
 
 /**
@@ -93,8 +95,8 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
              * At this point, we finished creating the mosaic. Serializes
              * the TileManager object which describe the new mosaic.
              */
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
-                   new File(builder.getTileDirectory(), TileManager.SERIALIZED_FILENAME)))) {
+            Path file = builder.getTileDirectory().resolve(TileManager.SERIALIZED_FILENAME);
+            try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file, CREATE, WRITE))) {
                 out.writeObject(tiles);
             }
         } catch (Throwable exception) { // NOSONAR: We also want to catch OutOfMemoryError.

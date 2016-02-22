@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.nio.file.NoSuchFileException;
 import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
@@ -824,7 +825,7 @@ public class CoverageTableModel extends AbstractTableModel {
             } catch (RemoteException exception) {
                 setFlag(RMI_FAILURE, true);
                 throw exception;
-            } catch (FileNotFoundException exception) {
+            } catch (FileNotFoundException | NoSuchFileException exception) {
                 setFlag(MISSING, true);
                 throw exception;
             } catch (IOException exception) {
@@ -850,7 +851,7 @@ public class CoverageTableModel extends AbstractTableModel {
                 final Throwable cause = exception.getCause();
                 if (cause instanceof RemoteException) {
                     setFlag(RMI_FAILURE, true);
-                } else if (cause instanceof FileNotFoundException) {
+                } else if (cause instanceof FileNotFoundException || cause instanceof NoSuchFileException) {
                     setFlag(MISSING, true);
                 } else if (cause instanceof IOException) {
                     setFlag(CORRUPTED, true);
@@ -949,7 +950,7 @@ public class CoverageTableModel extends AbstractTableModel {
                     }
                 } catch (IOException e) {
                     entry.setFlag(CoverageProxy.CORRUPTED, true);
-                    Logging.recoverableException(null, GridCoverageReference.class, "getFile", e);
+                    Logging.recoverableException(null, GridCoverageReference.class, "getPath", e);
                 }
             }
         }

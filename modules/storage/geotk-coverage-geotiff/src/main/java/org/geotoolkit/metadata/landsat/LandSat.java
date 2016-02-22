@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.metadata.landsat;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,8 +46,8 @@ import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
 import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.quality.DefaultScope;
 import org.apache.sis.metadata.iso.spatial.DefaultGeorectified;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
@@ -65,18 +67,20 @@ public final class LandSat {
     private LandSat(){}
 
     public static LandSatMetaNode parseMetadata(final File file) throws IOException{
-
-        final FileInputStream stream = new FileInputStream(file);
-        try{
+        try (FileInputStream stream = new FileInputStream(file)) {
             return parseMetadata(stream);
-        }finally{
-            stream.close();
+        }
+    }
+
+    public static LandSatMetaNode parseMetadata(final Path file) throws IOException{
+        try (InputStream stream = Files.newInputStream(file)){
+            return parseMetadata(stream);
         }
     }
 
     public static LandSatMetaNode parseMetadata(final InputStream stream) throws IOException{
 
-        final String metaFile = FileUtilities.getStringFromStream(stream);
+        final String metaFile = IOUtilities.toString(stream);
         final String[] lines = metaFile.split("\n");
 
 

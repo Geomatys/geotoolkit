@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -47,7 +47,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
 
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/coverage_base64");
         assertNotNull(expectedStream);
-        final String encodedCoverage = FileUtilities.getStringFromStream(expectedStream);
+        final String encodedCoverage = IOUtilities.toString(expectedStream);
 
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, "image/x-geotiff");

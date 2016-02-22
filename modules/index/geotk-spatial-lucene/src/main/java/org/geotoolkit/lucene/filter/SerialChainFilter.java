@@ -18,15 +18,16 @@
 package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
-import java.util.BitSet;
 
 import java.util.List;
-import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.util.BitDocIdSet;
+import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.DocIdBitSet;
+import org.apache.lucene.util.FixedBitSet;
 import org.geotoolkit.index.tree.Tree;
 
 /**
@@ -51,7 +52,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      */
     private static final long serialVersionUID = -8132561537335553911L;
 
-    private List<Filter> chain;
+    private final List<Filter> chain;
     
     public static final int AND     = 1;	     
     public static final int OR      = 2;   
@@ -59,7 +60,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
     public static final int XOR     = 4;
     public static final int DEFAULT = OR;
 	
-    private int[] actionType;
+    private final int[] actionType;
 
     public SerialChainFilter(final List<Filter> chain) {
         this.chain      = chain;
@@ -75,12 +76,12 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      * @see org.apache.lucene.search.Filter#bits(org.apache.lucene.index.IndexReader)
      */
     @Override
-    public  DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws CorruptIndexException, IOException {
+    public  DocIdSet getDocIdSet(final LeafReaderContext ctx, final Bits b) throws CorruptIndexException, IOException {
 
         final int chainSize  = chain.size();
         final int actionSize = actionType.length;
 
-        final BitSet bits    = ((DocIdBitSet)chain.get(0).getDocIdSet(ctx, b)).getBitSet();
+        final FixedBitSet bits    = (FixedBitSet) ((BitDocIdSet)chain.get(0).getDocIdSet(ctx, b)).bits();
 
         //if there is only an operand not we don't enter the loop
         int j = 0;
@@ -99,7 +100,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
                 action = DEFAULT;
             }
 
-            final BitSet nextFilterResponse = ((DocIdBitSet)chain.get(i).getDocIdSet(ctx, b)).getBitSet();
+            final FixedBitSet nextFilterResponse = (FixedBitSet) ((BitDocIdSet)chain.get(i).getDocIdSet(ctx, b)).bits();
 
             //if the next operator is NOT we have to process the action before the current operand
             if (j < actionSize && actionType[j] == NOT) {
@@ -129,15 +130,15 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
         return invalidateDeletedDocument(bits, b);
     }
 
-    private DocIdBitSet invalidateDeletedDocument(final BitSet results, final Bits initial) {
+    private BitDocIdSet invalidateDeletedDocument(final BitSet results, final Bits initial) {
         if (initial != null) {
             for (int i = 0; i < initial.length(); i++) {
                 if (!initial.get(i)) {
-                    results.set(i, false);
+                    results.clear(i);
                 }
             }
         }
-        return new DocIdBitSet(results);
+        return new BitDocIdSet(results);
     }
 
       /**
@@ -252,7 +253,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
     }
     
     @Override
-    public String toString() {
+    public String toString(String s) {
     	final StringBuffer buf = new StringBuffer();
     	buf.append("[SerialChainFilter]").append('\n');
         if (chain != null && chain.size() == 1) {

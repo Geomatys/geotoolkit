@@ -18,8 +18,11 @@ package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +47,6 @@ import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -67,9 +69,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         }
     }
 
-    private final File root;
+    private final Path root;
     private final String format;
-    private final URL rootPath;
+    private final URI rootPath;
 
     private final String separator;
 
@@ -78,14 +80,22 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     //default spi
     final ImageReaderSpi spi;
 
-    public FileCoverageStore(URL url, String format) throws URISyntaxException{
-        this(toParameters(url, format));
+    public FileCoverageStore(URL url, String format) throws URISyntaxException, IOException {
+        this(toParameters(url.toURI(), format));
     }
 
-    public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
+    public FileCoverageStore(Path path, String format) throws URISyntaxException, IOException {
+        this(toParameters(path.toUri(), format));
+    }
+
+    public FileCoverageStore(URI uri, String format) throws URISyntaxException, IOException {
+        this(toParameters(uri, format));
+    }
+
+    public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
-        rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
-        root = new File(rootPath.toURI());
+        rootPath = (URI) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
+        root = Paths.get(rootPath);
         format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
 
         if("AUTO".equalsIgnoreCase(format)){
@@ -99,9 +109,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         visit(root);
     }
 
-    private static ParameterValueGroup toParameters(URL url, String format){
+    private static ParameterValueGroup toParameters(URI uri, String format){
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(params,"path").setValue(url);
+        ParametersExt.getOrCreateValue(params,"path").setValue(uri);
         if(format!=null){
             ParametersExt.getOrCreateValue(params,"type").setValue(format);
         }
@@ -123,44 +133,43 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      *
      * @param file
      */
-    private void visit(final File file) {
+    private void visit(final Path file) throws IOException {
 
-        if (file.isDirectory()) {
-            final File[] list = file.listFiles();
-            if (list != null) {
-                for (int i = 0; i < list.length; i++) {
-                    visit(list[i]);
-                }
+        Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                test(file);
+                return FileVisitResult.CONTINUE;
             }
-        } else {
-            test(file);
-        }
+        });
     }
 
-    private String createLayerName(final File candidate) {
-        String fullName;
+    private String createLayerName(final Path candidate) {
         if (separator != null) {
-            fullName = candidate.getAbsolutePath().replace(root.getAbsolutePath(), "");
+            //TODO use relativize()
+            final Path absRoot = root.toAbsolutePath();
+            final Path abscandidate = candidate.toAbsolutePath();
+            String fullName = abscandidate.toString().replace(absRoot.toString(), "");
             if (fullName.startsWith(File.separator)) {
                 fullName = fullName.substring(1);
             }
             fullName = fullName.replaceAll(REGEX_SEPARATOR, separator);
+            final int idx = fullName.lastIndexOf('.');
+            return fullName.substring(0, idx);
         } else {
-            fullName = candidate.getName();
+            return org.geotoolkit.nio.IOUtilities.filenameWithoutExtension(candidate);
         }
-        final int idx = fullName.lastIndexOf('.');
-        return fullName.substring(0, idx);
     }
 
     /**
      *
      * @param candidate Candidate to be a image file.
      */
-    private void test(final File candidate) {
-        if(!candidate.isFile()){
+    private void test(final Path candidate) {
+        if(!Files.isRegularFile(candidate)){
             return;
         }
-
+        final String candidateName = IOUtilities.filename(candidate);
         ImageReader reader = null;
         try {
             //don't comment this block, This raise an error if no reader for the file can be found
@@ -204,13 +213,13 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             }
             // Tried to parse a incompatible file, not really an error.
         } catch (UnsupportedImageFormatException ex) {
-            LOGGER.log(Level.FINE, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
+            LOGGER.log(Level.FINE, "Error for file {0} : {1}", new Object[]{candidateName, ex.getMessage()});
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.
-            LOGGER.log(Level.WARNING, String.format("Error for file %s : %s", candidate.getName(), ex.getMessage()), ex);
+            LOGGER.log(Level.WARNING, String.format("Error for file %s : %s", candidateName, ex.getMessage()), ex);
         } finally {
-            ImageIOUtilities.releaseReader(reader);
+            XImageIO.disposeSilently(reader);
         }
     }
 
@@ -228,7 +237,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      * @throws IOException if fail to create a reader.
      * @throws UnsupportedImageFormatException if spi is defined but can't decode candidate file
      */
-    ImageReader createReader(final File candidate, ImageReaderSpi spi) throws IOException{
+    ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException{
         final ImageReader reader;
         if(spi == null){
             if (!IOUtilities.extension(candidate).isEmpty()) {
@@ -239,7 +248,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         }else{
             if (spi.canDecodeInput(candidate)) {
                 reader = spi.createReaderInstance();
-                Object in = ImageIOUtilities.toSupportedInput(spi, candidate);
+                Object in = XImageIO.toSupportedInput(spi, candidate);
                 reader.setInput(in);
             } else {
                 throw new UnsupportedImageFormatException("Unsupported file input for spi "+spi.getPluginClassName());
@@ -257,7 +266,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      * @return ImageWriter, never null
      * @throws IOException if fail to create a writer.
      */
-    ImageWriter createWriter(final File candidate) throws IOException{
+    ImageWriter createWriter(final Path candidate) throws IOException{
         final ImageReaderSpi readerSpi = createReader(candidate,spi).getOriginatingProvider();
         final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();
         if(writerSpiNames == null || writerSpiNames.length == 0){
@@ -273,7 +282,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[] {root};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[] {root};
     }
 }

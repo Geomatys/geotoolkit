@@ -34,8 +34,8 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -56,12 +56,12 @@ public class MIFFeatureStore extends AbstractFeatureStore {
     /**
      * Creates a new instance of MIFFeatureStore.
      *
-     * @param url The URL of the MIF file to use for this DataStore.
+     * @param uri The URL of the MIF file to use for this DataStore.
      *
      * @throws DataStoreException If we got a problem getting needed files.
      */
-    public MIFFeatureStore(final URL url) throws DataStoreException {
-        this(url, null);
+    public MIFFeatureStore(final URI uri) throws DataStoreException {
+        this(uri, null);
     }
 
     /**
@@ -69,17 +69,17 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * FeatureType - will have the correct value) You can call this with
      * namespace = null, but I suggest you give it an actual namespace.
      *
-     * @param url
+     * @param uri
      * @param namespace
      */
-    public MIFFeatureStore(final URL url, final String namespace) throws DataStoreException {
-        this(toParameter(url, namespace));
+    public MIFFeatureStore(final URI uri, final String namespace) throws DataStoreException {
+        this(toParameter(uri, namespace));
     }
 
     public MIFFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL filePath = (URL) params.parameter(MIFFeatureStoreFactory.URLP.getName().toString()).getValue();
+        final URI filePath = (URI) params.parameter(MIFFeatureStoreFactory.PATH.getName().toString()).getValue();
         try {
             manager = new MIFManager(filePath);
         } catch (Exception e) {
@@ -87,9 +87,9 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         }
     }
 
-    private static ParameterValueGroup toParameter(final URL url, final String namespace) {
+    private static ParameterValueGroup toParameter(final URI uri, final String namespace) {
         final ParameterValueGroup params = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, params).setValue(uri);
         Parameters.getOrCreate(MIFFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         return params;
     }

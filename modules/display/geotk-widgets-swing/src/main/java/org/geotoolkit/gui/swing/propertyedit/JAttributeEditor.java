@@ -29,24 +29,7 @@ import javax.swing.JTextField;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.PropertyType;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharacterEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharsetEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.ChoiceEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.DateEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.EnumEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.FilterEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.InternationalStringEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.NumberEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.StringEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.util.InternationalString;
 
@@ -75,7 +58,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     private static final List<PropertyValueEditor> DEFAULT_EDITORS = UnmodifiableArrayList.wrap(
         new PropertyValueEditor[]{
             new ChoiceEditor(), new BooleanEditor(), new CRSEditor(), new CharsetEditor(), new CharacterEditor(),
-            new NumberEditor(), new StringEditor(), new InternationalStringEditor(), new URLEditor(),
+            new NumberEditor(), new StringEditor(), new InternationalStringEditor(), new URLEditor(), new URIEditor(),
             new FileEditor(), new UnitEditor(), new EnumEditor(), new ArrayEditor(), new StyleEditor(),
             new FilterEditor(), new DateEditor(), new TimeStampEditor()});
 

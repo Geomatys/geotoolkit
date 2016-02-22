@@ -33,9 +33,9 @@ import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.util.ImageIOUtilities;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
@@ -230,7 +230,7 @@ public final class CoverageUtilities {
                                 }
                             } finally {
                                 if (reader != null) {
-                                    ImageIOUtilities.releaseReader(reader);
+                                    XImageIO.dispose(reader);
                                 }
                             }
 

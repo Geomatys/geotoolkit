@@ -18,18 +18,18 @@
 package org.geotoolkit.data.nmea;
 
 import gnu.io.CommPortIdentifier;
-import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.SetupService;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Load native libraries for NMEA.
@@ -51,18 +51,11 @@ public class SetupNMEA implements SetupService {
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
 
-        // Create folder where we'll store native libraries...
-        final String tempDir = System.getProperty("java.io.tmpdir");
-        final File tmpFolder = new File(tempDir, UUID.randomUUID().toString());
-        if (!tmpFolder.isDirectory()) {
-            tmpFolder.mkdir();
-            tmpFolder.deleteOnExit();
-        }
-
-
         try {
+            // Create folder where we'll store native libraries...
+            final Path tmpFolder = Files.createTempDirectory("geotk_nmea_lib");
             // ... and add its location to the library path.
-            addLibraryPath(tmpFolder.getAbsolutePath());
+            addLibraryPath(tmpFolder.toAbsolutePath().toString());
 
             // build library folder location. Windows /mac are special cases, as versions have different names.
             String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -82,10 +75,9 @@ public class SetupNMEA implements SetupService {
 
             for (final String libName : RXTX_LIB_NAMES) {
                 final String libFile = System.mapLibraryName(libName);
-                final InputStream resource = SetupNMEA.class.getResourceAsStream(libDir.toString() + libFile);
-                final File tmpFile = new File(tmpFolder, libFile);
-                FileUtilities.buildFileFromStream(resource, tmpFile);
-                tmpFile.deleteOnExit();
+                final InputStream resource = SetupNMEA.class.getResourceAsStream(libDir + libFile);
+                final Path tmpFile = tmpFolder.resolve(libFile);
+                IOUtilities.writeStream(resource, tmpFile);
             }
 
            CommPortIdentifier.getPortIdentifiers();

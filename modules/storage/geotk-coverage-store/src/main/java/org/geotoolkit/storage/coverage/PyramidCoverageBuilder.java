@@ -37,6 +37,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.XImageIO;
 import org.opengis.util.GenericName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.LanczosInterpolation;
@@ -56,7 +57,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
@@ -834,7 +834,7 @@ public class PyramidCoverageBuilder {
             }
         } finally {
             if (reader != null) {
-                ImageIOUtilities.releaseReader(reader);
+                XImageIO.dispose(reader);
             }
         }
         return sourceImg;

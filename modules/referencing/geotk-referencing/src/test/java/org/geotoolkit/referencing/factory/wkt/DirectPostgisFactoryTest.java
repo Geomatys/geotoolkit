@@ -62,7 +62,7 @@ public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test
      * Gets the connection parameters to the coverage database.
      */
     private static DataSource getCoverageDataSource() throws IOException {
-        final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
+        final File pf = Installation.TESTS.directory(true).resolve("coverage-sql.properties").toFile();
         assumeTrue(pf.isFile()); // The test will be skipped if the above resource is not found.
         final Properties properties = new Properties();
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(pf))) {

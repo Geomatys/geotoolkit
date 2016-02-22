@@ -31,7 +31,7 @@ abstract class WritableHilbertRTreeTest extends HilbertTest {
 
     /**
      * Create a generic HilbertRTree Test suite, stored on File,  with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws StoreIndexException during Tree creation.
      * @throws IOException if problem during TreeElementMapper or Tree head writing.
@@ -42,6 +42,6 @@ abstract class WritableHilbertRTreeTest extends HilbertTest {
         final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);
 
         tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
+        tree = new FileHilbertRTree(inOutFile.toPath(), 4, 2, crs, tEM);
     }
 }

@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
+import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.junit.After;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
-import org.geotoolkit.util.FileUtilities;
-import org.junit.After;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -46,7 +47,7 @@ public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
     @After
     public void cleanup(){
         for(File f : folders){
-            FileUtilities.deleteDirectory(f);
+            IOUtilities.deleteSilently(f.toPath());
         }
         folders.clear();
     }

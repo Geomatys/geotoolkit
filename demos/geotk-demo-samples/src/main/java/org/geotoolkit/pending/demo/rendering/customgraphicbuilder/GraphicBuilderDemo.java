@@ -69,7 +69,7 @@ public class GraphicBuilderDemo {
 
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put( "url", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp") );
+        params.put( "path", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp").toURI() );
         FeatureStore store = FeatureStoreFinder.open(params);
         FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         MutableStyle style = SF.style();

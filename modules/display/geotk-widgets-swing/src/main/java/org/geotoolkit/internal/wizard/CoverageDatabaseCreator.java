@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.internal.wizard;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -190,9 +190,9 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
         setProperty(properties, ConfigurationKey.USER,     login.getUserName());
         setProperty(properties, ConfigurationKey.PASSWORD, new String(login.getPassword()));
         setProperty(properties, ConfigurationKey.SCHEMA,   epsg ? "EPSG" : wizard.schema.getText());
-        File file = (epsg ? Installation.EPSG : Installation.COVERAGES).validDirectory(true);
-        file = new File(file, Installation.DATASOURCE_FILE);
-        try (OutputStream out = new FileOutputStream(file)) {
+        Path file = (epsg ? Installation.EPSG : Installation.COVERAGES).validDirectory(true);
+        file = file.resolve(Installation.DATASOURCE_FILE);
+        try (OutputStream out = Files.newOutputStream(file)) {
             properties.store(out, "Connection parameters from the installer.");
         }
     }

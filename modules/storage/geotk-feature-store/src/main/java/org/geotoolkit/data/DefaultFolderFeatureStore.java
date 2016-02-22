@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.data;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
@@ -90,7 +89,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
         singleFileDefaultParameters = desc.createValue();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == URLP || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
+            if(pdesc == PATH || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
                 continue;
             }
             Parameters.getOrCreate((ParameterDescriptor)pdesc, singleFileDefaultParameters)
@@ -128,13 +127,13 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     public synchronized Set<GenericName> getNames() throws DataStoreException {
 
         if(stores == null){
-            this.stores = new HashMap<GenericName, FeatureStore>();
-            final File folder = getFolder(folderParameters);
+            this.stores = new HashMap<>();
+            final Path folder = getFolder(folderParameters);
 
-            if(!folder.exists()){
+            if(!Files.exists(folder)){
                 try{
-                    folder.mkdirs();
-                }catch(SecurityException ex){
+                    Files.createDirectory(folder);
+                }catch(IOException | SecurityException ex){
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
             }
@@ -144,41 +143,56 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
                 recursive = RECURSIVE.getDefaultValue();
             }
 
-            for(File f : folder.listFiles()){
-                explore(f,recursive);
+            try {
+                if (recursive) {
+                    Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            testFile(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            if (Files.isHidden(dir) || Files.isSymbolicLink(dir)) {
+                                return FileVisitResult.SKIP_SUBTREE;
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                } else {
+                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
+                        for (Path path : directoryStream) {
+                            testFile(path);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
         }
 
         return stores.keySet();
     }
 
-    private void explore(final File candidate, boolean recursive){
-        if(candidate.isHidden()){//skip for hidden files
-            return;
+    private void testFile(Path file) throws IOException {
+        if (Files.isHidden(file) || Files.isSymbolicLink(file)) {
+            return;//skip hidden and sym link files
         }
-        if(candidate.isDirectory()){
-            if(recursive){
-                for(File f : candidate.listFiles()){
-                    explore(f,recursive);
-                }
-            }
-        }else{
-            //test the file
-            final ParameterValueGroup params = singleFileDefaultParameters.clone();
+
+        final ParameterValueGroup params = singleFileDefaultParameters.clone();
+        try {
+            Parameters.getOrCreate(PATH, params).setValue(file.toUri().toURL());
+        } catch (MalformedURLException ex) {
+            getLogger().log(Level.FINE, ex.getLocalizedMessage(), ex);
+        }
+        if (singleFileFactory.canProcess(params)) {
             try {
-                Parameters.getOrCreate(URLP, params)
-                    .setValue(candidate.toURI().toURL());
-            } catch (MalformedURLException ex) {
-                getLogger().log(Level.FINE, ex.getLocalizedMessage(),ex);
-            }
-            if(singleFileFactory.canProcess(params)){
-                try {
-                    final FeatureStore fileDS = singleFileFactory.open(params);
-                    fileDS.addStorageListener(subListener);
-                    stores.put(fileDS.getNames().iterator().next(), fileDS);
-                } catch (DataStoreException ex) {
-                    getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
-                }
+                final FeatureStore fileDS = singleFileFactory.open(params);
+                fileDS.addStorageListener(subListener);
+                stores.put(fileDS.getNames().iterator().next(), fileDS);
+            } catch (DataStoreException ex) {
+                getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
         }
     }
@@ -203,9 +217,10 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
 
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
         try {
-            final File folder = getFolder(folderParameters);
-            final File newFile = new File(folder, typeName.tip().toString()+singleFileFactory.getFileExtensions()[0]);
-            Parameters.getOrCreate(URLP, params).setValue(newFile.toURI().toURL());
+            final Path folder = getFolder(folderParameters);
+            final String fileName = typeName.tip().toString() + singleFileFactory.getFileExtensions()[0];
+            final Path newFile = folder.resolve(fileName);
+            Parameters.getOrCreate(PATH, params).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
@@ -234,24 +249,24 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
             throw new DataStoreException("There's no data with the following type name : "+typeName);
         }
         // We should get a file feature store.
-        final File[] sourceFiles;
+        final Path[] sourceFiles;
         try {
             if (store instanceof DataFileStore) {
                 sourceFiles = ((DataFileStore) store).getDataFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URL fileURL = Parameters.value(URLP, store.getConfiguration());
-                if (fileURL == null) {
+                final URI fileURI = Parameters.value(PATH, store.getConfiguration());
+                if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
-                sourceFiles = new File[]{new File(fileURL.toURI())};
+                sourceFiles = new Path[]{Paths.get(fileURI)};
             }
 
-            for (File f : sourceFiles) {
-                f.delete();
+            for (Path path : sourceFiles) {
+                Files.deleteIfExists(path);
             }
-        } catch (URISyntaxException e) {
-            throw new DataStoreException("Source data cannot be reached for type name : " + typeName, e);
+        } catch (IOException e) {
+            throw new DataStoreException("Source data cannot be deleted for type name : " + typeName, e);
         }
 
         stores.remove(typeName);
@@ -338,12 +353,12 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         return store.getFeatureWriter(typeName, filter, hints);
     }
 
-    private File getFolder(final ParameterValueGroup params) throws DataStoreException{
-        final URL url = Parameters.value(URLFOLDER, params);
+    private Path getFolder(final ParameterValueGroup params) throws DataStoreException{
+        final URI uri = Parameters.value(FOLDER_PATH, params);
 
         try {
-            return new File(url.toURI());
-        } catch (URISyntaxException e) {
+            return Paths.get(uri);
+        } catch (FileSystemNotFoundException | IllegalArgumentException e) {
             throw new DataStoreException(e);
         }
     }
@@ -351,9 +366,9 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     /**
      * {@inheritDoc}
      */
-    public File[] getDataFiles() throws DataStoreException {
-        final File folder = getFolder(folderParameters);
-        return new File[]{ folder };
+    public Path[] getDataFiles() throws DataStoreException {
+        final Path folder = getFolder(folderParameters);
+        return new Path[]{ folder };
     }
 
     @Override

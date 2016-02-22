@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -61,12 +63,12 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
             .addName("path")
             .addName(Bundle.formatInternational(Bundle.Keys.path))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.path_remarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
 
     /**
      * Mandatory - the image reader type.
@@ -124,7 +126,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         }
         try {
             return new FileCoverageStore(params);
-        } catch (URISyntaxException ex) {
+        } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
     }

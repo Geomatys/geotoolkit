@@ -42,7 +42,7 @@ public class PortrayalDemo {
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public static void main(String[] args) throws DataStoreException, IOException, PortrayalException {
+    public static void main(String[] args) throws DataStoreException, IOException, PortrayalException, URISyntaxException {
         Demos.init();
 
 
@@ -67,7 +67,7 @@ public class PortrayalDemo {
 
     }
 
-    private static MapContext createContext() throws DataStoreException  {
+    private static MapContext createContext() throws DataStoreException, URISyntaxException {
         //create a map context
         final MapContext context = MapBuilder.createContext();
 
@@ -88,9 +88,9 @@ public class PortrayalDemo {
         return context;
     }
 
-    private static FeatureCollection openShapeFile() throws DataStoreException {
+    private static FeatureCollection openShapeFile() throws DataStoreException, URISyntaxException {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put("url", PortrayalDemo.class.getResource("/data/world/Countries.shp"));
+        params.put("path", PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
         final FeatureStore store = FeatureStoreFinder.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());

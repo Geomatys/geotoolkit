@@ -18,10 +18,16 @@
 package org.geotoolkit.lucene;
 
 import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -32,14 +38,14 @@ import static org.junit.Assert.*;
  */
 public class TreeManagerTest extends org.geotoolkit.test.TestBase {
 
-    public static File directory = new File("TreeManagerTest");
-
+    public static Path directory = Paths.get("TreeManagerTest");
+    
     @BeforeClass
     public static void setUpMethod() throws Exception {
-        if (directory.exists()) {
-            FileUtilities.deleteDirectory(directory);
+        if (Files.isDirectory(directory)) {
+            IOUtilities.deleteRecursively(directory);
         }
-        directory.mkdir();
+        Files.createDirectory(directory);
     }
 
     @AfterClass
@@ -47,11 +53,17 @@ public class TreeManagerTest extends org.geotoolkit.test.TestBase {
         // postgres
         if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
             if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (directory.exists() && directory.listFiles().length > 0)
-                    LucenePostgresSQLTreeEltMapper.resetDB(directory);
+                if (Files.isDirectory(directory)) {
+                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+                        final Iterator<Path> iterator = directoryStream.iterator();
+                        if (iterator.hasNext()) {
+                            LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
+                        }
+                    }
+                }
             }
         }
-        FileUtilities.deleteDirectory(directory);
+        IOUtilities.deleteRecursively(directory);
     }
 
     @Test

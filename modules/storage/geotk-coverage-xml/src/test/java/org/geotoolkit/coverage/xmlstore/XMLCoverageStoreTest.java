@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.junit.AfterClass;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.util.FileUtilities;
-import org.junit.AfterClass;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -47,7 +47,7 @@ public class XMLCoverageStoreTest extends AbstractPyramidalModelStoreTest {
     @AfterClass
     public static void cleanup(){
         for(File f : folders){
-            FileUtilities.deleteDirectory(f);
+            IOUtilities.deleteSilently(f.toPath());
         }
         folders.clear();
     }

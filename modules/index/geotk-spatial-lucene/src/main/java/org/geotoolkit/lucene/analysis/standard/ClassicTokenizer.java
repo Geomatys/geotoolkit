@@ -18,16 +18,14 @@
 package org.geotoolkit.lucene.analysis.standard;
 
 import java.io.IOException;
-import java.io.Reader;
+
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.standard.StandardTokenizerInterface;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.util.AttributeFactory;
-import org.apache.lucene.util.Version;
 
 /** A grammar-based tokenizer constructed with JFlex
  *
@@ -52,7 +50,7 @@ import org.apache.lucene.util.Version;
 
 public final class ClassicTokenizer extends Tokenizer {
   /** A private instance of the JFlex-constructed scanner */
-  private StandardTokenizerInterface scanner;
+  private ClassicTokenizerImpl scanner;
 
   public static final int ALPHANUM          = 0;
   public static final int APOSTROPHE        = 1;
@@ -77,12 +75,17 @@ public final class ClassicTokenizer extends Tokenizer {
     "<CJ>",
     "<ACRONYM_DEP>"
   };
+  
+  private int skippedPositions;
 
   private int maxTokenLength = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
 
   /** Set the max allowed token length.  Any token longer
    *  than this is skipped. */
   public void setMaxTokenLength(int length) {
+    if (length < 1) {
+      throw new IllegalArgumentException("maxTokenLength must be greater than zero");
+    }
     this.maxTokenLength = length;
   }
 
@@ -95,24 +98,21 @@ public final class ClassicTokenizer extends Tokenizer {
    * Creates a new instance of the {@link ClassicTokenizer}.  Attaches
    * the <code>input</code> to the newly created JFlex scanner.
    *
-   * @param input The input reader
-   *
    * See http://issues.apache.org/jira/browse/LUCENE-1068
    */
-  public ClassicTokenizer(Version matchVersion, Reader input) {
-    super(input);
-    init(matchVersion);
+  public ClassicTokenizer() {
+    init();
   }
 
   /**
-   * Creates a new ClassicTokenizer with a given {@link org.apache.lucene.util.AttributeSource.AttributeFactory} 
+   * Creates a new ClassicTokenizer with a given {@link org.apache.lucene.util.AttributeFactory} 
    */
-  public ClassicTokenizer(Version matchVersion, AttributeFactory factory, Reader input) {
-    super(factory, input);
-    init(matchVersion);
+  public ClassicTokenizer(AttributeFactory factory) {
+    super(factory);
+    init();
   }
 
-  private void init(Version matchVersion) {
+  private void init() {
     this.scanner = new ClassicTokenizerImpl(input);
   }
 
@@ -131,17 +131,17 @@ public final class ClassicTokenizer extends Tokenizer {
   @Override
   public final boolean incrementToken() throws IOException {
     clearAttributes();
-    int posIncr = 1;
+    skippedPositions = 0;
 
     while(true) {
       int tokenType = scanner.getNextToken();
 
-      if (tokenType == StandardTokenizerInterface.YYEOF) {
+      if (tokenType == ClassicTokenizerImpl.YYEOF) {
         return false;
       }
 
       if (scanner.yylength() <= maxTokenLength) {
-        posIncrAtt.setPositionIncrement(posIncr);
+        posIncrAtt.setPositionIncrement(skippedPositions+1);
         scanner.getText(termAtt);
         final int start = scanner.yychar();
         offsetAtt.setOffset(correctOffset(start), correctOffset(start+termAtt.length()));
@@ -156,20 +156,30 @@ public final class ClassicTokenizer extends Tokenizer {
       } else
         // When we skip a too-long term, we still increment the
         // position increment
-        posIncr++;
+        skippedPositions++;
     }
   }
   
   @Override
-  public final void end() {
+  public final void end() throws IOException {
+    super.end();
     // set final offset
     int finalOffset = correctOffset(scanner.yychar() + scanner.yylength());
     offsetAtt.setOffset(finalOffset, finalOffset);
+    // adjust any skipped tokens
+    posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement()+skippedPositions);
+  }
+  
+  @Override
+  public void close() throws IOException {
+    super.close();
+    scanner.yyreset(input);
   }
 
-    @Override
-    public void reset() throws IOException {
-        super.reset();
-        scanner.yyreset(input);
-    }
+  @Override
+  public void reset() throws IOException {
+    super.reset();
+    scanner.yyreset(input);
+    skippedPositions = 0;
+  }
 }

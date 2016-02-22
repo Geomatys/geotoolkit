@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.internal.io;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,6 +40,7 @@ import javax.naming.event.EventContext;
 import javax.naming.event.NamingEvent;
 import javax.naming.event.NamingListener;
 import javax.naming.event.ObjectChangeListener;
+import javax.naming.OperationNotSupportedException;
 import org.apache.sis.internal.metadata.sql.Initializer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
@@ -62,12 +64,16 @@ public final class JNDI implements EventContext, InitialContextFactory {
         // define at least the derby folder if not set
         boolean reload = false;
         if (System.getProperty("derby.system.home") == null) {
-            final File path = Installation.SIS.directory(true);
-            if (!path.exists()) {
-                path.mkdirs();
+            final Path path = Installation.SIS.directory(true);
+            if (!Files.exists(path)) {
+                try {
+                    Files.createDirectories(path);
+                } catch (IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
             }
-            if (path.isDirectory()) {
-                System.setProperty("derby.system.home", path.getPath());
+            if (Files.isDirectory(path)) {
+                System.setProperty("derby.system.home", path.toAbsolutePath().toString());
                 reload = true;
             }
         }
@@ -133,7 +139,7 @@ public final class JNDI implements EventContext, InitialContextFactory {
             if (!(env instanceof JNDI)) {
                 try {
                     env.bind(Initializer.JNDI, source);
-                } catch (NameAlreadyBoundException ex) {
+                } catch (NameAlreadyBoundException | OperationNotSupportedException ex) {
                     Logging.getLogger("org.geotoolkit.referencing").log(Level.CONFIG, ex.getMessage(), ex);
                 }
             }

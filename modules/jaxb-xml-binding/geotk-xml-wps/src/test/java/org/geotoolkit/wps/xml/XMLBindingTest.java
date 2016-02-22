@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.wps.xml;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -26,7 +27,6 @@ import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.ows.xml.v110.CodeType;
-import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataInputsType;
 import org.geotoolkit.wps.xml.v100.Execute;
@@ -42,10 +42,10 @@ import org.junit.Test;
 public class XMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
-    public void testUnmarshallingExecute() throws JAXBException, IOException {
-        File f = FileUtilities.getFileFromResource("xml/executeRequest.xml");
+    public void testUnmarshallingExecute() throws JAXBException, IOException, URISyntaxException {
+        URL url = ClassLoader.getSystemResource("xml/executeRequest.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-        final Object obj = u.unmarshal(f);
+        final Object obj = u.unmarshal(url);
         Assert.assertTrue(obj instanceof Execute);
 
         Execute request = (Execute) obj;
@@ -69,9 +69,9 @@ public class XMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testUnmarshallingExecute2() throws JAXBException, IOException {
-        File f = FileUtilities.getFileFromResource("xml/executeRequest2.xml");
+        URL url = ClassLoader.getSystemResource("xml/executeRequest2.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-        final Object obj = u.unmarshal(f);
+        final Object obj = u.unmarshal(url);
         Assert.assertTrue(obj instanceof Execute);
 
         Execute request = (Execute) obj;
@@ -95,9 +95,9 @@ public class XMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testUnmarshallingExecute3() throws JAXBException, IOException {
-        File f = FileUtilities.getFileFromResource("xml/executeRequest3.xml");
+        URL url = ClassLoader.getSystemResource("xml/executeRequest3.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-        final Object obj = u.unmarshal(f);
+        final Object obj = u.unmarshal(url);
         Assert.assertTrue(obj instanceof Execute);
 
         Execute request = (Execute) obj;
@@ -121,9 +121,9 @@ public class XMLBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testUnmarshallingExecute4() throws JAXBException, IOException {
-        File f = FileUtilities.getFileFromResource("xml/executeRequest4.xml");
+        URL url = ClassLoader.getSystemResource("xml/executeRequest4.xml");
         Unmarshaller u = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-        final Object obj = u.unmarshal(f);
+        final Object obj = u.unmarshal(url);
         Assert.assertTrue(obj instanceof Execute);
 
         Execute request = (Execute) obj;

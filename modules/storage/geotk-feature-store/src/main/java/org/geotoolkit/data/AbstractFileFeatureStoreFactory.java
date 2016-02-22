@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
@@ -35,12 +35,12 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URL> URLP = new ParameterBuilder()
-            .addName("url")
-            .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
-            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramPathAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramPathRemarks))
             .setRequired(true)
-            .create(URL.class, null);
+            .create(URI.class, null);
 
     /**
      * {@inheritDoc }
@@ -50,9 +50,9 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
         boolean valid = super.canProcess(params);
 
         if(valid){
-            final Object obj = params.parameter(URLP.getName().toString()).getValue();
-            if(obj != null && obj instanceof URL){
-                final String path = ((URL)obj).toString().toLowerCase();
+            final Object obj = params.parameter(PATH.getName().toString()).getValue();
+            if(obj != null && obj instanceof URI){
+                final String path = ((URI)obj).toString().toLowerCase();
                 for(final String ext : getFileExtensions()){
                     if(path.endsWith(ext) && !path.endsWith("*"+ext)){
                         return true;
@@ -70,19 +70,21 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
     
     /**
      * {@inheritDoc }
+     * @param uri
      */
     @Override
-    public boolean canProcess(final URL url) {
-        return canProcess(Collections.singletonMap(URLP.getName().toString(), url));
+    public boolean canProcess(final URI uri) {
+        return canProcess(Collections.singletonMap(PATH.getName().toString(), uri));
     }
 
     /**
      * {@inheritDoc }
+     * @param uri
      */
     @Override
-    public FeatureStore createDataStore(final URL url) throws DataStoreException {
+    public FeatureStore createDataStore(final URI uri) throws DataStoreException {
         FeatureStore result;
-        final  Map params = Collections.singletonMap(URLP.getName().toString(), url);
+        final  Map params = Collections.singletonMap(PATH.getName().toString(), uri);
         try {
             result = open(params);
         } catch (DataStoreException e) {
