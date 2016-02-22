@@ -880,8 +880,8 @@ public class GridGeometry2D extends GeneralGridGeometry {
                     cornerToCRS2D = computeGridToCRS2D(orientation);
                 }
             }
+            return cornerToCRS2D;
         }
-        return cornerToCRS2D;
     }
 
     /**

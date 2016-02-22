@@ -597,9 +597,9 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                 if (cornerToCRS == null) {
                     cornerToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CENTER, anchor);
                 }
+                assert !cornerToCRS.equals(gridToCRS) : cornerToCRS;
+                return cornerToCRS;
             }
-            assert !cornerToCRS.equals(gridToCRS) : cornerToCRS;
-            return cornerToCRS;
         }
         return PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CENTER, anchor);
     }
