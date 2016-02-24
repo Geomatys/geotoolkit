@@ -18,8 +18,10 @@
 package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import java.util.List;
+import java.util.Objects;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
@@ -216,41 +218,42 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      */
     @Override
     public boolean equals(final Object o) {
-        if (this == o) {return true;}
-        if (!(o instanceof SerialChainFilter)) {return false;}
-        final SerialChainFilter other = (SerialChainFilter) o;
-
-        if (this.chain.size() != other.getChain().size() || this.actionType.length != other.getActionType().length) {
-        	return false;
+        if (this == o) {
+            return true;
         }
         
-        for (int i = 0; i < this.chain.size(); i++) {
-            if (this.actionType[i] != other.getActionType()[i]  || !this.chain.get(i).equals(other.getChain().get(i))) {
+        if (o instanceof SerialChainFilter) {
+            final SerialChainFilter other = (SerialChainFilter) o;
+
+            if (this.chain.size() != other.getChain().size() || 
+                this.actionType.length != other.getActionType().length) {
                 return false;
             }
+
+            for (int i = 0; i < this.chain.size(); i++) {
+                if (!this.chain.get(i).equals(other.getChain().get(i))) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < this.actionType.length; i++) {
+                if (this.actionType[i] != other.getActionType()[i]) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
+        return false;
     }
-    
-    /** 
-     * Returns a hash code value for this object.
-     * 
-     * @see org.apache.lucene.search.RangeFilter#hashCode
-     */
+
     @Override
     public int hashCode() {
-      if (chain.isEmpty()) {
-    	  return 0;
-      }
-
-      int h = chain.get(0).hashCode() ^ Integer.valueOf(actionType[0]).hashCode();
-      for (int i = 1; i < this.chain.size(); i++) {
-    	  h ^= chain.get(i).hashCode();
-    	  h ^= Integer.valueOf(actionType[i]).hashCode();
-      }
-
-      return h;
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.chain);
+        hash = 37 * hash + Arrays.hashCode(this.actionType);
+        return hash;
     }
+    
+    
     
     @Override
     public String toString(String s) {
