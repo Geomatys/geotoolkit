@@ -26,6 +26,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
@@ -91,7 +92,7 @@ public class KmlFeatureUtilities {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-                        final String ext = org.apache.sis.internal.storage.IOUtilities.extension(file);
+                        final String ext = IOUtilities.extension(file);
 
                         if ("kml".equalsIgnoreCase(ext)) {
                             if (LOGGER.isLoggable(Level.FINE)) {

@@ -26,8 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
 
 
@@ -247,7 +247,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (path instanceof File) {
                 return toSupportFile(((File) path).toPath(), extension, isTFW).toFile();
             }
-            final Object renamed = org.geotoolkit.nio.IOUtilities.changeExtension(path, extension);
+            final Object renamed = IOUtilities.changeExtension(path, extension);
             if (renamed != null) {
                 return renamed;
             }

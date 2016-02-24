@@ -103,7 +103,7 @@ public class BILImageReader extends WorldFileImageReader {
         public boolean canDecodeInput(final Object source) throws IOException {
             //check if file has extension .bil and .hdr file is present
 
-            final String extension = org.apache.sis.internal.storage.IOUtilities.extension(source);
+            final String extension = IOUtilities.extension(source);
             if(!"bil".equalsIgnoreCase(extension)){
                 return false;
             }

@@ -117,7 +117,7 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
             if (value != null) {
                 try {
                     Path path = Paths.get(value);
-                    return Files.exists(path) && "nc".equalsIgnoreCase(org.apache.sis.internal.storage.IOUtilities.extension(path));
+                    return Files.exists(path) && "nc".equalsIgnoreCase(IOUtilities.extension(path));
                 } catch (IllegalArgumentException| FileSystemNotFoundException e) {
                     return false;
                 }

@@ -20,7 +20,6 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,9 +34,9 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.apache.sis.internal.storage.IOUtilities;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -156,9 +155,9 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     private void deleteFile(final ShpFileType shpFileType) {
-        final URI url = shpFiles.getURI(shpFileType);
+        final URI uri = shpFiles.getURI(shpFileType);
         try {
-            Path toDelete = IOUtilities.toPath(url.toURL(), ENCODING);
+            Path toDelete = IOUtilities.toPath(uri);
             Files.deleteIfExists(toDelete);
         } catch(IOException ex){
             //should not happen

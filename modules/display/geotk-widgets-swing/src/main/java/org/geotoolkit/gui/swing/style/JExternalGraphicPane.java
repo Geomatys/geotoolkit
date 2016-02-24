@@ -32,9 +32,9 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;

@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 import javax.imageio.*;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.geometry.Envelopes;
@@ -39,6 +38,7 @@ import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;

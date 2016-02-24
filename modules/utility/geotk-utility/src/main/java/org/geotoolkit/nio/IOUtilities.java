@@ -398,6 +398,34 @@ public final class IOUtilities extends Static {
     }
 
     /**
+     * Wrap of {@link org.apache.sis.internal.storage.IOUtilities#filename(Object)} (Object)} to avoid double import.
+     * Returns the filename from a {@link Path}, {@link File}, {@link URL}, {@link URI} or {@link CharSequence}
+     * instance. If the given argument is specialized type like {@code Path} or {@code File}, then this method uses
+     * dedicated API like {@link Path#getFileName()}. Otherwise this method gets a string representation of the path
+     * and returns the part after the last {@code '/'} or platform-dependent name separator character, if any.
+     *
+     * @param  input An instance of one of the above-cited types, or {@code null}.
+     * @return The filename in the given input, or {@code null} if the given object is null or of unknown type.
+     */
+    public static String filename(Object input) {
+        return org.apache.sis.internal.storage.IOUtilities.filename(input);
+    }
+
+    /**
+     * Wrap of {@link org.apache.sis.internal.storage.IOUtilities#extension(Object)} (Object)} to avoid double import.
+     * Returns the filename extension from a {@link Path}, {@link File}, {@link URL}, {@link URI} or
+     * {@link CharSequence} instance. If no extension is found, returns an empty string. If the given
+     * object is of unknown type, return {@code null}.
+     *
+     * @param  input An instance of one of the above-cited types, or {@code null}.
+     * @return The extension in the given path, or an empty string if none, or {@code null}
+     *         if the given object is null or of unknown type.
+     */
+    public static String extension(Object input) {
+        return org.apache.sis.internal.storage.IOUtilities.extension(input);
+    }
+
+    /**
      * Extract file name without extension from path object (Usually instance of {@link String},
      * {@link File}, {@link URL}, {@link URI} or {@link Path}).
      *

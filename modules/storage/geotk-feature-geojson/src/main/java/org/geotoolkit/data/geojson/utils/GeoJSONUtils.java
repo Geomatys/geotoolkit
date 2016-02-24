@@ -168,7 +168,7 @@ public final class GeoJSONUtils extends Static {
      * @return The filename extension in the given path, or an empty string if none.
      */
     public static String extension(final Object path) {
-        return org.apache.sis.internal.storage.IOUtilities.extension(path);
+        return IOUtilities.extension(path);
     }
 
     /**

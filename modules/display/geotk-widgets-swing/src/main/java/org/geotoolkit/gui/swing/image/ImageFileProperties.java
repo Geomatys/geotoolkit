@@ -46,6 +46,7 @@ import javax.swing.DefaultListModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -55,7 +56,6 @@ import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;

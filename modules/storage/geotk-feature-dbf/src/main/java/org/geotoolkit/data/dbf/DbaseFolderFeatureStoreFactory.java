@@ -20,6 +20,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -114,7 +115,7 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
             boolean shpFiles = false;
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile)) {
                 for (Path candidate : stream) {
-                    final String ext = org.apache.sis.internal.storage.IOUtilities.extension(candidate);
+                    final String ext = IOUtilities.extension(candidate);
                     if ("dbf".equalsIgnoreCase(ext)) {
                         dbfFiles = true;
                     }
