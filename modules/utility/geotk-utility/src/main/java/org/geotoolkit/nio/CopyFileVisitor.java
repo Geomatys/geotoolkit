@@ -59,6 +59,9 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attrs) throws IOException {
+        if (sourcePath == null) {
+            sourcePath = file.getParent();
+        }
         final Path relativize = sourcePath.relativize(file);
         Files.copy(file, targetPath.resolve(relativize.toString()), copyOption);
         return FileVisitResult.CONTINUE;
