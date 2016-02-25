@@ -38,6 +38,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.geometry.jts.JTS;
 
 // Geotoolkit dependencies
@@ -105,11 +106,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public AbstractIndexer(final String indexID, final Path configDirectory, final Analyzer analyzer) {
         super(analyzer);
+        ArgumentChecks.ensureNonNull("indexID", indexID);
+        ArgumentChecks.ensureNonNull("configDirectory", configDirectory);
         try {
             // we get the last index directory
             long maxTime = 0;
             Path currentIndexDirectory = null;
-            if (configDirectory != null && Files.exists(configDirectory) && Files.isDirectory(configDirectory)) {
+            if (Files.exists(configDirectory) && Files.isDirectory(configDirectory)) {
 
                 try (final DirectoryStream<Path> dirStream = Files.newDirectoryStream(configDirectory)) {
                     for (Path indexDirectory : dirStream) {
@@ -130,7 +133,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             if (currentIndexDirectory == null) {
                 currentIndexDirectory = configDirectory.resolve(indexID + "index-" + System.currentTimeMillis());
-                Files.createDirectory(currentIndexDirectory);
+                Files.createDirectories(currentIndexDirectory);
                 needCreation = true;
                 setFileDirectory(currentIndexDirectory);
             } else {
