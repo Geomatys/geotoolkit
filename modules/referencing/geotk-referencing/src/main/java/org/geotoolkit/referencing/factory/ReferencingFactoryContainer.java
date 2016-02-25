@@ -451,8 +451,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             csName  = IdentifiedObjects.getProperties(crs.getCoordinateSystem());
             crsName = IdentifiedObjects.getProperties(crs);
         } else {
-            csName  = getTemporaryName(cs);
-            crsName = getTemporaryName(horizontal);
+            csName  = getTemporaryName(cs, " (3D)");
+            crsName = getTemporaryName(horizontal, " (3D)");
         }
         crsName = Identifier3D.addHorizontalCRS(crsName, horizontal);
         final  CSFactory  csFactory = getCSFactory();
@@ -528,9 +528,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * Returns a new coordinate reference system with only the specified dimension. This method can
      * be used for example in order to get a component of a {@linkplain CompoundCRS compound CRS}.
      *
-     * @todo The current implementation does not break a 3D Geographic CRS or a 3D Projected CRS
-     *       into its components. The capability may be added in a future release (see
-     *       <a href="http://jira.geotoolkit.org/browse/GEOTK-129">GEOTK-129</a>).
+     * @todo The current implementation has incomplete support of 3D Geographic CRS.
+     *       See <a href="http://jira.geotoolkit.org/browse/GEOTK-129">GEOTK-129</a>.
      *
      * @param  crs The original (usually compound) CRS.
      * @param  dimensions The dimensions to keep.
@@ -544,7 +543,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             throws FactoryException
     {
         final int length = dimensions.length;
-        final int crsDimension = crs.getCoordinateSystem().getDimension();
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final int crsDimension = cs.getDimension();
         if (length == 0 || dimensions[0] < 0 || dimensions[length-1] >= crsDimension ||
             !ArraysExt.isSorted(dimensions, true))
         {
@@ -597,22 +597,28 @@ search:     for (final CoordinateReferenceSystem source : sources) {
             if (count == 1) {
                 return targets[0];
             }
-            return getCRSFactory().createCompoundCRS(getTemporaryName(crs), ArraysExt.resize(targets, count));
+            return getCRSFactory().createCompoundCRS(getTemporaryName(crs, " (subset)"), ArraysExt.resize(targets, count));
         }
         /*
-         * Special case for common hard-coded constants.
+         * Three-dimensional geographic CRS.
+         *
+         * TODO: needs a better inspection of axis order.
          */
-        if (CRS.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {
+        if (crsDimension == 3 && (cs instanceof EllipsoidalCS) && (crs instanceof GeodeticCRS)) {
             switch (dimensions.length) {
-                case 2: {
-                    if (dimensions[0] == 0 && dimensions[1] == 1) {
-                        return CommonCRS.WGS84.normalizedGeographic();
-                    }
-                    break;
-                }
                 case 1: {
                     if (dimensions[0] == 2) {
                         return CommonCRS.Vertical.ELLIPSOIDAL.crs();
+                    }
+                    break;
+                }
+                case 2: {
+                    if (dimensions[0] == 0 && dimensions[1] == 1) {
+                        if (CRS.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {    // Common case.
+                            return CommonCRS.WGS84.normalizedGeographic();
+                        }
+                        return getCRSFactory().createGeographicCRS(getTemporaryName(crs, " (subset)"), ((GeodeticCRS) crs).getDatum(),
+                                getCSFactory().createEllipsoidalCS(getTemporaryName(cs, " (subset)"), cs.getAxis(0), cs.getAxis(1)));
                     }
                     break;
                 }
@@ -630,10 +636,10 @@ search:     for (final CoordinateReferenceSystem source : sources) {
     /**
      * Returns a temporary name for object derived from the specified one.
      */
-    private static Map<String,?> getTemporaryName(final IdentifiedObject source) {
+    private static Map<String,?> getTemporaryName(final IdentifiedObject source, final String suffix) {
         final Identifier id = source.getName();
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
                 new ImmutableIdentifier(null, // Null because we are inventing a code.
-                    id.getCodeSpace(), id.getCode() + " (3D)"));
+                    id.getCodeSpace(), id.getCode() + suffix));
     }
 }
