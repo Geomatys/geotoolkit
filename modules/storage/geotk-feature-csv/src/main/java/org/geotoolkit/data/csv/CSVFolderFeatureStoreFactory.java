@@ -20,18 +20,17 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataType;
@@ -102,27 +101,21 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
         }
 
         final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        if(!(obj instanceof URI)){
             return false;
         }
 
-        final URL path = (URL)obj;
-        Path pathFile;
+        final URI path = (URI)obj;
         try {
-            pathFile = Paths.get(path.toURI());
-        } catch (URISyntaxException e) {
-            // Should not happen if the url is well-formed.
-            LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = Paths.get(path.toExternalForm());
-        }
-
-        if (Files.isDirectory(pathFile)){
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, "*.csv")) {
-                //at least one
-                return stream.iterator().hasNext();
-            } catch (IOException e) {
-                LOGGER.log(Level.FINE, e.getLocalizedMessage());
+            Path pathFile = IOUtilities.toPath(path);
+            if (Files.isDirectory(pathFile)) {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, "*.csv")) {
+                    //at least one
+                    return stream.iterator().hasNext();
+                }
             }
+        } catch (IOException e) {
+            LOGGER.log(Level.FINE, e.getLocalizedMessage());
         }
         return false;
     }

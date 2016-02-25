@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
@@ -94,14 +94,14 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
         }
 
         final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
-        if(!(obj instanceof URL)){
+        if(!(obj instanceof URI)){
             return false;
         }
 
         final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
         final Boolean recursive = (Boolean) params.parameter(RECURSIVE.getName().toString()).getValue();
 
-        final URL url = (URL)obj;
+        final URI url = (URI)obj;
         try {
             Path path = IOUtilities.toPath(url);
             if (Files.isDirectory(path)){

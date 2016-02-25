@@ -547,7 +547,10 @@ public final class ShpFiles {
                 base = type.toBase( (Path)obj );
             } else if(obj instanceof URL) {
                 base = type.toBase( (URL)obj );
+            } else if(obj instanceof URI) {
+                base = type.toBase( (URI)obj );
             }
+
             if (base != null) {
                 return base;
             }
