@@ -148,7 +148,9 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     final Coordinate[] coords = geom.getCoordinates();
                     for(int i=0, n = coords.length; i<n ; i++){
                         final Coordinate coord = coords[i];
-                        g2d.drawImage(img, (int)coord.x+postx, (int)coord.y+posty, null);
+                        //we use Math.floor and not a cast, for negative values this ensure
+                        //a regular displacement and avoid tile border artifacts
+                        g2d.drawImage(img, (int)Math.floor(coord.x)+postx, (int)Math.floor(coord.y)+posty, null);
                     }
 
                 }else{
@@ -164,7 +166,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         pcoord = geom.getCoordinate();
                     }
 
-                    g2d.drawImage(img, (int)pcoord.x+postx, (int)pcoord.y+posty, null);
+                    g2d.drawImage(img, (int)Math.floor(pcoord.x)+postx, (int)Math.floor(pcoord.y)+posty, null);
                 }
             }else{
                 final AffineTransform postConcat = new AffineTransform(1, 0, 0, 1, postx, posty);
