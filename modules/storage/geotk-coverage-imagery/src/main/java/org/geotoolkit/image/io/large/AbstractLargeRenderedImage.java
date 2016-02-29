@@ -44,17 +44,17 @@ public abstract class AbstractLargeRenderedImage implements RenderedImage {
      * Default tile size.
      */
     private static final int DEFAULT_TILE_SIZE = 256;
-    
+
     /**
      * Minimum required tile size.
      */
     private static final int MIN_TILE_SIZE = 64;
-    
+
     /**
-     * Upper left corner of currently stored {@link Raster}. 
+     * Upper left corner of currently stored {@link Raster}.
      */
     private static final Point ptOffset = new Point();
-    
+
     /**
      * Image attributs.
      */
@@ -76,29 +76,30 @@ public abstract class AbstractLargeRenderedImage implements RenderedImage {
     /**
      * Create {@link LargeRenderedImage} with default upper corner at position (0, 0),
      * a default tile size of 256 x 256 pixels and a default tile grid offset at position (0, 0).
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param colorModel {@link ColorModel} use to build {@link Raster} (image tiles).
      */
-    public AbstractLargeRenderedImage(int width, int height, ColorModel colorModel) { 
-        this(0, 0, width, height, null, 0, 0, colorModel);
+    public AbstractLargeRenderedImage(int width, int height, SampleModel sampleModel, ColorModel colorModel) {
+        this(0, 0, width, height, null, 0, 0, sampleModel, colorModel);
     }
-    
+
     /**
      * Create {@link LargeRenderedImage} object.
-     * 
+     *
      * @param minX image upper left corner min X values.
-     * @param minY image upper left corner min Y values. 
+     * @param minY image upper left corner min Y values.
      * @param width image width.
-     * @param height image height. 
+     * @param height image height.
      * @param tileSize size of tile or raster within this image.
      * @param tileGridXOffset tile grid offset in X direction.
      * @param tileGridYOffset tile grid offset in Y direction.
-     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles). 
+     * @param sampleModel
+     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles).
      */
     public AbstractLargeRenderedImage(int minX, int minY, int width, int height,
-            Dimension tileSize, int tileGridXOffset, int tileGridYOffset, ColorModel colorModel) {
+            Dimension tileSize, int tileGridXOffset, int tileGridYOffset, SampleModel sampleModel, ColorModel colorModel) {
         ArgumentChecks.ensureNonNull("ColorModel", colorModel);
         ArgumentChecks.ensureStrictlyPositive("image width", width);
         ArgumentChecks.ensureStrictlyPositive("image height", height);
@@ -119,7 +120,9 @@ public abstract class AbstractLargeRenderedImage implements RenderedImage {
         this.nbrTileX = (width  + tileWidth - 1)  / tileWidth;
         this.nbrTileY = (height + tileHeight - 1) / tileHeight;
         this.cm = colorModel;
-        this.sm = colorModel.createCompatibleSampleModel(tileWidth, tileHeight);
+        this.sm = (colorModel.isCompatibleSampleModel(sampleModel))
+                ? sampleModel
+                : colorModel.createCompatibleSampleModel(tileWidth, tileHeight);
         this.minTileGridX = (minX - tileGridXOffset) / tileWidth;
         this.minTileGridY = (minY - tileGridYOffset) / tileHeight;
         if (tileGridXOffset < minX) minTileGridX--;
