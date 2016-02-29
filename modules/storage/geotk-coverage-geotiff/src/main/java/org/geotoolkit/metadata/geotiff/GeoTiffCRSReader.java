@@ -42,46 +42,13 @@ import java.util.HashMap;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
-import org.apache.sis.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.apache.sis.referencing.crs.DefaultProjectedCRS;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.referencing.datum.DefaultEllipsoid;
-import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
-import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
-import org.apache.sis.internal.referencing.provider.Equirectangular;
-import org.geotoolkit.referencing.operation.provider.Krovak;
-import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
-import org.apache.sis.internal.referencing.provider.Mercator1SP;
-import org.apache.sis.internal.referencing.provider.Mercator2SP;
-import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
-import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
-import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
-import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
-import org.apache.sis.internal.referencing.provider.ObliqueStereographic;
-import org.geotoolkit.referencing.operation.provider.Orthographic;
-import org.apache.sis.internal.referencing.provider.PolarStereographicA;
-import org.geotoolkit.referencing.operation.provider.Stereographic;
-import org.apache.sis.internal.referencing.provider.TransverseMercator;
-import org.geotoolkit.resources.Vocabulary;
 import org.opengis.parameter.GeneralParameterDescriptor;
-
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -90,14 +57,56 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.crs.GeodeticCRS;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.util.FactoryException;
+
+import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.internal.referencing.provider.Equirectangular;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
+import org.apache.sis.internal.referencing.provider.ObliqueStereographic;
+import org.apache.sis.internal.referencing.provider.PolarStereographicA;
+import org.apache.sis.internal.referencing.provider.PolarStereographicB;
+import org.apache.sis.internal.referencing.provider.PolarStereographicC;
+import org.apache.sis.internal.referencing.provider.TransverseMercator;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCartesianCS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
+import org.geotoolkit.referencing.operation.provider.Krovak;
+import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
+import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
+import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
+import org.geotoolkit.referencing.operation.provider.Orthographic;
+import org.geotoolkit.referencing.operation.provider.Stereographic;
+import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
@@ -820,17 +829,74 @@ final class GeoTiffCRSReader {
             }
 
             /**
-             * POLAR_STEREOGRAPHIC.
+             * POLAR_STEREOGRAPHIC variant A B and C
              */
-            if (name.equalsIgnoreCase("polar_stereographic")
-                    || code == CT_PolarStereographic) {
-                parameters = mtFactory.getDefaultParameters("Polar_Stereographic");
-                parameters.parameter(code(PolarStereographicA.LATITUDE_OF_ORIGIN)).setValue(this.getOriginLat(metadata));
-                parameters.parameter(code(PolarStereographicA.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
-                parameters.parameter(code(PolarStereographicA.FALSE_EASTING)).setValue(getFalseEasting(metadata));
-                parameters.parameter(code(PolarStereographicA.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                parameters.parameter(code(PolarStereographicA.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
-                return parameters;
+            if (code == CT_PolarStereographic) {
+
+                /**
+                 * They exist 3 kind of polar StereoGraphic projections,define the case
+                 * relative to existing needed attributs
+                 */
+                //-- set the mutual projection attributs
+                //-- all polar stereographic formulas share LONGITUDE_OF_ORIGIN
+                final double longitudeOfOrigin = metadata.getAsDouble(ProjStraightVertPoleLongGeoKey);
+
+                /*
+                * For polar Stereographic variant A only latitudeOfNaturalOrigin expected values are {-90; +90}.
+                * In some case, standard parallele is stipulate into latitudeOfNaturalOrigin tiff tag by error.
+                * To avoid CRS problem creation, try to anticipe this comportement by switch latitudeOfNaturalOrigin into standard parallele.
+                * HACK FOR USGS LANDSAT 8 difference between geotiff tag and Landsat 8 metadata MTL.txt file.
+                */
+                double standardParallel                 = metadata.getAsDouble(ProjStdParallel1GeoKey);
+                final double latitudeOfNaturalOrigin    = metadata.getAsDouble(ProjNatOriginLatGeoKey);
+                final boolean isVariantALatitudeConform = (Math.abs(Latitude.MAX_VALUE - Math.abs(latitudeOfNaturalOrigin)) <  Formulas.ANGULAR_TOLERANCE);
+
+                if (!isVariantALatitudeConform && Double.isNaN(standardParallel)) {
+                    LOGGER.log(Level.WARNING, "The latitudeOfNaturalOrigin for Polar Stereographic variant A is not conform.\n"
+                            + "Expected values are {-90; +90}, found : "+latitudeOfNaturalOrigin+"\n"
+                            + "Switch latitudeOfNaturalOrigin by Latitude of standard parallel to try building of Polar Stereographic Variant B or C.");
+                    standardParallel = latitudeOfNaturalOrigin;
+                }
+
+                if (Double.isNaN(standardParallel)) {
+                    //-- no standard parallele : PolarStereoGraphic VARIANT A
+                    final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                    .getOperationMethod("Polar Stereographic (variant A)");
+
+                    parameters = method.getParameters().createValue();
+                    parameters.parameter(code(PolarStereographicA.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
+                    parameters.parameter(code(PolarStereographicA.LATITUDE_OF_ORIGIN)).setValue(latitudeOfNaturalOrigin);
+                    parameters.parameter(code(PolarStereographicA.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
+                    parameters.parameter(code(PolarStereographicA.FALSE_EASTING)).setValue(metadata.getAsDouble(ProjFalseEastingGeoKey));
+                    parameters.parameter(code(PolarStereographicA.FALSE_NORTHING)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
+
+                } else {
+
+                    //-- Variant B and C share STANDARD_PARALLEL
+
+                    final double falseOriginEasting = metadata.getAsDouble(ProjFalseOriginEastingGeoKey);
+                    if (Double.isNaN(falseOriginEasting)) {
+                        //-- no false Origin Easting : PolarStereoGraphic VARIANT B
+                        final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                              .getOperationMethod("Polar Stereographic (variant B)");
+
+                        parameters = method.getParameters().createValue();
+                        parameters.parameter(code(PolarStereographicB.STANDARD_PARALLEL)).setValue(standardParallel);
+                        parameters.parameter(code(PolarStereographicB.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
+                        parameters.parameter(code(PolarStereographicB.FALSE_EASTING)).setValue(metadata.getAsDouble(ProjFalseEastingGeoKey));
+                        parameters.parameter(code(PolarStereographicB.FALSE_NORTHING)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
+                    } else {
+                        //-- PolarStereoGraphic VARIANT C
+                        final OperationMethod method = DefaultFactories.forBuildin(CoordinateOperationFactory.class)
+                              .getOperationMethod("Polar Stereographic (variant C)");
+
+                        parameters = method.getParameters().createValue();
+                        parameters.parameter(code(PolarStereographicB.STANDARD_PARALLEL)).setValue(standardParallel);
+                        parameters.parameter(code(PolarStereographicB.LONGITUDE_OF_ORIGIN)).setValue(longitudeOfOrigin);
+                        parameters.parameter(code(PolarStereographicC.EASTING_AT_FALSE_ORIGIN)).setValue(metadata.getAsDouble(ProjFalseOriginEastingGeoKey));
+                        parameters.parameter(code(PolarStereographicC.NORTHING_AT_FALSE_ORIGIN)).setValue(metadata.getAsDouble(ProjFalseNorthingGeoKey));
+                    }
+                }
             }
 
             /**
@@ -917,7 +983,7 @@ final class GeoTiffCRSReader {
                 return parameters;
             }
 
-        } catch (NoSuchIdentifierException e) {
+        } catch (FactoryException e) {
             throw new IOException(e.getLocalizedMessage(), e);
         }
 
@@ -984,7 +1050,24 @@ final class GeoTiffCRSReader {
                         && !tempCode.startsWith("epsg")) {
                     geogCode.insert(0, "EPSG:");
                 }
-                gcs = (GeographicCRS) CRS.decode(geogCode.toString(), true);
+
+                final CoordinateReferenceSystem decCRS = CRS.decode(geogCode.toString(), true);
+                //-- all CRS must be Geodetic
+                if (!(decCRS instanceof GeodeticCRS))
+                    throw new IllegalArgumentException("Impossible to define CRS from none Geodetic base. found : "+decCRS.toWKT());
+
+                if (decCRS instanceof GeographicCRS) {
+                    gcs = (GeographicCRS) CRS.decode(geogCode.toString(), true);
+                } else {
+                    //-- Try to build it from datum and re-create Geographic CRS.
+                    LOGGER.log(Level.WARNING, "Impossible to build Projected CRS from none Geographic base CRS, replaced by Geographic CRS.");
+                    final GeodeticCRS geodeticCrs = (GeodeticCRS) decCRS;
+                    final GeodeticDatum datum = geodeticCrs.getDatum();
+                    final HashMap<String, Object> properties = new HashMap<String, Object>();
+                    properties.put(GeographicCRS.NAME_KEY, decCRS.getName());
+                    gcs = new DefaultGeographicCRS(properties, datum, org.apache.sis.referencing.CommonCRS.defaultGeographic().getCoordinateSystem());
+                }
+
                 if (angularUnit != null
                         && !angularUnit.equals(gcs.getCoordinateSystem().getAxis(0).getUnit())) {
                     // //
@@ -999,7 +1082,6 @@ final class GeoTiffCRSReader {
                 throw new IOException(fe);
             }
         }
-
         return gcs;
     }
 
