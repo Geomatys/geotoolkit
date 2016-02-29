@@ -44,6 +44,7 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -242,8 +243,8 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         protected Feature currentFeature = null;
         protected Path currentFile = null;
         protected Feature nextFeature = null;
-        protected final DirectoryStream<Path> gmlPathsStream;
-
+        protected final List<Path> files = new LinkedList<>();
+        protected int index=-1;
         /**
          * @deprecated
          */
@@ -257,7 +258,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
             this.xmlReader = new JAXPStreamFeatureReader(type);
             this.xmlReader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             try {
-                this.gmlPathsStream = Files.newDirectoryStream(folder, ".gml");
+                this.files.addAll(IOUtilities.listChildren(folder, "*.gml"));
             } catch (IOException e) {
                 throw new DataStoreException(e.getLocalizedMessage(), e);
             }
@@ -280,7 +281,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 currentFile = null;
                 throw new NoSuchElementException("No more features");
             }
-            currentFile = gmlPathsStream.iterator().next();
+            currentFile = files.get(index);
             nextFeature = null;
             return currentFeature;
         }
@@ -306,10 +307,13 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
             while(nextFeature==null){
                 if(featureReader==null){
                     //get the next file
-                    if (gmlPathsStream.iterator().hasNext()) {
-                        xmlReader.reset();
-                        featureReader = xmlReader.readAsStream(gmlPathsStream.iterator().hasNext());
+
+                    index++;
+                    if(index >= files.size()){
+                        return;
                     }
+                    xmlReader.reset();
+                    featureReader = xmlReader.readAsStream(files.get(index));
                 }
 
                 if(featureReader.hasNext()){
@@ -323,11 +327,6 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         @Override
         public void close() {
             xmlReader.dispose();
-            try {
-                gmlPathsStream.close();
-            } catch (IOException e) {
-                getLogger().log(Level.WARNING, "Unable to close stream on directory : "+e.getLocalizedMessage(), e);
-            }
         }
 
     }
