@@ -55,6 +55,7 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
 /**
+ *
  * A container of factories frequently used together, with utility methods.
  * This class serves two purpose:
  * <p>
@@ -481,17 +482,16 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             final GeographicCRS base3D    = (GeographicCRS) toGeodetic3D(null, base2D, vertical, xyFirst);
             final Matrix        prepend   = toStandard(base2D, true);
             final Matrix        append    = toStandard(sourceCRS, false);
+            final MathTransformFactory mtFactory = getMathTransformFactory();
             Conversion projection = sourceCRS.getConversionFromBase();
-            if (!prepend.isIdentity() || !append.isIdentity()) {
-                final MathTransformFactory mtFactory = getMathTransformFactory();
-                MathTransform mt = projection.getMathTransform();
-                mt = mtFactory.createConcatenatedTransform(
-                     mtFactory.createConcatenatedTransform(
-                     mtFactory.createAffineTransform(prepend), mt),
-                     mtFactory.createAffineTransform(append));
-                projection = new DefaultConversion(IdentifiedObjects.getProperties(projection),
-                                                    projection.getMethod(), mt, null);
-            }
+            MathTransform mt = projection.getMathTransform();
+            mt = mtFactory.createConcatenatedTransform(
+                 mtFactory.createConcatenatedTransform(
+                 mtFactory.createAffineTransform(prepend), mt),
+                 mtFactory.createAffineTransform(append));
+            mt = mtFactory.createPassThroughTransform(0, mt, 1);
+            projection = new DefaultConversion(IdentifiedObjects.getProperties(projection),
+                                                projection.getMethod(), mt, null);
             return crsFactory.createProjectedCRS(crsName, base3D, projection, targetCS);
         }
         // Should never happen.
