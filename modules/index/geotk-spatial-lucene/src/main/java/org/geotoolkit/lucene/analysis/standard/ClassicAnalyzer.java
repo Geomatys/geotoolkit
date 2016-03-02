@@ -109,7 +109,7 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
     tok = new StopFilter(tok, stopwords);
     return new TokenStreamComponents(src, tok) {
       @Override
-      protected void setReader(final Reader reader) throws IOException {
+      protected void setReader(final Reader reader) {
         src.setMaxTokenLength(ClassicAnalyzer.this.maxTokenLength);
         super.setReader(reader);
       }
