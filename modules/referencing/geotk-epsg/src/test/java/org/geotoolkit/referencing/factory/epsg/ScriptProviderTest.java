@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.factory.epsg;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.util.ServiceLoader;
-import org.apache.sis.referencing.factory.sql.InstallationScriptProvider;
+import org.apache.sis.setup.InstallationResources;
 import org.apache.sis.test.TestUtilities;
 import org.junit.Test;
 
@@ -39,16 +39,16 @@ public final strictfp class ScriptProviderTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testResources() throws IOException {
-        final InstallationScriptProvider provider = TestUtilities.getSingleton(
-                ServiceLoader.load(InstallationScriptProvider.class));
+        final ScriptProvider provider = (ScriptProvider) TestUtilities.getSingleton(
+                ServiceLoader.load(InstallationResources.class));
 
-        assertTrue(provider.getLicense("text/plain").toString().contains("IOGP"));
-        assertTrue(provider.getLicense("text/html" ).toString().contains("IOGP"));
+        assertTrue(provider.getLicense("EPSG", null, "text/plain").contains("IOGP"));
+        assertTrue(provider.getLicense("EPSG", null, "text/html" ).contains("IOGP"));
 
-        final String[] names = provider.getScriptNames();
+        final String[] names = provider.getResourceNames("EPSG");
         assertArrayEquals(new String[] {"Prepare", "Tables.sql", "Data.sql", "FKeys.sql", "Finish"}, names);
         for (int i=0; i<names.length; i++) {
-            try (final BufferedReader in = provider.getScriptContent(i)) {
+            try (final BufferedReader in = provider.openScript("EPSG", i)) {
                 // Just verify that we can read.
                 assertFalse(in.readLine().isEmpty());
             }

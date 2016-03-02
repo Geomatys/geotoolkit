@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import java.util.Locale;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import org.opengis.util.InternationalString;
 import org.apache.sis.internal.util.Constants;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.referencing.factory.sql.InstallationScriptProvider;
 
 
@@ -40,17 +39,7 @@ public class ScriptProvider extends InstallationScriptProvider {
      * Creates a new script provider.
      */
     public ScriptProvider() {
-        super(PREPARE, "Tables.sql", "Data.sql", "FKeys.sql", FINISH);
-    }
-
-    /**
-     * Returns the "EPSG" authority.
-     *
-     * @return {@code "EPSG"}.
-     */
-    @Override
-    public String getAuthority() {
-        return Constants.EPSG;
+        super(Constants.EPSG, PREPARE, "Tables.sql", "Data.sql", "FKeys.sql", FINISH);
     }
 
     /**
@@ -61,7 +50,7 @@ public class ScriptProvider extends InstallationScriptProvider {
      * @throws IOException if an error occurred while reading the license file.
      */
     @Override
-    public InternationalString getLicense(final String mimeType) throws IOException {
+    public String getLicense(final String authority, final Locale locale, final String mimeType) throws IOException {
         final String filename;
         switch (mimeType) {
             case "text/plain": filename = "LICENSE.txt";  break;
@@ -69,15 +58,16 @@ public class ScriptProvider extends InstallationScriptProvider {
             default: return null;
         }
         final StringBuilder buffer = new StringBuilder();
+        final String lineSeparator = System.lineSeparator();
         try (final BufferedReader in = new BufferedReader(new InputStreamReader(
                 ScriptProvider.class.getResourceAsStream(filename), StandardCharsets.UTF_8)))
         {
             String line;
             while ((line = in.readLine()) != null) {
-                buffer.append(line).append('\n');
+                buffer.append(line).append(lineSeparator);
             }
         }
-        return new SimpleInternationalString(buffer.toString());
+        return buffer.toString();
     }
 
     /**
@@ -87,7 +77,7 @@ public class ScriptProvider extends InstallationScriptProvider {
      * @return The SQL script of the given name, or {@code null} if the given name is not one of the expected names.
      */
     @Override
-    protected InputStream open(final String name) {
+    protected InputStream openStream(final String name) {
         return ScriptProvider.class.getResourceAsStream(name);
     }
 }
