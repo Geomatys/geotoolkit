@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 import static java.lang.StrictMath.*;
 
 

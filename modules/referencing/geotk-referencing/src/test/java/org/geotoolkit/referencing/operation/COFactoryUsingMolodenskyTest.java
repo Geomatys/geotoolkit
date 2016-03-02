@@ -748,6 +748,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      * @throws Exception Should never happen.
      */
     @Test
+    @Ignore("To be revised after migration to SIS")
     public void testGeographic3D_to_Vertical() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
