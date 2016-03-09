@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
+import javax.imageio.ImageReader;
+
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
@@ -47,6 +49,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 
@@ -81,6 +84,11 @@ public class LandsatReader extends GridCoverageReader {
      * build different coverage from Landsat datas.
      */
     private final static int[][] BANDS_INDEX;
+
+    /**
+     * TiffImageReader SPI used to read images
+     */
+    private static final TiffImageReader.Spi TIFF_SPI = new TiffImageReader.Spi();
 
     /**
      * {@link Path} of the directory which contain all band images.
@@ -216,12 +224,19 @@ public class LandsatReader extends GridCoverageReader {
 
         final List<GridSampleDimension> gList = new ArrayList<>();
         for (int i : bandId) {
-            final String bandName = metaParse.getValue(true, BAND_NAME_LABEL+i);
-            final Path resolve    = parenPath.resolve(bandName);
+            final String bandName = metaParse.getValue(true, BAND_NAME_LABEL + i);
+            final Path resolve = parenPath.resolve(bandName);
             final ImageCoverageReader imageCoverageReader = new ImageCoverageReader();
-            imageCoverageReader.setInput(resolve.toFile());
-            gList.addAll(imageCoverageReader.getSampleDimensions(0));
-            imageCoverageReader.dispose();
+            try {
+                final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
+                tiffReader.setInput(resolve);
+                imageCoverageReader.setInput(tiffReader);
+                gList.addAll(imageCoverageReader.getSampleDimensions(0));
+            } catch (IOException ex) {
+                throw new CoverageStoreException(ex);
+            } finally {
+                imageCoverageReader.dispose();
+            }
         }
 
         gsdLandsat[index] = gList;
@@ -259,11 +274,16 @@ public class LandsatReader extends GridCoverageReader {
                 final String bandName = metaParse.getValue(true, BAND_NAME_LABEL+i);
                 final Path band = parenPath.resolve(bandName);
                 final ImageCoverageReader bandReader = new ImageCoverageReader();
-                param.setDeferred(true);
-                bandReader.setInput(band.toFile());
-                final GridCoverage2D read = bandReader.read(0, param);
-                bands[currentCov++] = read;
-                bandReader.dispose();
+                try {
+                    final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
+                    tiffReader.setInput(band);
+                    bandReader.setInput(tiffReader);
+                    param.setDeferred(true);
+                    final GridCoverage2D read = bandReader.read(0, param);
+                    bands[currentCov++] = read;
+                } finally {
+                    bandReader.dispose();
+                }
             }
 
 
