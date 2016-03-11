@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -189,7 +189,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      */
     protected final GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
-        return getObjectiveCoverage(projectedCoverage, false);
+        return getObjectiveCoverage(projectedCoverage, renderingContext.getCanvasObjectiveBounds(),
+                renderingContext.getResolution(), renderingContext.getObjectiveToDisplay(), false);
     }
 
     /**
@@ -208,14 +209,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      */
     protected final GridCoverage2D getObjectiveElevationCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
-        return getObjectiveCoverage(projectedCoverage, true);
+        return getObjectiveCoverage(projectedCoverage, renderingContext.getCanvasObjectiveBounds(),
+                renderingContext.getResolution(), renderingContext.getObjectiveToDisplay(), true);
     }
 
     /**
      * Returns expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
-     * from given {@link ProjectedCoverage}, adapted to asked {@linkplain #renderingContext internally rendering context} situation.
+     * from given {@link ProjectedCoverage}.
      *
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
+     * @param renderingBound Rendering context enveloppe
+     * @param resolution Rendering resolution in envelope crs
+     * @param objToDisp Objective to displace affine transform
      * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
      * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
      * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
@@ -225,7 +230,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
-    private GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation/*, final CanvasType displayOrObjective*/)
+    protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
+            Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp, final boolean isElevation)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
         //-- ArgumentChecks.ensureNonNull("CanvasType", displayOrObjective);
@@ -235,10 +241,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ////////////////////////////////////////////////////////////////////
 
         //-- resolution of horizontal Part of CRS
-        double[] resolution = renderingContext.getResolution();
         assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only defined in 2D.";
-
-        Envelope renderingBound = renderingContext.getCanvasObjectiveBounds();
 
         resolution = checkResolution(resolution, renderingBound);
 
@@ -264,7 +267,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         * We try to define if the two geographic part from the two respectively
         * coverage and rendering envelope intersect.
         */
-        final CoordinateReferenceSystem renderingContextObjectiveCRS2D = renderingContext.getObjectiveCRS2D();
+        final CoordinateReferenceSystem renderingContextObjectiveCRS2D = CRSUtilities.getCRS2D(renderingBound.getCoordinateReferenceSystem());
         final GeneralEnvelope renderingBound2D                         = GeneralEnvelope.castOrCopy(Envelopes.transform(renderingBound, renderingContextObjectiveCRS2D));
         final GeneralEnvelope coverageIntoRender2DCRS                  = GeneralEnvelope.castOrCopy(Envelopes.transform(dataBBox, renderingContextObjectiveCRS2D));
 
@@ -386,8 +389,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //----------------------------- DISPLAY -------------------------------//
         //-- compute output grid Envelope into rendering context display
         //-- get destination image size
-        final AffineTransform2D trs   = renderingContext.getObjectiveToDisplay();
-        final GeneralEnvelope dispEnv = CRS.transform(trs, outputRenderingCoverageEnv2D);
+        final GeneralEnvelope dispEnv = CRS.transform(objToDisp, outputRenderingCoverageEnv2D);
         final int width               = (int) Math.ceil(dispEnv.getSpan(0));
         final int height              = (int) Math.ceil(dispEnv.getSpan(1));
 
@@ -443,6 +445,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         return dataCoverage;
     }
+
 
     /**
      * Clip requested envelope with internally {@link ProjectedCoverage} boundary.

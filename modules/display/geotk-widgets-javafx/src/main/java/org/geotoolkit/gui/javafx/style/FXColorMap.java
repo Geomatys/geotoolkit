@@ -305,10 +305,17 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
     }
 
+    /**
+     * Get sample dimension min and max values from coverage metadata if
+     * present.
+     *
+     * @return min,max array or null if metadatas do not contain the informations.
+     */
     private Double[] findMinMaxInMeta(){
         final CoverageMapLayer cml = (CoverageMapLayer)layer;
         final CoverageReference cref = cml.getCoverageReference();
         final CoverageDescription covdesc = cref.getMetadata();
+        if(covdesc==null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();
 
         //search for band statistics

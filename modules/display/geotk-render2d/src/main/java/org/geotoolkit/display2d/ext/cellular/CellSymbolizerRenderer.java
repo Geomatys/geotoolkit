@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,7 +63,11 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -256,56 +259,70 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             return;
         }
 
-        final GridCoverage2D coverage;
+        //adjust envelope, we need cells to start at crs 0,0 to avoid artifacts
+        //when building tiles
+        final int cellSize = symbol.getSource().getCellSize();
+        final AffineTransform2D displayToObjective = renderingContext.getDisplayToObjective();
+        double objCellSize = XAffineTransform.getScale(displayToObjective) * cellSize;
+        final GeneralEnvelope env = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+        final int hidx = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
+        //round under and above to match cell size
+        env.setRange(hidx, objCellSize * Math.floor(env.getMinimum(hidx)/objCellSize), objCellSize * Math.ceil(env.getMaximum(hidx)/objCellSize));
+        env.setRange(hidx+1, objCellSize * Math.floor(env.getMinimum(hidx+1)/objCellSize), objCellSize * Math.ceil(env.getMaximum(hidx+1)/objCellSize));
+
+
+        GridCoverage2D coverage;
         try {
-            coverage = getObjectiveCoverage(projectedCoverage);
+            coverage = getObjectiveCoverage(projectedCoverage,env,renderingContext.getResolution(),
+                    renderingContext.getObjectiveToDisplay(),false);
         } catch (Exception ex) {
             throw new PortrayalException(ex);
+        }
+        if(coverage!=null){
+            coverage = coverage.view(ViewType.GEOPHYSICS);
         }
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return;
         }
 
-        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
 
-        Envelope env = renderingContext.getCanvasObjectiveBounds2D();
-        final AffineTransform tr;
-        try {
-            // TODO: handle the case where gridToCRS is not affine.
-            tr = ((AffineTransform) gridToCRS).createInverse();
-            env = CRS.transform(new AffineTransform2D(tr), env);
+        //create all cell features
+        final GeneralEnvelope area = new GeneralEnvelope(coverage.getEnvelope2D());
+        //round under and above to match cell size
+        area.setRange(hidx, objCellSize * Math.floor(area.getMinimum(hidx)/objCellSize), objCellSize * Math.ceil(area.getMaximum(hidx)/objCellSize));
+        area.setRange(hidx+1, objCellSize * Math.floor(area.getMinimum(hidx+1)/objCellSize), objCellSize * Math.ceil(area.getMaximum(hidx+1)/objCellSize));
+        final int nbx = (int) Math.ceil(area.getSpan(0) / objCellSize);
+        final int nby = (int) Math.ceil(area.getSpan(1) / objCellSize);
 
-            final MathTransform trans = renderingContext.getMathTransform(renderingContext.getDisplayCRS(), coverage.getCoordinateReferenceSystem2D());
-            if(trans instanceof AffineTransform){
-                tr.concatenate((AffineTransform)trans);
-            }else{
-                //TODO try to find a better way to calculate the step
-                //currently make a fake affinetransform using the difference between envelopes.
-                final AffineTransform dispToObjective = renderingContext.getDisplayToObjective();
-                final AffineTransform objToCoverage   = calculateAverageAffine(renderingContext, coverage);
-                tr.concatenate(dispToObjective);
-                tr.concatenate(objToCoverage);
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
-            return;
-        }
-
-
-        //calculate decimation factor
-        final int cellSize = symbol.getSource().getCellSize();
-        Point2D delta = new Point2D.Double(cellSize, 0);
-        delta = tr.deltaTransform(delta, delta);
-        final int decimateX = length(delta);
-        delta.setLocation(0, cellSize);
-        delta = tr.deltaTransform(delta, delta);
-        final int decimateY = length(delta);
-
-        final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0) / decimateX, env.getMinimum(1) / decimateY,
-                                                       env.getSpan(0)    / decimateX, env.getSpan(1)    / decimateY);
         final RenderedImage image = coverage.getRenderedImage();
         final int nbBand = image.getSampleModel().getNumBands();
+        final Statistics[][][] stats = new Statistics[nbBand][nby][nbx];
+        MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
+
+
+        final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
+        int i,x,y;
+        final double[] gridCoord = new double[gridToCRS.getSourceDimensions()];
+        final double[] crsCoord = new double[gridToCRS.getTargetDimensions()];
+        try{
+            while(ite.next()){
+                gridCoord[0] = ite.getX();
+                gridCoord[1] = ite.getY();
+                gridToCRS.transform(gridCoord, 0, crsCoord, 0, 1);
+                crsCoord[0] = (crsCoord[0]-area.getMinimum(0))/objCellSize;
+                crsCoord[1] = (crsCoord[1]-area.getMinimum(1))/objCellSize;
+                x = (int) crsCoord[0];
+                y = (int) crsCoord[1];
+                for(i=0;i<nbBand;i++){
+                    if(stats[i][y][x]==null) stats[i][y][x] = new Statistics("");
+                    stats[i][y][x].accept(ite.getSampleDouble());
+                    if(i<nbBand-1) ite.next();
+                }
+            }
+        }catch(TransformException ex){
+            throw new PortrayalException(ex);
+        }
 
         //prepare the cell feature type
         final SimpleFeatureType cellType = CellSymbolizer.buildCellType(coverage);
@@ -313,19 +330,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Feature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
+        params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(
+                env.getMinimum(0), env.getMaximum(0),
+                env.getMinimum(1), env.getMaximum(1));
+        params.displayClipRect = null;
+        params.displayClip = null;
+
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
-
-        //iterator on image
-        final CellIterator ite = new CellIterator(image,decimateX,decimateY);
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
-
-        //expand the search area by the maximum symbol size
-        float symbolsMargin = renderers.getMargin(null, renderingContext);
-        if(symbolsMargin==0) symbolsMargin = 300f;
-        if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
-            params.objectiveJTSEnvelope.expandBy(symbolsMargin);
-        }
 
         //force image interpolation here
         Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
@@ -333,31 +345,30 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
-        while(ite.next()){
-            if(monitor.stopRequested()) break;
-            if(!ite.visible(shp)) continue;
-            final Point2D point = ite.position();
-            pf.clearDataCache();
-            try {
-                final Point2D obj = gridToCRS.transform(point, null);
-                final Statistics[] stats = ite.statistics();
 
-                values[0] = GF.createPoint(new Coordinate(obj.getX(), obj.getY()));
+        for(y=0;y<nby;y++){
+            for(x=0;x<nbx;x++){
+                if(stats[0][y][x]==null){
+                    for(i=0;i<nbBand;i++)
+                    stats[i][y][x] = new Statistics("");
+                }
+                pf.clearDataCache();
+                double cx = area.getMinimum(0) + (0.5+x)*objCellSize;
+                double cy = area.getMinimum(1) + (0.5+y)*objCellSize;
+
+                values[0] = GF.createPoint(new Coordinate(cx,cy));
                 int k=0;
                 for(int b=0,n=nbBand;b<n;b++){
-                    values[++k] = stats[b].count();
-                    values[++k] = stats[b].minimum();
-                    values[++k] = stats[b].mean();
-                    values[++k] = stats[b].maximum();
-                    values[++k] = stats[b].span();
-                    values[++k] = stats[b].rms();
-                    values[++k] = stats[b].sum();
+                    values[++k] = stats[b][y][x].count();
+                    values[++k] = stats[b][y][x].minimum();
+                    values[++k] = stats[b][y][x].mean();
+                    values[++k] = stats[b][y][x].maximum();
+                    values[++k] = stats[b][y][x].span();
+                    values[++k] = stats[b][y][x].rms();
+                    values[++k] = stats[b][y][x].sum();
                 }
 
                 renderCellFeature(feature, pf, renderers);
-
-            } catch (TransformException ex) {
-                LOGGER.log(Level.INFO, ex.getMessage(),ex);
             }
         }
 

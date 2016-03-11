@@ -1025,19 +1025,14 @@ public final class ReferencingUtilities {
                  */
                 int tmpOffset = 0;
                 for (CoordinateReferenceSystem tmpSubCRS : toFind) {
-                    int srcOffset = 0;
-                    int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();
-
-                    for (CoordinateReferenceSystem subCRS : ((CompoundCRS) inputCRS).getComponents()) {
-                        if (subCRS.equals(tmpSubCRS)) {
-                            final GeneralEnvelope subTmp = tmpResult.subEnvelope(tmpOffset, tmpOffset + tmpDimNumber);
-                            resultEnvelope.subEnvelope(srcOffset, srcOffset+tmpResult.getDimension()).setEnvelope(subTmp);
-                            break;
-                        }
-                        srcOffset += subCRS.getCoordinateSystem().getDimension();
+                    final int srcOffset = org.apache.sis.internal.metadata.AxisDirections.indexOfColinear(
+                            inputCRS.getCoordinateSystem(), tmpSubCRS.getCoordinateSystem());
+                    if(srcOffset>=0){
+                        int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();
+                        final GeneralEnvelope subTmp = tmpResult.subEnvelope(tmpOffset, tmpOffset + tmpDimNumber);
+                        resultEnvelope.subEnvelope(srcOffset, srcOffset+tmpResult.getDimension()).setEnvelope(subTmp);
+                        break;
                     }
-
-                    tmpOffset += tmpDimNumber;
                 }
 
             } else {

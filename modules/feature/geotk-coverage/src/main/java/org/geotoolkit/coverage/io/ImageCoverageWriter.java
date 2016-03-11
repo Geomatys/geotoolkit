@@ -685,6 +685,14 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 }
             }
         }
+
+        if (imageParam.canWriteTiles()) {
+            imageParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+            //-- one destination tile equals source image tile representation
+            imageParam.setTiling(image.getTileWidth() / imageParam.getSourceXSubsampling(),
+                    image.getTileHeight() / imageParam.getSourceYSubsampling(), 0, 0);
+        }
+
         /*
          * Creates metadata with the information calculated so far. The code above this
          * point should have created an image having a grid geometry matching the user
@@ -703,7 +711,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 res = param.getResolution();
             }
             if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
-                if (imageWriter instanceof MultidimensionalImageStore 
+                if (imageWriter instanceof MultidimensionalImageStore
                  || isNetcdfHack
                  || isTiffHack) {
                     crs = gridGeometry.getCoordinateReferenceSystem();
@@ -712,7 +720,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 }
             }
             if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
-                if (imageWriter instanceof MultidimensionalImageStore 
+                if (imageWriter instanceof MultidimensionalImageStore
                  || isNetcdfHack
                  || isTiffHack) {
                     env = gridGeometry.getEnvelope();
@@ -731,7 +739,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 final double[] origin = env.getLowerCorner().getCoordinate();
                 final int dim = origin.length;
                 origin[Y_DIMENSION] = ymax;
-                
+
                 if (res != null) {
                     accessor.setOrigin(origin);
                     final double[] p = new double[dim];
@@ -748,7 +756,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         accessor.addOffsetVector(p);
                         median[i] = env.getMedian(i);
                     }
-                    
+
                     accessor.setSpatialRepresentation(median, null, PixelOrientation.UPPER_LEFT);
                     final int[] maxGrid = new int[dim];
                     Arrays.fill(maxGrid, 1);
@@ -756,18 +764,18 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                     maxGrid[Y_DIMENSION] = size.height - 1;
                     accessor.setLimits(new int[dim], maxGrid);
                 } else {
-                    
+
                     final double[] envBounds = env.getUpperCorner().getCoordinate();
                     envBounds[Y_DIMENSION] = env.getMinimum(Y_DIMENSION);
-                    
+
                     final int[] high = new int[dim];
                     Arrays.fill(high, 1);
                     high[X_DIMENSION] = size.width - 1;
                     high[Y_DIMENSION] = size.height - 1;
-                    
+
                     accessor.setRectifiedGridDomain(origin, envBounds, null, high, null, false);
                     accessor.setSpatialRepresentation(origin, envBounds, null, PixelOrientation.UPPER_LEFT);
-                    
+
                 }
             }
             final int n = coverage.getNumSampleDimensions();
