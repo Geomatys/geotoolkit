@@ -337,7 +337,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16) {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
-                
+
                 for (int j = 0; j < mapSize; j++) {
                     int v = j * 255 / mapSize;
                     int a = 255 << 24;
@@ -401,7 +401,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         for (int i = 0, n = points.size(); i < n; i++) {
             final InterpolationPoint point = points.get(i);
             SE_VALUES[i] = point.getData().doubleValue();
-            SE_ARGB[i] = point.getValue().evaluate(null, Color.class).getRGB();
+            final Color evaluate = point.getValue().evaluate(null, Color.class);
+            SE_ARGB[i] = (evaluate != null) ? evaluate.getRGB() : 0;
         }
 
         int lastStep = -1;
@@ -500,5 +501,5 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         int b = lastBlue  + (int)(pourcent*blueInterval);
         return new Color(r, g, b, a) ;
     }
-    
+
 }
