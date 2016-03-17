@@ -45,6 +45,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -137,7 +138,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 reader.setReadEmbeddedFeatureType(true);
                 try {
                     if (Files.isDirectory(file)) {
-                        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(file, "*.gml")) {
+                        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(file, new PosixDirectoryFilter("*.gml", true))) {
                             final Iterator<Path> gmlPaths = directoryStream.iterator();
                             // get first gml file only
                             if (gmlPaths.hasNext()) {

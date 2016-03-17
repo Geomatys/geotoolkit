@@ -27,6 +27,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
@@ -73,7 +74,7 @@ public class KmlFeatureUtilities {
         if (Files.isDirectory(directory)) {
 
             //first loop to unzip kmz files
-            try(DirectoryStream<Path> filteredStream = Files.newDirectoryStream(directory, "*.kmz")) {
+            try(DirectoryStream<Path> filteredStream = Files.newDirectoryStream(directory, new PosixDirectoryFilter("*.kmz", true))) {
                 for (Path path : filteredStream) {
                     if (LOGGER.isLoggable(Level.FINE)) {
                         LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries unzipping kmz file : {0}", path.getFileName().toString());

@@ -21,6 +21,7 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -109,7 +110,7 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
         try {
             Path pathFile = IOUtilities.toPath(path);
             if (Files.isDirectory(pathFile)) {
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, "*.csv")) {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, new PosixDirectoryFilter("*.csv", true))) {
                     //at least one
                     return stream.iterator().hasNext();
                 }
