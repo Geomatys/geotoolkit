@@ -147,14 +147,18 @@ public enum Installation {
      * @param value The preference value, or {@code null} for removing it.
      */
     public final void set(final boolean userSpecific, final String value) {
-        final Preferences prefs = preference(userSpecific);
-        if (value != null) {
-            prefs.put(key, value);
-        } else {
-            prefs.remove(key);
-        }
-        if (!userSpecific) {
-            preference(true).remove(key);
+        try {
+            final Preferences prefs = preference(userSpecific);
+            if (value != null) {
+                prefs.put(key, value);
+            } else {
+                prefs.remove(key);
+            }
+            if (!userSpecific) {
+                preference(true).remove(key);
+            }
+        } catch (SecurityException e) {
+            Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
         }
     }
 
@@ -165,10 +169,14 @@ public enum Installation {
      * @return The preference value, or {@code null} if none.
      */
     public final String get(final boolean userSpecific) {
-        if (key != null) {
-            if (userSpecific || allowSystemPreferences) {
-                return preference(userSpecific).get(key, null);
+        try {
+            if (key != null) {
+                if (userSpecific || allowSystemPreferences) {
+                    return preference(userSpecific).get(key, null);
+                }
             }
+        } catch (SecurityException e) {
+            Logging.recoverableException(Logging.getLogger("org.geotoolkit"), Installation.class, "set", e);
         }
         return null;
     }
