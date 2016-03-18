@@ -28,7 +28,7 @@ import org.apache.sis.util.Static;
  *
  * @author Remi Marechal (Geomatys)
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 final class LandsatConstants extends Static {
 

@@ -1077,7 +1077,7 @@ public class PyramidCoverageBuilder {
                            RenderedImage baseImg, GridMosaic mosaic, ProcessListener processListener,
                            AtomicInteger lastProc, double[] fill, MathTransform destCrs_to_covGrid,
                            double... affArgs){
-            super(minX,minY,width,height,tileSize,0,0,baseImg.getColorModel());
+            super(minX,minY,width,height,tileSize,0,0, baseImg.getSampleModel(), baseImg.getColorModel());
             this.baseImg = baseImg;
             this.mosaic = mosaic;
             this.processListener = processListener;
@@ -1087,10 +1087,10 @@ public class PyramidCoverageBuilder {
             this.affArgs = affArgs;
         }
 
-        @Override
-        public SampleModel getSampleModel() {
-            return baseImg.getSampleModel();
-        }
+//        @Override
+//        public SampleModel getSampleModel() {
+//            return baseImg.getSampleModel();
+//        }
 
         @Override
         public Raster getTile(int cTX, int cTY) {

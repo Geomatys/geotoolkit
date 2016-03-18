@@ -19,15 +19,19 @@ package org.geotoolkit.coverage.landsat;
 import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Path;
+
+import org.opengis.util.GenericName;
+
 import org.apache.sis.storage.DataStoreException;
+
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.AbstractCoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.opengis.util.GenericName;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.storage.coverage.CoverageReference;
+
+import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 
 /**
  * Reader adapted to read and aggregate directly needed bands to build appropriate
@@ -48,7 +52,7 @@ public class LandsatCoverageReference extends AbstractCoverageReference {
     /**
      * {@link Path} to the metadata landsat 8 file.
      */
-    private final Path metadata;
+    private final LandsatMetadataParser metadataParser;
 
     /**
      * Index which define what part of the landsat 8 data will be read.<br><br>
@@ -71,16 +75,18 @@ public class LandsatCoverageReference extends AbstractCoverageReference {
      * @param store normally Landsat store.
      * @param name REFLECTIVE, THERMIC, or PANCHROMATIC.
      * @param imagePath path metadata file.
-     * @param metadata Landsat 8 parent directory.
+     * @param metadataParser Landsat 8 parent directory.
      */
     public LandsatCoverageReference(final CoverageStore store, final GenericName name,
-                                    final Path imagePath, final Path metadata) {
+                                    final Path imagePath, final LandsatMetadataParser metadataParser) {
         super(store, name);
-        this.imagePath = imagePath;
-        this.metadata = metadata;
+        this.imagePath      = imagePath;
+        this.metadataParser = metadataParser;
 
-        String head = name.tip().toString();
-        switch (head) {
+        final String head     = name.tip().toString();
+        final int lastIndexOf = head.lastIndexOf("-");
+        final String refName  = head.substring(lastIndexOf+1, head.length());
+        switch (refName) {
             case REFLECTIVE_LABEL   : imageIndex = 0; break;
             case PANCHROMATIC_LABEL : imageIndex = 1; break;
             case THERMAL_LABEL      : imageIndex = 2; break;
@@ -116,7 +122,7 @@ public class LandsatCoverageReference extends AbstractCoverageReference {
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         try {
-            return new LandsatReader(imagePath, metadata);
+            return new LandsatReader(imagePath, metadataParser);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex);
         }
