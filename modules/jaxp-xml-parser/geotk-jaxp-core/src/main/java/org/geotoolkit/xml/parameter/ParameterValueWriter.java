@@ -17,12 +17,15 @@
 package org.geotoolkit.xml.parameter;
 
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.parameter.Parameter;
-import org.geotoolkit.parameter.ParameterGroup;
+
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+
+import java.nio.file.Path;
+
 import static org.geotoolkit.xml.parameter.ParameterConstants.*;
 
 /**
@@ -87,7 +90,16 @@ public class ParameterValueWriter extends StaxStreamWriter {
             throws XMLStreamException {
         final Object value = parameter.getValue();
         if(value != null){
-            writer.writeCharacters(value.toString());
+            //HACK for Path support
+            // we don't use ObjectConverters to convert Path into a String because
+            // there is an already existing converter that doesn't return full path
+            // with protocol (URI scheme)
+            if (value instanceof Path) {
+                Path path = (Path) value;
+                writer.writeCharacters(path.toAbsolutePath().toUri().toString());
+            } else {
+                writer.writeCharacters(ObjectConverters.convert(value, String.class));
+            }
         }
     }
 

@@ -261,7 +261,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                                 final Object argument;
                                 if (IOUtilities.canProcessAsPath(output)) {
                                     messageKey = Errors.Keys.CantWriteFile_1;
-                                    argument = org.apache.sis.internal.storage.IOUtilities.filename(output);
+                                    argument = IOUtilities.filename(output);
                                 } else {
                                     messageKey = Errors.Keys.UnknownType_1;
                                     argument = output.getClass();

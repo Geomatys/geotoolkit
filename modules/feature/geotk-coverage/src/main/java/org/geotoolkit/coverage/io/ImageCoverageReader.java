@@ -404,7 +404,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
                                         messageKey = Errors.Keys.CantReadFile_1;
-                                        argument = org.apache.sis.internal.storage.IOUtilities.filename(input);
+                                        argument = IOUtilities.filename(input);
                                     } else {
                                         messageKey = Errors.Keys.UnknownType_1;
                                         argument = input.getClass();
@@ -469,7 +469,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (IOUtilities.canProcessAsPath(input)) {
             final String[] suffixes = provider.getFileSuffixes();
             return (suffixes != null) && ArraysExt.containsIgnoreCase(suffixes,
-                    org.apache.sis.internal.storage.IOUtilities.extension(input));
+                    IOUtilities.extension(input));
         } else {
             return provider.canDecodeInput(input);
         }

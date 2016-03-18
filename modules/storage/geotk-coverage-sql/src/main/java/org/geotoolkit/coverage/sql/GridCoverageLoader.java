@@ -470,7 +470,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
             final int imageHeight    = imageReader.getHeight(index);
             if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
                 throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.MismatchedImageSize_5,
-                        org.apache.sis.internal.storage.IOUtilities.filename(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
+                        IOUtilities.filename(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
             }
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
@@ -498,7 +498,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
     private String getInputName() throws CoverageStoreException {
         final Object input = getInput();
         if (IOUtilities.canProcessAsPath(input)) {
-            return org.apache.sis.internal.storage.IOUtilities.filename(input);
+            return IOUtilities.filename(input);
         } else {
             return entry.toString();
         }

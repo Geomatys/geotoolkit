@@ -17,6 +17,7 @@
 package org.geotoolkit.util;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,9 +26,6 @@ import static org.junit.Assert.*;
  * @author Cédric Briançon (Geomatys)
  */
 public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
-
-    private final static String encodedStr = "CRS%3dCRS%3a84%26BBOX%3d-180.0%2c-90.0%2c180.0%2c90.0%26FORMAT%3dimage%2fpng%26LAYERS%3dnamespace%3aorbites";
-    private final static String decodedStr = "CRS=CRS:84&BBOX=-180.0,-90.0,180.0,90.0&FORMAT=image/png&LAYERS=namespace:orbites";
 
     @Test
     public void positionsTest() {
@@ -55,13 +53,4 @@ public class StringUtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, nb[2]);
     }
 
-//    @Test
-//    public void EncodeUrlTest() {
-//        assertEquals(StringUtilities.encodeToUTF8URL(decodedStr), encodedStr);
-//    }
-//
-//    @Test
-//    public void DecodeUrlTest() {
-//        assertEquals(StringUtilities.decodeUTF8URL(encodedStr), decodedStr);
-//    }
 }

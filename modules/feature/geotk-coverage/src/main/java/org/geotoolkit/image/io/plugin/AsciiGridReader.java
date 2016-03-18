@@ -780,7 +780,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         final BufferedImage image;
         try {
             buffer.clear().limit(0);
-            final ImageInputStream in = new ChannelImageInputStream(org.apache.sis.internal.storage.IOUtilities.filename(input),
+            final ImageInputStream in = new ChannelImageInputStream(IOUtilities.filename(input),
                     Channels.newChannel(binaryStream), buffer, true);
             try (RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
                    new long[1], new Dimension[] {new Dimension(width, height)}))

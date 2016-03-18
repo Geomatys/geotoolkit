@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2015, Geomatys
+ *    (C) 2009-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.nio;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.regex.Pattern;
 
 /**
- *  A {@link PathMatcher} implementation using Unix-style wildcards.
+ *  A {@link java.nio.file.DirectoryStream.Filter} implementation using Unix-style wildcards.
  * A pattern is given to the constructor, which can contains the
  * {@code "*"} and {@code "?"} wildcards.
  *
@@ -29,23 +30,26 @@ import java.util.regex.Pattern;
  * <pre>
  * <code>
  *
- * PathMatcher matcher = new PosixPathMatcher("*.png");
+ * DirectoryStream.Filter<Path> filter = new PosixDirectoryFilter("*.png");
  *
- * matcher.matches(Paths.get("/tmp/image.png")); // true
- * matcher.matches(Paths.get("/tmp/image.jpeg")); // false
+ * try (DirectoryStream<Path> stream = Files.newDirectoryStream(root, filter)) {
+ *      for (Path matching : stream) {
+ *          //file matching filter in root directory
+ *      }
+ * }
  * </code>
  * </pre>
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class PosixPathMatcher implements PathMatcher {
+public class PosixDirectoryFilter implements DirectoryStream.Filter<Path> {
 
     /**
      * The pattern to matchs to filenames.
      */
     private final Pattern pattern;
 
-    public PosixPathMatcher(final String pattern) {
+    public PosixDirectoryFilter(final String pattern) {
         this(pattern, Boolean.FALSE);
     }
     /**
@@ -55,7 +59,7 @@ public class PosixPathMatcher implements PathMatcher {
      * @param pattern The pattern. Example: {@code "*.png"}
      * @param caseInsensitive use {@link Pattern#CASE_INSENSITIVE} flag
      */
-    public PosixPathMatcher(final String pattern, boolean caseInsensitive) {
+    public PosixDirectoryFilter(final String pattern, boolean caseInsensitive) {
         final int length = pattern.length();
         final StringBuilder buffer = new StringBuilder(length + 8);
         for (int i=0; i<length; i++) {
@@ -78,7 +82,7 @@ public class PosixPathMatcher implements PathMatcher {
     }
 
     @Override
-    public boolean matches(Path path) {
-        return (path != null) && pattern.matcher(path.getFileName().toString()).matches();
+    public boolean accept(Path entry) throws IOException {
+        return (entry != null) && pattern.matcher(entry.getFileName().toString()).matches();
     }
 }

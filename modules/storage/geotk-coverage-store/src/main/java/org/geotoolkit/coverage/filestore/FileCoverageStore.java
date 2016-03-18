@@ -32,6 +32,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
@@ -40,7 +41,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.utility.parameter.ParametersExt;
@@ -157,7 +157,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             final int idx = fullName.lastIndexOf('.');
             return fullName.substring(0, idx);
         } else {
-            return org.geotoolkit.nio.IOUtilities.filenameWithoutExtension(candidate);
+            return IOUtilities.filenameWithoutExtension(candidate);
         }
     }
 

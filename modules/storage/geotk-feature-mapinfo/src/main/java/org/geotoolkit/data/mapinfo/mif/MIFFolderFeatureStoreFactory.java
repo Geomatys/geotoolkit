@@ -21,6 +21,7 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -102,7 +103,7 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
                     return true;
                 }
 
-                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, "*.mif")) {
+                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, new PosixDirectoryFilter("*.mif", true))) {
                     return dirStream.iterator().hasNext();
                 }
             }

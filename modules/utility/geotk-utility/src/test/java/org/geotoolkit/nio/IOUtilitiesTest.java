@@ -18,14 +18,15 @@
 package org.geotoolkit.nio;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.*;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -280,5 +281,161 @@ public final strictfp class IOUtilitiesTest {
         assertFalse(IOUtilities.isFileSystemSupported(uriHTTP));
         assertFalse(IOUtilities.isFileSystemSupported(uriHTTPS));
         assertFalse(IOUtilities.isFileSystemSupported(uriFTP));
+    }
+
+    @Test
+    public void childrenListTest() throws IOException, URISyntaxException {
+
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        URL resourceURL = classloader.getResource("org/geotoolkit/xml/test-data");
+        if (resourceURL != null) {
+            Path directory = Paths.get(resourceURL.toURI());
+
+            List<Path> result = IOUtilities.listChildren(directory);
+            assertEquals(5, result.size());
+
+            //result list should be sorted in asc
+            assertEquals("Metadata-ASCAT.xml", result.get(0).getFileName().toString());
+            assertEquals("Metadata-IFREMER.xml", result.get(1).getFileName().toString());
+            assertEquals("Metadata-IGN.xml", result.get(2).getFileName().toString());
+            assertEquals("Metadata.xml", result.get(3).getFileName().toString());
+            assertEquals("NOAA.xml", result.get(4).getFileName().toString());
+        }
+
+        resourceURL = classloader.getResource("org/geotoolkit/xml/test-data/Metadata.xml");
+        if (resourceURL != null) {
+            Path directory = Paths.get(resourceURL.toURI());
+
+            try {
+                IOUtilities.listChildren(directory);
+                fail("Should rise IllegalArgumentException on a regularFile");
+            } catch (IllegalArgumentException e) {
+                //expected exception
+            }
+        }
+
+        Path tmpDir = Files.createTempDirectory("IOUtilitiesTest");
+        List<Path> result = IOUtilities.listChildren(tmpDir);
+        assertEquals(0, result.size());
+        IOUtilities.deleteSilently(tmpDir);
+    }
+
+    @Test
+    public void copyResourcesFileTest() {
+
+        Path tmpWorkspace = null;
+        try {
+            tmpWorkspace = Files.createTempDirectory("IOUtilitiesTest");
+            Files.createDirectories(tmpWorkspace);
+            String resource = "org/geotoolkit/xml/test-data/Metadata.xml";
+
+            //Copy resource File with hierarchy
+            try {
+                Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, true);
+                Path expectedResPath = tmpWorkspace.resolve(resource);
+                testResourceFile(expectedResPath, resource, copiedRes);
+
+            } catch (URISyntaxException | IOException e) {
+                fail("Unable to setup test environment");
+            }
+
+            //Copy resource File without hierarchy
+            try {
+                Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, false);
+                Path expectedResPath = tmpWorkspace.resolve("Metadata.xml");
+                testResourceFile(expectedResPath, resource, copiedRes);
+
+            } catch (URISyntaxException | IOException e) {
+                fail("Unable to setup test environment");
+            }
+
+            //test failures
+            try {
+                IOUtilities.copyResource("unknown/resource", null, tmpWorkspace, false);
+                fail("Should rise FileNotFoundException");
+            } catch (FileNotFoundException ex) {
+                //normal exception
+            } catch (URISyntaxException | IOException e) {
+                fail("Wrong exception, Should rise FileNotFoundException");
+            }
+        } catch (IOException e) {
+            fail("Unable to setup test environment");
+        } finally {
+            if (tmpWorkspace != null) {
+                IOUtilities.deleteSilently(tmpWorkspace);
+            }
+        }
+    }
+
+    @Test
+    public void copyResourcesDirectoryTest() {
+
+        Path tmpWorkspace = null;
+        try {
+            tmpWorkspace = Files.createTempDirectory("IOUtilitiesTest");
+            Files.createDirectories(tmpWorkspace);
+            String resource = "org/geotoolkit/xml/test-data";
+
+            String[] expectedFiles = new String[]{"Metadata.xml", "Metadata-ASCAT.xml", "Metadata-IFREMER.xml",
+            "Metadata-IGN.xml", "NOAA.xml"};
+
+            //Copy resource Directory with hierarchy
+            try {
+                Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, true);
+                Path expectedResPath = tmpWorkspace.resolve(resource);
+                testResourceDirectory(expectedResPath, expectedFiles, copiedRes);
+
+            } catch (URISyntaxException | IOException e) {
+                fail("Unable to setup test environment");
+            }
+
+
+            //Copy resource Directory without hierarchy
+            try {
+                Path copiedRes = IOUtilities.copyResource(resource, null, tmpWorkspace, false);
+                Path expectedResPath = tmpWorkspace.resolve("test-data");
+                testResourceDirectory(expectedResPath, expectedFiles, copiedRes);
+
+            } catch (URISyntaxException | IOException e) {
+                fail("Unable to setup test environment");
+            }
+        } catch (IOException e) {
+            fail("Unable to setup test environment");
+        } finally {
+            if (tmpWorkspace != null) {
+                IOUtilities.deleteSilently(tmpWorkspace);
+            }
+        }
+    }
+
+    private void testResourceDirectory(Path expectedResPath, String[] resource, Path copiedRes) throws IOException {
+        //test exist
+        assertTrue(Files.isDirectory(copiedRes));
+
+        //test path
+        assertEquals(expectedResPath.toString(), copiedRes.toString());
+
+        for (String file : resource) {
+            Path expectedFile = expectedResPath.resolve(file);
+            Path copiedFile = copiedRes.resolve(file);
+            testResourceFile(expectedFile, "org/geotoolkit/xml/test-data/"+file, copiedFile);
+        }
+
+    }
+
+    private void testResourceFile(Path expectedResPath, String resource, Path copiedRes) throws IOException {
+        //test exist
+        assertTrue(Files.isRegularFile(copiedRes));
+
+        //test path
+        assertEquals(expectedResPath.toString(), copiedRes.toString());
+
+        //test content
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try (InputStream resourceStream = classLoader.getResourceAsStream(resource)) {
+            String expectedContent = IOUtilities.toString(resourceStream);
+            String copiedContent = IOUtilities.toString(copiedRes);
+            assertEquals(expectedContent, copiedContent);
+        }
     }
 }
