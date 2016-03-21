@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.sld.xml;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -72,6 +70,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 
+import static java.nio.file.StandardOpenOption.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
@@ -165,6 +164,12 @@ public final class StyleXmlIO {
             throws JAXBException{
         if(source instanceof File){
             return unMarshaller.unmarshal( (File)source );
+        }else if(source instanceof Path){
+            try (InputStream in = Files.newInputStream((Path) source)) {
+                return unMarshaller.unmarshal( in );
+            } catch (IOException e) {
+                throw new JAXBException(e.getMessage(), e);
+            }
         }else if(source instanceof InputSource){
             return unMarshaller.unmarshal( (InputSource)source );
         }else if(source instanceof InputStream){
@@ -232,6 +237,12 @@ public final class StyleXmlIO {
             final Marshaller marshaller) throws JAXBException{
         if(target instanceof File){
             marshaller.marshal(jaxbElement, (File)target );
+        }else if(target instanceof Path){
+            try (OutputStream out = Files.newOutputStream((Path) target,CREATE, WRITE, TRUNCATE_EXISTING)) {
+                marshaller.marshal(jaxbElement, out);
+            } catch (IOException e) {
+                throw new JAXBException(e.getMessage(), e);
+            }
         }else if(target instanceof ContentHandler){
             marshaller.marshal(jaxbElement, (ContentHandler)target );
         }else if(target instanceof OutputStream){
