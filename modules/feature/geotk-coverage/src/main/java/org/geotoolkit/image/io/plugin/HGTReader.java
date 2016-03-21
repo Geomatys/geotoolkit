@@ -164,6 +164,8 @@ public class HGTReader extends SpatialImageReader {
 
     @Override
     protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
+        if (imageIndex < 0)
+            return null;
         SpatialMetadata md = new SpatialMetadata(false, this, null);
 
         final DimensionAccessor dac = new DimensionAccessor(md);
