@@ -25,19 +25,25 @@ import org.junit.Test;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class StringToCharacterConverterTest {
+public class CharacterConverterTest {
 
     @Test
     public void converterFoundTest() {
         try {
             ObjectConverters.find(String.class, Character.class);
         } catch (UnconvertibleObjectException ex) {
-            Assert.fail("Converter not found");
+            Assert.fail("Converter String -> Character not found");
+        }
+
+        try {
+            ObjectConverters.find(Character.class, String.class);
+        } catch (UnconvertibleObjectException ex) {
+            Assert.fail("Converter Character -> String not found");
         }
     }
 
     @Test
-    public void conversionTest() {
+    public void conversionToCharacterTest() {
         Character resultChar = ObjectConverters.convert(";", Character.class);
         Assert.assertEquals(Character.valueOf(';'), resultChar);
 
@@ -48,6 +54,20 @@ public class StringToCharacterConverterTest {
         ObjectConverter<? super String, ? extends Character> converter = ObjectConverters.find(String.class, Character.class);
         resultChar = converter.apply(null);
         Assert.assertNull(resultChar);
+    }
+
+    @Test
+    public void conversionToStringTest() {
+        String resultStr = ObjectConverters.convert(';', String.class);
+        Assert.assertEquals(";", resultStr);
+
+        resultStr = ObjectConverters.convert('a', String.class);
+        Assert.assertEquals("a", resultStr);
+
+        //test null input
+        ObjectConverter<? super Character, ? extends String> converter = ObjectConverters.find(Character.class, String.class);
+        resultStr = converter.apply(null);
+        Assert.assertNull(resultStr);
     }
 
     /**

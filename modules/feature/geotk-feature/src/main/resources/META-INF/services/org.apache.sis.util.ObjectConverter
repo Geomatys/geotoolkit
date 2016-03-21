@@ -4,3 +4,4 @@ org.geotoolkit.feature.util.converter.StringToTimeStampConverter
 org.geotoolkit.feature.util.converter.DateToTimeStampConverter
 org.geotoolkit.feature.util.converter.DateToTimeConverter
 org.geotoolkit.feature.util.converter.StringToCharacterConverter
+org.geotoolkit.feature.util.converter.CharacterToStringConverter
