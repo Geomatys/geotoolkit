@@ -439,7 +439,11 @@ public class ImageUtils extends Static{
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
             }
-            case  Short :
+            case  Short : {
+                sampleBitSize = java.lang.Short.SIZE;
+                sampleFormat  = SAMPLEFORMAT_INT;
+                break;
+            }
             case UShort : {
                 sampleBitSize = java.lang.Short.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
@@ -509,7 +513,11 @@ public class ImageUtils extends Static{
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
             }
-            case Short  :
+            case Short  : {
+                sampleBitSize = java.lang.Short.SIZE;
+                sampleFormat  = SAMPLEFORMAT_INT;
+                break;
+            }
             case UShort : {
                 sampleBitSize = java.lang.Short.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
@@ -806,7 +814,7 @@ public class ImageUtils extends Static{
             */
            switch (sampleBitsSize) {
                case java.lang.Byte.SIZE  : dataBufferType = DataBuffer.TYPE_BYTE;   break;
-               case java.lang.Short.SIZE : dataBufferType = DataBuffer.TYPE_USHORT; break;
+               case java.lang.Short.SIZE : dataBufferType = (sampleFormat == SAMPLEFORMAT_INT) ? DataBuffer.TYPE_SHORT : DataBuffer.TYPE_USHORT; break;
                case Integer.SIZE         : dataBufferType = DataBuffer.TYPE_INT;    break;
                case Double.SIZE          : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
                default : {
