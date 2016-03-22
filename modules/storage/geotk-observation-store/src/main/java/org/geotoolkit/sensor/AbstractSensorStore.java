@@ -110,7 +110,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
     @Override
     public int replaceSensor(String id, Object sensor) throws DataStoreException {
         if (writer != null) {
-            return replaceSensor(id, sensor);
+            return writer.replaceSensor(id, (AbstractSensorML) sensor);
         }
         return -1;
     }
