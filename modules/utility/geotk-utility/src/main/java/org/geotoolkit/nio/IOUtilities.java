@@ -204,6 +204,9 @@ public final class IOUtilities extends Static {
      * @deprecated prefer using {@link #tryToPath(Object)} method to deal with Path instead of File
      */
     public static Object tryToFile(Object path) throws IOException {
+        if (path == null) {
+            return null;
+        }
         if (path instanceof File) {
             return (File) path;
         } else if (path instanceof CharSequence) {
@@ -266,7 +269,8 @@ public final class IOUtilities extends Static {
      * If a conversion from a {@link URL} object was necessary, then the URL is assumed
      * to <strong>not</strong> be encoded.
      *
-     * @param  candidate The candidate to convert to a {@link Path} if possible.
+     * @param  candidate The candidate to convert to a {@link Path} if possible. Can return {@code null} if input
+     *                   candidate was {@code null}
      * @return The candidate as a {@link Path} if this conversion was possible.
      * @throws IOException If an error occurred while converting the candidate to a Path. For example a not supported
      * FileSystem
@@ -274,11 +278,22 @@ public final class IOUtilities extends Static {
      *
      */
     public static Path toPath(Object candidate) throws IOException, IllegalArgumentException {
+        if (candidate == null) {
+            return null;
+        }
+
         if (candidate instanceof Path) {
             return (Path) candidate;
         }
         if (candidate instanceof CharSequence) {
-            return Paths.get(candidate.toString());
+            URI uri = URI.create(toSafeURI(String.valueOf(candidate)));
+            if (uri.getScheme() != null) {
+                //let java check matching FileSystem
+                return Paths.get(uri);
+            } else {
+                //assume on local filesystem
+                return Paths.get(candidate.toString());
+            }
         } else if (candidate instanceof URL) {
             final URL url = (URL) candidate;
             return org.apache.sis.internal.storage.IOUtilities.toPath(url, null);
@@ -312,6 +327,37 @@ public final class IOUtilities extends Static {
         }
         throw new IllegalArgumentException("Can't convert "+candidate.getClass()+" into a Path."+
         "Supported candidate type are CharSequence, URL, URI, File and Path");
+    }
+
+    /**
+     * Encode a String into a safe URI format.
+     * For example space characters will be replaced with %20
+     *
+     * @param candidate String
+     * @return encoded candidate String
+     */
+    private static String toSafeURI(String candidate) {
+        StringBuilder sb = new StringBuilder();
+        for (char ch : candidate.toCharArray()) {
+            if (isUnsafe(ch)) {
+                sb.append('%');
+                sb.append(Integer.toHexString(ch));
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Check if a char need to be encoded into URI format.
+     * Ignore reserved characters see <a href="https://tools.ietf.org/html/rfc3986#section-2.2">URI RFC/a>
+     *
+     * @param ch
+     * @return
+     */
+    private static boolean isUnsafe(char ch) {
+        return ch > 128 || " <>".indexOf(ch) >= 0;
     }
 
     /**
@@ -839,6 +885,8 @@ public final class IOUtilities extends Static {
     /**
      * This method delete recursively a file or directory behind a Path without raising an exception if delete failed.
      * If an exception occurs, message will be logged as debug.
+     *
+     * TODO create asyncDeleteSilently to delete recursively a file/folder in a separate thread
      *
      * @param path file or folder to delete
      * @return delete status. {@code true} if delete succeed, {@code false} otherwise
