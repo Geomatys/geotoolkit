@@ -331,8 +331,10 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                     try {
                         imgReader.setInput(tileFile);
                         buff = imgReader.read(0);
-                    } finally {
-                        releaseReader(imgReader);
+                    }catch (Exception ex){
+                        throw ex;
+                    }finally {
+                        ImageIOUtilities.releaseReader(imgReader);
                     }
                     //add in cache list.
                     final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);
@@ -398,6 +400,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
             try {
                 imgWriter.setOutput(tileFile);
                 imgWriter.write(toWrite);
+                imgWriter.dispose();
             } finally {
                 releaseWriter(imgWriter);
             }
