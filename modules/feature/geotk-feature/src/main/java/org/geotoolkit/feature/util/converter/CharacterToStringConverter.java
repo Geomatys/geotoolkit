@@ -20,38 +20,33 @@ import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
- * Convert a String into a Character.
- * If input String is {@code null}, output Character will be also {@code null}.
- * If input String is empty of contain more than one character, an {@link UnconvertibleObjectException} will be thrown.
+ * Convert a Character into a String.
+ * If input Character is {@code null}, output String will be also {@code null}.
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class StringToCharacterConverter extends SimpleConverter<String, Character> {
+public class CharacterToStringConverter extends SimpleConverter<Character, String > {
 
     @Override
-    public Class<String> getSourceClass() {
-        return String.class;
-    }
-
-    @Override
-    public Class<Character> getTargetClass() {
+    public Class<Character> getSourceClass() {
         return Character.class;
     }
 
     @Override
-    public Character apply(String s) throws UnconvertibleObjectException {
-        if (s == null) {
-            return null;
-        }
-
-        if (s.length() != 1) {
-            throw new UnconvertibleObjectException("Input String is empty or contain more than one character.");
-        }
-        return s.charAt(0);
+    public Class<String> getTargetClass() {
+        return String.class;
     }
 
     @Override
-    public ObjectConverter<Character, String> inverse() throws UnsupportedOperationException {
-        return new CharacterToStringConverter();
+    public String apply(Character character) throws UnconvertibleObjectException {
+        if (character == null) {
+            return null;
+        }
+        return String.valueOf(character.charValue());
+    }
+
+    @Override
+    public ObjectConverter<String, Character> inverse() throws UnsupportedOperationException {
+        return new StringToCharacterConverter();
     }
 }

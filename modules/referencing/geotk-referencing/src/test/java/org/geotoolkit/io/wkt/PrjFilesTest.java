@@ -18,6 +18,10 @@
 package org.geotoolkit.io.wkt;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.geotoolkit.nio.IOUtilities;
 import org.junit.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
@@ -65,5 +69,23 @@ public final strictfp class PrjFilesTest extends org.geotoolkit.test.TestBase {
         PrjFiles.write(CommonCRS.WGS84.normalizedGeographic(), out);
         out.close();
         assertEquals(WKT, out.toString());
+    }
+
+    /**
+     * Tests the write operation.
+     *
+     * @throws IOException should not happen.
+     */
+    @Test
+    public void testWriteInPath() throws IOException {
+        Path tmpPRJ = Files.createTempFile(null, ".prj");
+        try {
+            PrjFiles.write(CommonCRS.WGS84.normalizedGeographic(), tmpPRJ);
+            assertTrue(Files.exists(tmpPRJ));
+            assertTrue(Files.size(tmpPRJ) > 0);
+            assertEquals(WKT, IOUtilities.toString(tmpPRJ));
+        } finally {
+            Files.deleteIfExists(tmpPRJ);
+        }
     }
 }

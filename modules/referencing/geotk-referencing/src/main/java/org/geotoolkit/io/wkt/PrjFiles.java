@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -35,6 +36,8 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.apache.sis.io.wkt.Warnings;
+
+import static java.nio.file.StandardOpenOption.*;
 
 
 /**
@@ -222,6 +225,27 @@ public final class PrjFiles extends Static {
         // No need to buffer, because we will write everything (except EOL) in one shot.
         // In addition, OutputStreamWriter already manage its own internal buffer anyway.
         try (Writer out = new OutputStreamWriter(new FileOutputStream(file), ENCODING)) {
+            out.write(wkt);
+            out.write('\n'); // Use Unix EOL for cross-platform consistency.
+        }
+    }
+
+    /**
+     * Formats a coordinate reference system as a PRJ file.
+     * The file is created only if the given CRS is formattable.
+     *
+     * @param  crs The PRJ file content as a coordinate reference system.
+     * @param  file The file to create. It usually has the {@code ".prj"} suffix,
+     * @throws ContentFormatException if the given CRS is not formattable as a WKT.
+     * @throws IOException If an other error occurred while writing the file.
+     */
+    public static void write(final CoordinateReferenceSystem crs, final Path file)
+            throws ContentFormatException, IOException
+    {
+        final String wkt = format(crs);
+        // No need to buffer, because we will write everything (except EOL) in one shot.
+        // In addition, OutputStreamWriter already manage its own internal buffer anyway.
+        try (Writer out = Files.newBufferedWriter(file, Charset.forName(ENCODING), CREATE, WRITE, TRUNCATE_EXISTING)) {
             out.write(wkt);
             out.write('\n'); // Use Unix EOL for cross-platform consistency.
         }

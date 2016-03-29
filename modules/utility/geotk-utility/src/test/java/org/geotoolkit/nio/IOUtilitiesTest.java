@@ -186,7 +186,95 @@ public final strictfp class IOUtilitiesTest {
     }
 
     @Test
-    public void conversionTests() throws IOException, URISyntaxException {
+    public void canProcessAsPathTest() throws IOException {
+        //valid candidates
+        assertTrue(IOUtilities.canProcessAsPath(Paths.get("./somePath"))); //from path
+        assertTrue(IOUtilities.canProcessAsPath(new File("myFile")));  //from File
+        assertTrue(IOUtilities.canProcessAsPath(URI.create("file:/tmp"))); // from URI
+        assertTrue(IOUtilities.canProcessAsPath(new URL("file:/tmp"))); //from URL
+
+        //invalid candidates
+        assertFalse(IOUtilities.canProcessAsPath("/tmp")); //from Sting
+        assertFalse(IOUtilities.canProcessAsPath(1)); //from int
+    }
+
+    @Test
+    public void toPathTest() throws IOException {
+        Path pathObj = Files.createTempFile("path", ".tmp");
+        File fileObj = File.createTempFile("file", ".tmp");
+        URI uriObj = URI.create("file:/tmp");
+        URL urlFileObj = new URL("file:/tmp");
+
+        try {
+            //convert to Path
+            assertNull(IOUtilities.toPath(null));
+            assertSame(pathObj, IOUtilities.toPath(pathObj)); //should be same reference
+            assertEquals(fileObj.toPath(), IOUtilities.toPath(fileObj));
+            assertEquals(Paths.get(uriObj), IOUtilities.toPath(uriObj));
+            assertEquals(Paths.get(uriObj), IOUtilities.toPath(urlFileObj));
+
+            //valid string Object
+            assertEquals(Paths.get("/tmp"), IOUtilities.toPath("/tmp"));
+            assertEquals(Paths.get("/tmp"), IOUtilities.toPath("file:/tmp"));
+            assertEquals(Paths.get("/tmp my file"), IOUtilities.toPath("file:/tmp my file"));
+            assertEquals(Paths.get("./tmp"), IOUtilities.toPath("./tmp"));
+            assertEquals(Paths.get("./tmp my file"), IOUtilities.toPath("./tmp my file"));
+
+            try {
+                IOUtilities.toPath("http://some/url");
+                fail("Should raise FileSystemNotFoundException because http FileSystem is not supported by default");
+            } catch (FileSystemNotFoundException e) {
+                //normal exception
+            }
+
+            try {
+                IOUtilities.toPath(new URL("http://some/url"));
+                fail("Should raise FileSystemNotFoundException because http FileSystem is not supported by default");
+            } catch (IOException e) {
+                //normal exception
+            }
+
+            try {
+                IOUtilities.toPath(1);
+                fail("Should raise IllegalArgumentException");
+            } catch (IllegalArgumentException e) {
+                //normal exception
+            }
+        } finally {
+            //clean
+            Files.delete(pathObj);
+            fileObj.delete();
+        }
+    }
+
+    @Test
+    public void tryToPathTest() throws IOException {
+        Path pathObj = Files.createTempFile("path", ".tmp");
+        File fileObj = File.createTempFile("file", ".tmp");
+        URI uriObj = URI.create("file:/tmp");
+        URL urlFileObj = new URL("file:/tmp");
+        URL urlObj = new URL("http://some/url");
+        String strObj = "/tmp";
+
+        try {
+            //using try
+            assertNull(IOUtilities.tryToPath(null));
+            assertSame(pathObj, IOUtilities.tryToPath(pathObj)); //must be same object
+            assertEquals(fileObj.toPath(), IOUtilities.tryToPath(fileObj));
+            assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(uriObj));
+            assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(urlFileObj));
+            assertEquals(Paths.get(strObj), IOUtilities.tryToPath(strObj));
+            assertEquals(urlObj, IOUtilities.tryToPath(urlObj));// not converted because FS not supported
+            assertEquals(1, IOUtilities.tryToPath(1)); // not converted
+        } finally {
+            //clean
+            Files.delete(pathObj);
+            fileObj.delete();
+        }
+    }
+
+    @Test
+    public void tryToFileTest() throws IOException, URISyntaxException {
 
         Path pathObj = Files.createTempFile("path", ".tmp");
         File fileObj = File.createTempFile("file", ".tmp");
@@ -196,48 +284,8 @@ public final strictfp class IOUtilitiesTest {
         String strObj = "/tmp";
         Integer intObj = 1;
 
-        //tests
-        assertTrue(IOUtilities.canProcessAsPath(pathObj));
-        assertTrue(IOUtilities.canProcessAsPath(fileObj));
-        assertTrue(IOUtilities.canProcessAsPath(uriObj));
-        assertTrue(IOUtilities.canProcessAsPath(urlFileObj));
-        assertTrue(IOUtilities.canProcessAsPath(urlObj));
-        assertFalse(IOUtilities.canProcessAsPath(strObj));
-        assertFalse(IOUtilities.canProcessAsPath(intObj));
-
-        //convert to Path
-        assertSame(pathObj, IOUtilities.toPath(pathObj)); //must be same object
-        assertEquals(fileObj.toPath(), IOUtilities.toPath(fileObj));
-        assertEquals(Paths.get(uriObj), IOUtilities.toPath(uriObj));
-        assertEquals(Paths.get(uriObj), IOUtilities.toPath(urlFileObj));
-
-        //valid string Object
-        assertEquals(Paths.get(strObj), IOUtilities.toPath(strObj));
-
-        try {
-            IOUtilities.toPath(urlObj);
-            fail("Should raise FileSystemNotFoundException because http FileSystem is not supported by default");
-        } catch (IOException e) {
-            //normal exception
-        }
-
-        try {
-            IOUtilities.toPath(intObj);
-            fail("Should raise IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            //normal exception
-        }
-
-        //using try
-        assertSame(pathObj, IOUtilities.tryToPath(pathObj)); //must be same object
-        assertEquals(fileObj.toPath(), IOUtilities.tryToPath(fileObj));
-        assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(uriObj));
-        assertEquals(Paths.get(uriObj), IOUtilities.tryToPath(urlFileObj));
-        assertEquals(Paths.get(strObj), IOUtilities.tryToPath(strObj));
-        assertEquals(urlObj, IOUtilities.tryToPath(urlObj));// not converted because FS not supported
-        assertEquals(1, IOUtilities.tryToPath(intObj)); // not converted
-
         //try file conversion
+        assertNull(IOUtilities.tryToFile(null));
         assertEquals(pathObj.toFile(), IOUtilities.tryToFile(pathObj));
         assertSame(fileObj, IOUtilities.tryToFile(fileObj));
         assertEquals(new File(uriObj), IOUtilities.tryToFile(uriObj));
