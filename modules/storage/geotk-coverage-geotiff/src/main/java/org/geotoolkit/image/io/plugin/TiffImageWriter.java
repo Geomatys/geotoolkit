@@ -84,6 +84,8 @@ import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -692,7 +694,9 @@ public class TiffImageWriter extends SpatialImageWriter {
         // avant d'appeler open definir sil sagit d'une bigtiff
 
         // 1 : isBigTiff
+
         final SampleModel sm = imageType.getSampleModel();
+        final short planarConfiguration = ImageUtils.getPlanarConfiguration(sm);//-- 1 for interleaved, 2 for banded
         final int[] sampleSize = sm.getSampleSize();
         int pixelSize = 0;
         for (int i = 0; i < sampleSize.length; i++) {
@@ -780,8 +784,9 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert tileRegion.height % currentImgTH == 0;
 
             assert bitPerSample != 0;
+            final boolean isBanded = planarConfiguration == 2;
 
-            final int numTiles = dstNumXT * dstNumYT;//-- voir pour strip
+            final int numTiles = dstNumXT * dstNumYT * (isBanded ? sm.getNumBands() : 1);//-- voir pour strip
             final Object byteCountArray;
             final long byteCountArraySize;
             final Object offsetArray;
@@ -803,9 +808,9 @@ public class TiffImageWriter extends SpatialImageWriter {
             final long destOffsetArraySize    = (offsetArraySize    > datasize) ? offsetArraySize    : 0;
 
             //-- write current tile byte position --//
-            final long currentByteCount = (long) currentImgTW * currentImgTH * pixelSize / Byte.SIZE;
-            final long tileOffsetBeg   = buffPos + destByteCountArraySize + destOffsetArraySize;//-- position in bytes
-            long currentoffset         = tileOffsetBeg;
+            final long currentByteCount = (long) currentImgTW * currentImgTH * (isBanded ? sm.getNumBands() : 1) * bitPerSample / Byte.SIZE;
+            final long tileOffsetBeg    = buffPos + destByteCountArraySize + destOffsetArraySize;//-- position in bytes
+            long currentoffset          = tileOffsetBeg;
 
             // fill byte count array
             if (isBigTIFF) {
@@ -826,12 +831,33 @@ public class TiffImageWriter extends SpatialImageWriter {
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
             //-- add current offset array in current headProperties --//
             addProperty(TileOffsets, (isBigTIFF) ? TYPE_ULONG : TYPE_UINT, Array.getLength(offsetArray), offsetArray, headProperties);
-            assert tileOffsetBeg == channel.getStreamPosition() : "expected : "+tileOffsetBeg+". found : "+channel.getStreamPosition();
+            if ((byteCountArraySize > datasize))
+                assert tileOffsetBeg == channel.getStreamPosition() : "expected : "+tileOffsetBeg+". found : "+channel.getStreamPosition();
+            else
+                assert (offsetTagPosition + datasize) == channel.getStreamPosition() : "expected : "+tileOffsetBeg+". found : "+channel.getStreamPosition();
+            channel.seek(tileOffsetBeg);
             if (metaIndex == metaHeads.length) {
                 metaHeads = Arrays.copyOf(metaHeads, metaHeads.length << 1);
             }
             metaHeads[metaIndex++] = headProperties;
             this.headProperties = null;
+            final int dataType = sm.getDataType();
+            final int fakeTileArrayLength = currentImgTW * currentImgTH * (isBanded ? sm.getNumBands() : 1);
+            Object fakeTile;
+            switch (dataType) {
+                case DataBuffer.TYPE_BYTE   : fakeTile = new byte[fakeTileArrayLength]; break;
+                case DataBuffer.TYPE_USHORT :
+                case DataBuffer.TYPE_SHORT  : fakeTile = new short[fakeTileArrayLength]; break;
+                case DataBuffer.TYPE_INT    : fakeTile = new int[fakeTileArrayLength]; break;
+                case DataBuffer.TYPE_FLOAT  : fakeTile = new float[fakeTileArrayLength]; break;
+                case DataBuffer.TYPE_DOUBLE : fakeTile = new double[fakeTileArrayLength]; break;
+                default: throw new IIOException(error(Errors.Keys.UnsupportedDataType, dataType));
+            }
+
+            for (int ty = 0; ty < numTiles; ty++) {
+                write(fakeTile, dataType, 0, fakeTileArrayLength, bitPerSample, compression);
+            }
+            assert channel.getStreamPosition() == endOfFile;
         }
 
         // 1 : etude du image type specifier
@@ -1867,7 +1893,13 @@ public class TiffImageWriter extends SpatialImageWriter {
          && tileRegion.equals(imageBoundary)) {
 
             final long currentByteCount = (long) currentImgTW * currentImgTH * bitPerSample *  pixelLength / Byte.SIZE;
-            long currentoffset = buffPos + byteCountArraySize + offsetArraySize;
+
+            //-- if all offsets or bytecounts datasize should be contained into Long or Integer datasize. --//
+            final int datasize = (isBigTIFF) ? Long.SIZE / Byte.SIZE : Integer.SIZE / Byte.SIZE;
+            //-- Expected channel position where the first sample will be written
+            final long sampleWritingBegin = (byteCountArraySize <= datasize) ? buffPos : buffPos + byteCountArraySize + offsetArraySize;
+
+            long currentoffset = sampleWritingBegin;
 
             // fill byte count array
             if (isBigTIFF) {
@@ -1887,6 +1919,8 @@ public class TiffImageWriter extends SpatialImageWriter {
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
             //-- add current offset array in current headProperties --//
             addProperty(TileOffsets, arrayType, Array.getLength(offsetArray), offsetArray, headProperties);
+
+            channel.seek(sampleWritingBegin);
 
             //-- copy raster one by one
             int writeTileLength = currentImgTH * currentImgTW * pixelLength;
@@ -2690,7 +2724,12 @@ public class TiffImageWriter extends SpatialImageWriter {
          && dstOffX == 0
          && dstOffY == 0) {
 
-             long currentoffset = buffPos + byteCountArraySize + offsetArraySize;
+            //-- if all offsets or bytecounts datasize should be contained into Long or Integer datasize. --//
+            final int datasize = (isBigTIFF) ? Long.SIZE / Byte.SIZE : Integer.SIZE / Byte.SIZE;
+            //-- Expected channel position where the first sample will be written
+            final long sampleWritingBegin = (byteCountArraySize <= datasize) ? buffPos : buffPos + byteCountArraySize + offsetArraySize;
+
+            long currentoffset = sampleWritingBegin;
             //-- fill byte count array. --//
             if (isBigTIFF) {
                 Arrays.fill((long[]) byteCountArray, currentByteCount);
@@ -2712,6 +2751,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
 
             //---------------------------------------------------------------------//
+            channel.seek(sampleWritingBegin);
 
             int writelength = img.getWidth() * pixelLength;
             assert writelength * sampleSize == currentByteCount : "writeLength = "+(writelength * sampleSize)+" currentByteCount = "+currentByteCount;
@@ -2842,7 +2882,13 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                    for (int tx = minTX; tx < maxTX; tx++) {
                        // -- get the following image raster
-                        final Raster imageTile        = img.getTile(tx, ty);
+                       Raster imageTile = null;
+//                       try {
+                           imageTile        = img.getTile(tx, ty);
+//                       } catch (Exception ex) {
+//                           System.out.println("tx = "+tx+", ty = "+ty);
+//                       }
+
                         final DataBuffer rasterBuffer = imageTile.getDataBuffer();
 
                         //-- width of the current tile

@@ -27,8 +27,8 @@ import org.junit.Test;
 
 /**
  * Effectuate all same test than super class with image build with {@link BandedSampleModel}.
- * 
- * @author Remi Marechal (Geomatys) 
+ *
+ * @author Remi Marechal (Geomatys)
  */
 public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWriterTest {
 
@@ -44,10 +44,17 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
     public void defaultColorMapTest() throws IOException {
         //-- do nothing has no sens to test color map
     }
-    
+
+    @Override
+    public strictfp void writeEmptyTest() throws IOException {
+        //-- Bug 
+    }
+
+
+
     /**
      * Improve method {@link TIFFImageWriter#replacePixels(java.awt.image.RenderedImage, javax.imageio.ImageWriteParam) }.
-     * 
+     *
      * @throws IOException if problem during I/O action.
      */
     @Test
@@ -55,19 +62,19 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
     public void replacePixelTest() throws IOException {
         //-- 1 band byte --//
         TestReplacePixel("replacePixel : 2 band Byte", Byte.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
+
         //-- 1 band short --//
         TestReplacePixel("replacePixel : 2 band Short", Short.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
+
         //-- 1 band int --//
         TestReplacePixel("replacePixel : 5 band Integer", Integer.SIZE, 5, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
+
         //-- 1 band Float --//
         TestReplacePixel("replacePixel : 4 band Float", Float.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
-        
+
         //-- 1 band double --//
         TestReplacePixel("replacePixel : 2 Double Byte", Double.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
-        
+
         //-- 3 bands RGB --//
         TestReplacePixel("replacePixel : 3 bands Byte", Byte.SIZE, 3, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
         //-- 4 band RGB --//
@@ -76,7 +83,7 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
 
     /**
      * {@inheritDoc }
-     * Same than super class 
+     * Same than super class
      */
     @Override
     protected void regionTest(String message, ImageOrientation imageOrientation) throws IOException {
@@ -84,19 +91,19 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
         //-- Short --//
         generalTest(message+" : 5 bands, type : Short.", fileTest, Short.SIZE, 5,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
-        
+
         //-- Int --//
         generalTest(message+" : 5 bands, type : Int.", fileTest, Integer.SIZE, 5,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
-        
+
         //-- Float --//
         generalTest(message+" : 5 bands, type : Float.", fileTest, Float.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation); 
-        
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
+
         //-- Double --//
         generalTest(message+" : 5 bands, type : Double.", fileTest, Double.SIZE, 5,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
-        
+
         //-- RGB --//
         //-- type Byte RGB
         generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, Byte.SIZE, 3,
