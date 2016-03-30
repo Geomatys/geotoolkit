@@ -59,6 +59,13 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
+    static {
+        try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+        } catch (ClassNotFoundException e) {
+            LOGGER.warning("Unable to load Derby JDBC driver. Derby jar is missing from classpath.");
+        }
+    }
 
     public LuceneDerbySQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
         this.crs    = crs;
