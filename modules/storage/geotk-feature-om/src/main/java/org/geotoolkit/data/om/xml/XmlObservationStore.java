@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,19 +94,17 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
     protected final Map<GenericName, FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final Path xmlFile;
-    
+
     public XmlObservationStore(final ParameterValueGroup params) throws IOException {
         super(params);
-        URI uri = (URI) params.parameter(FILE_PATH.getName().toString()).getValue();
-        xmlFile = IOUtilities.toPath(uri);
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filename(xmlFile));
-
+        xmlFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
     }
     
     public XmlObservationStore(final Path xmlFile) {
         super(null);
         this.xmlFile = xmlFile;
-        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filename(xmlFile));
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
     }
 
     @Override

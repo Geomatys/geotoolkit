@@ -19,6 +19,9 @@ package org.geotoolkit.data.om.netcdf;
 
 import org.geotoolkit.data.om.OMFeatureTypes;
 import java.io.File;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +38,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.observation.ObservationReader;
@@ -49,7 +53,6 @@ import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
@@ -64,21 +67,21 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
 
     protected final Map<GenericName, FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
-    private final File dataFile;
+    private final Path dataFile;
     private final NCFieldAnalyze analyze;
     
     public NetcdfObservationStore(final ParameterValueGroup params) {
         super(params);
-        dataFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+        dataFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
-        types = OMFeatureTypes.getFeatureTypes(FileUtilities.getFileName(dataFile));
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
     }
     
-    public NetcdfObservationStore(final File observationFile) {
+    public NetcdfObservationStore(final Path observationFile) {
         super(null);
         dataFile = observationFile;
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
-        types = OMFeatureTypes.getFeatureTypes(FileUtilities.getFileName(dataFile));
+        types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
     }
 
     @Override
@@ -89,7 +92,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     /**
      * @return the dataFile
      */
-    public File getDataFile() {
+    public Path getDataFile() {
         return dataFile;
     }
     
@@ -209,13 +212,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     }
     
     private String getProcedureID() {
-        String local;
-        if (dataFile.getName().indexOf('.') != -1) {
-            local = dataFile.getName().substring(0, dataFile.getName().lastIndexOf('.'));
-        } else {
-            local = dataFile.getName();
-        }
-        return local;
+        return IOUtilities.filenameWithoutExtension(dataFile);
     }
     
     @Override
@@ -276,8 +273,8 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{dataFile};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{dataFile};
     }
 
     /**

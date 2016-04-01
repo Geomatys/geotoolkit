@@ -4,6 +4,7 @@ package org.geotoolkit.data.om.netcdf;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +45,7 @@ class NetcdfFeatureReader implements FeatureReader {
     protected List<Feature> features = new ArrayList<>();
     protected int cpt = 0;
 
-    NetcdfFeatureReader(final File source, final FeatureType type) throws NetCDFParsingException {
+    NetcdfFeatureReader(final Path source, final FeatureType type) throws NetCDFParsingException {
         this.type = type;
         ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(source, "temp");
         for (Observation obs : result.observations) {

@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.lucene.filter;
 
-import java.io.IOException;
-
-import java.util.List;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
@@ -30,6 +27,12 @@ import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.FixedBitSet;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.Tree;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 import static org.geotoolkit.index.LogicalFilterType.*;
 
 /**
@@ -241,17 +244,10 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
 
     @Override
     public int hashCode() {
-      if (chain.isEmpty()) {
-    	  return 0;
-      }
-
-      int h = chain.get(0).hashCode() ^ actionType[0].hashCode();
-      for (int i = 1; i < this.chain.size(); i++) {
-    	  h ^= chain.get(i).hashCode();
-    	  h ^= actionType[i].hashCode();
-      }
-
-      return h;
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.chain);
+        hash = 37 * hash + Arrays.hashCode(this.actionType);
+        return hash;
     }
     
     @Override

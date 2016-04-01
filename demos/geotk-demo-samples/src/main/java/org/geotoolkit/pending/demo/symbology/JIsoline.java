@@ -47,7 +47,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class JIsoline extends JAbstractMapPane{
   
 
-    public JIsoline() throws DataStoreException, MalformedURLException{
+    public JIsoline() throws DataStoreException, MalformedURLException, URISyntaxException {
         super(createContext());
     }
 
