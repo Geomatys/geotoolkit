@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014-2015, Geomatys
+ *    (C) 2014-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,26 +28,31 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import static org.geotoolkit.coverage.SampleDimensionUtils.buildCategories;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.opengis.util.FactoryException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import static org.geotoolkit.coverage.SampleDimensionUtils.buildCategories;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
 

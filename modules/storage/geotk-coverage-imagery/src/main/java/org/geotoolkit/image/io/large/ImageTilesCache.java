@@ -334,7 +334,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                     }catch (Exception ex){
                         throw ex;
                     }finally {
-                        ImageIOUtilities.releaseReader(imgReader);
+                        imgReader.dispose();
                     }
                     //add in cache list.
                     final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);

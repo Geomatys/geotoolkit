@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2015, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
+
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  * Geotiff is a widely used format, many metadata formats may be associated with it.

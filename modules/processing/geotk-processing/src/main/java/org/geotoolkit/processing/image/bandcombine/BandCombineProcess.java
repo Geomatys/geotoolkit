@@ -125,7 +125,7 @@ public class BandCombineProcess extends AbstractProcess {
 
         //-- try to reuse a java color model for better performances
         final ColorModel cm  = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands, 0, 0, 10);
-        final SampleModel sm = ImageUtils.createSampleModel(PlanarConfiguration.Interleaved, SampleType.valueOf(sampleType), width, height, nbtotalbands);
+        final SampleModel sm = ImageUtils.createSampleModel(PlanarConfiguration.INTERLEAVED, SampleType.valueOf(sampleType), width, height, nbtotalbands);
 
 
         //-- destination Images Dimensions

@@ -80,8 +80,8 @@ public class BandSelectProcess extends AbstractProcess {
 
         //-- study Color Model
         final SampleType st                = SampleType.valueOf(inputImage.getSampleModel().getDataType());
-        //-- if we choose only one band grayScale else RGB 
-        final PhotometricInterpretation pI = (bands.length == 1) ? PhotometricInterpretation.GrayScale : PhotometricInterpretation.RGB;
+        //-- if we choose only one band grayScale else RGB
+        final PhotometricInterpretation pI = (bands.length == 1) ? PhotometricInterpretation.GRAYSCALE : PhotometricInterpretation.RGB;
         final ColorModel outCm             = ImageUtils.createColorModel(st, bands.length, pI, null);
 
         final BufferedImage resultImage    = new BufferedImage(outCm, raster, false, new Hashtable<>());

@@ -24,6 +24,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageWriteParam;
 
+import org.geotoolkit.image.internal.PhotometricInterpretation;
+import org.geotoolkit.image.internal.SampleType;
+
 import org.junit.Test;
 
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
@@ -55,33 +58,33 @@ public class UncompressedTiledWriterTest extends UncompressedTiffWriterTest {
     public void singleTileTest() throws IOException {
 
         //-- 1 band byte --//
-        testSingleTile("singleTileTest : 1 band Byte", Byte.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 1 band Byte", SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE);
 
         //-- 1 band short --//
-        testSingleTile("singleTileTest : 1 band Short", Short.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 1 band Short", SampleType.USHORT, 1, PhotometricInterpretation.GRAYSCALE);
 
         //-- 1 band int --//
-        testSingleTile("singleTileTest : 1 band Integer", Integer.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 1 band Integer", SampleType.INTEGER, 1, PhotometricInterpretation.GRAYSCALE);
 
         //-- 1 band Float --//
-        testSingleTile("singleTileTest : 1 band Float", Float.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
+        testSingleTile("singleTileTest : 1 band Float", SampleType.FLOAT, 1, PhotometricInterpretation.GRAYSCALE);
 
         //-- 1 band double --//
-        testSingleTile("singleTileTest : 1 Double Byte", Double.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
+        testSingleTile("singleTileTest : 1 Double Byte", SampleType.DOUBLE, 1, PhotometricInterpretation.GRAYSCALE);
 
 
         //-- 3 bands RGB --//
-        testSingleTile("singleTileTest : 3 bands Byte", Byte.SIZE, 3, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 3 bands Byte", SampleType.BYTE, 3, PhotometricInterpretation.RGB);
         //-- 4 band RGB --//
-        testSingleTile("singleTileTest : 4 bands Byte", Byte.SIZE, 4, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 4 bands Byte", SampleType.BYTE, 4, PhotometricInterpretation.RGB);
 
         //--Color Map --//
         //-- 1 band byte --//
-        testSingleTile("singleTileTest : 3 bands Byte Color Map", Byte.SIZE, 3, PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT);
-        //-- 1 band byte --//
-        testSingleTile("singleTileTest : 4 bands Byte Color Map", Byte.SIZE, 4, PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT);
+        testSingleTile("singleTileTest : 1 bands Byte Color Map", SampleType.BYTE, 1, PhotometricInterpretation.PALETTE);
+        //-- uncomment this code when a solution for multi band with color palette will be approuved.
+//        //-- 1 band byte --//
+//        testSingleTile("singleTileTest : 4 bands Byte Color Map", Byte.SIZE, 4, PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT);
     }
-
 
     /**
      * Write and read an image without any subsampling or other, and with only one tile.
@@ -93,8 +96,9 @@ public class UncompressedTiledWriterTest extends UncompressedTiffWriterTest {
      * @param sampleFormat
      * @throws IOException
      */
-    private void testSingleTile(final String message, final int sampleBitsSize, final int numBand,
-            final short photometricInterpretation, final short sampleFormat) throws IOException {
+    private void testSingleTile(final String message, final SampleType sampleType,
+                                final int numBand, final PhotometricInterpretation photometricInterpretation)
+            throws IOException {
         final File fileTest = File.createTempFile(message, "tiff", tempDir);
         writer.setOutput(fileTest); //-- to initialize writer
 
@@ -102,13 +106,7 @@ public class UncompressedTiledWriterTest extends UncompressedTiffWriterTest {
         final int width  = writerParam.getTileWidth();
         final int height = writerParam.getTileHeight();
 
-        /*
-         * Image volontary created with planarconfiguration equal 1 to don't build banded sampleModel
-         * because with banded sample model one tile offset for each band and the aim of this test is
-         * to have only a single tile offset tiff tag.
-         * N = TilesPerImage for PlanarConfiguration = 1; N = SamplesPerPixel * TilesPerImage for PlanarConfiguration = 2
-         */
-        final WritableRenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        final WritableRenderedImage sourceImage = createImageTest(width, height, sampleType, numBand, photometricInterpretation);
         writer.write(sourceImage, writerParam);
         writer.dispose();
 

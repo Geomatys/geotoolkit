@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,34 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.metadata.dimap;
+
+import org.opengis.coverage.SampleDimensionType;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.coordinate.GeometryFactory;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.constraint.Restriction;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.lineage.Lineage;
+import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.spatial.Dimension;
+import org.opengis.metadata.spatial.DimensionNameType;
+import org.opengis.metadata.spatial.SpatialRepresentation;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.MemberName;
+import org.opengis.util.TypeName;
 
 import org.apache.sis.internal.jaxb.gmi.MI_Metadata;
 import org.apache.sis.measure.NumberRange;
@@ -51,6 +79,7 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
@@ -61,33 +90,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.opengis.coverage.SampleDimensionType;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.coordinate.GeometryFactory;
-import org.opengis.metadata.acquisition.AcquisitionInformation;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.Role;
-import org.opengis.metadata.constraint.Restriction;
-import org.opengis.metadata.content.ContentInformation;
-import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.lineage.Lineage;
-import org.opengis.metadata.lineage.ProcessStep;
-import org.opengis.metadata.quality.DataQuality;
-import org.opengis.metadata.spatial.Dimension;
-import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.metadata.spatial.SpatialRepresentation;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-import org.opengis.util.MemberName;
-import org.opengis.util.TypeName;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 

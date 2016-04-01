@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 /**
  * LandSat metadata node are composed of a key and associated value.
  * Model is organised in a tree where node with children have the key 'GROUP'
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -36,23 +36,23 @@ public class LandSatMetaNode extends DefaultMutableTreeNode {
 
     /**
      * Get node at given path.
-     * 
+     *
      * @param path
      * @return LandSatMetaNode or null if node does not exist
      */
     public LandSatMetaNode search(String ... path){
-        
+
         if(!path[0].equalsIgnoreCase(getKey())){
             //name does not match
             return null;
         }
-        
+
         if(path.length == 1){
             return this;
         }else if(getChildCount() > 0){
-            //search childrens    
+            //search childrens
             final String[] subSearch = Arrays.copyOfRange(path, 1, path.length);
-            
+
             for(int i=0,n=getChildCount();i<n;i++){
                 final LandSatMetaNode result = ((LandSatMetaNode)getChildAt(i)).search(subSearch);
                 if(result != null){
@@ -60,11 +60,11 @@ public class LandSatMetaNode extends DefaultMutableTreeNode {
                 }
             }
         }
-        
-        return null;        
+
+        return null;
     }
-    
-    
+
+
     @Override
     public Entry<String, String> getUserObject() {
         return (Entry) super.getUserObject();
@@ -95,5 +95,5 @@ public class LandSatMetaNode extends DefaultMutableTreeNode {
     public String toString() {
         return getKey() + " = " + getValue();
     }
-    
+
 }

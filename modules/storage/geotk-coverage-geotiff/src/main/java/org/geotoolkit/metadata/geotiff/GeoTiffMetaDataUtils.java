@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,9 @@ package org.geotoolkit.metadata.geotiff;
 import java.util.Collection;
 import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
 import com.sun.media.imageio.plugins.tiff.TIFFTag;
+
 import javax.imageio.metadata.IIOMetadataNode;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -192,7 +194,7 @@ public final class GeoTiffMetaDataUtils {
     static Node createTiffField(final TIFFTag tag){
         return createTiffField(tag.getNumber(),tag.getName());
     }
-    
+
     /**
      * Create a Tiffield node.
      */

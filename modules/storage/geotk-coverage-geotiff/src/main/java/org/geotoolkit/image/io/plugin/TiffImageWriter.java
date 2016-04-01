@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -45,7 +44,6 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
+
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -65,31 +64,31 @@ import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 
-import static java.nio.file.StandardOpenOption.*;
-import static org.geotoolkit.image.internal.ImageUtils.*;
+import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WritableImageByteChannel;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
-
-import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.internal.PlanarConfiguration;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import static java.nio.file.StandardOpenOption.*;
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
+import static org.geotoolkit.image.internal.ImageUtils.*;
 
 /**
  *
@@ -695,9 +694,10 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         // 1 : isBigTiff
 
-        final SampleModel sm = imageType.getSampleModel();
+        final SampleModel sm            = imageType.getSampleModel();
         final short planarConfiguration = ImageUtils.getPlanarConfiguration(sm);//-- 1 for interleaved, 2 for banded
-        final int[] sampleSize = sm.getSampleSize();
+        final int[] sampleSize          = sm.getSampleSize();
+        final int numBands              = sm.getNumBands();
         int pixelSize = 0;
         for (int i = 0; i < sampleSize.length; i++) {
             pixelSize += sampleSize[i];
@@ -770,8 +770,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- write tiff tags --//
         writeTags(headProperties, ifdPosition);
 
-        //-- ecriture des arrays byte count
-        //-- dans un premier temps sous forme de tuiles
+        //-- write arrays byte count and offset
+        //-- write empty always tiled
 
         {
             assert currentImgTW != 0;
@@ -786,7 +786,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert bitPerSample != 0;
             final boolean isBanded = planarConfiguration == 2;
 
-            final int numTiles = dstNumXT * dstNumYT * (isBanded ? sm.getNumBands() : 1);//-- voir pour strip
+            final int numTiles = dstNumXT * dstNumYT * (isBanded ? numBands : 1);
             final Object byteCountArray;
             final long byteCountArraySize;
             final Object offsetArray;
@@ -808,7 +808,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             final long destOffsetArraySize    = (offsetArraySize    > datasize) ? offsetArraySize    : 0;
 
             //-- write current tile byte position --//
-            final long currentByteCount = (long) currentImgTW * currentImgTH * (isBanded ? sm.getNumBands() : 1) * bitPerSample / Byte.SIZE;
+            final long currentByteCount = (long) currentImgTW * currentImgTH * (isBanded ? 1 : numBands) * bitPerSample / Byte.SIZE;
             final long tileOffsetBeg    = buffPos + destByteCountArraySize + destOffsetArraySize;//-- position in bytes
             long currentoffset          = tileOffsetBeg;
 
@@ -842,7 +842,11 @@ public class TiffImageWriter extends SpatialImageWriter {
             metaHeads[metaIndex++] = headProperties;
             this.headProperties = null;
             final int dataType = sm.getDataType();
-            final int fakeTileArrayLength = currentImgTW * currentImgTH * (isBanded ? sm.getNumBands() : 1);
+            /*
+             * Banded      = numbands tiles of size (tileWidth * tileHeight)
+             * Interleaved = one tile of size (tilewidth * tileHeight * numbands)
+             */
+            final int fakeTileArrayLength = currentImgTW * currentImgTH * (isBanded ? 1 : numBands);
             Object fakeTile;
             switch (dataType) {
                 case DataBuffer.TYPE_BYTE   : fakeTile = new byte[fakeTileArrayLength]; break;
@@ -865,7 +869,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         // 3 : etude du compute region en fonction de width heigth et param
         // 4 : injecter les metadatas
         // 5 : garder les thumbnails pour les ecrires au endwriteempty
-        // 6 : lever exception si != uncompressed
 //        super.prepareWriteEmpty(streamMetadata, imageType, width, height, imageMetadata, thumbnails, param); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -1553,8 +1556,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         final Map<String, Object> pcObj = headProperties.get(PlanarConfiguration);
         short srcPC = 1;
         if (pcObj != null) srcPC = ((short[]) pcObj.get(ATT_VALUE))[0];
-
-
 
         if (srcPC != imgPC) {
             final String src = (srcPC == 1) ? "interleaved" : "banded";

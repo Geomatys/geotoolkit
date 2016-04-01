@@ -158,7 +158,7 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
             histo[i] = (long)i;
         }
 
-        ImageStatistics stat = new ImageStatistics(1, SampleType.Byte);
+        ImageStatistics stat = new ImageStatistics(1, SampleType.BYTE);
         ImageStatistics.Band band0 = stat.getBand(0);
         band0.setHistogram(histo);
 

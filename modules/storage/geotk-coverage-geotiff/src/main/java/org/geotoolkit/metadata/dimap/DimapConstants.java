@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ import org.geotoolkit.math.NumberSet;
  * @module pending
  */
 public final class DimapConstants {
-    
+
     /**
      * Raster encoding possible byteOrder
      */
@@ -72,7 +72,7 @@ public final class DimapConstants {
         public NumberSet getNumberSet(){
             return n;
         }
-        
+
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public final class DimapConstants {
     public static final String TAG_PRODUCTION_FACILITY_SOFTWARE_NAME = "SOFTWARE_NAME";
     public static final String TAG_PRODUCTION_FACILITY_SOFTWARE_VERSION = "SOFTWARE_VERSION";
     public static final String TAG_PRODUCTION_FACILITY_PROCESSING_CENTER = "PROCESSING_CENTER";
-    
+
     // Quality assessment group ------------------------------------------------
     public static final String TAG_QUALITY_ASSESSMENT = "Quality_Assessment";
     public static final String TAG_QUALITY_TABLES = "QUALITY_TABLES";
@@ -193,7 +193,7 @@ public final class DimapConstants {
     // RASTER CS tag group -----------------------------------------------------
     public static final String TAG_RASTER_CS = "Raster_CS";
     public static final String TAG_RASTER_CS_TYPE = "RASTER_CS_TYPE";
-    
+
 
     // Image display information -----------------------------------------------
     public static final String TAG_IMAGE_DISPLAY = "Image_Display";
@@ -240,31 +240,31 @@ public final class DimapConstants {
     public static final String TAG_DATA_PROCESSING_ALGORITHM_TYPE = "ALGORITHM_TYPE";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_NAME = "ALGORITHM_NAME";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_ACTIVATION = "ALGORITHM_ACTIVATION";
-    
+
     //Satellite_Time------------------------------------------------------------
     public static final String TAG_SATELLITE_TIME = "Satellite_Time";
-    
+
     //Processing_Options
     public static final String TAG_PROCESSING_OPTIONS = "Processing_Options";
     public static final String TAG_DYNAMIC_STRETCH = "Dynamic_Stretch";
     public static final String TAG_THRESHOLDS = "Thresholds";
     public static final String TAG_LOW_THRESHOLD = "LOW_THRESHOLD";
     public static final String TAG_HIGH_THRESHOLD = "HIGH_THRESHOLD";
-    
+
     //Data Strip tag group ------------------------------------------------
     public static final String TAG_DATA_STRIP = "Data_Strip";
     public static final String TAG_SENSOR_CALIBRATION = "Sensor_Calibration";
-    
+
     public static final String TAG_SPECTRAL_SENSITIVITIES = "Spectral_Sensitivities";
     public static final String TAG_BAND_SPECTRAL_SENSITIVITIES = "Band_Spectral_Sensitivities";
     public static final String TAG_WAVELENGTH_STEP = "WAVELENGTH_STEP";
     public static final String TAG_FIRST_WAVELENGTH_VALUE = "FIRST_WAVELENGTH_VALUE";
-    
+
     public static final String TAG_SOLAR_IRRADIANCE = "Solar_Irradiance";
     public static final String TAG_BAND_SOLAR_IRRADIANCE = "Band_Solar_Irradiance";
     public static final String TAG_SOLAR_IRRADIANCE_VALUE = "SOLAR_IRRADIANCE_VALUE";
-    
-    
+
+
     private DimapConstants(){}
 
 }
