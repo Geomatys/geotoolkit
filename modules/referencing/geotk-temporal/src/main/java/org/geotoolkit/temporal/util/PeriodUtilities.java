@@ -186,11 +186,12 @@ public class PeriodUtilities {
         //we look if the gap is more than one week (1000 ms)
         temp = gap / SECOND_MS;
         if (temp >= 1) {
-            response.append(temp).append('S');
             gap -= temp * SECOND_MS;
-        }
-        if (gap != 0) {
-            throw new IllegalArgumentException("TimePeriod can't be found a the Millisecond precision");
+            response.append(temp);
+            if (gap != 0) {
+               response.append(".").append(gap);
+            }
+            response.append('S');
         }
         return response.toString();
     }
@@ -294,9 +295,19 @@ public class PeriodUtilities {
 
         //we look if the period contains seconds (1000 ms)
         if (periodDescription.indexOf('S') != -1) {
-            final int nbSec = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('S')));
-            time += nbSec * SECOND_MS;
-            periodDescription = periodDescription.substring(periodDescription.indexOf('S') + 1);
+            if (periodDescription.indexOf('.') != -1) {
+                final int nbSec = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('.')));
+                time += nbSec * SECOND_MS;
+                periodDescription = periodDescription.substring(periodDescription.indexOf('.') + 1);
+                // millsecond
+                final int nbMSec = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('S')));
+                time += nbMSec;
+                periodDescription = periodDescription.substring(periodDescription.indexOf('S') + 1);
+            } else {
+                final int nbSec = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('S')));
+                time += nbSec * SECOND_MS;
+                periodDescription = periodDescription.substring(periodDescription.indexOf('S') + 1);
+            }
         }
 
         if (periodDescription.length() != 0) {
