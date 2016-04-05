@@ -48,7 +48,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getAllConceptRelatives", propOrder = {
     "concept",
     "thesaurus",
-    "relation"
+    "relation",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetAllConceptRelatives", namespace = "http://ws.geotk.org/")
 public class GetAllConceptRelatives {

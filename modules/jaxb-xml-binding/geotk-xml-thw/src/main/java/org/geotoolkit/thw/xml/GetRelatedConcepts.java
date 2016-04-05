@@ -48,7 +48,8 @@ import javax.xml.bind.annotation.XmlType;
     "concept",
     "relation",
     "language",
-    "thesaurusUri"
+    "thesaurusUri",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetRelatedConcepts", namespace = "http://ws.geotk.org/")
 public class GetRelatedConcepts {

@@ -44,7 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAvailableLanguages", propOrder = {
-    "concept"
+    "concept",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetAvailableLanguages", namespace = "http://ws.geotk.org/")
 public class GetAvailableLanguages {

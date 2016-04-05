@@ -45,7 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getSupportedLangs", propOrder = {
-    "thesaurus"
+    "thesaurus",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetSupportedLangs", namespace = "http://ws.geotk.org/")
 public class GetSupportedLangs {
