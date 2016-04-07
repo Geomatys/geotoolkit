@@ -36,24 +36,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.crs.DefaultDerivedCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
@@ -68,10 +55,27 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Classes;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
 
 /**
  *
@@ -1041,28 +1045,34 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {
-        int index = getTemporalAxisIndex();
-        if(index < 0 && (startDate!=null || endDate!=null) ){
-            //no temporal axis, add one
-            CoordinateReferenceSystem crs = getObjectiveCRS();
-            crs = appendCRS(crs, CommonCRS.Temporal.JAVA.crs());
-            setObjectiveCRS(crs);
-            index = getTemporalAxisIndex();
-        }
-
-        if (index >= 0) {
-
-            if(startDate!=null || endDate!=null){
-                setRange(index,
-                    (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
-                    (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
-            }else{
-                //remove this dimension
+        try {
+            int index = getTemporalAxisIndex();
+            if (index < 0 && (startDate != null || endDate != null)) {
+                //no temporal axis, add one
                 CoordinateReferenceSystem crs = getObjectiveCRS();
-                crs = removeCRS(crs, CommonCRS.Temporal.JAVA.crs());
+
+                    crs = appendCRS(crs, CommonCRS.Temporal.JAVA.crs());
+
+
                 setObjectiveCRS(crs);
+                index = getTemporalAxisIndex();
             }
 
+            if (index >= 0) {
+                if(startDate!=null || endDate!=null){
+                    setRange(index,
+                        (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
+                        (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
+                }else{
+                    //remove this dimension
+                    CoordinateReferenceSystem crs = getObjectiveCRS();
+                    crs = removeCRS(crs, CommonCRS.Temporal.JAVA.crs());
+                    setObjectiveCRS(crs);
+                }
+
+            }
+        } catch (FactoryException ex) {
+            throw new TransformException("", ex);
         }
     }
 
@@ -1081,26 +1091,30 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public void setElevationRange(final Double min, final Double max, final Unit<Length> unit) throws TransformException {
-        int index = getElevationAxisIndex();
-        if(index < 0 && (min!=null || max!=null)){
-            //no elevation axis, add one
-            CoordinateReferenceSystem crs = getObjectiveCRS();
-            crs = appendCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
-            setObjectiveCRS(crs);
-            index = getElevationAxisIndex();
-        }
-
-        if (index >= 0) {
-            if(min!=null || max!=null){
-                setRange(index,
-                    (min!=null)?min:Double.NEGATIVE_INFINITY,
-                    (max!=null)?max:Double.POSITIVE_INFINITY);
-            }else{
-                //remove this dimension
+        try {
+            int index = getElevationAxisIndex();
+            if(index < 0 && (min!=null || max!=null)){
+                //no elevation axis, add one
                 CoordinateReferenceSystem crs = getObjectiveCRS();
-                crs = removeCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+                crs = appendCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
                 setObjectiveCRS(crs);
+                index = getElevationAxisIndex();
             }
+
+            if (index >= 0) {
+                if(min!=null || max!=null){
+                    setRange(index,
+                        (min!=null)?min:Double.NEGATIVE_INFINITY,
+                        (max!=null)?max:Double.POSITIVE_INFINITY);
+                }else{
+                    //remove this dimension
+                    CoordinateReferenceSystem crs = getObjectiveCRS();
+                    crs = removeCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+                    setObjectiveCRS(crs);
+                }
+            }
+        } catch (FactoryException ex) {
+            throw new TransformException("", ex);
         }
     }
 
@@ -1166,26 +1180,30 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     public void setAxisRange(final Double min, final Double max,
             final Comparator<CoordinateSystemAxis> comparator, CoordinateReferenceSystem axisCrs) throws TransformException {
-        int index = getAxisIndex(comparator);
-        if(index < 0 && (min!=null || max!=null)){
-            //no elevation axis, add one
-            CoordinateReferenceSystem crs = getObjectiveCRS();
-            crs = appendCRS(crs, axisCrs);
-            setObjectiveCRS(crs);
-            index = getElevationAxisIndex();
-        }
-
-        if (index >= 0) {
-            if(min!=null || max!=null){
-                setRange(index,
-                    (min!=null)?min:Double.NEGATIVE_INFINITY,
-                    (max!=null)?max:Double.POSITIVE_INFINITY);
-            }else{
-                //remove this dimension
+        try {
+            int index = getAxisIndex(comparator);
+            if(index < 0 && (min!=null || max!=null)){
+                //no elevation axis, add one
                 CoordinateReferenceSystem crs = getObjectiveCRS();
-                crs = removeCRS(crs, axisCrs);
+                crs = appendCRS(crs, axisCrs);
                 setObjectiveCRS(crs);
+                index = getElevationAxisIndex();
             }
+
+            if (index >= 0) {
+                if(min!=null || max!=null){
+                    setRange(index,
+                        (min!=null)?min:Double.NEGATIVE_INFINITY,
+                        (max!=null)?max:Double.POSITIVE_INFINITY);
+                }else{
+                    //remove this dimension
+                    CoordinateReferenceSystem crs = getObjectiveCRS();
+                    crs = removeCRS(crs, axisCrs);
+                    setObjectiveCRS(crs);
+                }
+            }
+        } catch(FactoryException ex) {
+            throw new TransformException("", ex);
         }
     }
 
@@ -1206,19 +1224,21 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         return -1;
     }
 
-    private CoordinateReferenceSystem appendCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toAdd){
+    private CoordinateReferenceSystem appendCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toAdd) throws FactoryException{
         if(crs instanceof CompoundCRS){
             final CompoundCRS orig = (CompoundCRS) crs;
             final List<CoordinateReferenceSystem> lst = new ArrayList<>(orig.getComponents());
             lst.add(toAdd);
-            return new DefaultCompoundCRS(name(orig.getName().getCode()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
-        }else{
-            return new DefaultCompoundCRS(name(crs.getName().getCode() + ' ' + toAdd.getName().getCode()), crs, toAdd);
+            return new GeodeticObjectBuilder().addName(orig.getName().getCode())
+                                              .createCompoundCRS(lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+        } else {
+            return new GeodeticObjectBuilder().addName(crs.getName().getCode() + ' ' + toAdd.getName().getCode())
+                                              .createCompoundCRS(crs, toAdd);
         }
 
     }
 
-    private CoordinateReferenceSystem removeCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toRemove){
+    private CoordinateReferenceSystem removeCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toRemove) throws FactoryException{
         if(crs instanceof CompoundCRS){
             final CompoundCRS orig = (CompoundCRS) crs;
             final List<CoordinateReferenceSystem> lst = new ArrayList<>(orig.getComponents());
@@ -1226,25 +1246,11 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             if(lst.size() == 1){
                 return lst.get(0);
             }
-            return new DefaultCompoundCRS(name(orig.getName().getCode()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+            return new GeodeticObjectBuilder().addName(orig.getName().getCode())
+                                              .createCompoundCRS(lst.toArray(new CoordinateReferenceSystem[lst.size()]));
         }else{
             return crs;
         }
 
     }
-
-    private static Map<String,String> name(final String name) {
-        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
-    }
-
-
-    private static Date toDate(final double d){
-        if(Double.isNaN(d)){
-            return null;
-        }else{
-            return new Date((long)d);
-        }
-    }
-
-
 }

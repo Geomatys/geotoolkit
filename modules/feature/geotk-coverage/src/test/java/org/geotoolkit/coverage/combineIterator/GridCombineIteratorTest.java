@@ -16,28 +16,29 @@
  */
 package org.geotoolkit.coverage.combineIterator;
 
-import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.junit.Assert;
-import org.junit.Test;
-import org.opengis.geometry.Envelope;
-import static org.junit.Assert.*;
+
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.geometry.Envelope;
 
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
+
+import org.junit.Assert;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test multidimensionnal {@link Envelope} iterator, {@link  GridCombineIterator}.
@@ -121,16 +122,15 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
      * Test iterator in particularity 2 dimensional case.
      */
     @Test
-    public void test3D() {
-
-        final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "compoundcrstest");
+    public void test3D() throws FactoryException {
 
         final int[] gridLow   = new int[]{0, 0, 0};
         final int[] gridHigh = new int[]{1, 1, 1};
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
 
-        final CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(map, PredefinedCRS.CARTESIAN_2D, CommonCRS.Temporal.JAVA.crs());
+        final CoordinateReferenceSystem crs3D = new GeodeticObjectBuilder().addName("compoundcrstest")
+                                                                           .createCompoundCRS(PredefinedCRS.CARTESIAN_2D,
+                                                                                              CommonCRS.Temporal.JAVA.crs());
 
         final MatrixSIS mat = Matrices.createDiagonal(4, 4);//-- identity
 
@@ -196,11 +196,12 @@ public strictfp class GridCombineIteratorTest extends org.geotoolkit.test.TestBa
      * MyCompoundCrs = [Temporal][2D part][elevation];
      */
     @Test
-    public void testmultidim() {
-        final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "compoundcrstest");
+    public void testmultidim() throws FactoryException {
 
-        final CompoundCRS ccrs = new DefaultCompoundCRS(map, CommonCRS.Temporal.JAVA.crs(), CommonCRS.WGS84.geographic(), CommonCRS.Vertical.DEPTH.crs());
+        final CoordinateReferenceSystem ccrs = new GeodeticObjectBuilder().addName("compoundcrstest")
+                                                                          .createCompoundCRS(CommonCRS.Temporal.JAVA.crs(),
+                                                                                             CommonCRS.WGS84.geographic(),
+                                                                                             CommonCRS.Vertical.DEPTH.crs());
 
         final int[] gridLow        = new int[]{-2,  0,  0, 1};
         final int[] gridHigh       = new int[]{ 0, 11, 11, 4}; //-- 11 because exclusive high border

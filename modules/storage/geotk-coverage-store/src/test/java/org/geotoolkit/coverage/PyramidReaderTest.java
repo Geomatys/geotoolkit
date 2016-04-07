@@ -1,35 +1,38 @@
 
 package org.geotoolkit.coverage;
 
-import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
-import org.junit.Assert;
-import org.junit.Test;
+
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
@@ -51,8 +54,10 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-                Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4dcrs"), horizontal,vertical,temporal);
+
+        final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4dcrs")
+                                                                         .createCompoundCRS(horizontal, vertical, temporal);
+
         final int width = 28;
         final int height = 13;
 

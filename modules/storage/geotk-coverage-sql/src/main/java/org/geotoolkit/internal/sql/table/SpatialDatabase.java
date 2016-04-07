@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.awt.RenderingHints;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
-import javax.sql.DataSource;
-import java.awt.RenderingHints;
 
-import org.opengis.util.FactoryException;
+import javax.sql.DataSource;
+
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -34,13 +34,16 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.util.FactoryException;
 
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.metadata.iso.extent.Extents;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
+
+import org.geotoolkit.metadata.Citations;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
@@ -49,7 +52,6 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 
-import org.apache.sis.referencing.CommonCRS;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -168,6 +170,7 @@ public class SpatialDatabase extends Database {
      * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties The configuration properties, or {@code null} if none.
      * @param  temporalCRS The temporal vertical reference system, or {@code null} if none.
+     * @throws IllegalStateException if problem during Spatio Temporal CRS creation.
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties, final TemporalCRS temporalCRS) {
         super(datasource, properties);
@@ -176,9 +179,13 @@ public class SpatialDatabase extends Database {
         this.verticalCRS    = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         this.temporalCRS    = DefaultTemporalCRS.castOrCopy(temporalCRS);
         this.spatialCRS     = PredefinedCRS.WGS84_3D;
-        spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
-        horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);
-        vertTemporalCRS     = createSpatioTemporalCRS(verticalCRS,   temporalCRS, true);
+        try {
+            spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
+            horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);
+            vertTemporalCRS     = createSpatioTemporalCRS(verticalCRS,   temporalCRS, true);
+        } catch (FactoryException ex) { //-- TODO leave exception propagation.
+            throw new IllegalStateException(ex);
+        }
         pixelInCell         = PixelInCell.CELL_CORNER;
     }
 
@@ -193,7 +200,7 @@ public class SpatialDatabase extends Database {
      */
     private static CoordinateReferenceSystem createSpatioTemporalCRS(
             final CoordinateReferenceSystem spatialCRS, final TemporalCRS temporalCRS, final boolean world)
-    {
+            throws FactoryException {
         if (temporalCRS == null) return spatialCRS;
         if (spatialCRS == null) return temporalCRS;
         final Map<String,Object> id = new HashMap<>(4);
@@ -202,7 +209,10 @@ public class SpatialDatabase extends Database {
         if (world) {
             id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, Extents.WORLD);
         }
-        return new DefaultCompoundCRS(id, spatialCRS, temporalCRS);
+        return new GeodeticObjectBuilder().addName(spatialCRS.getName().getCode() +
+                " + Time(" + temporalCRS.getName().getCode() + ')')
+                                //-- TODO .addDomainOfValidity(Extents.WORLD)
+                                          .createCompoundCRS(spatialCRS, temporalCRS);
     }
 
     /**

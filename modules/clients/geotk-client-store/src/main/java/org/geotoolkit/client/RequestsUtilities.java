@@ -25,24 +25,26 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
 import javax.imageio.ImageIO;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.temporal.object.TemporalUtilities;
+
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.util.FactoryException;
 
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.CommonCRS;
+
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
  * Utilities methods that provide conversion functionnalities between real objects and queries
@@ -232,7 +234,7 @@ public final class RequestsUtilities {
      */
     public static Envelope toEnvelope(final String bbox, final CoordinateReferenceSystem crs,
                     final String strElevation, final String strTime)
-                    throws IllegalArgumentException, ParseException {
+                    throws IllegalArgumentException, ParseException, FactoryException {
 
         final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalComponent(crs);
         final VerticalCRS               verticalCRS;
@@ -295,12 +297,11 @@ public final class RequestsUtilities {
         }
 
         //create the 2/3/4 D BBox ----------------------------------------------
-        final Map<String,?> name = Collections.singletonMap(IdentifiedObject.NAME_KEY, "rendering bbox");
         if (verticalCRS != null && temporalCRS != null) {
-            final CoordinateReferenceSystem finalCRS = new DefaultCompoundCRS(name,
-                    new CoordinateReferenceSystem[]{ horizontalCRS,
-                                                     verticalCRS,
-                                                     temporalCRS });
+            final CoordinateReferenceSystem finalCRS = new GeodeticObjectBuilder().addName("rendering bbox")
+                                                                                  .createCompoundCRS(horizontalCRS,
+                                                                                                     verticalCRS,
+                                                                                                     temporalCRS);
             final GeneralEnvelope envelope = new GeneralEnvelope(finalCRS);
             envelope.setRange(0, dimX[0], dimX[1]);
             envelope.setRange(1, dimY[0], dimY[1]);
@@ -308,16 +309,17 @@ public final class RequestsUtilities {
             envelope.setRange(3, dimT[0], dimT[1]);
             return envelope;
         } else if(verticalCRS != null) {
-            final CoordinateReferenceSystem finalCRS = new DefaultCompoundCRS(name,
-                    new CoordinateReferenceSystem[]{ horizontalCRS, verticalCRS });
+            final CoordinateReferenceSystem finalCRS = new GeodeticObjectBuilder().addName("rendering bbox")
+                                                                                  .createCompoundCRS(horizontalCRS, verticalCRS);
+
             final GeneralEnvelope envelope = new GeneralEnvelope(finalCRS);
             envelope.setRange(0, dimX[0], dimX[1]);
             envelope.setRange(1, dimY[0], dimY[1]);
             envelope.setRange(2, dimZ[0], dimZ[1]);
             return envelope;
         } else if(temporalCRS != null) {
-            final CoordinateReferenceSystem finalCRS = new DefaultCompoundCRS(name,
-                    new CoordinateReferenceSystem[]{ horizontalCRS, temporalCRS });
+            final CoordinateReferenceSystem finalCRS = new GeodeticObjectBuilder().addName("rendering bbox")
+                                                                                  .createCompoundCRS(horizontalCRS, temporalCRS);
             final GeneralEnvelope envelope = new GeneralEnvelope(finalCRS);
             envelope.setRange(0, dimX[0], dimX[1]);
             envelope.setRange(1, dimY[0], dimY[1]);

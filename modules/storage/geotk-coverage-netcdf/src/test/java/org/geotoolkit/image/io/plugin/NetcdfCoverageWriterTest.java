@@ -46,8 +46,8 @@ import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
@@ -210,9 +210,9 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("Not yet implemented")
     public void testXYZT() throws Exception {
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("WGS84 + z + t"),
-                PredefinedCRS.WGS84_3D,
-                CommonCRS.Temporal.JAVA.crs());
+        final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("WGS84 + z + t")
+                                                                         .createCompoundCRS(PredefinedCRS.WGS84_3D,
+                                                                                            CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
