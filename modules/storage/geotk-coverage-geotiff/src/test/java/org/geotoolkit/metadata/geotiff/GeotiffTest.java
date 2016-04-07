@@ -20,15 +20,21 @@ package org.geotoolkit.metadata.geotiff;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import javax.imageio.IIOImage;
 import javax.imageio.metadata.IIOMetadataNode;
+
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.internal.ImageUtils;
@@ -42,12 +48,12 @@ import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.metadata.Citations;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.TAG_GEOTIFF_IFD;
+
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.TAG_GEOTIFF_IFD;
+import static org.junit.Assert.*;
 
 /**
  * Test class to improve Reading / writing action with some geographicales or related metadatas fonctionalities.<br>
@@ -159,22 +165,20 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
      * @throws IOException if problem during
      */
     @Test
-    public void temporalTest() throws IOException {
+    public void temporalTest() throws IOException, FactoryException {
 
         final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.Byte, 3);
 
         //-- temporal CRS
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, "TemporalReferenceSystem");
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put(org.opengis.referencing.IdentifiedObject.NAME_KEY, name);
-
-        final CoordinateReferenceSystem crsSource = new DefaultCompoundCRS(properties, CommonCRS.WGS84.geographic(), CommonCRS.Temporal.JAVA.crs());
+        final CoordinateReferenceSystem crsSource = new GeodeticObjectBuilder().addName((GenericName) name)
+                                                                               .createCompoundCRS(CommonCRS.WGS84.geographic(),
+                                                                                                  CommonCRS.Temporal.JAVA.crs());
 
         final SpatialMetadata sm = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
 
         final ReferencingBuilder builder = new ReferencingBuilder(sm);
                 builder.setCoordinateReferenceSystem(crsSource);
-
 
         final long time = System.currentTimeMillis();
 

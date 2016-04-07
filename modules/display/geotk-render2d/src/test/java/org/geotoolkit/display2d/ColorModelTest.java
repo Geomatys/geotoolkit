@@ -43,6 +43,19 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.opengis.coverage.Coverage;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.GraphicalSymbol;
+
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
+
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -59,34 +72,23 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-
 import org.geotoolkit.test.Assert;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.coverage.Coverage;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.GraphicalSymbol;
-
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
@@ -213,9 +215,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
-                    CRS.decode("EPSG:4326"),
+        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs").createCompoundCRS(CRS.decode("EPSG:4326"),
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());
 

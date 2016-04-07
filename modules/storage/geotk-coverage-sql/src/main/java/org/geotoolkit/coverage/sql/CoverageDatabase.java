@@ -34,10 +34,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
-import org.opengis.util.FactoryException;
+import javax.sql.DataSource;
+
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -46,10 +46,12 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.NullArgumentException;
+import org.opengis.util.FactoryException;
+
+import org.geotoolkit.util.DateRange;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -60,7 +62,6 @@ import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.resources.Errors;
-
 
 /**
  * A connection to a collection of coverages declared in a SQL database.

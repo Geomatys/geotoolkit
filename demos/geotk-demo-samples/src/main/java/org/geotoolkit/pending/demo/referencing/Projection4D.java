@@ -1,15 +1,15 @@
 
 package org.geotoolkit.pending.demo.referencing;
 
-import java.util.Collections;
-import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+
+import org.geotoolkit.pending.demo.Demos;
 
 /**
  * @author Johann Sorel
@@ -28,11 +28,10 @@ public class Projection4D {
         TemporalCRS temporalAxis = CommonCRS.Temporal.JULIAN.crs();
         VerticalCRS verticalAxis = CommonCRS.Vertical.MEAN_SEA_LEVEL.crs();
 
-        final CompoundCRS crs4D = new DefaultCompoundCRS(
-                Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "MyCRS4D"),
-                crs2D, temporalAxis, verticalAxis);
-        System.out.println(crs4D);
+        final CoordinateReferenceSystem crs4D = new GeodeticObjectBuilder().addName("MyCRS4D")
+                                   .createCompoundCRS(crs2D, temporalAxis, verticalAxis);
 
+        System.out.println(crs4D);
 
         //convinient methods to extract vertical and temporal axis from a CRS.
         verticalAxis = CRS.getVerticalComponent(crs4D, false);

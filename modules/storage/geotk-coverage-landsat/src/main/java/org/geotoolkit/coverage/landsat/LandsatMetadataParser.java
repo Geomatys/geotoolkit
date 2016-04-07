@@ -51,6 +51,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.acquisition.DefaultAcquisitionInformation;
@@ -72,7 +73,6 @@ import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.logging.Logging;
@@ -633,10 +633,8 @@ public class LandsatMetadataParser {
         //-- add temporal part if Date exist
         final TemporalCRS temporalCRS = CommonCRS.Temporal.JAVA.crs();
 
-        final Map<String,Object> params = new HashMap<>();
-        params.put("name", crs2D.getName().getCode()+"/"+temporalCRS.getName().getCode());
-
-        projectedCRS = new DefaultCompoundCRS(params, crs2D, temporalCRS);
+        projectedCRS = new GeodeticObjectBuilder().addName(crs2D.getName().getCode()+"/"+temporalCRS.getName().getCode())
+                                                  .createCompoundCRS(crs2D, temporalCRS);
         return projectedCRS;
     }
 

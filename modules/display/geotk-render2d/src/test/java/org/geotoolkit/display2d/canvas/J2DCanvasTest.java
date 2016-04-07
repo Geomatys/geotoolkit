@@ -17,29 +17,30 @@
 
 package org.geotoolkit.display2d.canvas;
 
-import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.Date;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
+
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import static org.junit.Assert.*;
-import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test envelope configuration on J2DCanvas.
@@ -74,11 +75,10 @@ public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
          assertTrue(temps == null);
          assertTrue(elev == null);
 
-         CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "WGS84-4D"),
-               CommonCRS.WGS84.normalizedGeographic(),
-               CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-               CommonCRS.Temporal.JAVA.crs());
+        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("WGS84-4D")
+                                                                   .createCompoundCRS(CommonCRS.WGS84.normalizedGeographic(),
+                                                                                      CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                                                                                      CommonCRS.Temporal.JAVA.crs());
 
          final GeneralEnvelope env = new GeneralEnvelope(crs);
          env.setRange(0, -170, 170);
@@ -99,17 +99,15 @@ public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
          assertTrue(elev[1] == 150);
          assertTrue(temps[0].getTime() == 3000);
          assertTrue(temps[1].getTime() == 6000);
-
      }
 
      @Test
-     public void testCreationWith4Denvelope() throws PortrayalException{
+     public void testCreationWith4Denvelope() throws PortrayalException, FactoryException{
 
-         CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "WGS84-4D"),
-               CommonCRS.WGS84.normalizedGeographic(),
-               CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-               CommonCRS.Temporal.JAVA.crs());
+        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("WGS84-4D")
+                                                                   .createCompoundCRS(CommonCRS.WGS84.normalizedGeographic(),
+                                                                                      CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                                                                                      CommonCRS.Temporal.JAVA.crs());
 
          final GeneralEnvelope env = new GeneralEnvelope(crs);
          env.setRange(0, -170, 170);

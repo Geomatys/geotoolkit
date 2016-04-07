@@ -26,8 +26,8 @@ import java.awt.image.WritableRaster;
 import java.util.*;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -231,7 +231,8 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
         Map<String, Object> props = new HashMap<>();
         props.put("name", "4dcrs");
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(props, horizontal,vertical,temporal);
+        final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4dcrs")
+                                                                         .createCompoundCRS(horizontal, vertical, temporal);
         final int width = 28;
         final int height = 13;
 

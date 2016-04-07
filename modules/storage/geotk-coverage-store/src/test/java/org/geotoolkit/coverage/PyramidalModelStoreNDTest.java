@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage;
 
-import java.util.Collections;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -24,31 +23,34 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.List;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
-import static org.junit.Assert.*;
-
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.GridMosaic;
-import org.geotoolkit.storage.coverage.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
-import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.CommonCRS;
 import org.opengis.util.GenericName;
+
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
+
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
+import org.geotoolkit.util.NamesExt;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * Abstract pyramid store test.
@@ -83,7 +85,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         store = createStore();
         final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-        crs = new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "3dcrs"), horizontal,vertical);
+        crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
         final GenericName name = NamesExt.create("test");
         ref = (PyramidalCoverageReference) store.create(name);

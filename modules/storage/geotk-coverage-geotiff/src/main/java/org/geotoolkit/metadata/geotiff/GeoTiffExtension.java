@@ -19,28 +19,30 @@ package org.geotoolkit.metadata.geotiff;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.plugin.TiffImageReader;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.referencing.ReferencingUtilities;
+
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.referencing.ReferencingUtilities;
+
 /**
  * Geotiff is a widely used format, many metadata formats may be associated with it.
  * Extensions may modify metadatas, samples or even grid geometry and crs.
  *
+ * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public abstract class GeoTiffExtension {
@@ -112,7 +114,6 @@ public abstract class GeoTiffExtension {
         //ensure no cache modify the values
         metadata.clearInstancesCache();
 
-
         final ReferencingBuilder rb = new ReferencingBuilder(metadata);
         final GridDomainAccessor acc = new GridDomainAccessor(metadata);
         final RectifiedGrid rectifiedGrid = metadata.getInstanceForType(RectifiedGrid.class);
@@ -139,11 +140,9 @@ public abstract class GeoTiffExtension {
 
         if (axisIndex < 0) {
             //this axis is not declared, add it
-            final Map<String,Object> params = new HashMap<>();
-            params.put("name", crs.getName().getCode()+"/"+axisCrs.getName().getCode());
-            crs = new DefaultCompoundCRS(params, crs, axisCrs);
+            crs = new GeodeticObjectBuilder().addName(crs.getName().getCode()+"/"+axisCrs.getName().getCode())
+                                             .createCompoundCRS(crs, axisCrs);
             rb.setCoordinateReferenceSystem(crs);
-
             //calculate new transform values
             final List<double[]> offsetVectors = new ArrayList(rectifiedGrid.getOffsetVectors());
                 for (int i = 0; i < offsetVectors.size(); i++) {
