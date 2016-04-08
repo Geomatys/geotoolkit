@@ -19,60 +19,63 @@ package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageTypeSpecifier;
+
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PhotometricInterpretation;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.plugin.ImageOrientation;
-import org.junit.Test;
 
 /**
  * Effectuate all same test than super class with image build with {@link BandedSampleModel}.
- * 
- * @author Remi Marechal (Geomatys) 
+ *
+ * @author Remi Marechal (Geomatys)
  */
 public class BandTestTiffImageWriter extends TestTiffImageWriter {
 
     public BandTestTiffImageWriter(String compression) throws IOException {
         super(compression);
     }
-    
-    @Override
-    protected ImageTypeSpecifier buildImageTypeSpecifier(int sampleBitsSize, int numBand, short photometricInterpretation, short sampleFormat) throws UnsupportedImageFormatException {
-        return buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, (short) 2);
-    }
 
     @Override
-    public void defaultColorMapTest() throws IOException {
-        //-- do nothing has no sens to test color map
+    protected ImageTypeSpecifier buildImageTypeSpecifier(SampleType sampleType, int numBand,
+                                                         PhotometricInterpretation photometricInterpretation)
+            throws UnsupportedImageFormatException {
+        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand, photometricInterpretation, PlanarConfiguration.BANDED, buildColorMapArray(sampleType));
     }
 
     /**
      * {@inheritDoc }
-     * Same than super class 
+     * Same than super class
      */
     @Override
     protected void regionTest(String message, ImageOrientation imageOrientation) throws IOException {
+        super.regionTest(message, imageOrientation);
         final File fileTest = File.createTempFile(message, "tiff", tempDir);
         //-- Short --//
-        generalTest(message+" : 5 bands, type : Short.", fileTest, Short.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
-        
+        generalTest(message+" : 5 bands, type : Short.", fileTest, SampleType.USHORT, 5,
+                PhotometricInterpretation.GRAYSCALE, imageOrientation);
+
         //-- Int --//
-        generalTest(message+" : 5 bands, type : Int.", fileTest, Integer.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
-        
+        generalTest(message+" : 5 bands, type : Int.", fileTest, SampleType.INTEGER, 5,
+                PhotometricInterpretation.GRAYSCALE, imageOrientation);
+
         //-- Float --//
-        generalTest(message+" : 5 bands, type : Float.", fileTest, Float.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation); 
-        
+        generalTest(message+" : 5 bands, type : Float.", fileTest, SampleType.FLOAT, 5,
+                PhotometricInterpretation.GRAYSCALE, imageOrientation);
+
         //-- Double --//
-        generalTest(message+" : 5 bands, type : Double.", fileTest, Double.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
-        
+        generalTest(message+" : 5 bands, type : Double.", fileTest, SampleType.DOUBLE, 5,
+                PhotometricInterpretation.GRAYSCALE, imageOrientation);
+
         //-- RGB --//
         //-- type Byte RGB
-        generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, Byte.SIZE, 3,
-                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
-        generalTest(message+" : 4 bands RGB, type : Byte.", fileTest, Byte.SIZE, 4,
-                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
+        generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, SampleType.BYTE, 3,
+                PhotometricInterpretation.RGB, imageOrientation);
+        generalTest(message+" : 4 bands RGB, type : Byte.", fileTest, SampleType.BYTE, 4,
+                PhotometricInterpretation.RGB, imageOrientation);
     }
 }

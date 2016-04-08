@@ -18,7 +18,7 @@ package org.geotoolkit.metadata.landsat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.geotoolkit.gui.swing.tree.Trees;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

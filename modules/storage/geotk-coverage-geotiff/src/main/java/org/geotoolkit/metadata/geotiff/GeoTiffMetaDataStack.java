@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,8 +37,6 @@ import org.w3c.dom.Node;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.NullArgumentException;
 
 /**
  *
@@ -73,7 +73,7 @@ public final class GeoTiffMetaDataStack {
     private Node date                             = null;
 
     public GeoTiffMetaDataStack(Node tiffTree) {
-        ensureNonNull("tiffTree", tiffTree);
+        ArgumentChecks.ensureNonNull("tiffTree", tiffTree);
 
         Element tmpIfd = (Element) getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
         if (tmpIfd == null) {

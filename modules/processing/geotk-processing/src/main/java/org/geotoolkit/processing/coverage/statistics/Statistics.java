@@ -468,7 +468,7 @@ public class Statistics extends AbstractProcess {
     }
 
     private int getNbBins(SampleType dataType) {
-        if (dataType != null && dataType.equals(SampleType.Byte)) {
+        if (dataType != null && dataType.equals(SampleType.BYTE)) {
             return 255;
         }
         return 1000;

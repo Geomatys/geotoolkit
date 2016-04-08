@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,11 +20,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import javax.xml.parsers.ParserConfigurationException;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.opengis.metadata.Metadata;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  * Test read of CBERS xml nodes.

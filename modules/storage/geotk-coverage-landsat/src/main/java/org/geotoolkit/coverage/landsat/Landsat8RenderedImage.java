@@ -136,7 +136,7 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
         trsy       = srcImgBoundary.getMinY();
         sampleType = SampleType.valueOf(sampleModel.getDataType());
 
-        oneBandColorModel = ImageUtils.createColorModel(sampleType, 1, PhotometricInterpretation.GrayScale, null);
+        oneBandColorModel = ImageUtils.createColorModel(sampleType, 1, PhotometricInterpretation.GRAYSCALE, null);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
             return null;
         }
 
-        final SampleModel oneBandSampleModel = ImageUtils.createSampleModel(PlanarConfiguration.Banded, sampleType,
+        final SampleModel oneBandSampleModel = ImageUtils.createSampleModel(PlanarConfiguration.BANDED, sampleType,
                 rasterWidth, rasterHeight, 1);
 
         //-- create array bank container
@@ -201,7 +201,7 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
 
             //-- all bands are read
             final DataBuffer dataBuffer = createDatabuffer(sampleType, bankData, rasterWidth * rasterHeight);
-            final SampleModel createSampleModel = ImageUtils.createSampleModel(PlanarConfiguration.Banded, sampleType,
+            final SampleModel createSampleModel = ImageUtils.createSampleModel(PlanarConfiguration.BANDED, sampleType,
                                                                                rasterWidth, rasterHeight, bands.length);
 
             return Raster.createWritableRaster(createSampleModel, dataBuffer, new Point((int) tlx, (int) tly));
@@ -236,20 +236,20 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
      */
     private Object createBankData(final SampleType sampleType, final int bandNumber) {
         switch (sampleType) {
-            case Byte : {
+            case BYTE : {
                 return new byte[bandNumber][];
             }
-            case Short  :
-            case UShort : {
+            case SHORT  :
+            case USHORT : {
                 return new short[bandNumber][];
             }
-            case Integer : {
+            case INTEGER : {
                 return new int[bandNumber][];
             }
-            case Float : {
+            case FLOAT : {
                 return new float[bandNumber][];
             }
-            case Double : {
+            case DOUBLE : {
                 return new double[bandNumber][];
             }
             default : throw new IllegalStateException("Current SampleType : "+sampleType+" is not known."); //-- should never append
@@ -266,22 +266,22 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
      */
     private DataBuffer createDatabuffer(final SampleType sampleType, final Object bankDatas, final int buffersize) {
         switch (sampleType) {
-            case Byte : {
+            case BYTE : {
                 return new DataBufferByte((byte[][]) bankDatas, buffersize);
             }
-            case Short : {
+            case SHORT : {
                 return new DataBufferShort((short[][]) bankDatas, buffersize);
             }
-            case UShort : {
+            case USHORT : {
                 return new DataBufferUShort((short[][]) bankDatas, buffersize);
             }
-            case Integer : {
+            case INTEGER : {
                 return new DataBufferInt((int[][]) bankDatas, buffersize);
             }
-            case Float : {
+            case FLOAT : {
                 return new DataBufferFloat((float[][]) bankDatas, buffersize);
             }
-            case Double : {
+            case DOUBLE : {
                 return new DataBufferDouble((double[][]) bankDatas, buffersize);
             }
             default : throw new IllegalStateException("Current SampleType : "+sampleType+" is not known."); //-- should never append
@@ -298,38 +298,38 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
     private void mergeRasters(final SampleType sampleType, final int bandID, final Object destinationArray, final BufferedImage datas) {
 
         switch (sampleType) {
-            case Byte : {
+            case BYTE : {
                 final byte[][] da  = (byte[][]) destinationArray;
                 final DataBufferByte dbb = (DataBufferByte) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();
                 break;
             }
-            case Short : {
+            case SHORT : {
                 final short[][] da  = (short[][]) destinationArray;
                 final DataBufferShort dbb = (DataBufferShort) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();
                 break;
             }
 
-            case UShort : {
+            case USHORT : {
                 final short[][] da  = (short[][]) destinationArray;
                 final DataBufferUShort dbb = (DataBufferUShort) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();
                 break;
             }
-            case Integer : {
+            case INTEGER : {
                 final int[][] da  = (int[][]) destinationArray;
                 final DataBufferInt dbb = (DataBufferInt) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();
                 break;
             }
-            case Float : {
+            case FLOAT : {
                 final float[][] da  = (float[][]) destinationArray;
                 final DataBufferFloat dbb = (DataBufferFloat) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();
                 break;
             }
-            case Double : {
+            case DOUBLE : {
                 final double[][] da  = (double[][]) destinationArray;
                 final DataBufferDouble dbb = (DataBufferDouble) datas.getData().getDataBuffer();
                 da[bandID] = dbb.getData();

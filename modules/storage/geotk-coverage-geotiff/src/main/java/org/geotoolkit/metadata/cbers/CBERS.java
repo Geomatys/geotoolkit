@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.nio.charset.StandardCharsets;
+
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.constraint.Constraints;
+import org.opengis.metadata.content.CoverageContentType;
+import org.opengis.metadata.identification.TopicCategory;
+import org.opengis.metadata.maintenance.ScopeCode;
+import org.opengis.metadata.spatial.Dimension;
+import org.opengis.metadata.spatial.DimensionNameType;
+
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -47,17 +59,10 @@ import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.quality.DefaultScope;
 import org.apache.sis.metadata.iso.spatial.DefaultDimension;
 import org.apache.sis.metadata.iso.spatial.DefaultGeorectified;
+
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.DomUtilities;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.Role;
-import org.opengis.metadata.constraint.Constraints;
-import org.opengis.metadata.content.CoverageContentType;
-import org.opengis.metadata.identification.TopicCategory;
-import org.opengis.metadata.maintenance.ScopeCode;
-import org.opengis.metadata.spatial.Dimension;
-import org.opengis.metadata.spatial.DimensionNameType;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;

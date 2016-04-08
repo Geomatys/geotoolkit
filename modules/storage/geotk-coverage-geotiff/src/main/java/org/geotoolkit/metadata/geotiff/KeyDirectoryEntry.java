@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@ package org.geotoolkit.metadata.geotiff;
 
 /**
  * Entries in the GeoKeyDirectory are always a set of 4 values.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

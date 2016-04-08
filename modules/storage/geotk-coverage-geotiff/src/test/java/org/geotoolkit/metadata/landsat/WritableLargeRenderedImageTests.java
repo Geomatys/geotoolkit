@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2015, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
-import junit.framework.Assert;
+
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
@@ -38,6 +40,8 @@ import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Setup;
+
+import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -52,14 +56,14 @@ public final strictfp class WritableLargeRenderedImageTests {
     /**
      * {@link Logger} to show times number and time length of a test loop.
      *
-     * @see #test() 
+     * @see #test()
      */
     private static final Logger LOGGER = Logging.getLogger(WritableLargeRenderedImageTests.class.getCanonicalName());
 
     /**
      * Define test image size.
      *
-     * @see #WritableLargeRenderedImageTests() 
+     * @see #WritableLargeRenderedImageTests()
      */
     private final static int IMG_SIZE = 5000; //-- increase this attribut to improve LargeCache comportement
 
@@ -73,7 +77,7 @@ public final strictfp class WritableLargeRenderedImageTests {
         ImageCacheConfiguration.setCacheMemorySize("3m");
         LargeCache.getInstance().setMemoryCapacity((long) 3E6);
     }
-    
+
     /**
      * Fill and rewrite {@link WritableLargeRenderedImage} many times to stimulate
      * {@link LargeCache} and thrad safe comportement.
@@ -84,8 +88,8 @@ public final strictfp class WritableLargeRenderedImageTests {
     @Test
     public void test() throws InterruptedException, ExecutionException {
 
-        WritableLargeRenderedImage outPutImageTest = ImageUtils.createRGBLargeImage(IMG_SIZE, IMG_SIZE, SampleType.Byte);
-        WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.Byte, 1, PhotometricInterpretation.GrayScale, null);
+        WritableLargeRenderedImage outPutImageTest = ImageUtils.createRGBLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE);
+        WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, null);
 
         final ExecutorService poule = Executors.newFixedThreadPool(3);
 
@@ -125,7 +129,7 @@ public final strictfp class WritableLargeRenderedImageTests {
             }
             LOGGER.log(Level.INFO, "iteration nb : "+nb+", time : "+(System.currentTimeMillis() - t));
         }
-        
+
         poule.shutdown();
         poule.awaitTermination(10, TimeUnit.SECONDS);
     }
@@ -152,7 +156,7 @@ public final strictfp class WritableLargeRenderedImageTests {
 
         /**
          * Build a rewriting thread.
-         * 
+         *
          * @param input source image.
          * @param output destination filled image.
          * @param bandIndex band index of the destination image which will be filled.

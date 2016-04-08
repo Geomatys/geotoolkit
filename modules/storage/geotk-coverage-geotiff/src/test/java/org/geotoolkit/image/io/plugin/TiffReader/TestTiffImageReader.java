@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -37,7 +36,7 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * In this implementation write image entirely and read the expected piece of image given by parameters.
      */
     @Override
@@ -47,17 +46,17 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
         writer.setOutput(fileTest);
         writer.write(sourceImage, writerParam);//-- write with param in case of tiled writing --//
         writer.dispose();
-        
+
         //-- prepare ImageReaderParam --//
         readerParam.setSourceRegion(null);
         readerParam.setSourceSubsampling(sourceXSubsample, sourceYsubsampling, sourceXOffset, sourceYOffset);
         readerParam.setSourceRegion(sourceRegion);
         readerParam.setDestinationOffset(destOffset);
-            
+
         //-- read expected piece of image --//
         reader.setInput(fileTest);
         final RenderedImage img = reader.read(0, readerParam);
-        reader.dispose();        
+        reader.dispose();
         return img;
-    }    
+    }
 }
