@@ -19,8 +19,8 @@ package org.geotoolkit.observation.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +66,7 @@ public class FileObservationStore extends AbstractObservationStore implements Da
 
     public FileObservationStore(final ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
-        final URL url = (URL) params.parameter(FILE_PATH.getName().toString()).getValue();
+        final URI url = (URI) params.parameter(FILE_PATH.getName().toString()).getValue();
         this.dataFile = IOUtilities.toPath(url);
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
     }

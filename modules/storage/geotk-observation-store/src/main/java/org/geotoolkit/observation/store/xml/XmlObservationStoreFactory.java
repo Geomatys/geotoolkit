@@ -17,8 +17,8 @@
 
 package org.geotoolkit.observation.store.xml;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -79,12 +79,20 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
 
     @Override
     public ObservationStore open(ParameterValueGroup params) throws DataStoreException {
-        return new XmlObservationStore(params);
+        try {
+            return new XmlObservationStore(params);
+        } catch (IOException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
     public ObservationStore create(ParameterValueGroup params) throws DataStoreException {
-        return new XmlObservationStore(params);
+        try {
+            return new XmlObservationStore(params);
+        } catch (IOException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        }
     }
     
 }
