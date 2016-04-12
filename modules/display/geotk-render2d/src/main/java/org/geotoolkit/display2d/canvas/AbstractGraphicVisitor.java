@@ -24,10 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
@@ -45,13 +47,13 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * A visitor which can be applied to the
@@ -112,7 +114,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      *
      * @return list : each entry contain a gridsampledimension and value associated.
      */
-    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea){
+    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
 
         final CoverageMapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
@@ -146,8 +148,12 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                         Logging.unexpectedException(null, AbstractGraphicVisitor.class, "getCoverageValues", e);
                         day = 1;
                     }
-                    objCRS = new DefaultCompoundCRS(Collections.singletonMap(
-                            DefaultCompoundCRS.NAME_KEY, objCRS.getName().getCode() + " + time"), objCRS, temporalCRS);
+                    try {
+                        objCRS = new GeodeticObjectBuilder().addName(objCRS.getName().getCode() + " + time")
+                                .createCompoundCRS(objCRS, temporalCRS);
+                    } catch (FactoryException ex) {
+                        throw new IllegalStateException(ex);
+                    }
                     final GeneralEnvelope merged = new GeneralEnvelope(objCRS);
                     merged.subEnvelope(0, objBounds.getDimension()).setEnvelope(objBounds);
                     merged.setRange(objBounds.getDimension(), lastTime - day, lastTime);

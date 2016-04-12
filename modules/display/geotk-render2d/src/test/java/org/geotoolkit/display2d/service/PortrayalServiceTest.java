@@ -33,12 +33,32 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
+
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ColorMap;
+import org.opengis.style.ContrastEnhancement;
+import org.opengis.style.Description;
+import org.opengis.style.OverlapBehavior;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.ShadedRelief;
+import org.opengis.style.Symbolizer;
+import org.opengis.filter.FilterFactory;
+import org.opengis.style.Fill;
+import org.opengis.style.Graphic;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.Mark;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Stroke;
+
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -51,14 +71,18 @@ import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -76,30 +100,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.ChannelSelection;
-import org.opengis.style.ColorMap;
-import org.opengis.style.ContrastEnhancement;
-import org.opengis.style.Description;
-import org.opengis.style.OverlapBehavior;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.ShadedRelief;
-import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.opengis.filter.FilterFactory;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Stroke;
 
 /**
  * Testing portrayal service.
@@ -226,11 +228,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
-                    CRS.decode("EPSG:4326"),
-                    CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-                    CommonCRS.Temporal.JAVA.crs());
+        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs")
+                                                                   .createCompoundCRS(CRS.decode("EPSG:4326"),
+                                                                                      CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                                                                                      CommonCRS.Temporal.JAVA.crs());
 
         List<Coverage> temps = new ArrayList<Coverage>();
         for(int i=0; i<10; i++){

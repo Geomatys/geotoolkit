@@ -17,7 +17,6 @@
 
 package org.geotoolkit.display2d;
 
-import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -35,9 +34,9 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
@@ -145,11 +144,9 @@ public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(-90, fliped.getMinimum(1),DELTA);
         assertEquals(90, fliped.getMaximum(1),DELTA);
 
-
         //test on a compoundCRS
-        CoordinateReferenceSystem comp = new DefaultCompoundCRS(
-                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
-                    epsg4326,
+        CoordinateReferenceSystem comp = new GeodeticObjectBuilder().addName("4D crs")
+                .createCompoundCRS(epsg4326,
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());
 
@@ -170,8 +167,5 @@ public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
         assertEquals(60, fliped.getMaximum(2),DELTA);
         assertEquals(1000, fliped.getMinimum(3),DELTA);
         assertEquals(5000, fliped.getMaximum(3),DELTA);
-
     }
-
-
 }

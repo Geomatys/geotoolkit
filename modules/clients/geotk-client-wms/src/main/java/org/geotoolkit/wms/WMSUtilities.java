@@ -26,32 +26,36 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.measure.unit.Unit;
-import org.geotoolkit.client.CapabilitiesException;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.cs.AbstractCS;
-import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
-import org.geotoolkit.temporal.object.ISODateParser;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.temporal.util.PeriodUtilities;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.wms.xml.AbstractDimension;
-import org.geotoolkit.wms.xml.AbstractLayer;
-import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
-import org.geotoolkit.wms.xml.Style;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.util.FactoryException;
+
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
+import org.apache.sis.referencing.cs.AbstractCS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.referencing.CommonCRS;
+
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.temporal.util.PeriodUtilities;
+import org.geotoolkit.wms.xml.AbstractDimension;
+import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.Style;
 
 /**
  * Convinient WMS methods.
@@ -326,9 +330,14 @@ public final class WMSUtilities {
 
             // build new envelope with all dimension CRSs and lower/upper ordinates.
             if (!dimensionsCRS.isEmpty()) {
-                final CoordinateReferenceSystem outCRS = new DefaultCompoundCRS(
-                        Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, layer.getName()),
-                        dimensionsCRS.toArray(new CoordinateReferenceSystem[dimensionsCRS.size()]));
+
+                final CoordinateReferenceSystem outCRS;
+                try {
+                    outCRS = new GeodeticObjectBuilder().addName(layer.getName())
+                            .createCompoundCRS(dimensionsCRS.toArray(new CoordinateReferenceSystem[dimensionsCRS.size()]));
+                } catch (FactoryException ex) {
+                    throw new CapabilitiesException("", ex);
+                }
                 layerEnvelope = new GeneralEnvelope(outCRS);
 
                 //build ordinate list like (xmin, ymin, zmin, xmax, ymax, zmax)

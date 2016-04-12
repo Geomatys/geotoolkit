@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,28 +31,27 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.gml.xml.v311.GridEnvelopeType;
-import org.geotoolkit.gml.xml.v311.TimePositionType;
-import org.geotoolkit.wcs.xml.GetCoverage;
-
-import org.geotoolkit.wcs.xml.StringUtilities;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-
-import org.apache.sis.util.Version;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.wcs.xml.DomainSubset;
 
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Version;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
+import org.geotoolkit.gml.xml.v311.GridEnvelopeType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.wcs.xml.GetCoverage;
+import org.geotoolkit.wcs.xml.StringUtilities;
+import org.geotoolkit.wcs.xml.DomainSubset;
 
 /**
  * <p>An xml binding class for a getCoverage request.
@@ -229,7 +229,8 @@ public class GetCoverageType implements GetCoverage {
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-            return new DefaultCompoundCRS(name(objCrs.getName().getCode() + " (3D)"), objCrs, verticalCRS);
+            return new GeodeticObjectBuilder().addName(objCrs.getName().getCode() + " (3D)")
+                                              .createCompoundCRS(objCrs, verticalCRS);
         } else {
             return objCrs;
         }
@@ -312,7 +313,8 @@ public class GetCoverageType implements GetCoverage {
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-            return new DefaultCompoundCRS(name(objCrs.getName().getCode() + " (3D)"), objCrs, verticalCRS);
+            return new GeodeticObjectBuilder().addName(objCrs.getName().getCode() + " (3D)")
+                                              .createCompoundCRS(objCrs, verticalCRS);
         } else {
             return objCrs;
         }
@@ -384,7 +386,7 @@ public class GetCoverageType implements GetCoverage {
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
-    
+
     @Override
     public Object getExtension() {
         return null;

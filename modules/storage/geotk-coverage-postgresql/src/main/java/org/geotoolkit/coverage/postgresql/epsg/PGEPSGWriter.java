@@ -29,8 +29,8 @@ import org.opengis.metadata.Identifier;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.sql.DataSource;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -153,8 +153,8 @@ public class PGEPSGWriter implements EPSGWriter {
                 for(int i=1;i<parts.size();i++){
                     toSplit[i-1] = parts.get(i);
                 }
-                final CompoundCRS secondPart = new DefaultCompoundCRS(
-                        Collections.singletonMap(CompoundCRS.NAME_KEY, "Split-" + candidate.getName().getCode()), toSplit);
+                final CoordinateReferenceSystem secondPart = new GeodeticObjectBuilder().addName("Split-" + candidate.getName().getCode())
+                                           .createCompoundCRS(toSplit);
                 cmpd_vertcrs_code = getOrCreateCoordinateReferenceSystem(secondPart);
             }
 
