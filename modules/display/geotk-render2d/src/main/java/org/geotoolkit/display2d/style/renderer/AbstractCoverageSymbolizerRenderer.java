@@ -253,7 +253,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final Map<String, Double> queryValues = extractQuery(projectedCoverage.getLayer());
         if (queryValues != null && !queryValues.isEmpty()) {
             renderingBound = fixEnvelopeWithQuery(queryValues, renderingBound, coverageMapLayerCRS);
-            resolution     = fixResolutionWithCRS(resolution, coverageMapLayerCRS);
         }
 
         final GridCoverageReader reader = ref.acquireReader();
