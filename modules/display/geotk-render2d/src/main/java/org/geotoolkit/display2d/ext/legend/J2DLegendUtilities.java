@@ -526,34 +526,6 @@ public class J2DLegendUtilities {
                     continue;
                 }
 
-                // else try a WMS getLegendGraphic request
-                if (image == null) {
-                    final ParameterValue paramVal;
-                    if(covRef.getStore()==null) break testwms;
-                    try {
-                        paramVal = covRef.getStore().getConfiguration().parameter("url");
-                    } catch (ParameterNotFoundException e) {
-                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-                        break testwms;
-                    }
-                    final URL urlWms = (URL) paramVal.getValue();
-                    final StringBuilder sb = new StringBuilder(urlWms.toString());
-                    if (!urlWms.toString().endsWith("?")) {
-                        sb.append("?");
-                    }
-                    sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
-                      .append(covLayer.getCoverageReference().getName().tip().toString());
-
-                    try {
-                        final URL getLegendUrl = new URL(sb.toString());
-                        image = ImageIO.read(getLegendUrl);
-                    } catch (IOException e) {
-                        LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-                        // just skip this layer if we didn't succeed in getting the get legend result.
-                        continue;
-                    }
-                }
-
                 if (image != null) {
                     toSet.height += image.getHeight();
                     if (toSet.width < image.getWidth()) {
