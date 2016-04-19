@@ -24,7 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
@@ -53,10 +55,10 @@ public abstract class AbstractCoverageStore extends CoverageStore {
 
     protected static final String NO_NAMESPACE = "no namespace";
 
-    private final Logger Logger = Logging.getLogger("org.geotoolkit.storage.coverage");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
-    protected final Set<StorageListener> listeners = new HashSet<>();
+    protected final Set<StorageListener> storeListeners = new HashSet<>();
 
     private final HashMap<GenericName, CoverageReference> cachedRefs = new HashMap<>();
 
@@ -73,6 +75,19 @@ public abstract class AbstractCoverageStore extends CoverageStore {
         } else {
             defaultNamespace = namespace;
         }
+
+        //redirect warning listener events to default logger
+        listeners.getLogger().setUseParentHandlers(false);
+        listeners.getLogger().addHandler(new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                getLogger().log(record);
+            }
+            @Override
+            public void flush() {}
+            @Override
+            public void close() throws SecurityException {}
+        });
     }
 
     @Override
@@ -90,7 +105,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     }
 
     protected Logger getLogger(){
-        return Logger;
+        return LOGGER;
     }
 
 
@@ -301,14 +316,14 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     }
 
     public void addStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
+        synchronized (storeListeners) {
+            storeListeners.add(listener);
         }
     }
 
     public void removeStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
+        synchronized (storeListeners) {
+            storeListeners.remove(listener);
         }
     }
 
@@ -319,8 +334,8 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     protected void sendStructureEvent(final StorageEvent event){
         cachedRefs.clear();
         final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        synchronized (storeListeners) {
+            lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);
         }
         for(final StorageListener listener : lst){
             listener.structureChanged(event);
@@ -333,8 +348,8 @@ public abstract class AbstractCoverageStore extends CoverageStore {
      */
     protected void sendContentEvent(final StorageEvent event){
         final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        synchronized (storeListeners) {
+            lst = storeListeners.toArray(new StorageListener[storeListeners.size()]);
         }
         for(final StorageListener listener : lst){
             listener.contentChanged(event);

@@ -178,7 +178,7 @@ public final class CoverageStoreFinder extends Static {
      *
      * @param  parameters The configuration of the desired coverage store.
      * @return A coverage store created from the given parameters, or {@code null} if none.
-     * @throws CoverageStoreException If a factory is found but can't create the coverage store.
+     * @throws DataStoreException If a factory is found but can't create the coverage store.
      */
     public static CoverageStore open(final Map<String, Serializable> parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
@@ -194,7 +194,7 @@ public final class CoverageStoreFinder extends Static {
      *
      * @param  parameters The configuration of the desired coverage store.
      * @return A coverage store created from the given parameters, or {@code null} if none.
-     * @throws CoverageStoreException If a factory is found but can't create the coverage store.
+     * @throws DataStoreException If a factory is found but can't create the coverage store.
      */
     public static CoverageStore open(final ParameterValueGroup parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
