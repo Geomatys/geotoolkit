@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -89,6 +90,7 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
@@ -504,13 +506,20 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 continue;
             }
 
+            Object min = dimEnv.getMinimum(0);
+            Object max = dimEnv.getMaximum(0);
+            if(crs instanceof DefaultTemporalCRS){
+                min = ((DefaultTemporalCRS)crs).toDate((Double)min);
+                max = ((DefaultTemporalCRS)crs).toDate((Double)max);
+            }
+            
             final Filter dimFilter = FILTER_FACTORY.and(
                     FILTER_FACTORY.or(
                             FILTER_FACTORY.isNull(def.getLower()),
-                            FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(dimEnv.getMaximum(0)) )),
+                            FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(max) )),
                     FILTER_FACTORY.or(
                             FILTER_FACTORY.isNull(def.getUpper()),
-                            FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(dimEnv.getMinimum(0)) ))
+                            FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(min) ))
             );
 
             filter = FILTER_FACTORY.and(filter, dimFilter);
