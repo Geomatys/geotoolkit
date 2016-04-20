@@ -57,8 +57,29 @@ public class LiteJsonLocationTest {
 
     }
 
+
+    @Test
+    public void testBefore () throws URISyntaxException, IOException {
+        URL fcFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/featurecollection.json");
+        Path fcPath = Paths.get(fcFile.toURI());
+
+        //get Location from stream
+        try (InputStream stream = Files.newInputStream(fcPath);
+             JsonParser parser = GeoJSONParser.FACTORY.createParser(stream)) {
+            parser.nextToken();
+
+            JsonLocation currentLocation = parser.getCurrentLocation();
+            LiteJsonLocation liteJsonLocation = new LiteJsonLocation(currentLocation);
+            Assert.assertFalse(liteJsonLocation.isBefore(currentLocation));
+
+            parser.nextToken();
+            currentLocation = parser.getCurrentLocation();
+            Assert.assertTrue(liteJsonLocation.isBefore(currentLocation));
+        }
+    }
+
+
     private JsonLocation moveAndReturnPos(JsonParser parser) throws IOException {
-        JsonLocation streamLocation;
         parser.nextToken();
         parser.nextToken();
         parser.nextToken();

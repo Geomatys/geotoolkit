@@ -132,6 +132,12 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
 
             // set parser to feature object start
             while (parser.getCurrentToken() != JsonToken.START_OBJECT && !endPos.equals(currentPos)) {
+
+                if (parser.getCurrentToken() != JsonToken.START_OBJECT && endPos.isBefore(currentPos)) {
+                    //cannot find collection end token and no more start object token
+                    //break loop to avoid infinite search
+                    break;
+                }
                 parser.nextToken();
                 currentPos = parser.getCurrentLocation();
             }
