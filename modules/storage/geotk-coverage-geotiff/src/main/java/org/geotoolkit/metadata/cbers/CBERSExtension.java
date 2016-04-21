@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2015, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,9 @@ package org.geotoolkit.metadata.cbers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.nio.IOUtilities;
@@ -64,7 +66,7 @@ public class CBERSExtension extends GeoTiffExtension{
         //NOTE : we don't extract anything from this metadata format yet
         // FIXME Why ?
         if(true) return metadata;
-        
+
         if(hasMetadata == null){
             //get the metadata file
             final Object input = reader.getInput();

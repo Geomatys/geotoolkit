@@ -145,7 +145,7 @@ final class ImageCoverageStore extends Static {
         }
         final String streamName;
         if (IOUtilities.canProcessAsPath(stream)) {
-            streamName = org.apache.sis.internal.storage.IOUtilities.filename(stream);
+            streamName = IOUtilities.filename(stream);
         } else {
             streamName = Classes.getShortClassName(stream);
         }

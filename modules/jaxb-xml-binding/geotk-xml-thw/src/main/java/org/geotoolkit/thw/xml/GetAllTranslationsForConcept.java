@@ -48,7 +48,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllTranslationsForConcept", propOrder = {
     "conceptUri",
-    "propertyUri"
+    "propertyUri",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetAllTranslationsForConcept", namespace = "http://ws.geotk.org/")
 public class GetAllTranslationsForConcept {

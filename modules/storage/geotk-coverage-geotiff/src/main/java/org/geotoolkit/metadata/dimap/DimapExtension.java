@@ -1,24 +1,5 @@
 package org.geotoolkit.metadata.dimap;
 
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.plugin.TiffImageReader;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
-import org.geotoolkit.util.DomUtilities;
-import org.geotoolkit.util.dom.LazyLoadElement;
-import org.opengis.util.FactoryException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.DirectoryStream;
@@ -29,6 +10,29 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.opengis.util.FactoryException;
+
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
+import org.geotoolkit.util.DomUtilities;
+import org.geotoolkit.util.dom.LazyLoadElement;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Geotiff extension with partial support of DIMAP_v1.1 metadata format.

@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *    (C) 2009-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,8 +24,8 @@ import org.apache.sis.util.ArgumentChecks;
 /**
  * A {@link ReadableByteChannel} with a {@code read} method that return all available bytes with theirs bits reversed.<br/>
  * This class is used for read Tiff or GeoTiff file with a tag tiff fill order at value 2 which means all read byte have their bits reversed.
- * 
- * @see #read(java.nio.ByteBuffer) 
+ *
+ * @see #read(java.nio.ByteBuffer)
  * @author Remi Marechal (Geomatys).
  */
 final class ReversedBitsChannel implements ReadableByteChannel {
@@ -35,13 +34,13 @@ final class ReversedBitsChannel implements ReadableByteChannel {
      * Array which contain reversed value.
      */
     private static final byte[] REVERSE = new byte[256];
-    
+
     static {
         for (int p = 0; p < 256; p++) {
             REVERSE[p] = (byte) (Integer.reverse(p) >>> 24);
         }
     }
-    
+
     /**
      * ReadableByteChannel where to read originals Bytes.
      */
@@ -49,24 +48,24 @@ final class ReversedBitsChannel implements ReadableByteChannel {
 
     /**
      * Creates a new {@code ReversedBitsChannel} wrapping the given {@code ReadableByteChannel}.
-     * 
+     *
      * @param input given {@code ReadableByteChannel}.
      */
     public ReversedBitsChannel(final ReadableByteChannel input) {
         ArgumentChecks.ensureNonNull("input", input);
         this.input = input;
     }
-    
+
     /**
      * Reads a sequence of bytes from this channel into the given buffer.<br/>
      * All <code>bits</code> from each read <code>byte</code> are reverse which means <br/>
      * lower order bit becomme high order bit and vice - versa.<br/><br/>
-     * 
+     *
      * For example : <br/>
      * read <code>byte</code> : 11010100<br/>
      * becomme : 00101011<br/>
      * Same operation affected on all read <code>bytes</code> into given buffer.<br/>
-     * Moreother buffer properties like position, limit and others are same like a normal read use. 
+     * Moreother buffer properties like position, limit and others are same like a normal read use.
      *
      * @param  dst
      *         The buffer into which bytes are to be transferred
@@ -105,7 +104,7 @@ final class ReversedBitsChannel implements ReadableByteChannel {
 
     /**
      * Reverse <code>bits</code> sens of all byte from buffer between inclusive positionMin and exclusive positionMax.
-     * 
+     *
      * @param buffer buffer where byte will be reverse.
      * @param position first reverse byte position in buffer.
      * @param limit last exclusive reverse byte position in buffer.
@@ -116,7 +115,7 @@ final class ReversedBitsChannel implements ReadableByteChannel {
             buffer.put(position++, REVERSE[b & 0xFF]);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */

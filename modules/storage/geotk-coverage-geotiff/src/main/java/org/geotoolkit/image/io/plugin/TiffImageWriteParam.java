@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2014, Geomatys
+ *    (C) 2010-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +20,7 @@ import javax.imageio.ImageWriter;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 
 /**
- * A specific implementation of {@link SpatialImageWriteParam} adapted with 
+ * A specific implementation of {@link SpatialImageWriteParam} adapted with
  * {@link TiffImageWriter} image writer use.
  *
  * /!\ {@linkplain #setSourceBands(int[])} method will have no impact on image writing for now.

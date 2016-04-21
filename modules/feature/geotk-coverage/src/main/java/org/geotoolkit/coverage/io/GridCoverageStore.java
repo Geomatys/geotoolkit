@@ -365,7 +365,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final String cause = message;
             message = Errors.getResources(locale).getString(isWriting ?
                     Errors.Keys.CantWriteFile_1 : Errors.Keys.CantReadFile_1,
-                    org.apache.sis.internal.storage.IOUtilities.filename(path));
+                    IOUtilities.filename(path));
             if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
                 message = message + '\n' + cause;
             }

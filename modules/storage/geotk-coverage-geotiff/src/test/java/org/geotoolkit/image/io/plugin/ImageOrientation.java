@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,18 +18,18 @@ package org.geotoolkit.image.io.plugin;
 
 /**
  * To define which part of image will be written or read.
- * 
- * @see TestTiffImageReaderWriter#lowerLeftCorner() 
- * @see TestTiffImageReaderWriter#lowerRightCorner() 
- * @see TestTiffImageReaderWriter#upperLeftCornerTest()  
- * @see TestTiffImageReaderWriter#upperRightCorner()  
- * @see TestTiffImageReaderWriter#lowerLeftCorner() 
+ *
+ * @see TestTiffImageReaderWriter#lowerLeftCorner()
+ * @see TestTiffImageReaderWriter#lowerRightCorner()
+ * @see TestTiffImageReaderWriter#upperLeftCornerTest()
+ * @see TestTiffImageReaderWriter#upperRightCorner()
+ * @see TestTiffImageReaderWriter#lowerLeftCorner()
  * @author Remi Marechal (Geomatys).
  */
 public enum ImageOrientation {
     IMAGE_UPPER_LEFT_CORNER,
-     IMAGE_UPPER_RIGHT_CORNER, 
-    IMAGE_LOWER_LEFT_CORNER,  
-     IMAGE_LOWER_RIGHT_CORNER, 
-     IMAGE_CENTER             
+     IMAGE_UPPER_RIGHT_CORNER,
+    IMAGE_LOWER_LEFT_CORNER,
+     IMAGE_LOWER_RIGHT_CORNER,
+     IMAGE_CENTER
 }

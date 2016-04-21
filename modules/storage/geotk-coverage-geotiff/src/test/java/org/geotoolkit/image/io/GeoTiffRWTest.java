@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.image.io;
 
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageIO;
-import javax.imageio.IIOImage;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.ImageIO;
+import javax.imageio.IIOImage;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;

@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2015, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,7 +29,7 @@ import java.util.regex.Pattern;
  * <pre>
  * <code>
  *
- * PathMatcher matcher = new UnixPathMatcher("*.png");
+ * PathMatcher matcher = new PosixPathMatcher("*.png");
  *
  * matcher.matches(Paths.get("/tmp/image.png")); // true
  * matcher.matches(Paths.get("/tmp/image.jpeg")); // false

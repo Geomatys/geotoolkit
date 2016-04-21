@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,13 +25,14 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
@@ -40,8 +41,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.internal.storage.IOUtilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
@@ -58,8 +57,6 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FileCoverageStore extends AbstractCoverageStore implements DataFileStore {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
-
     private static final String REGEX_SEPARATOR;
     static {
         if (File.separatorChar == '\\') {
@@ -75,7 +72,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     private final String separator;
 
-    private final DataNode rootNode = new DefaultDataNode();
+    //initialized at first access, this is not done in the constructor to
+    //ensure whoever created the store to be able to attach warning listeners on it.
+    private DataNode rootNode;
 
     //default spi
     final ImageReaderSpi spi;
@@ -105,8 +104,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         }
 
         separator = Parameters.value(FileCoverageStoreFactory.PATH_SEPARATOR, params);
-
-        visit(root);
     }
 
     private static ParameterValueGroup toParameters(URI uri, String format){
@@ -124,7 +121,19 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
     }
 
     @Override
-    public DataNode getRootNode() {
+    public synchronized DataNode getRootNode() throws DataStoreException{
+        if(rootNode==null){
+            rootNode = new DefaultDataNode();
+            try {
+                visit(root);
+            } catch (DataStoreException ex) {
+                rootNode = null;
+                throw ex;
+            }catch (IOException ex) {
+                rootNode = null;
+                throw new DataStoreException(ex.getMessage(),ex);
+            }
+        }
         return rootNode;
     }
 
@@ -133,15 +142,39 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      *
      * @param file
      */
-    private void visit(final Path file) throws IOException {
+    private void visit(final Path file) throws IOException, DataStoreException {
 
-        Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        if (Files.isRegularFile(root)) {
+            //we opened a single file, we consider it as a real error
+            try {
                 test(file);
-                return FileVisitResult.CONTINUE;
+            } catch (Exception ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
             }
-        });
+
+        } else {
+            //explore as a folder, we only throw warnings for unsupported files.
+            //this behavior ensure the store will be opened even if a few files are corrupted.
+            Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        test(file);
+                    } catch (UnsupportedImageFormatException ex) {
+                        // Tried to parse a incompatible file, not really an error.
+                        final LogRecord rec = new LogRecord(Level.WARNING, "Unsupported image format encoding or compression for file "+IOUtilities.filename(file)+" : "+ex.getMessage());
+                        rec.setThrown(ex);
+                        listeners.warning(rec);
+                    } catch (Exception ex) {
+                        //Exception type is not specified cause we can get IOException as IllegalArgumentException.
+                        final LogRecord rec = new LogRecord(Level.WARNING, "Exception occured decoding file "+IOUtilities.filename(file)+" : "+ex.getMessage());
+                        rec.setThrown(ex);
+                        listeners.warning(rec);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
     }
 
     private String createLayerName(final Path candidate) {
@@ -157,7 +190,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             final int idx = fullName.lastIndexOf('.');
             return fullName.substring(0, idx);
         } else {
-            return org.geotoolkit.nio.IOUtilities.filenameWithoutExtension(candidate);
+            return IOUtilities.filenameWithoutExtension(candidate);
         }
     }
 
@@ -165,11 +198,10 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
      *
      * @param candidate Candidate to be a image file.
      */
-    private void test(final Path candidate) {
-        if(!Files.isRegularFile(candidate)){
+    private void test(final Path candidate) throws Exception {
+        if (!Files.isRegularFile(candidate)) {
             return;
         }
-        final String candidateName = IOUtilities.filename(candidate);
         ImageReader reader = null;
         try {
             //don't comment this block, This raise an error if no reader for the file can be found
@@ -180,10 +212,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
             final String filename = createLayerName(candidate);
 
             final int nbImage = reader.getNumImages(true);
-
-//            final Name baseName = new DefaultName(nmsp,filename);
-//            final FileCoverageReference baseNode = new FileCoverageReference(this,baseName,candidate,-1);
-//            rootNode.getChildren().add(baseNode);
 
             if (reader instanceof NamedImageStore) {
                 //try to find a proper name for each image
@@ -211,13 +239,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                     rootNode.getChildren().add(fcr);
                 }
             }
-            // Tried to parse a incompatible file, not really an error.
-        } catch (UnsupportedImageFormatException ex) {
-            LOGGER.log(Level.FINE, "Error for file {0} : {1}", new Object[]{candidateName, ex.getMessage()});
-
-        } catch (Exception ex) {
-            //Exception type is not specified cause we can get IOException as IllegalArgumentException.
-            LOGGER.log(Level.WARNING, String.format("Error for file %s : %s", candidateName, ex.getMessage()), ex);
         } finally {
             XImageIO.disposeSilently(reader);
         }

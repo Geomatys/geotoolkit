@@ -21,10 +21,10 @@ import java.io.File;
 import java.util.Arrays;
 import javax.imageio.IIOException;
 
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.image.io.Formats;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.Classes;
 
 

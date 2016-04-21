@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.landsat;
 
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -58,7 +59,7 @@ public class LandsatStoreFactory extends AbstractCoverageStoreFactory{
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH;
+    public static final ParameterDescriptor<Path> PATH;
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR;
 
@@ -67,7 +68,7 @@ public class LandsatStoreFactory extends AbstractCoverageStoreFactory{
         final ParameterBuilder builder = new ParameterBuilder().setRequired(true);
         PATH = builder.addName("path")
                       .setDescription("Landsat product file : Landsat8, MTL.txt (*.txt)")
-                      .create(URL.class, null);
+                      .create(Path.class, null);
 
         PARAMETERS_DESCRIPTOR = builder.addName("SpotParameters")
                       .createGroup(IDENTIFIER, PATH, NAMESPACE);

@@ -24,30 +24,13 @@ import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.Console;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -221,6 +204,9 @@ public final class IOUtilities extends Static {
      * @deprecated prefer using {@link #tryToPath(Object)} method to deal with Path instead of File
      */
     public static Object tryToFile(Object path) throws IOException {
+        if (path == null) {
+            return null;
+        }
         if (path instanceof File) {
             return (File) path;
         } else if (path instanceof CharSequence) {
@@ -283,7 +269,8 @@ public final class IOUtilities extends Static {
      * If a conversion from a {@link URL} object was necessary, then the URL is assumed
      * to <strong>not</strong> be encoded.
      *
-     * @param  candidate The candidate to convert to a {@link Path} if possible.
+     * @param  candidate The candidate to convert to a {@link Path} if possible. Can return {@code null} if input
+     *                   candidate was {@code null}
      * @return The candidate as a {@link Path} if this conversion was possible.
      * @throws IOException If an error occurred while converting the candidate to a Path. For example a not supported
      * FileSystem
@@ -291,11 +278,22 @@ public final class IOUtilities extends Static {
      *
      */
     public static Path toPath(Object candidate) throws IOException, IllegalArgumentException {
+        if (candidate == null) {
+            return null;
+        }
+
         if (candidate instanceof Path) {
             return (Path) candidate;
         }
         if (candidate instanceof CharSequence) {
-            return Paths.get(candidate.toString());
+            URI uri = URI.create(toSafeURI(String.valueOf(candidate)));
+            if (uri.getScheme() != null) {
+                //let java check matching FileSystem
+                return Paths.get(uri);
+            } else {
+                //assume on local filesystem
+                return Paths.get(candidate.toString());
+            }
         } else if (candidate instanceof URL) {
             final URL url = (URL) candidate;
             return org.apache.sis.internal.storage.IOUtilities.toPath(url, null);
@@ -329,6 +327,37 @@ public final class IOUtilities extends Static {
         }
         throw new IllegalArgumentException("Can't convert "+candidate.getClass()+" into a Path."+
         "Supported candidate type are CharSequence, URL, URI, File and Path");
+    }
+
+    /**
+     * Encode a String into a safe URI format.
+     * For example space characters will be replaced with %20
+     *
+     * @param candidate String
+     * @return encoded candidate String
+     */
+    private static String toSafeURI(String candidate) {
+        StringBuilder sb = new StringBuilder();
+        for (char ch : candidate.toCharArray()) {
+            if (isUnsafe(ch)) {
+                sb.append('%');
+                sb.append(Integer.toHexString(ch));
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Check if a char need to be encoded into URI format.
+     * Ignore reserved characters see <a href="https://tools.ietf.org/html/rfc3986#section-2.2">URI RFC/a>
+     *
+     * @param ch
+     * @return
+     */
+    private static boolean isUnsafe(char ch) {
+        return ch > 128 || " <>".indexOf(ch) >= 0;
     }
 
     /**
@@ -395,6 +424,34 @@ public final class IOUtilities extends Static {
             //no matching FS provider
             return false;
         }
+    }
+
+    /**
+     * Wrap of {@link org.apache.sis.internal.storage.IOUtilities#filename(Object)} (Object)} to avoid double import.
+     * Returns the filename from a {@link Path}, {@link File}, {@link URL}, {@link URI} or {@link CharSequence}
+     * instance. If the given argument is specialized type like {@code Path} or {@code File}, then this method uses
+     * dedicated API like {@link Path#getFileName()}. Otherwise this method gets a string representation of the path
+     * and returns the part after the last {@code '/'} or platform-dependent name separator character, if any.
+     *
+     * @param  input An instance of one of the above-cited types, or {@code null}.
+     * @return The filename in the given input, or {@code null} if the given object is null or of unknown type.
+     */
+    public static String filename(Object input) {
+        return org.apache.sis.internal.storage.IOUtilities.filename(input);
+    }
+
+    /**
+     * Wrap of {@link org.apache.sis.internal.storage.IOUtilities#extension(Object)} (Object)} to avoid double import.
+     * Returns the filename extension from a {@link Path}, {@link File}, {@link URL}, {@link URI} or
+     * {@link CharSequence} instance. If no extension is found, returns an empty string. If the given
+     * object is of unknown type, return {@code null}.
+     *
+     * @param  input An instance of one of the above-cited types, or {@code null}.
+     * @return The extension in the given path, or an empty string if none, or {@code null}
+     *         if the given object is null or of unknown type.
+     */
+    public static String extension(Object input) {
+        return org.apache.sis.internal.storage.IOUtilities.extension(input);
     }
 
     /**
@@ -829,6 +886,8 @@ public final class IOUtilities extends Static {
      * This method delete recursively a file or directory behind a Path without raising an exception if delete failed.
      * If an exception occurs, message will be logged as debug.
      *
+     * TODO create asyncDeleteSilently to delete recursively a file/folder in a separate thread
+     *
      * @param path file or folder to delete
      * @return delete status. {@code true} if delete succeed, {@code false} otherwise
      */
@@ -870,6 +929,51 @@ public final class IOUtilities extends Static {
             Files.delete(filePath);
         }
         Files.createFile(filePath);
+    }
+
+    /**
+     * Traverse a directory an return children files with depth 0.
+     * Result of this method can result of an OutOfMemory if scanned
+     * folder contains very large number of files.
+     *
+     * @param directory input Path, should be a directory
+     * @return children Path
+     * @throws IllegalArgumentException if input Path is not a directory
+     * @throws IOException if an error occurs during directory scanning
+     */
+    public static List<Path> listChildren(Path directory) throws IllegalArgumentException, IOException {
+        return listChildren(directory, "*");
+    }
+
+    /**
+     * Traverse a directory an return children files with depth 0.
+     * Result of this method can result of an OutOfMemory if scanned
+     * folder contains very large number of files.
+     *
+     * @param directory input Path, should be a directory
+     * @param glob glob filter
+     * @return children Path
+     * @throws IllegalArgumentException if input Path is not a directory
+     * @throws IOException if an error occurs during directory scanning
+     */
+    public static List<Path> listChildren(Path directory, String glob) throws IllegalArgumentException, IOException {
+        if (!Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("Input Path is not a directory or doesn't exist");
+        }
+
+        if (glob == null || glob.isEmpty()) {
+            glob = "*";
+        }
+
+        final List<Path> children = new LinkedList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, glob)) {
+            for (Path child : stream) {
+                children.add(child);
+            }
+        }
+        //asc sort
+        Collections.sort(children);
+        return children;
     }
 
     /**
@@ -1016,7 +1120,18 @@ public final class IOUtilities extends Static {
      * @param resource resource path. As package or path format (with '.' or '/' separators)
      * @return A file path if it exist or null otherwise.
      */
-    public static Path getResourceAsPath(String resource) throws URISyntaxException {
+    public static Path getResourceAsPath(String resource) throws URISyntaxException, IOException {
+        return getResourceAsPath(resource, null);
+    }
+
+    /**
+     * Searches in the Context ClassLoader for the named file and returns it.
+     *
+     * @param resource resource path. As package or path format (with '.' or '/' separators)
+     * @param classLoader classloader, can be null
+     * @return A file path if it exist or null otherwise.
+     */
+    public static Path getResourceAsPath(String resource, ClassLoader classLoader) throws URISyntaxException, IOException {
 
         //change package based location to path based
         final String extension = org.apache.sis.internal.storage.IOUtilities.extension(resource);
@@ -1031,55 +1146,123 @@ public final class IOUtilities extends Static {
             resource +="." + extension;
         }
 
-        final URL systemResource = ClassLoader.getSystemResource(resource);
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+
+        final URL systemResource = classLoader.getResource(resource);
         if (systemResource != null) {
-            return  Paths.get(systemResource.toURI());
+            URI resourceURI = systemResource.toURI();
+
+            if (resourceURI.getScheme().startsWith("jar")) {
+                //get or create FileSystem if needed (if resource is in another JAR)
+                FileSystem fileSystem;
+                try {
+                    fileSystem = FileSystems.getFileSystem(resourceURI);
+                } catch (FileSystemNotFoundException ex) {
+                    fileSystem = FileSystems.newFileSystem(resourceURI, new HashMap<String, Object>());
+                }
+                return fileSystem.getPath(resource);
+            } else {
+                return Paths.get(resourceURI);
+            }
         }
         return null;
     }
 
-//    /**
-//     * Find if a resource is "local" (meaning NIO API compatible)
-//     * or distant (accessed with URL API).
-//     *
-//     * @param uri
-//     * @return true if NIO compatible, false otherwise
-//     */
-//    public static boolean isNIO(URI uri) {
-//        try {
-//            if (uri.getScheme() == null) {
-//                //scheme null, consider as Path on default FileSystem
-//                Paths.get(uri.toString());
-//            } else {
-//                Paths.get(uri);
-//            }
-//            return true;
-//        } catch (FileSystemNotFoundException fse) {
-//            // No FileSystemProvider defined for uri scheme
-//            return false;
-//        }
-//    }
-//
-//    /**
-//     * Find if a resource is "local" (meaning NIO API compatible)
-//     * or distant (accessed with URL API).
-//     *
-//     * @param url
-//     * @return true if NIO compatible, false otherwise
-//     */
-//    public static boolean isNIO(URL url) {
-//        try {
-//            if (url.toExternalForm().startsWith("file:")) {
-//                //scheme null, consider as Path on default FileSystem
-//                Paths.get(url.toString());
-//            } else {
-//                Paths.get(url);
-//            }
-//            return true;
-//        } catch (FileSystemNotFoundException fse) {
-//            // No FileSystemProvider defined for url scheme
-//            return false;
-//        }
-//    }
+    /**
+     * Find and copy resource into a target directory.
+     *
+     * @param resource resource path relative to resource directory like "org/geotoolkit/myresource".
+     *                 Can target a file or a directory
+     * @param classLoader {@link ClassLoader} used for resource search.
+     *                                       (Use current thread ClassLoader if {@code null}).
+     * @param output Output directory where resource will be copied.
+     * @param createResourceHierarchy flag to enable/disable creation of resource parent directory in output directory
+     * e.g.:
+     * <pre><code>
+     *    IOUtilities.copyResource("org/geotoolkit/myresource", null, Paths.get("directory"), true);
+     *    // will create directory/org/geotoolkit/myresource
+     *    IOUtilities.copyResource("org/geotoolkit/myresource", null, Paths.get("directory"), false);
+     *    // will create directory/myresource
+     * </code></pre>
+     * @return Path to extracted resource.
+     * If resource is a directory, returned Path will target root directory where resource content is copied.
+     * @throws IOException if copy or file access went wrong
+     * @throws URISyntaxException an error occurs during resource URI conversion
+     * @throws IllegalArgumentException if output Path is not a directory
+     * @throws FileNotFoundException if resource is not found on classloader
+     */
+    public static Path copyResource(String resource, ClassLoader classLoader, Path output, boolean createResourceHierarchy)
+            throws IOException, URISyntaxException, IllegalArgumentException {
 
+        ArgumentChecks.ensureNonNull("resource", resource);
+        ArgumentChecks.ensureNonNull("output", output);
+
+        output = output.toAbsolutePath();
+
+        if (!Files.exists(output)) {
+            Files.createDirectories(output);
+        }
+
+        if (!Files.isDirectory(output)) {
+            throw new IllegalArgumentException("Output is not a directory");
+        }
+
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+
+        URL resURL = classLoader.getResource(resource);
+        if (resURL != null) {
+            URI resURI = resURL.toURI();
+
+            //handle JAR resources
+            Path resPath;
+            if (resURI.getScheme().startsWith("jar")) {
+                FileSystem fileSystem;
+                try {
+                    fileSystem = FileSystems.getFileSystem(resURI);
+                } catch (FileSystemNotFoundException ex) {
+                    fileSystem = FileSystems.newFileSystem(resURI, new HashMap<String, Object>());
+                }
+                resPath = fileSystem.getPath(resource);
+                //hack add start / for CopyFileVisitor relativize
+                if (!resPath.toString().startsWith("/")) {
+                    resPath = resPath.getFileSystem().getPath("/", resPath.toString());
+                }
+
+            } else {
+                resPath = Paths.get(resURI);
+            }
+
+            String resourceName = resPath.getFileName().toString();
+            //prepare workspace directory
+            Path copyDir = output;
+            if (Files.isDirectory(resPath)) {
+                copyDir = output.resolve(resourceName);
+            }
+
+            if (createResourceHierarchy) {
+                if (Files.isDirectory(resPath)) {
+                    copyDir = output.resolve(resource);
+                } else {
+                    String lastDirectory = resource.substring(0, resource.lastIndexOf('/'));
+                    copyDir = output.resolve(lastDirectory);
+                }
+            }
+            Files.createDirectories(copyDir);
+
+            Path outputPath = copyDir;
+            if (Files.isRegularFile(resPath)) {
+                outputPath = outputPath.resolve(resourceName);
+            }
+
+            //copy files
+            Files.walkFileTree(resPath, new CopyFileVisitor(copyDir, StandardCopyOption.REPLACE_EXISTING));
+            return outputPath;
+        }
+
+        throw new FileNotFoundException("Unable to find resource "+resource+ " into ClassLoader "+classLoader);
+    }
 }

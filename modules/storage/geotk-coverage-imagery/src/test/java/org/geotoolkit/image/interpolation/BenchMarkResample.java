@@ -150,13 +150,13 @@ public class BenchMarkResample {
 
 
 
-        source    = ImageUtils.createScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.Integer, 1);
+        source    = ImageUtils.createScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.INTEGER, 1);
         final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(source, source);
         while (pix.next()) {
             pix.setSample(RANDOM.nextInt());
         }
 
-        target    = ImageUtils.createScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.Integer, 1);
+        target    = ImageUtils.createScaledBandedImage(SRC_WIDTH, SRC_HEIGHT, SampleType.INTEGER, 1);
 
     }
 

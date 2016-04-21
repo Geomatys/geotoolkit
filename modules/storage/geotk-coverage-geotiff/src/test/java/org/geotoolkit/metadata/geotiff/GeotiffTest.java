@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -51,9 +50,8 @@ import org.geotoolkit.metadata.Citations;
 
 import org.junit.After;
 import org.junit.Test;
-
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.TAG_GEOTIFF_IFD;
 import static org.junit.Assert.*;
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.TAG_GEOTIFF_IFD;
 
 /**
  * Test class to improve Reading / writing action with some geographicales or related metadatas fonctionalities.<br>
@@ -105,7 +103,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
     @Test
     public void noDataTest() throws IOException {
 
-        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.Byte, 3);
+        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
         final IIOMetadataNode root       = new IIOMetadataNode(TAG_GEOTIFF_IFD);
         final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(root);
         stack.setMinSampleValue(1, 1, 1);
@@ -167,7 +165,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
     @Test
     public void temporalTest() throws IOException, FactoryException {
 
-        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.Byte, 3);
+        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
 
         //-- temporal CRS
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, "TemporalReferenceSystem");

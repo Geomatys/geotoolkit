@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.nio.IOUtilities;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;

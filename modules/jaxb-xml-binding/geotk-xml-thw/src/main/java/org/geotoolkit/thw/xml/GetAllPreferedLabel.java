@@ -45,7 +45,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAllPreferedLabel", propOrder = {
     "language",
-    "showDeactivated"
+    "showDeactivated",
+    "outputFormat"
 })
 @XmlRootElement(name = "GetAllPreferedLabel", namespace = "http://ws.geotk.org/")
 public class GetAllPreferedLabel {

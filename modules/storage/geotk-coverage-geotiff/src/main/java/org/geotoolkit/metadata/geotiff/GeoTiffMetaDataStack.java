@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,21 +37,19 @@ import org.w3c.dom.Node;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.NullArgumentException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
- * 
- * note : with java 9 class will become only accessible by its module (no public signature on class header). 
+ *
+ * note : with java 9 class will become only accessible by its module (no public signature on class header).
  */
 public final class GeoTiffMetaDataStack {
 
     /**
      * Date formatter to format in accordance with tiff specification.<br><br>
-     * 
+     *
      * More informations at : http://www.awaresystems.be/imaging/tiff/tifftags/datetime.html.
      */
     private static final SimpleDateFormat S_DATE_FORMAT = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
@@ -57,7 +57,7 @@ public final class GeoTiffMetaDataStack {
         //Force removing timezone
         S_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-    
+
     private final Element ifd;
 
     //what needs to be written when flush is called
@@ -73,8 +73,8 @@ public final class GeoTiffMetaDataStack {
     private Node date                             = null;
 
     public GeoTiffMetaDataStack(Node tiffTree) {
-        ensureNonNull("tiffTree", tiffTree);
-        
+        ArgumentChecks.ensureNonNull("tiffTree", tiffTree);
+
         Element tmpIfd = (Element) getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
         if (tmpIfd == null) {
             ifd = (Element) tiffTree.appendChild(createNode(TAG_GEOTIFF_IFD));
@@ -99,29 +99,28 @@ public final class GeoTiffMetaDataStack {
         entries.add(entry);
     }
 
-    void addDouble(final int keyID, final double value) {        
+    void addDouble(final int keyID, final double value) {
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
-                keyID, 
-                getGeoDoubleParamsTag().getNumber(), 
+                keyID,
+                getGeoDoubleParamsTag().getNumber(),
                 1,
                 doubleValues.size());
         entries.add(entry);
-        
+
         doubleValues.add(value);
     }
 
     void addAscii(final int keyID, final String value) {
-        // +1 for the '|' character to be appended
-        final int lenght = value.length() + 1;
+        //-- if already exist data separate by a "|"
+        if (asciiValues.length() > 0) asciiValues.append('|');
+
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
-                keyID, 
-                getGeoAsciiParamsTag().getNumber(), 
-                lenght, 
+                keyID,
+                getGeoAsciiParamsTag().getNumber(),
+                value.length(),
                 asciiValues.length());
         entries.add(entry);
-        
         asciiValues.append(value);
-        asciiValues.append('|');
     }
 
     void setModelPixelScale(final double x, final double y, final double z) {
@@ -131,7 +130,7 @@ public final class GeoTiffMetaDataStack {
 
     /**
      * Set Nodata values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
-     * 
+     *
      * @param noDataValue expected setted nodata.
      * @throws NullArgumentException if noDataValue is {@code null}.
      * @throws IllegalArgumentException if noDataValue is empty.
@@ -141,14 +140,14 @@ public final class GeoTiffMetaDataStack {
         if (noDataValue.isEmpty())
             throw new IllegalArgumentException("GeotiffMetadataStack : you try to "
                     + "set an empty Nodata Value (String) into metadata tree node.");
-        Node noData = createTiffField(GeoTiffConstants.GDAL_NODATA_KEY, "noData"); 
+        Node noData = createTiffField(GeoTiffConstants.GDAL_NODATA_KEY, "noData");
         noData.appendChild(createTiffAsciis(noDataValue));
         noDatas.add(noData);
     }
-    
+
     /**
      * Set minimum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
-     * 
+     *
      * @param minimumSampleValues minimum sample value for each image bands.
      * @throws NullArgumentException if maximumSampleValues array is {@code null}.
      */
@@ -156,31 +155,31 @@ public final class GeoTiffMetaDataStack {
         minSampleValue = createTiffField(GeoTiffConstants.MinSampleValue, "minSampleValue");
         minSampleValue.appendChild(createTiffShorts(minimumSampleValues));
     }
-    
+
     /**
      * Set maximum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
-     * 
+     *
      * @param maximumSampleValue maximum sample value for each image bands.
      * @throws NullArgumentException if maximumSampleValues array is {@code null}.
      */
     void setMaxSampleValue(final int ...maximumSampleValues) {
-        maxSampleValue = createTiffField(GeoTiffConstants.MaxSampleValue, "maxSampleValue"); 
+        maxSampleValue = createTiffField(GeoTiffConstants.MaxSampleValue, "maxSampleValue");
         maxSampleValue.appendChild(createTiffShorts(maximumSampleValues));
     }
-    
+
     /**
-     * Set date into this {@link GeoTiffMetaDataStack} in aim of build or write metadata. 
-     * 
+     * Set date into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
+     *
      * @param date which be set into metadata node.
      * @throws NullArgumentException if date is {@code null}.
      */
     synchronized void setDate(final Date date) {
         ArgumentChecks.ensureNonNull("date", date);
-        this.date = createTiffField(GeoTiffConstants.DateTime, "date"); 
+        this.date = createTiffField(GeoTiffConstants.DateTime, "date");
         final String sdat = S_DATE_FORMAT.format(date);
         this.date.appendChild(createTiffAsciis(sdat));
     }
-    
+
     void addModelTiePoint(final TiePoint tp) {
         tiePoints.add(tp);
     }
@@ -207,7 +206,7 @@ public final class GeoTiffMetaDataStack {
 
         nTransform = createTiffField(getModelTransformationTag());
         final Node nValues = createTiffDoubles(modelTransformation);
-        nTransform.appendChild(nValues);  
+        nTransform.appendChild(nValues);
     }
 
     static Node createModelTransformationElement(final double ... values) {
@@ -260,30 +259,30 @@ public final class GeoTiffMetaDataStack {
             nGeoKeyDir.appendChild(createTiffShorts(values));
             ifd.appendChild(nGeoKeyDir);
         }
-        
+
         //write tagsets
         ifd.setAttribute(ATT_TAGSETS,
                 BaselineTIFFTagSet.class.getName() + ","
                 + GeoTIFFTagSet.class.getName());
 
         if (nPixelScale != null) ifd.appendChild(nPixelScale);
-        
+
         if (!tiePoints.isEmpty()) {
             ifd.appendChild(createModelTiePointsElement(tiePoints));
         } else if (nTransform != null) {
             ifd.appendChild(nTransform);
         }
-        
+
         if (minSampleValue != null) ifd.appendChild(minSampleValue);
-        
+
         if (maxSampleValue != null) ifd.appendChild(maxSampleValue);
-        
-        if (!noDatas.isEmpty()) 
+
+        if (!noDatas.isEmpty())
             for (Node nd : noDatas) ifd.appendChild(nd);
-        
+
         if (date != null)
             ifd.appendChild(date);
-            
+
         if (!doubleValues.isEmpty()) {
             final Node nDoubles = createTiffField(getGeoDoubleParamsTag());
             final Node nValues = createTiffDoubles(doubleValues);

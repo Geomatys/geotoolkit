@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,22 +20,8 @@ package org.geotoolkit.metadata.geotiff;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import java.io.IOException;
-import org.geotoolkit.metadata.Citations;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.operation.provider.Orthographic;
-import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
-import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
-import org.apache.sis.internal.referencing.provider.PolarStereographicA;
-import org.geotoolkit.referencing.operation.provider.Stereographic;
-import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
-import org.apache.sis.internal.referencing.provider.Mercator1SP;
-import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
-import org.apache.sis.internal.referencing.provider.Mercator2SP;
-import org.apache.sis.internal.referencing.provider.TransverseMercator;
-import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
-import org.geotoolkit.resources.Errors;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
@@ -53,12 +38,30 @@ import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.PolarStereographicA;
+import org.apache.sis.internal.referencing.provider.PolarStereographicB;
+import org.apache.sis.internal.referencing.provider.TransverseMercator;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
+
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.metadata.Citations;
+import org.geotoolkit.referencing.operation.provider.Orthographic;
+import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
+import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
+import org.geotoolkit.referencing.operation.provider.Stereographic;
+import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
@@ -441,7 +444,23 @@ public final class GeoTiffCRSWriter {
         }
 
         // /////////////////////////////////////////////////////////////////////
-        // polar_stereographic
+        // polar_stereographic varian B
+        // /////////////////////////////////////////////////////////////////////
+        if (IdentifiedObjects.isHeuristicMatchForName(new PolarStereographicB().getParameters(), desc)) {   // TODO: need an other way to check for match.
+            // key 3075
+            stack.addShort(ProjCoordTransGeoKey, CT_PolarStereographic);
+            stack.addAscii(PCSCitationGeoKey, name);
+
+            // params
+            stack.addDouble(ProjStraightVertPoleLongGeoKey, value(parameters,PolarStereographicB.LONGITUDE_OF_ORIGIN));
+            stack.addDouble(ProjStdParallel1GeoKey,         value(parameters,PolarStereographicB.STANDARD_PARALLEL));
+            stack.addDouble(ProjFalseEastingGeoKey,         value(parameters,PolarStereographicB.FALSE_EASTING));
+            stack.addDouble(ProjFalseNorthingGeoKey,        value(parameters,PolarStereographicB.FALSE_NORTHING));
+            return;
+        }
+
+        // /////////////////////////////////////////////////////////////////////
+        // polar_stereographic Varian A
         // /////////////////////////////////////////////////////////////////////
         if (IdentifiedObjects.isHeuristicMatchForName(new PolarStereographicA().getParameters(), desc)) {   // TODO: need an other way to check for match.
             // key 3075

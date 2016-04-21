@@ -164,11 +164,12 @@ public class LuceneIndexSearcher extends IndexLucene {
                 try {
                     this.numericFields          = new HashMap<>();
                     final Path numericFieldFile = currentIndexDirectory.resolve("numericFields.properties");
-                    final Properties prop       = IOUtilities.getPropertiesFromFile(numericFieldFile);
-                    for (String fieldName : prop.stringPropertyNames()) {
-                        this.numericFields.put(fieldName, ((String)prop.get(fieldName)).charAt(0));
+                    if (Files.isRegularFile(numericFieldFile)) {
+                        final Properties prop = IOUtilities.getPropertiesFromFile(numericFieldFile);
+                        for (String fieldName : prop.stringPropertyNames()) {
+                            this.numericFields.put(fieldName, ((String) prop.get(fieldName)).charAt(0));
+                        }
                     }
-                    
                 } catch (IOException ex) {
                     LOGGER.log(Level.WARNING, "IO exception while reading numericFields file", ex);
                 }

@@ -25,7 +25,6 @@ import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import org.geotoolkit.temporal.util.PeriodUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -72,7 +71,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 1: isolated Date
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
         dates.add(df.parse("2003-01-07T00:00:00Z"));
 
         String expResult = "2003-01-07T00:00:00Z";
@@ -82,7 +81,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 2: isolated Date
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
         dates.add(df.parse("2003-01-07T00:00:00Z"));
         dates.add(df.parse("2003-01-21T00:00:00Z"));
 
@@ -93,7 +92,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 3: three isolated date
          */
-        dates = new TreeSet<Date>();
+        dates = new TreeSet<>();
         dates.add(df.parse("2007-06-06T14:00:00Z"));
         dates.add(df.parse("2007-06-13T14:00:00Z"));
         dates.add(df.parse("2007-06-20T14:00:00Z"));
@@ -105,7 +104,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 4: one period
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
         dates.add(df.parse("2004-01-28T00:00:00Z"));
         dates.add(df.parse("2004-02-04T00:00:00Z"));
         dates.add(df.parse("2004-02-11T00:00:00Z"));
@@ -122,7 +121,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 5: two period not joined
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
 
         //first period
         dates.add(df.parse("2004-01-28T00:00:00Z"));
@@ -148,7 +147,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 6: two period joined
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
 
         //first period
         dates.add(df.parse("2004-01-28T00:00:00Z"));
@@ -173,7 +172,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 7: isolated dates + period1 + isolated dates + period2 + isolated dates
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
 
         //isolated date
         dates.add(df.parse("2003-01-07T00:00:00Z"));
@@ -225,7 +224,9 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void getPeriodDescription() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        df2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         PeriodUtilities instance = new PeriodUtilities(df);
 
         SortedSet<Date> dates;
@@ -233,7 +234,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 1: one hour period
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
         dates.add(df.parse("2004-01-28T00:00:00Z"));
         dates.add(df.parse("2004-01-28T01:00:00Z"));
         dates.add(df.parse("2004-01-28T02:00:00Z"));
@@ -251,7 +252,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 2: one week period
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
         dates.add(df.parse("2004-01-28T00:00:00Z"));
         dates.add(df.parse("2004-02-04T00:00:00Z"));
         dates.add(df.parse("2004-02-11T00:00:00Z"));
@@ -269,7 +270,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 3: one week and one day period
          */
-        dates    = new TreeSet<Date>();
+        dates    = new TreeSet<>();
 
         dates.add(df.parse("2004-02-25T00:00:00Z"));
         dates.add(df.parse("2004-03-04T00:00:00Z"));
@@ -277,6 +278,35 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         dates.add(df.parse("2004-03-20T00:00:00Z"));
 
         expResult = "2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
+        result = instance.getDatesRespresentation(dates);
+        assertEquals(expResult, result);
+        
+        /**
+         * Test 4: one week and one day period one second
+         */
+        dates    = new TreeSet<>();
+
+        dates.add(df.parse("2004-02-25T00:00:01Z"));
+        dates.add(df.parse("2004-03-04T00:00:02Z"));
+        dates.add(df.parse("2004-03-12T00:00:03Z"));
+        dates.add(df.parse("2004-03-20T00:00:04Z"));
+
+        expResult = "2004-02-25T00:00:01Z/2004-03-20T00:00:04Z/P1W1DT1S";
+        result = instance.getDatesRespresentation(dates);
+        assertEquals(expResult, result);
+        
+        /**
+         * Test 5: one week and one day period one second 250 millisecond
+         */
+        instance = new PeriodUtilities(df2);
+         
+        dates    = new TreeSet<>();
+        dates.add(df2.parse("2004-02-25T00:00:01.250Z"));
+        dates.add(df2.parse("2004-03-04T00:00:02.500Z"));
+        dates.add(df2.parse("2004-03-12T00:00:03.750Z"));
+        dates.add(df2.parse("2004-03-20T00:00:05.000Z"));
+        
+        expResult = "2004-02-25T00:00:01.250Z/2004-03-20T00:00:05.000Z/P1W1DT1.250S";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
 
@@ -290,14 +320,16 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        df2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         PeriodUtilities instance = new PeriodUtilities(df);
         SortedSet<Date> expResult;
 
         /**
          * Test 1: isolated Date
          */
-        expResult    = new TreeSet<Date>();
+        expResult    = new TreeSet<>();
         expResult.add(df.parse("2003-01-07T00:00:00Z"));
 
         String periods = "2003-01-07T00:00:00Z";
@@ -307,7 +339,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 2: one period
          */
-        expResult    = new TreeSet<Date>();
+        expResult    = new TreeSet<>();
         expResult.add(df.parse("2004-01-28T00:00:00Z"));
         expResult.add(df.parse("2004-02-04T00:00:00Z"));
         expResult.add(df.parse("2004-02-11T00:00:00Z"));
@@ -324,7 +356,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 3: two period not joined
          */
-        expResult    = new TreeSet<Date>();
+        expResult    = new TreeSet<>();
 
         //first period
         expResult.add(df.parse("2004-01-28T00:00:00Z"));
@@ -350,7 +382,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 3: two period joined
          */
-        expResult    = new TreeSet<Date>();
+        expResult    = new TreeSet<>();
 
         //first period
         expResult.add(df.parse("2004-01-28T00:00:00Z"));
@@ -375,7 +407,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         /**
          * Test 5: isolated dates + period1 + isolated dates + period2 + isolated dates
          */
-        expResult    = new TreeSet<Date>();
+        expResult    = new TreeSet<>();
 
         //isolated date
         expResult.add(df.parse("2003-01-07T00:00:00Z"));
@@ -415,6 +447,37 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         expResult.add(df.parse("2011-10-31T00:00:00Z"));
 
         periods = "2003-01-07T00:00:00Z,2004-01-07T00:00:00Z,2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-03-02T00:00:00Z,2005-07-20T00:00:00Z,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W,2009-10-31T00:00:00Z,2010-10-31T00:00:00Z,2011-10-31T00:00:00Z";
+        result = instance.getDatesFromPeriodDescription(periods);
+        assertEquals(expResult, result);
+        
+        /**
+         * Test 4: one week and one day period one second
+         */
+        periods = "2004-02-25T00:00:01Z/2004-03-20T00:00:04Z/P1W1DT1S";
+        expResult    = new TreeSet<>();
+
+        expResult.add(df.parse("2004-02-25T00:00:01Z"));
+        expResult.add(df.parse("2004-03-04T00:00:02Z"));
+        expResult.add(df.parse("2004-03-12T00:00:03Z"));
+        expResult.add(df.parse("2004-03-20T00:00:04Z"));
+
+        result = instance.getDatesFromPeriodDescription(periods);
+        assertEquals(expResult, result);
+        
+        
+        /**
+         * Test 5: one week and one day period one second 250 millisecond
+         */
+        instance = new PeriodUtilities(df2);
+        
+        periods = "2004-02-25T00:00:01.250Z/2004-03-20T00:00:05.000Z/P1W1DT1.250S";
+
+        expResult    = new TreeSet<>();
+        expResult.add(df2.parse("2004-02-25T00:00:01.250Z"));
+        expResult.add(df2.parse("2004-03-04T00:00:02.500Z"));
+        expResult.add(df2.parse("2004-03-12T00:00:03.750Z"));
+        expResult.add(df2.parse("2004-03-20T00:00:05.000Z"));
+        
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
     }

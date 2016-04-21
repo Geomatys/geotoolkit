@@ -38,8 +38,8 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
-import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.collection.WeakHashSet;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * The collection of all the files that are the shapefile and its metadata and
@@ -354,7 +354,7 @@ public final class ShpFiles {
         final URI uri = getURI(type);
 
         try {
-            return org.geotoolkit.nio.IOUtilities.open(uri);
+            return IOUtilities.open(uri);
         }catch(Throwable e){
             if( e instanceof IOException ){
                 throw (IOException) e;
@@ -381,7 +381,7 @@ public final class ShpFiles {
         final URI uri = getURI(type);
 
         try {
-            return org.geotoolkit.nio.IOUtilities.openWrite(uri, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            return IOUtilities.openWrite(uri, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         } catch (Throwable e) {
             if (e instanceof IOException) {
                 throw (IOException) e;
@@ -547,7 +547,10 @@ public final class ShpFiles {
                 base = type.toBase( (Path)obj );
             } else if(obj instanceof URL) {
                 base = type.toBase( (URL)obj );
+            } else if(obj instanceof URI) {
+                base = type.toBase( (URI)obj );
             }
+
             if (base != null) {
                 return base;
             }
@@ -666,7 +669,7 @@ public final class ShpFiles {
             final URI treeURI = getURI(QIX);
 
             try {
-                final Path treePath = org.geotoolkit.nio.IOUtilities.toPath(treeURI);
+                final Path treePath = IOUtilities.toPath(treeURI);
                 if (!Files.exists(treePath) || (Files.size(treePath) == 0)) {
                     return null;
                 }

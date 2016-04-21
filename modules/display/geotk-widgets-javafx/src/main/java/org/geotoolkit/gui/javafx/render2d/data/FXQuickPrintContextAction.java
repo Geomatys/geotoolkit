@@ -63,7 +63,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMapAction;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXQuickPrinContextAction extends FXMapAction {
+public class FXQuickPrintContextAction extends FXMapAction {
 
     public static final Image ICON_PRINT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PRINT,16,FontAwesomeIcons.DEFAULT_COLOR),null);
 
@@ -110,9 +110,9 @@ public class FXQuickPrinContextAction extends FXMapAction {
                     new Dimension(100,100));
     
 
-    public FXQuickPrinContextAction(FXMap map) {
-        super(map,GeotkFX.getString(FXQuickPrinContextAction.class,"label"),
-                GeotkFX.getString(FXQuickPrinContextAction.class,"label"),ICON_PRINT);
+    public FXQuickPrintContextAction(FXMap map) {
+        super(map,GeotkFX.getString(FXQuickPrintContextAction.class,"label"),
+                GeotkFX.getString(FXQuickPrintContextAction.class,"label"),ICON_PRINT);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class FXQuickPrinContextAction extends FXMapAction {
             final FileChooser.ExtensionFilter filterPng = new FileChooser.ExtensionFilter("Image PNG", "*.png");
             final FileChooser.ExtensionFilter filterDvg = new FileChooser.ExtensionFilter("Image SVG", "*.svg");
             final FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle(GeotkFX.getString(FXQuickPrinContextAction.class,"label"));
+            fileChooser.setTitle(GeotkFX.getString(FXQuickPrintContextAction.class,"label"));
             fileChooser.getExtensionFilters().add(filterPng);
             fileChooser.getExtensionFilters().add(filterDvg);
             fileChooser.setSelectedExtensionFilter(filterPng);

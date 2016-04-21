@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,24 +17,15 @@
 package org.geotoolkit.metadata.geotiff;
 
 import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
+
 import java.util.logging.Level;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import javax.imageio.metadata.IIOMetadata;
 
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
+import javax.imageio.metadata.IIOMetadata;
 
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -42,13 +33,25 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
-import org.w3c.dom.Node;
-
-import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.jdk8.JDK8;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.geotoolkit.referencing.operation.MathTransforms;
+
+import org.w3c.dom.Node;
+
+import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.util.DomUtilities.*;

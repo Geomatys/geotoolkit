@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,19 +20,19 @@ import javax.imageio.ImageWriteParam;
 import java.io.IOException;
 
 /**
- * Effectuate all tests from {@link TestTiffImageReaderWriter} 
+ * Effectuate all tests from {@link TestTiffImageReaderWriter}
  * without compression and with random tile dimensions.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
- 
+
     public UncompressedTiledReaderTest() throws IOException {
-        super(); 
+        super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         final int tileWidth  = (random.nextInt(7) + 1) * 16;
         final int tileHeight = (random.nextInt(7) + 1) * 16;
-        
+
         writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
 }

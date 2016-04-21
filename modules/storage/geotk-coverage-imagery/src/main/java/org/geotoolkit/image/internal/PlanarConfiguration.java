@@ -30,14 +30,14 @@ public enum PlanarConfiguration {
      * Integer that define planar configuration as interleaved.
      * For example in a RGB image, within the same band, pixel value will be order like follow : RGBRGBRGB ...
      */
-    Interleaved,
+    INTERLEAVED,
 
     /**
      * Integer that define planar configuration as banded.
      * For example in a RGB image, within the first band, pixel value will be order
      * like follow : RRRRRRRR... and next band : GGGGGGG... and last : BBBBBBB.
      */
-    Banded;
+    BANDED;
 
     /**
      * Mapping between {@link ImageUtils#getPlanarConfiguration(java.awt.image.ColorModel)} and
@@ -48,8 +48,8 @@ public enum PlanarConfiguration {
      */
     public static PlanarConfiguration valueOf(int planardConfiguration) {
         switch (planardConfiguration) {
-            case 1 : return Interleaved;
-            case 2 : return Banded;
+            case 1 : return INTERLEAVED;
+            case 2 : return BANDED;
             default: return null;
         }
     }
@@ -64,8 +64,8 @@ public enum PlanarConfiguration {
      */
     public static int valueOf(final PlanarConfiguration planardConfiguration) {
         switch (planardConfiguration) {
-            case Interleaved : return 1;
-            case Banded      : return 2;
+            case INTERLEAVED : return 1;
+            case BANDED      : return 2;
             default: throw new IllegalArgumentException("unknow planar configuration.");
         }
     }

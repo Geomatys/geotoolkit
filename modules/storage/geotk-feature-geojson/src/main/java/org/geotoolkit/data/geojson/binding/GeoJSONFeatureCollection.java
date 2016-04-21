@@ -21,10 +21,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.geojson.utils.GeoJSONFeatureIterator;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.data.geojson.utils.GeoJSONTypes;
-import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
+import org.geotoolkit.data.geojson.utils.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +48,8 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
      * sourceInput should be not {@code null} and used to create {@link JsonParser object}
      */
     transient Path sourceInput = null;
-    transient JsonLocation startPos = null;
-    transient JsonLocation endPos = null;
+    transient LiteJsonLocation startPos = null;
+    transient LiteJsonLocation endPos = null;
     transient Boolean lazyMode;
 
     public GeoJSONFeatureCollection(Boolean lazyMode) {
@@ -69,11 +66,11 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
     }
 
     public void setStartPosition(JsonLocation startPos) {
-        this.startPos = startPos;
+        this.startPos = new LiteJsonLocation(startPos);
     }
 
     public void setEndPosition(JsonLocation endPos) {
-        this.endPos = endPos;
+        this.endPos = new LiteJsonLocation(endPos);
     }
 
     public void setSourceInput(Path input) {
@@ -125,7 +122,7 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
 
             //loop to FeatureCollection start
             if (currentPos == null) {
-                while (!GeoJSONUtils.equals(startPos, currentPos)) {
+                while (!startPos.equals(currentPos)) {
                     parser.nextToken();
                     currentPos = parser.getCurrentLocation();
                 }
@@ -134,12 +131,18 @@ public class GeoJSONFeatureCollection extends GeoJSONObject implements GeoJSONFe
             current = null;
 
             // set parser to feature object start
-            while (parser.getCurrentToken() != JsonToken.START_OBJECT && !GeoJSONUtils.equals(endPos, currentPos)) {
+            while (parser.getCurrentToken() != JsonToken.START_OBJECT && !endPos.equals(currentPos)) {
+
+                if (parser.getCurrentToken() != JsonToken.START_OBJECT && endPos.isBefore(currentPos)) {
+                    //cannot find collection end token and no more start object token
+                    //break loop to avoid infinite search
+                    break;
+                }
                 parser.nextToken();
                 currentPos = parser.getCurrentLocation();
             }
 
-            if (!GeoJSONUtils.equals(endPos, currentPos)) {
+            if (!endPos.equals(currentPos)) {
                 GeoJSONObject obj = GeoJSONParser.parseGeoJSONObject(parser);
                 if (obj instanceof GeoJSONFeature) {
                     current = (GeoJSONFeature) obj;

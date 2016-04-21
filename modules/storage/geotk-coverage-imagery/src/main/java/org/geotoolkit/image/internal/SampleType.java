@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,35 +25,36 @@ import java.awt.image.DataBuffer;
  * @author Remi Marechal (Geomatys).
  */
 public enum SampleType {
+
     /**
      * Data type {@link Byte}.
      */
-    Byte,
+    BYTE,
 
     /**
      * Data type {@link Short}.
      */
-    Short,
+    SHORT,
 
     /**
      * Data type {@link Short}.
      */
-    UShort,
+    USHORT,
 
     /**
      * Data type {@link Integer}.
      */
-    Integer,
+    INTEGER,
 
     /**
      * Data type {@link Float}.
      */
-    Float,
+    FLOAT,
 
     /**
      * Data type {@link Double}.
      */
-    Double;
+    DOUBLE;
 
     /**
      * Mapping between {@link java.awt.image.SampleModel#getDataType()} and
@@ -64,12 +65,12 @@ public enum SampleType {
      */
     public static SampleType valueOf(int dataType) {
         switch (dataType) {
-            case DataBuffer.TYPE_BYTE : return Byte;
-            case DataBuffer.TYPE_SHORT : return Short;
-            case DataBuffer.TYPE_USHORT : return UShort;
-            case DataBuffer.TYPE_INT: return Integer;
-            case DataBuffer.TYPE_FLOAT : return Float;
-            case DataBuffer.TYPE_DOUBLE : return Double;
+            case DataBuffer.TYPE_BYTE     : return BYTE;
+            case DataBuffer.TYPE_SHORT    : return SHORT;
+            case DataBuffer.TYPE_USHORT   : return USHORT;
+            case DataBuffer.TYPE_INT      : return INTEGER;
+            case DataBuffer.TYPE_FLOAT    : return FLOAT;
+            case DataBuffer.TYPE_DOUBLE   : return DOUBLE;
             case DataBuffer.TYPE_UNDEFINED: //fall through
             default: return null;
         }
@@ -84,13 +85,13 @@ public enum SampleType {
      */
     public static int valueOf(final SampleType sampleType) {
         switch (sampleType) {
-            case Byte : return DataBuffer.TYPE_BYTE;
-            case Short : return DataBuffer.TYPE_SHORT;
-            case UShort : return DataBuffer.TYPE_USHORT;
-            case Integer : return DataBuffer.TYPE_INT;
-            case Float : return DataBuffer.TYPE_FLOAT;
-            case Double : return DataBuffer.TYPE_DOUBLE;
-            default : return DataBuffer.TYPE_UNDEFINED;
+            case BYTE    : return DataBuffer.TYPE_BYTE;
+            case SHORT   : return DataBuffer.TYPE_SHORT;
+            case USHORT  : return DataBuffer.TYPE_USHORT;
+            case INTEGER : return DataBuffer.TYPE_INT;
+            case FLOAT   : return DataBuffer.TYPE_FLOAT;
+            case DOUBLE  : return DataBuffer.TYPE_DOUBLE;
+            default      : return DataBuffer.TYPE_UNDEFINED;
         }
     }
 
@@ -112,7 +113,7 @@ public enum SampleType {
      * Float data  : bitspersample = 32, sampleformat = 3<br>
      *
      * Note : for bitpersample = 8, and bitspersample = 64, sampleFormat is ignored
-     * the only available {@link SampleType} are respectively {@link SampleType#Byte} and {@link SampleType#Double}.
+     * the only available {@link SampleType} are respectively {@link SampleType#BYTE} and {@link SampleType#DOUBLE}.
      * Moreover for each unknow combination bitPerSample, sampleFormat this method return {@code null}.
      *
      *
@@ -122,22 +123,18 @@ public enum SampleType {
      */
     public static SampleType valueOf(final int bitPerSample, final int sampleFormat) {
         switch (bitPerSample) {
-            case 8 : return Byte;
+            case 8 : return BYTE;
             case 16 : {
                 switch (sampleFormat) {
-                    case 1 : return UShort;
-                    case 2 : return Short;
+                    case 1 : return USHORT;
+                    case 2 : return SHORT;
                     default : return null;
                 }
             }
             case 32 : {
-                switch (sampleFormat) {
-                    case 2 : return Integer;
-                    case 3 : return Float;
-                    default : return null;
-                }
+                return (sampleFormat == 3) ? FLOAT : INTEGER;
             }
-            case 64: return Double;
+            case 64: return DOUBLE;
             default: return null;
         }
     }

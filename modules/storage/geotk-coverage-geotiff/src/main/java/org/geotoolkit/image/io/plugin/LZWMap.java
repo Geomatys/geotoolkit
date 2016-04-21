@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,20 +28,20 @@ import org.apache.sis.util.ArgumentChecks;
 class LZWMap extends HashMap<byte[], Short> {
 
     /**
-     * {@code byte[]} array use to store key. 
+     * {@code byte[]} array use to store key.
      */
     private final byte[][] keys;
-    
+
     /**
      * {@code short[]} array use to store LZW key associate code.
      */
     private final short[][] values;
-    
+
     /**
      * Maximum key and value array length.
      */
     private final static int PRIME_NUMBER = 5407;
-    
+
     /**
      * Default value array length.
      */
@@ -52,13 +51,13 @@ class LZWMap extends HashMap<byte[], Short> {
         keys   = new byte[PRIME_NUMBER][];
         values = new short[PRIME_NUMBER][];
     }
-    
+
     /**
      * Return true if container start with element byte suite else false.<br/><br/>
-     * 
+     *
      * @param container
      * @param element
-     * @return 
+     * @return
      */
     private boolean containAtBegin(final byte[] container, final byte[] element) {
         final int eltLength = element.length;
@@ -69,13 +68,13 @@ class LZWMap extends HashMap<byte[], Short> {
         }
         return true;
     }
-    
+
     /**
      * Put code in relation with key at expected position.
-     * 
+     *
      * @param position
      * @param eltLength
-     * @param code 
+     * @param code
      */
     private void putCode(final int position, final int eltLength, final short code) {
         if (values[position] == null) {
@@ -85,13 +84,13 @@ class LZWMap extends HashMap<byte[], Short> {
         }
         values[position][eltLength - 2] = code;
     }
-    
+
     /**
-     * Add 
-     * 
+     * Add
+     *
      * @param key
      * @param value
-     * @return 
+     * @return
      */
     @Override
     public Short put(final byte[] key, final Short value) {
@@ -107,7 +106,7 @@ class LZWMap extends HashMap<byte[], Short> {
                 putCode(arrayPos, key.length, value);
                 break;
             } else {
-                // 2 case 
+                // 2 case
                 final byte[] precKey = keys[arrayPos];
                 if (containAtBegin(precKey, key)) {
                     //-- if key is already contained --//
@@ -130,36 +129,36 @@ class LZWMap extends HashMap<byte[], Short> {
 
     /**
      * Return {@code true} if key as already been put else {@code false}.
-     * 
-     * @param key 
+     *
+     * @param key
      * @return {@code true} if key as already been put else {@code false}.
      */
     @Override
     public boolean containsKey(Object key) {
         ArgumentChecks.ensureNonNull("key ", key);
-        if (!(key instanceof byte[])) 
+        if (!(key instanceof byte[]))
             throw new IllegalArgumentException("key must be instance of byte[]");
         final byte[] ki = (byte[]) key;
         //-- hash code creation, constitute by the first pair of byte from key. --//
         final int hash = (((ki[0] & 0xFF) << Byte.SIZE) | (ki[1] & 0xFF));
         int arrayPos   = hash % PRIME_NUMBER;
         assert arrayPos >= 0 : "expected : >= 0 found : "+(hash % PRIME_NUMBER)+" hash code : "+hash;
-        
+
         while (keys[arrayPos] != null) {
             if (containAtBegin(keys[arrayPos], ki)) return true;
             arrayPos++;
             if (arrayPos == PRIME_NUMBER) {
                 assert assertArrayConform() : "keys array must contain at least null value";
                 arrayPos = 0;
-            } 
+            }
         }
         return false;
     }
-    
+
     /**
      * Return {@code true} if {@linkplain #keys} array contain at least one {@code null} value else return {@code false}.<br/>
      * Normaly should never return {@code false}.
-     * 
+     *
      * @return {@code true} if {@linkplain #keys} array contain at least one {@code null} value else return {@code false}.
      */
     private boolean assertArrayConform() {
@@ -171,10 +170,10 @@ class LZWMap extends HashMap<byte[], Short> {
     }
 
     /**
-     * Return LZW code in relation with {@code byte[]} key if it is found 
+     * Return LZW code in relation with {@code byte[]} key if it is found
      * else return 256 which is a reserved code.
-     * 
-     * @param key 
+     *
+     * @param key
      * @return short value which is LZW code in relation with specified key.
      * @throws {@link NullArgumentException} if key is {@code null}.
      * @throws {@link IllegalArgumentException} if key is not instance of {@code byte[]}.
@@ -182,14 +181,14 @@ class LZWMap extends HashMap<byte[], Short> {
     @Override
     public Short get(Object key) {
         ArgumentChecks.ensureNonNull("key ", key);
-        if (!(key instanceof byte[])) 
+        if (!(key instanceof byte[]))
             throw new IllegalArgumentException("key must be instance of byte[]");
         final byte[] ki = (byte[]) key;
         //-- hash code creation, constitute by the first pair of byte from key. --//
         final int hash = (((ki[0] & 0xFF) << Byte.SIZE) | (ki[1] & 0xFF));
         int arrayPos   = hash % PRIME_NUMBER;
         assert arrayPos >= 0;
-        
+
         while (keys[arrayPos] != null) {
             if (containAtBegin(keys[arrayPos], ki)) return values[arrayPos][ki.length - 2];
             arrayPos++;

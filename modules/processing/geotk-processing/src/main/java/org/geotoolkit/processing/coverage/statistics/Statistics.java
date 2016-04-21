@@ -48,6 +48,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
+import org.geotoolkit.coverage.grid.ViewType;
 
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
@@ -172,8 +173,11 @@ public class Statistics extends AbstractProcess {
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(env);
             param.setResolution(res);
-            final GridCoverage coverage = reader.read(ref.getImageIndex(), param);
-
+            GridCoverage coverage = reader.read(ref.getImageIndex(), param);
+            if(coverage instanceof GridCoverage2D){
+                //we want the statistics on the real data values
+                coverage = ((GridCoverage2D)coverage).view(ViewType.GEOPHYSICS);
+            }
             org.geotoolkit.process.Process process = new Statistics((GridCoverage2D)coverage, excludeNoData);
             ParameterValueGroup out = process.call();
             return value(OUTCOVERAGE, out);
@@ -239,6 +243,11 @@ public class Statistics extends AbstractProcess {
                         candidate = getCoverage(ref);
                     }
                 }
+            }
+
+            if(candidate instanceof GridCoverage2D){
+                //we want the statistics on the real data values
+                candidate = ((GridCoverage2D)candidate).view(ViewType.GEOPHYSICS);
             }
 
             if (candidate == null) {
@@ -468,7 +477,7 @@ public class Statistics extends AbstractProcess {
     }
 
     private int getNbBins(SampleType dataType) {
-        if (dataType != null && dataType.equals(SampleType.Byte)) {
+        if (dataType != null && dataType.equals(SampleType.BYTE)) {
             return 255;
         }
         return 1000;

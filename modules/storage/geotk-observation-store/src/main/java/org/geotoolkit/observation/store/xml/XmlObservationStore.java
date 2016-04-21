@@ -18,6 +18,7 @@ package org.geotoolkit.observation.store.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -71,9 +73,10 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
 
     private final Path xmlFile;
     
-    public XmlObservationStore(final ParameterValueGroup params) {
+    public XmlObservationStore(final ParameterValueGroup params) throws IOException {
         super(params);
-        xmlFile = (Path) params.parameter(FILE_PATH.getName().toString()).getValue();
+        URI uri = (URI) params.parameter(FILE_PATH.getName().toString()).getValue();
+        xmlFile = IOUtilities.toPath(uri);
     }
     
     public XmlObservationStore(final Path xmlFile) {

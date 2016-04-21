@@ -410,7 +410,7 @@ public final class XImageIO extends Static {
                     final Object argument;
                     if (IOUtilities.canProcessAsPath(input)) {
                         messageKey = Errors.Keys.CantReadFile_1;
-                        argument = org.apache.sis.internal.storage.IOUtilities.filename(input);
+                        argument = IOUtilities.filename(input);
                     } else {
                         messageKey = Errors.Keys.UnknownType_1;
                         argument = input.getClass();
@@ -535,7 +535,7 @@ public final class XImageIO extends Static {
         if (!IOUtilities.canProcessAsPath(input)) {
             return getReader(input, seekForwardOnly, ignoreMetadata);
         }
-        return getReaderBySuffix(org.apache.sis.internal.storage.IOUtilities.extension(input),
+        return getReaderBySuffix(IOUtilities.extension(input),
                 input, seekForwardOnly, ignoreMetadata);
     }
 
@@ -751,7 +751,7 @@ public final class XImageIO extends Static {
             throws IOException
     {
         ensureNonNull("output", output);
-        return getWriterBySuffix(org.apache.sis.internal.storage.IOUtilities.extension(output), output, image);
+        return getWriterBySuffix(IOUtilities.extension(output), output, image);
     }
 
     /**

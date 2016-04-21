@@ -1492,7 +1492,7 @@ public class NetcdfImageReader extends FileImageReader implements
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
-                return ArraysExt.containsIgnoreCase(SUFFIXES, org.apache.sis.internal.storage.IOUtilities.extension(source));
+                return ArraysExt.containsIgnoreCase(SUFFIXES, IOUtilities.extension(source));
                 /*
                  * If a future version wants to use NetcdfFile.canOpen(String),
                  * then please verify that the following issues are resolved:

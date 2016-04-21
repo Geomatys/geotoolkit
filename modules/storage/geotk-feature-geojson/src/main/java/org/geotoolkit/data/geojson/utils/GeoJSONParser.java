@@ -22,12 +22,10 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.geojson.binding.*;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -94,7 +92,7 @@ public final class GeoJSONParser {
      */
     public static GeoJSONObject parse(Path jsonFile, boolean lazy) throws IOException {
 
-        try (BufferedReader reader = Files.newBufferedReader(jsonFile, Charset.forName("UTF-8"));
+        try (InputStream reader = Files.newInputStream(jsonFile);
              JsonParser p = FACTORY.createParser(reader)) {
 
             JsonToken startToken = p.nextToken();
@@ -384,8 +382,8 @@ public final class GeoJSONParser {
     private static void lazyParseFeatureCollection(GeoJSONFeatureCollection coll, JsonParser p, Path source) throws IOException {
 
         p.nextToken();
-        coll.setStartPosition(p.getCurrentLocation());
         coll.setSourceInput(source);
+        coll.setStartPosition(p.getCurrentLocation());
 
         int startArray = 1;
         int endArray = 0;

@@ -22,7 +22,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
 import org.geotoolkit.gui.javafx.render2d.data.FXOpenContextAction;
-import org.geotoolkit.gui.javafx.render2d.data.FXQuickPrinContextAction;
+import org.geotoolkit.gui.javafx.render2d.data.FXQuickPrintContextAction;
 import org.geotoolkit.gui.javafx.render2d.data.FXSaveContextAction;
 
 /**
@@ -40,7 +40,7 @@ public class FXContextBar extends ToolBar {
         
         final Button butOpen = new FXOpenContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butSave = new FXSaveContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butPrint = new FXQuickPrinContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butPrint = new FXQuickPrintContextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         butOpen.getStyleClass().add(LEFT);
         butSave.getStyleClass().add(CENTER);
         butPrint.getStyleClass().add(RIGHT);

@@ -17,10 +17,12 @@
 package org.geotoolkit.xml.parameter;
 
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.util.ObjectConverters;
@@ -112,10 +114,24 @@ public class ParameterValueReader extends StaxStreamReader {
         if(desc instanceof ParameterDescriptor){
             final String text = reader.getElementText();
             if (!text.isEmpty()) {
-                result = new Parameter(
-                        (ParameterDescriptor) desc,
-                        ObjectConverters.convert(
-                        text,((ParameterDescriptor) desc).getValueClass()));
+                Class targetClass = ((ParameterDescriptor) desc).getValueClass();
+                Object converted = null;
+                //HACK for Path support
+                // we don't use ObjectConverters to convert Path from a String because
+                // there is an already existing converter that doesn't use protocol (URI scheme)
+                if (Path.class.isAssignableFrom(targetClass)) {
+                    URI uri = URI.create(text);
+                    if (uri.getScheme() != null) {
+                        //may target a path on another file system
+                        converted = Paths.get(uri);
+                    } else {
+                        //assume path is on current file system (relative of absolute)
+                        converted = Paths.get(text);
+                    }
+                } else {
+                    converted = ObjectConverters.convert(text, targetClass);
+                }
+                result = new Parameter((ParameterDescriptor) desc,converted);
             } else {
                 result = null;
             }

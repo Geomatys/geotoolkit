@@ -21,6 +21,7 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -110,7 +111,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
         try {
             Path path = IOUtilities.toPath(url);
             if (Files.isDirectory(path)){
-                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, "*.gml")) {
+                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, new PosixDirectoryFilter("*.gml", true))) {
                     return dirStream.iterator().hasNext();
                 }
             }
