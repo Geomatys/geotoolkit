@@ -1,7 +1,6 @@
 package org.geotoolkit.coverage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -14,7 +13,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -31,13 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 //import javax.imageio.ImageIO;//-- debug
+import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Test pyramid generation with PyramidCoverageBuilder.
@@ -47,18 +46,7 @@ import org.opengis.referencing.datum.PixelInCell;
  */
 public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
-    private static final GenericName NAME = NamesExt.create("test");
-    private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
-    private static final CoordinateReferenceSystem EPSG4326;
-    static {
-        try {
-            EPSG4326 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException(ex);
-        } catch (FactoryException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+    private static final CoordinateReferenceSystem EPSG4326 = CommonCRS.WGS84.geographic();
 
     @Test
     public void testPyramid () throws DataStoreException, TransformException, IOException, FactoryException {

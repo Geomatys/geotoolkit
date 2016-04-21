@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import org.geotoolkit.referencing.CRS;
 import static org.junit.Assert.*;
 
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -57,17 +56,10 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
-    private static final CoordinateReferenceSystem EPSG4326;
+    private static final CoordinateReferenceSystem EPSG4326 = CommonCRS.WGS84.geographic();
     private static final GeneralDirectPosition UL84;
     private static final GeneralDirectPosition UL4326;
     static {
-        try {
-            EPSG4326 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException(ex);
-        } catch (FactoryException ex) {
-            throw new RuntimeException(ex);
-        }
         UL84 = new GeneralDirectPosition(CRS84);
         UL84.setOrdinate(0, -180);
         UL84.setOrdinate(1, 90);

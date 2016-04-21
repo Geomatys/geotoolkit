@@ -52,16 +52,17 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
+import org.apache.sis.referencing.CRS;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
 
 /**
  * Component that allows to browse data on an additional axis.
@@ -335,13 +336,13 @@ public class JAdditionalAxisNavigator extends JPanel {
                 if (bounds != null && bounds.getCoordinateReferenceSystem() != null) {
                     final CoordinateReferenceSystem layerCRS = bounds.getCoordinateReferenceSystem();
 
-                    final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(layerCRS);
+                    final List<SingleCRS> parts = CRS.getSingleComponents(layerCRS);
 browseCRS:          for (CoordinateReferenceSystem part : parts) {
                         if (part.getCoordinateSystem().getDimension() == 1
                                 && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE) {
                             // Check we haven't already got it
                             for (CoordinateReferenceSystem inserted : toFill) {
-                                if (CRS.equalsApproximatively(inserted, part)) {
+                                if (Utilities.equalsApproximatively(inserted, part)) {
                                     continue browseCRS;
                                 }
                             }
@@ -397,7 +398,7 @@ browseCRS:          for (CoordinateReferenceSystem part : parts) {
 
         //check the axis is not already in the list
         for (AxisDef tmp : axis) {
-            if (CRS.equalsIgnoreMetadata(guiAxis.getSelectedValue(), tmp.nav.getCrs())) {
+            if (Utilities.equalsIgnoreMetadata(guiAxis.getSelectedValue(), tmp.nav.getCrs())) {
                 return;
             }
         }

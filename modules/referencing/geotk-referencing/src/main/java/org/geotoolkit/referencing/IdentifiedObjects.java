@@ -73,7 +73,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 3.18 (derived from 1.2)
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 public final class IdentifiedObjects extends Static {
     /**
      * Do not allows instantiation of this class.

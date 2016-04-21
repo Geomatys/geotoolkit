@@ -26,8 +26,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
@@ -70,7 +70,7 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
      */
     @Before
     public void setUp() {
-        mtFactory = AuthorityFactoryFinder.getMathTransformFactory(null);
+        mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
     }
 
     /**

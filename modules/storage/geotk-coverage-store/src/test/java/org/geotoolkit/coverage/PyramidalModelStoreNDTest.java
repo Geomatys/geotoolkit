@@ -36,12 +36,12 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
@@ -83,7 +83,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
         //create a small pyramid
         store = createStore();
-        final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
+        final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
@@ -215,7 +215,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         //we expect a 3D coverage, with all slices
         final GridCoverage coverage = (GridCoverage) reader.read(ref.getImageIndex(), null);
         final Envelope env = coverage.getEnvelope();
-        assertTrue(CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
         assertEquals(corner_long,  env.getMinimum(0), DELTA);//-- -180
         assertEquals(  75,         env.getMinimum(1), DELTA);
         assertEquals( corner_v[0], env.getMinimum(2), DELTA);//-- 15
@@ -307,7 +307,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
      * @param envelope expented envelope
      */
     private void checkCoverage(GridCoverage2D coverage, int width, int height, int[][] colors, double... envelope){
-        assertTrue(CRS.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
         Envelope env = coverage.getEnvelope();
         assertEquals(envelope[0], env.getMinimum(0), DELTA);
         assertEquals(envelope[1], env.getMaximum(0), DELTA);

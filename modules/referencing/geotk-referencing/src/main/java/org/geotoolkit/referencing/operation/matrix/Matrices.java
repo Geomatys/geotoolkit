@@ -34,6 +34,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.20 (derived from 2.2)
  * @module
  */
+@Deprecated
 public class Matrices extends Static {
     /**
      * Do not allows instantiation of this class.
@@ -96,32 +97,11 @@ public class Matrices extends Static {
      *
      * @since 3.20 (derived from 3.16)
      *
-     * @deprecated Replace by Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createPassThrough(int, Matrix, int)}.
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices},
      */
     @Deprecated
     public static Matrix resizeAffine(Matrix matrix, final int sourceDimension, final int targetDimension) {
-        final int oldSrcDim = matrix.getNumCol() - 1;
-        final int oldTgtDim = matrix.getNumRow() - 1;
-        if (oldSrcDim != sourceDimension && oldTgtDim != targetDimension) {
-            final Matrix resized = org.apache.sis.referencing.operation.matrix.Matrices.createDiagonal(targetDimension+1, sourceDimension+1);
-            final int commonRows = Math.min(targetDimension, oldTgtDim);
-            final int commonCols = Math.min(sourceDimension, oldSrcDim);
-            for (int j=0; j<commonRows; j++) {
-                // Set the scale factor to zero only for existing dimensions
-                // (not for new target dimensions added by this method call).
-                if (j >= commonCols && j < targetDimension) {
-                    resized.setElement(j, j, 0);
-                }
-                // Copy the scale and shear factors.
-                for (int i=0; i<commonCols; i++) {
-                    resized.setElement(j, i, matrix.getElement(j, i));
-                }
-                // Copy the translation term.
-                resized.setElement(j, sourceDimension, matrix.getElement(j, oldSrcDim));
-            }
-            matrix = resized;
-        }
-        return matrix;
+        return org.apache.sis.referencing.operation.matrix.Matrices.resizeAffine(matrix, targetDimension + 1, sourceDimension + 1);
     }
 
     /**

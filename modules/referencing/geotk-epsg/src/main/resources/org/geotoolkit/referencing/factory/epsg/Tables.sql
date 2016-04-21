@@ -142,7 +142,7 @@ CONSTRAINT pk_coordinate_operation PRIMARY KEY ( coord_op_code ) );
 CREATE TABLE epsg_coordoperationmethod (
 coord_op_method_code                               INTEGER NOT NULL,
 coord_op_method_name                               VARCHAR(50) NOT NULL,
-reverse_op                                         SMALLINT NOT NULL,
+reverse_op                                         BOOLEAN NOT NULL,
 formula                                            VARCHAR(4000),
 example                                            VARCHAR(4000),
 remarks                                            VARCHAR(254),
@@ -168,7 +168,7 @@ CREATE TABLE epsg_coordoperationparamusage (
 coord_op_method_code                               INTEGER NOT NULL,
 parameter_code                                     INTEGER NOT NULL,
 sort_order                                         SMALLINT NOT NULL,
-param_sign_reversal                                VARCHAR(3),
+param_sign_reversal                                BOOLEAN,
 CONSTRAINT pk_coordinate_operationparame2 PRIMARY KEY ( parameter_code, coord_op_method_code ) );
 
 CREATE TABLE epsg_coordoperationparamvalue (
@@ -221,7 +221,7 @@ semi_major_axis                                    DOUBLE PRECISION NOT NULL,
 uom_code                                           INTEGER NOT NULL,
 inv_flattening                                     DOUBLE PRECISION,
 semi_minor_axis                                    DOUBLE PRECISION,
-ellipsoid_shape                                    SMALLINT NOT NULL,
+ellipsoid_shape                                    BOOLEAN NOT NULL,
 remarks                                            VARCHAR(254),
 information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,

@@ -25,11 +25,8 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.ConcatenatedOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.operation.AuthorityBackedFactory;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
 
 import org.apache.sis.util.Classes;
 import org.junit.*;
@@ -70,12 +67,6 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
     @Ignore("CachingCoordinateOperationFactory is (for now) hidden by SIS factory.")
     public final void testGeographicBacked() throws FactoryException {
         assumeNotNull(factory);
-
-        assertTrue("Expected a caching factory but got " + opFactory.getClass().getCanonicalName(),
-                opFactory instanceof CachingCoordinateOperationFactory);
-        assertTrue("EPSG authority factory not found.",
-                ((CachingCoordinateOperationFactory) opFactory).getImplementationHints().
-                get(Hints.COORDINATE_OPERATION_FACTORY) instanceof AuthorityBackedFactory);
 
         final CoordinateReferenceSystem  sourceCRS;
         final CoordinateReferenceSystem  targetCRS;

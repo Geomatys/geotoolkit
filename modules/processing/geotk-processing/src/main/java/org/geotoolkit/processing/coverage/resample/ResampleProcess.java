@@ -55,7 +55,6 @@ import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
@@ -228,7 +227,7 @@ public class ResampleProcess extends AbstractProcess {
                                            final Hints               hints)
             throws FactoryException, TransformException
     {
-        return reproject(sourceCoverage, targetCRS, targetGG, interpolationType, 
+        return reproject(sourceCoverage, targetCRS, targetGG, interpolationType,
                 null, background, hints);
     }
 
@@ -355,12 +354,7 @@ public class ResampleProcess extends AbstractProcess {
         ////////////////////////////////////////////////////////////////////////////////////////
 
         final CoordinateOperationFactory factory = FactoryFinder.getCoordinateOperationFactory(hints);
-        final MathTransformFactory mtFactory;
-        if (factory instanceof AbstractCoordinateOperationFactory) {
-            mtFactory = ((AbstractCoordinateOperationFactory) factory).getMathTransformFactory();
-        } else {
-            mtFactory = FactoryFinder.getMathTransformFactory(hints);
-        }
+        final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(hints);
         /*
          * Computes the INVERSE of the math transform from [Source Grid] to [Target Grid].
          * The transform will be computed using the following path:

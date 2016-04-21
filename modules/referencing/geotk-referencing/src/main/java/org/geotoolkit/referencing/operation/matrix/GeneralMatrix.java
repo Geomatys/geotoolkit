@@ -99,22 +99,6 @@ public class GeneralMatrix extends GMatrix implements Matrix {
     }
 
     /**
-     * Constructs a new matrix and copies the initial values from the parameter matrix.
-     *
-     * @param matrix The matrix to copy.
-     */
-    public GeneralMatrix(final Matrix matrix) {
-        this(matrix.getNumRow(), matrix.getNumCol());
-        final int height = getNumRow();
-        final int width  = getNumCol();
-        for (int j=0; j<height; j++) {
-            for (int i=0; i<width; i++) {
-                setElement(j, i, matrix.getElement(j, i));
-            }
-        }
-    }
-
-    /**
      * Constructs a transform that maps a source region to a destination region.
      * Axis order and direction are left unchanged.
      * <p>

@@ -35,7 +35,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 
 import static org.junit.Assert.*;
@@ -44,12 +44,12 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.apache.sis.util.Utilities;
 
 /**
  * Pyramid store read and write tests.
@@ -81,7 +81,7 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
             return store;
         }
         store = createStore();
-        crs = CRS.decode("EPSG:3395");
+        crs = CRS.forCode("EPSG:3395");
 
         ////////////////////////////////////////////////////////////////////////
         //create a small RGBA pyramid //////////////////////////////////////////
@@ -215,13 +215,13 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
-        assertTrue(CRS.equalsIgnoreMetadata(crs,  covcrs));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs,  covcrs));
         final Envelope env = coverage.getEnvelope();
         assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(4*10)*0.5, env.getMaximum(0), DELTA);
         assertEquals(corner.getOrdinate(1) -(3*10)*0.5, env.getMinimum(1), DELTA);
-        assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
 
         //check tile aggregation
         final RenderedImage img = coverage.getRenderedImage();
@@ -264,13 +264,13 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
 
         //check coverage informations
         final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
-        assertTrue(CRS.equalsIgnoreMetadata(crs,  covcrs));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs,  covcrs));
         final Envelope env = coverage.getEnvelope();
         assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(4*10)*0.5, env.getMaximum(0), DELTA);
         assertEquals(corner.getOrdinate(1) -(3*10)*0.5, env.getMinimum(1), DELTA);
-        assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
 
         //check tile aggregation
         final RenderedImage img = coverage.getRenderedImage();
@@ -320,13 +320,13 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         rgbaCoverageRef.recycle(reader);
 
         //check coverage informations
-        assertTrue(CRS.equalsApproximatively(crs,  coverage.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximatively(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getEnvelope();
         assertEquals(corner.getOrdinate(0) +(1*10)*1, env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
         assertEquals(corner.getOrdinate(1) -(2*10)*1, env.getMinimum(1), DELTA);
-        assertTrue(CRS.equalsApproximatively(crs,  env.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximatively(crs,  env.getCoordinateReferenceSystem()));
 
 
         //check tile aggregation

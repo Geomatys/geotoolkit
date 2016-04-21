@@ -29,7 +29,10 @@ import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
  *
  * @author Johann Sorel (Geomatys)
  * @author Remi Marechal (Geomatys).
+ *
+ * @deprecated Moved to {@link org.apache.sis.referencing.operation.transform.MathTransforms#interpolate}
  */
+@Deprecated
 public final class LinearInterpolator1D extends AbstractMathTransform1D {
     private final double[] antecedent;
     private final double[] values;

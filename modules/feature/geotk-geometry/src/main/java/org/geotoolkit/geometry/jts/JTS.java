@@ -763,7 +763,7 @@ public final class JTS {
         if (userData == null) {
             userData = crs;
         }
-        
+
         geom.setUserData(userData);
         geom.setSRID(srid);
     }
@@ -1258,5 +1258,5 @@ public final class JTS {
         return crs1 != null && crs2 != null && (!crs1.equals(crs2));
 
     }
-        
+
 }

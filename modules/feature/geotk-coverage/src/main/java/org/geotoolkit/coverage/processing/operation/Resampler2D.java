@@ -70,7 +70,6 @@ import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -302,12 +301,7 @@ final class Resampler2D extends GridCoverage2D {
         ////////////////////////////////////////////////////////////////////////////////////////
 
         final CoordinateOperationFactory factory = FactoryFinder.getCoordinateOperationFactory(hints);
-        final MathTransformFactory mtFactory;
-        if (factory instanceof AbstractCoordinateOperationFactory) {
-            mtFactory = ((AbstractCoordinateOperationFactory) factory).getMathTransformFactory();
-        } else {
-            mtFactory = FactoryFinder.getMathTransformFactory(hints);
-        }
+        final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(hints);
         /*
          * Computes the INVERSE of the math transform from [Source Grid] to [Target Grid].
          * The transform will be computed using the following path:

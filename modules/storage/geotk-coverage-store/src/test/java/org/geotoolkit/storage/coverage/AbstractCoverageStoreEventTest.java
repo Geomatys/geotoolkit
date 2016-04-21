@@ -24,13 +24,11 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.util.GenericName;
+
+import static org.junit.Assert.*;
+
 
 /**
  * Coverage store event tests.
@@ -93,7 +91,5 @@ public abstract class AbstractCoverageStoreEventTest extends org.geotoolkit.test
         assertEquals(null, reflistener.lastContentEvent.getMosaicId());
         assertEquals(null, reflistener.lastContentEvent.getTiles());
         assertEquals(CoverageStoreContentEvent.Type.DATA_UPDATE, reflistener.lastContentEvent.getType());
-
     }
-
 }

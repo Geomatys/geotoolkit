@@ -24,7 +24,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -33,6 +32,7 @@ import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 
 /**
  *
@@ -51,7 +51,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
 
         //create a small pyramid
         final CoverageStore store = new MPCoverageStore();
-        final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
+        final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
 

@@ -36,7 +36,10 @@ package org.geotoolkit.referencing.operation.transform;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.operation.transform.InterpolatedTransform}
  */
+@Deprecated
 public enum GridType {
     /**
      * The grid values give directly the target coordinates. The source coordinates

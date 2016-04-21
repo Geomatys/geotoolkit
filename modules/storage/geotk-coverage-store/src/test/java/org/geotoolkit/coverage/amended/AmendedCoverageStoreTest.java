@@ -35,7 +35,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -44,6 +43,9 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -115,8 +117,6 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
         GridCoverage coverage = decoratedRef.acquireReader().read(0, null);
         assertEquals(CommonCRS.WGS84.normalizedGeographic(), coverage.getCoordinateReferenceSystem());
-
-
     }
 
     /**
@@ -146,8 +146,6 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         GridCoverage coverage = decoratedRef.acquireReader().read(0, null);
         assertEquals(IMAGECRS, coverage.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 20), decoratedRef.getGridGeometry(0).getGridToCRS());
-
-
     }
 
     /**
@@ -195,8 +193,5 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         decoratedCov = decoratedRef.acquireReader().read(0, param);
         assertEquals(overrideCrs, decoratedCov.getCoordinateReferenceSystem());
         assertEquals(new AffineTransform2D(1, 0, 0, 1, 20, 30), decoratedRef.getGridGeometry(0).getGridToCRS());
-
-
     }
-
 }

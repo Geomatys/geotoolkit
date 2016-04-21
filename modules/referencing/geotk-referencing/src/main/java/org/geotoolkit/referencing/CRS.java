@@ -24,8 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.opengis.geometry.*;
 import org.opengis.referencing.*;
@@ -41,16 +39,14 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.Factories;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -89,37 +85,6 @@ public final class CRS extends Static {
     }
 
     /**
-     * A factory for default (non-lenient) operations.
-     */
-    private static volatile CoordinateOperationFactory strictFactory;
-
-    /**
-     * A factory for default lenient operations.
-     */
-    private static volatile CoordinateOperationFactory lenientFactory;
-
-    /**
-     * The default value for {@link Hints#LENIENT_DATUM_SHIFT},
-     * or {@code null} if not yet determined.
-     */
-    private static volatile Boolean defaultLenient;
-
-    /**
-     * Registers a listener automatically invoked when the system-wide configuration changed.
-     */
-    static {
-        Factories.addChangeListener(new ChangeListener() {
-            @Override public void stateChanged(ChangeEvent e) {
-                synchronized (CRS.class) {
-                    strictFactory   = null;
-                    lenientFactory  = null;
-                    defaultLenient  = null;
-                }
-            }
-        });
-    }
-
-    /**
      * Do not allow instantiation of this class.
      */
     private CRS() {
@@ -137,35 +102,14 @@ public final class CRS extends Static {
      * {@link #findMathTransform(CoordinateReferenceSystem, CoordinateReferenceSystem)
      * findMathTransform} convenience methods.
      *
-     * @param lenient {@code true} if the coordinate operations should be created
-     *        even when there is no information available for a datum shift.
+     * @param lenient ignored.
      * @return The coordinate operation factory used for finding math transform in this class.
-     *
-     * @see Hints#LENIENT_DATUM_SHIFT
      *
      * @category factory
      * @since 2.4
      */
     public static CoordinateOperationFactory getCoordinateOperationFactory(final boolean lenient) {
-        CoordinateOperationFactory factory = (lenient) ? lenientFactory : strictFactory;
-        if (factory == null) synchronized (CRS.class) {
-            // Double-checked locking - was a deprecated practice before Java 5.
-            // Is okay since Java 5 provided that the variables are volatile.
-            factory = (lenient) ? lenientFactory : strictFactory;
-            if (factory == null) {
-                final Hints hints = new Hints(); // Get the system-width default hints.
-                if (lenient) {
-                    hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-                }
-                factory = FactoryFinder.getCoordinateOperationFactory(hints);
-                if (lenient) {
-                    lenientFactory = factory;
-                } else {
-                    strictFactory = factory;
-                }
-            }
-        }
-        return factory;
+        return DefaultFactories.forBuildin(CoordinateOperationFactory.class);
     }
 
     /**
@@ -586,7 +530,7 @@ public final class CRS extends Static {
             final SingleCRS[] toSearch = components.clone();
 compare:    for (final SingleCRS component : actualComponents) {
                 for (int i=firstValid; i<toSearch.length; i++) {
-                    if (equalsIgnoreMetadata(component, toSearch[i])) {
+                    if (Utilities.equalsIgnoreMetadata(component, toSearch[i])) {
                         /*
                          * Found a match: remove it from the search list. Note that we copy the
                          * remaining components to the end of the array (which is unusual) rather
@@ -819,9 +763,12 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 2.2
+     *
+     * @deprecated Moved to Apache SIS {@link Utilities} class.
      */
+    @Deprecated
     public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
-        return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
+        return Utilities.equalsIgnoreMetadata(object1, object2);
     }
 
     /**
@@ -891,36 +838,24 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
      *
      * @category transform
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
      */
     // LGPL - we will define findOperation instead.
+    @Deprecated
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS)
             throws FactoryException
     {
-        // No need to synchronize; this is not a big deal if 'defaultLenient' is computed twice.
-        Boolean lenient = defaultLenient;
-        if (lenient == null) {
-            defaultLenient = lenient = Boolean.TRUE.equals(
-                    Hints.getSystemDefault(Hints.LENIENT_DATUM_SHIFT));
-        }
-        return findMathTransform(sourceCRS, targetCRS, lenient);
+        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
     }
 
     /**
-     * Grab a transform between two Coordinate Reference Systems. This method is similar to
-     * <code>{@linkplain #findMathTransform(CoordinateReferenceSystem, CoordinateReferenceSystem)
-     * findMathTransform}(sourceCRS, targetCRS)</code>, except that it specifies whatever this
-     * method should tolerate <cite>lenient datum shift</cite>. If the {@code lenient} argument
-     * is {@code true}, then this method will not throw a "<cite>Bursa-Wolf parameters required</cite>"
-     * exception during datum shifts if the Bursa-Wolf parameters are not specified.
-     * Instead it will assume a no datum shift.
+     * Grab a transform between two Coordinate Reference Systems.
      *
      * @param  sourceCRS The source CRS.
      * @param  targetCRS The target CRS.
-     * @param  lenient {@code true} if the math transform should be created even when there is
-     *         no information available for a datum shift. if this argument is not specified,
-     *         then the default value is determined from the {@linkplain Hints#getSystemDefault
-     *         system default}.
+     * @param  lenient ignored.
      * @return The math transform from {@code sourceCRS} to {@code targetCRS}.
      * @throws FactoryException If no math transform can be created for the specified source and
      *         target CRS.
@@ -929,15 +864,16 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
      *
      * @category transform
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
      */
+    @Deprecated
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS,
                                                   boolean lenient) // LGPL
             throws FactoryException
     {
-        ensureNonNull("sourceCRS", sourceCRS);
-        ensureNonNull("targetCRS", targetCRS);
-        return getCoordinateOperationFactory(lenient).createOperation(sourceCRS, targetCRS).getMathTransform();
+        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
     }
 
     /**
@@ -948,30 +884,22 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @param  sourceCRS The source CRS.
      * @param  targetCRS The target CRS.
      * @param  areaOfInterest The geographic area of interest.
-     * @param  lenient {@code true} if the math transform should be created even when there is
-     *         no information available for a datum shift.
+     * @param  lenient ignored.
      * @return The math transform from {@code sourceCRS} to {@code targetCRS} in the given area of interest.
      * @throws FactoryException If no math transform can be created for the specified source and target CRS.
      *
      * @since 4.0-M2
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
      */
+    @Deprecated
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS,
                                                   final GeographicBoundingBox areaOfInterest,
                                                   boolean lenient)
             throws FactoryException
     {
-        /*
-         * TODO: we use a ThreadLocal for now as an easy way to support this functionality without
-         * breaking the DefaultCoordinateOperationFactory API. However we will need to find a better
-         * approach in Apache SIS.
-         */
-        OperationContext.setAreaOfInterest(areaOfInterest);
-        try {
-            return findMathTransform(sourceCRS, targetCRS, true);
-        } finally {
-            OperationContext.clear();
-        }
+        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, areaOfInterest).getMathTransform();
     }
 
     // Note: the above 4 transform methods simply delegate their work to the Envelopes class.
@@ -996,8 +924,10 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category transform
      * @since 2.5
+     *
+     * @deprecated Moved to Apache SIS {@link Envelopes} class.
      */
-    // See the above comment about why some Geotk code still reference this method.
+    @Deprecated
     public static Envelope transform(Envelope envelope, final CoordinateReferenceSystem targetCRS)
             throws TransformException
     {
@@ -1020,8 +950,10 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category transform
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS {@link Envelopes} class.
      */
-    // See the above comment about why some Geotk code still reference this method.
+    @Deprecated
     public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
             throws TransformException
     {
@@ -1044,8 +976,10 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category transform
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS {@link Envelopes} class.
      */
-    // See the above comment about why some Geotk code still reference this method.
+    @Deprecated
     public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
             throws TransformException
     {

@@ -789,6 +789,7 @@ public final class ReferencingUtilities {
      * @return List<CoordinateReferenceSystem>
      * @deprecated moved to {@link org.apache.sis.referencing.CRS#getSingleComponents(org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
+    @Deprecated
     public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
         return (List)org.apache.sis.referencing.CRS.getSingleComponents(crs);
     }

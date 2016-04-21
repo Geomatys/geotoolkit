@@ -22,9 +22,6 @@ import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.ConcatenatedOperation;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -43,11 +40,6 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.0
  */
 public abstract strictfp class TransformTestBase extends MathTransformTestCase {
-    /**
-     * The datum factory to use for testing.
-     */
-    protected final DatumFactory datumFactory;
-
     /**
      * The coordinate reference system factory to use for testing.
      */
@@ -88,33 +80,8 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
             final CoordinateOperationFactory opFactory)
     {
         super(datumFactory, crsFactory, mtFactory, opFactory);
-        this.datumFactory = datumFactory;
         this.mtFactory    = mtFactory;
         this.crsFactory   = crsFactory;
         this.opFactory    = opFactory;
-    }
-
-    /**
-     * Returns {@code true} if the given operation is, directly or indirectly, a transformation.
-     * This method returns {@code true} if the operation is either a {@link Transformation}, or
-     * a {@link ConcatenatedOperation} in which at least one step is a transformation.
-     *
-     * @param  operation The operation to test.
-     * @return {@code true} if the given operation is, directly or indirectly, a transformation.
-     *
-     * @since 3.16
-     */
-    protected static boolean isTransformation(final CoordinateOperation operation) {
-        if (operation instanceof Transformation) {
-            return true;
-        }
-        if (operation instanceof ConcatenatedOperation) {
-            for (final CoordinateOperation step : ((ConcatenatedOperation) operation).getOperations()) {
-                if (step instanceof Transformation) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

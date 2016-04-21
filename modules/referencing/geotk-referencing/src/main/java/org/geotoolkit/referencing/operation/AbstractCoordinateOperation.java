@@ -21,11 +21,6 @@
 package org.geotoolkit.referencing.operation;
 
 import org.opengis.referencing.operation.*;
-import org.opengis.metadata.Identifier;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 
 /**
@@ -34,27 +29,6 @@ import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 @Deprecated
 public class AbstractCoordinateOperation {
     private AbstractCoordinateOperation() {
-    }
-
-    /**
-     * Finds the operation method used by the given math transform.
-     */
-    static OperationMethod findMethod(final MathTransform transform) {
-        if (transform instanceof AbstractMathTransform) {
-            final ParameterDescriptorGroup d = ((AbstractMathTransform) transform).getParameterDescriptors();
-            if (d != null) {
-                final Identifier name = d.getName();
-                if (name != null) {
-                    final String n = name.getCode();
-                    for (final OperationMethod m : DefaultFactories.forBuildin(MathTransformFactory.class).getAvailableMethods(SingleOperation.class)) {
-                        if (IdentifiedObjects.isHeuristicMatchForName(m, n)) {
-                            return m;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**

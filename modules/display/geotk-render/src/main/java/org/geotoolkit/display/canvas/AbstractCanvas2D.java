@@ -43,7 +43,6 @@ import javax.measure.unit.Unit;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
@@ -71,11 +70,12 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -183,7 +183,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     public void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException{
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
+        if(Utilities.equalsIgnoreMetadata(objectiveCRS, crs)){
             return;
         }
 
@@ -207,28 +207,28 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
         if(preserve != null){
             //restore previous visible area
-            GeneralEnvelope env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+            GeneralEnvelope env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
             if(!isValid(env)) env = null;
 
             //try to normalize before reproject
             if(env == null && preserve.normalize()){
-                env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+                env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
             }
             if(!isValid(env)) env = null;
 
             //try to reduce to domain before reproject
             if(env == null){
-                final Envelope domain = CRS.getEnvelope(preserve.getCoordinateReferenceSystem());
+                final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(preserve.getCoordinateReferenceSystem());
                 if(domain != null){
                     preserve.intersect(domain);
-                    env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+                    env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
                 }
             }
             if(!isValid(env)) env = null;
 
             //fall back on crs domain
             if(env == null){
-                final Envelope domain = CRS.getEnvelope(objectiveCRS2D);
+                final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(objectiveCRS2D);
                 if(domain!=null){
                     env = new GeneralEnvelope(domain);
                 }
@@ -663,7 +663,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * 'graphicCRS' to 'objectiveCRS' transform.
          */
         final CoordinateReferenceSystem objectiveCRS = getObjectiveCRS();
-        final boolean cachedTransform = CRS.equalsIgnoreMetadata(targetCRS, objectiveCRS);
+        final boolean cachedTransform = Utilities.equalsIgnoreMetadata(targetCRS, objectiveCRS);
         if (cachedTransform) {
             tr = transforms.get(sourceCRS);
             if (tr != null) {
@@ -680,7 +680,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          */
         if (targetCRS instanceof GeneralDerivedCRS) {
             final GeneralDerivedCRS derivedCRS = (GeneralDerivedCRS) targetCRS;
-            if (CRS.equalsIgnoreMetadata(sourceCRS, derivedCRS.getBaseCRS())) {
+            if (Utilities.equalsIgnoreMetadata(sourceCRS, derivedCRS.getBaseCRS())) {
                 return derivedCRS.getConversionFromBase().getMathTransform();
             }
         }
@@ -701,11 +701,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
 
-        tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
-        //TODO I used the CRS utility class, the following commented code, raises bursa wolf errors
-//        CoordinateOperatetCoordinateOperationFactory();
-//        tr = factory.createOperation(sourceCRSionFactory factory = getCoordinateOperationFactory();
-//        tr = factory.createOperation(sourceCRS, targetCRS).getMathTransform();
+        tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
 
         if (cachedTransform) {
             transforms.put(sourceCRS, tr);
@@ -745,8 +741,8 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final DirectPosition oldCenter = getObjectiveCenter();
 
         final CoordinateReferenceSystem candidateCRS = center.getCoordinateReferenceSystem();
-        if(candidateCRS != null && !CRS.equalsIgnoreMetadata(candidateCRS, oldCenter.getCoordinateReferenceSystem())){
-            final MathTransform trs = CRS.findMathTransform(candidateCRS,oldCenter.getCoordinateReferenceSystem());
+        if(candidateCRS != null && !Utilities.equalsIgnoreMetadata(candidateCRS, oldCenter.getCoordinateReferenceSystem())){
+            final MathTransform trs = CRS.findOperation(candidateCRS, oldCenter.getCoordinateReferenceSystem(), null).getMathTransform();
             center = trs.transform(center, null);
         }
 
@@ -773,7 +769,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      */
     public Envelope getVisibleEnvelope2D() throws TransformException {
         final CoordinateReferenceSystem objectiveCRS2D = getObjectiveCRS2D();
-        return CRS.transform(getVisibleEnvelope(), objectiveCRS2D);
+        return Envelopes.transform(getVisibleEnvelope(), objectiveCRS2D);
     }
 
     public void rotate(final double r) throws NoninvertibleTransformException {
@@ -954,12 +950,12 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final CoordinateReferenceSystem envCRS = env.getCoordinateReferenceSystem();
         if(envCRS == null) return;
         final CoordinateReferenceSystem envCRS2D = CRSUtilities.getCRS2D(envCRS);
-        Envelope env2D = CRS.transform(env, envCRS2D);
+        Envelope env2D = Envelopes.transform(env, envCRS2D);
 
         //check that the provided envelope is in the canvas crs
         final CoordinateReferenceSystem canvasCRS2D = getObjectiveCRS2D();
-        if(!CRS.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)){
-            env2D = CRS.transform(env2D, canvasCRS2D);
+        if(!Utilities.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)){
+            env2D = Envelopes.transform(env2D, canvasCRS2D);
         }
 
         //configure the 2D envelope
@@ -971,7 +967,25 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
         //set the extra xis if some exist
         int index=0;
-        final List<CoordinateReferenceSystem> dcrss = ReferencingUtilities.decompose(envCRS);
+        List<SingleCRS> dcrss = CRS.getSingleComponents(envCRS);
+
+        // Following loop is a temporary hack for decomposing Geographic3D into Geographic2D + ellipsoidal height.
+        // This is a wrong thing to do according international standards; we will revisit in a future version.
+        for (int i=dcrss.size(); --i >= 0;) {
+            SingleCRS crs = dcrss.get(i);
+            SingleCRS hcrs = CRS.getHorizontalComponent(crs);
+            if (hcrs != null && hcrs != crs) {
+                SingleCRS vcrs = CRS.getVerticalComponent(envCRS, true);
+                if (vcrs != null && hcrs.getCoordinateSystem().getDimension()
+                                  + vcrs.getCoordinateSystem().getDimension()
+                                  == crs.getCoordinateSystem().getDimension())
+                {
+                    dcrss = new ArrayList<>(dcrss);
+                    dcrss.set(i, hcrs);
+                    dcrss.add(i+1, vcrs);
+                }
+            }
+        }
         for(CoordinateReferenceSystem dcrs : dcrss){
             if(dcrs.getCoordinateSystem().getDimension()==1){
                 final CoordinateSystemAxis axis = dcrs.getCoordinateSystem().getAxis(0);

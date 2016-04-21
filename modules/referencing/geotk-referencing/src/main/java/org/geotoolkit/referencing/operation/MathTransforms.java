@@ -30,29 +30,11 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**
- * Utility methods related to {@link MathTransform}s. This class centralizes in one place some of
- * the most commonly used functions from the {@link org.geotoolkit.referencing.operation.transform}
- * package, thus reducing the need to explore that low-level package. The {@code MathTransforms}
- * class provides the following services:
- * <p>
- * <ul>
- *   <li>Create various Geotk implementations of {@link MathTransform}</li>
- *   <li>Perform non-standard operations on arbitrary instances</li>
- * </ul>
- * <p>
- * The factory static methods are provided as convenient alternatives to the GeoAPI
- * {@link org.opengis.referencing.operation.MathTransformFactory} interface. However
- * users seeking for more implementation neutrality are encouraged to limit themselves
- * to the GeoAPI factory interfaces instead.
+ * Utility methods related to {@link MathTransform}s.
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @see org.opengis.referencing.operation.MathTransformFactory
- *
- * @since 3.20
- * @module
+ * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
  */
+@Deprecated
 public final class MathTransforms extends Static {
     /**
      * Do not allow instantiation of this class.

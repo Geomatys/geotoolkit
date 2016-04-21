@@ -34,6 +34,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
 
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
@@ -81,6 +82,7 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @level advanced
  * @module
  */
+@Deprecated
 public class ReferencingFactoryContainer extends ReferencingFactory {
     // "ReferencingFactoryContainer" name is LGPL.
 
@@ -422,7 +424,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
 
     /**
      * Implementation of {@link #toGeodetic3D(CompoundCRS)} invoked after the horizontal and
-     * vertical parts have been identified. This method may invokes itself recursively if the
+     * vertical parts have been identified. This method may invoke itself recursively if the
      * horizontal CRS is a derived one.
      *
      * @param  crs        The compound CRS to convert to a 3D geographic CRS, or {@code null}.
@@ -438,7 +440,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             final CoordinateSystemAxis vertical, final boolean xyFirst) throws FactoryException
     {
         /*
-         * Creates the set of axis in an order which depends of the xyFirst argument.
+         * Creates the set of axes in an order which depends of the xyFirst argument.
          * Then creates the property maps to be given to the object to be created.
          * They are common to whatever CRS type this method will create.
          */
@@ -614,7 +616,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
                 }
                 case 2: {
                     if (dimensions[0] == 0 && dimensions[1] == 1) {
-                        if (CRS.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {    // Common case.
+                        if (Utilities.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {    // Common case.
                             return CommonCRS.WGS84.normalizedGeographic();
                         }
                         return getCRSFactory().createGeographicCRS(getTemporaryName(crs, " (subset)"), ((GeodeticCRS) crs).getDatum(),
