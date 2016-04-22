@@ -288,8 +288,10 @@ public class ProgressMonitor extends HBox {
         runningTasks = new MenuButton("", new ImageView(runningTasksImage));
         tasksInError = new MenuButton("", new ImageView(tasksInErrorImage));
         
-        runningTasks.setTooltip(new Tooltip(getResourceString(CURRENT_TASK)));
-        tasksInError.setTooltip(new Tooltip(getResourceString(ERROR_TASK)));
+        final Tooltip runninTasksTooltip = new Tooltip(getResourceString(CURRENT_TASK));
+        runningTasks.setTooltip(runninTasksTooltip);
+        final Tooltip tasksInErrorTooltip = new Tooltip(getResourceString(ERROR_TASK));
+        tasksInError.setTooltip(tasksInErrorTooltip);
         
         final SimpleListProperty runningTasksProp = new SimpleListProperty(taskRegistry.getSubmittedTasks());
         final SimpleListProperty failedTasksProp = new SimpleListProperty(taskRegistry.getTasksInError());
@@ -375,9 +377,9 @@ public class ProgressMonitor extends HBox {
                 runningTasks.getItems().removeIf(new GetItemsForTask(toRemove));
             });
         });
-        final ObservableList<Task> tmpTasksInError = taskRegistry.getTasksInError();
         
         // Check failed tasks.
+        final ObservableList<Task> tmpTasksInError = taskRegistry.getTasksInError();
         tmpTasksInError.addListener((ListChangeListener.Change<? extends Task> c) -> {
             final Set<Task> toAdd = new HashSet<>();
             final Set<Task> toRemove = new HashSet<>();
@@ -514,7 +516,7 @@ public class ProgressMonitor extends HBox {
             }
         }
     }
-
+    
     /**
      * A simple menu items for failed tasks. Display an exception Dialog when clicked.
      */
@@ -530,7 +532,18 @@ public class ProgressMonitor extends HBox {
             if (title == null || title.isEmpty())
                 title = getResourceString(ANONYM_OPERATION);
             setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))+" - "+title);
-            Dialog d = GeotkFX.newExceptionDialog(failedTask.getMessage(), failedTask.getException());
+            
+            final Button deleteButton = new Button("", new ImageView(GeotkFX.ICON_DELETE));
+            deleteButton.setBorder(Border.EMPTY);
+            deleteButton.setPadding(Insets.EMPTY);
+            deleteButton.setBackground(Background.EMPTY);
+            deleteButton.setOnAction(e -> {
+                taskRegistry.getTasksInError().remove(failedTask);
+                e.consume();
+            });
+            setGraphic(deleteButton);
+            
+            final Dialog d = GeotkFX.newExceptionDialog(failedTask.getMessage(), failedTask.getException());
             d.setResizable(true);
 
             setOnAction((ActionEvent ae) -> d.show());
