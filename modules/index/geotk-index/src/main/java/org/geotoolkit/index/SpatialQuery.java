@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.index;
 
+import org.opengis.filter.sort.SortBy;
+
 /**
  *
  * @author Guilhem Legal(Geomatys)
@@ -27,4 +29,6 @@ public interface SpatialQuery {
     Object getSpatialFilter();
     
     Object getSort();
+    
+    void setSort(final String fieldName, final boolean desc, Character fieldType);
 }

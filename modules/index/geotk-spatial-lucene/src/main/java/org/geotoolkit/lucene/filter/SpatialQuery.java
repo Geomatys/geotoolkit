@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.Tree;
 
@@ -152,6 +153,25 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
         for (SpatialQuery sub: getSubQueries()) {
             sub.setSort(sort);
         }
+    }
+    
+    @Override
+    public void setSort(String fieldName, boolean desc, Character fieldType) {
+        final SortField sf;
+        if (fieldType != null) {
+            switch (fieldType) {
+                case 'd': sf = new SortField(fieldName, SortField.Type.DOUBLE, desc);break;
+                case 'i': sf = new SortField(fieldName, SortField.Type.INT, desc);break;
+                case 'f': sf = new SortField(fieldName, SortField.Type.FLOAT, desc);break;
+                case 'l': sf = new SortField(fieldName, SortField.Type.LONG, desc);break;
+                default : sf = new SortField(fieldName, SortField.Type.STRING, desc);break;
+            }
+        } else {
+            sf = new SortField(fieldName, SortField.Type.STRING, desc);
+        }
+
+        final Sort sortFilter     = new Sort(sf);
+        setSort(sortFilter);
     }
     
     /**
