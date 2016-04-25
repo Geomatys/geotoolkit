@@ -50,41 +50,6 @@ import org.geotoolkit.lang.Debug;
  * Base class for command line tools. Subclasses shall define fields annotated with {@link Option}
  * and/or methods annotated with {@link Action}. The annotated fields will be initialized by the
  * {@link #version()} method.
- * <p>
- * The following actions are recognized by this class:
- * <p>
- * <table border="1" cellpadding="3">
- *   <tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code help}</b></td>
- *     <td>Print the {@linkplain #help() help} summary.</td>
- *   </tr><tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code version}</b></td>
- *     <td>Print version number and system information.</td>
- *   </tr>
- * </table>
- * <p>
- * The following options are recognized by this class:
- * <p>
- * <table border="1" cellpadding="3">
- *   <tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code --colors}</b>=on|off</td>
- *     <td>Turn on or off syntax coloring on <A HREF="http://en.wikipedia.org/wiki/ANSI_escape_code">ANSI
- *       X3.64</A> (aka ECMA-48 and ISO/IEC 6429) compatible terminal.</p>
- *   </tr><tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code --debug}</b></td>
- *     <td>Print full stack trace in case of error.</td>
- *   </tr><tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code --encoding}</b>=<var>cp</var></td>
- *     <td>Sets the console encoding ({@code "UTF-8"}, {@code "ISO-8859-1"}, <i>etc.</i>)
- *         for application input and output. This value has no impact on data, but may improve
- *         the output quality. This is not needed on Linux terminal using UTF-8 encoding (tip:
- *         the <cite>terminus font</cite> gives good results).</td>
- *   </tr><tr>
- *     <td nowrap bgcolor="#EEEEFF"><b>{@code --locale}</b>=<var>lc</var></td>
- *     <td>Set the locale for string, number and date formatting
- *         ({@code "fr"} for French, <i>etc.</i>).</td>
- *   </tr>
- * </table>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
@@ -92,7 +57,10 @@ import org.geotoolkit.lang.Debug;
  *
  * @since 2.5
  * @module
+ *
+ * @deprecated In process of being removed in favor of Apache SIS command-line tools.
  */
+@Deprecated
 public abstract class CommandLine implements Runnable {
     /*
      * NOTE: There is no clear convention on exit code, except 0 == SUCCESS.
@@ -106,17 +74,6 @@ public abstract class CommandLine implements Runnable {
     public static final int ILLEGAL_ARGUMENT_EXIT_CODE = 1;
 
     /**
-     * The code given to {@link System#exit} when the program aborted at user request.
-     */
-    public static final int ABORT_EXIT_CODE = 2;
-
-    /**
-     * The code given to {@link System#exit} when the program failed because of bad
-     * content in a file.
-     */
-    public static final int BAD_CONTENT_EXIT_CODE = 3;
-
-    /**
      * The code given to {@link System#exit} when the program failed because of an
      * {@link java.io.IOException}.
      */
@@ -127,14 +84,6 @@ public abstract class CommandLine implements Runnable {
      * {@link java.sql.SQLException}.
      */
     public static final int SQL_EXCEPTION_EXIT_CODE = 101;
-
-    /**
-     * The code given to {@link System#exit} when the program failed because the
-     * system is in a state that does not allow the execution of the program.
-     *
-     * @since 3.00
-     */
-    public static final int ILLEGAL_STATE_EXIT_CODE = 190;
 
     /**
      * The code given to {@link System#exit} when the program failed because of an
@@ -713,36 +662,6 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Invoked when the user asked the {@code "version"} action. The default implementation
-     * prints version number and system informations. Subclasses can override this method
-     * if they want to print more informations.
-     */
-    @Action(maximalArgumentCount=0)
-    protected void version() {
-        VersionAction.version(out, colors, locale);
-    }
-
-    /**
-     * Invoked when the user asked the {@code "help"} action. The default implementation prints
-     * a description of this command and all arguments to the {@linkplain #out standard output}.
-     * The description is read from a {@linkplain Properties properties} file of the same name
-     * than the subclass, using {@link ResourceBundle} with the current {@linkplain #locale}.
-     * Then this class prints the following:
-     * <p>
-     * <ul>
-     *   <li>The value of the {@code Description} key.</li>
-     *   <li>The name of every {@link Action}s found in the subclass and the
-     *       corresponding value obtained from the properties file.</li>
-     *   <li>The name of every {@link Option}s found in the subclass and the
-     *       corresponding value obtained from the properties file.</li>
-     * </ul>
-     */
-    @Action(maximalArgumentCount=0)
-    protected void help() {
-        new HelpAction(this).help(command);
-    }
-
-    /**
      * Applies the given color to the specified buffer only if colors are enabled.
      *
      * @param buffer The buffer where to add the color.
@@ -752,38 +671,6 @@ public abstract class CommandLine implements Runnable {
         if (Boolean.TRUE.equals(colors)) {
             buffer.append(color.sequence());
         }
-    }
-
-    /**
-     * Returns the given text as bold characters, if colors are enabled.
-     *
-     * @param  text The text to get in bold characters.
-     * @return The given text in bold characters, or {@code text} unchanged if
-     *         colors are not enabled.
-     */
-    final String bold(String text) {
-        if (Boolean.TRUE.equals(colors)) {
-            text = X364.BOLD.sequence() + text + X364.NORMAL.sequence();
-        }
-        return text;
-    }
-
-    /**
-     * Returns a set of examples to be displayed after the help screen. This method is
-     * invoked by {@link #help}. Values in the returned map are examples of parameters
-     * to be given on the command line. The corresponding keys must also be keys in the
-     * same {@linkplain Properties properties} file than the one used by the {@code help()}
-     * method (see its javadoc for details).
-     * <p>
-     * The default implementation returns an empty map. Subclasses should override this
-     * method if they can provide a set of examples.
-     *
-     * @return A set of examples to be printed after the help screen.
-     *
-     * @since 3.00
-     */
-    Map<String,String> examples() {
-        return Collections.emptyMap();
     }
 
     /**
