@@ -18,7 +18,6 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
-import java.lang.reflect.Array;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 
@@ -154,40 +153,47 @@ abstract class SeparableInterpolation extends Interpolation {
      * @param length length of the copy.
      */
     private void WriteInInterpolArray (final Object src, int srcPos, final double[] dest, int destPos, final int length) {
+         int l = -1;
         switch (sourceDataType) {
             case DataBuffer.TYPE_BYTE   : {
-                int l = -1;
+                byte[] array = (byte[])src;
                 while (++l < length) {
-                    dest[destPos++] = (double) Array.getByte(src, srcPos++);
+                    dest[destPos++] = array[srcPos++] & 0xFF;
                 }
                 break;
             }
-            case DataBuffer.TYPE_SHORT  : 
-            case DataBuffer.TYPE_USHORT : {
-                int l = -1;
+            case DataBuffer.TYPE_SHORT  : {
+                short[] array = (short[])src;
                 while (++l < length) {
-                    dest[destPos++] = (double) Array.getShort(src, srcPos++);
+                    dest[destPos++] = array[srcPos++];
+                }
+                break;
+            }
+            case DataBuffer.TYPE_USHORT : {
+                short[] array = (short[])src;
+                while (++l < length) {
+                    dest[destPos++] = array[srcPos++] & 0xFFFF;
                 }
                 break;
             }
             case DataBuffer.TYPE_INT    : {
-                int l = -1;
+                int[] array = (int[])src;
                 while (++l < length) {
-                    dest[destPos++] = (double) Array.getInt(src, srcPos++);
+                    dest[destPos++] = array[srcPos++];
                 }
                 break;
             }
             case DataBuffer.TYPE_FLOAT  : {
-                int l = -1;
+                float[] array = (float[])src;
                 while (++l < length) {
-                    dest[destPos++] = (double) Array.getFloat(src, srcPos++);
+                    dest[destPos++] = array[srcPos++];
                 }
                 break;
             }
             case DataBuffer.TYPE_DOUBLE : {
-                int l = -1;
+                double[] array = (double[])src;
                 while (++l < length) {
-                    dest[destPos++] = Array.getDouble(src, srcPos++);
+                    dest[destPos++] = array[srcPos++];
                 }
                 break;
             }
