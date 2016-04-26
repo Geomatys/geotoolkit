@@ -341,6 +341,7 @@ public class PyramidCoverageBuilder {
                 //-- temporary reprojection
                 //-- try later to concatene gridtocrs + findmathtransform srcCrs -> outCrs
                 final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gcEnv, crs));
+                final GeneralEnvelope clipped = new GeneralEnvelope(envDest);
 
                 //set upperLeft ordinate
                 for (int d = 0; d < outDim; d++) {
@@ -349,10 +350,12 @@ public class PyramidCoverageBuilder {
                     } else {
                         //-- set horizontal crs part coordinates from out envelope into destination envelope
                         envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                        // clip envelope 2D part
+                        clipped.setRange(d, Math.max(clipped.getMinimum(d),outEnv.getMinimum(d)), Math.min(clipped.getMaximum(d),outEnv.getMaximum(d)));
                     }
                 }
                 final GridCoverageReadParam rp = new GridCoverageReadParam();
-                rp.setEnvelope(envDest);
+                rp.setEnvelope(clipped);
                 rp.setDeferred(true);
 
                 resample(pm, pyram.getId(), gridReader, imageIndex, rp, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
@@ -880,11 +883,11 @@ public class PyramidCoverageBuilder {
                     final Envelope envGit = gitEnv.next();
                     final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(envGit, crs));
                     for (int d = 0; d < outDim; d++) {
-                    if (d == minOrdi0 || d == minOrdi1) {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope
-                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                        if (d == minOrdi0 || d == minOrdi1) {
+                            //-- set horizontal crs part coordinates from out envelope into destination envelope
+                            envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                        }
                     }
-                }
                     //-- set horizontal crs part coordinates from out envelope into destination envelope
                     for (double pixelScal : resolution_Per_Envelope.get(outEnv)) {
                         final int nbrtx   = (int) Math.ceil((envDest.getSpan(minOrdi0) / pixelScal) / tileWidth);

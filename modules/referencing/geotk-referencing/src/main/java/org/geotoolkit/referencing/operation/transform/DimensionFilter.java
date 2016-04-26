@@ -158,8 +158,8 @@ public class DimensionFilter extends TransformSeparator {
         /*
          * -------- HACK BEGINS -------- (same than in 'separate(...)')
          */
-        if (transform instanceof SeparableTransform) {
-            final MathTransform candidate = ((SeparableTransform) transform).subTransform(sourceDimensions, targetDimensions);
+        if (step instanceof SeparableTransform) {
+            final MathTransform candidate = ((SeparableTransform) step).subTransform(sourceDimensions, targetDimensions);
             if (candidate != null) {
                 if (sourceDimensions == null) sourceDimensions = targetDimensions;
                 if (targetDimensions == null) targetDimensions = sourceDimensions;
