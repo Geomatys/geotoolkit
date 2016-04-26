@@ -17,11 +17,14 @@
 
 package org.geotoolkit.metadata.geotiff;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,10 +37,13 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.measure.NumberRange;
 
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.coverage.Category;
@@ -52,7 +58,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import static org.geotoolkit.coverage.SampleDimensionUtils.buildCategories;
+import static org.geotoolkit.coverage.SampleDimensionUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
 
@@ -391,4 +397,112 @@ public strictfp class ThirdPartyMetaDataReader {
             accessor.setDimension(dim, Locale.ENGLISH);
         }
     }
+
+    /**
+     * Build {@linkplain Category categories} {@link List} from sample and noData values from band.<br><br>
+     *
+     * Cases : <br>
+     * - if one of scale or offset is null then their default value will be used (scale=1, offset=0)
+     * - if no data values are given and scale/offset are missing then their default value will be used (scale=1, offset=0)
+     *
+     * @param minSampleValue minimum sample value for current {@link SampleDimension} (band).
+     * @param maxSampleValue maximum sample value for current {@link SampleDimension} (band).
+     * @param typeClass data type of sample values
+     * @param scale scale use to convert sample values into geophysic values, or {@code null} if none.
+     * @param offset offset use to convert sample values into geophysic values, or {@code null} if none.
+     * @param nodataValues {@link Set} which contain all nodata, organize in ascending order, for current band.
+     * @return {@link Category} list for current band.
+     *
+     * @throws NullArgumentException if nodataValues {@link Set} or typeClass is {@code null}.
+     */
+    public static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue,
+                                                 Double scale, Double offset, final Class typeClass,
+                                                 final TreeSet<Double> nodataValues) {
+        ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
+        ArgumentChecks.ensureNonNull("typeClass",    typeClass);
+
+        if(scale==null && offset!=null){
+            //we use the default scale value
+            scale = 1.0;
+        }
+        if(scale!=null && offset==null){
+            //we use the default offset value
+            offset = 0.0;
+        }
+
+        final List<Category> categories = new ArrayList<>();
+        if(nodataValues.isEmpty()){
+            if(scale!=null){
+                //main datas category
+                categories.add(new Category("data", null,
+                        getTypedRangeNumber(typeClass,minSampleValue, true,maxSampleValue, true),
+                        scale, offset));
+            }
+            return categories;
+        }
+
+        /*
+        If we have no data values but no scale or offset we set them to the default values.
+        TODO : Normaly we should not create a category because the image is obviously just photographic,
+        but we should define a 'mask' somehow to indicate where the image datas are.
+        Since geotk/sis do not have yet this approach we cheat by interpreting the data
+        as geophysic with a nodata category
+        */
+        if(scale==null) scale = 1.0;
+        if(offset==null) offset = 0.0;
+
+        double currentMinSV  = minSampleValue;
+        double currentMaxSV  = maxSampleValue;
+        boolean isMinInclude = true;
+        boolean isMaxInclude = true;
+
+        final Iterator<Double> itNoData = nodataValues.iterator();
+        while (itNoData.hasNext()) {
+            final double currentNoData = itNoData.next();
+            categories.add(new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0),
+                                       getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true)));
+            if (currentNoData == currentMinSV) {
+                isMinInclude = false;
+            } else if (currentNoData == currentMaxSV) {
+                isMaxInclude = false;
+            } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
+                categories.add(new Category("data", null,
+                    getTypedRangeNumber(typeClass,
+                                        currentMinSV, isMinInclude,
+                                        currentNoData, false), scale, offset));
+                isMinInclude = false;
+                currentMinSV = currentNoData;
+            }
+        }
+
+        assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
+                + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
+
+        categories.add(new Category("data", null,
+                    getTypedRangeNumber(typeClass,
+                                        currentMinSV, isMinInclude,
+                                        currentMaxSV, isMaxInclude), scale, offset));
+
+        return categories;
+    }
+
+    /**
+     * Returns an appropriate {@link NumberRange} from given parameters.
+     *
+     * @param <T> type of internal data.
+     * @param type type of internal data.
+     * @param min minimum range value.
+     * @param isMinIncluded {@code true} if minimum value is considered as include into range interval else false (exclusive).
+     * @param max maximum range value.
+     * @param isMaxIncluded {@code true} if maximum value is considered as include into range interval else false (exclusive).
+     * @return appropriate range value casted in expected type.
+     */
+    private static <T extends Number & Comparable<T>> NumberRange<T> getTypedRangeNumber(final Class<T> type,
+            final double min, final boolean isMinIncluded,
+            final double max, final boolean isMaxIncluded)
+    {
+        return new NumberRange(type, Numbers.cast(min, type), isMinIncluded,
+                                     Numbers.cast(max, type), isMaxIncluded);
+    }
+    
 }
