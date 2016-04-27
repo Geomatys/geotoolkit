@@ -403,7 +403,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
         }
         try {
-            return new ShapefileFeatureWriter(this,typeName.tip().toString(), shpFiles, attReader, featureReader, dbfCharset);
+            return handleRemaining(new ShapefileFeatureWriter(this,typeName.tip().toString(), shpFiles, attReader, featureReader, dbfCharset),filter);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
