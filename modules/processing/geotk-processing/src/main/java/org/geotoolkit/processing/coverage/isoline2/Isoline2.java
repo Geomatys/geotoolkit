@@ -237,7 +237,7 @@ public class Isoline2 extends AbstractProcess {
 
     private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
 
-        FeatureType type = buildIsolineFeatureType(featureTypeName);
+        FeatureType type = buildIsolineFeatureType(featureTypeName,crs);
 
         //create FeatureType in FeatureStore if not exist
         boolean createSchema = false;
@@ -264,15 +264,11 @@ public class Isoline2 extends AbstractProcess {
      * @return
      * @throws DataStoreException
      */
-    public static FeatureType buildIsolineFeatureType(String featureTypeName) throws DataStoreException {
+    public static FeatureType buildIsolineFeatureType(String featureTypeName,CoordinateReferenceSystem crs) throws DataStoreException {
         //FeatureType with scale
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "isolines");
-        try {
-            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, CRS.decode("EPSG:4326", true));
-        } catch (FactoryException ex) {
-            throw new DataStoreException(ex);
-        }
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, crs);
         ftb.add("scale", Double.class);
         ftb.add("value", Double.class);
         ftb.setDefaultGeometry(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
