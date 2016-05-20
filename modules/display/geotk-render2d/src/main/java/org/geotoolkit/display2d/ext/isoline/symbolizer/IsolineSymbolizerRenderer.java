@@ -111,6 +111,15 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 double[] resolution = renderingContext.getResolution();
                 Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
                 resolution = checkResolution(resolution, bounds);
+                if(resolution.length!=bounds.getDimension()){
+                    double[] res = new double[bounds.getDimension()];
+                    res[0] = resolution[0];
+                    res[1] = resolution[1];
+                    for(int i=2;i<res.length;i++){
+                        res[i] = bounds.getSpan(i);
+                    }
+                    resolution = res;
+                }
 
                 final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(coverageLayer);
                 if (queryValues != null && !queryValues.isEmpty()) {
