@@ -24,9 +24,8 @@ import org.apache.sis.geometry.GeneralDirectPosition;
  * <p>
  * Requirements:
  * <ul>
- *   <li>{@code geotk-utility} module</li>
- *   <li>{@code geotk-referencing} module</li>
- *   <li>{@code geotk-epsg} module (only for {@link #geographicToProjected()})</li>
+ *   <li>{@code sis-referencing} module</li>
+ *   <li>{@code sis-epsg} module (only for {@link #geographicToProjected()})</li>
  *   <li>JavaDB or Derby (only for {@link #geographicToProjected()})</li>
  * </ul>
  */

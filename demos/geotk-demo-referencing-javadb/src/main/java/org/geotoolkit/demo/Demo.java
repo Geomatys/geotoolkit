@@ -10,7 +10,7 @@ public class Demo {
 
     /**
      * Geotoolkit can store Coordinate Reference system in several ways.
-     * This exemple declare a dependency to geotk-epsg and derby.
+     * This exemple declare a dependency to sis-epsg and derby.
      * In this case geotoolkit will create a derby/javadb database.
      */
     public static void main(String[] args) throws Exception {

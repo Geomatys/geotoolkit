@@ -12,7 +12,7 @@ Running Geotoolkit.org
 
   While not mandatory, the referencing module works better with a connection to an
   {{{http://www.epsg.org/}EPSG}} database. The database will be created automatically
-  if the <<<geotk-epsg.jar>>> file is available on the classpath, together with
+  if the <<<sis-epsg.jar>>> file is available on the classpath, together with
   <<one>> of the following dependencies:
 
     * <<<derby.jar>>>
@@ -51,9 +51,9 @@ Running Geotoolkit.org
     <version>4.0-M4</version>
   </dependency>
   <dependency>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>geotk-epsg</artifactId>
-    <version>4.0-M4</version>
+    <groupId>org.apache.sis.non-free</groupId>
+    <artifactId>sis-epsg</artifactId>
+    <version>${sis.version}</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>

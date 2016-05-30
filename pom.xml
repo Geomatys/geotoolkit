@@ -175,13 +175,14 @@
   <properties>
     <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
     <sis.version>0.8-jdk7-SNAPSHOT</sis.version>
+    <sis.build.helper>0.8-jdk7-SNAPSHOT</sis.build.helper>
+    <sis.epsg.version>0.7</sis.epsg.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>5.4.1</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <sis.build.helper>0.8-jdk7-SNAPSHOT</sis.build.helper>
   </properties>
 
 

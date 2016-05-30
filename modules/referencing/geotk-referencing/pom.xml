@@ -168,10 +168,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-epsg</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.sis.non-free</groupId>
+      <artifactId>sis-epsg</artifactId>
+      <version>${sis.epsg.version}</version>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.sis.core</groupId>

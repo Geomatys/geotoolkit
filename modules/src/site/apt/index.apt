@@ -23,9 +23,6 @@ Geotoolkit.org modules
       * {{{./referencing/geotk-referencing3D/index.html}Referencing 3D}} -
         Transformation between ellipsoidal and geoidal heights
 
-      * {{{./referencing/geotk-epsg/index.html}EPSG database}} -
-        The database from {{{http://www.epsg.org/}OGP Surveying & Positioning Committee}}
-
    * {{{./coverage/index.html}Coverage}}
 
       * {{{./coverage/geotk-coverage/index.html}Coverage core}} -

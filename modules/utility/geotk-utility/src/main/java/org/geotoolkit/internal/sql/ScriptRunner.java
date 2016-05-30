@@ -502,7 +502,7 @@ scanLine:   for (; i<length; i++) {
                     String replace = replacements.get(word);
                     if (replaceTwoWords && replace == null && i<length && Character.isSpaceChar(buffer.charAt(i))) {
                         // A single word is not sufficient. Try with two words. This is needed in
-                        // order to catch "CREATE TABLE", which needs replacement by geotk-epsg.
+                        // order to catch "CREATE TABLE", which needs replacement by sis-epsg.
                         final int mark = i;
                         if (++i < length && Character.isJavaIdentifierStart(buffer.charAt(i))) {
                             while (++i < length && Character.isJavaIdentifierPart(buffer.charAt(i)));
