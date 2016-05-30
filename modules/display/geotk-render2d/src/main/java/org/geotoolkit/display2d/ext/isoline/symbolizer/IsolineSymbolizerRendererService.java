@@ -27,6 +27,7 @@ import org.geotoolkit.map.MapLayer;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -60,13 +61,20 @@ public class IsolineSymbolizerRendererService extends AbstractSymbolizerRenderer
 
     @Override
     public Rectangle2D glyphPreferredSize(CachedIsolineSymbolizer symbol, MapLayer layer) {
-        SymbolizerRendererService rasterRenderer = GO2Utilities.findRenderer(symbol.getCachedRasterSymbolizer());
-        return rasterRenderer.glyphPreferredSize(symbol.getCachedRasterSymbolizer(), layer);
+        CachedRasterSymbolizer rs = symbol.getCachedRasterSymbolizer();
+        if(rs!=null){
+            SymbolizerRendererService rasterRenderer = GO2Utilities.findRenderer(rs);
+            return rasterRenderer.glyphPreferredSize(symbol.getCachedRasterSymbolizer(), layer);
+        }
+        return super.glyphPreferredSize(symbol, layer);
     }
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedIsolineSymbolizer symbol, MapLayer layer) {
-        DefaultGlyphService.render(symbol.getCachedRasterSymbolizer().getSource(), rect, g, layer);
+        CachedRasterSymbolizer rs = symbol.getCachedRasterSymbolizer();
+        if(rs!=null){
+            DefaultGlyphService.render(symbol.getCachedRasterSymbolizer().getSource(), rect, g, layer);
+        }
         //TODO add lines
     }
 }

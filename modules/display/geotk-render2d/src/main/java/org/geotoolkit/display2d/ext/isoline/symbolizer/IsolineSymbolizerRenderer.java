@@ -59,6 +59,10 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.TextSymbolizer;
 
 import java.util.Map;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
+import org.geotoolkit.utility.parameter.ParametersExt;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -107,6 +111,15 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 double[] resolution = renderingContext.getResolution();
                 Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
                 resolution = checkResolution(resolution, bounds);
+                if(resolution.length!=bounds.getDimension()){
+                    double[] res = new double[bounds.getDimension()];
+                    res[0] = resolution[0];
+                    res[1] = resolution[1];
+                    for(int i=2;i<res.length;i++){
+                        res[i] = bounds.getSpan(i);
+                    }
+                    resolution = res;
+                }
 
                 final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(coverageLayer);
                 if (queryValues != null && !queryValues.isEmpty()) {
@@ -119,7 +132,8 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 param.setResolution(resolution);
 
                 final GridCoverageReader reader = coverageReference.acquireReader();
-                final GridCoverage2D inCoverage = (GridCoverage2D) reader.read(coverageReference.getImageIndex(), param);
+                GridCoverage2D inCoverage = (GridCoverage2D) reader.read(coverageReference.getImageIndex(), param);
+                inCoverage = inCoverage.view(ViewType.GEOPHYSICS);
                 coverageReference.recycle(reader);
 
                 final GridEnvelope gridEnv = new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2);
@@ -127,7 +141,13 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
                 final GridGeometry inGridGeom = new GeneralGridGeometry(gridEnv, gridToCRS, crs);
 
-                final ResampleProcess resampleProcess = new ResampleProcess(inCoverage, crs, inGridGeom, InterpolationCase.BILINEAR, null);
+                final ParameterValueGroup resampleParams = ResampleDescriptor.INPUT_DESC.createValue();
+                ParametersExt.getOrCreateValue(resampleParams, IN_COVERAGE.getName().getCode()).setValue(inCoverage);
+                ParametersExt.getOrCreateValue(resampleParams, IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(crs);
+                ParametersExt.getOrCreateValue(resampleParams, IN_GRID_GEOMETRY.getName().getCode()).setValue(inGridGeom);
+                ParametersExt.getOrCreateValue(resampleParams, IN_INTERPOLATION_TYPE.getName().getCode()).setValue(InterpolationCase.BILINEAR);
+                ParametersExt.getOrCreateValue(resampleParams, IN_BORDER_COMPORTEMENT_TYPE.getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
+                final ResampleProcess resampleProcess = new ResampleProcess(resampleParams);
                 final ParameterValueGroup output = resampleProcess.call();
 
                 final GridCoverage2D resampledCoverage = (GridCoverage2D) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();

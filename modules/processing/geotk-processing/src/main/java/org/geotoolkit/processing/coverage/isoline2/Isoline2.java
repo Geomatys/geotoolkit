@@ -52,6 +52,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -134,7 +135,8 @@ public class Isoline2 extends AbstractProcess {
                 }
 
                 if (image == null) {
-                    final GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), readParam);
+                    GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), readParam);
+                    coverage = coverage = coverage.view(ViewType.GEOPHYSICS);
                     image = coverage.getRenderedImage();
                 }
 
@@ -235,7 +237,7 @@ public class Isoline2 extends AbstractProcess {
 
     private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
 
-        FeatureType type = buildIsolineFeatureType(featureTypeName);
+        FeatureType type = buildIsolineFeatureType(featureTypeName,crs);
 
         //create FeatureType in FeatureStore if not exist
         boolean createSchema = false;
@@ -262,15 +264,11 @@ public class Isoline2 extends AbstractProcess {
      * @return
      * @throws DataStoreException
      */
-    public static FeatureType buildIsolineFeatureType(String featureTypeName) throws DataStoreException {
+    public static FeatureType buildIsolineFeatureType(String featureTypeName,CoordinateReferenceSystem crs) throws DataStoreException {
         //FeatureType with scale
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "isolines");
-        try {
-            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, CRS.decode("EPSG:4326", true));
-        } catch (FactoryException ex) {
-            throw new DataStoreException(ex);
-        }
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, crs);
         ftb.add("scale", Double.class);
         ftb.add("value", Double.class);
         ftb.setDefaultGeometry(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
@@ -348,8 +346,8 @@ public class Isoline2 extends AbstractProcess {
 
                     if(y>0){
                         //filter the constructions which are not used
-                        final Set<Construction> oldinconstructions = new HashSet<Construction>();
-                        final Set<Construction> newinconstructions = new HashSet<Construction>();
+                        final Set<Construction> oldinconstructions = new HashSet<>();
+                        final Set<Construction> newinconstructions = new HashSet<>();
                         for(int x=1;x<width;x++){
                             for(int k=0;k<intervals.length;k++){
                                 if(line0TopNeighbor[k][x] != null){
@@ -379,7 +377,7 @@ public class Isoline2 extends AbstractProcess {
                 }
 
                 //loop on the last line to push the remaining geometries
-                final Set<Construction> oldinconstructions = new HashSet<Construction>();
+                final Set<Construction> oldinconstructions = new HashSet<>();
                 for(int x=1;x<width;x++){
                     for(int k=0;k<intervals.length;k++){
                         line0TopNeighbor[k][x].getConstructions(oldinconstructions);

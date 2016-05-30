@@ -1,28 +1,24 @@
 package org.geotoolkit.gui.javafx.util;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.Predicate;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CustomMenuItem;
@@ -31,21 +27,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import static javafx.scene.paint.Color.BLUE;
-import static javafx.scene.paint.Color.RED;
+import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
+import javafx.scene.text.Font;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.internal.GeotkFX;
 
 /**
@@ -56,40 +46,81 @@ import org.geotoolkit.internal.GeotkFX;
  * and tasks in error, there's two {@link MenuButton}. Each display custom menu
  * items containing information about a task.
  * 
+ * The {@link ProgressMonitor} is skinnable using a css stylesheet and the specific
+ * following css classes:
+ * {@link ProgressMonitor.CURRENT_TASK_CSS_CLASS}
+ * {@link ProgressMonitor.CURRENT_TASK_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor.ERROR_TASK_CSS_CLASS}
+ * {@link ProgressMonitor.ERROR_TASK_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor.PROGRESS_MONITOR_CSS_CLASS}
+ * {@link ProgressMonitor.CANCEL_BUTTON_CSS_CLASS}
+ * {@link ProgressMonitor.TASK_PROGRESS_CSS_CLASS}
+ * {@link ProgressMonitor.TASK_PROGRESS_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor.MENU_ITEM_CSS_CLASS}
+ * {@link ProgressMonitor.CLEAR_MENU_ITEM_CSS_CLASS}
+ * 
+ * 
+ * {@link ProgressMonitor} labels can be parametrized using {@link ResourceBundle} 
+ * properties defined by {@link ProgressMonitor.ResourceKey}.
+ * 
  * @author Alexis Manin (Geomatys)
  */
 public class ProgressMonitor extends HBox {
 
-    public static final Font AWESOME_FONT = IconBuilder.FONT.deriveFont(11f);
-    public static final Image ICON_CANCEL = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_BAN, null, Color.BLACK, AWESOME_FONT, null, null, 2, false, true), null);
-    public static final Image ICON_ERROR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXCLAMATION_CIRCLE, null, new Color(200, 0, 0), AWESOME_FONT, null, null, 0, false, true), null);
-    public static final Image ICON_RUNNING_TASKS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ELLIPSIS_V, null, new Color(0, 200, 220), AWESOME_FONT, null, null, 0, false, true), null);
-
-//    private static final Background EMPTY_BACKGROUND = new Background(new BackgroundFill(null, CornerRadii.EMPTY, Insets.EMPTY));
+    private static String ICON_LABEL_FONT_FAMILY = "-fx-font-family: FontAwesome Regular;";
     
-    private TaskProgress lastTask = new TaskProgress();
+    /**
+     * The css classes associated to the {@link ProgressMonitor} nodes.
+     */
+    public static final String CURRENT_TASK_CSS_CLASS="geotk-progressMonitor-runningTasks"; 
+    public static final String CURRENT_TASK_GRAPHIC_CSS_CLASS="geotk-progressMonitor-runningTasks-graphic"; 
+    public static final String ERROR_TASK_CSS_CLASS="geotk-progressMonitor-tasksInError";
+    public static final String ERROR_TASK_GRAPHIC_CSS_CLASS="geotk-progressMonitor-tasksInError-graphic";
+    public static final String PROGRESS_MONITOR_CSS_CLASS="geotk-progressMonitor";
+    public static final String CANCEL_BUTTON_CSS_CLASS="geotk-progressMonitor-cancelButton";
+    public static final String TASK_PROGRESS_CSS_CLASS="geotk-progressMonitor-taskProgress";
+    public static final String TASK_PROGRESS_GRAPHIC_CSS_CLASS="geotk-progressMonitor-taskProgress-graphic";
+    public static final String MENU_ITEM_CSS_CLASS="geotk-progressMonitor-menuItem";
+    public static final String CLEAR_MENU_ITEM_CSS_CLASS="geotk-progressMonitor-clearMenuItem";
+    
+    private TaskProgress lastTask;
 
-    private final MenuButton runningTasks = new MenuButton("", new ImageView(ICON_RUNNING_TASKS));
-    private final MenuButton tasksInError = new MenuButton("", new ImageView(ICON_ERROR));
+    private final MenuButton runningTasks;
+    private final MenuButton tasksInError;
 
     private final TaskManager taskRegistry;
-
-    public ProgressMonitor(TaskManager registry) {
+    
+    static {
+        // Load Font Awesome.
+        final Font font = FXUtilities.FONTAWESOME;
+    }
+    
+    /**
+     * The base constructor of progress monitors.
+     * 
+     * @param registry The {@link TaskManager} followed by this progress monitor.
+     */
+    public ProgressMonitor(final TaskManager registry) {
         ArgumentChecks.ensureNonNull("Input task registry", registry);
-        setSpacing(10);
-        setAlignment(Pos.CENTER);
-        minWidthProperty().bind(prefWidthProperty());
-        prefWidthProperty().set(USE_COMPUTED_SIZE);
-
+        
         taskRegistry = registry;
 
-        runningTasks.setTooltip(new Tooltip("Tâches en cours"));
-        tasksInError.setTooltip(new Tooltip("Tâches échouées"));
-        runningTasks.setFont(javafx.scene.text.Font.font(9f));
-        tasksInError.setFont(javafx.scene.text.Font.font(9f));
-            
-        SimpleListProperty runningTasksProp = new SimpleListProperty(taskRegistry.getSubmittedTasks());
-        SimpleListProperty failedTasksProp = new SimpleListProperty(taskRegistry.getTasksInError());
+        final Label runningIcon = new Label(FontAwesomeIcons.ICON_GEARS_ALIAS);
+        runningIcon.setStyle(ICON_LABEL_FONT_FAMILY);
+        runningIcon.getStyleClass().add(CURRENT_TASK_GRAPHIC_CSS_CLASS);
+        runningTasks = new MenuButton(GeotkFX.getString(ProgressMonitor.class, "currentTasksLabel"), runningIcon);
+        final Label errorIcon = new Label(FontAwesomeIcons.ICON_EXCLAMATION_CIRCLE);        
+        errorIcon.setStyle(ICON_LABEL_FONT_FAMILY);
+        errorIcon.getStyleClass().add(ERROR_TASK_GRAPHIC_CSS_CLASS);
+        tasksInError = new MenuButton(GeotkFX.getString(ProgressMonitor.class, "errorTasksLabel"), errorIcon);
+        
+        final Tooltip runninTasksTooltip = new Tooltip(GeotkFX.getString(ProgressMonitor.class, "currentTasksTooltip"));
+        runningTasks.setTooltip(runninTasksTooltip);
+        final Tooltip tasksInErrorTooltip = new Tooltip(GeotkFX.getString(ProgressMonitor.class, "errorTasksTooltip"));
+        tasksInError.setTooltip(tasksInErrorTooltip);
+        
+        final SimpleListProperty runningTasksProp = new SimpleListProperty(taskRegistry.getSubmittedTasks());
+        final SimpleListProperty failedTasksProp = new SimpleListProperty(taskRegistry.getTasksInError());
 
         // Hide list of tasks if there's no information available.
         runningTasks.visibleProperty().bind(runningTasksProp.sizeProperty().greaterThan(1));
@@ -100,27 +131,23 @@ public class ProgressMonitor extends HBox {
         tasksInError.textProperty().bind(failedTasksProp.sizeProperty().asString());
 
         // Set default visible task the last one submitted.
+        lastTask = new TaskProgress();
         lastTask.taskProperty().bind(runningTasksProp.valueAt(runningTasksProp.sizeProperty().subtract(1)));
 
         // Do not reserve size for hidden components.
         runningTasks.managedProperty().bind(runningTasks.visibleProperty());
         tasksInError.managedProperty().bind(tasksInError.visibleProperty());
         lastTask.managedProperty().bind(lastTask.visibleProperty());
-
-        runningTasks.setMinWidth(0);
-        runningTasks.setAlignment(Pos.CENTER);
-        tasksInError.setAlignment(Pos.CENTER);
-
-        // TODO : put style in CSS          
-        runningTasks.setBorder(Border.EMPTY);
-        tasksInError.setBorder(Border.EMPTY);
-        
-        runningTasks.setBackground(Background.EMPTY);
-        tasksInError.setBackground(Background.EMPTY);            
         
         initTasks();
-
+                    
         getChildren().addAll(lastTask, runningTasks, tasksInError);
+        minWidthProperty().bind(prefWidthProperty());
+        prefWidthProperty().set(USE_COMPUTED_SIZE);
+            
+        getStyleClass().add(PROGRESS_MONITOR_CSS_CLASS);
+        runningTasks.getStyleClass().add(CURRENT_TASK_CSS_CLASS);
+        tasksInError.getStyleClass().add(ERROR_TASK_CSS_CLASS);
     }
 
     /**
@@ -128,16 +155,29 @@ public class ProgressMonitor extends HBox {
      * {@link TaskManager} to be aware of new events.
      */
     private void initTasks() {
+
+        final MenuItem clearErrorItem = new MenuItem(GeotkFX.getString(ProgressMonitor.class, "cleanErrorList"));
+        clearErrorItem.setOnAction(evt -> taskRegistry.getTasksInError().clear());
+        
+        final Label icon = new Label(FontAwesomeIcons.ICON_TRASH_O);
+        icon.setStyle(ICON_LABEL_FONT_FAMILY);
+        clearErrorItem.setGraphic(icon);
+        
+        clearErrorItem.getStyleClass().add(CLEAR_MENU_ITEM_CSS_CLASS);
+            
+        tasksInError.getItems().add(clearErrorItem);
+        tasksInError.getItems().add(new SeparatorMenuItem());
+        
         // Listen on current running tasks
         final ObservableList<Task> tmpSubmittedTasks = taskRegistry.getSubmittedTasks();
         tmpSubmittedTasks.addListener((ListChangeListener.Change<? extends Task> c) -> {
 
-            final HashSet<Task> toAdd = new HashSet<>();
-            final HashSet<Task> toRemove = new HashSet<>();
+            final Set<Task> toAdd = new HashSet<>();
+            final Set<Task> toRemove = new HashSet<>();
             storeChanges(c, toAdd, toRemove);
 
             Platform.runLater(() -> {
-                for (Task task : toAdd) {
+                for (final Task task : toAdd) {
                     final CustomMenuItem item = new CustomMenuItem(new TaskProgress(task));
                     item.setHideOnClick(false);
                     runningTasks.getItems().add(item);
@@ -146,17 +186,17 @@ public class ProgressMonitor extends HBox {
                 runningTasks.getItems().removeIf(new GetItemsForTask(toRemove));
             });
         });
-        final ObservableList<Task> tmpTasksInError = taskRegistry.getTasksInError();
-
+        
         // Check failed tasks.
+        final ObservableList<Task> tmpTasksInError = taskRegistry.getTasksInError();
         tmpTasksInError.addListener((ListChangeListener.Change<? extends Task> c) -> {
-            final HashSet<Task> toAdd = new HashSet<>();
-            final HashSet<Task> toRemove = new HashSet<>();
+            final Set<Task> toAdd = new HashSet<>();
+            final Set<Task> toRemove = new HashSet<>();
             storeChanges(c, toAdd, toRemove);
 
             Platform.runLater(() -> {
-                for (Task task : toAdd) {
-                    tasksInError.getItems().addAll(new ErrorMenuItem(task));
+                for (final Task task : toAdd) {
+                    tasksInError.getItems().add(new ErrorMenuItem(task));
                 }
                 // remove Ended tasks
                 tasksInError.getItems().removeIf(new GetItemsForTask(toRemove));
@@ -172,7 +212,7 @@ public class ProgressMonitor extends HBox {
                 runningTasks.getItems().add(item);
             }
 
-            for (Task t : tmpTasksInError) {
+            for (final Task t : tmpTasksInError) {
                 tasksInError.getItems().add(new ErrorMenuItem(t));
             }
         };
@@ -201,7 +241,7 @@ public class ProgressMonitor extends HBox {
                 added.addAll(addedSubList);
             }
 
-            Iterator<? extends Task> it = removeSubList.iterator();
+            final Iterator<? extends Task> it = removeSubList.iterator();
             while (it.hasNext()) {
                 final Task current = it.next();
                 if (!added.remove(current)) {
@@ -220,23 +260,19 @@ public class ProgressMonitor extends HBox {
         private final Label title = new Label();
         private final Tooltip description = new Tooltip();
         private final ProgressBar progress = new ProgressBar();
-        private final Button cancelButton = new Button("", new ImageView(ICON_CANCEL));
-
+        private final Button cancelButton;
+        
         private final ObjectProperty<Task> taskProperty = new SimpleObjectProperty<>();
 
-        public TaskProgress() {
+        TaskProgress() {
             this(null);
         }
 
-        public TaskProgress(final Task t) {
-            setSpacing(5);
-            setAlignment(Pos.CENTER);
-            
-            // TODO : put style rule in CSS.
-            cancelButton.setPadding(Insets.EMPTY);
-            cancelButton.setBackground(Background.EMPTY);
-            cancelButton.setBorder(Border.EMPTY);
-            getChildren().addAll(title, progress, cancelButton);
+        TaskProgress(final Task t) {
+            final Label icon = new Label(FontAwesomeIcons.ICON_BAN);
+            icon.setStyle(ICON_LABEL_FONT_FAMILY);
+            icon.getStyleClass().add(TASK_PROGRESS_GRAPHIC_CSS_CLASS);
+            cancelButton = new Button("", icon);
 
             taskProperty.addListener((ObservableValue<? extends Task> observable, Task oldValue, Task newValue) -> {
                 if (Platform.isFxApplicationThread()) {
@@ -247,6 +283,11 @@ public class ProgressMonitor extends HBox {
             });
             
             taskProperty.set(t);
+            
+            getChildren().addAll(title, progress, cancelButton);
+            
+            getStyleClass().add(TASK_PROGRESS_CSS_CLASS);
+            cancelButton.getStyleClass().add(CANCEL_BUTTON_CSS_CLASS);
         }
 
         public ObjectProperty<Task> taskProperty() {
@@ -276,26 +317,43 @@ public class ProgressMonitor extends HBox {
             }
         }
     }
-
+    
     /**
      * A simple menu items for failed tasks. Display an exception Dialog when clicked.
      */
-    private static class ErrorMenuItem extends MenuItem {
+    private class ErrorMenuItem extends MenuItem {
 
         final Task failedTask;
 
-        public ErrorMenuItem(final Task failedTask) {
+        ErrorMenuItem(final Task failedTask) {
             ArgumentChecks.ensureNonNull("task in error", failedTask);
+            
             this.failedTask = failedTask;
             // No need for binding here. Task failed, its state should not change anymore.
             String title = failedTask.getTitle();
             if (title == null || title.isEmpty())
-                title = "opération anonyme";
+                title = GeotkFX.getString(ProgressMonitor.class, "anonymOperation");
             setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))+" - "+title);
-            Dialog d = GeotkFX.newExceptionDialog(failedTask.getMessage(), failedTask.getException());
+            
+            final Label icon = new Label(FontAwesomeIcons.ICON_TRASH_O);
+            icon.setStyle(ICON_LABEL_FONT_FAMILY);
+            
+            final Button deleteButton = new Button("", icon);
+            deleteButton.setBorder(Border.EMPTY);
+            deleteButton.setPadding(Insets.EMPTY);
+            deleteButton.setBackground(Background.EMPTY);
+            deleteButton.setOnAction(e -> {
+                taskRegistry.getTasksInError().remove(failedTask);
+                e.consume();
+            });
+            setGraphic(deleteButton);
+            
+            final Dialog d = GeotkFX.newExceptionDialog(failedTask.getMessage(), failedTask.getException());
             d.setResizable(true);
 
             setOnAction((ActionEvent ae) -> d.show());
+            
+            getStyleClass().add(MENU_ITEM_CSS_CLASS);
         }
 
         public Task getTask() {
@@ -311,7 +369,7 @@ public class ProgressMonitor extends HBox {
 
         private final Collection<? extends Task> tasks;
 
-        public GetItemsForTask(final Collection<? extends Task> taskFilter) {
+        GetItemsForTask(final Collection<? extends Task> taskFilter) {
             ArgumentChecks.ensureNonNull("Input filter tasks", taskFilter);
             tasks = taskFilter;
         }
@@ -319,7 +377,7 @@ public class ProgressMonitor extends HBox {
         @Override
         public boolean test(MenuItem item) {
             if (item instanceof CustomMenuItem) {
-                Node content = ((CustomMenuItem) item).getContent();
+                final Node content = ((CustomMenuItem) item).getContent();
                 return (content instanceof TaskProgress
                         && tasks.contains(((TaskProgress) content).getTask()));
             } else if (item instanceof ErrorMenuItem) {

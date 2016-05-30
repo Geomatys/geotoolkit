@@ -161,10 +161,12 @@ public class XMLSampleDimension {
         categories.clear();
         name = gsd.getDescription().toString();
         setUnit(gsd.getUnits());
-        for(Category cat : gsd.getCategories()){
-            final XMLCategory xcat = new XMLCategory();
-            xcat.fill(cat);
-            categories.add(xcat);
+        if(gsd.getCategories()!=null){
+            for(Category cat : gsd.getCategories()){
+                final XMLCategory xcat = new XMLCategory();
+                xcat.fill(cat);
+                categories.add(xcat);
+            }
         }
     }
 }

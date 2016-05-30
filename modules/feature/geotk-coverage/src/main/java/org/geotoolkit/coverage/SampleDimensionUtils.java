@@ -17,16 +17,10 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.util.InternationalString;
@@ -111,128 +105,7 @@ public final strictfp class SampleDimensionUtils {
                                             minCategoryValue, isMinInclude, 
                                             maxCategoryValue, isMaxInclude), scale, offset);
     }
-    
-    /**
-     * Build {@linkplain Category categories} {@link List} from sample and noData values from band.<br><br>
-     * 
-     * Particularity cases : <br>
-     * - if scale is not {@code null} and define as 1 and offset define as {@code null}, {@link ViewType#PHOTOGRAPHIC} is considered.<br>
-     * - if offset is not {@code null} and define as 0 and scale define as {@code null}, {@link ViewType#PHOTOGRAPHIC} is assume.
-     * 
-     * @param minSampleValue minimum sample value for current {@link SampleDimension} (band).
-     * @param maxSampleValue maximum sample value for current {@link SampleDimension} (band).
-     * @param typeClass data type of 
-     * @param scale scale use to convert sample values into geophysic values, or {@code null} if none. 
-     * @param offset offset use to convert sample values into geophysic values, or {@code null} if none.
-     * @param nodataValues {@link Set} which contain all nodata, organize in ascending order, for current band.
-     * @return {@link Category} list for current band.
-     * @throws NullArgumentException if nodataValues {@link Set} or typeClass is {@code null}.
-     */
-    public static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue, 
-                                                  Double scale,         Double offset,
-                                                  final Class typeClass,       final TreeSet<Double> nodataValues) {
-        ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
-        ArgumentChecks.ensureNonNull("typeClass",    typeClass);
         
-        //-- in case where scale is define as 1 and offset as null 
-        //-- we assume View.PHOTOMETRIC comportement
-        if (offset == null && scale != null) 
-            if (StrictMath.abs(scale - 1) <= 1E-9) scale = null;
-        
-        //-- in case where no scale and offset define as 0 
-        //-- we assume View.PHOTOMETRIC comportement
-        if (scale == null && offset != null)
-            if (StrictMath.abs(offset) < 1E-9) offset = null;
-        
-        
-        if ((scale != null && offset == null)
-          || scale == null && offset != null) 
-            throw new IllegalArgumentException("Impossible to build conform category : "
-                    + "offset and scale from sample to geophysic transformation must be "
-                    + "both null or both no null : scale = "+scale+", offset = "+offset);
-        final List<Category> categories = new ArrayList<>();
-        if (nodataValues.isEmpty()) {
-            if (scale != null) {
-                assert offset != null;
-                categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            minSampleValue, true, 
-                                            maxSampleValue, true), scale, offset));
-            } else {
-                //-- create a category define as View.PHOTOMETRIC
-                assert offset == null;
-                categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            minSampleValue, true, 
-                                            maxSampleValue, true)));
-            }
-            
-            return categories;
-        }
-        
-        double currentMinSV  = minSampleValue;
-        double currentMaxSV  = maxSampleValue;
-        boolean isMinInclude = true;
-        boolean isMaxInclude = true;
-        
-        final Iterator<Double> itNoData = nodataValues.iterator();
-        while (itNoData.hasNext()) {
-            final double currentNoData = itNoData.next();
-            categories.add(new Category(NODATA_CATEGORY_NAME, new Color(0,0,0,0), 
-                                       getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true)));
-            if (currentNoData == currentMinSV) {
-                isMinInclude = false;
-            } else if (currentNoData == currentMaxSV) {
-                isMaxInclude = false;
-            } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
-                if (scale != null) {
-                    assert offset != null;
-                    categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentNoData, false), scale, offset));
-                } else {
-                    //-- create a category define as View.PHOTOMETRIC
-                    assert offset == null;
-                    categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentNoData, false)));
-                }
-                
-                
-                isMinInclude = false;
-                currentMinSV = currentNoData;
-            } else {
-                //-- volontary do nothing with no intersection
-            }
-        }
-        
-        assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
-                + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
-        
-        //-- add the last category
-        //-- it is the last category to insert in case with intersection between sample values intervals
-        //-- else if no intersection it just will be sample interval.
-        if (scale != null) {
-            assert offset != null;
-            categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentMaxSV, isMaxInclude), scale, offset));
-        } else {
-            //-- create a category define as View.PHOTOMETRIC
-            assert offset == null;
-            categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentMaxSV, isMaxInclude)));
-        }
-        
-        
-        return categories;
-    }
-    
     /**
      * Returns an appropriate {@link NumberRange} from given parameters.
      * 
