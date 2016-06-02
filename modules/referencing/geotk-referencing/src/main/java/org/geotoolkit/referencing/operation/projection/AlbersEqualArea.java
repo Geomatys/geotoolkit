@@ -34,6 +34,7 @@ import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
@@ -200,8 +201,8 @@ public class AlbersEqualArea extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        final MatrixSIS normalize   = getContextualParameters().getMatrix(true);
-        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        final MatrixSIS normalize   = getContextualParameters().getMatrix(MatrixRole.NORMALIZATION);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION);
         normalize.convertAfter(0, n, null);
         denormalize.convertBefore(0,  1/n, null);
         denormalize.convertBefore(1, -1/n, ρ0);

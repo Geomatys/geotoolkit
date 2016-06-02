@@ -27,6 +27,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 
 
@@ -128,7 +129,7 @@ abstract class CassiniOrMercator extends UnitaryProjection {
          * of FE and FN (despite their names) there is actually nothing special to do in this
          * method for the South Orientated case.
          */
-        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION);
         denormalize.convertBefore(1, null, -ml0);
     }
 

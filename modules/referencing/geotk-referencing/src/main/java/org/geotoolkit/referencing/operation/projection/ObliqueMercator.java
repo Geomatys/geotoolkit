@@ -40,6 +40,7 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
@@ -385,8 +386,8 @@ public class ObliqueMercator extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        getContextualParameters().getMatrix(true).convertAfter(0, null, -centralMeridian);
-        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        getContextualParameters().getMatrix(MatrixRole.NORMALIZATION).convertAfter(0, null, -centralMeridian);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION);
         if (rectifiedGridAngle != 0) {
             // TODO: This complicated code is only a workaround for the absence of "rotate" method in MatrixSIS.
             // We should provide a "rotate" method in a future SIS version instead.

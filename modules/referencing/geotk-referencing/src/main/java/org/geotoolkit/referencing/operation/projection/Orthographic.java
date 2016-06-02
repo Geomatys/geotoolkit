@@ -33,6 +33,7 @@ import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
@@ -165,9 +166,9 @@ public class Orthographic extends UnitaryProjection {
          * validation and the initialization of (de)normalize affine transforms.
          */
         if (south) {
-            getContextualParameters().getMatrix(true).convertAfter(1, -1, null);
+            getContextualParameters().getMatrix(MatrixRole.NORMALIZATION).convertAfter(1, -1, null);
         }
-        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION);
         if (eccentricity != 0) {
             /*
              * In principle the elliptical case is not supported. If nevertheless the user gave

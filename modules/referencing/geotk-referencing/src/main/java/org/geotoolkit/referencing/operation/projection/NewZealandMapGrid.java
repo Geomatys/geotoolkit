@@ -27,6 +27,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 
 
@@ -133,7 +134,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
      */
     protected NewZealandMapGrid(final OperationMethod method, final Parameters parameters) {
         super(method, parameters, null);
-        final MatrixSIS normalize = getContextualParameters().getMatrix(true);
+        final MatrixSIS normalize = getContextualParameters().getMatrix(MatrixRole.NORMALIZATION);
         normalize.convertBefore(1, 180/PI * 3600E-5, null);
         normalize.convertBefore(1, null, -getAndStore(parameters, org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.LATITUDE_OF_ORIGIN));
     }

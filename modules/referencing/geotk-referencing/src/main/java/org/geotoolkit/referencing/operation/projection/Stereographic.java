@@ -38,6 +38,7 @@ import org.apache.sis.referencing.operation.projection.PolarStereographic;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.apache.sis.internal.system.DefaultFactories;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
@@ -165,8 +166,8 @@ public class Stereographic extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        getContextualParameters().getMatrix(false).convertBefore(0, k0, null);
-        getContextualParameters().getMatrix(false).convertBefore(1, k0, null);
+        getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION).convertBefore(0, k0, null);
+        getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION).convertBefore(1, k0, null);
     }
 
     /**

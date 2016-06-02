@@ -30,6 +30,7 @@ import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.parameter.Parameters;
 
+import org.apache.sis.referencing.operation.transform.ContextualParameters.MatrixRole;
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -192,9 +193,9 @@ public class Krovak extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        getContextualParameters().getMatrix(true).convertAfter(0, -alfa, null);
-        getContextualParameters().getMatrix(false).convertBefore(0, -rop, null);
-        getContextualParameters().getMatrix(false).convertBefore(1, -rop, null);
+        getContextualParameters().getMatrix(MatrixRole.NORMALIZATION).convertAfter(0, -alfa, null);
+        getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION).convertBefore(0, -rop, null);
+        getContextualParameters().getMatrix(MatrixRole.DENORMALIZATION).convertBefore(1, -rop, null);
     }
 
     /**
