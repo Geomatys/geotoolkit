@@ -204,8 +204,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public ShapefileFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
 
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
@@ -273,7 +273,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public ShapefileFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();

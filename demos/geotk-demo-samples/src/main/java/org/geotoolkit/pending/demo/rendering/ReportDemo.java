@@ -17,7 +17,6 @@ import java.util.Random;
 import net.sf.jasperreports.engine.JasperReport;
 
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -63,6 +62,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 
@@ -86,7 +86,7 @@ public class ReportDemo {
 
 
         //source to make an atlas ----------------------------------------------------
-        final FeatureStore store = FeatureStoreFinder.open(
+        final FeatureStore store = (FeatureStore) DataStores.open(
                 (Map)Collections.singletonMap("path",ReportDemo.class.getResource("/data/world/Countries.shp").toURI()));
         final GenericName name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));

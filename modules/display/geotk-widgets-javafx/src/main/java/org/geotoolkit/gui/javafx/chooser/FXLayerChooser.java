@@ -57,6 +57,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.style.MutableStyle;
@@ -135,7 +136,7 @@ public class FXLayerChooser extends BorderPane{
 
                 if(source instanceof FeatureStore){
                     final FeatureStore store = (FeatureStore) source;
-                    final FeatureStoreFactory factory = store.getFactory();
+                    final DataStoreFactory factory = store.getFactory();
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
                     

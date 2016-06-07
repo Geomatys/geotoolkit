@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.index.LogicalFilterType;
 
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.GEOMETRY_PROPERTY;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.wrap;
@@ -1550,7 +1551,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         List<Filter> filters  = new ArrayList<>();
         filters.add(spatialQuery1.getSpatialFilter());
         filters.add(spatialQuery2.getSpatialFilter());
-        int filterType[]  = {SerialChainFilter.OR};
+        LogicalFilterType filterType[]  = {LogicalFilterType.OR};
         SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
 
 
@@ -1584,7 +1585,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          * case 2: same test with AND instead of OR
          *
          */
-        int filterType2[]  = {SerialChainFilter.AND};
+        LogicalFilterType filterType2[]  = {LogicalFilterType.AND};
         serialFilter = new SerialChainFilter(filters, filterType2);
 
         //we perform a lucene query
@@ -1618,7 +1619,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         List<Filter> filters3     = new ArrayList<>();
         filters3.add(spatialQuery.getSpatialFilter());
-        int filterType3[]         = {SerialChainFilter.NOT};
+        LogicalFilterType filterType3[]         = {LogicalFilterType.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
 
         //we perform a lucene query
@@ -1663,7 +1664,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         List<Filter> filters4  = new ArrayList<>();
         filters4.add(spatialQuery.getSpatialFilter());
         filters4.add(bboxQuery.getSpatialFilter());
-        int filterType4[]         = {SerialChainFilter.AND};
+        LogicalFilterType filterType4[]         = {LogicalFilterType.AND};
         serialFilter              = new SerialChainFilter(filters4, filterType4);
 
         //we perform a lucene query
@@ -1691,7 +1692,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          * case 5: INTERSECT line AND NOT BBOX
          *
          */
-        int filterType5[] = {SerialChainFilter.AND, SerialChainFilter.NOT};
+        LogicalFilterType filterType5[] = {LogicalFilterType.AND, LogicalFilterType.NOT};
         serialFilter      = new SerialChainFilter(filters4, filterType5);
 
         //we perform a lucene query

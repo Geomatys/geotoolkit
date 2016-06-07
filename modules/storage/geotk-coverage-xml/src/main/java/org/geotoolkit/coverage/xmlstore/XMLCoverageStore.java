@@ -34,13 +34,13 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -102,7 +102,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactoryById(XMLCoverageStoreFactory.NAME);
+        return (CoverageStoreFactory) DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override

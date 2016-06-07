@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractFeatureClient;
-import org.geotoolkit.client.ClientFinder;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
@@ -47,6 +47,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -59,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureClient extends AbstractFeatureClient {
+public class WebFeatureClient extends AbstractFeatureClient implements Client {
     /**
      * Default timeout (in milliseconds).
      *
@@ -101,7 +102,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
 
     @Override
     public WFSFeatureStoreFactory getFactory() {
-        return (WFSFeatureStoreFactory)ClientFinder.getFactoryById(WFSFeatureStoreFactory.NAME);
+        return (WFSFeatureStoreFactory)DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
     }
 
     public WFSVersion getVersion(){

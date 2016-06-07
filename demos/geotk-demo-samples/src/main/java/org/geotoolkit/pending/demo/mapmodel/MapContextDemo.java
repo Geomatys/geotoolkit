@@ -6,7 +6,6 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -28,6 +27,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.storage.DataStores;
 
 
 public class MapContextDemo {
@@ -87,7 +87,7 @@ public class MapContextDemo {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("path", MapContextDemo.class.getResource("/data/world/Countries.shp").toURI());
 
-        final FeatureStore store = FeatureStoreFinder.open(params);
+        final FeatureStore store = (FeatureStore) DataStores.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);

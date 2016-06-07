@@ -360,14 +360,13 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     /**
      * Gets the value of the dcElement property.
-     * (unModifiable)
      */
     @Override
     public List<JAXBElement<SimpleLiteral>> getDCElement() {
         if (dcElement == null) {
             dcElement = new ArrayList<>();
         }
-        return Collections.unmodifiableList(dcElement);
+        return dcElement;
     }
     
     public void setIdentifier(final SimpleLiteral identifier) {

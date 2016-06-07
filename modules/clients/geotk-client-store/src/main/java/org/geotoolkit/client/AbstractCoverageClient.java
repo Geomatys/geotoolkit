@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCoverageClient extends AbstractCoverageStore implements Client {
+public abstract class AbstractCoverageClient extends AbstractCoverageStore {
 
     private final Map<String,Object> userProperties = new HashMap<String,Object>();
     protected final URL serverURL;
@@ -48,15 +48,10 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
         this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
-
-    @Override
-    public abstract CoverageClientFactory getFactory();
-    
-    
+        
     /**
      * {@inheritDoc}
      */
-    @Override
     public URL getURL() {
         return serverURL;
     }
@@ -64,7 +59,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
     /**
      * {@inheritDoc}
      */
-    @Override
     public URI getURI() {
         try {
             return serverURL.toURI();
@@ -77,7 +71,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
     /**
      * {@inheritDoc}
      */
-    @Override
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
@@ -88,7 +81,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
         return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
     }
 
-    @Override
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
@@ -102,7 +94,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
     /**
      * {@inheritDoc }
      */
-    @Override
     public void setUserProperty(final String key,final Object value){
         userProperties.put(key, value);
     }
@@ -110,7 +101,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
     /**
      * {@inheritDoc }
      */
-    @Override
     public Object getUserProperty(final String key){
         return userProperties.get(key);
     }
@@ -118,7 +108,6 @@ public abstract class AbstractCoverageClient extends AbstractCoverageStore imple
     /**
      * {@inheritDoc }
      */
-    @Override
     public Map<String, Object> getUserProperties() {
         return userProperties;
     }

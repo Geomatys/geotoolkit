@@ -28,7 +28,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -42,6 +41,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -75,7 +75,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
+    public DataStoreFactory getFactory() {
         return wrapped.getFactory();
     }
 

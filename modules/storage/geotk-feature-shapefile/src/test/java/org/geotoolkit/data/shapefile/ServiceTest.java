@@ -22,9 +22,9 @@ import java.util.Iterator;
 
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.ShapeTestData;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStores;
 
 import static org.junit.Assert.*;
 
@@ -43,7 +43,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testIsAvailable() {
-        Iterator list = FeatureStoreFinder.getAvailableFactories(null).iterator();
+        Iterator list = DataStores.getAvailableFactories(FeatureStoreFactory.class).iterator();
         boolean found = false;
         while (list.hasNext()) {
             FeatureStoreFactory fac = (FeatureStoreFactory) list.next();
@@ -63,7 +63,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
     public void testShapefileDataStore() throws Exception {
         HashMap params = new HashMap();
         params.put("path", ShapeTestData.url(TEST_FILE).toURI());
-        FeatureStore ds = FeatureStoreFinder.open(params);
+        FeatureStore ds = (FeatureStore) DataStores.open(params);
         assertNotNull(ds);
         params.put("path", ShapeTestData.url(TEST_FILE).toURI().toString());
         assertNotNull(ds);

@@ -28,7 +28,6 @@ import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -102,12 +101,12 @@ public class LandsatStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore open(ParameterValueGroup params) throws DataStoreException {
+    public LandsatCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         return new LandsatCoverageStore(params);
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public LandsatCoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

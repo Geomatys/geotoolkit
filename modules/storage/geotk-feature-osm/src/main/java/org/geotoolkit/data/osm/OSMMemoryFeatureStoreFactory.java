@@ -21,7 +21,6 @@ import java.net.URI;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -83,8 +82,8 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     }
 
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public OSMMemoryFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
 
         final String path = uri.toString();
@@ -102,7 +101,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     }
 
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public OSMMemoryFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

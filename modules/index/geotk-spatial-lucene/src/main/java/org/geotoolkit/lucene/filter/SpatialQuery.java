@@ -23,6 +23,8 @@ import java.util.Objects;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.Tree;
 
 import org.opengis.util.FactoryException;
@@ -35,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SpatialQuery {
+public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     
     /**
      * The spatial filter added to the lucene query.
@@ -51,7 +53,7 @@ public class SpatialQuery {
      * Logical operator to apply between the spatial filter and the query
      * default operator is AND.
      */
-    private final int logicalOperator;
+    private final LogicalFilterType logicalOperator;
     
     /**
      * A list of sub-queries with have to be executed separely.
@@ -69,7 +71,7 @@ public class SpatialQuery {
      * @param query  A well-formed Lucene query.
      */
     public SpatialQuery(final String query) {
-        this(query,null,SerialChainFilter.AND,null);
+        this(query,null,LogicalFilterType.AND,null);
     }
     
     /**
@@ -82,7 +84,7 @@ public class SpatialQuery {
      * @throws org.opengis.referencing.operation.TransformException
      */
     public SpatialQuery(final LuceneOGCFilter spatialFilter) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
-        this("",spatialFilter,SerialChainFilter.AND);
+        this("",spatialFilter,LogicalFilterType.AND);
     }
     
     /**
@@ -92,12 +94,12 @@ public class SpatialQuery {
      * @param filter A lucene filter (spatial, serialChain, ...)
      * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
      */
-    public SpatialQuery(final String query, final Filter filter, final int logicalOperator) {
+    public SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator) {
         this(query,filter,logicalOperator,null);
     }
     
 
-    private SpatialQuery(final String query, final Filter filter, final int logicalOperator, final List<SpatialQuery> sub){
+    private SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
         this.query           = new StringBuilder(query);
         this.spatialFilter   = filter;
         this.logicalOperator = logicalOperator;
@@ -111,6 +113,7 @@ public class SpatialQuery {
     /**
      * Return the spatial filter (it can be a SerialChainFilter) to add to the lucene query.
      */
+    @Override
     public Filter getSpatialFilter() {
         return spatialFilter;
     }
@@ -118,6 +121,7 @@ public class SpatialQuery {
     /**
      * Return the lucene query associated with the filter. 
      */
+    @Override
     public String getQuery() {
         if (query == null || query.toString().equals("") || query.toString().equals(" ")) {
             return "metafile:doc";
@@ -128,7 +132,7 @@ public class SpatialQuery {
     /**
      * Return the logical operator to apply between the query and the filter. 
      */
-    public int getLogicalOperator() {
+    public LogicalFilterType getLogicalOperator() {
         return logicalOperator;
     }
     
@@ -149,6 +153,25 @@ public class SpatialQuery {
         for (SpatialQuery sub: getSubQueries()) {
             sub.setSort(sort);
         }
+    }
+    
+    @Override
+    public void setSort(String fieldName, boolean desc, Character fieldType) {
+        final SortField sf;
+        if (fieldType != null) {
+            switch (fieldType) {
+                case 'd': sf = new SortField(fieldName, SortField.Type.DOUBLE, desc);break;
+                case 'i': sf = new SortField(fieldName, SortField.Type.INT, desc);break;
+                case 'f': sf = new SortField(fieldName, SortField.Type.FLOAT, desc);break;
+                case 'l': sf = new SortField(fieldName, SortField.Type.LONG, desc);break;
+                default : sf = new SortField(fieldName, SortField.Type.STRING, desc);break;
+            }
+        } else {
+            sf = new SortField(fieldName, SortField.Type.STRING, desc);
+        }
+
+        final Sort sortFilter     = new Sort(sf);
+        setSort(sortFilter);
     }
     
     /**
@@ -207,7 +230,7 @@ public class SpatialQuery {
     public String toString() {
         StringBuilder s = new StringBuilder("[SpatialQuery]:").append('\n');
         
-        if (spatialFilter == null && !query.toString().equals("") && logicalOperator == SerialChainFilter.NOT) {
+        if (spatialFilter == null && !query.toString().equals("") && logicalOperator == LogicalFilterType.NOT) {
             s.append("query: NOT <").append(query).append(">").append('\n');
             
         } else if (!query.toString().equals("")) {
@@ -260,7 +283,7 @@ public class SpatialQuery {
         int hash = 5;
         hash = 97 * hash + (this.spatialFilter != null ? this.spatialFilter.hashCode() : 0);
         hash = 97 * hash + (this.query != null ? getQuery().hashCode() : 0);
-        hash = 97 * hash + this.logicalOperator;
+        hash = 97 * hash + (this.logicalOperator != null ? logicalOperator.hashCode() : 0);
         hash = 97 * hash + (this.subQueries != null ? this.subQueries.hashCode() : 0);
         hash = 97 * hash + (this.sort != null ? this.sort.hashCode() : 0);
         return hash;

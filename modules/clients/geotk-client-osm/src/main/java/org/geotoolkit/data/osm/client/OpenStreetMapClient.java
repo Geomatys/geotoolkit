@@ -27,7 +27,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
@@ -54,6 +53,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -88,7 +88,7 @@ public class OpenStreetMapClient extends AbstractClient{
 
     @Override
     public ClientFactory getFactory() {
-        return ClientFinder.getFactoryById(OSMClientFactory.NAME);
+        return (ClientFactory) DataStores.getFactoryById(OSMClientFactory.NAME);
     }
 
     public OSMVersion getVersion(){

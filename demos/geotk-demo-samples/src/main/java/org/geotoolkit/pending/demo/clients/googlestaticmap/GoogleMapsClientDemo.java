@@ -5,12 +5,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
@@ -36,7 +36,7 @@ public class GoogleMapsClientDemo {
         parameters.put("identifier", "googleStaticMaps");
         parameters.put("url", new URL("http://maps.google.com/maps/api/staticmap"));
 
-        final CoverageStore store = CoverageStoreFinder.open(parameters);
+        final CoverageStore store = (CoverageStore) DataStores.open(parameters);
 
         for(GenericName name : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(name));

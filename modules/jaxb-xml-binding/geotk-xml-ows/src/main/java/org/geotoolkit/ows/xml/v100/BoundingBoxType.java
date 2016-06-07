@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -107,7 +105,7 @@ public class BoundingBoxType implements BoundingBox {
      */
     @Override
     public List<Double> getLowerCorner() {
-       return Collections.unmodifiableList(lowerCorner);
+       return lowerCorner;
     }
     
     /**
@@ -144,7 +142,7 @@ public class BoundingBoxType implements BoundingBox {
      */
     @Override
     public List<Double> getUpperCorner() {
-        return Collections.unmodifiableList(upperCorner);
+        return upperCorner;
     }
 
     /**

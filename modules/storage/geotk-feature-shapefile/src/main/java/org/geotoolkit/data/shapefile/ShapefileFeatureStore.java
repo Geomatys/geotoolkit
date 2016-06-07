@@ -48,7 +48,6 @@ import org.apache.sis.metadata.iso.citation.Citations;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
@@ -89,6 +88,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
 
 /**
@@ -197,7 +197,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(ShapefileFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override

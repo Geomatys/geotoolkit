@@ -27,7 +27,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
-import org.geotoolkit.client.FeatureClientFactory;
+import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -43,7 +43,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements FeatureClientFactory{
+public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -127,7 +127,7 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
 
     @Override
     public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         return new WebFeatureClient(params);
     }
 

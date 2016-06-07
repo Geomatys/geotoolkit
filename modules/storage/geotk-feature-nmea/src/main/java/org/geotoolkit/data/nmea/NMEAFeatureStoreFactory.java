@@ -66,13 +66,13 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public FeatureStore open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public NMEAFeatureStore open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new NMEAFeatureStore(params);
     }
 
     @Override
-    public FeatureStore create(ParameterValueGroup params) throws DataStoreException {
+    public NMEAFeatureStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

@@ -18,12 +18,14 @@ package org.geotoolkit.data.osm.client;
 
 import java.util.Collections;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -85,10 +87,14 @@ public class OSMClientFactory extends AbstractClientFactory{
         return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.OTHER, true, false, true);
+    }
 
     @Override
-    public Client open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public OpenStreetMapClient open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new OpenStreetMapClient(params);
     }
 

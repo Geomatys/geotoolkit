@@ -81,13 +81,13 @@ public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public GPXFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new GPXFeatureStore(params);
     }
 
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public GPXFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

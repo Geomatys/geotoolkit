@@ -43,7 +43,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
@@ -53,6 +52,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.Feature;
 
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.JXErrorPane;
 
 /**
@@ -121,7 +121,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
     private FeatureStore getDataStore(){
         if(store == null){
             try {
-                store = FeatureStoreFinder.open(dbParameters);
+                store = (FeatureStore) DataStores.open(dbParameters);
             } catch (DataStoreException ex) {
                 JXErrorPane.showDialog(ex);
             }

@@ -35,7 +35,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
@@ -47,6 +46,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -101,13 +101,13 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             store.close();
         }
 
-        final CoverageStoreFactory factory = CoverageStoreFinder.getFactoryById("pgraster");
+        final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
 
         try{
-            store = factory.create(params);
+            store = (CoverageStore) factory.create(params);
         }catch(DataStoreException ex){
             //it may already exist
-            store = factory.open(params);
+            store = (CoverageStore) factory.open(params);
         }
 
 

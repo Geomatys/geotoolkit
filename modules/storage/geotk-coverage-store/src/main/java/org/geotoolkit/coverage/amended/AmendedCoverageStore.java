@@ -18,11 +18,11 @@ package org.geotoolkit.coverage.amended;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.CoverageType;
@@ -87,7 +87,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore{
      * {@inheritDoc }
      */
     @Override
-    public CoverageStoreFactory getFactory() {
+    public DataStoreFactory getFactory() {
         return store.getFactory();
     }
 

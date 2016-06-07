@@ -25,13 +25,12 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -42,7 +41,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleClientFactory extends AbstractClientFactory implements CoverageClientFactory{
+public class StaticGoogleClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 
     /** factory identification **/
     public static final String NAME = "googleStaticMaps";
@@ -82,8 +81,13 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     }
 
     @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
+    }
+
+    @Override
     public StaticGoogleMapsClient open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         final StaticGoogleMapsClient server = new StaticGoogleMapsClient(params);
 
         try{
@@ -101,7 +105,7 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     }
 
     @Override
-    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public StaticGoogleMapsClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
@@ -110,12 +114,8 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public StaticGoogleMapsClient create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new Google Static coverage store.");
     }
 
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
-    }
 }
