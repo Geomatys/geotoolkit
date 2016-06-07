@@ -95,57 +95,49 @@ public final class ShpFiles {
      * @param path any one of the shapefile files
      */
     public ShpFiles(final Object path, final boolean loadQix) throws IllegalArgumentException {
-        URL url = null;
-
+        URI uri = null;
+        
         if(path instanceof String){
             try {
-                url = new URL(path.toString());
-            } catch (MalformedURLException e) {
-                try {
-                    url = Paths.get(path.toString()).toUri().toURL();
-                } catch (MalformedURLException ex) {
-                    throw new IllegalArgumentException(
-                            "Path object can not be converted to a valid URL",ex);
-                }
+                uri = URI.create(path.toString());
+            } catch (IllegalArgumentException e) {
+                uri = Paths.get(path.toString()).toUri();
             }
         }else if(path instanceof Path){
-            try {
-                url = ((Path) path).toUri().toURL();
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(
-                        "Path object can not be converted to a valid URL",ex);
-            }
+            
+            uri = ((Path) path).toUri();
+            
         }else if(path instanceof URI){
-            try {
-                url = ((URI) path).toURL();
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(
-                        "Path object can not be converted to a valid URL",ex);
-            }
+            
+            uri = (URI) path;
+            
         }else if(path instanceof File){
-            try {
-                url = ((File) path).toURI().toURL();
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(
-                        "Path object can not be converted to a valid URL",ex);
-            }
+            
+            uri = ((File) path).toURI();
+            
         }else if(path instanceof URL){
-            url = (URL) path;
+            try {
+                uri = ((URL) path).toURI();
+            } catch (URISyntaxException ex) {
+                throw new IllegalArgumentException(
+                        "URL object can not be converted to a valid URI",ex);
+            }    
         }else{
             throw new IllegalArgumentException(
-                    "Path object can not be converted to a valid URL : " +path);
+                    "Path object can not be converted to a valid URI : " +path);
         }
 
         loadQuadTree = loadQix;
 
-        final String base = baseName(url);
+        final String base = baseName(uri);
         if (base == null) {
-            throw new IllegalArgumentException(url.getPath()
+            throw new IllegalArgumentException(uri.getPath()
                             + " is not one of the files types that is known to be associated with a shapefile");
         }
 
-        final String urlString = url.toExternalForm();
-        final char lastChar = urlString.charAt(urlString.length()-1);
+        //final String urlString = url.toExternalForm();
+        final String uriString = uri.toString();
+        final char lastChar = uriString.charAt(uriString.length()-1);
         final boolean upperCase = Character.isUpperCase(lastChar);
 
         //retrive all file uris associated with this shapefile
@@ -158,11 +150,12 @@ public final class ShpFiles {
                 extensionWithPeriod = type.extensionWithPeriod.toLowerCase();
             }
 
-            final URL newURL;
+            final URI newURI;
             try {
-                newURL = new URL(url, base+extensionWithPeriod);
-                uris.put(type, newURL.toURI());
-            } catch (URISyntaxException | MalformedURLException e) {
+                // TODO find a better way
+                newURI = URI.create(base+extensionWithPeriod);
+                uris.put(type, newURI);
+            } catch (IllegalArgumentException e) {
                 // shouldn't happen because the starting url was constructable
                 throw new RuntimeException(e);
             }
@@ -432,8 +425,8 @@ public final class ShpFiles {
                 channel = raf.getChannel();
 
             } else {
-                final URL url = uri.toURL();
-                final InputStream in = url.openConnection().getInputStream();
+                final Path p = Paths.get(uri);
+                final InputStream in = Files.newInputStream(p);
                 channel = Channels.newChannel(in);
             }
         } catch (Throwable e) {
@@ -485,8 +478,8 @@ public final class ShpFiles {
                 channel = raf.getChannel();
                 ((FileChannel) channel).lock();
             } else {
-                final URL url = uri.toURL();
-                final OutputStream out = url.openConnection().getOutputStream();
+                final Path p = Paths.get(uri);
+                final OutputStream out = Files.newOutputStream(p);
                 channel = Channels.newChannel(out);
             }
 
@@ -524,9 +517,6 @@ public final class ShpFiles {
     }
 
     public boolean exists(final URI uri) throws IllegalArgumentException {
-        if (!isLocal()) {
-            throw new IllegalArgumentException("This method only makes sense if the files are local");
-        }
         if (uri == null) {
             return false;
         }
@@ -538,19 +528,9 @@ public final class ShpFiles {
     /////////////// utils methods //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private static String baseName(final Object obj) {
+    private static String baseName(final URI obj) {
         for(final ShpFileType type : ShpFileType.values()) {
-            String base = null;
-            if(obj instanceof File) {
-                base = type.toBase( (File)obj);
-            } else if(obj instanceof Path) {
-                base = type.toBase( (Path)obj );
-            } else if(obj instanceof URL) {
-                base = type.toBase( (URL)obj );
-            } else if(obj instanceof URI) {
-                base = type.toBase( (URI)obj );
-            }
-
+            String base = type.toBase( (URI)obj );
             if (base != null) {
                 return base;
             }
