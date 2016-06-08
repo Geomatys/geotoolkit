@@ -27,13 +27,15 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -66,6 +68,7 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  *
@@ -518,34 +521,34 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
         return result;
     }
 
-    public static URL resolveURL(URL base, String location) throws MalformedURLException, URISyntaxException{
+    public static URI resolveURI(URI base, String location) throws MalformedURLException, URISyntaxException{
         //try an url
         if (location.startsWith("http://") || location.startsWith("https://")) {
-            return new URL(location);
+            return new URI(location);
         }
 
         //try to file
-        File f = new File(location);
-        if(f.exists()){
-            return f.toURI().toURL();
+        Path p = Paths.get(location);
+        if (Files.exists(p)) {
+            return p.toUri();
         }
 
         //try a jar resource
         final URL jarUrl = Utils.class.getResource(location);
-        if(jarUrl!=null){
-            return jarUrl;
+        if (jarUrl != null) {
+            return jarUrl.toURI();
         }
 
         //try to resolve a relative path
-        if(base!=null){
-            f = new File(base.toURI());
-            if(f.exists()){
-                if(f.isFile()){
-                    f = f.getParentFile();
+        if (base!=null) {
+            p = Paths.get(base);
+            if (Files.exists(p)) {
+                if (Files.isRegularFile(p)){
+                    p = p.getParent();
                 }
-                f = new File(f, location);
-                if(f.exists()){
-                    return f.toURI().toURL();
+                p = p.resolve(location);
+                if (Files.exists(p)){
+                    return p.toUri();
                 }
             }
         }
@@ -560,16 +563,19 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
      */
     public static Schema getDistantSchema(final String location) {
 
-        URL schemaUrl = null;
+        URI schemaUri = null;
         try {
             //search in the jar files if we have it
-            if(location.startsWith("http://schemas.opengis.net/")){
+            if (location.startsWith("http://schemas.opengis.net/")) {
                 String localUrl = location.replace("http://schemas.opengis.net/", "/org/geotoolkit/xsd/");
-                schemaUrl = Utils.class.getResource(localUrl);
+                URL url = Utils.class.getResource(localUrl);
+                if (url != null) {
+                    schemaUri = Utils.class.getResource(localUrl).toURI();
+                }
             }
 
-            if(schemaUrl==null){
-                schemaUrl = resolveURL(null, location);
+            if (schemaUri==null) {
+                schemaUri = resolveURI(null, location);
             }
         } catch (MalformedURLException | URISyntaxException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -579,7 +585,7 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
         try {
             LOGGER.log(Level.FINE, "retrieving:{0}", location);
             final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
-            final Object obj = u.unmarshal(schemaUrl.openStream());
+            final Object obj = u.unmarshal(IOUtilities.open(schemaUri));
             XSDMarshallerPool.getInstance().recycle(u);
             if (obj instanceof Schema) {
                 return (Schema) obj;

@@ -425,8 +425,7 @@ public final class ShpFiles {
                 channel = raf.getChannel();
 
             } else {
-                final Path p = Paths.get(uri);
-                final InputStream in = Files.newInputStream(p);
+                final InputStream in = IOUtilities.open(uri);
                 channel = Channels.newChannel(in);
             }
         } catch (Throwable e) {
@@ -478,8 +477,7 @@ public final class ShpFiles {
                 channel = raf.getChannel();
                 ((FileChannel) channel).lock();
             } else {
-                final Path p = Paths.get(uri);
-                final OutputStream out = Files.newOutputStream(p);
+                final OutputStream out = IOUtilities.openWrite(uri);
                 channel = Channels.newChannel(out);
             }
 
