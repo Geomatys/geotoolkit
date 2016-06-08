@@ -18,7 +18,6 @@ package org.geotoolkit.gui.javafx.render2d;
 
 import java.awt.geom.Point2D;
 import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -27,8 +26,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
 
 /**
- * Mouse handler which allows to move on map using drag&drop. Also contains
- * processes for zoom on mouse wheel.
+ * Mouse handler which allows to move on map using drag and drop.
+ * Also contains processes for zoom on mouse wheel.
  * 
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)

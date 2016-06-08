@@ -42,7 +42,7 @@ public class FXStyleElementEditor {
      * Search the registered StyleElementEditor for one which support the given
      * object.
      *
-     * @param candidate
+     * @param candidate style element to edit
      * @return StyleElementEditor or null if no editor found
      */
     public static synchronized FXStyleElementController findEditor(Object candidate) {
@@ -63,8 +63,8 @@ public class FXStyleElementEditor {
     /**
      * Find all editors which handle a class child of the given one.
      *
-     * @param candidate
-     * @return Collection<StyleElementEditor> , never null, but can be empty.
+     * @param candidate style element class to edit
+     * @return Collection of StyleElementEditor , never null, but can be empty.
      *      List is sorted by edited class name.
      */
     public static synchronized List<FXStyleElementController> findEditorsForType(Class candidate){

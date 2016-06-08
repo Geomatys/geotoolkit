@@ -338,7 +338,7 @@ public class FXMap extends BorderPane {
 
     /**
      * insert a MapDecoration at a specific index
-     * @param index : index where to isert the decoration
+     * @param index : index where to insert the decoration
      * @param deco : MapDecoration to add
      */
     public void addDecoration(final int index, final FXMapDecoration deco) {
@@ -354,9 +354,10 @@ public class FXMap extends BorderPane {
      * get the index of a MapDecoration
      * @param deco : MapDecoration to find
      * @return index of the MapDecoration
-     * @throw ClassCastException or NullPointerException
+     * @throws ClassCastException error
+     * @throws NullPointerException error
      */
-    public int getDecorationIndex(final FXMapDecoration deco) {
+    public int getDecorationIndex(final FXMapDecoration deco) throws ClassCastException,NullPointerException {
         return userDecorations.indexOf(deco);
     }
 

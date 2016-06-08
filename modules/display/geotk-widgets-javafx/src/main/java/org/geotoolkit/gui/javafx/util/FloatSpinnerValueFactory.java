@@ -79,6 +79,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Set minimum allowed value for edition
+     * @param value minimum value
      */
     public final void setMin(float value) {
         min.set(value);
@@ -86,6 +87,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Get minimum allowed value for edition
+     * @return minimum value
      */
     public final float getMin() {
         return min.get();
@@ -93,6 +95,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Minimum allowed value for edition
+     * @return minimum value property
      */
     public final FloatProperty minProperty() {
         return min;
@@ -100,6 +103,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Set maximum allowed value for edition
+     * @param value maximum value
      */
     public final void setMax(float value) {
         max.set(value);
@@ -107,6 +111,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Get maximum allowed value for edition
+     * @return maximum value
      */
     public final float getMax() {
         return max.get();
@@ -114,6 +119,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Maximum allowed value for edition
+     * @return maximum property
      */
     public final FloatProperty maxProperty() {
         return max;
@@ -121,6 +127,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Set incremented / decremented amount when an arrow is clicked.
+     * @param value step amount
      */
     public final void setAmountToStepBy(float value) {
         amountToStepBy.set(value);
@@ -128,6 +135,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Get incremented / decremented amount when an arrow is clicked.
+     * @return step amount
      */
     public final float getAmountToStepBy() {
         return amountToStepBy.get();
@@ -135,6 +143,7 @@ public class FloatSpinnerValueFactory extends SpinnerValueFactory<Float> {
 
     /**
      * Incremented / decremented amount when an arrow is clicked.
+     * @return step amount property
      */
     public final FloatProperty amountToStepByProperty() {
         return amountToStepBy;

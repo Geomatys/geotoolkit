@@ -19,7 +19,6 @@ package org.geotoolkit.gui.javafx.render2d;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
 public interface FXCanvasHandler {
 
@@ -28,12 +27,16 @@ public interface FXCanvasHandler {
      * @return current installed FXMap
      */
     FXMap getMap();
-    
+
+    /**
+     *
+     * @param component source map
+     */
     void install(FXMap component);
     
     /**
      * 
-     * @param component
+     * @param component source map
      * @return true if the handler can be removed, false if the handle has raised a veto
      */
     boolean uninstall(FXMap component);

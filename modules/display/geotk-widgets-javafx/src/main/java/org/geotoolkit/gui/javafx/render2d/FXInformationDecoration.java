@@ -20,7 +20,6 @@ package org.geotoolkit.gui.javafx.render2d;
  * Information decoration
  * 
  * @author Johann Sorel
- * @module pending
  */
 public interface FXInformationDecoration extends FXMapDecoration{
 
@@ -43,9 +42,9 @@ public interface FXInformationDecoration extends FXMapDecoration{
     
     /**
      * 
-     * @param text
+     * @param text message to display
      * @param time : time cant be inferior to 3000 (3seconds)
-     * @param level
+     * @param level message log level
      */
     public void displayMessage(String text, int time, LEVEL level);
     

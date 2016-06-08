@@ -75,7 +75,7 @@ public interface FXFilterOperator {
      * Build a filter operation to apply on the given expression
      * @param toApplyOn The property destined to be filtered.
      * @param filterEditor The node which have been used to parameterize filter.
-     * Should be the node given by {@link #getFilterEditor() }, or null if no editor is available.
+     * Should be the node given by {@link #createFilterEditor(org.opengis.feature.PropertyType) }, or null if no editor is available.
      * @return A filter operation ready to work on any object matching input expression requirements.
      */
     Filter getFilterOver(final Expression toApplyOn, final Node filterEditor);

@@ -81,7 +81,7 @@ import org.geotoolkit.internal.Loggers;
 
 /**
  *
- * @author Johann Sorel
+ * @author Johann Sorel 
  */
 public class EditionHelper {
 
@@ -262,8 +262,8 @@ public class EditionHelper {
 
     /**
      *
-     * @param map
-     * @param editedLayer
+     * @param map source map
+     * @param editedLayer edited layer
      */
     public EditionHelper(final FXMap map, final FeatureMapLayer editedLayer) {
         ArgumentChecks.ensureNonNull("map", map);
@@ -281,7 +281,7 @@ public class EditionHelper {
      *
      * Recommended size range 3 - 10
      *
-     * @param mousePointerSize
+     * @param mousePointerSize on click distance tolerance
      */
     public void setMousePointerSize(int mousePointerSize) {
         this.mousePointerSize = mousePointerSize;
@@ -305,7 +305,7 @@ public class EditionHelper {
      * The closest intersection point will be returned if mouse is outside the constraint
      * area.
      *
-     * @param constraint
+     * @param constraint geometry
      */
     public void setConstraint(Geometry constraint) {
         this.constraint = constraint;
@@ -325,7 +325,7 @@ public class EditionHelper {
      * @param my : y coordinate of the mouse on the map (in pixel)
      * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
      */
-    public Polygon mousePositionToGeometry(final double mx, final double my) throws NoninvertibleTransformException {
+    public Polygon mousePositionToGeometry(final double mx, final double my) {
         final Coordinate[] coord = new Coordinate[5];
         coord[0] = toCoord(mx - mousePointerSize, my - mousePointerSize);
         coord[1] = toCoord(mx - mousePointerSize, my + mousePointerSize);
@@ -1065,8 +1065,9 @@ public class EditionHelper {
      * @param poly : in canvas objective CRS
      * @param fl : target layer filter
      * @return geometry filter
+     * @throws org.opengis.geometry.MismatchedDimensionException if crs dimensions do not match
      */
-    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
+    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws MismatchedDimensionException {
 
         final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
         final Expression geomField = FF.property(geoStr);

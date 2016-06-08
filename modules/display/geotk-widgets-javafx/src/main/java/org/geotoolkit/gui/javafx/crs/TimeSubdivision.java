@@ -25,7 +25,6 @@ import org.geotoolkit.temporal.object.TemporalConstants;
  * A single temporal subdivision used by DateRenderer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
 public interface TimeSubdivision {
 
@@ -50,20 +49,21 @@ public interface TimeSubdivision {
     public boolean isIntermediate();
 
     /**
+     * @param fm Font metrics to use for length evaluation
      * @return maximum size of a text element
      */
     public double getTextLength(FontMetrics fm);
 
     /**
-     * @param milliseconds
+     * @param milliseconds time in milliseconds
      * @return Text for this time unit.
      */
     public String getText(long milliseconds);
 
     /**
      *
-     * @param begin
-     * @param end
+     * @param begin start time inclusive
+     * @param end end time inclusive
      * @return steps between the two values
      */
     public long[] getSteps(long begin, long end);

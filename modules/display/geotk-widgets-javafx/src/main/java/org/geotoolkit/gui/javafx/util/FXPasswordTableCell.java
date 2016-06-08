@@ -27,8 +27,7 @@ import javafx.scene.control.TableCell;
 /**
  *
  * @author Samuel Andrés (Geomatys)
- * @param <S>
- * @param <T>
+ * @param <S> cell source value type
  */
 public class FXPasswordTableCell<S> extends TableCell<S, String>{
     

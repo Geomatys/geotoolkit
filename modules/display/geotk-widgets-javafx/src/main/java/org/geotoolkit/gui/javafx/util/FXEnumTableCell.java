@@ -29,8 +29,8 @@ import javafx.util.StringConverter;
 /**
  *
  * @author Samuel Andrés (Geomatys)
- * @param <S>
- * @param <T>
+ * @param <S> cell source type
+ * @param <T> cell target type
  */
 public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
     
