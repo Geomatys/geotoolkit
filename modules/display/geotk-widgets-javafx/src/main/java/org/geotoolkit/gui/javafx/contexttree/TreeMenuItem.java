@@ -48,8 +48,8 @@ public class TreeMenuItem {
     
     /**
      * 
-     * @param selection
-     * @param type
+     * @param selection selected nodes
+     * @param type expected type
      * @return true if selection is unique and the selected item is instance of type. 
      */
     protected static boolean uniqueAndType(final List<? extends TreeItem> selection, final Class type) {

@@ -167,7 +167,7 @@ public class MoveGeometryTool extends AbstractEditionTool{
                         if(mouseGeo.intersects(geometry)){
                             draggingAll = true;
                         }
-                    } catch (NoninvertibleTransformException ex) {
+                    } catch (Exception ex) {
                         Loggers.JAVAFX.log(Level.WARNING, null, ex);
                     }
                     return;

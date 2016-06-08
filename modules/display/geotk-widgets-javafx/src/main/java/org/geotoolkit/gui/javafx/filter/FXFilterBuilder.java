@@ -79,11 +79,13 @@ public class FXFilterBuilder extends BorderPane {
     /**
      * A grid pane which will contain filter editors bound by an AND or OR filter.
      * Columns are : 
-     * 0 --> Type of link (AND, OR, or nothing for first row).
-     * 1 --> Property to apply filter upon,
-     * 2 --> Type of filter operator to apply,
-     * 3 --> Filter operator form,
-     * 4 --> Remove filter button.
+     * <ul>
+     * <li>Type of link (AND, OR, or nothing for first row).</li>
+     * <li>Property to apply filter upon,</li>
+     * <li>Type of filter operator to apply,</li>
+     * <li>Filter operator form,</li>
+     * <li>Remove filter button.</li>
+     * </ul>
      */
     protected final GridPane filterEditors;
     
@@ -278,7 +280,7 @@ public class FXFilterBuilder extends BorderPane {
     /**
      * Create a combo-box (by default its editable with auto-completion) to allow 
      * user to pick a property as filter target.
-     * @return 
+     * @return ComboBox
      */
     protected ComboBox<PropertyType> createPropertyChoice() {
         final ComboBox<PropertyType> cBox = new ComboBox<>(availableProperties);

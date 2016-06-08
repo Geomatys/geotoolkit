@@ -98,8 +98,9 @@ public class ComboBoxCompletion {
     /**
      * Adapt text typed in editor to build a permissive regex to search for  
      * correspondance in combo box items.
+     * 
      * @param fieldText The text to transform in regex pattern.
-     * @return 
+     * @return created pattern
      */
     public static Pattern buildPattern(final String fieldText) {
         final String pattern = fieldText
@@ -114,7 +115,7 @@ public class ComboBoxCompletion {
      * Build a new combobox completion but does not return it to avoid warnings
      * "new instance ignored".
      * 
-     * @param combobox 
+     * @param combobox to apply completion on
      */
     public static void autocomplete(final ComboBox combobox){
         new ComboBoxCompletion(combobox);

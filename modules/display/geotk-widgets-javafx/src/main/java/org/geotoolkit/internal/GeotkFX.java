@@ -89,6 +89,10 @@ public final class GeotkFX {
     /**
      * Get the local string for the given class and key.
      * The object class name will be pre-concatenate with the key.
+     *
+     * @param base base class
+     * @param key Bundle key
+     * @return I18N String
      */
     public static String getString(Object base, final String key){
         return getString(base.getClass(), key);
@@ -97,6 +101,10 @@ public final class GeotkFX {
     /**
      * Get the local string for the given class and key.
      * The class name will be pre-concatenate with the key.
+     *
+     * @param clazz base class
+     * @param key Bundle key
+     * @return I18N String
      */
     public static String getString(Class clazz, final String key){
         try{
@@ -108,6 +116,9 @@ public final class GeotkFX {
     
     /**
      * Get the local string for the given key.
+     *
+     * @param key Bundle key
+     * @return I18N String
      */
     public static String getString(final String key){
         try{
@@ -117,10 +128,24 @@ public final class GeotkFX {
         }
     }
 
+    /**
+     * Get I18N String with parameters.
+     *
+     * @param key Bundle key
+     * @param obj1 first argument
+     * @return I18N String
+     */
     public static String getString(final String key, Object obj1){
         return getString(key, new Object[]{obj1});
     }
 
+    /**
+     * Get I18N String with parameters.
+     *
+     * @param key Bundle key
+     * @param objects arguments
+     * @return I18N String
+     */
     public static String getString(final String key, final Object[] objects){
         String text = getString(key);
         String pattern;
@@ -133,6 +158,12 @@ public final class GeotkFX {
         return text;
     }
 
+    /**
+     * Get I18N String.
+     * 
+     * @param key Bundle key
+     * @return I18N String
+     */
     public static InternationalString getI18NString(final String key){
         try{
             String text = BUNDLE.getString(key);
@@ -192,7 +223,8 @@ public final class GeotkFX {
     /**
      * Load and initialize geotk bundle,css,loader for given object.
      * 
-     * @param candidate 
+     * @param candidate widget to load JRXML in
+     * @param cdtClass class as base for resource classloader
      */
     public static void loadJRXML(Parent candidate, Class cdtClass) {
         loadJRXML(candidate, cdtClass, true);
@@ -240,10 +272,10 @@ public final class GeotkFX {
      * Binding which checks if the given object is an instance of given class.
      * Binding value is null otherwise.
      *
-     * @param <T>
-     * @param value
-     * @param clazz
-     * @return
+     * @param <T> binding class
+     * @param value observed value
+     * @param clazz binding class
+     * @return binding object
      */
     public static <T> ObjectBinding<T> isInstance(ObservableValue<?> value, Class<T> clazz){
         return new IsInstanceBinding<>(value,clazz);

@@ -81,8 +81,8 @@ public class FXStyleTree {
      * Validate the editor for given path.
      * If edited object is a symbolizer this method will properly replace the symbolizer.
      *
-     * @param editor
-     * @param oldPath
+     * @param editor can be null
+     * @param oldPath original tree item
      */
     public static void applyTreeItemEditor(final FXStyleElementController editor, final TreeItem oldPath){
         if(editor == null) return;

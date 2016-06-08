@@ -53,7 +53,7 @@ import org.geotoolkit.internal.Loggers;
  * A custom component which contains a text field designed to contain a file path.
  * 
  * Note : Override {@link #chooseInputContent() } method, to allow user to choose a path
- * when he clicks on {@link #chooseFileButton}.
+ * when he clicks on {@link #choosePathButton}.
  * 
  * Note 2 : It's not its purpose, but you can also use distant URL as text field
  * content. No completion will be proposed, but you will be able to use system 
@@ -156,7 +156,7 @@ public abstract class AbstractPathTextField extends HBox {
      * 
      * @param inputText The current text value of {@link #inputText} control.
      * @return A valid URI which points on the location defined by input text.
-     * @throws Exception 
+     * @throws Exception malformatted URI
      */
     protected abstract URI getURIForText(final String inputText) throws Exception;
     

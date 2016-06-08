@@ -51,6 +51,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
     
     /**
      * show layer properties in contextTree.
+     * @param map source map
      */
     public LayerPropertiesItem(FXMap map){
         this(map,
@@ -62,6 +63,8 @@ public class LayerPropertiesItem extends TreeMenuItem{
 
     /**
      * show layer properties in contextTree.
+     * @param map source map
+     * @param panels dialog panels
      */
     public LayerPropertiesItem(FXMap map, FXPropertyPane ... panels){
         this.map = map;

@@ -106,7 +106,7 @@ public class FXToolBox extends BorderPane {
     /**
      * Create tool box with all map layers.
      *
-     * @param map
+     * @param map source map widget
      */
     public FXToolBox(final FXMap map) {
         this.map = map;
@@ -116,8 +116,8 @@ public class FXToolBox extends BorderPane {
     /**
      * Create toolbox for a single layer.
      * 
-     * @param map
-     * @param layer
+     * @param map source map widget
+     * @param layer edited layer
      */
     public FXToolBox(final FXMap map, final MapLayer layer) {
         this.map = map;
@@ -133,6 +133,7 @@ public class FXToolBox extends BorderPane {
 
     /**
      * Control visibility of commit/rollback buttons.
+     * @return commit rollback property
      */
     public BooleanProperty commitRollbackVisibleProperty(){
         return commitRollBackBar.visibleProperty();
@@ -207,7 +208,7 @@ public class FXToolBox extends BorderPane {
 
     /**
      * Live list of tools displayed.
-     * @return
+     * @return list of tools SPI
      */
     public ObservableList<EditionTool.Spi> getTools() {
         return tools;
@@ -215,7 +216,7 @@ public class FXToolBox extends BorderPane {
 
     /**
      * Number of tools on each row.
-     * @return
+     * @return number of tools per line property
      */
     public IntegerProperty getToolPerRow() {
         return toolPerRow;
