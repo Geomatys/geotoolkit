@@ -20,7 +20,10 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
@@ -31,6 +34,7 @@ import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Cached External graphic
@@ -91,14 +95,15 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             OnlineResource online = styleElement.getOnlineResource();
             if(online != null && online.getLinkage() != null){
 
-                final URI path = styleElement.getOnlineResource().getLinkage();
-                isSVG = path.toString().toLowerCase().endsWith(".svg");
+                final URI uri = styleElement.getOnlineResource().getLinkage();
+                isSVG = uri != null && uri.toString().toLowerCase().endsWith(".svg");
 
-                if (!isSVG && path != null) {
-                    try {
-                        cachedImage = ImageIO.read(path.toURL());
+                if (!isSVG) {
+                    final Path path = Paths.get(uri);
+                    try (InputStream in = IOUtilities.open(path)){
+                        cachedImage = ImageIO.read(in);
                     } catch (IOException ex) {
-                        LOGGER.log(Level.INFO, "CacheExternal, can read image for path : "+ path.toString()+" : "+ex.getMessage());
+                        LOGGER.log(Level.INFO, "CacheExternal, can read image for path : "+ uri.toString()+" : "+ex.getMessage());
                     }
                 }
             }

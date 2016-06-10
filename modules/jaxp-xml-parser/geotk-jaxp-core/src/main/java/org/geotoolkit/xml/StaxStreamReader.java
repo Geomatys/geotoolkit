@@ -45,6 +45,7 @@ import javax.xml.stream.util.StreamReaderDelegate;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stax.StAXSource;
+import org.geotoolkit.nio.IOUtilities;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -151,7 +152,7 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
             sourceStream = ((URL)input).openStream();
             input = sourceStream;
         }else if(input instanceof URI){
-            sourceStream = ((URI)input).toURL().openStream();
+            sourceStream = IOUtilities.open(input);
             input = sourceStream;
         }else if(input instanceof String){
             input = new StringReader((String) input);

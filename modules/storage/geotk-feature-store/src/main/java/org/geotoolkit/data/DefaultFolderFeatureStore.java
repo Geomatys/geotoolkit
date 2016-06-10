@@ -181,11 +181,8 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         }
 
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
-        try {
-            Parameters.getOrCreate(PATH, params).setValue(file.toUri().toURL());
-        } catch (MalformedURLException ex) {
-            getLogger().log(Level.FINE, ex.getLocalizedMessage(), ex);
-        }
+        Parameters.getOrCreate(PATH, params).setValue(file.toUri());
+        
         if (singleFileFactory.canProcess(params)) {
             try {
                 final FeatureStore fileDS = (FeatureStore) singleFileFactory.open(params);
