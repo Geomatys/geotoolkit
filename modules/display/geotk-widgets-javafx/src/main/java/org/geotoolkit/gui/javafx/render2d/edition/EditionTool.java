@@ -82,9 +82,9 @@ public interface EditionTool extends FXCanvasHandler {
         /**
          * Create a new instance of this tool.
          *
-         * @param map
-         * @param candidate
-         * @return EditionTool
+         * @param map source map
+         * @param candidate edited object
+         * @return EditionTool created tool
          */
         EditionTool create(FXMap map, Object candidate);
     }

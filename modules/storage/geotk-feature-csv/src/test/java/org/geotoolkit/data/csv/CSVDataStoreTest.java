@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -78,7 +78,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         File f = File.createTempFile("test", ".csv");
         f.deleteOnExit();
 
-        final FeatureStore ds = FeatureStoreFinder.open(
+        final FeatureStore ds = (FeatureStore) DataStores.open(
                 (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.PATH.getName().getCode(),
                 f.toURL()));
         assertNotNull(ds);

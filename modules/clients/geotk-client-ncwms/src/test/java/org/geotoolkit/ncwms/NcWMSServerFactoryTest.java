@@ -18,7 +18,7 @@ package org.geotoolkit.ncwms;
 
 import java.util.Iterator;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,8 +36,7 @@ public class NcWMSServerFactoryTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFactory() {
 
-        final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
-
+        final Iterator<ClientFactory> ite = DataStores.getAllFactories(ClientFactory.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof NcWMSClientFactory){

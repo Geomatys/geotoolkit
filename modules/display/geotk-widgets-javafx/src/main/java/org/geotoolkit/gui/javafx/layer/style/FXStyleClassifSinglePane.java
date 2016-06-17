@@ -34,7 +34,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -533,6 +532,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     
     /**
      * Derivate a symbolizer with a new color.
+     * @param symbol original symbolizer
+     * @param color new color
+     * @return derivate symbolizer
      */
     protected Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
@@ -567,11 +569,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     }
 
     /**
-     * Creae a rule for given property name and object value.
+     * Create a rule for given property name and object value.
      * 
-     * @param property
-     * @param obj
-     * @return
+     * @param property rule filter property
+     * @param obj rule filter property value
+     * @param idx color index
+     * @return rule created rule
      */
     protected MutableRule createRule(final PropertyName property, final Object obj, int idx){
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();

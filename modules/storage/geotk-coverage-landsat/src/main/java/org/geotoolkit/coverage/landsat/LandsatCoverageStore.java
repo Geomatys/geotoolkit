@@ -31,12 +31,12 @@ import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.utility.parameter.ParametersExt;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.storage.DataStores;
 
 /**
  * Store adapted to Landsat 8 comportement.
@@ -135,7 +135,7 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      */
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactoryById(LandsatStoreFactory.NAME);
+        return (CoverageStoreFactory) DataStores.getFactoryById(LandsatStoreFactory.NAME);
     }
 
     /**

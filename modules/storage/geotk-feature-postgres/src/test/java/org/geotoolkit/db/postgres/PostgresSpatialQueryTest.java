@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -44,6 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 
 /**
@@ -94,7 +94,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
 
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
+        store = (PostgresFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
@@ -105,7 +105,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
 
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
+        store = (PostgresFeatureStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

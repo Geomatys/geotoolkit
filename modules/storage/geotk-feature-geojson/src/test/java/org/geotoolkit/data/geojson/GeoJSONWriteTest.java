@@ -30,6 +30,7 @@ import java.util.*;
 
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -59,7 +60,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toUri());
 
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 
@@ -111,7 +112,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(geomsFile.toUri());
 
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 
@@ -209,7 +210,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(complexFile.toUri());
 
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
 

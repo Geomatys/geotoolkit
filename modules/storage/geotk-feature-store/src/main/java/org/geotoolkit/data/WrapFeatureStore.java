@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.geotoolkit.storage.DataStoreFactory;
 
 /**
  * Simple wrapper of a FeatureStore.
@@ -47,7 +48,7 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public FeatureStoreFactory getFactory() {
+    public DataStoreFactory getFactory() {
         return featureStore.getFactory();
     }
 

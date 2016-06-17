@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
 import org.geotoolkit.csw.v202.GetDomain202;
@@ -37,6 +36,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStores;
 
 
 /**
@@ -102,7 +102,7 @@ public class CatalogServicesClient extends AbstractClient {
 
     @Override
     public ClientFactory getFactory() {
-        return ClientFinder.getFactoryById(CSWClientFactory.NAME);
+        return (ClientFactory) DataStores.getFactoryById(CSWClientFactory.NAME);
     }
 
     private static CSWVersion toVersion(final String version){

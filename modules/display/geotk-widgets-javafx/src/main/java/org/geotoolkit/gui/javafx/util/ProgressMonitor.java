@@ -48,20 +48,16 @@ import org.geotoolkit.internal.GeotkFX;
  * 
  * The {@link ProgressMonitor} is skinnable using a css stylesheet and the specific
  * following css classes:
- * {@link ProgressMonitor.CURRENT_TASK_CSS_CLASS}
- * {@link ProgressMonitor.CURRENT_TASK_GRAPHIC_CSS_CLASS}
- * {@link ProgressMonitor.ERROR_TASK_CSS_CLASS}
- * {@link ProgressMonitor.ERROR_TASK_GRAPHIC_CSS_CLASS}
- * {@link ProgressMonitor.PROGRESS_MONITOR_CSS_CLASS}
- * {@link ProgressMonitor.CANCEL_BUTTON_CSS_CLASS}
- * {@link ProgressMonitor.TASK_PROGRESS_CSS_CLASS}
- * {@link ProgressMonitor.TASK_PROGRESS_GRAPHIC_CSS_CLASS}
- * {@link ProgressMonitor.MENU_ITEM_CSS_CLASS}
- * {@link ProgressMonitor.CLEAR_MENU_ITEM_CSS_CLASS}
- * 
- * 
- * {@link ProgressMonitor} labels can be parametrized using {@link ResourceBundle} 
- * properties defined by {@link ProgressMonitor.ResourceKey}.
+ * {@link ProgressMonitor#CURRENT_TASK_CSS_CLASS}
+ * {@link ProgressMonitor#CURRENT_TASK_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor#ERROR_TASK_CSS_CLASS}
+ * {@link ProgressMonitor#ERROR_TASK_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor#PROGRESS_MONITOR_CSS_CLASS}
+ * {@link ProgressMonitor#CANCEL_BUTTON_CSS_CLASS}
+ * {@link ProgressMonitor#TASK_PROGRESS_CSS_CLASS}
+ * {@link ProgressMonitor#TASK_PROGRESS_GRAPHIC_CSS_CLASS}
+ * {@link ProgressMonitor#MENU_ITEM_CSS_CLASS}
+ * {@link ProgressMonitor#CLEAR_MENU_ITEM_CSS_CLASS}
  * 
  * @author Alexis Manin (Geomatys)
  */

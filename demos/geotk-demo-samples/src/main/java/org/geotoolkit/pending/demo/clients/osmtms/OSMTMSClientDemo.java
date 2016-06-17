@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.clients.osmtms;
 import java.net.URL;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -17,6 +16,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -43,7 +43,7 @@ public class OSMTMSClientDemo {
         Parameters.getOrCreate(OSMTMSClientFactory.NIO_QUERIES, params).setValue(true);
         Parameters.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL, params).setValue(18);
 
-        final CoverageStore store = CoverageStoreFinder.open(params);
+        final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         for(GenericName n : store.getNames()){
             final CoverageReference cr = store.getCoverageReference(n);

@@ -33,8 +33,8 @@ import javafx.scene.layout.Border;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @param <S>
- * @param <T>
+ * @param <S> cell source value type
+ * @param <T> cell target value type
  */
 public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
     

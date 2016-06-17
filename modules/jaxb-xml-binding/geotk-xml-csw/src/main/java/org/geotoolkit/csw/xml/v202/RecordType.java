@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
@@ -156,7 +155,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         if (anyText == null) {
             anyText = new ArrayList<>();
         }
-        return Collections.unmodifiableList(anyText);
+        return anyText;
     }
 
     /**

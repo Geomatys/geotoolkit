@@ -82,6 +82,7 @@ import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 import org.w3c.dom.Document;
 
 
@@ -107,7 +108,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     private static final String GML = "http://www.opengis.net/gml";
     protected List<FeatureType> featureTypes;
-    private URL base = null;
+    private URI base = null;
     //benchmarked 07/04/2015 : reduce by 10% reading time
     private final Map<QName,GenericName> nameCache = new HashMap<QName,GenericName>(){
         @Override
@@ -177,29 +178,33 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
         super.setInput(input);
-        if(input instanceof URL){
-            base = (URL) input;
-        }else if(input instanceof URI){
-            base =((URI)input).toURL();
-        }else if(input instanceof Path){
-            base =((Path)input).toUri().toURL();
-        }else if(input instanceof File){
-            base = ((File)input).toURI().toURL();
-        }else{
+        if (input instanceof URL) {
+            try {
+                base = ((URL) input).toURI();
+            } catch (URISyntaxException ex) {
+               throw new IOException(ex);
+            }
+        } else if (input instanceof URI) {
+            base = (URI) input;
+        } else if (input instanceof Path) {
+            base = ((Path) input).toUri();
+        } else if (input instanceof File) {
+            base = ((File) input).toURI();
+        } else {
             base = null;
         }
 
-        if(unmarshaller==null){
+        if (unmarshaller == null) {
             try {
                 unmarshaller = getPool().acquireUnmarshaller();
                 unmarshaller.setEventHandler(JAXBLOGGER);
             } catch (JAXBException ex) {
-                throw new IOException(ex.getMessage(),ex);
+                throw new IOException(ex.getMessage(), ex);
             }
         }
     }
 
-    public Object getInput(){
+    public URI getInput(){
         return base;
     }
 
@@ -271,8 +276,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final String fturl = urls[i + 1];
                     schemaLocations.put(namespace, fturl);
                     try {
-                        final URL url = Utils.resolveURL(base, fturl);
-                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
+                        final URI uri = Utils.resolveURI(base, fturl);
+                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(IOUtilities.open(uri));
                         for (FeatureType ft : fts) {
                             if (!featureTypes.contains(ft)) {
                                 featureTypes.add(ft);

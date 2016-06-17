@@ -31,7 +31,6 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
@@ -64,6 +63,7 @@ import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.*;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.storage.DataStores;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.identification.Identification;
@@ -245,7 +245,7 @@ public class WebProcessingClient extends AbstractClient implements ProcessingReg
 
     @Override
     public ClientFactory getFactory() {
-        return ClientFinder.getFactoryById(WPSClientFactory.NAME);
+        return (ClientFactory) DataStores.getFactoryById(WPSClientFactory.NAME);
     }
 
     /**

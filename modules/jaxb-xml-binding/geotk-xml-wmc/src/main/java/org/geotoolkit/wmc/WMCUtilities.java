@@ -28,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
@@ -60,6 +59,9 @@ import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -160,13 +162,13 @@ public class WMCUtilities {
 
             //build server from parameters.
             final ServerType serverType = layerType.getServer();
-            final Client server;
+            final DataStore server;
             final String serviceId = getServiceId(serverType.getService().value());
             final GenericName layerName = NamesExt.valueOf(layerType.getName());
             try {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
-                final ClientFactory factory = ClientFinder.getFactoryById(serviceId);
+                final DataStoreFactory factory = DataStores.getFactoryById(serviceId);
                 final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
                 parameters.put("identifier", serviceId);
                 parameters.put("version", serverType.getVersion());

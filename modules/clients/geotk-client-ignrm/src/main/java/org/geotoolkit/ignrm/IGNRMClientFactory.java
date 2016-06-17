@@ -19,7 +19,6 @@ package org.geotoolkit.ignrm;
 import java.net.URL;
 import java.util.Collections;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -27,6 +26,9 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -80,8 +82,13 @@ public class IGNRMClientFactory extends AbstractClientFactory{
     }
 
     @Override
-    public Client open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.OTHER, false, false, false);
+    }
+
+    @Override
+    public IGNRMClient open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         ClientSecurity security = null;
         try{

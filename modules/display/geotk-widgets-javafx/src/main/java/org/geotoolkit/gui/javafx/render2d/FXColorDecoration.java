@@ -25,7 +25,6 @@ import javafx.scene.layout.Pane;
  * Color Decoration
  * 
  * @author Johann Sorel
- * @module pending
  */
 public class FXColorDecoration extends Pane implements FXMapDecoration{
 

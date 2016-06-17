@@ -83,14 +83,14 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
 
     static DataSource getDataSource(Path directory) {
 
-        final String dbUrl = "jdbc:derby:" + directory.toString()+ "/treemap-db;";
+        final String dbUrl = "jdbc:derby:" + directory.toAbsolutePath().toString()+ "/treemap-db;";
         LOGGER.log(Level.INFO, "connecting to datasource {0}", dbUrl);
         return new DefaultDataSource(dbUrl);
 
     }
 
     public static TreeElementMapper createTreeEltMapperWithDB(Path directory) throws SQLException, IOException {
-        final String dbUrl = "jdbc:derby:" + directory.toString() + "/treemap-db;create=true;";
+        final String dbUrl = "jdbc:derby:" + directory.toAbsolutePath().toString() + "/treemap-db;create=true;";
         LOGGER.log(Level.INFO, "creating datasource {0}", dbUrl);
         final DataSource source = new DefaultDataSource(dbUrl);
         // Establish connection and create schema if does not exist.

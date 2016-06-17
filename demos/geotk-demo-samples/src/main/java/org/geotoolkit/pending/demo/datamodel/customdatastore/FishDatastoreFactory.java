@@ -59,13 +59,13 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     }
 
     @Override
-    public FeatureStore open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public FishFeatureStore open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new FishFeatureStore(params);
     }
 
     @Override
-    public FeatureStore create(ParameterValueGroup params) throws DataStoreException {
+    public FishFeatureStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

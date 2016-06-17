@@ -192,8 +192,8 @@ public class SMLFeatureStoreFactory extends AbstractFeatureStoreFactory {
     }
 
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public SMLFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();
@@ -228,7 +228,7 @@ public class SMLFeatureStoreFactory extends AbstractFeatureStoreFactory {
     }
 
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public SMLFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

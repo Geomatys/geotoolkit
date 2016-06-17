@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.gml;
 
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -34,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -72,7 +72,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      */
     @Override
     public FileFeatureStoreFactory getSingleFileFactory() {
-        return FeatureStoreFinder.getAllFactories(GMLFeatureStoreFactory.class).iterator().next();
+        return DataStores.getAllFactories(GMLFeatureStoreFactory.class).iterator().next();
     }
 
     /**

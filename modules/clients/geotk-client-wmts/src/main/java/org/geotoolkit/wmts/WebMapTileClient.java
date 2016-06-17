@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
@@ -34,7 +33,9 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
@@ -52,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileClient extends AbstractCoverageClient {
+public class WebMapTileClient extends AbstractCoverageClient implements Client{
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
@@ -149,7 +150,7 @@ public class WebMapTileClient extends AbstractCoverageClient {
 
     @Override
     public WMTSClientFactory getFactory() {
-        return (WMTSClientFactory)ClientFinder.getFactoryById(WMTSClientFactory.NAME);
+        return (WMTSClientFactory)DataStores.getFactoryById(WMTSClientFactory.NAME);
     }
 
     /**

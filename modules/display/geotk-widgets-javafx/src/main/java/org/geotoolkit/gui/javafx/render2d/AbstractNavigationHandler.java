@@ -52,6 +52,8 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
     /**
      * Make a zoom on the map at the given point
+     * @param center zoom center
+     * @param zoom zoom scale factor
      */
     protected void scale(final Point2D center, final double zoom){
         try {
@@ -63,6 +65,10 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
     /**
      * Zoom on the given rectangle coordinates.
+     * @param startx top left bbox zoom corner
+     * @param starty top left bbox zoom corner
+     * @param endx lower right bbox zoom corner
+     * @param endy lower right bbox zoom corner
      */
     protected void zoom(double startx, double starty, double endx, double endy){
 
@@ -83,6 +89,12 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
     /**
      * Draw a rectangle on the ZoomPan decoration.
+     * @param startX rectangle top left corner
+     * @param startY rectangle top left corner
+     * @param lastX rectangle lower right corner
+     * @param lastY rectangle lower right corner
+     * @param view visible
+     * @param fill fill rectangle
      */
     protected void drawRectangle(final double startX, final double startY,
                                  final double lastX, final double lastY,
@@ -93,6 +105,10 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
     /**
      * Drag the map from coordinate 1 to coordinate 2.
+     * @param x1 start drag position
+     * @param y1 start drag position
+     * @param x2 end drag position
+     * @param y2 end drag position
      */
     protected void processDrag(final double x1, final double y1, final double x2, final double y2) {
         try {

@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -93,8 +92,13 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     }
 
     @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
+    }
+
+    @Override
     public NcWebMapClient open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+        ensureCanProcess(params);
         return new NcWebMapClient(params);
     }
 
@@ -104,18 +108,13 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     }
 
     @Override
-    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public NcWebMapClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public NcWebMapClient create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
-    }
-
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 
 }

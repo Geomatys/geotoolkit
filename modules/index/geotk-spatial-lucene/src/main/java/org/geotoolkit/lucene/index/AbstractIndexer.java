@@ -47,7 +47,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
-import org.geotoolkit.lucene.IndexingException;
+import org.geotoolkit.index.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 

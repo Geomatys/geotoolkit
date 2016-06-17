@@ -3,8 +3,8 @@ package org.geotoolkit.pending.demo.coverage;
 
 import java.util.Iterator;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new coveragestores are made through the CoverageStoreFinder utility class        
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
+        final Iterator<CoverageStoreFactory> ite = DataStores.getAllFactories(CoverageStoreFactory.class).iterator();
         
         while(ite.hasNext()){
             

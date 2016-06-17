@@ -18,12 +18,14 @@ package org.geotoolkit.wcs;
 
 import java.util.Collections;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -87,8 +89,13 @@ public class WCSClientFactory extends AbstractClientFactory{
     }
 
     @Override
-    public Client open(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.COVERAGE, true, false, false);
+    }
+
+    @Override
+    public WebCoverageClient open(ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new WebCoverageClient(params);
     }
 

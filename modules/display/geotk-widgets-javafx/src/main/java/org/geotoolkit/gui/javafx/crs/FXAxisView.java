@@ -27,7 +27,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
 import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
-import org.apache.sis.measure.Range;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.temporal.object.TemporalConstants;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -134,7 +133,7 @@ public class FXAxisView extends Control {
 
     /**
      * 
-     * @param tr 
+     * @param tr amount to add to translation
      */
     public void translate(final double tr) {
         offset.set(offset.get()+tr);

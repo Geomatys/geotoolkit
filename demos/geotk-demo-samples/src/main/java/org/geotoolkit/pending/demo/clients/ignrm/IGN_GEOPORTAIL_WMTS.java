@@ -3,7 +3,6 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
 import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -14,6 +13,7 @@ import org.geotoolkit.security.BasicAuthenticationSecurity;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.opengis.util.GenericName;
@@ -37,7 +37,7 @@ public class IGN_GEOPORTAIL_WMTS {
         Parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE, params).setValue(true);
         Parameters.getOrCreate(WMTSClientFactory.NIO_QUERIES, params).setValue(true);
 
-        final WebMapTileClient store = (WebMapTileClient) CoverageStoreFinder.open(params);
+        final WebMapTileClient store = (WebMapTileClient) DataStores.open(params);
 
 
         final MapContext context = MapBuilder.createContext();

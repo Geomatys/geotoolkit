@@ -30,7 +30,6 @@ import javafx.scene.shape.Rectangle;
  * TODO : use buffer
  * 
  * @author Johann Sorel
- * @module pending
  */
 public class FXZoomDecoration extends Pane implements FXMapDecoration{
 

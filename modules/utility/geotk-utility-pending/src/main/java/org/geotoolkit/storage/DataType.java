@@ -11,30 +11,46 @@ public enum DataType {
     /**
      * A discrete coverage made of quadrilateral cells.
      */
-    GRID,
+    GRID(true),
 
     /**
      * A {@linkplain #GRID} coverage where cells are regrouped in tiles, and different set of tiles are pre-computed for different resolutions.
      */
-    PYRAMID,
+    PYRAMID(true),
 
     /**
      * Other coverage not define
      */
-    COVERAGE,
+    COVERAGE(true),
 
     /**
      * {@link org.opengis.feature.Feature} data.
      */
-    VECTOR,
+    VECTOR(false),
 
     /**
      * Observation data retrieved from sensors.
      */
-    SENSOR,
+    SENSOR(false),
 
     /**
      * Descriptive information.
      */
-    METADATA
+    METADATA(false),
+
+    /**
+     * Unspecified type.
+     */
+    OTHER(false);
+
+    private final boolean coverageType;
+
+    private DataType(boolean coverageType) {
+        this.coverageType = coverageType;
+    }
+
+    public boolean isCoverageType() {
+        return coverageType;
+    }
+
 }

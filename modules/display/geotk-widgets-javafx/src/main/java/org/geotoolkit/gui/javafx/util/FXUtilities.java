@@ -68,8 +68,8 @@ public final class FXUtilities {
 
     
     public static final PaletteFactory PF = PaletteFactory.getDefault();
-    public static final List<Object> PALETTES = new ArrayList<Object>();
-    public static final List<Object> PALETTES_NAMED = new ArrayList<Object>();
+    public static final List<Object> PALETTES = new ArrayList<>();
+    public static final List<Object> PALETTES_NAMED = new ArrayList<>();
 
     static{
         PALETTES.add(new DefaultRandomPalette());
@@ -133,17 +133,6 @@ public final class FXUtilities {
             throw new IllegalArgumentException(ex.getMessage(),ex);
         }
     }
-        
-//    public ObservableValue create(){
-//        return new ObservableValueBase() {
-//
-//            @Override
-//            public Object getValue() {
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//        };
-//    }
-    
     
     /**
      * Recursive loop on node and it's children, calling the consumer for each node.
@@ -179,7 +168,7 @@ public final class FXUtilities {
         
     /**
      * Expand all nodes from root to given node
-     * @param candidate 
+     * @param candidate node to expand including all it's parents
      */
     public static void expandRootToItem(TreeItem candidate) {
         if (candidate != null) {
@@ -192,7 +181,7 @@ public final class FXUtilities {
     
     /**
      * Expand all nodes child node recursively
-     * @param candidate 
+     * @param candidate candidate node to expand including all it's children
      */
     public static void expandAll(TreeItem candidate) {
         if (candidate != null) {
@@ -254,7 +243,7 @@ public final class FXUtilities {
     /**
      * Hide table or treetable header.
      * 
-     * @param view 
+     * @param view Table or TreeTable view
      */
     public static void hideTableHeader(final Control view){
         if( !(view instanceof TreeTableView || view instanceof TableView)){
@@ -282,10 +271,10 @@ public final class FXUtilities {
      *
      * Something wrong in javafx treetableview selection.
      * When removing a treetiem which was selection, the previous node gets
-     * selected but is not hilghted, we can't unselected it.
+     * selected but is not highlighted, we can't unselected it.
      *
-     * @param tree 
-     * @return List<TreeItem>
+     * @param tree treetable view
+     * @return List of TreeItem
      */
     public static List<TreeItem> getSelectionItems(TreeTableView tree){
         final List<TreeItem> selection = new ArrayList<>();
@@ -302,8 +291,8 @@ public final class FXUtilities {
      * view content are concatenated.
      * Unlike FXCollections.concat this list is not editable but has events.
      *
-     * @param listes
-     * @return
+     * @param listes lists to sequence
+     * @return sequenced list of all given lists
      */
     public static ObservableList view(ObservableList ... listes){
         return new ViewList(listes);

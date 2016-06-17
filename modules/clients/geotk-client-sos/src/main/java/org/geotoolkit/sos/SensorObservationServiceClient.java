@@ -19,11 +19,11 @@ package org.geotoolkit.sos;
 import java.net.URL;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -61,7 +61,7 @@ public class SensorObservationServiceClient extends AbstractClient {
 
     @Override
     public ClientFactory getFactory() {
-        return ClientFinder.getFactoryById(SOSClientFactory.NAME);
+        return (ClientFactory) DataStores.getFactoryById(SOSClientFactory.NAME);
     }
 
     /**

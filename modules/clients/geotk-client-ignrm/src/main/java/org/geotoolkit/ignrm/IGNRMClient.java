@@ -23,10 +23,10 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.ignrm.parser.TokenParser;
 import org.geotoolkit.ignrm.parser.TokenInformationParser;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -51,7 +51,7 @@ public class IGNRMClient extends AbstractClient {
 
     @Override
     public ClientFactory getFactory() {
-        return ClientFinder.getFactoryById(IGNRMClientFactory.NAME);
+        return (ClientFactory) DataStores.getFactoryById(IGNRMClientFactory.NAME);
     }
     
     public GetTokenRequest createGetToken(){

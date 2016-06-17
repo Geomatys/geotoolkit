@@ -33,7 +33,7 @@ import org.geotoolkit.storage.StorageListener;
 
 /**
  * Action to rollback a feature maplayer session.
- * <br/>
+ * <br>
  * The action is diabled when there are no changes in the session.
  *
  * @author Johann Sorel (Geomatys)

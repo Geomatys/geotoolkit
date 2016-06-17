@@ -30,7 +30,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -39,6 +38,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
+import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -70,7 +70,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiEditor.setHelpVisible(false);
 
         final List<CoverageStoreFactory> factories = new ArrayList<>(
-                CoverageStoreFinder.getAvailableFactories(null));
+                DataStores.getAvailableFactories(CoverageStoreFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -107,9 +107,9 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
         final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
         if(guiCreateNew.isSelected()){
-            return factory.create(param);
+            return (CoverageStore) factory.create(param);
         }else{
-            return factory.open(param);
+            return (CoverageStore) factory.open(param);
         }
     }
 

@@ -21,7 +21,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -114,8 +113,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public GeoJSONFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new GeoJSONFeatureStore(params);
     }
 
@@ -123,7 +122,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public GeoJSONFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
     

@@ -39,7 +39,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
@@ -75,6 +74,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -213,7 +213,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(WFSFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(WFSFeatureStoreFactory.NAME);
     }
 
     @Override

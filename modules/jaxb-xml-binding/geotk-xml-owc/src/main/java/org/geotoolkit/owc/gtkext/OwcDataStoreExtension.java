@@ -20,16 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
@@ -42,6 +39,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.xml.OwcExtension;
 import org.geotoolkit.owc.xml.v10.OfferingType;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
@@ -107,22 +106,19 @@ public class OwcDataStoreExtension extends OwcExtension {
             }
         }
         
-        //search feature store factories
-        final FeatureStoreFactory ff = FeatureStoreFinder.getFactoryById(factoryName);
+        final DataStoreFactory ff = DataStores.getFactoryById(factoryName);
         if(ff!=null){
-            final FeatureStore store = ff.open(params);
-            final Session session = store.createSession(true);
-            final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
-            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
-            return layer;
-        }
-        //search coverage store factories
-        final CoverageStoreFactory cf = CoverageStoreFinder.getFactoryById(factoryName);
-        if(cf!=null){
-            final CoverageStore store = cf.open(params);
-            final CoverageReference covref = store.getCoverageReference(NamesExt.valueOf(typeName));
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
-            return layer;
+            final DataStore store = ff.open(params);
+            if(store instanceof FeatureStore){
+                final Session session = ((FeatureStore)store).createSession(true);
+                final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
+                final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
+                return layer;
+            }else if(store instanceof CoverageStore){
+                final CoverageReference covref = ((CoverageStore)store).getCoverageReference(NamesExt.valueOf(typeName));
+                final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
+                return layer;
+            }
         }
         
         //unknown factory, may no be in the classpath
@@ -173,7 +169,7 @@ public class OwcDataStoreExtension extends OwcExtension {
                 if(session!=null){
                     final FeatureStore store = session.getFeatureStore();
                     if(store!=null){
-                        final FeatureStoreFactory factory = store.getFactory();
+                        final DataStoreFactory factory = store.getFactory();
                         final InternationalString id = factory.getIdentification().getCitation().getTitle();
                         return id.toString();
                     }
@@ -184,7 +180,7 @@ public class OwcDataStoreExtension extends OwcExtension {
             final CoverageReference covref = cml.getCoverageReference();
             final CoverageStore store = covref.getStore();
             if(store!=null){
-                final CoverageStoreFactory factory = store.getFactory();
+                final DataStoreFactory factory = store.getFactory();
                 final InternationalString id = factory.getIdentification().getCitation().getTitle();
                 return id.toString();
             }

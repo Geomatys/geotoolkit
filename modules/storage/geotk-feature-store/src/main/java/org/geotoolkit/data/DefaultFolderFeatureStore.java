@@ -181,14 +181,11 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         }
 
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
-        try {
-            Parameters.getOrCreate(PATH, params).setValue(file.toUri().toURL());
-        } catch (MalformedURLException ex) {
-            getLogger().log(Level.FINE, ex.getLocalizedMessage(), ex);
-        }
+        Parameters.getOrCreate(PATH, params).setValue(file.toUri());
+        
         if (singleFileFactory.canProcess(params)) {
             try {
-                final FeatureStore fileDS = singleFileFactory.open(params);
+                final FeatureStore fileDS = (FeatureStore) singleFileFactory.open(params);
                 fileDS.addStorageListener(subListener);
                 stores.put(fileDS.getNames().iterator().next(), fileDS);
             } catch (DataStoreException ex) {
@@ -225,7 +222,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
             throw new DataStoreException(ex);
         }
 
-        final FeatureStore store = singleFileFactory.create(params);
+        final FeatureStore store = (FeatureStore) singleFileFactory.create(params);
         store.addStorageListener(subListener);
         store.createFeatureType(typeName, featureType);
         stores.put(typeName, store);

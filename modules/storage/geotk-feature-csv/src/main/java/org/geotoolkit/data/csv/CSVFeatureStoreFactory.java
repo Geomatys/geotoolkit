@@ -95,13 +95,13 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
 
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public CSVFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new CSVFeatureStore(params);
     }
 
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public CSVFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

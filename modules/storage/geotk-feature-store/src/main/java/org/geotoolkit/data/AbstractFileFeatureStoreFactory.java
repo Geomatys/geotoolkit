@@ -86,9 +86,9 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
         FeatureStore result;
         final  Map params = Collections.singletonMap(PATH.getName().toString(), uri);
         try {
-            result = open(params);
+            result = (FeatureStore) open(params);
         } catch (DataStoreException e) {
-            result = create(params);
+            result = (FeatureStore) create(params);
         }
         return result;
     }

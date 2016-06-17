@@ -3,7 +3,6 @@ package org.geotoolkit.pending.demo.datamodel.mapinfo;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -21,6 +20,7 @@ import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.storage.DataStores;
 
 /**
  * A simple example for MIF/MID feature store.
@@ -62,7 +62,7 @@ public class MifDemo {
             Parameters.getOrCreate(MIFFeatureStoreFactory.PATH, parameters).setValue(dataLocation.toURI());
 
             // Initialize the store, and create a session to browse it's data.
-            final FeatureStore store1 = FeatureStoreFinder.open(parameters);
+            final FeatureStore store1 = (FeatureStore) DataStores.open(parameters);
             Session session = store1.createSession(false);
 
             // Create a mif featureStore for writing operation.

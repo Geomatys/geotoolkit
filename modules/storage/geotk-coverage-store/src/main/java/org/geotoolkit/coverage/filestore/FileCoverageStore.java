@@ -35,7 +35,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
@@ -45,6 +44,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -117,7 +117,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactoryById(FileCoverageStoreFactory.NAME);
+        return (CoverageStoreFactory) DataStores.getFactoryById(FileCoverageStoreFactory.NAME);
     }
 
     @Override

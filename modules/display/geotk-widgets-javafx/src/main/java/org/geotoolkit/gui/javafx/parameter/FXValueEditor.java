@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterDescriptor;
  * of a given type. 
  * 
  * By setting a {@link ParameterDescriptor} or an {@link AttributeType} marked as 
- * compatible by {@link #canHandle(org.opengis.feature.AttributeType) } methods, 
+ * compatible by {@link #getValueClass() } methods,
  * the editor will adapt itself to provide a {@link #valueProperty() } compatible 
  * with the class given by input descriptor/type.
  * 
@@ -102,6 +102,8 @@ public abstract class FXValueEditor {
     /**
      * Search for a 'In' restriction filter.
      * return list of possible values if restriction exist. null otherwise
+     * @param at attribute
+     * @return list of restricted values, or null if none
      */
     protected static List<Object> extractChoices(AttributeType at) {
         if(!(at instanceof org.geotoolkit.feature.type.PropertyType)) return null;

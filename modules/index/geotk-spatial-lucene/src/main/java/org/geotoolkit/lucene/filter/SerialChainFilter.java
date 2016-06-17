@@ -17,11 +17,6 @@
  */
 package org.geotoolkit.lucene.filter;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import java.util.List;
-import java.util.Objects;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.DocIdSet;
@@ -30,7 +25,15 @@ import org.apache.lucene.util.BitDocIdSet;
 import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.FixedBitSet;
+import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.Tree;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static org.geotoolkit.index.LogicalFilterType.*;
 
 /**
  * 
@@ -56,20 +59,14 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
 
     private final List<Filter> chain;
     
-    public static final int AND     = 1;	     
-    public static final int OR      = 2;   
-    public static final int NOT     = 3;
-    public static final int XOR     = 4;
-    public static final int DEFAULT = OR;
-	
-    private final int[] actionType;
+    private LogicalFilterType[] actionType;
 
     public SerialChainFilter(final List<Filter> chain) {
         this.chain      = chain;
-        this.actionType = new int[]{DEFAULT};
+        this.actionType = new LogicalFilterType[]{DEFAULT};
     }
 
-    public SerialChainFilter(final List<Filter> chain, final int[] actionType) {
+    public SerialChainFilter(final List<Filter> chain, final LogicalFilterType[] actionType) {
         this.chain      = chain;
         this.actionType = actionType.clone();
     }
@@ -94,7 +91,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
 
         for (int i = 1; i < chainSize; i++) {
 
-            int action;
+            LogicalFilterType action;
             if (j < actionSize) {
                 action = actionType[j];
                 j++;
@@ -153,7 +150,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
     /**
      * @return the actionType
      */
-    public int[] getActionType() {
+    public LogicalFilterType[] getActionType() {
         return actionType.clone();
     }
 
@@ -164,7 +161,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      * 
      * @return an int flag.
      */
-    public static int valueOf(final String filterName) {
+    public static LogicalFilterType valueOf(final String filterName) {
 
         if (filterName.equals("And")) {
             return AND;
@@ -186,7 +183,7 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
      * 
      * @return A filter name : And, Or, Xor or Not. 
      */
-    public static String valueOf(final int flag) {
+    public static String valueOf(final LogicalFilterType flag) {
         switch (flag) {
             case AND:
                 return "AND";
@@ -221,11 +218,11 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
         if (this == o) {
             return true;
         }
-        
+
         if (o instanceof SerialChainFilter) {
             final SerialChainFilter other = (SerialChainFilter) o;
 
-            if (this.chain.size() != other.getChain().size() || 
+            if (this.chain.size() != other.getChain().size() ||
                 this.actionType.length != other.getActionType().length) {
                 return false;
             }
@@ -252,8 +249,6 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
         hash = 37 * hash + Arrays.hashCode(this.actionType);
         return hash;
     }
-    
-    
     
     @Override
     public String toString(String s) {

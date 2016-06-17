@@ -17,8 +17,8 @@
 package org.geotoolkit.osmtms;
 
 import java.util.Iterator;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,9 +36,7 @@ public class OSMTMSCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase
     @Test
     public void testFactory() {
 
-
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
-
+        final Iterator<CoverageStoreFactory> ite = DataStores.getAllFactories(CoverageStoreFactory.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
             if(ite.next() instanceof OSMTMSClientFactory){

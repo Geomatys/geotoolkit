@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.geotoolkit.storage.DataStores;
 
 /**
  * A featureStore for MapInfo exchange format MIF-MID.
@@ -99,7 +100,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(MIFFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(MIFFeatureStoreFactory.NAME);
     }
 
     /**
