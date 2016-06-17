@@ -5,17 +5,22 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.apache.sis.internal.system.OS;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Quentin Boileau (Geomatys)
  */
 public class PosixDirectoryFilterTest {
+
+    private final boolean isCaseSensitive;
+
+    public PosixDirectoryFilterTest() {
+        isCaseSensitive = OS.current() == OS.LINUX;
+    }
 
     @Test
     public void testFilter() throws IOException {
@@ -36,9 +41,9 @@ public class PosixDirectoryFilterTest {
                     foundFileName.add(path.getFileName().toString());
                 }
             }
-            assertEquals(3, foundFileName.size());
+            assertEquals(isCaseSensitive ? 3 : 2, foundFileName.size());
+            assertEquals(isCaseSensitive, foundFileName.contains("image.PNG"));
             assertTrue(foundFileName.contains("image.jpg"));
-            assertTrue(foundFileName.contains("image.PNG"));
             assertTrue(foundFileName.contains("image.png"));
         } finally {
             IOUtilities.deleteRecursively(rootDir);
@@ -58,8 +63,8 @@ public class PosixDirectoryFilterTest {
                     foundFileName.add(path.getFileName().toString());
                 }
             }
-            assertEquals(2, foundFileName.size());
-            assertTrue(foundFileName.contains("image.PNG"));
+            assertEquals(isCaseSensitive ? 2 : 1, foundFileName.size());
+            assertEquals(isCaseSensitive, foundFileName.contains("image.PNG"));
             assertTrue(foundFileName.contains("image.png"));
 
             foundFileName.clear();
@@ -78,7 +83,9 @@ public class PosixDirectoryFilterTest {
 
     private void fillDirectory(Path rootDir) throws IOException {
         Files.createFile(rootDir.resolve("image.png"));
-        Files.createFile(rootDir.resolve("image.PNG"));
+        if (isCaseSensitive) {
+            Files.createFile(rootDir.resolve("image.PNG"));
+        }
         Files.createFile(rootDir.resolve("image.jpg"));
         Files.createFile(rootDir.resolve("md.txt"));
         Files.createFile(rootDir.resolve("MD.xml"));
