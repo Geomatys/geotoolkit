@@ -3,8 +3,8 @@ package org.geotoolkit.pending.demo.clients;
 
 import java.util.Iterator;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new servers are made through the serverFinder utility class        
-        final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
+        final Iterator<ClientFactory> ite = DataStores.getAllFactories(ClientFactory.class).iterator();
         
         while(ite.hasNext()){
             

@@ -19,7 +19,6 @@ package org.geotoolkit.data.dbf;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -97,8 +96,8 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      * {@inheritDoc}
      */
     @Override
-    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
+    public DbaseFileFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
         return new DbaseFileFeatureStore(params);
     }
 
@@ -106,7 +105,7 @@ public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      * {@inheritDoc}
      */
     @Override
-    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+    public DbaseFileFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

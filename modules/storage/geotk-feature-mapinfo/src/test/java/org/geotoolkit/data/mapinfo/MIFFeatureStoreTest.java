@@ -29,7 +29,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureWriter;
@@ -46,6 +45,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -90,12 +90,12 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
         final GeometryFactory GF = new GeometryFactory();
         final File f = File.createTempFile("test", ".mif", tempDir);
 
-        final FeatureStoreFactory ff = FeatureStoreFinder.getFactoryById("MIF-MID");
+        final FeatureStoreFactory ff = (FeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
         final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, MIFFeatureStoreFactory.PATH.getName().getCode()).setValue(f.toURI());
         
         //create new store from scratch
-        final FeatureStore ds = ff.create(params);
+        final FeatureStore ds = (FeatureStore) ff.create(params);
         assertNotNull(ds);
 
         //create a feature type

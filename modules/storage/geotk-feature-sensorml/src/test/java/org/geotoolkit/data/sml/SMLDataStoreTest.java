@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -41,6 +40,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -113,7 +113,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             params.put("dbtype", "SML");
             params.put(SMLFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(SMLFeatureStoreFactory.DERBYURL.getName().toString(), url);
-            store = FeatureStoreFinder.open(params);
+            store = (FeatureStore) DataStores.open(params);
 
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();

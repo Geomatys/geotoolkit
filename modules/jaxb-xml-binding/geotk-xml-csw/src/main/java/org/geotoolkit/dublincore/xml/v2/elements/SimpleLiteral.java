@@ -87,7 +87,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
      */
     public SimpleLiteral(final String scheme, final String content) {
         this.scheme  = scheme;
-        this.content = new ArrayList<String>();
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
     
@@ -106,14 +106,13 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
      * The scheme attribute may be used as a qualifier to reference an encoding scheme that describes the value domain for a given property.
      * Gets the value of the content property.
      * 
-     * (unmodifiable) 
      */
     @Override
     public List<String> getContent() {
         if (content == null) {
-            content = new ArrayList<String>();
+            content = new ArrayList<>();
         }
-        return Collections.unmodifiableList(content);
+        return content;
     }
     
     @Override
@@ -130,7 +129,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     
     public void setContent(final String content) {
         if (this.content == null) {
-            this.content = new ArrayList<String>();
+            this.content = new ArrayList<>();
         }
         this.content.add(content);
     }

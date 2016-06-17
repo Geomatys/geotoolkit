@@ -55,6 +55,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -124,7 +125,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(GeoJSONFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(GeoJSONFeatureStoreFactory.NAME);
     }
 
     @Override

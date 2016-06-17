@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.query.DefaultJoin;
@@ -47,6 +46,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataStores;
 
 /**
  *
@@ -78,7 +78,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
     }
 
     private void process() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
-        final FeatureStore store = FeatureStoreFinder.open(dbParameters);
+        final FeatureStore store = (FeatureStore) DataStores.open(dbParameters);
         final Session session = store.createSession(false);
 
         processLanduse(store, session);

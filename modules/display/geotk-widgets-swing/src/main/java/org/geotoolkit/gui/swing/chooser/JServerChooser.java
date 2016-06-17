@@ -28,7 +28,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -41,6 +40,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
+import org.geotoolkit.storage.DataStores;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -71,7 +71,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<ClientFactory> factories = new ArrayList<>(ClientFinder.getAvailableFactories(null));
+        final List<ClientFactory> factories = new ArrayList<>(DataStores.getAvailableFactories(ClientFactory.class));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -107,7 +107,7 @@ public class JServerChooser extends javax.swing.JPanel {
         }
 
         final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
-        return factory.open(param);
+        return (Client) factory.open(param);
     }
 
     public List<MapLayer> getSelectedLayers() throws DataStoreException{

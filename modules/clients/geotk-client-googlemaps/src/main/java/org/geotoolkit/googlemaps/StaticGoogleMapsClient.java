@@ -21,14 +21,15 @@ import java.net.URL;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleMapsClient extends AbstractCoverageClient {
+public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client {
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
 
@@ -101,7 +102,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient {
 
     @Override
     public StaticGoogleClientFactory getFactory() {
-        return (StaticGoogleClientFactory) ClientFinder.getFactoryById(StaticGoogleClientFactory.NAME);
+        return (StaticGoogleClientFactory) DataStores.getFactoryById(StaticGoogleClientFactory.NAME);
     }
 
     @Override

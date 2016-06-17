@@ -19,26 +19,36 @@ package org.geotoolkit.observation;
 
 import java.util.List;
 import java.util.Set;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
-import org.opengis.util.GenericName;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class ObservationStore extends DataStore {
+public interface ObservationStore {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
      *
      * @return source configuration parameters
      */
-    public abstract ParameterValueGroup getConfiguration();
+    ParameterValueGroup getConfiguration();
+
+    /**
+     * Get the factory which created this source.
+     *
+     * @return this source original factory
+     */
+    DataStoreFactory getFactory();
+
+    Metadata getMetadata() throws DataStoreException;
 
     public abstract Set<GenericName> getProcedureNames();
 
@@ -82,4 +92,7 @@ public abstract class ObservationStore extends DataStore {
      * @return An Observation Writer.
      */
     public abstract ObservationFilter cloneObservationFilter(ObservationFilter toClone);
+
+    void close() throws DataStoreException;
+    
 }

@@ -59,6 +59,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStore;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
@@ -77,7 +78,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureStore extends FeatureStore {
+public abstract class AbstractFeatureStore extends DataStore implements FeatureStore {
 
     /**
      * Static variables refering to GML model.

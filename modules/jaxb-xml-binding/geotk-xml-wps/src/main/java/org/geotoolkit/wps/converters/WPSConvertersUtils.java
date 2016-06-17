@@ -61,7 +61,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
@@ -85,6 +84,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.storage.DataStores;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
@@ -866,7 +866,7 @@ public class WPSConvertersUtils {
     public static final Feature readFeatureFromJson(final URI uri) throws DataStoreException, URISyntaxException, IOException {
         ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(uri));
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
 
         if (store == null)
             throw new DataStoreException("No available factory found");
@@ -899,7 +899,7 @@ public class WPSConvertersUtils {
     public static final FeatureCollection readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
         final ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(url));
-        final FeatureStore store = FeatureStoreFinder.open(param);
+        final FeatureStore store = (FeatureStore) DataStores.open(param);
 
         if (store == null)
             throw new DataStoreException("No available factory found");

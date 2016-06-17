@@ -246,6 +246,7 @@ public class FXCoordinateBar extends GridPane {
 
     /**
      * TODO change this, we should be able to control multiple crs axis at the same time.
+     * 
      * @return temporal axis crs viewer
      */
     public FXAxisView getSliderview() {
@@ -255,7 +256,7 @@ public class FXCoordinateBar extends GridPane {
     /**
      * Set scale values displayed in the right corner combo box.
      * 
-     * @param scales 
+     * @param scales predefined scale values
      */
     public void setScaleBoxValues(Long[] scales){
         scaleCombo.getItems().setAll(Arrays.asList(scales));

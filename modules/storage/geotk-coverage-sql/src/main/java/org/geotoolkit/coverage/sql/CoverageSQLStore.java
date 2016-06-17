@@ -25,7 +25,6 @@ import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -33,6 +32,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -88,7 +88,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactoryById(CoverageSQLStoreFactory.NAME);
+        return (CoverageStoreFactory) DataStores.getFactoryById(CoverageSQLStoreFactory.NAME);
     }
 
     @Override

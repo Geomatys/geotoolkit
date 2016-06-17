@@ -33,7 +33,7 @@ import org.opengis.filter.FilterFactory2;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @param <T>
+ * @param <T> Edited object class
  */
 public abstract class FXStyleElementController<T> extends BorderPane {
 
@@ -125,13 +125,13 @@ public abstract class FXStyleElementController<T> extends BorderPane {
 
     /**
      * Create a value object editable by this controller.
-     * @return 
+     * @return a new instance of the edited class of this editor
      */
     public abstract T newValue();
     
     /**
      * Called when to value property changes.
-     * @param styleElement 
+     * @param styleElement  edited object
      */
     protected abstract void updateEditor(T styleElement);
         

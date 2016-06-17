@@ -4,6 +4,7 @@ package org.geotoolkit.pending.demo.swing;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -47,18 +47,21 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.gui.swing.propertyedit.JLayerCRSPane;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.referencing.operation.TransformException;
+import org.openide.util.Exceptions;
 
 public class WidgetsDemo extends javax.swing.JFrame {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public WidgetsDemo() throws DataStoreException, URISyntaxException {
+    public WidgetsDemo() throws DataStoreException, URISyntaxException, MalformedURLException {
         Demos.init();
 
         initComponents();
@@ -132,11 +135,9 @@ public class WidgetsDemo extends javax.swing.JFrame {
 
     }
 
-    private static FeatureCollection openShapeFile() throws DataStoreException, URISyntaxException {
-        final Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put("path", PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
+    private static FeatureCollection openShapeFile() throws DataStoreException, URISyntaxException, MalformedURLException {
 
-        final FeatureStore store = FeatureStoreFinder.open(params);
+        final FeatureStore store = new ShapefileFeatureStore(PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);
@@ -227,6 +228,8 @@ public class WidgetsDemo extends javax.swing.JFrame {
                     new WidgetsDemo().setVisible(true);
                 } catch (DataStoreException | URISyntaxException ex) {
                     Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
+                } catch (MalformedURLException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
             }
         });

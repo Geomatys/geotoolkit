@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.rendering.customgraphicbuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -27,6 +26,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.storage.DataStores;
 
 
 public class GraphicBuilderDemo {
@@ -70,7 +70,7 @@ public class GraphicBuilderDemo {
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put( "path", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp").toURI() );
-        FeatureStore store = FeatureStoreFinder.open(params);
+        FeatureStore store = (FeatureStore) DataStores.open(params);
         FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         MutableStyle style = SF.style();
         MapLayer layer = MapBuilder.createFeatureLayer(fs, style);

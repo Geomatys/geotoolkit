@@ -91,7 +91,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
-        FeatureStore store = factory.open(map);
+        FeatureStore store = (FeatureStore) factory.open(map);
         String typeName = IndexedShapefileDataStoreTest.STATE_POP.substring(
                 IndexedShapefileDataStoreTest.STATE_POP.indexOf('/') + 1,
                 IndexedShapefileDataStoreTest.STATE_POP.lastIndexOf('.'));

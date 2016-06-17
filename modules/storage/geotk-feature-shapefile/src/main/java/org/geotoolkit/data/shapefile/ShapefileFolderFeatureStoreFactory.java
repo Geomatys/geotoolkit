@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -37,6 +36,7 @@ import java.net.URI;
 import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -69,7 +69,7 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
 
     @Override
     public FileFeatureStoreFactory getSingleFileFactory() {
-        return FeatureStoreFinder.getAllFactories(ShapefileFeatureStoreFactory.class).iterator().next();
+        return DataStores.getAllFactories(ShapefileFeatureStoreFactory.class).iterator().next();
     }
 
     @Override

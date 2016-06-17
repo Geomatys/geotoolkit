@@ -21,7 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.gpx.model.MetaData;
@@ -65,6 +64,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_GPX_ENTITY;
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_ROUTE;
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_TRACK;
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_WAYPOINT;
+import org.geotoolkit.storage.DataStores;
 
 /**
  * GPX DataStore, holds 4 feature types.
@@ -115,7 +115,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(GPXFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{

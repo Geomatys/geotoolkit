@@ -20,7 +20,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.util.NamesExt;
@@ -53,6 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.client.Client;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.coverage.CoverageStore;
 
 
 /**
@@ -63,7 +66,7 @@ import java.util.logging.Logger;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapClient extends AbstractCoverageClient {
+public class WebMapClient extends AbstractCoverageClient implements Client {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
@@ -187,7 +190,7 @@ public class WebMapClient extends AbstractCoverageClient {
 
     @Override
     public WMSClientFactory getFactory() {
-        return (WMSClientFactory)ClientFinder.getFactoryById(WMSClientFactory.NAME);
+        return (WMSClientFactory)DataStores.getFactoryById(WMSClientFactory.NAME);
     }
 
     /**

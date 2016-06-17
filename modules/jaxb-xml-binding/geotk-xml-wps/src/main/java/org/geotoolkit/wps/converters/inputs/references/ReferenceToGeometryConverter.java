@@ -31,7 +31,6 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -43,6 +42,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -106,7 +106,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
             ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
             try {
                 param.parameter(PATH.getName().getCode()).setValue(URI.create(source.getHref()));
-                FeatureStore store = FeatureStoreFinder.open(param);
+                FeatureStore store = (FeatureStore) DataStores.open(param);
                 Iterator<GenericName> iterator = store.getNames().iterator();
 
                 int typesSize = store.getNames().size();

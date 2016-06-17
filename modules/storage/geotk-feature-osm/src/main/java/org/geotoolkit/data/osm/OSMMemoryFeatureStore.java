@@ -30,7 +30,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -64,6 +63,7 @@ import org.opengis.filter.identity.Identifier;
 
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
+import org.geotoolkit.storage.DataStores;
 
 /**
  * OSM DataStore, holds 3 feature types.
@@ -153,7 +153,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
     }
     
     @Override

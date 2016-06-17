@@ -17,8 +17,8 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.util.Set;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,8 +36,7 @@ public class FileCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFactory() {
 
-        final Set<CoverageStoreFactory> set = CoverageStoreFinder.getAllFactories(null);
-
+        final Set<CoverageStoreFactory> set = DataStores.getAllFactories(CoverageStoreFactory.class);
         boolean found = false;
         for(CoverageStoreFactory fact : set){
             if(fact instanceof FileCoverageStoreFactory){

@@ -33,7 +33,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -48,6 +47,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -106,7 +106,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(GMLFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(GMLFeatureStoreFactory.NAME);
     }
 
     @Override

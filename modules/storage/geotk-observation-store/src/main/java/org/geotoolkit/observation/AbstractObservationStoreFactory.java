@@ -17,21 +17,18 @@
 package org.geotoolkit.observation;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.AbstractDataStoreFactory;
+import org.geotoolkit.storage.DataStore;
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -39,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * 
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class AbstractObservationStoreFactory extends Factory implements ObservationStoreFactory {
+public abstract class AbstractObservationStoreFactory extends AbstractDataStoreFactory implements ObservationStoreFactory {
  
     /**
      * Identifier, Mandatory.
@@ -65,20 +62,6 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
     
     /**
      * {@inheritDoc }
-     *
-     * @return a display name derivate from class name.
-     */
-    @Override
-    public CharSequence getDisplayName() {
-        String displayName = Classes.getShortClassName(this);
-        if(displayName.endsWith("Factory")){
-            displayName = displayName.substring(0, displayName.length() - 7);
-        }
-        return displayName;
-    }
-
-    /**
-     * {@inheritDoc }
      */
     @Override
     public CharSequence getDescription() {
@@ -89,7 +72,7 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
      * {@inheritDoc }
      */
     @Override
-    public ObservationStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -107,7 +90,7 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
      * {@inheritDoc }
      */
     @Override
-    public ObservationStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -177,42 +160,7 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
         final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
-    
-    /**
-     * Set the identifier parameter in the map if not present.
-     */
-    private Map<String,Serializable> forceIdentifier(Map params){
-
-        if(!params.containsKey(IDENTIFIER.getName().getCode())){
-            //identifier is not specified, force it
-            final ParameterDescriptorGroup desc = getParametersDescriptor();
-            params = new HashMap<String, Serializable>(params);
-            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
-        }
-        return params;
-    }
-
-    /**
-     * Check if the Identifier parameter exist.
-     * if it exist, it must be set to 'value' otherwise return false.
-     * if not present, return true;
-     * @return
-     */
-    protected boolean checkIdentifier(final ParameterValueGroup params){
-        final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
-                .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-
-        for(GeneralParameterValue val : params.values()){
-            if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
-                final Object candidate = ((ParameterValue)val).getValue();
-                return expectedId.equals(candidate);
-            }
-        }
-
-        return true;
-    }
-    
+        
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
      *

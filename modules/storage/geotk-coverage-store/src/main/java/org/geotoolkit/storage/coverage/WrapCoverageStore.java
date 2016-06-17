@@ -19,6 +19,8 @@ package org.geotoolkit.storage.coverage;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStore;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -33,7 +35,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel
  */
-public class WrapCoverageStore extends CoverageStore{
+public class WrapCoverageStore extends DataStore implements CoverageStore{
 
     protected final CoverageStore store;
 
@@ -51,7 +53,7 @@ public class WrapCoverageStore extends CoverageStore{
     }
 
     @Override
-    public CoverageStoreFactory getFactory() {
+    public DataStoreFactory getFactory() {
         return store.getFactory();
     }
 

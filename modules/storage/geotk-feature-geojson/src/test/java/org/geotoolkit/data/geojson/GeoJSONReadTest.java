@@ -13,6 +13,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.*;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +38,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -58,7 +59,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -79,7 +80,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -100,7 +101,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -121,7 +122,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -142,7 +143,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -163,7 +164,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -185,7 +186,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -206,7 +207,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -231,7 +232,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(arrayFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
@@ -273,7 +274,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(jsonFile.toURI());
-        FeatureStore store = FeatureStoreFinder.open(param);
+        FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());

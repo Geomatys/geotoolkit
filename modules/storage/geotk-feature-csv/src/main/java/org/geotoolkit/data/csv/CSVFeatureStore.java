@@ -69,6 +69,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -171,7 +172,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(CSVFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(CSVFeatureStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

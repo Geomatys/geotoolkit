@@ -34,6 +34,7 @@ import org.apache.sis.util.collection.TreeTable.Node;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
@@ -50,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCoverageStore extends CoverageStore {
+public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
 
 
     protected static final String NO_NAMESPACE = "no namespace";

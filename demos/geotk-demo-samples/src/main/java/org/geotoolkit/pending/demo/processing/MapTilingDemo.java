@@ -24,9 +24,9 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
@@ -68,7 +68,8 @@ public class MapTilingDemo {
 
         //create a coverage store where the pyramid wil be stored
         final XMLCoverageStoreFactory factory = new XMLCoverageStoreFactory();
-        final CoverageStore store = factory.create(Collections.singletonMap("path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
+        final CoverageStore store = (CoverageStore) factory.create(Collections.singletonMap(
+                "path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
         final GenericName name = NamesExt.create("bluemarble");
         final CoverageReference ref = store.create(name);
 
@@ -128,7 +129,7 @@ public class MapTilingDemo {
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).setValue(new URI("file:/home/jsorel/temp/bluemarble/bluemarble"));
 
-        final CoverageStore store = CoverageStoreFinder.open(params);
+        final CoverageStore store = (CoverageStore) DataStores.open(params);
 
         final MapContext context = MapBuilder.createContext();
 

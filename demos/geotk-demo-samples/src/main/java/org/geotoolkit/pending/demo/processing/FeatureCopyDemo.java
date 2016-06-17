@@ -3,12 +3,12 @@ package org.geotoolkit.pending.demo.processing;
 
 import java.net.URI;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.datastore.copy.CopyDescriptor;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -21,7 +21,7 @@ public class FeatureCopyDemo {
         final ParameterValueGroup shpParams = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         ParametersExt.getOrCreateValue(shpParams,"path").setValue(URI.create("file:/...someshapefile"));
         
-        final FeatureStore source = FeatureStoreFinder.open(shpParams);
+        final FeatureStore source = (FeatureStore) DataStores.open(shpParams);
         
         final ParameterValueGroup pgParams = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         ParametersExt.getOrCreateValue(pgParams,"host").setValue("host");
@@ -30,7 +30,7 @@ public class FeatureCopyDemo {
         ParametersExt.getOrCreateValue(pgParams,"user").setValue("user");
         ParametersExt.getOrCreateValue(pgParams,"password").setValue("secret");
         
-        final FeatureStore target = FeatureStoreFinder.open(pgParams);
+        final FeatureStore target = (FeatureStore) DataStores.open(pgParams);
         
         final ParameterValueGroup copyParams = CopyDescriptor.INPUT_DESC.createValue();
         ParametersExt.getOrCreateValue(copyParams, "source_datastore").setValue(source);

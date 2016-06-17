@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.geotoolkit.index.IndexingException;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;

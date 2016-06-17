@@ -37,7 +37,6 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
@@ -64,6 +63,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -172,7 +172,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(SMLFeatureStoreFactory.NAME);
+        return (FeatureStoreFactory) DataStores.getFactoryById(SMLFeatureStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {

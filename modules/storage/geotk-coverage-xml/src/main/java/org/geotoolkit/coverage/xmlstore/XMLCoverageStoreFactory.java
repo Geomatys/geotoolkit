@@ -24,7 +24,6 @@ import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -102,7 +101,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public CoverageStore open(ParameterValueGroup params) throws DataStoreException {
+    public XMLCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         if(!canProcess(params)){
             throw new DataStoreException("Can not process parameters.");
         }
@@ -114,7 +113,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public XMLCoverageStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 

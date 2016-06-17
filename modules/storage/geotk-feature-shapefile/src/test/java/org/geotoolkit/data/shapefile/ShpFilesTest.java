@@ -76,7 +76,7 @@ public class ShpFilesTest extends org.geotoolkit.test.TestBase {
 
         String fileName = files.get(SHP).getPath();
         fileName = fileName.substring(0, fileName.length()-4)+".shp";
-        ShpFiles shpFiles = new ShpFiles(fileName);
+        ShpFiles shpFiles = new ShpFiles("file:" + fileName);
 
         URI shpURL = shpFiles.getURI(SHP);
         URI dbfURL = shpFiles.getURI(DBF);
@@ -141,7 +141,7 @@ public class ShpFilesTest extends org.geotoolkit.test.TestBase {
                 "testFileStringConstructor", ShpFileType.values(), false);
 
         File file = expected.values().iterator().next();
-        ShpFiles shapefiles = new ShpFiles(file.getPath());
+        ShpFiles shapefiles = new ShpFiles("file:" + file.getPath());
 
         assertEqualMaps(expected, shapefiles.getFileNames());
     }

@@ -51,26 +51,23 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
-import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
-import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -143,9 +140,7 @@ public class FXStoreChooser extends SplitPane {
     public FXStoreChooser(Predicate factoryFilter) {
         
         final Set factoriesLst = new HashSet();
-        factoriesLst.addAll(FeatureStoreFinder.getAvailableFactories(null));
-        factoriesLst.addAll(CoverageStoreFinder.getAvailableFactories(null));
-        factoriesLst.addAll(ClientFinder.getAvailableFactories(null));
+        factoriesLst.addAll(DataStores.getAvailableFactories(null));
         
         ObservableList factories = FXCollections.observableArrayList(factoriesLst);
         Collections.sort(factories, SORTER);
@@ -233,7 +228,7 @@ public class FXStoreChooser extends SplitPane {
     /**
      * 
      * @return FeatureStore, CoverageStore or Client
-     * @throws DataStoreException 
+     * @throws DataStoreException if store creation failed
      */
     private Object getStore() throws DataStoreException {
         final Object factory = factoryView.getSelectionModel().getSelectedItem();
@@ -258,9 +253,9 @@ public class FXStoreChooser extends SplitPane {
     /**
      * Display a modal dialog.
      *
-     * @param parent
+     * @param parent parent widget, can be null
      * @return FeatureStore, CoverageStore or Client
-     * @throws DataStoreException
+     * @throws DataStoreException if store creation failed
      */
     public static Object showDialog(Node parent) throws DataStoreException{
         return showDialog(parent, null);
@@ -270,8 +265,9 @@ public class FXStoreChooser extends SplitPane {
      * Display a modal dialog.
      *
      * @param parent Parent region over which dialog will be displayed.
+     * @param predicate factory filter
      * @return FeatureStore, CoverageStore or Client
-     * @throws DataStoreException
+     * @throws DataStoreException if store creation failed
      */
     public static Object showDialog(Node parent, Predicate predicate) throws DataStoreException{
         final List lst = showDialog(parent, predicate, false);
@@ -285,8 +281,10 @@ public class FXStoreChooser extends SplitPane {
     /**
      * Display a modal dialog choosing layers.
      *
-     * @return
-     * @throws DataStoreException
+     * @param parent Parent region over which dialog will be displayed.
+     * @param predicate factory filter
+     * @return created map layers.
+     * @throws DataStoreException if store creation failed
      */
     public static List<MapLayer> showLayerDialog(Node parent, Predicate predicate) throws DataStoreException{
         return showDialog(parent, predicate, true);

@@ -7,7 +7,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -36,6 +35,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.storage.DataStores;
 
 public class PortrayalDemo {
 
@@ -91,7 +91,7 @@ public class PortrayalDemo {
     private static FeatureCollection openShapeFile() throws DataStoreException, URISyntaxException {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("path", PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
-        final FeatureStore store = FeatureStoreFinder.open(params);
+        final FeatureStore store = (FeatureStore) DataStores.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);

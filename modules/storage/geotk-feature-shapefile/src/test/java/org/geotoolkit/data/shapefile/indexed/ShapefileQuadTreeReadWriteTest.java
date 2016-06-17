@@ -111,7 +111,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         Map params = new HashMap();
         params.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), url.toURI());
         params.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
-        FeatureStore createFeatureStore = fac.open(params);
+        FeatureStore createFeatureStore = (FeatureStore) fac.open(params);
         return createFeatureStore;
     }
 

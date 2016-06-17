@@ -32,11 +32,12 @@ import java.util.Set;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.om.xml.XmlObservationStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
 /**
@@ -53,9 +54,10 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
 
             final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/observation1.xml");
             final Map params = new HashMap<>();
-            params.put(OMXmlFeatureStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
+            params.put(XmlObservationStoreFactory.IDENTIFIER.getName().toString(), "observationXmlFile");
+            params.put(XmlObservationStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
 
-            store = FeatureStoreFinder.open(params);
+            store = (FeatureStore) DataStores.open(params);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";

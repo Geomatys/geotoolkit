@@ -24,20 +24,16 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.Classes;
-import org.opengis.metadata.quality.ConformanceResult;
+import org.geotoolkit.storage.AbstractDataStoreFactory;
+import org.geotoolkit.storage.DataStore;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -48,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureStoreFactory extends Factory implements FeatureStoreFactory {
+public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFactory implements FeatureStoreFactory{
 
     public static final Class[] GEOMS_ALL = new Class[]{
         Geometry.class,
@@ -112,7 +108,7 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -130,7 +126,7 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      * {@inheritDoc }
      */
     @Override
-    public FeatureStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -178,55 +174,6 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean canProcess(final ParameterValueGroup params) {
-        if(params == null){
-            return false;
-        }
-
-        //check identifier value is exist
-        final boolean validId = checkIdentifier(params);
-        if(!validId){
-            return false;
-        }
-
-        final ParameterDescriptorGroup desc = getParametersDescriptor();
-        if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
-            return false;
-        }
-
-        final ConformanceResult result = Parameters.isValid(params, desc);
-        return (result != null) && Boolean.TRUE.equals(result.pass());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ConformanceResult availability() {
-        final DefaultConformanceResult result =  new DefaultConformanceResult();
-        result.setPass(Boolean.TRUE);
-        return result;
-    }
-
-    /**
-     * Set the identifier parameter in the map if not present.
-     */
-    private Map<String,Serializable> forceIdentifier(Map params){
-
-        if(!params.containsKey(IDENTIFIER.getName().getCode())){
-            //identifier is not specified, force it
-            final ParameterDescriptorGroup desc = getParametersDescriptor();
-            params = new HashMap<String, Serializable>(params);
-            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
-        }
-        return params;
-    }
-
-    /**
      * Check if the Identifier parameter exist.
      * if it exist, it must be set to 'value' otherwise return false.
      * if not present, return true;
@@ -251,18 +198,6 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
 
         return true;
     }
-
-    /**
-     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
-     * @throws DataStoreException if identifier is not valid
-     */
-    protected void checkCanProcessWithError(final ParameterValueGroup params) throws DataStoreException{
-        final boolean valid = canProcess(params);
-        if(!valid){
-            throw new DataStoreException("Parameter values not supported by this factory.");
-        }
-    }
-
 
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.

@@ -3,8 +3,8 @@ package org.geotoolkit.pending.demo.datamodel;
 
 import java.util.Iterator;
 import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new datastores are made through the DataStoreFinder utility class        
-        final Iterator<FeatureStoreFactory> ite = FeatureStoreFinder.getAllFactories(null).iterator();
+        final Iterator<FeatureStoreFactory> ite = DataStores.getAllFactories(FeatureStoreFactory.class).iterator();
         
         while(ite.hasNext()){
             
