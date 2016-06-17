@@ -8,7 +8,7 @@ Downloading Geotoolkit.org Binaries
   Binary versions of Geotk are available in several different formats. The easiest approach
   to integrate Geotk into a Java project uses the Apache maven dependency management tool to
   automatically obtain the required Java Archives (JAR) files from the network. For convenience
-  of users who are not using the maven build tool, Geotk is also distributed as bundles which
+  of users who are not using the maven build tool, Geotk 3.x is also distributed as bundles which
   combine components of the library into a single JAR file. Finally, users can download the source
   code and build Geotk themselves to obtain all of the pieces in one shot as explained on the
   {{{./build/index.html}building from source}} page.
@@ -47,7 +47,7 @@ Downloading Geotoolkit.org Binaries
 <properties>
   <!-- Define the version that we want to use here, so
        we have a single line to change when upgrating. -->
-  <geotk.version>3.20-geoapi-3.0</geotk.version>
+  <geotk.version>4.0-M5</geotk.version>
 </properties>
 
 <dependencies>
@@ -63,17 +63,9 @@ Downloading Geotoolkit.org Binaries
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-+---------------------------------------------------------+
 
-  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.20>>> or <<<4.0-M4>>>
-  version is wanted instead than <<<3.20-geoapi-3.0>>> (in order to use modules that are beyond
-  GeoAPI 3.0 interfaces), then the following repository must be declared in the root <<<pom.xml>>>
-  file.
-
-+---------------------------------------------------------+
 <repositories>
   <repository>
-     <!-- Not needed for "*-geoapi-3.0" versions -->
      <id>geotoolkit</id>
      <name>Geotk repository</name>
      <url>http://maven.geotoolkit.org</url>
@@ -86,7 +78,7 @@ Downloading Geotoolkit.org Binaries
 
 * Bundle downloads (everything in a single JAR)
 
-  Geotk can be obtained as single archives which bundles together specific components of the
+  Geotk 3.x can be obtained as single archives which bundles together specific components of the
   library to provide an easy way to get started. A single archive file should be downloaded; when
   uncompressed with the <<<unpack200>>> tool distributed with Java, the archive results in a single
   JAR file which includes the desired components of Geotk along with all the required
@@ -165,7 +157,7 @@ Downloading Geotoolkit.org Binaries
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-referencing-4.0-M4.pack.gz geotk-bundle-referencing.jar
+unpack200 --remove-pack-file geotk-bundle-referencing-3.21.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any
