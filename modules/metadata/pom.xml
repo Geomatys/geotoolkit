@@ -24,9 +24,8 @@
   <name>Metadata</name>
 
   <description>
-    Group of modules related to handling metadata. The "geotk-metadata" sub-module contains the core
-    classes and an implementation of the ISO 19115 standard. The "geotk-metadata-sql" sub-module provides
-    services for metadata storage in a SQL database.
+    Group of modules that extend the Apache SIS metadata module.
+    See http://sis.apache.org for the geotk-metadata replacement.
   </description>
 
 

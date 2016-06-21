@@ -24,8 +24,8 @@
   <name>Referencing</name>
 
   <description>
-    Projects group for referencing services. This group contains the
-    core of referencing services (geotk-referencing) and various plugins.
+    Group of modules that extend the Apache SIS referencing module.
+    See http://sis.apache.org for the geotk-referencing replacement.
   </description>
 
 
