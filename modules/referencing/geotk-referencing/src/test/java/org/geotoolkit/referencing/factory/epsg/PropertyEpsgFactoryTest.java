@@ -37,7 +37,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @DependsOn(PropertyAuthorityFactoryTest.class)
-public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase {
+public final strictfp class PropertyEpsgFactoryTest extends TestBase {
     /**
      * The factory to test.
      */

@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -50,7 +50,7 @@ import static java.util.Collections.singletonMap;
  *
  * @since 3.00
  */
-public final strictfp class CRS_Test extends ReferencingTestBase {
+public final strictfp class CRS_Test extends TestBase {
     /**
      * Tests the extraction of components from a {@link CompoundCRS}.
      *

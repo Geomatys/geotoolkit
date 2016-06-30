@@ -33,7 +33,7 @@ import org.apache.sis.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -50,7 +50,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.03
  */
-public final strictfp class ConformanceTest extends ReferencingTestBase {
+public final strictfp class ConformanceTest extends TestBase {
     /**
      * Deprecated method names to ignore.
      */

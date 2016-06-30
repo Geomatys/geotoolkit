@@ -22,7 +22,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 
@@ -35,7 +35,7 @@ import org.junit.*;
  *
  * @since 3.00
  */
-public abstract strictfp class EpsgFactoryTestBase extends ReferencingTestBase {
+public abstract strictfp class EpsgFactoryTestBase extends TestBase {
     /**
      * The factory to test, or {@code null} if we can't connect to the
      * database for the platform the test are running on.

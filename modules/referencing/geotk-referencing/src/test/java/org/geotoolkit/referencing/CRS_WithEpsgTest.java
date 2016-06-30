@@ -43,7 +43,7 @@ import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.IdentifiedObjects;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
@@ -64,7 +64,7 @@ import static java.util.Collections.singletonMap;
  * @since 2.4
  */
 @DependsOn(CRS_Test.class)
-public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
+public final strictfp class CRS_WithEpsgTest extends TestBase {
     /**
      * Ensures that the EPSG database is available. If no EPSG database is installed,
      * then the tests will be skipped. We do not cause a test failure because the EPSG

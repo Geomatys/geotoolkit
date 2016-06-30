@@ -23,7 +23,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Martin Desruisseaux (Geomatys)
  */
 @DependsOn(CRS_WithEpsgTest.class)
-public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
+public final strictfp class CRS_WithGridTest extends TestBase {
     /**
      * Tests transformation NADCON grids.
      *

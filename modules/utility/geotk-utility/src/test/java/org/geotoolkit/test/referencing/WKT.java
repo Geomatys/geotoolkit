@@ -38,18 +38,6 @@ public final strictfp class WKT {
     }
 
     /**
-     * Geographic CRS (EPSG:4326) with a datum name which is not recognized as an alias.
-     */
-    public static final String GEOGCS_WGS84_ALTERED = decodeQuotes(
-            "GEOGCS[“WGS84”,\n"                                   +
-            "  DATUM[“WGS84_altered”,\n"                          +
-            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-            "  PRIMEM[“Greenwich”, 0.0],\n"                       +
-            "  UNIT[“degree”, 0.017453292519943295],\n"           +
-            "  AXIS[“Longitude”,EAST],"                           +
-            "  AXIS[“Latitude”,NORTH]]");
-
-    /**
      * Mercator projection (EPSG:3395).
      */
     public static final String PROJCS_MERCATOR = decodeQuotes(
@@ -120,18 +108,4 @@ public final strictfp class WKT {
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH],\n" +
             "  AUTHORITY[“EPSG”, “27572”]]");
-
-    /**
-     * Antartic on WGS84 datum.
-     */
-    public static final String PROJCS_POLAR_STEREOGRAPHIC = decodeQuotes(
-            "PROJCS[“WGS 84 / Antarctic Polar Stereographic”,\n" +
-            "  GEOGCS[“WGS 84”,\n" +
-            "    DATUM[“World Geodetic System 1984”,\n" +
-            "      SPHEROID[“WGS 84”, 6378137.0, 298.257223563]],\n" +
-            "    PRIMEM[“Greenwich”, 0.0],\n" +
-            "    UNIT[“degree”, 0.017453292519943295]],\n" +
-            "  PROJECTION[“Polar Stereographic (variant B)”],\n" +
-            "  PARAMETER[“standard_parallel_1”, -71.0],\n" +
-            "  UNIT[“m”, 1.0]]");
 }
