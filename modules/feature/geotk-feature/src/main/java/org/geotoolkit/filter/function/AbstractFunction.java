@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.function;
 
-import org.geotoolkit.util.StringUtilities;
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -26,7 +25,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
-
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
