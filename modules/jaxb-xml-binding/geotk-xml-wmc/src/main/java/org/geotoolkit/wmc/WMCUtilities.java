@@ -26,8 +26,6 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.client.Client;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
@@ -41,7 +39,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
@@ -62,6 +60,8 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  *
@@ -139,7 +139,7 @@ public class WMCUtilities {
             //Retrieve enveloppe for the map context.
             BoundingBoxType bbox = general.getBoundingBox();
             try {
-                srs = CRS.decode(bbox.getSRS(), true);
+                srs = AbstractCRS.castOrCopy(CRS.forCode(bbox.getSRS())).forConvention(AxesConvention.RIGHT_HANDED);
             } catch (FactoryException ex) {
                 Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
             }

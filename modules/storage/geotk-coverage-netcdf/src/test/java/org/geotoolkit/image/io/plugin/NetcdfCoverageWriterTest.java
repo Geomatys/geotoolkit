@@ -18,8 +18,6 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +27,6 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -47,7 +44,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
@@ -99,10 +96,6 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         super(NetcdfImageWriter.class);
     }
 
-    private static Map<String,String> name(final String name) {
-        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
-    }
-
     /**
      * Tests the creation of a NetCDF file using {@code "CRS:84"} on the whole world.
      *
@@ -126,7 +119,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testEPSG4326() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         testWriteRead(env, "EPSG4326.cdl");
@@ -142,7 +135,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testEPSG4088() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4088"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4088"));
         env.setRange(0, -2E7, 2E7);
         env.setRange(1, -1E7, 1E7);
         skipRead = true;

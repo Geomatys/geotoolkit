@@ -63,6 +63,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.InterpolationMethod;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -127,7 +128,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             throw new CoverageStoreException(ex);
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
+        if (!Utilities.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
             try {
                 requestedEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, crsCoverage2D);
             } catch (TransformException ex) {

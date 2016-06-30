@@ -48,7 +48,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -68,6 +68,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
@@ -86,8 +87,8 @@ import org.opengis.util.FactoryException;
  * See {@link PGCoverageBuilder#PGCoverageBuilder(java.awt.Dimension, org.geotoolkit.image.interpolation.InterpolationCase, int) }<br/><br/>
  *
  * We choose {@link CoordinateReferenceSystem}.<br/>
- * {@code final CoordinateReferenceSystem crs4326 = CRS.decode("EPSG:4326");}<br/>
- * {@code final CoordinateReferenceSystem crs2163 = CRS.decode(";EPSG:2163");}<br/>
+ * {@code final CoordinateReferenceSystem crs4326 = CRS.forCode("EPSG:4326");}<br/>
+ * {@code final CoordinateReferenceSystem crs2163 = CRS.forCode("EPSG:2163");}<br/>
  * See <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
  * for more {@link CoordinateReferenceSystem}.<br/><br/>
  *
@@ -409,12 +410,12 @@ public class PyramidCoverageBuilder {
 
         //MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
-        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(CRS.transform(envDest, envDestCRS2D));
-        final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), true);
+        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(Envelopes.transform(envDest, envDestCRS2D));
+        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), null).getMathTransform();
 
         final Dimension tileSize              = new Dimension(tileWidth, tileHeight);
 
-        final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
+        final GeneralEnvelope covEnvInDestCRS = Envelopes.transform(destCrs_to_coverageCRS.inverse(), covEnv);
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
 
         //------------------- param resolution configuration -------------------
@@ -438,7 +439,7 @@ public class PyramidCoverageBuilder {
             res[widthAxis] = res[heightAxis] = pixelScal;
             //-- output image size
             readParam.setResolution(res);
-            assert CRS.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem())
+            assert Utilities.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem())
                     : "PyramidCoverageBuilder : requested CRS into GridCoverageReadParam must be same than Coverage";
 
             final GridCoverage2D gridCoverage2D = (GridCoverage2D) coverageReader.read(imageIndex, readParam);//-- normaly with a gridGeometry2D --> gridCoverage2D
@@ -751,13 +752,13 @@ public class PyramidCoverageBuilder {
 
         //-- MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
-        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(CRS.transform(envDest, envDestCRS2D));
-        final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(envDestCRS2D, gridCoverage2D.getCoordinateReferenceSystem2D(), true);
+        GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(Envelopes.transform(envDest, envDestCRS2D));
+        final MathTransform destCrs_to_coverageCRS = CRS.findOperation(envDestCRS2D, gridCoverage2D.getCoordinateReferenceSystem2D(), null).getMathTransform();
 
         final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
         final Dimension tileSize                   = new Dimension(tileWidth, tileHeight);
 
-        final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
+        final GeneralEnvelope covEnvInDestCRS = Envelopes.transform(destCrs_to_coverageCRS.inverse(), covEnv);
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
 
         //one mosaic for each level scale
@@ -933,7 +934,7 @@ public class PyramidCoverageBuilder {
     public static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageReference pm, final CoordinateReferenceSystem crs) throws DataStoreException {
         Pyramid pyramid = null;
         for (Pyramid p : pm.getPyramidSet().getPyramids()) {
-            if (CRS.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(), crs)) {
+            if (Utilities.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(), crs)) {
                 pyramid = p;
                 break;
             }

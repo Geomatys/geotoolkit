@@ -29,7 +29,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 
@@ -56,6 +56,7 @@ import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * @author crossley
@@ -72,7 +73,7 @@ public final class GeometryUtils {
     static{
         CoordinateReferenceSystem crs = null;
         try {
-            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+            crs = CRS.forCode("EPSG:4326");
         } catch (Exception ex){
             LOGGER.warning("could not get crs for EPSG:4326");
         }
@@ -109,7 +110,7 @@ public final class GeometryUtils {
 
         if (unit.equals(NonSI.DEGREE_ANGLE)) {
             try {
-                envelope = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+                envelope = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
             } catch (TransformException ex) {
                 LOGGER.severe("unable to reproject the envelope:" + ex.getMessage());
             }
@@ -426,7 +427,7 @@ public final class GeometryUtils {
 
 	GeographicCRS wgs84crs = null;
         try {
-                wgs84crs = (GeographicCRS) CRS.decode("EPSG:4979");
+                wgs84crs = (GeographicCRS) CRS.forCode("EPSG:4979");
         } catch (Exception nsace){
                 LOGGER.warning("could not get crs for EPSG:4979");
         }
@@ -450,7 +451,7 @@ public final class GeometryUtils {
         //same equality issues as above
         DirectPosition dp2 = new JTSGeometryFactory(wgs84crs).createDirectPosition();
         try{
-            MathTransform transform = CRS.findMathTransform(crs, wgs84crs);
+            MathTransform transform = CRS.findOperation(crs, wgs84crs, null).getMathTransform();
             transform.transform(dp, dp2);
         } catch (FactoryException fe) {
         	LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "

@@ -51,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * TODO : This should be part of the CoverageWriter interface.
@@ -101,7 +102,7 @@ public class FillCoverage {
         }
         //adjust the writing hyper-cube if an envelope is provided
         if(env!=null){
-            if(!CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())){
+            if(!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())){
                 throw new CoverageStoreException("Envelope is not in data CRS.");
             }
             try {
@@ -183,24 +184,24 @@ public class FillCoverage {
         }
 
     }
-    
+
     /**
      * Fill given coverage reference, providing it with processed images.
-     * 
+     *
      * @param evaluator
-     * @param outRef 
+     * @param outRef
      */
     public static void fill(PyramidalCoverageReference outRef, SampleEvaluator evaluator)
             throws DataStoreException, TransformException, FactoryException {
-        
+
         final ColorModel cm = outRef.getColorModel();
         final SampleModel sm = outRef.getSampleModel();
-        
+
         for(Pyramid pyramid : outRef.getPyramidSet().getPyramids()){
             for(GridMosaic mosaic : pyramid.getMosaics()){
                 final Dimension tileSize = mosaic.getTileSize();
                 final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
-                
+
                 final Dimension gridSize = mosaic.getGridSize();
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
@@ -216,7 +217,7 @@ public class FillCoverage {
             }
         }
     }
-    
+
 
     /**
      *

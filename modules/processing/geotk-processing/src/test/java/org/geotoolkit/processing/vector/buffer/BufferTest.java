@@ -35,7 +35,7 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -138,7 +138,7 @@ public class BufferTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("BufferTest");
         ftb.add("name", String.class);
-        ftb.add("position", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("position");
         final FeatureType sft = ftb.buildFeatureType();

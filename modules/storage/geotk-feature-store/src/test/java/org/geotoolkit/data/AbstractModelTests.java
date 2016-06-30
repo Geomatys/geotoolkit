@@ -23,7 +23,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.util.GenericName;
@@ -60,19 +60,19 @@ public abstract class AbstractModelTests {
         final List<Class> bindinds = getSupportedAttributTypes();
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         final Session session = store.createSession(true);
-        
+
 
         for(final Class geomType : geometryBindings){
 
             //create the schema ------------------------------------------------
             final String name = "testname";
             sftb.reset();
-            sftb.setName(name);            
-            sftb.add("att_geometry", geomType, CRS.decode("EPSG:4326"));
-            sftb.setDefaultGeometry("att_geometry");            
+            sftb.setName(name);
+            sftb.add("att_geometry", geomType, CRS.forCode("EPSG:4326"));
+            sftb.setDefaultGeometry("att_geometry");
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));
-            }            
+            }
             final FeatureType sft = sftb.buildFeatureType();
 
             //add listeners
@@ -156,7 +156,7 @@ public abstract class AbstractModelTests {
             }catch(DataStoreException ex){
                 //ok
             }
-            
+
         }
 
     }

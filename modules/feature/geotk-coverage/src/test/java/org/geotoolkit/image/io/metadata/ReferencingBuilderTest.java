@@ -28,12 +28,13 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
@@ -120,7 +121,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     @Ignore("Referencing parameter names changed.")
     public void testFormatProjectedCRS() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final CoordinateReferenceSystem crs = CRS.fromWKT(WKT.PROJCS_MERCATOR);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
@@ -170,7 +171,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     @Ignore("Referencing parameter names changed.")
     public void testFormatTransverseMercatorCRS() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_UTM_10N);
+        final CoordinateReferenceSystem crs = CRS.fromWKT(WKT.PROJCS_UTM_10N);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
@@ -225,7 +226,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     private static void assertEqualsIgnoreMetadata(final String message,
             final IdentifiedObject object1, final IdentifiedObject object2)
     {
-        assertTrue(message, CRS.equalsIgnoreMetadata(object1, object2));
+        assertTrue(message, Utilities.equalsIgnoreMetadata(object1, object2));
     }
 
     /**
@@ -279,7 +280,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following should have been tested by testFormatProjectedCRS()
          */
-        final ProjectedCRS originalCRS = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final ProjectedCRS originalCRS = (ProjectedCRS) CRS.fromWKT(WKT.PROJCS_MERCATOR);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(originalCRS);

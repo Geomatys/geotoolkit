@@ -31,7 +31,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -90,7 +90,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
-        ftb.add("position", Polygon.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Polygon.class, CRS.forCode("EPSG:3395"));
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("position");
@@ -102,7 +102,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
-        ftb.add("position", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("position");

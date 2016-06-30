@@ -112,7 +112,7 @@
                     ftb.setName("Fish");
                     ftb.add("name", String.class);
                     ftb.add("length", Integer.class);
-                    ftb.add("lastPosition", LineString.class, CRS.decode("EPSG:3395"));
+                    ftb.add("lastPosition", LineString.class, CRS.forCode("EPSG:3395"));
                     ftb.add("lastPositionDate", Date.class);
                     ftb.add("direction", Float.class);
                     ftb.setDefaultGeometry("lastPosition");

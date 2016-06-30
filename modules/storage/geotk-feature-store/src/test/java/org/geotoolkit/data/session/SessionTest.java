@@ -37,7 +37,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.After;
@@ -386,7 +386,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
         //check the query modified feature is correctly reprojected ------------
         qb.reset();
-        qb.setCRS(CRS.decode("EPSG:4326"));
+        qb.setCRS(CRS.forCode("EPSG:4326"));
         qb.setTypeName(name);
         query = qb.buildQuery();
 
@@ -418,7 +418,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(15d)), values);
 
         qb.reset();
-        qb.setCRS(CRS.decode("EPSG:4326"));
+        qb.setCRS(CRS.forCode("EPSG:4326"));
         qb.setTypeName(name);
         query = qb.buildQuery();
 
@@ -571,7 +571,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
 
         //check we have a modification in another crs --------------------------
-        bbox = new DefaultBoundingBox(CRS.decode("EPSG:4326"));
+        bbox = new DefaultBoundingBox(CRS.forCode("EPSG:4326"));
         bbox.setRange(1, 49, 51);
         bbox.setRange(0, 0, 2);
         qb.reset();

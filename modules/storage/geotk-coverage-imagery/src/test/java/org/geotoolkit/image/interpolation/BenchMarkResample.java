@@ -27,7 +27,7 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -100,7 +100,7 @@ public class BenchMarkResample {
     public BenchMarkResample() throws Exception {
 
         //----------------------------- Lambert -------------------------------
-        wilsonCRS     = CRS.decode("EPSG:2154");//-- Lambert
+        wilsonCRS     = CRS.forCode("EPSG:2154");//-- Lambert
         baseWilsonCRS = ((ProjectedCRS) wilsonCRS).getBaseCRS();
 
         //-- source to dest
@@ -125,7 +125,7 @@ public class BenchMarkResample {
 
 
         //------------------------------ Mercator ------------------------------
-        mercatCRS     = CRS.decode("EPSG:3395"); //-- Mercator
+        mercatCRS     = CRS.forCode("EPSG:3395"); //-- Mercator
         baseMercatCRS = ((ProjectedCRS) mercatCRS).getBaseCRS();
 
         //-- source to dest

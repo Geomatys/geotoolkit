@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,7 +57,7 @@ public class LineStringPosListType {
         CoordinateReferenceSystem crs = null;
         if (this.srsName != null) {
             try {
-                crs = CRS.decode(srsName);
+                crs = CRS.forCode(srsName);
             } catch (FactoryException ex) {
                 Logging.getLogger("org.geotoolkit.internal.jaxb").log(Level.WARNING, null, ex);
             }

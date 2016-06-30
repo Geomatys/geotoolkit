@@ -19,7 +19,7 @@ package org.geotoolkit.wmts;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -43,17 +43,16 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     GeneralEnvelope envelop;
 
     public WMTSUtilitiesTest() throws NoSuchAuthorityCodeException, FactoryException {
-        crs1 = CRS.decode("EPSG:3395");
-        crs2 = CRS.decode("EPSG:2154");
-        crs3 = CRS.decode("EPSG:3031");
-        crsGeo = CRS.decode("EPSG:4326");
-        crsLambertZ1 = CRS.decode("EPSG:27571");
-        crsLambertZ2 = CRS.decode("EPSG:27572");
-        crs84 = CRS.decode("CRS:84");
+        crs1 = CRS.forCode("EPSG:3395");
+        crs2 = CRS.forCode("EPSG:2154");
+        crs3 = CRS.forCode("EPSG:3031");
+        crsGeo = CRS.forCode("EPSG:4326");
+        crsLambertZ1 = CRS.forCode("EPSG:27571");
+        crsLambertZ2 = CRS.forCode("EPSG:27572");
+        crs84 = CRS.forCode("CRS:84");
         envelop = new GeneralEnvelope(crsGeo);
         envelop.setRange(0, 0, 50);
         envelop.setRange(1, 40, 50);
-
     }
 
     /**

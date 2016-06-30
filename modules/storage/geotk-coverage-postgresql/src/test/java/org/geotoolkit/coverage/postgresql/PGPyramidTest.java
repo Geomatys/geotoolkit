@@ -31,7 +31,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
@@ -69,7 +69,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
 
     static{
         try {
-            CRS_4326 = CRS.decode("EPSG:4326");
+            CRS_4326 = CRS.forCode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException("Failed to load CRS");
         } catch (FactoryException ex) {
@@ -99,7 +99,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         if(store != null){
             store.close();
         }
-        
+
         final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
         try{
             store = (CoverageStore) factory.create(params);

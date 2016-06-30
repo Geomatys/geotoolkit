@@ -18,7 +18,7 @@ package org.geotoolkit.metadata.dimap;
 
 import org.apache.sis.metadata.iso.DefaultMetadata;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.util.DomUtilities;
 
 import org.opengis.metadata.acquisition.AcquisitionInformation;
@@ -110,7 +110,7 @@ public class DimapAccessorTest extends org.geotoolkit.test.TestBase {
         final CoordinateReferenceSystem crs = DimapAccessor.readCRS(docSample);
 
         assertNotNull(crs);
-        assertEquals(crs, CRS.decode("EPSG:32738"));
+        assertEquals(crs, CRS.forCode("EPSG:32738"));
     }
 
     @Test

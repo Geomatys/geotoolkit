@@ -41,7 +41,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
@@ -1337,7 +1337,7 @@ public class OGCforSLD110Test extends TestCase{
         assertEquals(15d,geom.getMinY(),1e-7);
         assertEquals(19d,geom.getMaxY(),1e-7);
         final CoordinateReferenceSystem crs = geom.getCoordinateReferenceSystem();
-        assertEquals(CRS.decode("EPSG:4326"), crs);
+        assertEquals(CRS.forCode("EPSG:4326"), crs);
 
     }
 

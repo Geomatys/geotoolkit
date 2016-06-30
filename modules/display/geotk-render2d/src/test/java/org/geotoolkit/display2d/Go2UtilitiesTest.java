@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 
 import org.apache.sis.referencing.CommonCRS;
@@ -126,7 +126,7 @@ public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
     public void testLongitudeFirst() throws Exception{
 
         //test on EPSG:4326
-        final CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem epsg4326 = CRS.forCode("EPSG:4326");
         assertTrue(epsg4326.getCoordinateSystem().getAxis(0).getDirection() == AxisDirection.NORTH);
         assertTrue(epsg4326.getCoordinateSystem().getAxis(1).getDirection() == AxisDirection.EAST);
 

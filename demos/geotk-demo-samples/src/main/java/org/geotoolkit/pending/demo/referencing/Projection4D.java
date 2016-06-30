@@ -24,7 +24,7 @@ public class Projection4D {
     public static void main(String[] args) throws Exception{
         Demos.init();
 
-        final CoordinateReferenceSystem crs2D = org.geotoolkit.referencing.CRS.decode("EPSG:27582");
+        final CoordinateReferenceSystem crs2D = CRS.forCode("EPSG:27582");
         TemporalCRS temporalAxis = CommonCRS.Temporal.JULIAN.crs();
         VerticalCRS verticalAxis = CommonCRS.Vertical.MEAN_SEA_LEVEL.crs();
 

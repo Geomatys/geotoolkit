@@ -29,9 +29,9 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
+import org.apache.sis.util.Utilities;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -165,7 +165,7 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
     {
         super(targetCRS);
         ensureNonNull("targetCRS", targetCRS);
-        defaultCRS = CRS.equalsIgnoreMetadata(sourceCRS, targetCRS) ? null : sourceCRS;
+        defaultCRS = Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS) ? null : sourceCRS;
         factory = FactoryFinder.getCoordinateOperationFactory(hints);
     }
 
@@ -253,7 +253,7 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
          * CRS, then gets the transformation and saves it in case the next call to this
          * method would uses again the same transformation.
          */
-        if (forward == null || !CRS.equalsIgnoreMetadata(sourceCRS, userCRS)) {
+        if (forward == null || !Utilities.equalsIgnoreMetadata(sourceCRS, userCRS)) {
             setSourceCRS(userCRS);
         }
         if (forward.transform(position, this) != this) {
@@ -275,7 +275,7 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
     public DirectPosition inverseTransform(final CoordinateReferenceSystem crs)
             throws TransformException
     {
-        if (inverse == null || !CRS.equalsIgnoreMetadata(sourceCRS, crs)) {
+        if (inverse == null || !Utilities.equalsIgnoreMetadata(sourceCRS, crs)) {
             ensureNonNull("crs", crs);
             setSourceCRS(crs);
             inverse = forward.inverse();

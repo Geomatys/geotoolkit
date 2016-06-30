@@ -76,6 +76,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.apache.sis.util.Utilities;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
@@ -360,12 +361,12 @@ public class PyramidalModelReader extends GridCoverageReader{
         final Envelope mosEnvelope                = mosaic.getEnvelope();
 
         //-- check CRS conformity
-        if (!(CRS.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
+        if (!(Utilities.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
             throw new IllegalArgumentException("the wantedEnvelope is not define in same CRS than mosaic. Expected : "
                                                 +mosEnvelope.getCoordinateReferenceSystem()+". Found : "+wantedCRS);
 
         final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
-        assert CRS.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
+        assert Utilities.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
 
         final ViewType currentViewType = getPyramidalModel().getPackMode();
 

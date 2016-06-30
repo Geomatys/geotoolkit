@@ -33,7 +33,7 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,7 +53,7 @@ public class ShadedRelief extends AbstractProcess {
     private static CoordinateReferenceSystem MERCATOR;
     static {
         try {
-            MERCATOR = CRS.decode("EPSG:3395");
+            MERCATOR = CRS.forCode("EPSG:3395");
         } catch (FactoryException ex) {
             Logging.getLogger("org.geotoolkit.processing.coverage.shadedrelief").log(Level.SEVERE, null, ex);
         }
@@ -113,7 +113,7 @@ public class ShadedRelief extends AbstractProcess {
         final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final MathTransform dataToMercator;
         try {
-            dataToMercator = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), MERCATOR);
+            dataToMercator = CRS.findOperation(coverage.getCoordinateReferenceSystem2D(), MERCATOR, null).getMathTransform();
             final MathTransform gridToMercator = MathTransforms.concatenate(gridToData, dataToMercator);
             gridToMercator.transform(coords, 0, coords, 0, coords.length/2);
 

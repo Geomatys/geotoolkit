@@ -34,7 +34,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -107,7 +107,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         name = NamesExt.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
-        builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
+        builder.add("geometry", Point.class, CRS.forCode("EPSG:27582"));
         builder.add("string", String.class);
         final FeatureType type3 = builder.buildSimpleFeatureType();
         store.createFeatureType(name,type3);
@@ -130,10 +130,10 @@ public class MemoryReadingTest extends AbstractReadingTests{
             writer.close();
         }
 
-        GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+        GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
         env.setRange(0, -5, 10);
         env.setRange(1, -1, 11);
-        
+
         names.add(name);
         expecteds.add(new ExpectedResult(name,type3,2,env));
 

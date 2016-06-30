@@ -36,7 +36,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,7 +49,6 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -235,7 +234,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
-        ftb.add("position", Polygon.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Polygon.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("position");
         final FeatureType sft = ftb.buildFeatureType();

@@ -8,7 +8,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -19,7 +19,7 @@ public class FeatureTypeBuilderDemo {
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
         Demos.init();
-        
+
         System.out.println(createSimpleType());
         System.out.println(createComplexType());
     }
@@ -29,7 +29,7 @@ public class FeatureTypeBuilderDemo {
         ftb.setName("Fish");
         ftb.add("name", String.class);
         ftb.add("length", Integer.class);
-        ftb.add("lastPosition", LineString.class, CRS.decode("EPSG:3395"));
+        ftb.add("lastPosition", LineString.class, CRS.forCode("EPSG:3395"));
         ftb.add("lastPositionDate", Date.class);
         ftb.add("direction", Float.class);
         ftb.setDefaultGeometry("lastPosition");
@@ -43,7 +43,7 @@ public class FeatureTypeBuilderDemo {
 
         //track point type
         ftb.setName("FishTrackPoint");
-        ftb.add("location", Point.class, CRS.decode("EPSG:3395"));
+        ftb.add("location", Point.class, CRS.forCode("EPSG:3395"));
         ftb.add("time", Date.class);
         final ComplexType trackPointType = ftb.buildType();
 

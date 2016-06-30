@@ -15,7 +15,7 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,8 +75,8 @@ public class UnionDemo {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();
@@ -94,7 +94,7 @@ public class UnionDemo {
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
         ftb.add("color", String.class);
-        ftb.add("geom3", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom3", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("att", Integer.class);
 
         ftb.setDefaultGeometry("geom3");

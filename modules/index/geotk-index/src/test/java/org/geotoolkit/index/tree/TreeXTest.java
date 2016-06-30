@@ -31,11 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.referencing.CRS;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Test static TreeX methods.
@@ -84,7 +82,7 @@ public class TreeXTest extends TreeTest {
 
     @Test
     public void readCRSTest() throws IOException, ClassNotFoundException, FactoryException {
-        assertTrue(CRS.equalsIgnoreMetadata(CRS_TEST, TreeAccessFile.getTreeCRS(treeFile)));
+        assertTrue(Utilities.equalsIgnoreMetadata(CRS_TEST, TreeAccessFile.getTreeCRS(treeFile)));
     }
 
     /**

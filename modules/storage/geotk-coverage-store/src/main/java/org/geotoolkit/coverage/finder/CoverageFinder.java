@@ -35,6 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -194,9 +195,9 @@ public abstract class CoverageFinder {
         // if several equal ratio.
         for (Pyramid pyramid : results) {
             final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
-            if (org.geotoolkit.referencing.CRS.findMathTransform(pyCrs, crs2D).isIdentity()
-                    || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs2D, pyCrs)
-                    || org.geotoolkit.referencing.CRS.equalsApproximatively(crs2D, pyCrs)) {
+            if (CRS.findOperation(pyCrs, crs2D, null).getMathTransform().isIdentity()
+                    || Utilities.equalsIgnoreMetadata(crs2D, pyCrs)
+                    || Utilities.equalsApproximatively(crs2D, pyCrs)) {
                 return pyramid;
             }
         }

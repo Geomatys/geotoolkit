@@ -51,7 +51,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.jdbc.ManageableDataSource;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Feature;
@@ -669,7 +669,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
                     srsName = "urn:ogc:def:crs:" + srsName.substring(12);
                 }
                 try {
-                    final CoordinateReferenceSystem crs = CRS.decode(srsName);
+                    final CoordinateReferenceSystem crs = CRS.forCode(srsName);
                     crsID = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
                 } catch (NoSuchAuthorityCodeException ex) {
                     throw new SQLException(ex);

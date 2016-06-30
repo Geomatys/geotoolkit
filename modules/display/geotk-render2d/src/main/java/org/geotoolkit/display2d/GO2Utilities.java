@@ -139,6 +139,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -264,7 +265,7 @@ public final class GO2Utilities {
         boolean sameCRS = true;
         try{
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+            if(!Utilities.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
                 sameCRS = false;
                 dataCoverage = GO2Utilities.resample(dataCoverage.view(ViewType.NATIVE),renderingContext.getObjectiveCRS2D());
 
@@ -774,7 +775,7 @@ public final class GO2Utilities {
         final CoordinateReferenceSystem targetCRS = params.getEnvelope().getCoordinateReferenceSystem();
 
 
-        if(!CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)){
+        if(!Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)){
             //projection is not the same, must reproject it
             final GridCoverageReadParam newParams = new GridCoverageReadParam();
             final double[] newRes = context.getResolution(targetCRS);

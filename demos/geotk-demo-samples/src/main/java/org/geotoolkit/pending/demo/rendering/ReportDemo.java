@@ -41,7 +41,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.report.CollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
@@ -65,6 +65,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
+import org.apache.sis.geometry.Envelopes;
 
 public class ReportDemo {
 
@@ -147,7 +148,7 @@ public class ReportDemo {
                     };
                     final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), Color.WHITE,false);
                     final SceneDef sceneDef = new SceneDef(context,null,ext);
-                    final ViewDef viewDef = new ViewDef(CRS.transform(context.getBounds(), CRS.decode("EPSG:3395")),0);
+                    final ViewDef viewDef = new ViewDef(Envelopes.transform(context.getBounds(), CRS.forCode("EPSG:3395")), 0);
                     final MapDef mapdef = new MapDef(canvasDef,sceneDef,viewDef,null);
                     modified.getProperty("map3").setValue(mapdef);
                 }catch(Exception ex){

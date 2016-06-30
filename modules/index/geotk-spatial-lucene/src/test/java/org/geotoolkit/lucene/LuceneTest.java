@@ -30,8 +30,6 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
@@ -42,7 +40,7 @@ import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,6 +59,8 @@ import java.util.logging.Logger;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.LogicalFilterType;
 
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.GEOMETRY_PROPERTY;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.wrap;
 import static org.junit.Assert.*;
@@ -81,7 +81,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
     static{
         try {
-            WGS84 = CRS.decode("CRS:84");
+            WGS84 = CRS.forCode("CRS:84");
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -318,7 +318,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         double min2[] = {-2226389.8158654715, -2258423.6490963786};
         double max2[] = { 2226389.8158654715,  2258423.6490963805};
         bbox = new GeneralEnvelope(min2, max2);
-        bbox.setCoordinateReferenceSystem(CRS.decode("EPSG:3395", true));
+        bbox.setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode("EPSG:3395")).forConvention(AxesConvention.RIGHT_HANDED));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(bbox));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -391,7 +391,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
             new Coordinate(775978.5043848383, 3339584.723798207),
             new Coordinate(775978.5043848383, -3339584.723798207),
         });
-        JTS.setCRS(geom, CRS.decode("EPSG:3395"));
+        JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -453,7 +453,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
             new Coordinate(4452779.631730943, 4838471.398061137),
             new Coordinate(4452779.631730943, -3339584.723798207),
         });
-        JTS.setCRS(geom, CRS.decode("EPSG:3395"));
+        JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -2957,7 +2957,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
         // re-add the document
 
-        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
         Document docu = new Document();
         docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
         docu.add(new StringField("docid", 66 + "", Field.Store.YES));
@@ -3006,7 +3006,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
     private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
-        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
 
         Document doc = new Document();
         doc.add(new StringField("id", "point 1", Field.Store.YES));

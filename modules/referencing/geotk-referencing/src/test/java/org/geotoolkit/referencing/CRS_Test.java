@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.TestBase;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -78,13 +79,13 @@ public final strictfp class CRS_Test extends TestBase {
         assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs2D));
         assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs3D));
         assertSame(MODIFIED_JULIAN,    org.apache.sis.referencing.CRS.getTemporalComponent(crs4D));
-        assertSame(crs3D, CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT));
-        assertSame(crs3D, CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT));
-        assertNull(       CRS.getCompoundCRS(crs3D, crs2D, MODIFIED_JULIAN));
-        assertNull(       CRS.getCompoundCRS(crs4D, crs2D, MODIFIED_JULIAN));
-        assertNull(       CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
-        assertSame(crs4D, CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
-        assertSame(crs4D, CRS.getCompoundCRS(crs4D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN, crs2D));
+        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT));
+        assertSame(crs3D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT));
+        assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, MODIFIED_JULIAN));
+        assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, MODIFIED_JULIAN));
+        assertNull(       org.geotoolkit.referencing.CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
+        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
+        assertSame(crs4D, org.geotoolkit.referencing.CRS.getCompoundCRS(crs4D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN, crs2D));
     }
 
     /**
@@ -123,7 +124,7 @@ public final strictfp class CRS_Test extends TestBase {
         }
         final TestTransform tr = new TestTransform();
         final DirectPosition2D origin = new DirectPosition2D(80, -20);
-        final double[] result = CRS.deltaTransform(tr, origin, vector);
+        final double[] result = org.geotoolkit.referencing.CRS.deltaTransform(tr, origin, vector);
         assertEquals(expected.length, result.length);
         for (int i=0; i<expected.length; i++) {
             assertEquals(expected[i], result[i], 1E-10);
@@ -139,7 +140,7 @@ public final strictfp class CRS_Test extends TestBase {
      */
     @Test
     public void testIGNF() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("IGNF:MILLER");
+        final CoordinateReferenceSystem crs = CRS.forCode("IGNF:MILLER");
         assertTrue(crs instanceof ProjectedCRS);
     }
 }

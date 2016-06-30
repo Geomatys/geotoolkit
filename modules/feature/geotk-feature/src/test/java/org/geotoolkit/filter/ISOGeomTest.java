@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class ISOGeomTest extends org.geotoolkit.test.TestBase {
         Geometry jtsGeom = factory.createMultiPoint(points);
 
 
-        CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs = CRS.forCode("EPSG:4326");
 
         JTSMultiPoint isoGeom = new JTSMultiPoint();
         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));

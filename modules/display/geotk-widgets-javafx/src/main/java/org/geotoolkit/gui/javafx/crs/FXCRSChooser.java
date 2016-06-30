@@ -31,9 +31,10 @@ import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.crs.AbstractCRS;
 
 /**
  *
@@ -53,13 +54,13 @@ public class FXCRSChooser extends BorderPane {
     private ChoiceBox<AxesConvention> uiChoice;
 
     private FXCRSTable uiTable;
-    
+
     private final ObjectProperty<CoordinateReferenceSystem> crsProperty = new SimpleObjectProperty<>();
     private boolean updateText = false;
-    
+
     public FXCRSChooser() {
         GeotkFX.loadJRXML(this,FXCRSChooser.class);
-        
+
         uiSearch.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 
             @Override
@@ -68,13 +69,13 @@ public class FXCRSChooser extends BorderPane {
                 uiTable.searchCRS(uiSearch.getText());
             }
         });
-        
+
         uiTable = new FXCRSTable();
         uiPane.setCenter(uiTable);
-        
+
         uiTable.crsProperty().bindBidirectional(crsProperty);
-        
-        crsProperty.addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
+
+        crsProperty.addListener((ObservableValue<? extends CoordinateReferenceSystem> observable,
                               CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
             uiTable.crsProperty().set(newValue);
             if(newValue!=null){
@@ -96,7 +97,10 @@ public class FXCRSChooser extends BorderPane {
         try{
             Integer epsg = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true);
             if(epsg!=null){
-                crs = CRS.decode("EPSG:"+epsg, uiLongFirst.isSelected());
+                crs = CRS.forCode("EPSG:"+epsg);
+                if (uiLongFirst.isSelected()) {
+                    crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+                }
             }
         }catch(FactoryException ex){/*no important*/}
 
@@ -107,16 +111,16 @@ public class FXCRSChooser extends BorderPane {
 
         return crs;
     }
-    
+
     public ObjectProperty<CoordinateReferenceSystem> crsProperty(){
         return crsProperty;
     }
-        
+
     public static CoordinateReferenceSystem showDialog(Object parent, CoordinateReferenceSystem crs){
         final FXCRSChooser chooser = new FXCRSChooser();
         chooser.crsProperty.set(crs);
         FXOptionDialog.showOkCancel(parent, chooser, "", false);
         return chooser.getCorrectedCRS();
     }
-    
+
 }

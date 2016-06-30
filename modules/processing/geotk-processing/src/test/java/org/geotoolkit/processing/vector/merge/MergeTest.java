@@ -34,7 +34,7 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -101,8 +101,8 @@ public class MergeTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("MergeTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Polygon.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Polygon.class, CRS.forCode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();
@@ -113,9 +113,9 @@ public class MergeTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Merge2Test");
         ftb.add("name", Integer.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("color", String.class);
-        ftb.add("geom3", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom3", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();
@@ -126,7 +126,7 @@ public class MergeTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Merge3Test");
         ftb.add("height", Integer.class);
-        ftb.add("geom4", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom4", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("color", String.class);
         ftb.setDefaultGeometry("geom4");
         final FeatureType sft = ftb.buildFeatureType();

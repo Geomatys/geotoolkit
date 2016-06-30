@@ -45,8 +45,6 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
@@ -60,7 +58,7 @@ import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 
@@ -71,6 +69,8 @@ import org.opengis.geometry.Envelope;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -88,7 +88,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
     static {
         try {
-            WGS84 = CRS.decode("CRS:84");
+            WGS84 = CRS.forCode("CRS:84");
         } catch (FactoryException ex) {
             throw new RuntimeException(ex);
         }
@@ -109,7 +109,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         Files.createDirectory(directory);
 
         // the tree CRS (must be) cartesian
-        treeCrs = CRS.decode("CRS:84");
+        treeCrs = CRS.forCode("CRS:84");
 
         //creating tree (R-Tree)------------------------------------------------
 
@@ -290,7 +290,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         /*
          * The same box in a diferent crs
          */
-        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:3395"));
         env.setEnvelope(-2226389.8158654715, -2258423.6490963786,
                          2226389.8158654715, 2258423.6490963805);
 
@@ -436,7 +436,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         double min2[] = {-2226389.8158654715, -2258423.6490963786};
         double max2[] = { 2226389.8158654715,  2258423.6490963805};
         bbox = new GeneralEnvelope(min2, max2);
-        bbox.setCoordinateReferenceSystem(CRS.decode("EPSG:3395", true));
+        bbox.setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode("EPSG:3395")).forConvention(AxesConvention.RIGHT_HANDED));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(bbox));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -490,7 +490,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
             new Coordinate(775978.5043848383, 3339584.723798207),
             new Coordinate(775978.5043848383, -3339584.723798207),
         });
-        JTS.setCRS(geom, CRS.decode("EPSG:3395"));
+        JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -536,7 +536,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
             new Coordinate(4452779.631730943, 4838471.398061137),
             new Coordinate(4452779.631730943, -3339584.723798207),
         });
-        JTS.setCRS(geom, CRS.decode("EPSG:3395"));
+        JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -2442,7 +2442,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
 
         // re-add the document
-        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
         Document docu = new Document();
         docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
         docu.add(new StringField("docid", 66 + "", Field.Store.YES));
@@ -2480,7 +2480,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
-        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
 
         Document doc = new Document();
         doc.add(new StringField("id", "point 1", Field.Store.YES));

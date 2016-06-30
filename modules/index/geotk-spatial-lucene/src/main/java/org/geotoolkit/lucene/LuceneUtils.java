@@ -41,7 +41,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
@@ -95,9 +95,9 @@ public class LuceneUtils {
                 reproj = false;
             } else {
                 if (Units.isLinear(unit)) {
-                    crs = CRS.decode("EPSG:3857");
+                    crs = CRS.forCode("EPSG:3857");
                 } else {
-                    crs = CRS.decode("CRS:84");
+                    crs = CRS.forCode("CRS:84");
                 }
                 e   = getReprojectedEnvelope(bound, crs);
                 reproj = true;
@@ -140,7 +140,7 @@ public class LuceneUtils {
         final Envelope jtsBound = geom.getEnvelopeInternal();
         final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
         try {
-            final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+            final CoordinateReferenceSystem geomCRS = CRS.forCode(epsgCode);
             final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
             bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
             bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
@@ -201,7 +201,7 @@ public class LuceneUtils {
     public static NamedEnvelope getNamedEnvelope(final String id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
         final com.vividsolutions.jts.geom.Envelope jtsBound = geom.getEnvelopeInternal();
         final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+        final CoordinateReferenceSystem geomCRS = CRS.forCode(epsgCode);
         final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
         bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
         bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
@@ -246,7 +246,7 @@ public class LuceneUtils {
         JTS.setCRS(poly, crs);
         return poly;
     }
-    
+
     public static Polygon[] getPolygons(final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final CoordinateReferenceSystem crs) {
         final List<Polygon> polygonList = new ArrayList<>();
         for (int i = 0; i < minx.size(); i++) {

@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -107,7 +108,7 @@ public class TransformedCoverage extends AbstractCoverage {
             Coverage coverage) throws FactoryException
     {
         while (true) {
-            if (CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), crs)) {
+            if (Utilities.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), crs)) {
                 return coverage;
             }
             if (coverage.getClass() == TransformedCoverage.class) {

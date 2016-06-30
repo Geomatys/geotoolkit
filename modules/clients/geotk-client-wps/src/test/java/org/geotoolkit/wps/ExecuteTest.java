@@ -28,7 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
@@ -52,7 +52,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
     private static String EPSG_VERSION;
 
     public ExecuteTest() {
-        EPSG_VERSION = CRS.getVersion("EPSG").toString();
+        EPSG_VERSION = org.geotoolkit.referencing.CRS.getVersion("EPSG").toString();
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
 
             final GeometryFactory gf = new GeometryFactory();
             final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
-            JTS.setCRS(point, CRS.decode("EPSG:4326"));
+            JTS.setCRS(point, CRS.forCode("EPSG:4326"));
 
             final List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
             inputs.add(new WPSInputLiteral("literal", "10"));

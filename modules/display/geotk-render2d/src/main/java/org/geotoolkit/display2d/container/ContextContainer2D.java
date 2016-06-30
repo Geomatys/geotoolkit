@@ -57,6 +57,7 @@ import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.util.Utilities;
 
 /**
  * This is the general use case of a renderer, this renderer is made to work
@@ -154,7 +155,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
             final MapContext context = getContext();
             if(context != null){
                 Envelope env = context.getBounds(true);
-                if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
+                if( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
                     org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(env);
                     return genv.toRectangle2D();
                 }else{
@@ -194,7 +195,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
                 Envelope env = context.getBounds(true);
 
                 if(env != null){
-                    if ( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {
+                    if ( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {
                         return new GeneralEnvelope(env);
                     } else {
                         return (GeneralEnvelope) CRS.transform(env, crs);

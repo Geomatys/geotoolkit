@@ -18,6 +18,7 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.util.Utilities;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -58,7 +59,7 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                     if(lo instanceof Geometry){
                         Geometry geom = (Geometry)lo;
                         final CoordinateReferenceSystem sourceCRS = JTS.findCoordinateReferenceSystem(geom);
-                        if(CRS.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
+                        if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
                         final MathTransform trs = CRS.findMathTransform(sourceCRS, targetCrs);
                         geom = JTS.transform(geom, trs);
                         l = ff.literal(geom);

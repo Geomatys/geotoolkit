@@ -49,7 +49,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataFileStore;
@@ -209,7 +209,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             if(field.isEmpty()){
                 field = "unamed"+(unnamed++);
             }
-            
+
             final int dep = field.indexOf('(');
             final int fin = field.lastIndexOf(')');
 
@@ -243,7 +243,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                         if(name.contains(":")){
                             try {
                                 //check if it's a geometry type
-                                crs = CRS.decode(name);
+                                crs = CRS.forCode(name);
                                 type = Geometry.class;
                             } catch (NoSuchAuthorityCodeException ex) {
                                 getLogger().log(Level.SEVERE, null, ex);
@@ -284,7 +284,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             sb.append(desc.getName().tip().toString());
             sb.append('(');
             final Class clazz = desc.getType().getBinding();
-            if(Number.class.isAssignableFrom(clazz) || float.class.equals(clazz) 
+            if(Number.class.isAssignableFrom(clazz) || float.class.equals(clazz)
                     || double.class.equals(clazz) || int.class.equals(clazz)
                     || short.class.equals(clazz) || byte.class.equals(clazz)) {
                 sb.append(clazz.getSimpleName());
@@ -763,7 +763,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return null;
     }
 
-    
+
     private static DefaultFeature defaultFeature(final FeatureType type, final String id){
         final Collection<Property> props = new ArrayList<Property>();
         for(final PropertyDescriptor subDesc : type.getDescriptors()){
@@ -790,7 +790,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         final List<String> strings = new ArrayList<>();
         int last = 0;
         toSplit = toSplit.trim();
-        
+
         String currentValue = null;
         boolean inEscape = false;
         for(;;){

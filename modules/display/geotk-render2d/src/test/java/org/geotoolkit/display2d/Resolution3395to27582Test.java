@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.util.FactoryException;
@@ -31,6 +31,6 @@ import org.opengis.util.FactoryException;
 public class Resolution3395to27582Test extends ResolutionCRSTest {
 
     public Resolution3395to27582Test() throws NoninvertibleTransformException, NoSuchAuthorityCodeException, FactoryException {
-        super(CRS.decode("EPSG:3395"), CRS.decode("EPSG:27582"), new double[]{4300, 253}, 3);
+        super(CRS.forCode("EPSG:3395"), CRS.forCode("EPSG:27582"), new double[] {4300, 253}, 3);
     }
 }

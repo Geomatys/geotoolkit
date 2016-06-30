@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.image.color.ScaledColorSpace;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -110,7 +110,7 @@ public class WKBRasterReader {
         if(authorityFactory != null){
             gcb.setCoordinateReferenceSystem(authorityFactory.createCoordinateReferenceSystem(epsgCode));
         }else{
-            gcb.setCoordinateReferenceSystem(CRS.decode(epsgCode));
+            gcb.setCoordinateReferenceSystem(CRS.forCode(epsgCode));
         }
         gcb.setGridToCRS((MathTransform)getGridToCRS());
         gcb.setRenderedImage(image);

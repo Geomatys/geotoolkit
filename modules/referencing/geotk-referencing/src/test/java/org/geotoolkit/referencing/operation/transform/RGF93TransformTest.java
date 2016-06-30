@@ -21,10 +21,12 @@ package org.geotoolkit.referencing.operation.transform;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.test.CalculationType;
 import org.opengis.test.referencing.TransformTestCase;
 import org.apache.sis.internal.system.DataDirectory;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.junit.Test;
 
 import static org.apache.sis.test.Assume.*;
@@ -135,9 +137,9 @@ public final strictfp class RGF93TransformTest extends TransformTestCase {
          * Get the transform, which will use the NTv2 grid since
          * we are transforming between two-dimensional CRS.
          */
-        final ProjectedCRS sourceCRS = (ProjectedCRS) CRS.decode("EPSG:27572", true);       // Lambert zone II etendu
-        final ProjectedCRS targetCRS = (ProjectedCRS) CRS.decode("EPSG:2154",  true);       // RGF93 / lambert93
-        transform = CRS.findMathTransform(sourceCRS, targetCRS);
+        final ProjectedCRS sourceCRS = (ProjectedCRS) AbstractCRS.castOrCopy(CRS.forCode("EPSG:27572")).forConvention(AxesConvention.RIGHT_HANDED);       // Lambert zone II etendu
+        final ProjectedCRS targetCRS = (ProjectedCRS) AbstractCRS.castOrCopy(CRS.forCode("EPSG:2154")).forConvention(AxesConvention.RIGHT_HANDED);       // RGF93 / lambert93
+        transform = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         /*
          * Test the transform. It is normal to have a difference compared with CIRCE, since the
          * NTv2 grid is an approximation. However the difference compared to the expected values

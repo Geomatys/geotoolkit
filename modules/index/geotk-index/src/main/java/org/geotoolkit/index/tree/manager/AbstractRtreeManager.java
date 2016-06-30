@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -47,7 +47,7 @@ public class AbstractRtreeManager {
     static {
         CoordinateReferenceSystem crs = null;
         try {
-            crs = CRS.decode("CRS:84");
+            crs = CRS.forCode("CRS:84");
         } catch (FactoryException ex) {
             LOGGER.log(Level.SEVERE, "Error while reading CRS:84", ex);
         }

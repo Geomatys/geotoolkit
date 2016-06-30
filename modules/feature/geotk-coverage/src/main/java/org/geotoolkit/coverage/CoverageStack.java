@@ -74,7 +74,7 @@ import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 

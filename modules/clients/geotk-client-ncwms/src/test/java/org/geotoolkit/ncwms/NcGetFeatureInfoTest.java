@@ -22,7 +22,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -47,7 +47,7 @@ public class NcGetFeatureInfoTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNcGetFeatureInfo111() throws NoSuchAuthorityCodeException, FactoryException {
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -104,7 +104,7 @@ public class NcGetFeatureInfoTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNcGetFeatureInfo130() throws NoSuchAuthorityCodeException, FactoryException {
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 

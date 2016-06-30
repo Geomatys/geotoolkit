@@ -17,7 +17,7 @@ import org.geotoolkit.pending.demo.Demos;
 import static org.geotoolkit.pending.demo.mapmodel.MapContextDemo.openWorldFile;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.vector.buffer.BufferDescriptor;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -67,7 +67,7 @@ public class ProcessedLayerDemo {
     }
 
     private static MapLayer createProcessedCoverageLayer() throws Exception{
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:2154");
         GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -30, +30);
         env.setRange(1, 20, 80);

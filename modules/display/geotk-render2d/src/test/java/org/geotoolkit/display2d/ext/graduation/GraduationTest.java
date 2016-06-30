@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.LineString;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -37,7 +36,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,7 +55,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
     @Test
     public void renderGraduationTest() throws PortrayalException, FactoryException{
 
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:2154");
 
         final GraduationSymbolizer gs = new GraduationSymbolizer();
         final GraduationSymbolizer.Graduation gra = new GraduationSymbolizer.Graduation();
@@ -80,7 +79,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
 
         final SceneDef sdef = new SceneDef(context);
         final CanvasDef cdef = new CanvasDef(new Dimension(100, 100), Color.darkGray);
-        final ViewDef vdef = new ViewDef(CRS.getEnvelope(crs));
+        final ViewDef vdef = new ViewDef(org.geotoolkit.referencing.CRS.getEnvelope(crs));
 
         final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
         Assert.assertNotNull(img);

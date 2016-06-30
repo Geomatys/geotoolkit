@@ -32,7 +32,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.After;
 import org.junit.Before;
 
@@ -52,6 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import org.opengis.metadata.Identifier;
+import org.apache.sis.util.Utilities;
 
 /**
  * Generic reading tests for datastore.
@@ -271,10 +272,10 @@ public abstract class AbstractReadingTests{
         if(type.getGeometryDescriptor() != null){
             final GeometryDescriptor desc = type.getGeometryDescriptor();
             final CoordinateReferenceSystem originalCRS = desc.getCoordinateReferenceSystem();
-            CoordinateReferenceSystem testCRS = CRS.decode("EPSG:3395");
-            if(CRS.equalsIgnoreMetadata(originalCRS, testCRS)){
+            CoordinateReferenceSystem testCRS = CRS.forCode("EPSG:3395");
+            if(Utilities.equalsIgnoreMetadata(originalCRS, testCRS)){
                 //change the test crs
-                testCRS = CRS.decode("EPSG:4326");
+                testCRS = CRS.forCode("EPSG:4326");
             }
 
             //handle geometry as object since they can be ISO or JTS

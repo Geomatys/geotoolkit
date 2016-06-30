@@ -41,7 +41,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.sort.DefaultSortBy;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -449,7 +449,7 @@ public class MemoryDatastoreTest extends TestCase{
         Filter filter = FF.equals(FF.property("date"), FF.literal(new Date(10000L)));
         Query query = QueryBuilder.filtered(name,filter);
         assertEquals(store.getCount(query),1);
-        
+
         reader = store.getFeatureReader(query);
         try{
             Feature sf;
@@ -498,7 +498,7 @@ public class MemoryDatastoreTest extends TestCase{
         qb.setTypeName(name);
         qb.setProperties(new String[]{"string","date"});
         query = qb.buildQuery();
-        
+
         assertEquals(store.getCount(query),3);
 
         reader = store.getFeatureReader(query);
@@ -577,7 +577,7 @@ public class MemoryDatastoreTest extends TestCase{
         final GenericName name = NamesExt.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
-        builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
+        builder.add("geometry", Point.class, CRS.forCode("EPSG:27582"));
         builder.add("string", String.class);
         final FeatureType type = builder.buildFeatureType();
         store.createFeatureType(name,type);
@@ -634,7 +634,7 @@ public class MemoryDatastoreTest extends TestCase{
         //test reprojection-------------------------------------------------------
         qb.reset();
         qb.setTypeName(name);
-        qb.setCRS(CRS.decode("EPSG:4326"));
+        qb.setCRS(CRS.forCode("EPSG:4326"));
         query = qb.buildQuery();
 
         assertEquals(1,store.getCount(query));

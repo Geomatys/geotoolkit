@@ -11,28 +11,28 @@ import java.util.List;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
 
 public class CreateShapefileDemo {
-    
+
     public static void main(String[] args) throws Exception {
-        
+
         //create a featurestore toward the wanted path
         final ShapefileFeatureStore store = new ShapefileFeatureStore(URI.create("file:/tmp/test.shp"));
-        
+
         //create the feature type needed
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("River");
-        ftb.add("the_geom",Point.class, CRS.decode("EPSG:4326"));
+        ftb.add("the_geom",Point.class, CRS.forCode("EPSG:4326"));
         ftb.add("name", String.class);
         final FeatureType type = ftb.buildFeatureType();
-        
+
         //add this model in the datastore
         store.createFeatureType(type.getName(), type);
-        
+
         //create and store a feature
         final List<Feature> features = new ArrayList<Feature>();
         final Feature f = FeatureUtilities.defaultFeature(type, "id-0");
@@ -40,7 +40,7 @@ public class CreateShapefileDemo {
         f.getProperty("name").setValue("long river");
         features.add(f);
         store.addFeatures(type.getName(), features);
-        
+
     }
-    
+
 }

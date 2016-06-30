@@ -75,6 +75,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -372,7 +373,7 @@ public class ResampleProcess extends AbstractProcess {
          */
         MathTransform allSteps, allSteps2D;
         final MathTransform step1, step2, step3 ;
-        if (CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+        if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             /*
              * Note: targetGG should not be null, otherwise 'existingCoverage(...)' should
              *       have already detected that this resample is not doing anything.
@@ -849,7 +850,7 @@ public class ResampleProcess extends AbstractProcess {
             reducedCRS = sourceCRS;
         }
         GridGeometry gridGeometry = source.getGridGeometry();
-        if (targetCRS == null || CRS.equalsIgnoreMetadata(reducedCRS, targetCRS)) {
+        if (targetCRS == null || Utilities.equalsIgnoreMetadata(reducedCRS, targetCRS)) {
             /*
              * Same CRS (or unknown target CRS, which we treat as same), so we will keep the same
              * "gridToCRS" transform. Basically the result will be the same as if we did a crop,

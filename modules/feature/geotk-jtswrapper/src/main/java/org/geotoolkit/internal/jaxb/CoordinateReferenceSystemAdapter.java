@@ -3,7 +3,7 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
@@ -21,7 +21,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
     @Override
     public CoordinateReferenceSystem unmarshal(final String v) throws Exception {
         if (v != null) {
-            return CRS.decode(v);
+            return CRS.forCode(v);
         }
         return null;
     }

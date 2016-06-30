@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.measure.Range;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.Utilities;
 
 /**
  * MapLayer holding a collection of features.
@@ -119,7 +119,7 @@ public interface FeatureMapLayer extends CollectionMapLayer{
                 return false;
             }
             final DimensionDef other = (DimensionDef) obj;
-            if (!CRS.equalsIgnoreMetadata(this.crs, other.crs)) {
+            if (!Utilities.equalsIgnoreMetadata(this.crs, other.crs)) {
                 return false;
             }
             if (this.lower != other.lower && (this.lower == null || !this.lower.equals(other.lower))) {

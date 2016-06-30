@@ -25,7 +25,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.jts.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -99,10 +99,10 @@ public class EqualsExactTest extends AbstractProcessTest {
         final Geometry geom = fact.createPolygon(ring, null);
         Geometry geom2 = fact.createPolygon(ring, null);
 
-        final CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
         JTS.setCRS(geom, crs1);
 
-        final CoordinateReferenceSystem crs2 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs2 = CRS.forCode("EPSG:4326");
         JTS.setCRS(geom2, crs2);
 
         final double tolerance = 0.00001;
@@ -120,7 +120,7 @@ public class EqualsExactTest extends AbstractProcessTest {
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
 
-        final MathTransform mt = CRS.findMathTransform(crs2, crs1);
+        final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
         geom2 = JTS.transform(geom2, mt);
         final Boolean expected = geom.equalsExact(geom2, tolerance);
 

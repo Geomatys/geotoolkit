@@ -42,7 +42,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.volume.ComputeVolumeBuilder;
 import org.geotoolkit.processing.coverage.volume.ComputeVolumeProcess;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -85,7 +85,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
 
     static {
         try {
-            GEO_CRS                  = CRS.decode("CRS:84");
+            GEO_CRS = CRS.forCode("CRS:84");
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
@@ -453,7 +453,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
             try {
                 Envelope readEnvelope            = param.getEnvelope();
-                MathTransform paramToCoverageCrs = CRS.findMathTransform(param.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem());
+                MathTransform paramToCoverageCrs = CRS.findOperation(param.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
                 readEnvelope                     = Envelopes.transform(paramToCoverageCrs, readEnvelope);
                 GeneralEnvelope readGenEnvelope  = new GeneralEnvelope(readEnvelope);
                 readGenEnvelope.intersects(coverage.getEnvelope(), true);

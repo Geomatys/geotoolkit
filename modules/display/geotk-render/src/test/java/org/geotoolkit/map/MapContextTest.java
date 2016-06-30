@@ -19,7 +19,7 @@ package org.geotoolkit.map;
 import junit.framework.TestCase;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Test;
@@ -28,6 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import java.io.IOException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Test MapContext creation and behavior.
@@ -49,14 +50,14 @@ public class MapContextTest extends TestCase {
         //default MapContext
         MapContext context = MapBuilder.createContext();
         assertNotNull(context);
-        assertTrue(CRS.equalsIgnoreMetadata(CommonCRS.WGS84.defaultGeographic(), context.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.defaultGeographic(), context.getCoordinateReferenceSystem()));
 
 
         // WGS72 MapContext
         final CoordinateReferenceSystem wgs72 = CommonCRS.WGS72.defaultGeographic();
         context = MapBuilder.createContext(wgs72);
         assertNotNull(context);
-        assertTrue(CRS.equalsIgnoreMetadata(wgs72, context.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(wgs72, context.getCoordinateReferenceSystem()));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class MapContextTest extends TestCase {
         // test layer in different CRS than Context
         context = MapBuilder.createContext();
 
-        CoordinateReferenceSystem mercator = CRS.parseWKT(
+        CoordinateReferenceSystem mercator = CRS.fromWKT(
                 "PROJCS[“WGS 84 / World Mercator”,\n" +
                 "  GEOGCS[“WGS 84”,\n" +
                 "    DATUM[“World Geodetic System 1984”,\n" +
@@ -123,7 +124,7 @@ public class MapContextTest extends TestCase {
         env1.setRange(1, -10000, 10000);
         context.layers().add(new MockMapLayer(defaultStyle, env1, true));
 
-        CoordinateReferenceSystem lambert = CRS.parseWKT(
+        CoordinateReferenceSystem lambert = CRS.fromWKT(
                 "PROJCS[“NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001”,\n" +
                 "  GEOGCS[“GCS_North_American_1983”,\n" +
                 "    DATUM[“D_North_American_1983”,\n" +
@@ -159,7 +160,7 @@ public class MapContextTest extends TestCase {
         context = MapBuilder.createContext();
         ctxBounds = context.getBounds(true);
         assertNotNull(ctxBounds);
-        expected = new GeneralEnvelope(CRS.getEnvelope(CommonCRS.WGS84.defaultGeographic()));
+        expected = new GeneralEnvelope(org.geotoolkit.referencing.CRS.getEnvelope(CommonCRS.WGS84.defaultGeographic()));
         assertTrue(expected.equals(ctxBounds, 0.0000001, true));
 
     }

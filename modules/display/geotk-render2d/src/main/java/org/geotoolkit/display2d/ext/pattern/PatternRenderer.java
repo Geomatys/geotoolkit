@@ -47,6 +47,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Renderer for Pattern symbolizer.
@@ -86,7 +87,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
             throw new PortrayalException(ex);
         }
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
+        if(!Utilities.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
                 //we resample the native view of the coverage only, the style will be applied later.

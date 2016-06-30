@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.referencing;
 
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -17,7 +17,7 @@ public class WKTReadWrite {
      */
     public static void main(String[] args) throws FactoryException {
         Demos.init();
-        
+
         final String wkt = "PROJCS[\"WGS 84 / World Mercator\",   GEOGCS[\"WGS 84\",     " +
                 "DATUM[\"World Geodetic System 1984\",       " +
                 "SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]],       " +
@@ -37,7 +37,7 @@ public class WKTReadWrite {
                 "AXIS[\"Easting\", EAST],   " +
                 "AXIS[\"Northing\", NORTH], " +
                 "AUTHORITY[\"EPSG\",\"3395\"]]";
-        final CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        final CoordinateReferenceSystem crs = CRS.fromWKT(wkt);
         System.out.println(crs);
 
         String backToWKT = crs.toWKT();

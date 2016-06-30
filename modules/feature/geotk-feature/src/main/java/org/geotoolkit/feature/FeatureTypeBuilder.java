@@ -22,14 +22,12 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Classes;
 
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -502,7 +500,7 @@ public class FeatureTypeBuilder {
         add(desc);
         return desc;
     }
-    
+
     public AttributeDescriptor add(final GenericName typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         AttributeTypeBuilder atb = new AttributeTypeBuilder();
@@ -518,12 +516,12 @@ public class FeatureTypeBuilder {
         add(desc);
         return desc;
     }
-    
+
     public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         return add(typeNamespace, typeName, binding, name, crs, min, max, nillable, null, userData);
     }
-    
+
     public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Object defaultValue, final Map<Object,Object> userData){
         AttributeTypeBuilder atb = new AttributeTypeBuilder();
@@ -753,7 +751,7 @@ public class FeatureTypeBuilder {
      */
     private static CoordinateReferenceSystem decode(final String srs) {
         try {
-            return CRS.decode(srs);
+            return CRS.forCode(srs);
         } catch (Exception e) {
             String msg = "SRS '" + srs + "' unknown:" + e.getLocalizedMessage();
             throw (IllegalArgumentException) new IllegalArgumentException(msg).initCause(e);

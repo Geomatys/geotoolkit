@@ -20,12 +20,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
@@ -44,7 +42,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -53,12 +51,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Fill;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
-import org.opengis.util.FactoryException;
 
 /**
  *
@@ -134,8 +130,8 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
     @Test
     public void bufferGeoTest() throws Exception{
 
-        final CoordinateReferenceSystem crs2154 = CRS.decode("EPSG:2154");
-        final CoordinateReferenceSystem crs3857 = CRS.decode("EPSG:3857");
+        final CoordinateReferenceSystem crs2154 = CRS.forCode("EPSG:2154");
+        final CoordinateReferenceSystem crs3857 = CRS.forCode("EPSG:3857");
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
@@ -160,7 +156,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         context.layers().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs3857);
-        final Point pt = (Point) JTS.transform(point, CRS.findMathTransform(crs2154, crs3857));
+        final Point pt = (Point) JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
         env.setRange(0, pt.getX()-500, pt.getX()+500);
         env.setRange(1, pt.getY()-500, pt.getY()+500);
         final ViewDef viewDef = new ViewDef(env);

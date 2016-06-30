@@ -45,7 +45,7 @@ import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -71,7 +71,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
     static{
         try {
-            CRS_4326 = CRS.decode("EPSG:4326");
+            CRS_4326 = CRS.forCode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException("Failed to load CRS");
         } catch (FactoryException ex) {

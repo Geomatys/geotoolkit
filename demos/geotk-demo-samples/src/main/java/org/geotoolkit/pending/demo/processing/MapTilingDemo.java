@@ -2,7 +2,6 @@ package org.geotoolkit.pending.demo.processing;
 
 import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import java.awt.Dimension;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,7 +21,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageReference;
@@ -78,7 +77,7 @@ public class MapTilingDemo {
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
 //        Envelope env = context.getBounds();
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
         env.setRange(0, -180, +180);
         env.setRange(1, -90, 90);
         final int nbscale = 20;

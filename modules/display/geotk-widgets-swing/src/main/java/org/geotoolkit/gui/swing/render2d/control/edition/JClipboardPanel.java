@@ -51,6 +51,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Allow to copy geometry from clipboards
@@ -134,7 +135,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
                     final CoordinateReferenceSystem currentCRS = JTS.findCoordinateReferenceSystem(current);
 
                     if(currentCRS != null){
-                        if(!CRS.equalsIgnoreMetadata(currentCRS, crs)){
+                        if(!Utilities.equalsIgnoreMetadata(currentCRS, crs)){
                             final MathTransform trs = CRS.findMathTransform(currentCRS, crs);
                             current = JTS.transform(current, trs);
                         }
@@ -225,7 +226,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
                     final CoordinateReferenceSystem crs1 = getCRS(result);
                     final CoordinateReferenceSystem crs2 = getCRS(second);
                     if(crs1 != null && crs2 != null){
-                        if(!CRS.equalsIgnoreMetadata(crs1, crs2)){
+                        if(!Utilities.equalsIgnoreMetadata(crs1, crs2)){
                             //reproject second geometry
                             try {
                                 final MathTransform trs = CRS.findMathTransform(crs2, crs1);

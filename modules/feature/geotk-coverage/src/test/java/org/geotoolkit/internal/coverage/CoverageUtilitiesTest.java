@@ -21,7 +21,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -113,23 +113,23 @@ public class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
         final NumberRange<Double> meterRange = new NumberRange<>(Double.class, 200000d, true, 2d, true);
 
         final CoordinateReferenceSystem crs84 = CommonCRS.defaultGeographic();
-        final Envelope domain84 = CRS.getEnvelope(crs84);
+        final Envelope domain84 = org.geotoolkit.referencing.CRS.getEnvelope(crs84);
         Map.Entry<Envelope,double[]> scales = CoverageUtilities.toWellKnownScale(domain84, degreeRange);
         Assert.assertEquals("Input and output envelope must be the same.", domain84, scales.getKey());
         for (final double scale : scales.getValue()) {
             ensureAlmostContains(scale, DEGREE_SCALES);
         }
 
-        final CoordinateReferenceSystem crsGoogle = CRS.decode("EPSG:3857");
-        final Envelope domainGoogle = CRS.getEnvelope(crsGoogle);
+        final CoordinateReferenceSystem crsGoogle = CRS.forCode("EPSG:3857");
+        final Envelope domainGoogle = org.geotoolkit.referencing.CRS.getEnvelope(crsGoogle);
         scales = CoverageUtilities.toWellKnownScale(domainGoogle, meterRange);
         Assert.assertEquals("Input and output envelope must be the same.", domainGoogle, scales.getKey());
         for (final double scale : scales.getValue()) {
             ensureAlmostContains(scale, METER_SCALES);
         }
 
-        final CoordinateReferenceSystem crsMercat = CRS.decode("EPSG:3395");
-        final Envelope domainMercat = CRS.getEnvelope(crsMercat);
+        final CoordinateReferenceSystem crsMercat = CRS.forCode("EPSG:3395");
+        final Envelope domainMercat = org.geotoolkit.referencing.CRS.getEnvelope(crsMercat);
         scales = CoverageUtilities.toWellKnownScale(domainMercat, meterRange);
         Assert.assertEquals("Input and output envelope must be the same.", domainMercat, scales.getKey());
         for (final double scale : scales.getValue()) {

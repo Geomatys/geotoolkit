@@ -37,7 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Attribute;
 
@@ -83,7 +83,7 @@ public class FilterTestConstants {
     static{
         CoordinateReferenceSystem crs = null;
         try {
-            crs = CRS.decode("EPSG:4326");
+            crs = CRS.forCode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {

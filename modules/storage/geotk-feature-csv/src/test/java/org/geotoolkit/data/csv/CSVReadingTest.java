@@ -37,7 +37,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -64,11 +64,11 @@ public class CSVReadingTest extends AbstractReadingTests{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         final String namespace = "http://test.com";
-        
+
         GenericName name = NamesExt.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
-        builder.add(NamesExt.create(namespace, "geometry"), Geometry.class, CRS.decode("EPSG:27582"));
+        builder.add(NamesExt.create(namespace, "geometry"), Geometry.class, CRS.forCode("EPSG:27582"));
         builder.add(NamesExt.create(namespace, "stringProp"), String.class);
         builder.add(NamesExt.create(namespace, "intProp"), Integer.class);
         builder.add(NamesExt.create(namespace, "doubleProp"), Double.class);
@@ -97,10 +97,10 @@ public class CSVReadingTest extends AbstractReadingTests{
             writer.close();
         }
 
-        GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+        GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
         env.setRange(0, -5, 10);
         env.setRange(1, -1, 11);
-        
+
         names.add(name);
         expecteds.add(new ExpectedResult(name,type3,2,env));
     }

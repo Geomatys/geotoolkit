@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetFeatureInfo111() throws NoSuchAuthorityCodeException, FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
+        final CoordinateReferenceSystem crs = CRS.forCode("CRS:84");
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -92,7 +92,7 @@ public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetFeatureInfo130() throws NoSuchAuthorityCodeException, FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
+        final CoordinateReferenceSystem crs = CRS.forCode("CRS:84");
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);

@@ -90,10 +90,10 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.util.Utilities;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -163,7 +163,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             renderStyledFeature(renderingContext);
             return;
         }
-        
+
         //first extract the valid rules at this scale
         final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
 
@@ -172,7 +172,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         if(validRules.isEmpty()){
             return;
         }
-        
+
         //extract the used names
         Set<String> names = propertiesNames(validRules);
         if(names.contains("*")){
@@ -196,8 +196,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
             symbolsMargin = scale * symbolsMargin;
         }
-        
-        
+
+
         final FeatureCollection candidates;
         try {
             //optimize
@@ -205,8 +205,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
-        }        
-                
+        }
+
         //get the expected result type
         final FeatureType expected = candidates.getFeatureType();
 
@@ -218,11 +218,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     /**
      * Render styled features.
-     * 
-     * @param context 
+     *
+     * @param context
      */
     private void renderStyledFeature(final RenderingContext2D context){
-        
+
         final CanvasMonitor monitor = context.getMonitor();
         final FeatureCollection candidates;
         try {
@@ -232,10 +232,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             return;
         }
         final RenderingIterator statefullIterator = getIterator(candidates, context, getStatefullParameters(context));
-        
+
         //prepare the rendering parameters
         if(monitor.stopRequested()) return;
-        
+
         try{
             while(statefullIterator.hasNext()){
                 if(monitor.stopRequested()) return;
@@ -261,9 +261,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 getLogger().log(Level.WARNING, null, ex);
             }
         }
-        
+
     }
-    
+
     @Override
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
@@ -275,7 +275,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         col = GenericCachedFeatureIterator.wrap(col, 1000);
         return col;
     }
-    
+
     protected Collection<?> optimizeCollection(final RenderingContext2D context) throws Exception {
         currentQuery = prepareQuery(context, item, symbolsMargin);
         //we detach feature since we are going to use a cache.
@@ -285,7 +285,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         col = GenericCachedFeatureIterator.wrap(col, 1000);
         return col;
     }
-    
+
 
     @Override
     protected FeatureId id(Object candidate) {
@@ -482,7 +482,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 }
                 filter = FILTER_FACTORY.or(geomFilters);
             }
-           
+
         }else{
             filter = Filter.EXCLUDE;
         }
@@ -512,7 +512,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 min = ((DefaultTemporalCRS)crs).toDate((Double)min);
                 max = ((DefaultTemporalCRS)crs).toDate((Double)max);
             }
-            
+
             final Filter dimFilter = FILTER_FACTORY.and(
                     FILTER_FACTORY.or(
                             FILTER_FACTORY.isNull(def.getLower()),
@@ -678,12 +678,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
-    
+
     /**
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, 
+    protected static Query prepareQuery(final RenderingContext2D renderingContext,
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
         final FeatureCollection fs            = layer.getCollection();
@@ -794,18 +794,18 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
         final CoordinateReferenceSystem layerCRS                 = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
-        
+
         //expand the search area by the maximum symbol size
-        if(symbolsMargin>0){                
+        if(symbolsMargin>0){
             final GeneralEnvelope env = new GeneralEnvelope(bbox);
             env.setRange(0, env.getMinimum(0)-symbolsMargin, env.getMaximum(0)+symbolsMargin);
             env.setRange(1, env.getMinimum(1)-symbolsMargin, env.getMaximum(1)+symbolsMargin);
             bbox = new DefaultBoundingBox(env);
         }
-        
+
         //layer crs may be null if it define an abstract collection
         //or if the crs is defined only on the feature geometry
-        if(layerCRS != null && !org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+        if(layerCRS != null && !Utilities.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 
@@ -843,10 +843,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
             bbox = new DefaultBoundingBox(env);
         }
-        
+
         return bbox;
     }
-    
+
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator ite;

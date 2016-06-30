@@ -87,7 +87,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
 
@@ -148,7 +148,7 @@ public final class DimapAccessor extends Static {
     public static CoordinateReferenceSystem readCRS(final Element doc) throws NoSuchAuthorityCodeException, FactoryException {
         final Element ele = firstElement(doc, TAG_CRS);
         final Element code = firstElement(ele, TAG_HORIZONTAL_CS_CODE);
-        return CRS.decode(code.getTextContent());
+        return CRS.forCode(code.getTextContent());
     }
 
 

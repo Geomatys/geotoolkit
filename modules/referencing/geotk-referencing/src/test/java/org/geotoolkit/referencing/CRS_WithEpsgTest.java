@@ -36,6 +36,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
@@ -45,6 +46,8 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestBase;
 
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
 import static org.geotoolkit.referencing.Assert.*;
@@ -83,7 +86,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void testCorrectAxisOrder() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:4326");
         assertEquals("EPSG:4326", IdentifiedObjects.getIdentifierOrName(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
@@ -102,7 +105,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void testForcedAxisOrder() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
+        final CoordinateReferenceSystem crs = AbstractCRS.castOrCopy(CRS.forCode("EPSG:4326")).forConvention(AxesConvention.RIGHT_HANDED);
         assertEquals("EPSG:4326", IdentifiedObjects.getIdentifierOrName(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
@@ -113,7 +116,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
         CoordinateSystemAxis axis1 = cs.getAxis(1);
         assertEquals("Lat", axis1.getAbbreviation());
 
-        assertNotDeepEquals(crs, CRS.decode("EPSG:4326")); // Should not be (lon,lat) axis order.
+        assertNotDeepEquals(crs, CRS.forCode("EPSG:4326"));     // Should not be (lon,lat) axis order.
     }
 
     /**
@@ -127,7 +130,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
         assertNull(Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
         final CoordinateReferenceSystem crs;
         try {
-            crs = CRS.decode("EPSG:4326");
+            crs = CRS.forCode("EPSG:4326");
 
             final CoordinateSystem cs = crs.getCoordinateSystem();
             assertEquals(2, cs.getDimension());
@@ -179,7 +182,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
                 "  SPHEROID[\"International 1924\", 6378388.0, 297.0]],\n" +
                 "PRIMEM[\"Greenwich\", 0.0],\n" +
                 "UNIT[\"degree\", 0.017453292519943295]]";
-        return CRS.parseWKT(wkt);
+        return CRS.fromWKT(wkt);
     }
 
     /**
@@ -197,7 +200,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
                    + "  UNIT[\"DMSH\",0.0174532925199433],\n"
                    + "  AXIS[\"Lat\",NORTH], AXIS[\"Long\",EAST],\n"
                    + "  AUTHORITY[\"EPSG\",\"4326\"]]";
-        CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        CoordinateReferenceSystem crs = CRS.fromWKT(wkt);
         assertNotNull(crs);
     }
 
@@ -208,14 +211,14 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void testFindMathTransformIdentity() throws FactoryException {
-        CoordinateReferenceSystem crs1default = CRS.decode("EPSG:4326");
-        CoordinateReferenceSystem crs2default = CRS.decode("EPSG:4326");
-        MathTransform tDefault = CRS.findMathTransform(crs1default, crs2default);
+        CoordinateReferenceSystem crs1default = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem crs2default = CRS.forCode("EPSG:4326");
+        MathTransform tDefault = CRS.findOperation(crs1default, crs2default, null).getMathTransform();
         assertTrue("WSG84 transformed to WSG84 should be Identity", tDefault.isIdentity());
 
-        CoordinateReferenceSystem crs1force = CRS.decode("EPSG:4326",true);
-        CoordinateReferenceSystem crs2force = CRS.decode("EPSG:4326",true);
-        MathTransform tForce = CRS.findMathTransform(crs1force, crs2force);
+        CoordinateReferenceSystem crs1force = AbstractCRS.castOrCopy(CRS.forCode("EPSG:4326")).forConvention(AxesConvention.RIGHT_HANDED);
+        CoordinateReferenceSystem crs2force = AbstractCRS.castOrCopy(CRS.forCode("EPSG:4326")).forConvention(AxesConvention.RIGHT_HANDED);
+        MathTransform tForce = CRS.findOperation(crs1force, crs2force, null).getMathTransform();
         assertTrue("WSG84 transformed to WSG84 should be Identity", tForce.isIdentity());
     }
 
@@ -242,7 +245,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void test26986() throws FactoryException {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
+        CoordinateReferenceSystem crs = CRS.forCode("epsg:26986");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26986", IdentifiedObjects.getIdentifierOrName(crs));
     }
@@ -255,7 +258,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void test26742() throws FactoryException {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
+        CoordinateReferenceSystem crs = CRS.forCode("epsg:26742");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26742", IdentifiedObjects.getIdentifierOrName(crs));
     }
@@ -271,7 +274,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void test3785() throws FactoryException {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:3785");
+        CoordinateReferenceSystem crs = CRS.forCode("epsg:3785");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:3785", IdentifiedObjects.getIdentifierOrName(crs));
     }
@@ -286,7 +289,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void test3857() throws FactoryException {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:3857");
+        CoordinateReferenceSystem crs = CRS.forCode("epsg:3857");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:3857", IdentifiedObjects.getIdentifierOrName(crs));
     }
@@ -299,10 +302,10 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     @Test
     public void testHorizontalFromCompound() throws FactoryException {
         // retrives "NTF (Paris) / France II + NGF Lallemand"
-        CoordinateReferenceSystem compound = CRS.decode("EPSG:7401");
-        CoordinateReferenceSystem horizontal = org.apache.sis.referencing.CRS.getHorizontalComponent(compound);
+        CoordinateReferenceSystem compound = CRS.forCode("EPSG:7401");
+        CoordinateReferenceSystem horizontal = CRS.getHorizontalComponent(compound);
         // compares with "NTF (Paris) / France II"
-        assertEquals(CRS.decode("EPSG:27582"), horizontal);
+        assertEquals(CRS.forCode("EPSG:27582"), horizontal);
     }
 
     /**
@@ -313,10 +316,10 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     @Test
     public void testHorizontalFromGeodetic() throws FactoryException {
         // retrives "WGS 84 (geographic 3D)"
-        CoordinateReferenceSystem compound = CRS.decode("EPSG:4327");
-        CoordinateReferenceSystem horizontal = org.apache.sis.referencing.CRS.getHorizontalComponent(compound);
-        // the horizonal version is basically 4326, but it won't compare positively
-        // with 4326, not even using CRS.equalsIgnoreMetadata(), so we check the axis directly
+        CoordinateReferenceSystem compound = CRS.forCode("EPSG:4327");
+        CoordinateReferenceSystem horizontal = CRS.getHorizontalComponent(compound);
+        // the horizonal version is basically 4326, but it won't compare positively with 4326,
+        // not even using Utilities.equalsIgnoreMetadata(), so we check the axis directly.
         CoordinateSystem cs = horizontal.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
@@ -333,11 +336,11 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     @Test
     @Ignore
     public void testProjected4D() throws FactoryException {
-        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3395");
-        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:27572");
+        CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:3395");
+        CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:27572");
         sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "3D"), sourceCRS, CommonCRS.Vertical.ELLIPSOIDAL.crs());
         sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "4D"), sourceCRS, CommonCRS.Temporal.JULIAN.crs());
-        final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
+        final MathTransform tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         assertEquals(4, tr.getSourceDimensions());
         assertEquals(2, tr.getTargetDimensions());
     }
@@ -353,11 +356,11 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void testGeographic3D_to_2D() throws FactoryException {
-        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4327");
-        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:4327");
+        CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:4326");
         MathTransform tr;
         try {
-            CRS.findMathTransform(sourceCRS, targetCRS);
+            CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
             fail("No conversion from EPSG:4327 to EPSG:4326 should be allowed because the units " +
                  "conversion from DMS to degrees is not linear. Note that this exception may be " +
                  "removed in a future version if we implement non-linear unit conversions.");
@@ -365,8 +368,8 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
             assertTrue("The operation should have failed because of a unit conversion error.",
                     e.getCause() instanceof ConversionException);
         }
-        sourceCRS = CRS.decode("EPSG:4979");
-        tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        sourceCRS = CRS.forCode("EPSG:4979");
+        tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         assertEquals(3, tr.getSourceDimensions());
         assertEquals(2, tr.getTargetDimensions());
         assertDiagonalMatrix(tr, true, 1, 1, 0);
@@ -385,8 +388,8 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     @Test
     @Ignore("JSR-275 does not accept unit named 'level'.")
     public void testProjected3D_to_2D() throws FactoryException {
-        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
-        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3035");
+        CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:3035");
         GeodeticDatum targetDatum = ((GeographicCRS) targetCRS).getDatum();
         GeodeticDatum sourceDatum =  ((ProjectedCRS) sourceCRS).getDatum();
         final BursaWolfParameters[] params = ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters();
@@ -394,12 +397,12 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
         assertEquals("targetDatum", targetDatum, params[0].getTargetDatum());
         assertTrue("This test requires that the BursaWolf parameter is set to identity.", params[0].isIdentity());
 
-        CoordinateReferenceSystem vertCRS = CRS.parseWKT(
+        CoordinateReferenceSystem vertCRS = CRS.fromWKT(
                 "VERT_CS[\"Sigma Level\",VERT_DATUM[\"Sigma Level\",2000],UNIT[\"level\",1.0],AXIS[\"Sigma Level\",DOWN]]");
         sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "ETRS89 + Sigma level"), sourceCRS, vertCRS);
-        final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
-        assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, false));
-        assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, true));
+        final MathTransform tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
+        assertSame(tr, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
+        assertSame(tr, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
         assertEquals(3, tr.getSourceDimensions());
         assertEquals(2, tr.getTargetDimensions());
     }
@@ -415,10 +418,10 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
     @Test
     @Ignore
     public void testCRSWithGeographicArea() throws FactoryException {
-        final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4267"); // NAD27
-        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326"); // WGS84
+        final CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:4267"); // NAD27
+        final CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:4326"); // WGS84
         final DefaultGeographicBoundingBox box = new DefaultGeographicBoundingBox(-91.64, -88.09, 30.02, 35.00); // Mississipi (EPSG:1393)
-        final MathTransform mt = CRS.findMathTransform(sourceCRS, targetCRS, box, true);
+        final MathTransform mt = CRS.findOperation(sourceCRS, targetCRS, box).getMathTransform();
         /*
          * We expect "NAD27 to WGS 84 (56)" (EPSG:8609). Since the CoordinateOperation is lost at this stagen
          * we can not test the identifier code. So we will test the MathTransform WKT. In particular, we look

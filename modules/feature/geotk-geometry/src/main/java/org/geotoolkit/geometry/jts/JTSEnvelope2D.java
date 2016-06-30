@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -37,6 +37,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.util.Utilities;
 
 /**
  * A JTS envelope associated with a
@@ -268,7 +269,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
         if (crs != null) {
             final CoordinateReferenceSystem other = bbox.getCoordinateReferenceSystem();
             if (other != null) {
-                if (!CRS.equalsIgnoreMetadata(crs, other)) {
+                if (!Utilities.equalsIgnoreMetadata(crs, other)) {
                     throw new MismatchedReferenceSystemException(Errors.format(
                             Errors.Keys.MismatchedCoordinateReferenceSystem));
                 }

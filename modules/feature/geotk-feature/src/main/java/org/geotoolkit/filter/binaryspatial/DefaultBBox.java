@@ -49,6 +49,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -194,7 +195,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         //if we don't know the crs, we will assume it's the objective crs already
         if(candidateCrs != null){
             //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
+            if (!Utilities.equalsIgnoreMetadata(this.crs,candidateCrs)) {
                 try {
                     candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {

@@ -22,7 +22,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.jts.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -58,7 +58,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         final Geometry geom = fact.createPolygon(ring, null) ;
 
-        CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
         JTS.setCRS(geom, crs1);
 
         // Process

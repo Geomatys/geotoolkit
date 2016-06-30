@@ -57,6 +57,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Basic support for a  FeatureIterator that reprojects the geometry attribute.
@@ -447,7 +448,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
 
             final CoordinateReferenceSystem original =desc.getCoordinateReferenceSystem();
 
-            if (CRS.equalsIgnoreMetadata(original, crs)) {
+            if (Utilities.equalsIgnoreMetadata(original, crs)) {
                 //no need to wrap it, already in the asked projection
                 return reader;
             }

@@ -50,7 +50,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
@@ -106,7 +106,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
     static {
         try {
-            CRS_4326 = CRS.decode("EPSG:4326",true);
+            CRS_4326 = CRS.forCode("CRS:84");           // TODO: wrong variable name.
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException("Failed to load CRS");
         } catch (FactoryException ex) {

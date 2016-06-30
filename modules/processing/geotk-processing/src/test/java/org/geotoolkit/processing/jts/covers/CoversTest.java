@@ -19,7 +19,7 @@ package org.geotoolkit.processing.jts.covers;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
@@ -99,12 +99,12 @@ public class CoversTest extends AbstractProcessTest {
 
         final Geometry geom1 = fact.createPolygon(ring, null);
 
-        final CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
         JTS.setCRS(geom1, crs1);
 
         Geometry geom2 = fact.createPoint(new Coordinate(5, 5));
 
-        CoordinateReferenceSystem crs2= CRS.decode("EPSG:2154");
+        CoordinateReferenceSystem crs2= CRS.forCode("EPSG:2154");
         JTS.setCRS(geom2, crs2);
 
         // Process
@@ -118,7 +118,7 @@ public class CoversTest extends AbstractProcessTest {
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
-        final MathTransform mt = CRS.findMathTransform(crs2, crs1);
+        final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
         geom2 = JTS.transform(geom2, mt);
         final Boolean expected = geom1.covers(geom2);
 

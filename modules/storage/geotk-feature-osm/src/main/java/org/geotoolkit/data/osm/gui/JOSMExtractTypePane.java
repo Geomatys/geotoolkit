@@ -38,7 +38,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.jdesktop.swingx.JXErrorPane;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
@@ -60,7 +60,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     static {
         try {
-            EPSG_4326 = CRS.decode("EPSG:4326");
+            EPSG_4326 = CRS.forCode("EPSG:4326");
         } catch (FactoryException ex) {
             Logging.getLogger("org.geotoolkit.data.osm.gui").log(Level.WARNING, null, ex);
         }

@@ -24,11 +24,11 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.referencing.CRS;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.apache.sis.util.Utilities;
 
 
 public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<CrystallizeCachedSymbolizer>{
@@ -57,7 +57,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
 
         //reproject coverage
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
-        if(!CRS.equalsIgnoreMetadata(coverageCRS,renderingContext.getObjectiveCRS2D()) ){
+        if(!Utilities.equalsIgnoreMetadata(coverageCRS,renderingContext.getObjectiveCRS2D()) ){
             try{
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
                         dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());

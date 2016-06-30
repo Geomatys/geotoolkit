@@ -46,7 +46,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
@@ -1101,7 +1101,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     if (outputType.getBoundingBoxData() != null) {
                         try {
                             final BoundingBoxType bbox = outputType.getBoundingBoxData();
-                            final CoordinateReferenceSystem crs = CRS.decode(bbox.getCrs());
+                            final CoordinateReferenceSystem crs = CRS.forCode(bbox.getCrs());
                             final int dim = bbox.getDimensions();
                             final List<Double> lower = bbox.getLowerCorner();
                             final List<Double> upper = bbox.getUpperCorner();

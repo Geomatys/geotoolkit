@@ -9,7 +9,6 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -32,6 +31,7 @@ import java.util.Map;
 import org.opengis.referencing.datum.PixelInCell;
 import org.apache.sis.referencing.CommonCRS;
 
+import org.apache.sis.util.Utilities;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -81,7 +81,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
         //test pyramid
         Pyramid pyramid = pyramids.iterator().next();
-        assertTrue(CRS.equalsIgnoreMetadata(EPSG4326, pyramid.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(EPSG4326, pyramid.getCoordinateReferenceSystem()));
         assertArrayEquals(scales, pyramid.getScales(), 0.0000001);
 
         //test mosaics
@@ -164,7 +164,7 @@ public class PyramidCoverageBuilderTest extends org.geotoolkit.test.TestBase {
 
         //test pyramid
         Pyramid pyramid = pyramids.iterator().next();
-        assertTrue(CRS.equalsIgnoreMetadata(EPSG4326, pyramid.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(EPSG4326, pyramid.getCoordinateReferenceSystem()));
         assertArrayEquals(scales, pyramid.getScales(), 0.0000001);
 
         //test mosaics

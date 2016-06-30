@@ -81,7 +81,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -165,11 +165,11 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
 
         //create a serie of envelopes for tests --------------------------------
-        GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         envelopes.add(env);
-        env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
         env.setRange(0, -12, 31);
         env.setRange(1, -5, 46);
         envelopes.add(env);
@@ -181,7 +181,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -5, 46);
         env.setRange(1, -12, 31);
         envelopes.add(env);
-        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:3395"));
         env.setRange(0, -1200000, 3100000);
         env.setRange(1, -500000, 4600000);
         envelopes.add(env);
@@ -201,7 +201,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         //create some coverages ------------------------------------------------
 
-        env = new GeneralEnvelope(CRS.decode("EPSG:32738"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:32738"));
         env.setRange(0,  695035,  795035);
         env.setRange(1, 7545535, 7645535);
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -214,7 +214,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         GridCoverage2D coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
-        env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
         env.setRange(0,  -10,  25);
         env.setRange(1, -56, -21);
         img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -229,7 +229,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         //create some ND coverages ---------------------------------------------
         CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs")
-                                                                   .createCompoundCRS(CRS.decode("EPSG:4326"),
+                                                                   .createCompoundCRS(CRS.forCode("EPSG:4326"),
                                                                                       CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                                                                                       CommonCRS.Temporal.JAVA.crs());
 
@@ -264,8 +264,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testEnvelopeNotNull() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        MapContext context = MapBuilder.createContext(CRS.decode("EPSG:4326"));
-        GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        MapContext context = MapBuilder.createContext(CRS.forCode("EPSG:4326"));
+        GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -277,8 +277,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
 
         //CRS can not obtain envelope for this projection. we check that we don't reaise any error.
-        context = MapBuilder.createContext(CRS.decode("CRS:84"));
-        env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        context = MapBuilder.createContext(CRS.forCode("CRS:84"));
+        env = new GeneralEnvelope(CRS.forCode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -411,7 +411,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
 
         //sanity test, image should be a red vertical band in the middle
-        final CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem epsg4326 = CRS.forCode("EPSG:4326");
         GeneralEnvelope env = new GeneralEnvelope(epsg4326);
         env.setRange(0, -180, 180);
         env.setRange(1, -180, 180);

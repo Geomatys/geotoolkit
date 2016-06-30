@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Assert;
 import org.junit.Test;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -61,7 +61,7 @@ public class EqualityTest extends org.geotoolkit.test.TestBase {
 
         //track point type
         ftb.setName(ns,"FishTrackPoint");
-        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
+        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.forCode("EPSG:3395"));
         ftb.add(NamesExt.create(ns, "time"), Date.class);
         final ComplexType trackPointType = ftb.buildType();
 
@@ -91,7 +91,7 @@ public class EqualityTest extends org.geotoolkit.test.TestBase {
 
         //track point type
         ftb.setName(ns,"FishTrackPoint");
-        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
+        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.forCode("EPSG:3395"));
         ftb.add(NamesExt.create(ns, "time"), Date.class);
         final ComplexType trackPointType = ftb.buildType();
 

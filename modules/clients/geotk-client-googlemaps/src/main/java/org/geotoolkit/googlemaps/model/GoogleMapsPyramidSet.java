@@ -31,11 +31,10 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.GoogleCoverageReference;
 import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -60,7 +59,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
 
     static {
         try {
-            GOOGLE_MERCATOR = CRS.decode("EPSG:3857");
+            GOOGLE_MERCATOR = CRS.forCode("EPSG:3857");
         } catch (FactoryException ex) {
             throw new RuntimeException(ex);
         }

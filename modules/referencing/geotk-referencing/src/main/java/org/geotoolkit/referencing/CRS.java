@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Set;
 import java.util.List;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.opengis.geometry.*;
-import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
@@ -47,9 +45,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -135,194 +131,6 @@ public final class CRS extends Static {
     }
 
     /**
-     * Gets the list of the codes that are supported by the given authority. For example
-     * {@code getSupportedCodes("EPSG")} may returns {@code "EPSG:2000"}, {@code "EPSG:2001"},
-     * {@code "EPSG:2002"}, <i>etc</i>. It may also returns {@code "2000"}, {@code "2001"},
-     * {@code "2002"}, <i>etc.</i> without the {@code "EPSG:"} prefix. Whatever the authority
-     * name is prefixed or not is factory implementation dependent.
-     * <p>
-     * If there is more than one factory for the given authority, then this method merges the
-     * code set of all of them. If a factory fails to provide a set of supported code, then
-     * this particular factory is ignored. Please be aware of the following potential issues:
-     * <p>
-     * <ul>
-     *   <li>If there is more than one EPSG databases (for example an Access and a PostgreSQL ones),
-     *       then this method will connect to all of them even if their content are identical.</li>
-     *
-     *   <li>If two factories format their codes differently (e.g. {@code "4326"} and
-     *       {@code "EPSG:4326"}), then the returned set will contain a lot of synonymous
-     *       codes.</li>
-     *
-     *   <li>For any code <var>c</var> in the returned set, there is no warranty that
-     *       <code>{@linkplain #decode decode}(c)</code> will use the same authority
-     *       factory than the one that formatted <var>c</var>.</li>
-     *
-     *   <li>This method doesn't report connection problems since it doesn't throw any exception.
-     *       {@link FactoryException}s are logged as warnings and otherwise ignored.</li>
-     * </ul>
-     * <p>
-     * If a more determinist behavior is wanted, consider the code below instead.
-     * The following code exploit only one factory, the "preferred" one.
-     *
-     * {@preformat java
-     *     factory = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
-     *     Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
-     *     String code = ...  // Choose a code here.
-     *     CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem(code);
-     * }
-     *
-     * @param  authority The authority name (for example {@code "EPSG"}).
-     * @return The set of supported codes. May be empty, but never null.
-     *
-     * @see AuthorityFactory#getAuthorityCodes(Class)
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.factory.MultiAuthoritiesFactory#getAuthorityCodes(Class)}.
-     */
-    @Deprecated
-    public static Set<String> getSupportedCodes(final String authority) { // LGPL
-        ensureNonNull("authority", authority);
-        try {
-            return org.apache.sis.referencing.CRS.getAuthorityFactory(authority)
-                    .getAuthorityCodes(CoordinateReferenceSystem.class);
-        } catch (FactoryException e) {
-            throw new RuntimeException(e);  // TODO
-        }
-    }
-
-    /**
-     * Returns a Coordinate Reference System for the specified code.
-     * Note that the code needs to mention the authority. Examples:
-     * <p>
-     * <ul>
-     *   <li>{@code EPSG:4326}</li>
-     *   <li>{@code AUTO:42001,9001,0,30}</li>
-     * </ul>
-     * <p>
-     * If there is more than one factory implementation for the same authority, then all additional
-     * factories are {@linkplain org.geotoolkit.referencing.factory.FallbackAuthorityFactory fallbacks}
-     * to be used only when the first acceptable factory failed to create the requested CRS object.
-     *
-     * {@section Common codes}
-     * A few commonly used codes are:
-     * <p>
-     * <ul>
-     *   <li>Geographic CRS:
-     *   <ul>
-     *     <li>WGS 84 (2D only): EPSG:4326</li>
-     *     <li>WGS 84 with ellipsoidal height: EPSG:4979</li>
-     *   </ul></li>
-     *   <li>Simple projected CRS:
-     *   <ul>
-     *     <li>Mercator: 3395</li>
-     *   </ul></li>
-     *   <li>Universal Transverse Mercator (UTM) projections:
-     *   <ul>
-     *     <li>WGS 84 (northern hemisphere): EPSG:32600 + <var>zone</var></li>
-     *     <li>WGS 84 (southern hemisphere): EPSG:32700 + <var>zone</var></li>
-     *     <li>WGS 72 (northern hemisphere): EPSG:32200 + <var>zone</var></li>
-     *     <li>WGS 72 (southern hemisphere): EPSG:32300 + <var>zone</var></li>
-     *     <li>NAD 83 (northern hemisphere): EPSG:26900 + <var>zone</var> (zone 1 to 23 only)</li>
-     *     <li>NAD 27 (northern hemisphere): EPSG:26700 + <var>zone</var> (zone 1 to 22 only)</li>
-     *   </ul></li>
-     * </ul>
-     *
-     * {@section Caching}
-     * CRS objects created by previous calls to this method are
-     * {@linkplain org.geotoolkit.referencing.factory.CachingAuthorityFactory cached}
-     * using {@linkplain java.lang.ref.WeakReference weak references}. Subsequent calls to this
-     * method with the same authority code should be fast, unless the CRS object has been garbage
-     * collected.
-     *
-     * @param  code The Coordinate Reference System authority code.
-     * @return The Coordinate Reference System for the provided code.
-     * @throws NoSuchAuthorityCodeException If the code could not be understood.
-     * @throws FactoryException if the CRS creation failed for an other reason.
-     *
-     * @see #getSupportedCodes(String)
-     * @see org.apache.sis.measure.Units#valueOfEPSG(int)
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     *
-     * @deprecated Moved to {@link org.apache.sis.referencing.CRS#forCode(String)}.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem decode(final String code)
-            throws NoSuchAuthorityCodeException, FactoryException
-    {
-        return org.apache.sis.referencing.CRS.forCode(code);
-    }
-
-    /**
-     * Returns a Coordinate Reference System for the specified code, maybe forcing the axis order
-     * to (<var>longitude</var>, <var>latitude</var>). The {@code code} argument value is parsed
-     * as in <code>{@linkplain #decode(String) decode}(code)</code>. The {@code longitudeFirst}
-     * argument is the value to be given to the {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
-     * FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint.
-     * <p>
-     * <b>Example:</b> by default, {@code CRS.decode("EPSG:4326")} returns a Geographic CRS with
-     * (<var>latitude</var>, <var>longitude</var>) axis order, while {@code CRS.decode("EPSG:4326", true)}
-     * returns the same CRS except for axis order, which is  (<var>longitude</var>, <var>latitude</var>).
-     *
-     * @param  code The Coordinate Reference System authority code.
-     * @param  longitudeFirst {@code true} if axis order should be forced to
-     *         (<var>longitude</var>, <var>latitude</var>), {@code false} if no order should
-     *         be forced (i.e. the standard specified by the authority is respected).
-     * @return The Coordinate Reference System for the provided code.
-     * @throws NoSuchAuthorityCodeException If the code could not be understood.
-     * @throws FactoryException if the CRS creation failed for an other reason.
-     *
-     * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
-     * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     * @since 2.3
-     *
-     * @deprecated "Longitude first factory" no longer supported. Use a standard factory instead,
-     *             and invoke AbstractCRS.forConvention(AxesConvention) if desired.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem decode(String code, final boolean longitudeFirst)
-            throws NoSuchAuthorityCodeException, FactoryException
-    {
-        CoordinateReferenceSystem crs = org.apache.sis.referencing.CRS.forCode(code);
-        if (longitudeFirst) {
-            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
-        }
-        return crs;
-    }
-
-    /**
-     * Parses a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
-     * Known Text</cite></A> (WKT) into a CRS object. This convenience method is a
-     * shorthand for the following:
-     *
-     * {@preformat java
-     *     FactoryFinder.getCRSFactory(null).createFromWKT(wkt);
-     * }
-     *
-     * @param wkt The WKT string to parse.
-     * @return The parsed coordinate reference system.
-     * @throws FactoryException if the given WKT can't be parsed.
-     *
-     * @see Envelopes#parseWKT(String)
-     * @see CoordinateReferenceSystem#toWKT()
-     *
-     * @category factory
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.CRS#fromWKT(String)}.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
-        return org.apache.sis.referencing.CRS.fromWKT(wkt);
-    }
-
-    /**
      * Returns the domain of validity for the specified coordinate reference system,
      * or {@code null} if unknown. The returned envelope is expressed in terms of the
      * specified CRS.
@@ -367,7 +175,7 @@ public final class CRS extends Static {
                             if (candidate != null) {
                                 final CoordinateReferenceSystem sourceCRS =
                                         candidate.getCoordinateReferenceSystem();
-                                if (sourceCRS == null || equalsIgnoreMetadata(sourceCRS, crs)) {
+                                if (sourceCRS == null || Utilities.equalsIgnoreMetadata(sourceCRS, crs)) {
                                     if (envelope == null) {
                                         envelope = candidate;
                                     } else {
@@ -404,7 +212,7 @@ public final class CRS extends Static {
                     merged.translate(-org.apache.sis.referencing.CRS.getGreenwichLongitude(sourceCRS), 0);
                     merged.setCoordinateReferenceSystem(sourceCRS);
                     try {
-                        envelope = transform(envelope, targetCRS);
+                        envelope = Envelopes.transform(envelope, targetCRS);
                     } catch (TransformException exception) {
                         /*
                          * The envelope is probably outside the range of validity for this CRS.
@@ -728,48 +536,6 @@ compare:    for (final SingleCRS component : actualComponents) {
     ////          COORDINATE OPERATIONS          ////
     ////                                         ////
     /////////////////////////////////////////////////
-
-    /**
-     * Compares the specified objects for equality, ignoring metadata. If this method returns
-     * {@code true}, then:
-     *
-     * <ul>
-     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming
-     *       a set of coordinate values using one transform will produce the same results than
-     *       transforming the same coordinates with the other transform.</p></li>
-     *
-     *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
-     *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
-     *       CoordinateReferenceSystem) findMathTransform}(crs1, crs2)</code> will return
-     *       an identity transform.</p></li>
-     * </ul>
-     *
-     * If a more lenient comparison - allowing slight differences in numerical values - is wanted,
-     * then {@link #equalsApproximatively(Object, Object)} can be used instead.
-     *
-     * {@section Implementation note}
-     * This is a convenience method for the following method call:
-     *
-     * {@preformat java
-     *     return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
-     * }
-     *
-     * @param  object1 The first object to compare (may be null).
-     * @param  object2 The second object to compare (may be null).
-     * @return {@code true} if both objects are equal, ignoring metadata.
-     *
-     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#IGNORE_METADATA
-     *
-     * @category information
-     * @since 2.2
-     *
-     * @deprecated Moved to Apache SIS {@link Utilities} class.
-     */
-    @Deprecated
-    public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
-        return Utilities.equalsIgnoreMetadata(object1, object2);
-    }
 
     /**
      * Compares the specified objects for equality, ignoring metadata and slight differences

@@ -54,7 +54,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -96,7 +96,7 @@ public class XmlTestData {
 
         final CoordinateReferenceSystem crs;
         try {
-            crs = CRS.decode("EPSG:4326");
+            crs = CRS.forCode("EPSG:4326");
         } catch (FactoryException ex) {
             throw new RuntimeException(ex.getMessage(),ex);
         }
@@ -361,9 +361,9 @@ public class XmlTestData {
         phone.setValue(Arrays.asList("4161234567", "4168901234"));
         featureComplex.getProperties().add(phone);
 
-        EPSG_VERSION = CRS.getVersion("EPSG").toString();
-        
-        
+        EPSG_VERSION = org.geotoolkit.referencing.CRS.getVersion("EPSG").toString();
+
+
         //feature with attributes
         featureWithAttributes = FeatureUtilities.defaultFeature(typeWithAtts, "id-156");
         featureWithAttributes.setPropertyValue("ID", 36);

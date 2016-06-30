@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -61,7 +61,7 @@ final class GDALGridMapping {
      */
     GDALGridMapping(final WarningProducer caller, final String wkt, final String geoTransform) {
         if (wkt != null) try {
-            crs = CRS.parseWKT(wkt);
+            crs = CRS.fromWKT(wkt);
         } catch (FactoryException e) {
             Warnings.log(caller, Level.WARNING, caller.getClass(), "parseWKT", e);
         }

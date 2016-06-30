@@ -35,7 +35,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
@@ -74,7 +74,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
     static{
         try {
-            CRS_4326 = CRS.decode("EPSG:4326",true);
+            CRS_4326 = CRS.forCode("CRS:84");
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException("Failed to load CRS");
         } catch (FactoryException ex) {
@@ -1059,8 +1059,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         final ParameterValueGroup params2  = params.clone();
         params2.parameter("schema").setValue("public2");
         store2 = (PostgresFeatureStore) DataStores.open(params2);
-        
-        //-------------- create schema in public2 schema --------------------   
+
+        //-------------- create schema in public2 schema --------------------
         try{
             store2.getFactory().create(params2);
         } catch (Exception ex) {

@@ -31,7 +31,7 @@ import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.ogc.xml.v200.*;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
@@ -394,7 +394,7 @@ public class OGC200toGTTransformer {
         final DirectPositionType lower = entry.getLowerCorner();
         final DirectPositionType upper = entry.getUpperCorner();
 
-        GeneralEnvelope genv = new GeneralEnvelope(CRS.decode(srs));
+        GeneralEnvelope genv = new GeneralEnvelope(CRS.forCode(srs));
         genv.setRange(0, lower.getOrdinate(0), upper.getOrdinate(0));
         genv.setRange(1, lower.getOrdinate(1), upper.getOrdinate(1));
 

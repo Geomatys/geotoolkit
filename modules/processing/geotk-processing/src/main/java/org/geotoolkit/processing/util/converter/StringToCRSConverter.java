@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.util.converter;
 
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.geotoolkit.feature.util.converter.SimpleConverter;
@@ -52,7 +52,7 @@ public class StringToCRSConverter extends SimpleConverter<String, CoordinateRefe
     public CoordinateReferenceSystem apply(final String s) throws UnconvertibleObjectException {
         if(s == null) throw new UnconvertibleObjectException("Empty CRS");
         try {
-            final CoordinateReferenceSystem crs = CRS.decode(s);
+            final CoordinateReferenceSystem crs = CRS.forCode(s);
             return crs;
         }
         catch (NoSuchAuthorityCodeException ex) {

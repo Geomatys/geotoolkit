@@ -26,7 +26,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -308,7 +308,7 @@ public class ResampleTest extends org.geotoolkit.test.TestBase {
         setTargetImage(12, 12, DataBuffer.TYPE_DOUBLE, -1000);
 
         //-- creation du crs
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");//-- world mercator 3395
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:2154");//-- world mercator 3395
 
         final ProjectedCRS projCRS = (ProjectedCRS) crs;
 

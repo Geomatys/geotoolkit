@@ -52,7 +52,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixResolutionWithCRS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
@@ -75,6 +74,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Abstract renderer for symbolizer which only apply on coverages data.
@@ -355,7 +355,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ////////////////////////////////////////////////////////////////////
 
         final CoordinateReferenceSystem coverageCRS   = dataCoverage.getCoordinateReferenceSystem();
-        assert CRS.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
+        assert Utilities.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
 
         final CoordinateReferenceSystem coverageCRS2D = CRSUtilities.getCRS2D(coverageCRS);
 
@@ -469,7 +469,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ArgumentChecks.ensureNonNull("coverageEnvelope",  coverageEnvelope);
 
         final CoordinateReferenceSystem requestCRS = requestedEnvelope.getCoordinateReferenceSystem();
-        if (!CRS.equalsIgnoreMetadata(requestCRS, coverageEnvelope.getCoordinateReferenceSystem()))
+        if (!Utilities.equalsIgnoreMetadata(requestCRS, coverageEnvelope.getCoordinateReferenceSystem()))
             throw new IllegalArgumentException("requestedEnvelope and coverage envelope will be able to have same CRS : "
                     + "\n Expected CRS : "+requestCRS
                     + "\n Found : "+coverageEnvelope.getCoordinateReferenceSystem());

@@ -35,7 +35,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
@@ -45,7 +45,7 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  */
 public class NetCDFFeatureStoreTest extends AbstractReadingTests{
-    
+
     private static FeatureStore store;
     private static final Set<GenericName> names = new HashSet<>();
     private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
@@ -72,7 +72,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setDefaultGeometry(NamesExt.create(nsOM, "position"));
 
             int size = 4;
-            GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
             env.setRange(0, -51.78333, 27.816);
             env.setRange(1, -19.802, 128.6);
 
@@ -125,7 +125,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
         final ClassLoader cl = getContextClassLoader();
         return cl.getResourceAsStream(url);
     }
-    
+
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override

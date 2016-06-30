@@ -365,7 +365,7 @@ public class WPSConvertersUtils {
 
         try {
             // Set the envelope crs to 4326 because of client request :
-            final CoordinateReferenceSystem outCRS = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+            final CoordinateReferenceSystem outCRS = CRS.forCode("EPSG:4326");
             Envelope env =null;
             Integer crsCode = null;
             if (object instanceof GridCoverage2D) {
@@ -949,7 +949,7 @@ public class WPSConvertersUtils {
         if (jsonGeometry.getCrs() != null)
             crs = jsonGeometry.getCrs().getCRS();
         else
-            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+            crs = CRS.forCode("EPSG:4326");
 
         return GeometryUtils.toJTS(jsonGeometry, crs);
     }

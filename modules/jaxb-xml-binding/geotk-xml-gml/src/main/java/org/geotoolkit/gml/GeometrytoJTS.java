@@ -51,7 +51,7 @@ import org.geotoolkit.gml.xml.v311.ClothoidType;
 import org.geotoolkit.gml.xml.v311.CubicSplineType;
 import org.geotoolkit.gml.xml.v311.GeodesicStringType;
 import org.geotoolkit.gml.xml.v311.OffsetCurveType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.v321.AbstractSurfacePatchType;
 import org.geotoolkit.gml.xml.v321.PolygonPatchType;
@@ -61,6 +61,8 @@ import org.geotoolkit.gml.xml.v321.SurfaceType;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  *
@@ -75,7 +77,11 @@ public class GeometrytoJTS {
     private GeometrytoJTS(){}
 
     private static CoordinateReferenceSystem toCRS(String name, boolean longitudeFirst) throws FactoryException{
-        return CRS.decode(name, longitudeFirst);
+        CoordinateReferenceSystem crs = CRS.forCode(name);
+        if (longitudeFirst) {
+            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+        }
+        return crs;
     }
 
     /**

@@ -40,7 +40,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Ignore;
@@ -91,7 +91,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32632"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:32632"));
         env.setRange(0, -2574823.6832217844, 5487970.783439655);
         env.setRange(1, 4289777.45228916, 1.0491927042028729E7);
 

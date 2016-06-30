@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -31,6 +30,7 @@ import static org.geotoolkit.test.Assert.*;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -67,7 +67,7 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         final Envelope convertedEnvelope = convertedCoverage.getEnvelope();
         final Envelope expectedEnvelope = expectedCoverage.getEnvelope();
 
-        assertTrue(CRS.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
         assertTrue(expectedEnvelope.getMinimum(0) == convertedEnvelope.getMinimum(0));
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));

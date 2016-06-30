@@ -34,7 +34,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.type.ComplexType;
 
 import org.opengis.util.GenericName;
@@ -249,7 +249,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
             //System
             size = 1;
-            env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+            env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
             env.setRange(0, 65400, 65400);
             env.setRange(1, 1731368, 1731368);
             expecteds.add(new ExpectedResult(typeSystem.getName(),typeSystem, size, env));
@@ -259,7 +259,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             //todo must be fixed somehow later
             //a non-null property for it.
 //            size = 1;
-//            env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+//            env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
 //            env.setRange(0, 65400, 65400);
 //            env.setRange(1, 1731368, 1731368);
 //            expecteds.add(new ExpectedResult(typeComponent.getName(),typeComponent, size, env));

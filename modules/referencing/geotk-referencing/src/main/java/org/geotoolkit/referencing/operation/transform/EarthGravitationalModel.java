@@ -40,6 +40,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.ComparisonMode;
 
+import org.apache.sis.util.Utilities;
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -221,7 +222,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             rkm       = 3.986004418e+14;
             grava     = 9.7803267714;
             star      = 0.001931851386;
-        } else if (CRS.equalsIgnoreMetadata(CommonCRS.WGS72.datum(), datum)) {
+        } else if (Utilities.equalsIgnoreMetadata(CommonCRS.WGS72.datum(), datum)) {
             /*
              * WGS72 model values.
              */

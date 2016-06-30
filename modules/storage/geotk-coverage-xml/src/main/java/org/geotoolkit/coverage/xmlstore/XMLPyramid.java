@@ -39,7 +39,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -135,9 +135,9 @@ public class XMLPyramid implements Pyramid {
         if (crs != null && crsobj == null) {
             try {
                 if (crs.startsWith("EPSG")) {
-                    crsobj = CRS.decode(crs);
+                    crsobj = CRS.forCode(crs);
                 } else {
-                    crsobj = CRS.parseWKT(crs);
+                    crsobj = CRS.fromWKT(crs);
                 }
             } catch (Exception e) {
                 // Exception should be thrown only at initialisation, as we will call the method at object built.

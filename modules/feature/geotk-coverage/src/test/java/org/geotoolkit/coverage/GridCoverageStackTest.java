@@ -36,10 +36,10 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
+import org.apache.sis.util.Utilities;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -64,7 +64,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
                                                                                 .createCompoundCRS(horizontal, vertical);
 
         final GridCoverageStack stack = createCube3D(100, 100, crs);
-        assertTrue(CRS.equalsIgnoreMetadata(crs, stack.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs, stack.getCoordinateReferenceSystem()));
 
         final GridGeometry gridGeom = stack.getGridGeometry();
         assertNotNull(gridGeom);
@@ -115,7 +115,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
                                                                                 .createCompoundCRS(crs3d,temporal);
 
         final GridCoverageStack stack = createCube4D(100, 100, crs4d);
-        assertTrue(CRS.equalsIgnoreMetadata(crs4d, stack.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(crs4d, stack.getCoordinateReferenceSystem()));
 
         final GridGeometry gridGeom = stack.getGridGeometry();
         assertNotNull(gridGeom);

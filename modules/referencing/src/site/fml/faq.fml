@@ -50,20 +50,20 @@
         authority specification. Many softwares still use the old (<var>x</var>,<var>y</var>) axis
         order, because it is easier to implement. Geotk supports both conventions.</p>
 
-        <p>By default, Geotk creates CRS with axis order <em>as defined by the authority</em>. Those CRS are created by calls to the
-        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#decode(java.lang.String)">CRS.decode(String)</a></code>
-        method. The actual axis order can be verified after the CRS creation with <code>System.out.println(crs)</code>.
+        <p>By default, Geotk creates CRS with axis order <em>as defined by the authority</em>.
+        Those CRS are created by calls to the <code>CRS.forCode(String)</code> method.
+        The actual axis order can be verified after the CRS creation with <code>System.out.println(crs)</code>.
         See <a href="#axisOrderInTransforms">here</a> for more information about the elements to look at.</p>
 
         <p>If (<var>x</var>,<var>y</var>) axis order is wanted for compatibility with older OGC
         specifications or other softwares, CRS forced to <cite>longitude first</cite> axis order can be created by call to the
-        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#decode(java.lang.String, boolean)">CRS.decode(String, true)</a></code>
-        method. Note that while the documentation said "<cite>longitude first</cite>" for simplicity,
+        <code>AbstractCRS.castOrCopy(CRS.forCode("EPSG:xxxx")).forConvention(AxesConvention.RIGHT_HANDED)</code> methods.
+        Note that while the documentation said "<cite>longitude first</cite>" for simplicity,
         the implementation actually try to build a <cite>right-handed</cite> coordinate system.</p>
 
         <p>Note that the <a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well Known
-        Text</cite> (WKT) specification</a> is part of an older OGC standard. According that widely-used standard, CRS created by calls to the
-        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#parseWKT(java.lang.String)">CRS.parseWKT(String)</a></code>
+        Text</cite> (WKT) specification</a> is part of an older OGC standard.
+        According that widely-used standard, CRS created by calls to the <code>CRS.fromWKT(String)</code>
         method will have (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>,<var>y</var>) axis order
         by default if no <code>AXIS[…]</code> elements were explicitly specified in the WKT.</p>
 
@@ -102,7 +102,7 @@
         as in the example below:</p>
 
 <blockquote><pre>int code = 32600 + zone;
-CoordinateReferenceSystem crs = CRS.decode("EPSG:" + code);</pre></blockquote>
+CoordinateReferenceSystem crs = CRS.forCode("EPSG:" + code);</pre></blockquote>
 
         <p>The above approach requires the EPSG database to be installed. If installing the EPSG
         database is considered too heavy, a lighther approach is to use the "<code>AUTO</code>"
@@ -112,7 +112,7 @@ CoordinateReferenceSystem crs = CRS.decode("EPSG:" + code);</pre></blockquote>
 
 <blockquote><pre>int centralMeridian = <var>zone</var> * 6 - 183;
 int latitudeOfOrigin = 0;
-CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + "," + latitudeOfOrigin);</pre></blockquote>
+CoordinateReferenceSystem crs = CRS.forCode("AUTO:42001," + centralMeridian + "," + latitudeOfOrigin);</pre></blockquote>
 
         <p>Finally the most powerful (but also the most difficult) way is to instantiate directly
         a <code>MathTransform</code> using the parameters documented in the
@@ -147,7 +147,7 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
   UNIT["m", 1]]</pre></blockquote>
 
         <p>Since version 6.15 of the <a href="http://www.epsg.org">EPSG</a> database, it is also
-        possible to simply invoke <code>CRS.decode("EPSG:3857")</code>. The result of that method
+        possible to simply invoke <code>CRS.forCode("EPSG:3857")</code>. The result of that method
         call is slightly different in that the <code>"semi_minor"</code> parameter is not modified.
         Instead EPSG handles that projection with a new Operation Method called "<cite>Popular
         Visualisation Pseudo Mercator</cite>".</p>
@@ -243,7 +243,7 @@ if (identifier != null) {
 
     <faq id="lookupReliability">
       <question>
-        Can I rely on <code>IdentifiedObjects.lookupEpsgCode(…)</code> to work correctly as the inverse of <code>CRS.decode(…)</code>?
+        Can I rely on <code>IdentifiedObjects.lookupEpsgCode(…)</code> to work correctly as the inverse of <code>CRS.forCode(…)</code>?
       </question>
       <answer>
         <p>For CRS created from the EPSG database, usually yes. Note however that
@@ -265,14 +265,13 @@ if (identifier != null) {
         <p>The three following Coordinate Reference Systems:</p>
         <ul>
           <li><code>DefaultGeographicCRS.WGS84</code></li>
-          <li><code>CRS.decode("CRS:84")</code></li>
-          <li><code>CRS.decode("EPSG:4326", true)</code></li>
+          <li><code>CRS.forCode("CRS:84")</code></li>
+          <li><code>CRS.forCode("EPSG:4326", true)</code></li>
         </ul>
         <p>are not considered <code>equals(Object)</code> to each other, even though they all
         represent the same logical CRS. This is because they are associated to different metadata
         (name, identifiers, scope, domain of validity, remarks). In order to test if two CRS are
-        functionally equivalent, use
-        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#equalsIgnoreMetadata(java.lang.Object, java.lang.Object)">CRS.equalsIgnoreMetadata(Object, Object)</a></code>.</p>
+        functionally equivalent, use <code>Utilities.equalsIgnoreMetadata(Object, Object)</code>.</p>
       </answer>
     </faq>
 
@@ -322,9 +321,7 @@ if (identifier != null) {
 
         <ul>
           <li><p>If the transform is created using the convenience static methods defined in the
-              <code>CRS</code> class, then use <code>CRS.findMathTransform(sourceCRS, targetCRS,
-              true)</code>. Note the optional boolean argument which shall be explicitly set to
-              <code>true</code>, meaning "<cite>lenient datum shift</cite>".</p></li>
+              <code>CRS</code> class, then use <code>CRS.findOperation(sourceCRS, targetCRS, null)</code>.</p></li>
 
           <li><p>If the transform is created from the <code>CoordinateOperationFactory</code>
               interface, then use the following code snippet:</p>

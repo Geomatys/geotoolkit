@@ -28,6 +28,7 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -66,7 +67,7 @@ public abstract class SpatialNode extends SceneNode{
         final CoordinateReferenceSystem candidateCRS = candidateEnvelope.getCoordinateReferenceSystem();
 
 
-        if(CRS.equalsIgnoreMetadata(graphicCRS, candidateCRS)){
+        if(Utilities.equalsIgnoreMetadata(graphicCRS, candidateCRS)){
             final GeneralEnvelope genv = new GeneralEnvelope(graphicEnv);
             return genv.intersects(candidateEnvelope, true);
         }else{
