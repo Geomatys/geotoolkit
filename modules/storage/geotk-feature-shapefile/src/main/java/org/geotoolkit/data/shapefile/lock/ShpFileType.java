@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * Enumerates the known types of files associated with a shapefile.
- * 
+ *
  * @author jesse
  * @author Johann Sorel (Geomatys)
  */
@@ -43,6 +43,10 @@ public enum ShpFileType {
      * the .shx file, it contains index information of the existing features
      */
     SHX("shx"),
+    /**
+     * A QGis specialized file, which overrides .prj information.
+     */
+    QPJ("qpj"),
     /**
      * the .prj file, it contains the projection information of the shapefile
      */
