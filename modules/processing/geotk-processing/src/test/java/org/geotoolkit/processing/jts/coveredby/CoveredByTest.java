@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * JUnit test of CoveredBy process
@@ -97,7 +98,7 @@ public class CoveredByTest extends AbstractProcessTest {
 
         final Geometry geom1 = fact.createPolygon(ring, null) ;
 
-         CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+         CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
          JTS.setCRS(geom1, crs1);
 
         Geometry geom2 = fact.createPoint(new Coordinate(5, 5)) ;

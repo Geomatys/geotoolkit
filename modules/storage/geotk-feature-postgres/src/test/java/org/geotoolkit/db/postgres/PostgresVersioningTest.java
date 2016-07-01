@@ -35,15 +35,11 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
@@ -60,6 +56,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -70,22 +67,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FeatureType FTYPE_SIMPLE;
-    private static final CoordinateReferenceSystem CRS_4326;
 
     static{
-        try {
-            CRS_4326 = CRS.forCode("CRS:84");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        } catch (FactoryException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        }
-
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("boolean",  Boolean.class);
         ftb.add("integer",  Integer.class);
-        ftb.add("point",    Point.class, CRS_4326);
+        ftb.add("point",    Point.class, CommonCRS.defaultGeographic());
         ftb.add("string",   String.class);
         FTYPE_SIMPLE = ftb.buildFeatureType();
 

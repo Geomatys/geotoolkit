@@ -50,7 +50,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
@@ -76,11 +75,11 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
 import org.geotoolkit.storage.DataStores;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 
@@ -102,17 +101,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
     /** multiple properties of same complex type */
     private static final FeatureType FTYPE_COMPLEX3;
 
-    private static final CoordinateReferenceSystem CRS_4326;
-
     static {
-        try {
-            CRS_4326 = CRS.forCode("CRS:84");           // TODO: wrong variable name.
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        } catch (FactoryException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        }
-
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
@@ -132,14 +121,14 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
-        ftb.add("geometry",         Geometry.class, CRS_4326);
-        ftb.add("point",            Point.class, CRS_4326);
-        ftb.add("multipoint",       MultiPoint.class, CRS_4326);
-        ftb.add("linestring",       LineString.class, CRS_4326);
-        ftb.add("multilinestring",  MultiLineString.class, CRS_4326);
-        ftb.add("polygon",          Polygon.class, CRS_4326);
-        ftb.add("multipolygon",     MultiPolygon.class, CRS_4326);
-        ftb.add("geometrycollection",GeometryCollection.class, CRS_4326);
+        ftb.add("geometry",         Geometry.class, CommonCRS.defaultGeographic());
+        ftb.add("point",            Point.class, CommonCRS.defaultGeographic());
+        ftb.add("multipoint",       MultiPoint.class, CommonCRS.defaultGeographic());
+        ftb.add("linestring",       LineString.class, CommonCRS.defaultGeographic());
+        ftb.add("multilinestring",  MultiLineString.class, CommonCRS.defaultGeographic());
+        ftb.add("polygon",          Polygon.class, CommonCRS.defaultGeographic());
+        ftb.add("multipolygon",     MultiPolygon.class, CommonCRS.defaultGeographic());
+        ftb.add("geometrycollection",GeometryCollection.class, CommonCRS.defaultGeographic());
         FTYPE_GEOMETRY = ftb.buildFeatureType();
 
 
@@ -147,7 +136,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         ftb = new FeatureTypeBuilder();
 
         ftb.setName("Stop");
-        ftb.add("location", Point.class, CRS_4326);
+        ftb.add("location", Point.class, CommonCRS.defaultGeographic());
         ftb.add("time", Date.class);
         final ComplexType stopType = ftb.buildType();
 
@@ -333,42 +322,42 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         assertEquals("geometry", desc.getName().tip().toString());
         assertEquals(Geometry.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("point", desc.getName().tip().toString());
         assertEquals(Point.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("multipoint", desc.getName().tip().toString());
         assertEquals(MultiPoint.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("linestring", desc.getName().tip().toString());
         assertEquals(LineString.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("multilinestring", desc.getName().tip().toString());
         assertEquals(MultiLineString.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("polygon", desc.getName().tip().toString());
         assertEquals(Polygon.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("multipolygon", desc.getName().tip().toString());
         assertEquals(MultiPolygon.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
         assertEquals("geometrycollection", desc.getName().tip().toString());
         assertEquals(GeometryCollection.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
-        assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.defaultGeographic(), ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
     }
 
     @Ignore
@@ -595,28 +584,28 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
             Geometry geom;
             geom = (Geometry)resFeature.getProperty("geometry").getValue();
             assertEquals(point,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("point").getValue();
             assertEquals(point,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("multipoint").getValue();
             assertEquals(mp,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("linestring").getValue();
             assertEquals(ls,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("multilinestring").getValue();
             assertEquals(mls,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("polygon").getValue();
             assertEquals(polygon,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("multipolygon").getValue();
             assertEquals(mpolygon,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
             geom = (Geometry)resFeature.getProperty("geometrycollection").getValue();
             assertEquals(gc,geom);
-            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            assertEquals(CommonCRS.defaultGeographic(), JTS.findCoordinateReferenceSystem(geom));
         }finally{
             ite.close();
         }

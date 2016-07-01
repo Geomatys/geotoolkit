@@ -41,6 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -83,8 +84,8 @@ public class ReprojectTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:4326"));
-        //ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:4326"));
+        ftb.add("geom1", Geometry.class, CommonCRS.WGS84.geographic());
+        //ftb.add("geom2", Geometry.class, CommonCRS.WGS84.geographic());
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();

@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test Resolution class.
@@ -37,7 +38,7 @@ import org.apache.sis.geometry.Envelopes;
 public abstract class ResolutionCRSTest extends ResolutionTest {
 
     private final CoordinateReferenceSystem targetCrs;
-    private final CoordinateReferenceSystem crsBase = CRS.forCode("EPSG:4326");
+    private final CoordinateReferenceSystem crsBase = CommonCRS.WGS84.geographic();
     protected final GeneralDirectPosition lowerCorner = new GeneralDirectPosition(crsBase);
     protected final GeneralDirectPosition upperCorner = new GeneralDirectPosition(crsBase);
 

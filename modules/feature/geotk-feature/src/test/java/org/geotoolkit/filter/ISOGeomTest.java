@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
-import org.apache.sis.referencing.CRS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,6 +30,7 @@ import org.opengis.filter.spatial.Equals;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
@@ -62,7 +62,7 @@ public class ISOGeomTest extends org.geotoolkit.test.TestBase {
         Geometry jtsGeom = factory.createMultiPoint(points);
 
 
-        CoordinateReferenceSystem crs = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
 
         JTSMultiPoint isoGeom = new JTSMultiPoint();
         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));

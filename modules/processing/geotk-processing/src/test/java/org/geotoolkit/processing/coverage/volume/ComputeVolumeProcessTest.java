@@ -51,9 +51,9 @@ import org.opengis.util.GenericName;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test {@link ComputeVolumeProcess process} to compute volume from DEM.
@@ -74,22 +74,9 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     private static CoordinateReferenceSystem CARTESIAN_CRS = PredefinedCRS.CARTESIAN_2D;
 
     /**
-     * {@link CoordinateReferenceSystem} to test compute volume process with data from {@link GeographicCRS}.
-     */
-    private static CoordinateReferenceSystem GEO_CRS;
-
-    /**
      * {@link GeometryFactory} to create geometry to test process in differents way.
      */
     private final static GeometryFactory GF = new GeometryFactory();
-
-    static {
-        try {
-            GEO_CRS = CRS.forCode("CRS:84");
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
 
     /**
      * Test volume computing with bilinear interpolation in a cartesian space.
@@ -107,8 +94,9 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testBilinearGeographic() throws ProcessException {
-        basicTest(4, 4, 1.969068511407543E11, GEO_CRS,/*envelope coords -> */ -4, -4, 4, 4,
-                                                      /*geometry coords -> */ -2, -2, -2, 2, 2, 2, 2, -2, -2, -2);
+        basicTest(4, 4, 1.969068511407543E11, CommonCRS.defaultGeographic(),
+                /*envelope coords -> */ -4, -4, 4, 4,
+                /*geometry coords -> */ -2, -2, -2, 2, 2, 2, 2, -2, -2, -2);
     }
 
     /**
@@ -126,8 +114,9 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testBicubicGeographic() throws ProcessException {
-        basicTest(7, 7, 3.070735084708064E11, GEO_CRS,/* envelope coords -> */ 0, 0, 7, 7,
-                                                      /* geometry coords -> */ 1, 1, 1, 6, 6, 6, 6, 1, 1, 1);
+        basicTest(7, 7, 3.070735084708064E11, CommonCRS.defaultGeographic(),
+                /* envelope coords -> */ 0, 0, 7, 7,
+                /* geometry coords -> */ 1, 1, 1, 6, 6, 6, 6, 1, 1, 1);
     }
 
     /**
@@ -188,7 +177,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testAltitudesInGeographicSpace() throws ProcessException {
-        altitudesTest(GEO_CRS, 7.985004325473668E10, 7.985004325473668E10, 3.992502162736839E10);
+        altitudesTest(CommonCRS.defaultGeographic(), 7.985004325473668E10, 7.985004325473668E10, 3.992502162736839E10);
     }
 
     /**
@@ -264,7 +253,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testPikeGeographic() throws ProcessException {
-        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, GEO_CRS,
+        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, CommonCRS.defaultGeographic(),
                        /*resolution = 1 -> */  6.590783448178236E11,  1.327019633558373E12,
                        /*resolution = 0.5 -> */1.6519189509155865E11, 3.3282694459549146E11,
                        /*resolution = 3 -> */  5.770442307446779E12,  1.1535336449348941E13);
@@ -286,7 +275,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
      */
     @Test
     public void testHoleGeographic() throws ProcessException {
-        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, GEO_CRS,
+        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, CommonCRS.defaultGeographic(),
                        /*resolution = 1 -> */  1.3270196335583735E12,  6.590783448178241E11,
                        /*resolution = 0.5 -> */3.328269445954914E11,   1.6519189509155847E11,
                        /*resolution = 3 -> */  1.1535336449348945E13,  5.770442307446776E12);

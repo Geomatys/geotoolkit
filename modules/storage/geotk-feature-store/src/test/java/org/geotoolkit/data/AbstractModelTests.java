@@ -23,11 +23,11 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
-import org.apache.sis.referencing.CRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Generic schema manipulation tests
@@ -68,7 +68,7 @@ public abstract class AbstractModelTests {
             final String name = "testname";
             sftb.reset();
             sftb.setName(name);
-            sftb.add("att_geometry", geomType, CRS.forCode("EPSG:4326"));
+            sftb.add("att_geometry", geomType, CommonCRS.WGS84.geographic());
             sftb.setDefaultGeometry("att_geometry");
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));

@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.jts.buffer;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
@@ -32,6 +31,7 @@ import org.geotoolkit.processing.jts.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -58,7 +58,7 @@ public class BufferTest extends AbstractProcessTest {
         final int segments = 5;
         final int capStype = BufferOp.CAP_SQUARE;
 
-        CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom, crs1);
 
         // Process

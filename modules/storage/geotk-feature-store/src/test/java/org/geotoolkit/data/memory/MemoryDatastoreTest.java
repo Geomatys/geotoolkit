@@ -54,6 +54,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -634,7 +635,7 @@ public class MemoryDatastoreTest extends TestCase{
         //test reprojection-------------------------------------------------------
         qb.reset();
         qb.setTypeName(name);
-        qb.setCRS(CRS.forCode("EPSG:4326"));
+        qb.setCRS(CommonCRS.WGS84.geographic());
         query = qb.buildQuery();
 
         assertEquals(1,store.getCount(query));

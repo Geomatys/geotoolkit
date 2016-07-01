@@ -32,7 +32,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.junit.Test;
@@ -161,7 +160,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB));
-        gcb.setCoordinateReferenceSystem(CRS.forCode("EPSG:4326"));
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.geographic());
         gcb.setGridToCRS(new AffineTransform(1,0,0,1,0,0));
         final GridCoverage coverage = gcb.build();
 
@@ -174,7 +173,7 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
         final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
 
         //override grid to crs
-        final CoordinateReferenceSystem overrideCrs = CRS.forCode("CRS:84");
+        final CoordinateReferenceSystem overrideCrs = CommonCRS.defaultGeographic();
         decoratedRef.setOverrideCRS(overrideCrs);
         decoratedRef.setOverrideGridToCrs(new AffineTransform2D(1, 0, 0, 1, 20, 30));
         assertEquals(overrideCrs, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());

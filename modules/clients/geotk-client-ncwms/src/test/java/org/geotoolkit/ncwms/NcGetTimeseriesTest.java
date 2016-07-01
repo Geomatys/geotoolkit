@@ -22,10 +22,10 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CRS;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 /**
@@ -46,7 +46,7 @@ public class NcGetTimeseriesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNcGetTimeseries111() throws NoSuchAuthorityCodeException, FactoryException {
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -107,7 +107,7 @@ public class NcGetTimeseriesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNcGetTimeseries130() throws NoSuchAuthorityCodeException, FactoryException {
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 

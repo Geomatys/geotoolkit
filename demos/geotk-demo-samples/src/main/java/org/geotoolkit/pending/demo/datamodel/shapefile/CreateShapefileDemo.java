@@ -11,9 +11,9 @@ import java.util.List;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.apache.sis.referencing.CommonCRS;
 
 
 public class CreateShapefileDemo {
@@ -26,7 +26,7 @@ public class CreateShapefileDemo {
         //create the feature type needed
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("River");
-        ftb.add("the_geom",Point.class, CRS.forCode("EPSG:4326"));
+        ftb.add("the_geom",Point.class, CommonCRS.WGS84.geographic());
         ftb.add("name", String.class);
         final FeatureType type = ftb.buildFeatureType();
 

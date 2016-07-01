@@ -17,13 +17,13 @@ import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Example of creating a postgresql feature store with a raster geometry.
@@ -34,7 +34,7 @@ public class PostgisRasterDemo {
 
     public static void main(String[] args) throws Exception {
 
-        final CoordinateReferenceSystem crs = CRS.forCode("CRS:84");
+        final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
 
         //connect to postgres feature store
         final FeatureStore store = new PostgresFeatureStore("localhost", 5432, "table", "public", "user", "password");

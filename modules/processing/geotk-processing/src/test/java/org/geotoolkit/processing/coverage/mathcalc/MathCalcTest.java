@@ -43,7 +43,6 @@ import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;
 import org.junit.Test;
@@ -226,7 +225,7 @@ public class MathCalcTest extends org.geotoolkit.test.TestBase {
 
         //create a small pyramid
         final CoverageStore store = new MPCoverageStore();
-        final CoordinateReferenceSystem horizontal = CRS.forCode("CRS:84");
+        final CoordinateReferenceSystem horizontal = CommonCRS.defaultGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
         Map<String, Object> props = new HashMap<>();

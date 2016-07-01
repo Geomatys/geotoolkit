@@ -83,7 +83,7 @@ public class CoordinateConversion {
      * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void geographicToProjected() throws FactoryException, TransformException {
-        CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:4326");  // WGS 84
+        CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();  // WGS 84
         CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:3395");  // WGS 84 / World Mercator
         MathTransform tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         /*

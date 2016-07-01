@@ -195,7 +195,7 @@ public interface Property extends org.opengis.feature.Property {
      *  GeometryAttribute attribute = ...;
      *
      *  //set the crs
-     *  CoordinateReferenceSystem crs = CRS.forCode("EPSG:4326");
+     *  CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
      *  attribute.setCRS( crs );
      *
      *  //set the srs

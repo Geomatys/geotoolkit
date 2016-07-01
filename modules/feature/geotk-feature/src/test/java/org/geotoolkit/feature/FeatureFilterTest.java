@@ -30,7 +30,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
-import org.apache.sis.referencing.CRS;
 
 import org.junit.Test;
 
@@ -45,6 +44,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.Equals;
 import org.opengis.filter.spatial.Intersects;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 
@@ -290,9 +290,9 @@ public class FeatureFilterTest extends org.geotoolkit.test.TestBase {
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
-        sftb.add(multiPointProperty, MultiPoint.class, CRS.forCode("EPSG:4326"));
-        sftb.add(multiCurveProperty, MultiLineString.class, CRS.forCode("EPSG:4326"));
-        sftb.add(multiSurfaceProperty, MultiPolygon.class, CRS.forCode("EPSG:4326"));
+        sftb.add(multiPointProperty, MultiPoint.class, CommonCRS.WGS84.geographic());
+        sftb.add(multiCurveProperty, MultiLineString.class, CommonCRS.WGS84.geographic());
+        sftb.add(multiSurfaceProperty, MultiPolygon.class, CommonCRS.WGS84.geographic());
         sftb.add(doubleProperty, Double.class);
         sftb.add(intRangeProperty, String.class);
         sftb.add(strProperty, String.class);
@@ -335,7 +335,7 @@ public class FeatureFilterTest extends org.geotoolkit.test.TestBase {
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
-        sftb.add(attributGeometrie, Geometry.class, CRS.forCode("EPSG:4326"));
+        sftb.add(attributGeometrie, Geometry.class, CommonCRS.WGS84.geographic());
         sftb.add(boolProperty, Boolean.class);
         sftb.add(str4Property, String.class);
         sftb.add(featureRef, String.class);

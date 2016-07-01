@@ -50,6 +50,7 @@ import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -97,7 +98,7 @@ public class LuceneUtils {
                 if (Units.isLinear(unit)) {
                     crs = CRS.forCode("EPSG:3857");
                 } else {
-                    crs = CRS.forCode("CRS:84");
+                    crs = CommonCRS.defaultGeographic();
                 }
                 e   = getReprojectedEnvelope(bound, crs);
                 reproj = true;

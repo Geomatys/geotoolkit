@@ -50,7 +50,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
@@ -58,6 +57,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.style.Description;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
@@ -81,7 +81,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, CRS.forCode("CRS:84"));
+        ftb.add("geom", Point.class, CommonCRS.defaultGeographic());
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(type, "1");
@@ -111,7 +111,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
 

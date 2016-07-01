@@ -20,6 +20,7 @@ import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test resolution class with {@code MathTransform} which represent transformation
@@ -30,6 +31,6 @@ import org.opengis.util.FactoryException;
  */
 public class Resolution2154To4326Test extends ResolutionCRSTest {
     public Resolution2154To4326Test() throws NoninvertibleTransformException, NoSuchAuthorityCodeException, FactoryException {
-        super(CRS.forCode("EPSG:2154"), CRS.forCode("EPSG:4326"), new double[] {4300, 253}, 3);
+        super(CRS.forCode("EPSG:2154"), CommonCRS.WGS84.geographic(), new double[] {4300, 253}, 3);
     }
 }

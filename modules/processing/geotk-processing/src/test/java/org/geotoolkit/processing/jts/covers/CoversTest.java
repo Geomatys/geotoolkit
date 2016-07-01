@@ -34,6 +34,7 @@ import org.geotoolkit.processing.jts.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -99,7 +100,7 @@ public class CoversTest extends AbstractProcessTest {
 
         final Geometry geom1 = fact.createPolygon(ring, null);
 
-        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom1, crs1);
 
         Geometry geom2 = fact.createPoint(new Coordinate(5, 5));

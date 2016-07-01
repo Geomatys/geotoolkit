@@ -71,13 +71,7 @@ public final class GeometryUtils {
     private static final Envelope WHOLE_WORLD;
 
     static{
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.forCode("EPSG:4326");
-        } catch (Exception ex){
-            LOGGER.warning("could not get crs for EPSG:4326");
-        }
-
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
         final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
 
         final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] {-90,-180});
@@ -421,16 +415,10 @@ public final class GeometryUtils {
     public static DirectPosition ensureWGS84(DirectPosition dp) {
     	CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
     	int dim = crs.getCoordinateSystem().getDimension();
-    	boolean isProjectedCRS = crs instanceof ProjectedCRS;
     	CoordinateReferenceSystem bcrs = crs instanceof ProjectedCRS
 			? ((ProjectedCRS) crs).getBaseCRS() : crs;
 
-	GeographicCRS wgs84crs = null;
-        try {
-                wgs84crs = (GeographicCRS) CRS.forCode("EPSG:4979");
-        } catch (Exception nsace){
-                LOGGER.warning("could not get crs for EPSG:4979");
-        }
+        GeographicCRS wgs84crs = CommonCRS.WGS84.geographic3D();
 
         //have doubts about following line, was the commented out 2nd clause to condition doing anything - colin
         if (bcrs.equals(wgs84crs)) {    // || bcrs.equals(CRSUtils.WGS84_PROJ)) {

@@ -120,7 +120,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testEPSG4326() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         testWriteRead(env, "EPSG4326.cdl");

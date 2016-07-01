@@ -87,7 +87,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
 
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
 
@@ -133,7 +133,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
 
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -152,7 +152,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
 
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
 
@@ -203,7 +203,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
@@ -248,7 +248,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
@@ -293,7 +293,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
@@ -339,7 +339,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
@@ -385,7 +385,7 @@ public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);

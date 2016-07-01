@@ -21,7 +21,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.CoverageReference;
@@ -30,6 +29,7 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Create a pyramid from a MapContext.
@@ -77,7 +77,7 @@ public class MapTilingDemo {
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
 //        Envelope env = context.getBounds();
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, 90);
         final int nbscale = 20;

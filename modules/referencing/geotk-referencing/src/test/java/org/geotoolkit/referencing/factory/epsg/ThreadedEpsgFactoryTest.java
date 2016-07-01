@@ -28,6 +28,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.util.ComparisonMode;
 
@@ -245,7 +246,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
     public final void testUnique() throws FactoryException {        // LGPL
         assumeNotNull(factory);
 
-        final AbstractCRS epsgCrs = (AbstractCRS) CRS.forCode("EPSG:4326");
+        final AbstractCRS epsgCrs = (AbstractCRS) CommonCRS.WGS84.geographic();
         final String      wkt     = epsgCrs.toWKT();
         final AbstractCRS wktCrs  = (AbstractCRS) CRS.fromWKT(wkt);
 

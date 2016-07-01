@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * JUnit test of Intersects process
@@ -98,10 +99,10 @@ public class IntersectsTest extends AbstractProcessTest {
 
         Geometry geom2 = fact.createPoint(new Coordinate(5, 5));
 
-        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom1, crs1);
 
-        CoordinateReferenceSystem crs2 = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem crs2 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom2, crs2);
 
         // Process

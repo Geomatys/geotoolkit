@@ -30,7 +30,6 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
-import org.apache.sis.referencing.CRS;
 
 import org.junit.Test;
 
@@ -42,6 +41,7 @@ import org.opengis.filter.spatial.Equals;
 import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 /**
@@ -81,9 +81,9 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
-        sftb.add(multiPointProperty, MultiPoint.class, CRS.forCode("EPSG:4326"));
-        sftb.add(multiCurveProperty, MultiLineString.class, CRS.forCode("EPSG:4326"));
-        sftb.add(multiSurfaceProperty, MultiPolygon.class, CRS.forCode("EPSG:4326"));
+        sftb.add(multiPointProperty, MultiPoint.class, CommonCRS.WGS84.geographic());
+        sftb.add(multiCurveProperty, MultiLineString.class, CommonCRS.WGS84.geographic());
+        sftb.add(multiSurfaceProperty, MultiPolygon.class, CommonCRS.WGS84.geographic());
         sftb.add(doubleProperty, Double.class);
         sftb.add(intRangeProperty, String.class);
         sftb.add(strProperty, String.class);
@@ -126,7 +126,7 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
-        sftb.add(attributGeometrie, Geometry.class, CRS.forCode("EPSG:4326"));
+        sftb.add(attributGeometrie, Geometry.class, CommonCRS.WGS84.geographic());
         sftb.add(boolProperty, Boolean.class);
         sftb.add(str4Property, String.class);
         sftb.add(featureRef, String.class);
@@ -235,7 +235,7 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         /*
          * Filter equals on aggregateGeoFeature1
          */
-        CoordinateReferenceSystem crs = CRS.forCode("EPSG:4326");
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
 
         JTSMultiPoint multiPoint = new JTSMultiPoint();
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));

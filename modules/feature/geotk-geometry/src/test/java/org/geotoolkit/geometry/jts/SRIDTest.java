@@ -28,11 +28,11 @@ import org.geotoolkit.factory.HintsPending;
 import org.junit.Test;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -77,14 +77,14 @@ public class SRIDTest extends TestCase{
         geom.setSRID(4326);
         crs = JTS.findCoordinateReferenceSystem(geom);
         assertNotNull(crs);
-        assertEquals(CRS.forCode("EPSG:4326"), crs);
+        assertEquals(CommonCRS.WGS84.geographic(), crs);
 
     }
 
     @Test
     public void testCRSAccessDirect() throws FactoryException{
 
-        final CoordinateReferenceSystem epsg4326 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem epsg4326 = CommonCRS.WGS84.geographic();
 
         final Point geom = GF.createPoint(new Coordinate(50, 27));
 
@@ -101,7 +101,7 @@ public class SRIDTest extends TestCase{
     @Test
     public void testCRSAccessMap() throws NoSuchAuthorityCodeException, FactoryException{
 
-        final CoordinateReferenceSystem epsg4326 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem epsg4326 = CommonCRS.WGS84.geographic();
 
         final Point geom = GF.createPoint(new Coordinate(50, 27));
 

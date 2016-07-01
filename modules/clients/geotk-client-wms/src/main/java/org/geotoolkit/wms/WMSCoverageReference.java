@@ -95,22 +95,9 @@ public class WMSCoverageReference extends AbstractCoverageReference{
         CONVERT_TO_CRS84
     }
 
-    /**
-     * EPSG:4326 object.
-     */
-    private static final CoordinateReferenceSystem EPSG_4326;
     //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(
             CommonCRS.WGS84.normalizedGeographic(), -180, -90, 360, 180);
-    static {
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.forCode("EPSG:4326");
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        EPSG_4326 = crs;
-    }
 
     /**
      * The web map server to request.
@@ -520,7 +507,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
             }
             if(crs2D == null){
                 //last chance use : EPSG:4326
-                crs2D = EPSG_4326;
+                crs2D = CommonCRS.WGS84.geographic();
             }
 
             if ((server.getVersion() == WMSVersion.v111) && (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
@@ -528,7 +515,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, CommonCRS.WGS84.normalizedGeographic()));
                 env.setEnvelope(trsEnv);
-                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, EPSG_4326);
+                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, CommonCRS.WGS84.geographic());
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
             }else if (server.getVersion() == WMSVersion.v111) {
@@ -551,7 +538,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
-                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, EPSG_4326);
+                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, CommonCRS.WGS84.geographic());
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
             } else if (server.getVersion() == WMSVersion.v111) {
@@ -622,7 +609,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
                     case CONVERT_TO_EPSG4326:
                         env = Envelopes.transform(env, crs2D);
                         env = new GeneralEnvelope(env);
-                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(EPSG_4326);
+                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(CommonCRS.WGS84.geographic());
                         break;
                 }
             }
@@ -630,7 +617,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
 
         //check EPSG4326 politic------------------------------------------------
         if (epsg4326Politic != EPSG4326Politic.STRICT) {
-            if (Utilities.equalsIgnoreMetadata(crs2D, EPSG_4326)) {
+            if (Utilities.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.geographic())) {
                 switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
                         env = Envelopes.transform(env, crs2D);

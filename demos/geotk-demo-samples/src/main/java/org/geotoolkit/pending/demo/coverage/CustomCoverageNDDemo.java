@@ -16,7 +16,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -29,7 +28,7 @@ public class CustomCoverageNDDemo {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
 
         final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs")
-                                                                         .createCompoundCRS(CRS.forCode("EPSG:4326"),
+                                                                         .createCompoundCRS(CommonCRS.WGS84.geographic(),
                                                                                             CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                                                                                             CommonCRS.Temporal.JAVA.crs());
 

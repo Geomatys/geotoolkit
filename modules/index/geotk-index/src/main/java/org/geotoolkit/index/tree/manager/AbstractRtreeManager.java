@@ -22,14 +22,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
-import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -42,17 +40,7 @@ public class AbstractRtreeManager {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
-    public static final CoordinateReferenceSystem DEFAULT_CRS;
-
-    static {
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.forCode("CRS:84");
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, "Error while reading CRS:84", ex);
-        }
-        DEFAULT_CRS = crs;
-    }
+    public static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.defaultGeographic();
 
     public static void close(final Path directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
         final List<Object> owners = TREE_OWNERS.get(directory);

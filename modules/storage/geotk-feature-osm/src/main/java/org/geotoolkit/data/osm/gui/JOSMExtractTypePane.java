@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -38,15 +37,13 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
-import org.apache.sis.referencing.CRS;
 import org.jdesktop.swingx.JXErrorPane;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStores;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -56,15 +53,6 @@ import org.geotoolkit.storage.DataStores;
 public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    private static CoordinateReferenceSystem EPSG_4326 = null;
-
-    static {
-        try {
-            EPSG_4326 = CRS.forCode("EPSG:4326");
-        } catch (FactoryException ex) {
-            Logging.getLogger("org.geotoolkit.data.osm.gui").log(Level.WARNING, null, ex);
-        }
-    }
 
     private Map<String,Serializable> dbParameters = null;
 
@@ -96,7 +84,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("RailWay");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -148,7 +136,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Natural");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -200,7 +188,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Building");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -252,7 +240,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Landuse");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -304,7 +292,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Leisure");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -356,7 +344,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Waterway");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
@@ -408,7 +396,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Highway");
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("geometry", LineString.class, CommonCRS.WGS84.geographic());
         sftb.add("type", String.class);
         final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);

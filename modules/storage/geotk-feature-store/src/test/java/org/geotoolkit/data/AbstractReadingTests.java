@@ -52,6 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import org.opengis.metadata.Identifier;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -275,7 +276,7 @@ public abstract class AbstractReadingTests{
             CoordinateReferenceSystem testCRS = CRS.forCode("EPSG:3395");
             if(Utilities.equalsIgnoreMetadata(originalCRS, testCRS)){
                 //change the test crs
-                testCRS = CRS.forCode("EPSG:4326");
+                testCRS = CommonCRS.WGS84.geographic();
             }
 
             //handle geometry as object since they can be ISO or JTS

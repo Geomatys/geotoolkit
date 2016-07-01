@@ -28,6 +28,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 /**
@@ -46,10 +47,10 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
         crs1 = CRS.forCode("EPSG:3395");
         crs2 = CRS.forCode("EPSG:2154");
         crs3 = CRS.forCode("EPSG:3031");
-        crsGeo = CRS.forCode("EPSG:4326");
+        crsGeo = CommonCRS.WGS84.geographic();
         crsLambertZ1 = CRS.forCode("EPSG:27571");
         crsLambertZ2 = CRS.forCode("EPSG:27572");
-        crs84 = CRS.forCode("CRS:84");
+        crs84 = CommonCRS.defaultGeographic();
         envelop = new GeneralEnvelope(crsGeo);
         envelop.setRange(0, 0, 50);
         envelop.setRange(1, 40, 50);

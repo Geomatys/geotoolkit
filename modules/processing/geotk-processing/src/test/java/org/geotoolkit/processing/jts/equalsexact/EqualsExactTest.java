@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * JUnit test of Equals2d process
@@ -99,10 +100,10 @@ public class EqualsExactTest extends AbstractProcessTest {
         final Geometry geom = fact.createPolygon(ring, null);
         Geometry geom2 = fact.createPolygon(ring, null);
 
-        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom, crs1);
 
-        final CoordinateReferenceSystem crs2 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem crs2 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom2, crs2);
 
         final double tolerance = 0.00001;

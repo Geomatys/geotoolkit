@@ -8,6 +8,7 @@ import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * @author Johann Sorel
@@ -21,7 +22,7 @@ public class Reproject {
     public static void main(String[] args) throws Exception {
         Demos.init();
 
-        final CoordinateReferenceSystem inCRS = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem inCRS = CommonCRS.WGS84.geographic();
         final CoordinateReferenceSystem outCRS = CRS.forCode("EPSG:27582");
 
         final MathTransform trs = CRS.findOperation(inCRS, outCRS, null).getMathTransform();

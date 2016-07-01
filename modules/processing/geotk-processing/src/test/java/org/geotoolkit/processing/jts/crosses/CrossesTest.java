@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * JUnit test of Crosses process
@@ -101,7 +102,7 @@ public class CrossesTest extends AbstractProcessTest {
                 });
 
         final Geometry geom1 = fact.createPolygon(ring, null);
-        final CoordinateReferenceSystem crs1 = CRS.forCode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom1, crs1);
 
         Geometry geom2 = fact.createLineString(new Coordinate[]{

@@ -54,11 +54,10 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.referencing.CRS;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -94,12 +93,7 @@ public class XmlTestData {
 
     static {
 
-        final CoordinateReferenceSystem crs;
-        try {
-            crs = CRS.forCode("EPSG:4326");
-        } catch (FactoryException ex) {
-            throw new RuntimeException(ex.getMessage(),ex);
-        }
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
         ////////////////////////////////////////////////////////////////////////
         // TYPES ///////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
