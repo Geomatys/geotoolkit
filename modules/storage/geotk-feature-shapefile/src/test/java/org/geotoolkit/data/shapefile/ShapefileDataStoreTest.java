@@ -18,11 +18,9 @@ package org.geotoolkit.data.shapefile;
 
 import org.junit.Test;
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -34,7 +32,6 @@ import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureStore;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.data.FeatureReader;
@@ -67,6 +64,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.test.TestData;
 
 import static org.junit.Assert.*;
@@ -97,13 +95,6 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         query = builder.buildQuery();
 
         return s.createSession(true).getFeatureCollection(query);
-    }
-
-    protected FeatureCollection loadLocalFeaturesM2() throws IOException, DataStoreException, URISyntaxException {
-        String target = "jar:file:/C:/Documents and Settings/jgarnett/.m2/repository/org/geotoolkit/gt2-sample-data/2.4-SNAPSHOT/gt2-sample-data-2.4-SNAPSHOT.jar!/org/geotoolkit/test-data/shapes/statepop.shp";
-        URL url = new URL(target);
-        ShapefileFeatureStore s = new ShapefileFeatureStore(url.toURI());
-        return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
 
     protected FeatureCollection loadFeatures(final String resource, final Charset charset, final Query q) throws Exception {
@@ -623,6 +614,17 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 //        SimpleFeature feature1 = writer.next();
 //        writer.close();
 
+    }
+
+    @Test
+    public void testReadQPJ() throws Exception {
+        final URL shpUrl = this.getClass().getResource("/org/geotoolkit/test-data/shapes/utf8.shp");
+        final FeatureType ft = new ShapefileFeatureStore(shpUrl.toURI()).getFeatureType();
+        assertNotNull("No feature type loaded !", ft);
+        final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();
+        assertNotNull("No CRS loaded !", crs);
+        final URL qpjUrl = this.getClass().getResource("/org/geotoolkit/test-data/shapes/utf8.qpj");
+        assertEquals("CRS loaded by shapefile store is not the one contained in qpj !", crs, PrjFiles.read(qpjUrl));
     }
 
     /**

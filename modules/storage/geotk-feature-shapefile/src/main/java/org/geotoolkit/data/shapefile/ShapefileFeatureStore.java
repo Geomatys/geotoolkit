@@ -585,8 +585,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         CoordinateReferenceSystem crs = null;
 
         //read the projection
-        if (shpFiles.exists(PRJ)) {
-            try (ReadableByteChannel channel = shpFiles.getReadChannel(PRJ)) {
+        final boolean qpjExists = shpFiles.exists(QPJ);
+        final boolean prjExists = shpFiles.exists(PRJ);
+        if (qpjExists || prjExists) {
+            try (final ReadableByteChannel channel = qpjExists ? shpFiles.getReadChannel(QPJ) : shpFiles.getReadChannel(PRJ)) {
                 crs = PrjFiles.read(channel, true);
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
@@ -595,7 +597,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         final GeometryDescriptor geomDescriptor;
-        final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>();
+        final List<AttributeDescriptor> attributes = new ArrayList<>();
 
         try {
             //get the descriptor from shp
