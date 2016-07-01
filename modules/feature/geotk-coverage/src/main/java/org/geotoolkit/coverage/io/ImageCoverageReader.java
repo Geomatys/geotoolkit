@@ -82,7 +82,6 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -91,6 +90,7 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.apache.sis.geometry.Envelopes;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -1041,7 +1041,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                             if (crs instanceof CompoundCRS) {
                                 envelope = CRSUtilities.appendMissingDimensions(envelope, (CompoundCRS) crs);
                             }
-                            envelope = CRS.transform(envelope, crs);
+                            envelope = Envelopes.transform(envelope, crs);
                             final double[] median = new double[geodeticDim];
                             for (int i=0; i<geodeticDim; i++) {
                                 median[i] = envelope.getMedian(i);

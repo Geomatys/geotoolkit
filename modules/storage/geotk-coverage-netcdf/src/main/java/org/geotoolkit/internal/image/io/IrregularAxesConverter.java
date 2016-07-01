@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
@@ -200,7 +200,7 @@ public final class IrregularAxesConverter {
             }
             try {
                 final ProjectedCRS targetCRS = createProjectedCRS(sourceCRS, method);
-                final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
+                final MathTransform tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
                 final double[] nx, ny;
                 if ((ny = canConvert(tr, 1, y, x)) != null &&
                     (nx = canConvert(tr, 0, x, y)) != null)

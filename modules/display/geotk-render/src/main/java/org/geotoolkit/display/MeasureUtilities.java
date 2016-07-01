@@ -31,7 +31,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.jts.JTS;
@@ -109,7 +109,7 @@ public class MeasureUtilities {
 
             final GeographicCRS geoCRS = ReferencingUtilities.toNormalizedGeographicCRS(geomCRS);
 
-            final MathTransform step0 = CRS.findMathTransform(geomCRS, geoCRS,true);
+            final MathTransform step0 = CRS.findOperation(geomCRS, geoCRS, null).getMathTransform();
             Envelope genv = JTS.transform(env, step0);
 
             double centerMeridian = genv.getWidth()/2 + genv.getMinX();
@@ -128,7 +128,7 @@ public class MeasureUtilities {
             p.parameter("standard_parallel_1").setValue(northParallal);
             p.parameter("standard_parallel_2").setValue(southParallal);
 
-            MathTransform step1 = CRS.findMathTransform(geomCRS, geoCRS);
+            MathTransform step1 = CRS.findOperation(geomCRS, geoCRS, null).getMathTransform();
             MathTransform step2 = f.createParameterizedTransform(p);
             MathTransform trs = f.createConcatenatedTransform(step1, step2);
 

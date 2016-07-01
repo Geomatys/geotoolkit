@@ -139,6 +139,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -617,10 +618,10 @@ public final class GO2Utilities {
 
         Envelope cropped = wanted;
         if(!CRS.equalsApproximatively(context2D.getCanvasObjectiveBounds2D(), wanted.getCoordinateReferenceSystem())){
-            cropped = CRS.transform(wanted, context2D.getObjectiveCRS2D());
+            cropped = Envelopes.transform(wanted, context2D.getObjectiveCRS2D());
         }
 
-        cropped = CRS.transform(objToDisp, cropped);
+        cropped = Envelopes.transform(objToDisp, cropped);
 
         //we assume we only have a regular
         return wanted.getSpan(0) / cropped.getSpan(0);
@@ -779,7 +780,7 @@ public final class GO2Utilities {
             //projection is not the same, must reproject it
             final GridCoverageReadParam newParams = new GridCoverageReadParam();
             final double[] newRes = context.getResolution(targetCRS);
-            final Envelope newEnv= CRS.transform(params.getEnvelope(), targetCRS);
+            final Envelope newEnv= Envelopes.transform(params.getEnvelope(), targetCRS);
 
             newParams.setEnvelope(newEnv);
             newParams.setResolution(newRes);

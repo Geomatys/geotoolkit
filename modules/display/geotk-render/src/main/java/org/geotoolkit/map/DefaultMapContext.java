@@ -34,6 +34,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 
@@ -75,7 +76,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             if(this.area != null){
                 try {
                     //update the area of interest
-                    final Envelope newEnv = CRS.transform(area, crs);
+                    final Envelope newEnv = Envelopes.transform(area, crs);
                     setAreaOfInterest(newEnv);
                 } catch (TransformException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
@@ -138,7 +139,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
                 boolean addToResult = false;
                 if ((sourceCrs != null) && (crs != null) && !Utilities.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
-                        env = new GeneralEnvelope(CRS.transform(env, crs));
+                        env = new GeneralEnvelope(Envelopes.transform(env, crs));
                         addToResult = true;
                     } catch (TransformException e) {
                         LOGGER.log(Level.WARNING,

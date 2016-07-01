@@ -23,11 +23,9 @@ import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.*;
@@ -113,7 +111,7 @@ public class ProjectionUtils {
 
     public static String getMIFBounds(CoordinateReferenceSystem source) {
         StringBuilder builder = new StringBuilder();
-        Envelope bounds = CRS.getEnvelope(source);
+        Envelope bounds = org.geotoolkit.referencing.CRS.getEnvelope(source);
         if(bounds != null) {
             double minX = bounds.getLowerCorner().getOrdinate(0);
             double minY = bounds.getLowerCorner().getOrdinate(1);
@@ -343,7 +341,7 @@ public class ProjectionUtils {
             // now that we've got conversion, we can check for bounds.
             if (bounds != null) {
                 try {
-                    MathTransform transform = CRS.findMathTransform(CRS_FACTORY.createProjectedCRS(crsIdentifiers, baseCRS, conversion, cs), baseCRS);
+                    MathTransform transform = CRS.findOperation(CRS_FACTORY.createProjectedCRS(crsIdentifiers, baseCRS, conversion, cs), baseCRS, null).getMathTransform();
                     DirectPosition newLower = new DirectPosition2D(baseCRS);
                     DirectPosition newUpper = new DirectPosition2D(baseCRS);
                     transform.transform(bounds.getLowerCorner(), newLower);

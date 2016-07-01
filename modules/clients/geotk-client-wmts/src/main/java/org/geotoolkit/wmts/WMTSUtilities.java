@@ -28,7 +28,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixSet;
@@ -174,7 +174,7 @@ public final class WMTSUtilities {
         for (int n = 0, s = listCrs.size(); n < s; n++) {
             final CoordinateReferenceSystem crsTemp = listCrs.get(n);
             double valTemp = 0;
-            final MathTransform mt = CRS.findMathTransform(crsBase, crsTemp);
+            final MathTransform mt = CRS.findOperation(crsBase, crsTemp, null).getMathTransform();
             MatrixSIS mat1 = MatrixSIS.castOrCopy(mt.derivative(dplong1));
             MatrixSIS mat2 = MatrixSIS.castOrCopy(mt.derivative(dplong2));
             MatrixSIS mat3 = MatrixSIS.castOrCopy(mt.derivative(dplat1));

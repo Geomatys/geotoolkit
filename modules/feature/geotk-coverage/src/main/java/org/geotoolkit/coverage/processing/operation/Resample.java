@@ -49,6 +49,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.Utilities;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -278,7 +279,7 @@ public class Resample extends Operation2D {
             GridEnvelope gridEnvelope;
             try {
                 final GeneralEnvelope transformed;
-                transformed = CRS.transform(CRS.getCoordinateOperationFactory(true)
+                transformed = Envelopes.transform(CRS.getCoordinateOperationFactory(true)
                         .createOperation(targetCRS, reducedCRS), target);
                 final Envelope reduced;
                 final MathTransform gridToCRS;

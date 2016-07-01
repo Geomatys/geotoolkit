@@ -36,7 +36,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.PortrayalException;
@@ -49,6 +49,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  *
@@ -116,11 +117,11 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private void createTransformOutput() throws FactoryException, ConversionException {
         if (outputCrs != null){
             final CoordinateReferenceSystem crsImg = this.dataSource.getCoordinateReferenceSystem();
-            transformToOutput = CRS.findMathTransform(crsImg, outputCrs, true);
+            transformToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();
             try {
                 transformFromOutput = transformToOutput.inverse();
             } catch (NoninvertibleTransformException ex) {
-                transformFromOutput = CRS.findMathTransform(outputCrs, crsImg, true);
+                transformFromOutput = CRS.findOperation(outputCrs, crsImg, null).getMathTransform();
             }
         }
     }
@@ -131,13 +132,13 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
         final Envelope env;
         try {
-            env = CRS.transform(transformFromOutput, outputEnv);
+            env = Envelopes.transform(transformFromOutput, outputEnv);
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }

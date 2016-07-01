@@ -67,7 +67,7 @@ import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -81,6 +81,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Coverage editor tool.
@@ -246,7 +247,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 final MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                 GeneralEnvelope env = new GeneralEnvelope(PredefinedCRS.CARTESIAN_2D);
                 env.setEnvelope(gridSelectionSize.x, gridSelectionSize.y, gridSelectionSize.x + gridSelectionSize.width, gridSelectionSize.y + gridSelectionSize.height);
-                env = CRS.transform(grid_To_Crs, env);
+                env = Envelopes.transform(grid_To_Crs, env);
 
                 final CoordinateReferenceSystem covCRS = cov.getCoordinateReferenceSystem();
                 GeneralEnvelope vAInCovArea = new GeneralEnvelope(visibleArea);
@@ -273,7 +274,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         if(objPoints == null || lastObjCRS != objCRS){
             lastObjCRS = objCRS;
             objPoints = new double[dataPoints.length];
-            final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), objCRS);
+            final MathTransform dataToObj = CRS.findOperation(coverage.getCoordinateReferenceSystem(), objCRS, null).getMathTransform();
             dataToObj.transform(dataPoints, 0, objPoints, 0, dataPoints.length/2);
         }
         return objPoints;
@@ -294,7 +295,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
         final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         final MathTransform dispToObj = context.getDisplayToObjective();
-        final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
+        final MathTransform objToData = CRS.findOperation(context.getObjectiveCRS2D(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
         final MathTransform dataToGrid = gridTodata.inverse();
 
         final double[] coords = new double[8];
@@ -362,7 +363,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         coords[0] = mouseX;
         coords[1] = mouseY;
         final MathTransform dispToObj = context.getDisplayToObjective();
-        final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
+        final MathTransform objToData = CRS.findOperation(context.getObjectiveCRS2D(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
         final MathTransform dataToGrid = gridTodata.inverse();
 
         dispToObj.transform(coords, 0, coords, 0, 1);
@@ -422,7 +423,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
                 if (canvasDims == layerDim) {
                     try {
-                        canvasEnv = new GeneralEnvelope(CRS.transform(canvasEnv, layerEnvelope.getCoordinateReferenceSystem()));
+                        canvasEnv = new GeneralEnvelope(Envelopes.transform(canvasEnv, layerEnvelope.getCoordinateReferenceSystem()));
                         selectEnable = canvasEnv.intersects(layerEnvelope, true);
                     } catch (TransformException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -589,7 +590,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
             try{
                 final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-                final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), context.getObjectiveCRS2D());
+                final MathTransform dataToObj = CRS.findOperation(coverage.getCoordinateReferenceSystem(), context.getObjectiveCRS2D(), null).getMathTransform();
                 final MathTransform objToDisp = context.getObjectiveToDisplay();
                 final MathTransform gridToDisp = MathTransforms.concatenate(gridTodata, dataToObj, objToDisp);
 

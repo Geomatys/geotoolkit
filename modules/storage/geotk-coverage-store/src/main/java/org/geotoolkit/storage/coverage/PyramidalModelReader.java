@@ -57,7 +57,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
 
@@ -252,7 +251,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             crs = paramEnv.getCoordinateReferenceSystem();
         } else {
             try {
-                paramEnv = CRS.transform(paramEnv, crs);
+                paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
             }

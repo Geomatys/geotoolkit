@@ -17,11 +17,11 @@
 package org.geotoolkit.data.osm.client;
 
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 
 
 /**
@@ -71,7 +71,7 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
 
         final Envelope geoEnv;
         try {
-            geoEnv = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+            geoEnv = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
         } catch (TransformException ex) {
             throw new IllegalArgumentException("Could not reproject given envelope to OSM projection", ex);
         }

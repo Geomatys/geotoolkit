@@ -56,7 +56,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.data.FeatureCollection;
@@ -261,7 +261,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
                             try {
-                                final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map2D.getCanvas().getDisplayCRS(), dataCrs,true));
+                                final Geometry dataPoly = JTS.transform(poly, CRS.findOperation(map2D.getCanvas().getDisplayCRS(), dataCrs, null).getMathTransform());
 
                                 final Expression geomData = FF.literal(dataPoly);
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);

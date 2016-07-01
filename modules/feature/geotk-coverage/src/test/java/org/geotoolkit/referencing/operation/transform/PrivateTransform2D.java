@@ -75,6 +75,6 @@ final strictfp class PrivateTransform2D extends MathTransformWrapper implements 
      */
     @Override
     public MathTransform2D inverse() throws NoninvertibleTransformException {
-        return new PrivateTransform2D((MathTransform2D) super.inverse());
+        return new PrivateTransform2D((MathTransform2D) transform.inverse());
     }
 }

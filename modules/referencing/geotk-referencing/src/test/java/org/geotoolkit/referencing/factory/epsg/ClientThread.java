@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -162,7 +162,7 @@ final strictfp class ClientThread extends Thread {
                  * The result will be saved for comparison with the results from other threads.
                  */
                 final CoordinateReferenceSystem targetCRS = factory.createCoordinateReferenceSystem(code);
-                MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
+                MathTransform transform = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
                 assertSame(targetPt, transform.inverse().transform(sourcePt, targetPt));
                 statistics.accept(System.nanoTime() - startTime);
                 assertFalse("x=NaN", Double.isNaN(targetPt.x));
@@ -178,7 +178,7 @@ final strictfp class ClientThread extends Thread {
                 }
                 final ProjectedCRS sourceUTM = factory.createProjectedCRS(code = String.valueOf(32200 + zone));
                 final ProjectedCRS targetUTM = factory.createProjectedCRS(code = String.valueOf(32600 + zone));
-                transform = CRS.findMathTransform(sourceUTM, targetUTM);
+                transform = CRS.findOperation(sourceUTM, targetUTM, null).getMathTransform();
                 if (random.nextBoolean()) {
                     transform = transform.inverse();
                 }

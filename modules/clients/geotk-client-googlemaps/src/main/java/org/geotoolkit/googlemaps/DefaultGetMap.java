@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -121,8 +121,8 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
         //center must be expressed in lat/lon
         DirectPosition position = center;
         try{
-            final MathTransform trs = CRS.findMathTransform(
-                    center.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic());
+            final MathTransform trs = CRS.findOperation(
+                    center.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic(), null).getMathTransform();
             position = trs.transform(position, null);
         }catch(TransformException ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);

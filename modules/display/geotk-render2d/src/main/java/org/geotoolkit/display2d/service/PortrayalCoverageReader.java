@@ -31,7 +31,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -41,6 +40,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -131,7 +131,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
             //use the given crs
             paramEnv = getGridGeometry(0).getEnvelope();
             try {
-                paramEnv = CRS.transform(paramEnv, crs);
+                paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
             }

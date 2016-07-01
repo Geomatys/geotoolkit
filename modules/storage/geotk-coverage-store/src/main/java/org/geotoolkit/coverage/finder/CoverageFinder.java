@@ -35,6 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 
@@ -156,7 +157,7 @@ public abstract class CoverageFinder {
                 // compute sum of recovery ratio
                 // from crs validity domain area on pyramid crs validity domain area
                 try {
-                    pyramidBound = org.geotoolkit.referencing.CRS.transform(pyramidBound, crs2D);
+                    pyramidBound = Envelopes.transform(pyramidBound, crs2D);
                 } catch (TransformException ex) {
                     Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                 }

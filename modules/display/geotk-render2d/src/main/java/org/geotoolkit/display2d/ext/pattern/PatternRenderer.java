@@ -40,7 +40,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
 import org.opengis.geometry.Envelope;
@@ -126,7 +126,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         //data to objective
         final CoordinateSequenceMathTransformer cstrs;
         try {
-            cstrs = new CoordinateSequenceMathTransformer(CRS.findMathTransform(dataCRS, objectiveCRS));
+            cstrs = new CoordinateSequenceMathTransformer(CRS.findOperation(dataCRS, objectiveCRS, null).getMathTransform());
         } catch (FactoryException ex) {
             throw new PortrayalException(ex);
         }

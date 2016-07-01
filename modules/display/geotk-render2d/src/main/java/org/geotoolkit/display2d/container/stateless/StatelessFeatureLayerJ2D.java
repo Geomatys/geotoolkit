@@ -93,6 +93,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -501,7 +502,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
             final Envelope dimEnv;
             try {
-                dimEnv = org.geotoolkit.referencing.CRS.transform(canvasEnv, crs);
+                dimEnv = Envelopes.transform(canvasEnv, crs);
             } catch (TransformException ex) {
                 continue;
             }
@@ -727,7 +728,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
             final Envelope dimEnv;
             try {
-                dimEnv = org.geotoolkit.referencing.CRS.transform(canvasEnv, crs);
+                dimEnv = Envelopes.transform(canvasEnv, crs);
             } catch (TransformException ex) {
                 continue;
             }
@@ -810,7 +811,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             Envelope env;
 
             try{
-                env = org.geotoolkit.referencing.CRS.transform(bbox, layerCRS);
+                env = Envelopes.transform(bbox, layerCRS);
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds

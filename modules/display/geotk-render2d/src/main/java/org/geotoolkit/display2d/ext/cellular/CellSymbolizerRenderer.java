@@ -46,7 +46,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ObjectConverters;
@@ -68,6 +67,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -413,7 +413,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final MathTransform trs = context.getMathTransform(context.getObjectiveCRS(),coverage.getCoordinateReferenceSystem2D() );
 
         final Envelope refEnv = context.getCanvasObjectiveBounds();
-        final GeneralEnvelope coverageEnv = CRS.transform(trs, refEnv);
+        final GeneralEnvelope coverageEnv = Envelopes.transform(trs, refEnv);
 
         final double objX = refEnv.getSpan(0);
         final double objY = refEnv.getSpan(1);

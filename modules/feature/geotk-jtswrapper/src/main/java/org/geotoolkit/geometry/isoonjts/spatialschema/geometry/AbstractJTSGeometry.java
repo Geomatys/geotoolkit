@@ -19,7 +19,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurv
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 import org.geotoolkit.internal.jaxb.CoordinateReferenceSystemAdapter;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.util.Cloneable;
 
 import org.opengis.util.FactoryException;
@@ -382,7 +382,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     @Override
     public final Geometry transform(final CoordinateReferenceSystem newCRS) throws TransformException {
         try {
-            MathTransform mt = CRS.findMathTransform(getCoordinateReferenceSystem(), newCRS, true);
+            MathTransform mt = CRS.findOperation(getCoordinateReferenceSystem(), newCRS, null).getMathTransform();
             return transform(newCRS, mt);
         } catch (OperationNotFoundException e) {
             throw new TransformException("Unable to find an operation", e);

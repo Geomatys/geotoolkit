@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -145,7 +145,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
-                        candidateGeom = JTS.transform(candidateGeom, CRS.findMathTransform(sourceCRS, targetCRS, true));
+                        candidateGeom = JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;

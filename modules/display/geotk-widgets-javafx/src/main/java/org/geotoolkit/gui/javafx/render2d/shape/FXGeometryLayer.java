@@ -119,7 +119,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 if(dispCrs==null || geomcrs==null || Utilities.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    geom = JTS.transform(geom, org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                    geom = JTS.transform(geom, CRS.findOperation(geomcrs, dispCrs, null).getMathTransform());
                 }
 
                 coords.addAll(Arrays.asList(geom.getCoordinates()));
@@ -157,7 +157,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.Utilities.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    candidate = JTS.transform(editGeom.geometry.get(), org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                    candidate = JTS.transform(editGeom.geometry.get(), org.geotoolkit.referencing.CRS.findOperation(geomcrs, dispCrs, null).getMathTransform());
                 }
             }catch(Exception ex){
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);

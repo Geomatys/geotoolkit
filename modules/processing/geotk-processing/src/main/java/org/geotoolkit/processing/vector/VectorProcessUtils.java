@@ -53,7 +53,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
@@ -319,18 +319,18 @@ public final class VectorProcessUtils extends Static {
             final Geometry inputGeom) throws TransformException, FactoryException{
 
         if (!(wantedCRS.equals(geometryCRS))) {
-            final MathTransform transform = CRS.findMathTransform(geometryCRS, wantedCRS);
+            final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
             return JTS.transform(inputGeom, transform);
         }else{
             return inputGeom;
         }
     }
-    
-//    
+
+//
 //    public static Geometry convertToPolygon(Geometry intersectGeom) {
 //        GeometryFactory geomFact = new GeometryFactory();
 //        LinearRing ring;
-//        
+//
 //        if(intersectGeom instanceof Point){
 //            Point pt = (Point) intersectGeom;
 //            ring = geomFact.createLinearRing(new Coordinate[]{
@@ -343,13 +343,13 @@ public final class VectorProcessUtils extends Static {
 //            return geomFact.createPolygon(ring, null);
 //        }else if(intersectGeom instanceof LineString){
 //            LineString line = (LineString) intersectGeom;
-//            
+//
 //            return geomFact.createPolygon(ring, null);
 //        }
-//        
+//
 //    }
-    
-    
+
+
     /**
      * Compute the intersection geometry between two Features.
      * To determinate which Geometry used from Feature, we use the sourceGeomName and
@@ -393,7 +393,7 @@ public final class VectorProcessUtils extends Static {
                 }
             }
         }
-        
+
         targetGeometry = repojectGeometry(sourceCRS, targetCRS, targetGeometry);
         return sourceGeometry.intersection(targetGeometry);
     }
@@ -494,7 +494,7 @@ public final class VectorProcessUtils extends Static {
                         if (geom != null) {
                             //reproject geom into outputBaseCRS
                             geom = repojectGeometry(outputBaseCRS, geomCRS, geom);
-                            
+
                             //get all geometries recursively
                             final Collection<Geometry> subGeometry = getGeometries(geom);
 

@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -84,7 +84,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             baseToCoverage = new MathTransform[coverages.length];
             coverageCoord = new GeneralDirectPosition[coverages.length];
             for(int i=0;i<coverages.length;i++){
-                baseToCoverage[i] = CRS.findMathTransform(coord.getCoordinateReferenceSystem(), coverages[i].getCoordinateReferenceSystem());
+                baseToCoverage[i] = CRS.findOperation(coord.getCoordinateReferenceSystem(), coverages[i].getCoordinateReferenceSystem(), null).getMathTransform();
                 coverageCoord[i] = new GeneralDirectPosition(coverages[i].getCoordinateReferenceSystem());
             }
         }

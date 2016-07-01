@@ -56,7 +56,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
@@ -70,6 +70,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -300,7 +301,7 @@ public class EditionHelper {
                 final org.opengis.geometry.Envelope canvasEnv = map.getCanvas().getVisibleEnvelope();
                 final org.opengis.geometry.Envelope dimEnv;
                 try {
-                    dimEnv = CRS.transform(canvasEnv, crs);
+                    dimEnv = Envelopes.transform(canvasEnv, crs);
                 } catch (TransformException ex) {
                     continue;
                 }
@@ -903,9 +904,9 @@ public class EditionHelper {
 
     public Geometry toObjectiveCRS(Geometry geom){
         try{
-            final MathTransform trs = CRS.findMathTransform(
+            final MathTransform trs = CRS.findOperation(
                     editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
-                    map.getCanvas().getObjectiveCRS2D(), true);
+                    map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
             JTS.setCRS(geom, map.getCanvas().getObjectiveCRS2D());
@@ -949,7 +950,7 @@ public class EditionHelper {
             final Feature feature = FeatureUtilities.defaultFeature(featureType, UUID.randomUUID().toString());
 
             try {
-                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS2D(), dataCrs, true));
+                geom = JTS.transform(geom, CRS.findOperation(map.getCanvas().getObjectiveCRS2D(), dataCrs, null).getMathTransform());
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
@@ -999,7 +1000,7 @@ public class EditionHelper {
                 final Geometry geom;
                 if(reprojectToDataCRS){
                     geom = JTS.transform(geo,
-                            CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                            CRS.findOperation(map.getCanvas().getObjectiveCRS(), dataCrs, null).getMathTransform());
                     JTS.setCRS(geom, dataCrs);
                 }else{
                     geom = geo;

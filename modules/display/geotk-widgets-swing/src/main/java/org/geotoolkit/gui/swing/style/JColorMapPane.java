@@ -105,7 +105,6 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -146,6 +145,7 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -579,7 +579,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     }
 
                     GridCoverageReadParam readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
                     readParam.setResolution(res);
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setDeferred(true);
@@ -627,7 +627,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     }
 
                     readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
 
                     coverage = reader.read(cref.getImageIndex(), readParam);

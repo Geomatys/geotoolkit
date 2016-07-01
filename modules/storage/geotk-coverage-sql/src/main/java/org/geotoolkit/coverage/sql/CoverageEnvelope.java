@@ -47,6 +47,7 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
+import org.apache.sis.geometry.Envelopes;
 import static java.lang.Double.doubleToLongBits;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -321,7 +322,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
         try {
             final CoordinateOperation userToStandard = factory.createOperation(sourceCRS, targetCRS);
             if (!userToStandard.getMathTransform().isIdentity()) {
-                envelope = org.geotoolkit.referencing.CRS.transform(userToStandard, envelope);
+                envelope = Envelopes.transform(userToStandard, envelope);
             }
         } catch (FactoryException e) {
             throw new TransformException(Errors.format(Errors.Keys.CantTransformEnvelope), e);

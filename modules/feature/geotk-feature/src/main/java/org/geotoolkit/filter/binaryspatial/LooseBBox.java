@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
@@ -64,7 +64,7 @@ public class LooseBBox extends DefaultBBox{
         if(candidateCrs != null){
             //reproject in objective crs if needed
             try {
-                final MathTransform trs = CRS.findMathTransform(candidateCrs, this.crs);
+                final MathTransform trs = CRS.findOperation(candidateCrs, this.crs, null).getMathTransform();
                 if(!trs.isIdentity()){
                     candidate = JTS.transform(candidate, trs);
                 }

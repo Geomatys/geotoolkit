@@ -19,13 +19,13 @@ package org.geotoolkit.data.osm.client;
 import java.util.Date;
 
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.DateRange;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 
 
 /**
@@ -157,7 +157,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
         if(envelope != null){
             final Envelope geoEnv;
             try {
-                geoEnv = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+                geoEnv = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
             } catch (TransformException ex) {
                 throw new IllegalArgumentException("Could not reproject given envelope to OSM projection", ex);
             }

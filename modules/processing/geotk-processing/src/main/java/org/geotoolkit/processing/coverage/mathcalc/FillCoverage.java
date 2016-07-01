@@ -39,7 +39,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
@@ -51,6 +50,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -108,7 +108,7 @@ public class FillCoverage {
             try {
                 final MathTransform crsToGrid = gridToCrs.inverse();
                 // how do we round values ? cast, nearest, intersect, within ?
-                GeneralEnvelope gridEnv = CRS.transform(crsToGrid, env);
+                GeneralEnvelope gridEnv = Envelopes.transform(crsToGrid, env);
                 for(int i=0;i<nbDim;i++){
                     mins[i] = Math.max(mins[i], (int)gridEnv.getMinimum(i));
                     maxs[i] = Math.min(maxs[i], (int)gridEnv.getMaximum(i));

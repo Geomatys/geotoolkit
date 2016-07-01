@@ -31,7 +31,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.Utilities;
 
@@ -89,7 +90,7 @@ public class TransformedCoverage extends AbstractCoverage {
     {
         super(name, crs, (coverage instanceof PropertySource) ? ((PropertySource) coverage) : null, null);
         this.coverage = coverage;
-        toOriginalCRS = CRS.findMathTransform(crs, coverage.getCoordinateReferenceSystem());
+        toOriginalCRS = CRS.findOperation(crs, coverage.getCoordinateReferenceSystem(), null).getMathTransform();
     }
 
     /**
@@ -160,7 +161,7 @@ public class TransformedCoverage extends AbstractCoverage {
     public Envelope getEnvelope() {
         final GeneralEnvelope envelope;
         try {
-            envelope = CRS.transform(toOriginalCRS.inverse(), coverage.getEnvelope());
+            envelope = Envelopes.transform(toOriginalCRS.inverse(), coverage.getEnvelope());
         } catch (TransformException exception) {
             throw transformationFailed(exception);
         }

@@ -23,11 +23,11 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.Canvas;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -72,7 +72,7 @@ public abstract class SpatialNode extends SceneNode{
             return genv.intersects(candidateEnvelope, true);
         }else{
             try {
-                final GeneralEnvelope genv = new GeneralEnvelope(CRS.transform(graphicEnv, candidateCRS));
+                final GeneralEnvelope genv = new GeneralEnvelope(Envelopes.transform(graphicEnv, candidateCRS));
                 return genv.intersects(candidateEnvelope, true);
             } catch (TransformException ex) {
                 getLogger().log(Level.FINE, ex.getMessage(),ex);

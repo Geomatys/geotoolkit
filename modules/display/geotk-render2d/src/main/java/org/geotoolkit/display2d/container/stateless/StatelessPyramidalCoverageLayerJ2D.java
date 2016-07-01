@@ -53,7 +53,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.display.primitive.Graphic;
@@ -74,6 +74,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -118,7 +119,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             //no pyramid or tiles match this context definition
             return;
         }
-        
+
         //tiles to render
         final Map<Point,MathTransform> queries = new HashMap<Point,MathTransform>();
         final Map hints = new HashMap(item.getUserProperties());
@@ -216,7 +217,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             }
             return graphics;
         }
-                
+
         if(graphics == null) graphics = new ArrayList<>();
         if(mask instanceof SearchAreaJ2D){
             graphics = searchAt(renderingContext,(SearchAreaJ2D)mask,filter,graphics);
@@ -227,27 +228,27 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return graphics;
     }
 
-    private List<Graphic> searchAt(final RenderingContext2D context2D, 
+    private List<Graphic> searchAt(final RenderingContext2D context2D,
             final SearchAreaJ2D mask, final VisitFilter filter, List<Graphic> graphics) {
-        
+
         //search tiles visible on this area
         final TileSetResult result = listTiles(context2D);
         if(result==null){
             //no pyramid or tiles match this context definition
             return graphics;
         }
-        
+
         final Geometry searchGeom;
         try {
-            searchGeom = JTS.transform(mask.getObjectiveGeometryJTS(), CRS.findMathTransform(context2D.getObjectiveCRS2D(), result.pyramidCRS2D));
+            searchGeom = JTS.transform(mask.getObjectiveGeometryJTS(), CRS.findOperation(context2D.getObjectiveCRS2D(), result.pyramidCRS2D, null).getMathTransform());
         } catch (Exception ex) {
             LOGGER.log(Level.INFO, ex.getMessage(),ex);
             return graphics;
         }
-        
+
         final StatelessContextParams params = new StatelessContextParams(getCanvas(), getUserObject());
         params.update(context2D);
-                    
+
         //search for a tile which intersects the seach area
         final PyramidalCoverageReference covRef = (PyramidalCoverageReference) item.getCoverageReference();
         for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
@@ -269,16 +270,16 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         return graphics;
     }
-    
+
     /**
      * File the tiles to read for rendering.
-     * 
+     *
      * @param context2D
-     * @return 
+     * @return
      */
     private TileSetResult listTiles(RenderingContext2D context2D){
         final TileSetResult result = new TileSetResult();
-        
+
         final GenericName coverageName = item.getCoverageReference().getName();
         result.rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
@@ -292,7 +293,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         final CanvasMonitor monitor = context2D.getMonitor();
         final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();
         final Envelope canvasEnv = context2D.getCanvasObjectiveBounds();
-        
+
         //find the best pyramid
         try {
             result.pyramidSet = model.getPyramidSet();
@@ -319,7 +320,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         GeneralEnvelope wantedEnv;
         try {
             result.pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
-            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, result.pyramidCRS2D));
+            wantedEnv2D = new GeneralEnvelope(Envelopes.transform(canvasEnv2D, result.pyramidCRS2D));
             wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -333,7 +334,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         wantedEnv = new GeneralEnvelope(DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, wantedEnv, pyramidCRS));
 
         //ensure we don't go out of the crs envelope
-        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
+        final Envelope maxExt = org.geotoolkit.referencing.CRS.getEnvelope(pyramidCRS);
         if(maxExt != null){
             wantedEnv2D.intersect(maxExt);
             if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
@@ -403,7 +404,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         return result;
     }
-    
+
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
             PyramidalCoverageReference ref, String pyramidId, String mosaicId, int tileX, int tileY) {
 
@@ -414,12 +415,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
-        
+
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
         tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
-    
+
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
             PyramidalCoverageReference ref, String pyramidId, String mosaicId, TileReference tile) {
 
@@ -430,17 +431,17 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
-        
+
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
         tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
-    
+
     private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
             final String pyramidId, final String mosaicId, final TileReference tile) {
         final PyramidalCoverageReference covRef = (PyramidalCoverageReference) item.getCoverageReference();
-        
-        final ProjectedCoverage projectedCoverage = asCoverage(context, 
+
+        final ProjectedCoverage projectedCoverage = asCoverage(context,
                 params, covRef, pyramidId, mosaicId, tile);
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
@@ -465,7 +466,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
     }
 
-    
+
     private static class TileSetResult{
         //style informations
         private CachedRule[] rules;
@@ -479,5 +480,5 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         private double tileMinRow;
         private double tileMaxRow;
     }
-    
+
 }

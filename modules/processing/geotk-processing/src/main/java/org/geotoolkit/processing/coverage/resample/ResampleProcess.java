@@ -415,7 +415,7 @@ public class ResampleProcess extends AbstractProcess {
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
             targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
             targetEnvelope.setCoordinateReferenceSystem(targetCRS);
-            // 'targetCRS' may be different than the one set by CRS.transform(...).
+            // 'targetCRS' may be different than the one set by Envelopes.transform(...).
             /*
              * If the target GridGeometry is incomplete, provides default
              * values for the missing fields. Three cases may occurs:
@@ -876,7 +876,7 @@ public class ResampleProcess extends AbstractProcess {
             GridEnvelope gridEnvelope;
             try {
                 final GeneralEnvelope transformed;
-                transformed = CRS.transform(CRS.getCoordinateOperationFactory(true)
+                transformed = Envelopes.transform(CRS.getCoordinateOperationFactory(true)
                         .createOperation(targetCRS, reducedCRS), target);
                 final Envelope reduced;
                 final MathTransform gridToCRS;

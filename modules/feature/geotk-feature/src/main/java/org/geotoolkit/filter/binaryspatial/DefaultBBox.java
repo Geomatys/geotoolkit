@@ -31,7 +31,7 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.StringUtilities;
@@ -197,7 +197,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             //reproject in objective crs if needed
             if (!Utilities.equalsIgnoreMetadata(this.crs,candidateCrs)) {
                 try {
-                    candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
+                    candidate = JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
                     Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;

@@ -55,6 +55,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -157,7 +158,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         GeneralEnvelope wantedEnv;
         try {
             pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
-            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, pyramidCRS2D));
+            wantedEnv2D = new GeneralEnvelope(Envelopes.transform(canvasEnv2D, pyramidCRS2D));
             wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -198,7 +199,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
 
         GO2Utilities.removeNaN(wantedEnv);
-        
+
         final DirectPosition ul = mosaic.getUpperLeftCorner();
         final double tileMatrixMinX = ul.getOrdinate(0);
         final double tileMatrixMaxY = ul.getOrdinate(1);

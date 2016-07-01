@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -105,7 +105,7 @@ public class CombineIterator implements Iterator<Envelope> {
 
                     //try to convert from one axis to the other
                     try{
-                        final MathTransform trs = CRS.findMathTransform(baseCRS, targetCRS);
+                        final MathTransform trs = CRS.findOperation(baseCRS, targetCRS, null).getMathTransform();
                         final double[] bv = new double[]{n.doubleValue()};
                         trs.transform(bv, 0, bv, 0, 1);
                         n = bv[0];

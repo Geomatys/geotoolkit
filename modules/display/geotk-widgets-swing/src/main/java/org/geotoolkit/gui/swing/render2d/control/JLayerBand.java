@@ -57,7 +57,7 @@ import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.ArgumentChecks;
@@ -211,7 +211,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
             for (DimensionDef dimDef : fml.getExtraDimensions()) {
                 try {
                     // Test if a math transform can be found.
-                    CRS.findMathTransform(axis, dimDef.getCrs());
+                    CRS.findOperation(axis, dimDef.getCrs(), null).getMathTransform();
                     er = new Expression[]{dimDef.getLower(), dimDef.getUpper()};
                     break;
                 } catch (FactoryException ex) {

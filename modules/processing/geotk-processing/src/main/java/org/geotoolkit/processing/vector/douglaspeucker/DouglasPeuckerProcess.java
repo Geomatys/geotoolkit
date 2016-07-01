@@ -29,7 +29,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.Feature;
@@ -71,12 +71,12 @@ public class DouglasPeuckerProcess extends AbstractProcess {
     protected void execute() {
         final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final Double inputAccuracy                          = value(ACCURACY_IN, inputParameters);
-        final Boolean inputBehavior                               = value(DEL_SMALL_GEO_IN, inputParameters) != null ? 
-                                                                    value(DEL_SMALL_GEO_IN, inputParameters) : 
+        final Boolean inputBehavior                               = value(DEL_SMALL_GEO_IN, inputParameters) != null ?
+                                                                    value(DEL_SMALL_GEO_IN, inputParameters) :
                                                                     DEL_SMALL_GEO_IN.getDefaultValue();
-        
-        final Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters) != null ? 
-                                                                    value(LENIENT_TRANSFORM_IN, inputParameters) : 
+
+        final Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters) != null ?
+                                                                    value(LENIENT_TRANSFORM_IN, inputParameters) :
                                                                     LENIENT_TRANSFORM_IN.getDefaultValue();
 
         final FeatureCollection resultFeatureList =
@@ -105,7 +105,7 @@ public class DouglasPeuckerProcess extends AbstractProcess {
 
         final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
         final GeographicCRS longLatCRS = CommonCRS.WGS84.normalizedGeographic();
-        final MathTransform mtToLongLatCRS = CRS.findMathTransform(originalCRS, longLatCRS, lenient);
+        final MathTransform mtToLongLatCRS = CRS.findOperation(originalCRS, longLatCRS, null).getMathTransform();
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(oldFeature.getType(), oldFeature.getIdentifier().getID());
         for (Property property : oldFeature.getProperties()) {

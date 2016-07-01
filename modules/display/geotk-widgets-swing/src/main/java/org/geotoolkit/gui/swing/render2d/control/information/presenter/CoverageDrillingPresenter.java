@@ -29,7 +29,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -134,7 +134,7 @@ public class CoverageDrillingPresenter extends AbstractInformationPresenter {
                     double[] timesArray = new double[0];
 
                     if (temporalCRS != null) {
-                        transform = CRS.findMathTransform(temporalCRS, CommonCRS.Temporal.JAVA.crs(), true);
+                        transform = CRS.findOperation(temporalCRS, CommonCRS.Temporal.JAVA.crs(), null).getMathTransform();
 
                         final Set<Double> times = new TreeSet<Double>();
                         Set<DirectPosition> positions = allValues.getValues().keySet();

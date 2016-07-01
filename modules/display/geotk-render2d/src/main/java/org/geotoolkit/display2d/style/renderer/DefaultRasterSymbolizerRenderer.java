@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -74,7 +73,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -857,7 +856,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         final CoordinateReferenceSystem demCRS = elevGridGeom2D.getCoordinateReferenceSystem2D();
 
-        final MathTransform demCRSToCov        = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
+        final MathTransform demCRSToCov        = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
 
         if (elevGridGeom2D.getEnvelope2D().equals(coverage.getGridGeometry().getEnvelope2D())
          && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
@@ -893,7 +892,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
 
-        final MathTransform demCRSToCov = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
+        final MathTransform demCRSToCov = CRS.findOperation(demCRS, covCRS, null).getMathTransform(); // dem -> cov
 
         if (demCRSToCov.isIdentity())
             return dem;
@@ -952,7 +951,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final float[][] matrix = new float[base.getHeight()][base.getWidth()];
 
         final EarthGravitationalModel trs = EarthGravitationalModel.create(CommonCRS.WGS84.datum(), 180);
-        final MathTransform dataToLongLat = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), CommonCRS.WGS84.normalizedGeographic());
+        final MathTransform dataToLongLat = CRS.findOperation(coverage.getCoordinateReferenceSystem2D(), CommonCRS.WGS84.normalizedGeographic(), null).getMathTransform();
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
         final MathTransform gridToLonLat = MathTransforms.concatenate(gridToCRS, dataToLongLat);
 

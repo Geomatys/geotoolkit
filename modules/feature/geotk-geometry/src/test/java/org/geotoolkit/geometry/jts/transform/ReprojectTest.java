@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -65,7 +65,7 @@ public class ReprojectTest extends org.geotoolkit.test.TestBase {
         final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem crs2 = getLocalLambertCRS(10, 60);
 
-        final MathTransform mt = CRS.findMathTransform(crs1,crs2);
+        final MathTransform mt = CRS.findOperation(crs1,crs2, null).getMathTransform();
         final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
         final GeometryCSTransformer trs = new GeometryCSTransformer(cst);
 

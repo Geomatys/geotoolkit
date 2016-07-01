@@ -39,7 +39,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -321,7 +321,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final double mosULY = mosaic.getUpperLeftCorner().getOrdinate(1);
 
             CoordinateReferenceSystem destCrs2D = CRSUtilities.getCRS2D(pyramid.getCoordinateReferenceSystem());
-            MathTransform crsDestToCrsCoverage = CRS.findMathTransform(destCrs2D, coverageEnvelope.getCoordinateReferenceSystem());
+            MathTransform crsDestToCrsCoverage = CRS.findOperation(destCrs2D, coverageEnvelope.getCoordinateReferenceSystem(), null).getMathTransform();
             MathTransform srcCRSToGrid = ((GridCoverage2D)coverage).getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
             MathTransform crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
 

@@ -33,11 +33,11 @@ import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -134,7 +134,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
         if(border == null){
             Envelope env = layer.getBounds();
             try {
-                env = CRS.transform(env, params.context.getObjectiveCRS2D());
+                env = Envelopes.transform(env, params.context.getObjectiveCRS2D());
             } catch (TransformException ex) {
                 Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.SEVERE, null, ex);
             }

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.display3d.Map3D;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * @author Thomas Rouby (Geomatys))
@@ -84,7 +85,7 @@ public class QuadTree {
 
     private Envelope transformToPlateCarre(Envelope env){
         try{
-            final Envelope tmpEnv = org.geotoolkit.referencing.CRS.transform(env,
+            final Envelope tmpEnv = Envelopes.transform(env,
                     CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
 
             if (tmpEnv.getCoordinateReferenceSystem() instanceof GeographicCRS){
@@ -104,7 +105,7 @@ public class QuadTree {
                 final CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
                 final ProjectedCRS createProjectedCRS = crsFactory.createProjectedCRS(params, geoCrs, createDefiningConversion, PredefinedCS.PROJECTED);
 
-                return org.geotoolkit.referencing.CRS.transform(tmpEnv, createProjectedCRS);
+                return Envelopes.transform(tmpEnv, createProjectedCRS);
             }
         } catch (Exception ex) {
             Map3D.LOGGER.log(Level.WARNING, "", ex);

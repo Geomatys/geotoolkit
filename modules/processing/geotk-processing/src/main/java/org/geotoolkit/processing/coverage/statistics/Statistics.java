@@ -30,7 +30,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -54,6 +53,7 @@ import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
@@ -530,7 +530,7 @@ public class Statistics extends AbstractProcess {
             }
 
             final GridCoverageReadParam readParam = new GridCoverageReadParam();
-            readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+            readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
             readParam.setDeferred(true);
             readParam.setCoordinateReferenceSystem(crs);
 

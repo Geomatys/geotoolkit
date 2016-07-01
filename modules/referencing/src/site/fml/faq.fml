@@ -473,12 +473,11 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
       </question>
       <answer>
         <p>For 2D horizontal CRS created from the EPSG database, calls to
-        <code>CRS.findMathTransform(…, true)</code> - where the <code>true</code> argument is
-        for <cite>lenient datum shift</cite> - should generally succeed. For 3D CRS having any
+        <code>CRS.findOperation(…)</code> should generally succeed. For 3D CRS having any
         kind of height different than <cite>ellipsoid height</cite>, or for a 2D CRS of type
         <code>EngineeringCRS</code>, it may fail.</p>
 
-        <p>Note however that even if the call to <code>CRS.findMathTransform(…)</code> succeed,
+        <p>Note however that even if the call to <code>CRS.findOperation(…)</code> succeed,
         the call to <code>MathTransform.transform(…)</code> may fail or produce <code>NaN</code>
         or infinity values if the coordinate to transform is far from the projection area of validity.</p>
       </answer>

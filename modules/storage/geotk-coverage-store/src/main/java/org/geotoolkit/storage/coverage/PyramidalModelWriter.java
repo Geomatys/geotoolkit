@@ -63,6 +63,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.InterpolationMethod;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 
@@ -359,9 +360,9 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
                             //define CRS and mathTransform from current pyramid to source coverage.
                             destCrs2D = CRS.getHorizontalComponent(currentPyramid.getCoordinateReferenceSystem());
-                            crsDestToCrsCoverage = org.geotoolkit.referencing.CRS.findMathTransform(destCrs2D, crsCoverage2D);
+                            crsDestToCrsCoverage = CRS.findOperation(destCrs2D, crsCoverage2D, null).getMathTransform();
                             //geographic
-                            pyramidEnvelope = org.geotoolkit.referencing.CRS.transform(requestedEnvelope, destCrs2D);
+                            pyramidEnvelope = Envelopes.transform(requestedEnvelope, destCrs2D);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

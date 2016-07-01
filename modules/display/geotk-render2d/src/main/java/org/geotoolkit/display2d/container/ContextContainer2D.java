@@ -30,7 +30,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -57,6 +56,7 @@ import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
 
 /**
@@ -159,7 +159,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
                     org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(env);
                     return genv.toRectangle2D();
                 }else{
-                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(CRS.transform(env, crs));
+                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(Envelopes.transform(env, crs));
                     return genv.toRectangle2D();
                 }
             }
@@ -198,7 +198,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
                     if ( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {
                         return new GeneralEnvelope(env);
                     } else {
-                        return (GeneralEnvelope) CRS.transform(env, crs);
+                        return (GeneralEnvelope) Envelopes.transform(env, crs);
                     }
                 }
             }

@@ -35,7 +35,7 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.geometry.Envelopes;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -48,7 +48,7 @@ public class ZoomToItem extends TreeMenuItem{
 
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     private final FXMap map;
     private WeakReference<TreeItem> itemRef;
 
@@ -66,12 +66,12 @@ public class ZoomToItem extends TreeMenuItem{
                 if(path == null) return;
                 final MapItem parent = (MapItem) path.getParent().getValue();
                 final MapItem candidate = (MapItem) path.getValue();
-                
+
                 if(map == null) return;
                 try {
                     Envelope bounds = ((MapLayer)candidate).getBounds();
                     if (bounds.getSpan(0) == 0 && bounds.getSpan(1) == 0) {
-                        bounds = CRS.transform(bounds, map.getCanvas().getObjectiveCRS2D());
+                        bounds = Envelopes.transform(bounds, map.getCanvas().getObjectiveCRS2D());
                         final GeneralEnvelope genBounds = new GeneralEnvelope(bounds);
                         final double scale = map.getCanvas().getScale();
                         genBounds.setRange(0, genBounds.getLower(0) - 50 * scale, genBounds.getLower(0) + 50 * scale);
@@ -82,7 +82,7 @@ public class ZoomToItem extends TreeMenuItem{
                 } catch (NoninvertibleTransformException | TransformException ex) {
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
                 }
-                
+
             }
         });
     }

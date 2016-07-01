@@ -74,6 +74,7 @@ import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
+import org.apache.sis.geometry.Envelopes;
 import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
@@ -884,7 +885,7 @@ public class CoverageStack extends AbstractCoverage {
                     }
                 }
                 try {
-                    candidate = CRS.transform(operation, candidate);
+                    candidate = Envelopes.transform(operation, candidate);
                 } catch (TransformException exception) {
                     throw new MismatchedReferenceSystemException(Errors.format(errorCode, exception));
                 }

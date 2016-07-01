@@ -42,7 +42,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.image.BufferedImages;
@@ -125,11 +125,11 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     private void createTransformOutput() throws FactoryException, ConversionException {
         if (outputCrs != null){
             final CoordinateReferenceSystem crsImg = gridGeom.getCoordinateReferenceSystem();
-            coverageToOutput = CRS.findMathTransform(crsImg, outputCrs, true);
+            coverageToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();
             try {
                 outputToCoverage = coverageToOutput.inverse();
             } catch (NoninvertibleTransformException ex) {
-                outputToCoverage = CRS.findMathTransform(outputCrs, crsImg, true);
+                outputToCoverage = CRS.findOperation(outputCrs, crsImg, null).getMathTransform();
             }
         }
     }
@@ -141,7 +141,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 

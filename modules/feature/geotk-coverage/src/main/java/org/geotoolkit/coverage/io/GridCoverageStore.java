@@ -495,8 +495,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * IMPLEMENTATION NOTE: It could have been more efficient to compute the transform
          * from the requested envelope to the source grid (by concatenation of the various
          * transformation steps), so we could have performed only one shape transformation.
-         * However we want to use the CRS.transform(CoordinateOperation, ...) method rather
-         * than the CRS.transform(MathTransform, ...) method, in order to handle the cases
+         * However we want to use the Envelopes.transform(CoordinateOperation, ...) method rather
+         * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
         Shape shapeToRead = gridToCRS.createTransformedShape(gridExtent); // Will be clipped later.

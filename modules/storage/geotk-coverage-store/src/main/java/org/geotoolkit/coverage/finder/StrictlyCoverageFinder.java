@@ -24,7 +24,7 @@ import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
@@ -44,11 +44,11 @@ public class StrictlyCoverageFinder extends CoverageFinder {
     public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber)
             throws FactoryException {
 
-        final MathTransform mt = CRS.findMathTransform(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
+        final MathTransform mt = CRS.findOperation(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem(), null).getMathTransform();
         if (!mt.isIdentity()) throw new IllegalArgumentException("findMosaic : not same CoordinateReferenceSystem");
         final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         final List<GridMosaic> goodMosaics;
-        
+
         final GeneralEnvelope findEnvelope = new GeneralEnvelope(env);
         // if crs is compound
         if (env.getDimension() > 2) {
@@ -67,25 +67,25 @@ public class StrictlyCoverageFinder extends CoverageFinder {
                     } else if ((Math.abs(ratioTemp - bestRatio)) <= DEFAULT_EPSILON) { // =
                         goodMosaics.add(gridMosaic);
                     }
-                } 
+                }
             }
         } else {
             goodMosaics = mosaics;
         }
         // if no coverage intersect search envelope.
         if (goodMosaics.isEmpty())   return null;
-        
+
         if (goodMosaics.size() == 1) return goodMosaics.get(0);
-        
+
         // find mosaic with the most appropriate scale value.
         Collections.sort(goodMosaics, SCALE_COMPARATOR);
         Collections.reverse(goodMosaics);
-                
-        GridMosaic result = null;   
-        
+
+        GridMosaic result = null;
+
         for (GridMosaic candidate : goodMosaics) {// find best scale
             final double scale = candidate.getScale();
-            
+
             if(result == null){
                 //set the highest mosaic as base
                 result = candidate;
@@ -94,27 +94,27 @@ public class StrictlyCoverageFinder extends CoverageFinder {
             final Dimension tileSize = candidate.getTileSize();
             double nbtileX = env.getSpan(0) / (tileSize.width*scale);
             double nbtileY = env.getSpan(1) / (tileSize.height*scale);
-            
+
             //if the envelope has some NaN, we presume it's a square
             if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
                 nbtileX = nbtileY;
             }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
                 nbtileY = nbtileX;
             }
-            
+
             if(maxTileNumber != null && maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
                 //we haven't reach the best resolution, it would requiere
                 //too much tiles, we use the previous scale level
                 break;
             }
-            
+
             result = candidate;
-            
-            if( (scale * (1-tolerance)) < resolution){                      
+
+            if( (scale * (1-tolerance)) < resolution){
                 //we found the most accurate resolution
                 break;
-            }           
-        }    
+            }
+        }
         return result;
     }
 }

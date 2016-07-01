@@ -45,10 +45,11 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Utility class to render grid on J2DCanvas.
@@ -80,7 +81,7 @@ public class J2DGridUtilities {
         final Rectangle clip = new Rectangle(context.getCanvasDisplayBounds());
         clip.x += xTextOffset;
         clip.height -= yTextOffset;
-        
+
         final Shape shp = new TransformedShape(clip, context.getDisplayToObjective());
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         final PathIterator ite = shp.getPathIterator(new AffineTransform());
@@ -109,14 +110,14 @@ public class J2DGridUtilities {
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS2D();
         try{
             //reduce grid bounds to validity area
-            Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
+            Envelope gridBounds = Envelopes.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
 
             if(Math.abs(gridBounds.getSpan(0)) < MIN || Math.abs(gridBounds.getSpan(1)) < MIN ){
                 return;
             }
 
 
-            Envelope validity = CRS.getEnvelope(gridCRS);
+            Envelope validity = org.geotoolkit.referencing.CRS.getEnvelope(gridCRS);
             if(validity != null){
                 GeneralEnvelope env = new GeneralEnvelope(gridBounds);
                 env.intersect(validity);
@@ -124,7 +125,7 @@ public class J2DGridUtilities {
             }
 
 
-            final MathTransform gridToObj = CRS.findMathTransform(gridCRS, objectiveCRS, true);
+            final MathTransform gridToObj = CRS.findOperation(gridCRS, objectiveCRS, null).getMathTransform();
             final MathTransform objToGrid = gridToObj.inverse();
 
             //grid on X axis ---------------------------------------------------
@@ -166,7 +167,7 @@ public class J2DGridUtilities {
                     g.setStroke(template.getLineStroke());
                 }
                 for(Shape ds : pg.getDisplayShape()) g.draw(ds);
-                
+
 
                 //clip geometry to avoid text outside visible area
                 geom = JTS.transform(geom, gridToObj);
