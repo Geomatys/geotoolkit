@@ -63,18 +63,6 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
     private static final long serialVersionUID = 1752330560227688940L;
 
     /**
-     * Constructs an empty envelope with the specified coordinate reference system.
-     * All ordinates are initialized to 0.
-     *
-     * @param crs The coordinate reference system.
-     *
-     * @since 2.2
-     */
-    public GeneralEnvelope(final CoordinateReferenceSystem crs) {
-        super(crs);
-    }
-
-    /**
      * Constructs a new envelope with the same data than the specified envelope.
      *
      * @param envelope The envelope to copy.

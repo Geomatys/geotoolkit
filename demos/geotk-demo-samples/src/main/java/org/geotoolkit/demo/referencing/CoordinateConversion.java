@@ -14,8 +14,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 
 /**
@@ -42,8 +44,8 @@ public class CoordinateConversion {
      * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void geocentricToGeographic() throws FactoryException, TransformException {
-        CoordinateReferenceSystem sourceCRS = PredefinedCRS.GEOCENTRIC;
-        CoordinateReferenceSystem targetCRS = PredefinedCRS.WGS84_3D;
+        CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geocentric();
+        CoordinateReferenceSystem targetCRS = AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED);
         MathTransform tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         /*
          * From this point we can convert an arbitrary amount of coordinates using the

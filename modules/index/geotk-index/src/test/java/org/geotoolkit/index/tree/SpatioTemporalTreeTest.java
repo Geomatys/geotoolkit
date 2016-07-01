@@ -46,7 +46,7 @@
 //    private static final CoordinateReferenceSystem CARTESIAN_2DCRS = DefaultEngineeringCRS.CARTESIAN_2D;
 //    private static final CoordinateReferenceSystem CARTESIAN_3DCRS = DefaultEngineeringCRS.CARTESIAN_3D;
 //    private static final CoordinateReferenceSystem GEOCENTRIC_2DCRS = CommonCRS.WGS84.normalizedGeographic();
-//    private static final CoordinateReferenceSystem GEOCENTRIC_3DCRS = PredefinedCRS.WGS84_3D;
+//    private static final CoordinateReferenceSystem GEOCENTRIC_3DCRS = AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED);
 //    private static final CoordinateReferenceSystem TEMPORALCRS = DefaultTemporalCRS.JAVA;
 //    Tree tree;
 //    CoordinateReferenceSystem crs;
@@ -81,7 +81,7 @@
 //            tree.insert(ge);
 //        }
 //    }
-//    
+//
 //    @Test
 //    public void testHilbert() throws StoreIndexException, IOException{
 //        CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});

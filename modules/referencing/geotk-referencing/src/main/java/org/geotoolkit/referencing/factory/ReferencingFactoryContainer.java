@@ -30,6 +30,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
 
@@ -40,14 +41,15 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
-import org.geotoolkit.internal.referencing.VerticalDatumTypes;
+import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
@@ -83,7 +85,7 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @module
  */
 @Deprecated
-public class ReferencingFactoryContainer extends ReferencingFactory {
+public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory implements Factory {
     // "ReferencingFactoryContainer" name is LGPL.
 
     /**
@@ -231,6 +233,23 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         if (   csFactory != null) hints.put(Hints.            CS_FACTORY,    csFactory);
         if (datumFactory != null) hints.put(Hints.         DATUM_FACTORY, datumFactory);
         if (   mtFactory != null) hints.put(Hints.MATH_TRANSFORM_FACTORY,    mtFactory);
+    }
+
+    /**
+     * Returns the vendor responsible for creating this factory implementation.
+     * Many implementations from different vendors may be available for the same
+     * factory interface.
+     * <p>
+     * The default for Geotk implementations is to return
+     * {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
+     *
+     * @return The vendor for this factory implementation.
+     *
+     * @see Citations#GEOTOOLKIT
+     */
+    @Override
+    public Citation getVendor() {
+        return getClass().getName().startsWith("org.geotoolkit.") ? Citations.GEOTOOLKIT : Citations.UNKNOWN;
     }
 
     /**
@@ -616,7 +635,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
                 }
                 case 2: {
                     if (dimensions[0] == 0 && dimensions[1] == 1) {
-                        if (Utilities.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {    // Common case.
+                        if (Utilities.equalsIgnoreMetadata(crs, AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED))) {    // Common case.
                             return CommonCRS.WGS84.normalizedGeographic();
                         }
                         return getCRSFactory().createGeographicCRS(getTemporaryName(crs, " (subset)"), ((GeodeticCRS) crs).getDatum(),

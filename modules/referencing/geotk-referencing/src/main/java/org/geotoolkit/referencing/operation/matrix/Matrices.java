@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
-import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.lang.Static;
 
@@ -40,68 +39,6 @@ public class Matrices extends Static {
      * Do not allows instantiation of this class.
      */
     Matrices() {
-    }
-
-    /**
-     * Returns {@code true} if the given matrix is affine.
-     *
-     * @param matrix The matrix to test.
-     * @return {@code true} if the matrix is affine.
-     *
-     * @see XMatrix#isAffine()
-     *
-     * @since 3.20 (derived from 3.17)
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#isAffine(Matrix)},
-     *             at the difference that SIS requires the matrix to be square.
-     */
-    @Deprecated
-    public static boolean isAffine(final Matrix matrix) {
-        if (matrix instanceof AffineTransform) {
-            return true;
-        }
-        if (matrix instanceof GeneralMatrix) {
-            return ((GeneralMatrix) matrix).isAffine();
-        }
-        double expected = 1;
-        final int lastRow = matrix.getNumRow() - 1;
-        for (int i=matrix.getNumCol(); --i>=0;) {
-            if (matrix.getElement(lastRow, i) != expected) {
-                return false;
-            }
-            expected = 0;
-        }
-        return true;
-    }
-
-    /**
-     * Returns the given matrix resized to the given dimensions. This method can be invoked for
-     * adding or removing dimensions to an affine transform. The added or removed dimensions are
-     * always the last ones. More specifically:
-     * <p>
-     * <ul>
-     *   <li>If source and target dimensions are added, the corresponding offset and scale factors
-     *       will be 0 and 1 respectively. In other words, new dimensions are propagated unchanged.</li>
-     *   <li>New source dimensions have no impact on existing dimensions (the corresponding scale
-     *       factors are set to zero).</li>
-     * </ul>
-     * <p>
-     * The caller should ensure that {@link #isAffine(Matrix)} returns {@code true} before to invoke
-     * this method, since this is not verified by this method.
-     *
-     * @param  matrix The matrix to resize.
-     * @param  sourceDimension The desired number of source dimensions.
-     * @param  targetDimension The desired number of target dimensions.
-     * @return The matrix for the given number of dimensions. This will be the {@code matrix}
-     *         argument itself if no resizing was needed.
-     *
-     * @since 3.20 (derived from 3.16)
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices},
-     */
-    @Deprecated
-    public static Matrix resizeAffine(Matrix matrix, final int sourceDimension, final int targetDimension) {
-        return org.apache.sis.referencing.operation.matrix.Matrices.resizeAffine(matrix, targetDimension + 1, sourceDimension + 1);
     }
 
     /**

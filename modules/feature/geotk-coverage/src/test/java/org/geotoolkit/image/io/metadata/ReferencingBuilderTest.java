@@ -105,7 +105,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          * which has been initialized to the current locale and is not refreshed after the call
          * to Locale.setDefault(Locale.FRANCE).
          */
-        final String localizedName = PredefinedCS.GEODETIC_2D.getName().getCode();
+        final String localizedName = CommonCRS.defaultGeographic().getCoordinateSystem().getName().getCode();
         expected = expected.replace("“Géodésique 2D”", '"' + localizedName + '"');
         assertMultilinesEquals(decodeQuotes(expected), metadata.toString());
     }
@@ -260,13 +260,13 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         datum = ((GeographicCRS) crs).getDatum();
 
         assertNotSame(CommonCRS.WGS84.normalizedGeographic(), crs);
-        assertNotSame(PredefinedCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
-        assertNotSame(CommonCRS.WGS84.datum(),          builder.getDatum(Datum.class));
+        assertNotSame(CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem(), builder.getCoordinateSystem(CoordinateSystem.class));
+        assertNotSame(CommonCRS.WGS84.datum(), builder.getDatum(Datum.class));
 
         assertEqualsIgnoreMetadata("PrimeMeridian", CommonCRS.WGS84.primeMeridian(),  datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     CommonCRS.WGS84.ellipsoid(),      datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         CommonCRS.WGS84.datum(),          datum);
-        assertEqualsIgnoreMetadata("CS",            PredefinedCS.GEODETIC_2D,         crs.getCoordinateSystem());
+        assertEqualsIgnoreMetadata("CS",            CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem(), crs.getCoordinateSystem());
         assertEqualsIgnoreMetadata("CRS",           CommonCRS.WGS84.normalizedGeographic(), crs);
     }
 

@@ -45,7 +45,7 @@ import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.table.LabeledRenderer;
-import org.geotoolkit.util.collection.IntegerList;
+import org.apache.sis.util.collection.IntegerList;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -176,7 +176,7 @@ public class MultiColorChooser extends JComponent implements Dialog {
         final void add(final Color color) {
             final IntegerList elements = (IntegerList) this.elements;
             final int n = elements.size();
-            elements.addInteger(color.getRGB() & 0xFFFFFF);
+            elements.addInt(color.getRGB() & 0xFFFFFF);
             fireTableRowsInserted(n, n);
         }
 
@@ -187,7 +187,7 @@ public class MultiColorChooser extends JComponent implements Dialog {
             final IntegerList elements = (IntegerList) this.elements;
             final Color[] colors = new Color[elements.size()];
             for (int i=0; i<colors.length; i++) {
-                colors[i] = new Color(elements.getInteger(i));
+                colors[i] = new Color(elements.getInt(i));
             }
             return colors;
         }
@@ -233,7 +233,7 @@ public class MultiColorChooser extends JComponent implements Dialog {
                 return rowIndex + 1;
             }
             final IntegerList elements = (IntegerList) this.elements;
-            return new Color(elements.getInteger(rowIndex));
+            return new Color(elements.getInt(rowIndex));
         }
     }
 

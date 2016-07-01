@@ -32,7 +32,7 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.collection.IntegerList;
+import org.apache.sis.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.internal.storage.IOUtilities;
@@ -358,11 +358,11 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
             for (final Tile tile : entry.getValue()) {
                 final Point pt = getIndex2D(tile);
                 final int i = getIndex(pt.x, pt.y);
-                final int p = patternUsed.getInteger(i);
+                final int p = patternUsed.getInt(i);
                 if ((p != 0 && p != index) || (tiles != null && tiles.get(i) != null)) {
                     throw duplicatedTile(pt);
                 }
-                patternUsed.setInteger(i, index);
+                patternUsed.setInt(i, index);
             }
         }
         /*
@@ -371,7 +371,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          */
         if (patterns.length == 1) {
             for (int i=patternUsed.size(); --i >= 0;) {
-                if (patternUsed.getInteger(i) == 0) {
+                if (patternUsed.getInt(i) == 0) {
                     if (tiles == null || tiles.get(i) == null) {
                         // We have at least one hole, so we need to keep the list of them.
                         return;
@@ -450,7 +450,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
             patternUsed = new IntegerList(nx*ny, patterns.length, true);
             patternUsed.fill(1);
         }
-        patternUsed.setInteger(i, 0);
+        patternUsed.setInt(i, 0);
     }
 
     /**
@@ -691,7 +691,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
             final Tile tile = tiles.get(index);
             if (tile != null) {
                 // If a tile is explicitly defined, it should not have a pattern.
-                assert patternUsed == null || patternUsed.getInteger(index) == 0 : index;
+                assert patternUsed == null || patternUsed.getInt(index) == 0 : index;
                 return tile;
             }
             // Tests here because it would be an error to have null patterns when tiles == null,

@@ -674,7 +674,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             final Double z = entry.getKey();
             final Object obj = entry.getValue();
 
-            final org.geotoolkit.geometry.GeneralEnvelope sliceEnvelop = new org.geotoolkit.geometry.GeneralEnvelope(crs);
+            final GeneralEnvelope sliceEnvelop = new GeneralEnvelope(crs);
             for (int i = 0; i < nbDim; i++) {
                 if (i == axisIndex) {
                     sliceEnvelop.setRange(i, z, z);

@@ -28,7 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.GeotkFX;

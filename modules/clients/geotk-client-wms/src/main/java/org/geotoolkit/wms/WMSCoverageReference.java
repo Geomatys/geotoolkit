@@ -46,7 +46,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.StringUtilities;
@@ -644,7 +643,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
 
         if(matchCapabilitiesDates){
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-            final int index = dimensionColinearWith(crs.getCoordinateSystem(), Axes.TIME);
+            final int index = dimensionColinearWith(crs.getCoordinateSystem(), CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem().getAxis(0));
             if(index >= 0){
                 //there is a temporal axis
                 final double median = env.getMedian(index);

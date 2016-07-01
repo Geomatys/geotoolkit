@@ -35,7 +35,7 @@ import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Cloneable;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -215,8 +215,8 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             extent    = other.getExtent();
             gridToCRS = other.getGridToCRS();
             if (extent != null && gridToCRS != null) {
-                env = new GeneralEnvelope(extent, PixelInCell.CELL_CENTER, gridToCRS, null);
-                env.roundIfAlmostInteger(360, ULP_TOLERANCE);
+                env = new org.geotoolkit.geometry.GeneralEnvelope(extent, PixelInCell.CELL_CENTER, gridToCRS, null);
+                ((org.geotoolkit.geometry.GeneralEnvelope) env).roundIfAlmostInteger(360, ULP_TOLERANCE);
             }
             envelope = (env != null) ? new ImmutableEnvelope(env) : null;
         }
@@ -299,8 +299,8 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         }
         GeneralEnvelope env = null;
         if (extent != null && gridToCRS != null) {
-            env = new GeneralEnvelope(extent, anchor, gridToCRS, crs);
-            env.roundIfAlmostInteger(360, ULP_TOLERANCE);
+            env = new org.geotoolkit.geometry.GeneralEnvelope(extent, anchor, gridToCRS, crs);
+            ((org.geotoolkit.geometry.GeneralEnvelope) env).roundIfAlmostInteger(360, ULP_TOLERANCE);
         } else if (crs != null) {
             env = new GeneralEnvelope(crs);
             env.setToNaN();
@@ -352,7 +352,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             this.extent = null;
             return;
         }
-        final org.apache.sis.geometry.GeneralEnvelope transformed;
+        final GeneralEnvelope transformed;
         try {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {

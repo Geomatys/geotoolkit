@@ -50,9 +50,10 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.internal.FactoryUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 
 /**
@@ -147,7 +148,7 @@ public class GridCoverageFactory extends Factory {
         if (userHints != null) {
             defaultCRS = (CoordinateReferenceSystem) userHints.get(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM);
             if (Objects.equals(defaultCRS, CommonCRS.WGS84.normalizedGeographic()) ||
-                Objects.equals(defaultCRS, PredefinedCRS.WGS84_3D))
+                Objects.equals(defaultCRS, AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED)))
             {
                 // Will be handled in a special way by getDefaultCRS(int)
                 defaultCRS = null;
@@ -188,7 +189,7 @@ public class GridCoverageFactory extends Factory {
         }
         switch (dimension) {
             case  2: return CommonCRS.WGS84.normalizedGeographic();
-            case  3: return PredefinedCRS.WGS84_3D;
+            case  3: return AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED);
             default: throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.IllegalArgument_2, "dimension", dimension));
         }

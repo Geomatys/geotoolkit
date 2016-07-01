@@ -42,7 +42,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;

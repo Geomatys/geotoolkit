@@ -86,7 +86,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;

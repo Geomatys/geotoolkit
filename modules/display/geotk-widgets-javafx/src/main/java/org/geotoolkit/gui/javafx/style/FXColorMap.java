@@ -63,7 +63,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;

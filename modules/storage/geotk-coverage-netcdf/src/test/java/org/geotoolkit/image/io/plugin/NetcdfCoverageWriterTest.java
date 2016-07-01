@@ -45,10 +45,11 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import ucar.nc2.NCdumpW;
 
 import org.junit.*;
@@ -185,7 +186,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("Not yet implemented")
     public void testXYZ() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(PredefinedCRS.WGS84_3D);
+        final GeneralEnvelope env = new GeneralEnvelope(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED));
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         env.setRange(2,   10,  12); final GridCoverage2D coverage1 = createGridCoverage(env, "data", 100);
@@ -204,8 +205,8 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Ignore("Not yet implemented")
     public void testXYZT() throws Exception {
         final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("WGS84 + z + t")
-                                                                         .createCompoundCRS(PredefinedCRS.WGS84_3D,
-                                                                                            CommonCRS.Temporal.JAVA.crs());
+                .createCompoundCRS(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED),
+                CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);

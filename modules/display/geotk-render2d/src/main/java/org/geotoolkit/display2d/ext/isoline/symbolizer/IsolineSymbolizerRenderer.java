@@ -35,7 +35,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
 import org.opengis.util.GenericName;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -195,7 +195,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
             throw new PortrayalException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      * <br>

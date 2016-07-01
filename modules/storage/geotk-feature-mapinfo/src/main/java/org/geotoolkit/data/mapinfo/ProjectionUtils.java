@@ -25,7 +25,6 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.*;
@@ -50,6 +49,7 @@ import java.util.regex.Pattern;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 
@@ -268,7 +268,7 @@ public class ProjectionUtils {
         crsIdentifiers.put("authority", Citations.MAP_INFO);
 
         try {
-            baseCRS = CRS_FACTORY.createGeographicCRS(crsIdentifiers, datum, PredefinedCS.GEODETIC_2D);
+            baseCRS = CRS_FACTORY.createGeographicCRS(crsIdentifiers, datum, CommonCRS.defaultGeographic().getCoordinateSystem());
         } catch (FactoryException e) {
             throw new DataStoreException("A problem has been encountered while creating base geographic CRS.", e);
         }

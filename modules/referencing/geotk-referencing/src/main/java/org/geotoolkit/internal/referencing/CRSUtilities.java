@@ -40,6 +40,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;

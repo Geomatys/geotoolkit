@@ -24,7 +24,8 @@ import org.opengis.geometry.primitive.Point;
 import junit.framework.TestCase;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * @author gdavis
@@ -86,12 +87,12 @@ public class PointImplTest extends TestCase {
 //		} catch (Exception expected) {
 //		}
 //		// let's provide a CRS now and confirm everything works
-//		container.registerComponentInstance(PredefinedCRS.WGS84_3D);
+//		container.registerComponentInstance(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED));
 //
 //		PositionFactory positionFactory =
 //			(PositionFactory) container.getComponentInstanceOfType(PositionFactory.class);
 //
-//		assertSame(PredefinedCRS.WGS84_3D, positionFactory.getCoordinateReferenceSystem());
+//		assertSame(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED), positionFactory.getCoordinateReferenceSystem());
 	}
 
 //	/**
@@ -132,7 +133,7 @@ public class PointImplTest extends TestCase {
 
 		// Do actually test stuff
 		double[] ords = { 48.44, -123.37, 0.0 };
-		PositionFactory factory = new JTSPositionFactory(PredefinedCRS.WGS84_3D);
+		PositionFactory factory = new JTSPositionFactory(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED));
 
 		assertNotNull(factory);
 		DirectPosition here = factory.createDirectPosition(ords);

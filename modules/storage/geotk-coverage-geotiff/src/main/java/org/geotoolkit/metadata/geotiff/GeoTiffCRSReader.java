@@ -312,7 +312,7 @@ final class GeoTiffCRSReader {
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                            PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException ex) {
                 throw new IOException(ex);
@@ -369,7 +369,7 @@ final class GeoTiffCRSReader {
         // make the user defined GCS from all the components...
         props.put("name", name);
         return crsFactory.createGeographicCRS(props, datum,
-                PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
     }
 
     /**
@@ -1077,7 +1077,7 @@ final class GeoTiffCRSReader {
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                            PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException fe) {
                 throw new IOException(fe);
