@@ -17,9 +17,11 @@
 
 package org.geotoolkit.gui.javafx.filter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -34,6 +36,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -82,6 +85,7 @@ public class FXCQLEditor extends BorderPane {
     
     @FXML private ListView<String> uiProperties;
     @FXML private TreeView<Object> uiFunctions;
+    @FXML private TextArea uiDetail;
     
     private final CodeArea codeArea = new CodeArea();
     private final boolean filterMode;
@@ -123,9 +127,17 @@ public class FXCQLEditor extends BorderPane {
 
         final TreeItem<Object> root = new TreeItem<>("root");
 
-        for(FunctionFactory ff : Functions.getFactories()){
-            final String factoryName = ff.getIdentifier();
-            final TreeItem fnode = new TreeItem(factoryName);
+        //sort factory by name
+        final List<FunctionFactory> factories = new ArrayList<>(Functions.getFactories());
+        Collections.sort(factories, new Comparator<FunctionFactory>() {
+            @Override
+            public int compare(FunctionFactory o1, FunctionFactory o2) {
+                return o1.getIdentifier().compareTo(o2.getIdentifier());
+            }
+        });
+
+        for(FunctionFactory ff : factories){
+            final TreeItem fnode = new TreeItem(ff.getIdentifier());
             String[] names = ff.getNames();
             Arrays.sort(names);
             for(String str : names){
@@ -390,6 +402,29 @@ public class FXCQLEditor extends BorderPane {
                         }else{
                             codeArea.appendText(" "+sb.toString());
                         }
+
+                        //update text area
+                        final StringBuilder sbDesc = new StringBuilder();
+                        sbDesc.append(desc.getName().toString());
+                        if(desc.getRemarks()!=null){
+                            sbDesc.append(" : ");
+                            sbDesc.append(desc.getRemarks());
+                        }
+                        sbDesc.append("\n\n");
+
+                        for(GeneralParameterDescriptor argDesc : desc.descriptors()){
+                            sbDesc.append(" - ");
+                            sbDesc.append(argDesc.getName().toString());
+                            if(argDesc.getRemarks()!=null){
+                                sbDesc.append(" : ");
+                                sbDesc.append(argDesc.getRemarks());
+                            }
+                            sbDesc.append("\n\n");
+                        }
+                        
+                        uiDetail.setText(sbDesc.toString());
+                    }else{
+                        uiDetail.setText("");
                     }
                 }
             });

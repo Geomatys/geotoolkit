@@ -4,14 +4,18 @@ package org.geotoolkit.filter.function;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.util.InternationalString;
 
 /**
  * Abstract function factory.
@@ -71,19 +75,59 @@ public class AbstractFunctionFactory implements FunctionFactory{
             throw new IllegalArgumentException("Unknowed function name : "+ name);
         }
 
-        try{
-            final Constructor construct = clazz.getConstructors()[0];
-            final GeneralParameterDescriptor[] cstParams = new GeneralParameterDescriptor[construct.getParameterTypes().length];
-            for(int i=0;i<cstParams.length;i++){
-                cstParams[i] = new SimpleParameterDescriptor(Object.class, "", "param"+(i+1));
+        return getDescription(name,clazz);
+    }
+
+    private static ParameterDescriptorGroup getDescription(String name, Class clazz){
+        final String baseName = clazz.getName().replace('.', '_');
+
+        InternationalString description;
+        final List<GeneralParameterDescriptor> args = new ArrayList<>();
+        try {
+            Short key = (Short) Bundle.Keys.class.getDeclaredField(baseName+"_description").get(null);
+            description = Bundle.formatInternational(key);
+        } catch (Exception ex) {
+            description = new SimpleInternationalString(clazz.getSimpleName());
+        }
+
+        for(int i=0;;i++){
+            try {
+                final Short key = (Short) Bundle.Keys.class.getDeclaredField(baseName+"_arg"+i).get(null);
+                final InternationalString argDesc = Bundle.formatInternational(key);
+
+                final ParameterBuilder params = new ParameterBuilder();
+                params.addName("arg"+i);
+                params.setRemarks(argDesc);
+                args.add(params.create(Object.class, null));
+            } catch (Exception ex) {
+                break;
             }
-            final ParameterDescriptorGroup params = new ParameterBuilder().addName(name).createGroup(cstParams);
-            return params;
+        }
+        if(args.isEmpty()){
+            //use reflection
+            try{
+                final Constructor construct = clazz.getConstructors()[0];
+                final GeneralParameterDescriptor[] cstParams = new GeneralParameterDescriptor[construct.getParameterTypes().length];
+                for(int i=0;i<cstParams.length;i++){
+                    args.add(new SimpleParameterDescriptor(Object.class, "", "param"+(i+1)));
+                }
+            }catch(Exception ex){
+            }catch(Error ex){
+            }
+        }
+
+        final GeneralParameterDescriptor[] cstParams = new GeneralParameterDescriptor[args.size()];
+        args.toArray(cstParams);
+
+        final ParameterBuilder params = new ParameterBuilder();
+        params.addName(name);
+        params.setRemarks(description);
+        try{
+            return params.createGroup(cstParams);
         }catch(Exception ex){
-            return new ParameterBuilder().addName(name).createGroup();
-        }catch(Error ex){
             return new ParameterBuilder().addName(name).createGroup();
         }
     }
+
 
 }
