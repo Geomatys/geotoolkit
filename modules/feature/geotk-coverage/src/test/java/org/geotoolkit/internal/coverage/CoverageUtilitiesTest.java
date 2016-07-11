@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
+public strictfp class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
 
     private static final double EPSI = 1E-8;
 
@@ -138,13 +138,16 @@ public class CoverageUtilitiesTest extends org.geotoolkit.test.TestBase {
 
         final double minLimit = 2E-5;
         final double maxLimit = 0.36;
-        final NumberRange<Double> ReducedRange = new NumberRange<>(Double.class, 2E-5, true, 0.36, true);
+        final NumberRange<Double> ReducedRange = new NumberRange<>(Double.class, minLimit, true, maxLimit, true);
         final Envelope simple84 = new Envelope2D(crs84, 10, 10, 5, 5);
         GeneralEnvelope expectedResult = new GeneralEnvelope(new Envelope2D(crs84, 0, 0, 22.5, 22.5));
         scales = CoverageUtilities.toWellKnownScale(simple84, ReducedRange);
         Assert.assertTrue("Input envelope has not been adapted as expected.", expectedResult.equals(scales.getKey()));
+        //-- we want to reach at least minLimit resolution, also the last scale level
+        //-- may be smaller than it
+        final double minExpectedResolution = 1.07288360595703E-5;
         for (final double scale : scales.getValue()) {
-            Assert.assertTrue("Computed scale is outside input limits.", scale > minLimit && scale < maxLimit);
+            Assert.assertTrue("Computed scale is outside input limits. Expected between : ["+minExpectedResolution+"; "+maxLimit+"[, found : "+scale, scale >= minExpectedResolution && scale < maxLimit);
             ensureAlmostContains(scale, DEGREE_SCALES);
         }
     }

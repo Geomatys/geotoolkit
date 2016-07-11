@@ -26,6 +26,7 @@ import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
+import java.util.LinkedList;
 
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBilinear;
@@ -550,29 +551,21 @@ public final class CoverageUtilities extends Static {
 
         final double lowestResolution = Math.max(scaleLimit.getMinDouble(), scaleLimit.getMaxDouble());
         final double highestResolution = Math.min(scaleLimit.getMinDouble(), scaleLimit.getMaxDouble());
-
         // Go to lowest authorized resolution boundary : A single 256px side tile for output envelope.
+        final List<Double> scalesList = new LinkedList<>();
         double minScale = targetEnv.getSpan(xAxis) / 256;
-        while (minScale > lowestResolution) {
-            minScale /= 2;
-        }
-
-        // TODO : find a better way to compute array size ?
-        int scaleCount = 0;
-        double tmpScale = minScale;
-        while (tmpScale > highestResolution) {
-            tmpScale /= 2;
-            scaleCount++;
-        }
-
-        // Save scales until finest authorized resolution.
-        final double[] scales = new double[scaleCount];
-        int i = 0;
+        scalesList.add(minScale);
         while (minScale > highestResolution) {
-            scales[i++] = minScale;
             minScale /= 2;
+            //-- add after to get the last scale to, at least, reach data 1:1 resolution
+            scalesList.add(minScale);
         }
 
+        //-- cast
+        final double[] scales = new double[scalesList.size()];
+        for (int i = 0; i < scalesList.size(); i++) {
+            scales[i] = scalesList.get(i);
+        }
         return new AbstractMap.SimpleEntry<Envelope, double[]>(targetEnv, scales);
     }
 }
