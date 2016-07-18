@@ -30,7 +30,6 @@ import javax.media.jai.iterator.RectIterFactory;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.ColorInterpretation;
-import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
@@ -39,7 +38,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -394,7 +392,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
             final Color[] c = (colors != null) ? colors[b] : null;
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
-                sourceRange = range.castTo(sourceRange.getElementType());
+                sourceRange = range.castTo((Class) sourceRange.getElementType());   // TODO
                 categories[0] = new Category(name, c, targetRange, sourceRange);
             }
             dst[b] = new GridSampleDimension(name, needScaling ? categories : null,
