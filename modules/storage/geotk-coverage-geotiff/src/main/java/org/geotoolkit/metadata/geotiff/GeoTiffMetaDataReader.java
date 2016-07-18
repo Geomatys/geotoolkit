@@ -52,8 +52,14 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.w3c.dom.Node;
 
 import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultImageCRS;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.geotoolkit.util.DomUtilities.*;
 
 /**
@@ -167,6 +173,13 @@ public final class GeoTiffMetaDataReader {
 
             final GeoTiffCRSReader crsReader = new GeoTiffCRSReader();
             crsReader.fillCRSMetaDatas(spatialMetadata, entries);
+        } else {
+            new ReferencingBuilder(spatialMetadata).setCoordinateReferenceSystem(PredefinedCRS.GRID_2D);
+            GridDomainAccessor gridDomainAccessor = new GridDomainAccessor(spatialMetadata);
+            gridDomainAccessor.setAll(AffineTransforms2D.castOrCopy(new Matrix3()), readBounds(),
+                                      CellGeometry.AREA, PixelOrientation.UPPER_LEFT);
+            spatialMetadata.clearInstancesCache();
+
         }
 
         //-- looks for additional informations
