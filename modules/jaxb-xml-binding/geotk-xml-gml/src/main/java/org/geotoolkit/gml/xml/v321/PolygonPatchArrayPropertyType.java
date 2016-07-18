@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * This type defines a container for an array of 
+ * This type defines a container for an array of
  *    polygon patches.
- * 
+ *
  * <p>Java class for PolygonPatchArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonPatchArrayPropertyType">
  *   &lt;complexContent>
@@ -44,15 +44,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolygonPatchArrayPropertyType")
 public class PolygonPatchArrayPropertyType extends SurfacePatchArrayPropertyType {
 
-    @XmlElementRef(name = "PolygonPatch", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
+    @XmlElementRef(name = "PolygonPatch", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<? extends PolygonPatchType>> polygonPatch;
 
     PolygonPatchArrayPropertyType() {}
