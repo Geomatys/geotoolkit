@@ -67,6 +67,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.Equirectangular;
 import org.apache.sis.internal.referencing.provider.Mercator1SP;
 import org.apache.sis.internal.referencing.provider.Mercator2SP;
@@ -98,7 +99,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
@@ -935,13 +935,13 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("albers_Conic_Equal_Area")
                     || code == CT_AlbersEqualArea) {
-                parameters = mtFactory.getDefaultParameters(code(AlbersEqualArea.PARAMETERS));
+                parameters = mtFactory.getDefaultParameters("Albers Equal Area");
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
-                parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
-                parameters.parameter(code(AlbersEqualArea.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
-                parameters.parameter(code(AlbersEqualArea.FALSE_EASTING)).setValue(getFalseEasting(metadata));
-                parameters.parameter(code(AlbersEqualArea.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
+                parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.EASTING_AT_FALSE_ORIGIN)).setValue(getFalseEasting(metadata));
+                parameters.parameter(code(AlbersEqualArea.NORTHING_AT_FALSE_ORIGIN)).setValue(getFalseNorthing(metadata));
                 return parameters;
             }
 

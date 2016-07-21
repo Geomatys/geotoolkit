@@ -1,6 +1,5 @@
 org.geotoolkit.referencing.operation.provider.Logarithmic
 org.geotoolkit.referencing.operation.provider.Exponential
-org.geotoolkit.referencing.operation.provider.AlbersEqualArea
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
 org.geotoolkit.referencing.operation.provider.Orthographic
 org.geotoolkit.referencing.operation.provider.ObliqueMercator

@@ -42,6 +42,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
 import org.apache.sis.internal.referencing.provider.Mercator1SP;
@@ -55,7 +56,6 @@ import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
-import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Errors;
@@ -498,7 +498,7 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // albers_Conic_Equal_Area
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(AlbersEqualArea.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new AlbersEqualArea().getParameters(), desc)) {   // TODO: need an other way to check for match.
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_AlbersEqualArea);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -506,8 +506,8 @@ public final class GeoTiffCRSWriter {
             // params
             stack.addDouble(ProjNatOriginLongGeoKey, parameters.parameter("longitude_of_center").doubleValue()); //TODO no direct match found ?
             stack.addDouble(ProjNatOriginLatGeoKey,  parameters.parameter("latitude_of_center").doubleValue()); //TODO no direct match found ?
-            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,AlbersEqualArea.FALSE_EASTING));
-            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,AlbersEqualArea.FALSE_NORTHING));
+            stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,AlbersEqualArea.EASTING_AT_FALSE_ORIGIN));
+            stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,AlbersEqualArea.NORTHING_AT_FALSE_ORIGIN));
             stack.addDouble(ProjStdParallel1GeoKey,  value(parameters,AlbersEqualArea.STANDARD_PARALLEL_1));
             stack.addDouble(ProjStdParallel2GeoKey,  value(parameters,AlbersEqualArea.STANDARD_PARALLEL_2));
             // rectified grid angle???
