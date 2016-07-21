@@ -35,8 +35,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
-import org.geotoolkit.ows.xml.v110.ExceptionReport;
-import org.geotoolkit.ows.xml.v110.ExceptionType;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
@@ -44,7 +42,6 @@ import org.geotoolkit.process.*;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.security.ClientSecurity;
@@ -92,18 +89,18 @@ public class WebProcessingClient extends AbstractClient implements ProcessingReg
     private static final String USE_FORMAT_KEY = "format";
 
     //process descriptors
-    private final Map<String, ProcessDescriptor> descriptors = new HashMap<String, ProcessDescriptor>();
+    private final Map<String, ProcessDescriptor> descriptors = new HashMap<>();
     /** A map whose key is a process identifier, and value a boolean to specify if it supports outputs as reference (true) or not (false). */
-    private final Map<String, Boolean> storageSupported = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> storageSupported = new HashMap<>();
     /** A map whose key is a process identifier, and value a boolean to specify if it supports status (true) or not (false). */
-    private final Map<String, Boolean> statusSupported = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> statusSupported = new HashMap<>();
 
     /**
      * A map to specify for each process if we should ask its outputs as reference. Key is process identifier, and value
      * a boolean : true if we want references, false otherwise. It's important to notice that even if we set a value to
      * true, references will be used ONLY if this process can handle it (check it with {@link WebProcessingClient#supportStorage(String)}.
      */
-    private final Map<String, Boolean> outputAsReference = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> outputAsReference = new HashMap<>();
 
     private boolean descriptorsCached = false;
     private WPSCapabilitiesType capabilities;
@@ -255,6 +252,11 @@ public class WebProcessingClient extends AbstractClient implements ProcessingReg
         return WPSVersion.getVersion(Parameters.value(WPSClientFactory.VERSION, parameters));
     }
 
+    @Override
+    public Logger getLogger() {
+        return super.getLogger();
+    }
+
     public String getStorageDirectory() {
         return storageDirectory;
     }
@@ -401,14 +403,14 @@ public class WebProcessingClient extends AbstractClient implements ProcessingReg
     public List<ProcessDescriptor> getDescriptors() {
         checkDescriptors();
         final Collection<ProcessDescriptor> values = descriptors.values();
-        return new ArrayList<ProcessDescriptor>(values);
+        return new ArrayList<>(values);
     }
 
     @Override
     public List<String> getNames() {
         checkDescriptors();
         final Set<String> keys = descriptors.keySet();
-        return new ArrayList<String>(keys);
+        return new ArrayList<>(keys);
     }
 
     @Override
@@ -445,9 +447,9 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                 processAbstract = new DefaultInternationalString("");
             }
 
-            final List<ParameterDescriptor> inputDescriptors = new ArrayList<ParameterDescriptor>();
-            final List<ParameterDescriptor> outputDescriptors = new ArrayList<ParameterDescriptor>();
-            final Map<String, String> inputTypes = new HashMap<String, String>();
+            final List<ParameterDescriptor> inputDescriptors = new ArrayList<>();
+            final List<ParameterDescriptor> outputDescriptors = new ArrayList<>();
+            final Map<String, String> inputTypes = new HashMap<>();
 
             final ProcessDescriptions wpsProcessDescriptions = getDescribeProcess(Collections.singletonList(processIdentifier));
             if (wpsProcessDescriptions.getProcessDescription() == null) {
@@ -463,10 +465,10 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                 for (final InputDescriptionType inputDesc : inputDescriptionList) {
                     final String inputName = inputDesc.getIdentifier().getValue();
                     final String inputAbstract = (inputDesc.getAbstract() == null)? "No description available" : inputDesc.getAbstract().getValue();
-                    final Integer max = Integer.valueOf(inputDesc.getMaxOccurs().intValue());
-                    final Integer min = Integer.valueOf(inputDesc.getMinOccurs().intValue());
+                    final Integer max = inputDesc.getMaxOccurs().intValue();
+                    final Integer min = inputDesc.getMinOccurs().intValue();
 
-                    final Map<String, String> properties = new HashMap<String, String>();
+                    final Map<String, String> properties = new HashMap<>();
                     properties.put("name", inputName);
                     properties.put("remarks", inputAbstract);
 
@@ -569,7 +571,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     final LiteralOutputType literalOutput = outputDesc.getLiteralOutput();
                     final SupportedCRSsType bboxOutput = outputDesc.getBoundingBoxOutput();
 
-                    final Map<String, String> properties = new HashMap<String, String>();
+                    final Map<String, String> properties = new HashMap<>();
                     properties.put("name", outputName);
                     properties.put("remarks", outputAbstract);
 
@@ -643,21 +645,9 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
             //Process Descriptor creation
             final ProcessDescriptor processDesc = new AbstractProcessDescriptor(processIdentifier, getIdentification(), processAbstract, inputs, outputs) {
-
                 @Override
                 public Process createProcess(ParameterValueGroup input) {
-
-                    //Process creation
-                    Process proc = new AbstractProcess(this, input) {
-
-                        @Override
-                        protected void execute() throws ProcessException {
-                            final Execute exec = createRequest(getInput(), getDescriptor(), inputTypes);
-                            final ExecuteResponse response = sendExecuteRequest(exec, this);
-                            fillOutputs(outputParameters, getDescriptor(), response);
-                        }
-                    };
-                    return proc;
+                    return new WPSProcess(WebProcessingClient.this, this, inputTypes, input);
                 }
             };
 
@@ -761,8 +751,8 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-            final List<AbstractWPSInput> wpsIN = new ArrayList<AbstractWPSInput>();
-            final List<WPSOutput> wpsOUT = new ArrayList<WPSOutput>();
+            final List<AbstractWPSInput> wpsIN = new ArrayList<>();
+            final List<WPSOutput> wpsOUT = new ArrayList<>();
 
             final String processId = descriptor.getIdentifier().getCode();
 
@@ -789,11 +779,11 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                         final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
                         final int dim = envelop.getDimension();
 
-                        final List<Double> lower = new ArrayList<Double>();
-                        final List<Double> upper = new ArrayList<Double>();
+                        final List<Double> lower = new ArrayList<>();
+                        final List<Double> upper = new ArrayList<>();
                         for (int i = 0; i < dim; i++) {
-                            lower.add(Double.valueOf(envelop.getLowerCorner().getOrdinate(i)));
-                            upper.add(Double.valueOf(envelop.getUpperCorner().getOrdinate(i)));
+                            lower.add(envelop.getLowerCorner().getOrdinate(i));
+                            upper.add(envelop.getUpperCorner().getOrdinate(i));
                         }
 
                         wpsIN.add(new WPSInputBoundingBox(inputIdentifier, lower, upper, crs, dim));
@@ -859,114 +849,6 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
         } catch (UnconvertibleObjectException ex) {
             throw new ProcessException("Error during conversion step.", null, ex);
         }
-    }
-
-    /**
-     * Send the Execute request to the server URL an return the unmarshalled response.
-     *
-     * @param exec    the request
-     * @param process process used for throw ProcessException
-     * @return ExecuteResponse.
-     * @throws ProcessException is can't reach the server or if there is an error during Marshalling/Unmarshalling request
-     *                          or response.
-     */
-    private ExecuteResponse sendExecuteRequest(final Execute exec, final Process process) throws ProcessException {
-        try {
-            Object respObj = sendSecuredRequestInPost(exec);
-            respObj = checkResult(respObj);
-
-            if (respObj instanceof ExecuteResponse) {
-                final ExecuteResponse response = (ExecuteResponse) respObj;
-                // Check if distant process has failed, in case we throw an exception.
-                final ProcessFailedType processFailed = response.getStatus().getProcessFailed();
-                if (processFailed != null) {
-                    final StringBuilder errorText = new StringBuilder(process.getDescriptor().getIdentifier().getCode()+ " failed.");
-                    final ExceptionReport report = processFailed.getExceptionReport();
-                    if (report != null) {
-                        final List<ExceptionType> exceptionTypes = report.getException();
-                        for (ExceptionType type : exceptionTypes) {
-                            errorText.append('\n').append(type.getExceptionCode()).append(" : ");
-                            for (String txt : type.getExceptionText()) {
-                                errorText.append("\n\t").append(txt);
-                            }
-                        }
-                    }
-                    throw new ProcessException(errorText.toString(), process, null);
-
-                } else {
-                    return response;
-                }
-
-            } else if (respObj instanceof ExceptionReport) {
-                final ExceptionReport report = (ExceptionReport) respObj;
-                final ExceptionType excep = report.getException().get(0);
-                throw new ProcessException("Exception when executing the process.", process, new Exception(excep.toString()));
-            }
-            throw new ProcessException("Invalid response type.", process, null);
-
-        } catch (ProcessException e) {
-            throw e;
-        } catch (JAXBException ex) {
-            throw new ProcessException("Error when trying to parse the Execute response xml: ", process, ex);
-        } catch (IOException ex) {
-            throw new ProcessException("Error when trying to send request to the WPS server :", process, ex);
-        } catch (Exception e) {
-            throw new ProcessException(e.getMessage(), process, e);
-        }
-    }
-
-    /**
-     * A Function to ensure response object is success or failure. Otherwise, we request continually statusLocation until
-     * we reach wanted result.
-     * @param respObj The execute response given by service.
-     */
-    private Object checkResult(Object respObj) throws IOException, JAXBException, InterruptedException {
-
-        if (respObj instanceof ExceptionReport) {
-            return respObj;
-
-        } else if (respObj instanceof ExecuteResponse) {
-            StatusType status = ((ExecuteResponse) respObj).getStatus();
-            if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
-                return respObj;
-            }
-            LOGGER.log(Level.INFO, "Response object got, it's nor a succes nor a fail. Start querying statusLocation.");
-            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-
-            final ClientSecurity security = getClientSecurity();
-            final URL statusLocation = security.secure(new URL(((ExecuteResponse) respObj).getStatusLocation()));
-            Object tmpResponse;
-        /*
-         * We start querying distant status location. To be aware of process success (or failure), we keep doing request
-         * over time, until we get the right content. The time interval used for checking increase at each request, to
-         * avoid overloading.
-         */
-            final int maxTimeLapse = 30000;
-            int timeLapse = 250;
-            while (true) {
-                timeLapse = Math.min(timeLapse * 2, maxTimeLapse);
-                synchronized (this) {
-                    wait(timeLapse);
-                }
-                tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
-                if (tmpResponse instanceof JAXBElement) {
-                    tmpResponse = ((JAXBElement) tmpResponse).getValue();
-                }
-
-                if (tmpResponse instanceof ExecuteResponse) {
-                    status = ((ExecuteResponse) tmpResponse).getStatus();
-                    if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
-                        respObj = tmpResponse;
-                        break;
-                    }
-                } else if (tmpResponse instanceof ExceptionReport) {
-                    respObj = tmpResponse;
-                    break;
-                }
-            }
-        }
-
-        return respObj;
     }
 
     /**
