@@ -150,6 +150,13 @@ public final class GeoJSONParser {
             }
 
             switch (fieldname) {
+                case ID:
+                    p.nextToken();
+                    String id = p.getValueAsString();
+                    if(object instanceof GeoJSONFeature){
+                        ((GeoJSONFeature)object).setId(id);
+                    }
+                    break;
                 case TYPE:
                     p.nextToken();
                     String value = p.getValueAsString();
@@ -207,6 +214,12 @@ public final class GeoJSONParser {
                         parseGeometryCollection((GeoJSONGeometryCollection) object, p);
                     } else {
                         LOGGER.log(Level.WARNING, "Error need type before coordinates");
+                    }
+                    break;
+                default :
+                    if(p.getCurrentToken()==JsonToken.START_OBJECT){
+                        //skip any unknown properties
+                        parseGeoJSONObject(p,lazy,source);
                     }
                     break;
             }
