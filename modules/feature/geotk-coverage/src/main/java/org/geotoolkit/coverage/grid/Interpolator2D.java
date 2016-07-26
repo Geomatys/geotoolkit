@@ -24,8 +24,8 @@ import java.util.List;
 
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
-import javax.media.jai.iterator.RectIter;
-import javax.media.jai.iterator.RectIterFactory;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -114,6 +114,11 @@ public final class Interpolator2D extends Calculator2D {
      * This array will be constructed only when first needed.
      */
     private transient int[][] ints;
+
+    /**
+     * Image iterator, initialized at first interpolation.
+     */
+    private transient PixelIterator iterator;
 
     /**
      * Constructs a new interpolator using default interpolations.
@@ -232,6 +237,12 @@ public final class Interpolator2D extends Calculator2D {
         this.ymax = y + image.getHeight() - bottom;
 
         bounds = new Rectangle(0, 0, interpolation.getWidth(), interpolation.getHeight());
+    }
+
+    private void initIterator() {
+        if(iterator==null){
+            iterator = PixelIteratorFactory.createDefaultIterator(image);
+        }
     }
 
     /**
@@ -428,20 +439,15 @@ public final class Interpolator2D extends Calculator2D {
          */
         bounds.x = ix - left;
         bounds.y = iy - top;
-        final RectIter iter = RectIterFactory.create(image, bounds);
+        initIterator();
         for (; band<bandUp; band++) {
-            iter.startLines();
-            int j=0; do {
-                iter.startPixels();
-                final int[] row=samples[j++];
-                int i=0; do {
-                    row[i++] = iter.getSample(band);
+            for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
+                for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
+                    iterator.moveTo(px,py,band);
+                    samples[j][i] = iterator.getSample();
                 }
-                while (!iter.nextPixelDone());
-                assert i==row.length;
             }
-            while (!iter.nextLineDone());
-            assert j == samples.length;
+
             final int xfrac = (int) ((x-x0) * (1 << interpolation.getSubsampleBitsH()));
             final int yfrac = (int) ((y-y0) * (1 << interpolation.getSubsampleBitsV()));
             dest[band] = interpolation.interpolate(samples, xfrac, yfrac);
@@ -496,20 +502,15 @@ public final class Interpolator2D extends Calculator2D {
          */
         bounds.x = ix - left;
         bounds.y = iy - top;
-        final RectIter iter = RectIterFactory.create(image, bounds);
+        initIterator();
         for (; band<bandUp; band++) {
-            iter.startLines();
-            int j=0; do {
-                iter.startPixels();
-                final float[] row=samples[j++];
-                int i=0; do {
-                    row[i++] = iter.getSampleFloat(band);
+            for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
+                for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
+                    iterator.moveTo(px,py,band);
+                    samples[j][i] = iterator.getSampleFloat();
                 }
-                while (!iter.nextPixelDone());
-                assert i == row.length;
             }
-            while (!iter.nextLineDone());
-            assert j == samples.length;
+
             float dx = (float)(x-x0); if (dx==1) dx=ONE_EPSILON;
             float dy = (float)(y-y0); if (dy==1) dy=ONE_EPSILON;
             final float value = interpolation.interpolate(samples, dx, dy);
@@ -575,20 +576,15 @@ public final class Interpolator2D extends Calculator2D {
          */
         bounds.x = ix - left;
         bounds.y = iy - top;
-        final RectIter iter = RectIterFactory.create(image, bounds);
+        initIterator();
         for (; band<bandUp; band++) {
-            iter.startLines();
-            int j=0; do {
-                iter.startPixels();
-                final double[] row=samples[j++];
-                int i=0; do {
-                    row[i++] = iter.getSampleDouble(band);
+            for(int py=bounds.y,yn=bounds.y+bounds.height,j=0; py<yn; py++,j++){
+                for(int px=bounds.x,xn=bounds.x+bounds.width,i=0; px<xn; px++,i++){
+                    iterator.moveTo(px,py,band);
+                    samples[j][i] = iterator.getSampleDouble();
                 }
-                while (!iter.nextPixelDone());
-                assert i == row.length;
             }
-            while (!iter.nextLineDone());
-            assert j == samples.length;
+
             float dx = (float)(x-x0); if (dx==1) dx=ONE_EPSILON;
             float dy = (float)(y-y0); if (dy==1) dy=ONE_EPSILON;
             final double value = interpolation.interpolate(samples, dx, dy);
