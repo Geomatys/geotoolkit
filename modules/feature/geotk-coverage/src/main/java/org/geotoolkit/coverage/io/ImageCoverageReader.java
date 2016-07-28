@@ -773,7 +773,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     private GridSampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
             throws CoverageStoreException
     {
-         final List<GridSampleDimension> bands = getSampleDimensions(index);
+        final List<GridSampleDimension> bands = getSampleDimensions(index);
         if (bands != null) {
             int bandCount = bands.size();
             if (bandCount != 0) {

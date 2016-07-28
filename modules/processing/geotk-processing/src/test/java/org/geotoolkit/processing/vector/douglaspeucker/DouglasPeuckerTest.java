@@ -25,10 +25,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
-import javax.measure.quantity.Length;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -77,7 +73,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureCollectionInput1();
-        Unit<Length> unit = SI.METRE;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
@@ -101,7 +96,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         FeatureIterator iteratorOut = featureListOut.iterator();
         FeatureIterator iteratorResult = featureListResult.iterator();
 
-        double precision = 0.0001;
+        double precision = 0.0005;  // Half of millimetre (assuming a projected CRS in metres).
         while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
             Feature featureOut = iteratorOut.next();
             Feature featureResult = iteratorResult.next();
@@ -139,7 +134,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureCollectionInput2();
-        Unit<Length> unit = SI.METRE;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
@@ -166,7 +160,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureCollectionInput2();
-        Unit<Length> unit = SI.METRE;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
@@ -193,7 +186,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureCollectionInput2();
-        Unit<Length> unit = SI.METRE;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
