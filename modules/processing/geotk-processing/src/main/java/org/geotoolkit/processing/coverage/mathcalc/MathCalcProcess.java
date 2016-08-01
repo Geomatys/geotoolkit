@@ -30,7 +30,6 @@ import static org.geotoolkit.parameter.Parameters.value;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -39,6 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -49,7 +49,7 @@ public class MathCalcProcess extends AbstractProcess {
     public MathCalcProcess(Coverage[] inCoverages, String inFormula, String[] inMapping, CoverageReference outCoverage){
         this(toParameters(inCoverages, inFormula, inMapping, outCoverage));
     }
-    
+
     public MathCalcProcess(ParameterValueGroup params) {
         super(MathCalcDescriptor.INSTANCE, params);
     }
@@ -62,14 +62,14 @@ public class MathCalcProcess extends AbstractProcess {
         ParametersExt.getOrCreateValue(params, "inResultCoverage").setValue(outCoverage);
         return params;
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         final Coverage[] inCoverages = value(MathCalcDescriptor.IN_COVERAGES, inputParameters);
         final String inFormula = value(MathCalcDescriptor.IN_FORMULA, inputParameters);
         final String[] inMapping = value(MathCalcDescriptor.IN_MAPPING, inputParameters);
         final CoverageReference outRef = value(MathCalcDescriptor.IN_RESULT_COVERAGE, inputParameters);
-        
+
         final GeneralGridGeometry gg;
         final GridCoverageReader outReader;
         try {
@@ -79,7 +79,7 @@ public class MathCalcProcess extends AbstractProcess {
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         //create expression
         final FilterFactory2 ff = new ExtFilterFactory();
         final Expression exp;
@@ -88,7 +88,7 @@ public class MathCalcProcess extends AbstractProcess {
         } catch (CQLException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         // prepare dynamic pick object
         final MathCalcCoverageEvaluator evaluator;
         try {
@@ -96,7 +96,7 @@ public class MathCalcProcess extends AbstractProcess {
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         final FillCoverage filler = new FillCoverage();
         try {
             if(outRef instanceof PyramidalCoverageReference){
@@ -113,7 +113,7 @@ public class MathCalcProcess extends AbstractProcess {
         }
 
     }
-    
+
     //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
     private static class ExtFilterFactory extends WrapFilterFactory2{
 
@@ -126,36 +126,36 @@ public class MathCalcProcess extends AbstractProcess {
             return super.function(name, args);
         }
     }
-    
-        
+
+
     /**
      * Find common crs which can be used for mathcalc process.
-     * 
+     *
      * @param crss
      * @return
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     public static CoordinateReferenceSystem findCommunCrs(CoordinateReferenceSystem ... crss) throws IllegalArgumentException{
-        
+
         CoordinateReferenceSystem result = null;
-        
+
         for(CoordinateReferenceSystem crs : crss){
             if(result==null){
                 result = crs;
             }else{
                 final int nbr = result.getCoordinateSystem().getDimension();
                 final int nbc = crs.getCoordinateSystem().getDimension();
-                
-                if(nbr==nbc && CRS.equalsIgnoreMetadata(nbr, nbc)){
+
+                if (nbr==nbc && Utilities.equalsIgnoreMetadata(nbr, nbc)) {
                     //same number of dimensions and equal, OK
                 }else{
                     throw new IllegalArgumentException("CRS have different number of dimensions");
                 }
             }
         }
-        
+
         return result;
     }
-    
-    
+
+
 }

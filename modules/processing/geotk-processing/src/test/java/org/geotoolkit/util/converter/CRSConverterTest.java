@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
@@ -44,7 +44,7 @@ public class CRSConverterTest extends org.geotoolkit.test.TestBase {
 
         String inputString = "EPSG:3395";
         CoordinateReferenceSystem convertedCRS = converter.apply(inputString);
-        CoordinateReferenceSystem expectedCRS = CRS.decode("EPSG:3395");
+        CoordinateReferenceSystem expectedCRS = CRS.forCode("EPSG:3395");
         assertEquals(expectedCRS, convertedCRS);
 
 

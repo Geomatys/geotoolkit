@@ -59,7 +59,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.coverage.parameter.ImagingParameters;
 import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -72,6 +71,7 @@ import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -300,8 +300,8 @@ public class OperationJAI extends Operation2D {
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
         for (int i=0; i<sources.length; i++) {
             final GridCoverage2D source = sources[i];
-            if (!CRS.equalsIgnoreMetadata(crs, source.getCoordinateReferenceSystem2D()) ||
-                !CRS.equalsIgnoreMetadata(gridToCRS, source.getGridGeometry().getGridToCRS2D()))
+            if (!Utilities.equalsIgnoreMetadata(crs, source.getCoordinateReferenceSystem2D()) ||
+                !Utilities.equalsIgnoreMetadata(gridToCRS, source.getGridGeometry().getGridToCRS2D()))
             {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleGridGeometry));
             }
@@ -441,7 +441,7 @@ public class OperationJAI extends Operation2D {
             final CoordinateReferenceSystem srcCrs2D  = source.getCoordinateReferenceSystem2D();
             final CoordinateReferenceSystem sourceCRS = source.getCoordinateReferenceSystem();
             final CoordinateReferenceSystem targetCRS;
-            if (CRS.equalsIgnoreMetadata(crs2D, srcCrs2D)) {
+            if (Utilities.equalsIgnoreMetadata(crs2D, srcCrs2D)) {
                 targetCRS = sourceCRS; // No reprojection needed for this source coverage.
             } else {
                 /*
@@ -481,7 +481,7 @@ public class OperationJAI extends Operation2D {
             final MathTransform toSource2D = geometry.getGridToCRS2D();
             final MathTransform toSource   = geometry.getGridToCRS();
             MathTransform toTarget;
-            if (CRS.equalsIgnoreMetadata(gridToCrs2D, toSource2D)) {
+            if (Utilities.equalsIgnoreMetadata(gridToCrs2D, toSource2D)) {
                 toTarget  = toSource;
             } else {
                 /*

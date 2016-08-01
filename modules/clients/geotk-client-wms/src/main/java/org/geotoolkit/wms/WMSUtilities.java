@@ -46,7 +46,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -140,7 +140,7 @@ public final class WMSUtilities {
                 for (final String srid : stack[i].getCRS()) {
                     //search and return the first crs that we succesfuly parsed.
                     try{
-                        CoordinateReferenceSystem crs = CRS.decode(srid);
+                        CoordinateReferenceSystem crs = CRS.forCode(srid);
                         if(crs != null){
                             return crs;
                         }

@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
@@ -160,7 +160,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
     @Test
     public void testsNad83() throws FactoryException {
         final Hints photo = new Hints(Hints.COVERAGE_PROCESSING_VIEW, ViewType.PHOTOGRAPHIC);
-        final CoordinateReferenceSystem crs = CRS.parseWKT(
+        final CoordinateReferenceSystem crs = CRS.fromWKT(
                 "GEOGCS[\"NAD83\"," +
                   "DATUM[\"North_American_Datum_1983\"," +
                     "SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]]," +
@@ -254,7 +254,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
     @Test
     @Ignore("Usage of hints will be removed in Apache SIS.")
     public void testLenientDatumShift() throws FactoryException {
-        final CoordinateReferenceSystem sourceCRS = CRS.parseWKT(
+        final CoordinateReferenceSystem sourceCRS = CRS.fromWKT(
                 "PROJCS[\"Bessel_1841_Hotine_Oblique_Mercator_Azimuth_Natural_Origin\"," +
                 "GEOGCS[\"GCS_Bessel_1841\",DATUM[\"D_Bessel_1841\"," +
                 "SPHEROID[\"Bessel_1841\",6377397.155,299.1528128]]," +
@@ -267,7 +267,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
                 "PARAMETER[\"Longitude_Of_Center\",7.439583333333333]," +
                 "PARAMETER[\"Latitude_Of_Center\",46.95240555555556]," +
                 "UNIT[\"Meter\",1.0]]");
-        final CoordinateReferenceSystem targetCRS = CRS.parseWKT(decodeQuotes(
+        final CoordinateReferenceSystem targetCRS = CRS.fromWKT(decodeQuotes(
                 "PROJCS[“ETRS89 / ETRS-LAEA”,\n" +
                 "  GEOGCS[“ETRS89”,\n" +
                 "    DATUM[“European Terrestrial Reference System 1989”,\n" +

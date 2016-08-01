@@ -423,7 +423,7 @@ public final class FeatureTypeUtils extends Static {
                 case CRS:
                     String crsCode = parser.nextTextValue();
                     try {
-                        crs = org.geotoolkit.referencing.CRS.decode(crsCode);
+                        crs = org.apache.sis.referencing.CRS.forCode(crsCode);
                     } catch (FactoryException e) {
                         throw new DataStoreException("Geometry crs " + crsCode + " invalid : " + e.getMessage(), e);
                     }

@@ -30,7 +30,6 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -73,7 +72,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         }
         final GridCoverageBuilder gcb2 = new GridCoverageBuilder();
         gcb2.setRenderedImage(data);
-        gcb2.setCoordinateReferenceSystem(CRS.decode("EPSG:4326"));
+        gcb2.setCoordinateReferenceSystem(CommonCRS.WGS84.geographic());
         gcb2.setEnvelope(-90,-180,+90,+180);
         final GridCoverage2D inCoverage2 = (GridCoverage2D) gcb2.build();
 

@@ -27,6 +27,8 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.util.ComparisonMode;
 
@@ -244,9 +246,9 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
     public final void testUnique() throws FactoryException {        // LGPL
         assumeNotNull(factory);
 
-        final AbstractCRS epsgCrs = (AbstractCRS) org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+        final AbstractCRS epsgCrs = (AbstractCRS) CommonCRS.WGS84.geographic();
         final String      wkt     = epsgCrs.toWKT();
-        final AbstractCRS wktCrs  = (AbstractCRS) org.geotoolkit.referencing.CRS.parseWKT(wkt);
+        final AbstractCRS wktCrs  = (AbstractCRS) CRS.fromWKT(wkt);
 
         assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.APPROXIMATIVE));
         assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.IGNORE_METADATA));
@@ -256,7 +258,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertNotSame("identity", epsgCrs, wktCrs);
 
         // Parsing the same thing twice?
-        final AbstractCRS wktCrs2 = (AbstractCRS) org.geotoolkit.referencing.CRS.parseWKT(wkt);
+        final AbstractCRS wktCrs2 = (AbstractCRS) CRS.fromWKT(wkt);
         assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.APPROXIMATIVE));
         assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.IGNORE_METADATA));
         assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, ComparisonMode.BY_CONTRACT));

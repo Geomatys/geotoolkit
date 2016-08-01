@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.wps.WebProcessingClient;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -34,6 +33,7 @@ import javax.imageio.ImageIO;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * A simple example of web processing querying.
@@ -109,7 +109,7 @@ public class WPSClientDemo {
 
         GeometryFactory factory = new GeometryFactory();
         Geometry geometry = factory.toGeometry(new Envelope(1.0, 2.0, 43.3, 43.9));
-        geometry.setUserData(CRS.decode("EPSG:4326"));
+        geometry.setUserData(CommonCRS.WGS84.geographic());
         final double bufDistance = 0.5;
 
         // Instantiate inputs. Those objects get the same behaviour that the descriptors. If we cannot find a specific

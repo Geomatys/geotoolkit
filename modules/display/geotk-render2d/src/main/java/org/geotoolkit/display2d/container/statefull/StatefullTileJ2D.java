@@ -47,7 +47,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.map.ElevationModel;
@@ -56,6 +55,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.style.RasterSymbolizer;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -237,7 +237,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
             }
         }
 
-        final boolean needReproject = !CRS.equalsIgnoreMetadata(tileCRS,objCRS2D);
+        final boolean needReproject = !Utilities.equalsIgnoreMetadata(tileCRS,objCRS2D);
 
         if (needReproject) {
             //will be reprojected, we must check that image has alpha support

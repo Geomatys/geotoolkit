@@ -43,7 +43,6 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
@@ -52,6 +51,8 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -178,7 +179,7 @@ public class SpatialDatabase extends Database {
         this.horizontalCRS  = CommonCRS.WGS84.normalizedGeographic();
         this.verticalCRS    = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         this.temporalCRS    = DefaultTemporalCRS.castOrCopy(temporalCRS);
-        this.spatialCRS     = PredefinedCRS.WGS84_3D;
+        this.spatialCRS     = AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED);
         try {
             spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
             horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);

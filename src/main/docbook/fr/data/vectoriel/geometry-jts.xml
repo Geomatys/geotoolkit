@@ -181,11 +181,11 @@
         </para>
             <programlisting>
 
-                    final CoordinateReferenceSystem crs = CRS.decode("EPSG:3395");
+                    final CoordinateReferenceSystem crs = CRS.forCode("EPSG:3395");
                     //converting the CRS to an integer
                     final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
                     //srid back to CRS
-                    final CoordinateReferenceSystem backcrs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                    final CoordinateReferenceSystem backcrs = CRS.forCode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
 
             </programlisting>
         <para>

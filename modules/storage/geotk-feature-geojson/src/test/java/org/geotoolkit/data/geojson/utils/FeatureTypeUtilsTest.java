@@ -6,7 +6,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.geotoolkit.feature.type.*;
 import org.opengis.util.FactoryException;
@@ -19,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.sis.util.Utilities;
 import static org.junit.Assert.*;
 
 /**
@@ -91,7 +91,7 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         } else if (expType instanceof AttributeType) {
             assertTrue(((AttributeType) resType).getBinding().isAssignableFrom(((AttributeType) expType).getBinding()));
             if (expType instanceof GeometryType) {
-                assertTrue(CRS.equalsIgnoreMetadata(((GeometryType) expType).getCoordinateReferenceSystem(),
+                assertTrue(Utilities.equalsIgnoreMetadata(((GeometryType) expType).getCoordinateReferenceSystem(),
                         ((GeometryType) resType).getCoordinateReferenceSystem()));
             }
         }

@@ -31,16 +31,12 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.util.NamesExt;
@@ -56,26 +52,13 @@ import org.junit.BeforeClass;
 
 import javax.measure.unit.SI;
 import org.geotoolkit.storage.DataStores;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class PGPyramidTest extends org.geotoolkit.test.TestBase {
-
-    private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
-    private static final double DELTA = 0.00000001;
-    private static final CoordinateReferenceSystem CRS_4326;
-
-    static{
-        try {
-            CRS_4326 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        } catch (FactoryException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        }
-    }
 
     private CoverageStore store;
 
@@ -99,7 +82,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         if(store != null){
             store.close();
         }
-        
+
         final CoverageStoreFactory factory = (CoverageStoreFactory) DataStores.getFactoryById("pgraster");
         try{
             store = (CoverageStore) factory.create(params);
@@ -119,7 +102,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
     public void testInsertUpdateDelete() throws DataStoreException, VersioningException, IOException {
         reload();
 
-        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CRS_4326);
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
         upperLeft.setOrdinate(0, -90);
         upperLeft.setOrdinate(1, +180);
@@ -136,7 +119,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         assertNotNull(cref);
 
         //test create pyramid
-        pyramid = cref.createPyramid(CRS_4326);
+        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
         assertEquals(1,cref.getPyramidSet().getPyramids().size());
 
         //test create mosaic
@@ -184,7 +167,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
     public void testSampleDimensions() throws DataStoreException, VersioningException, IOException, TransformException {
         reload();
 
-        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CRS_4326);
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
         upperLeft.setOrdinate(0, -90);
         upperLeft.setOrdinate(1, +180);
@@ -201,7 +184,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         assertNotNull(cref);
 
         //test create pyramid
-        pyramid = cref.createPyramid(CRS_4326);
+        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
         assertEquals(1,cref.getPyramidSet().getPyramids().size());
 
         final List<GridSampleDimension> dimensions = new LinkedList<>();
@@ -291,5 +274,4 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
             }
         }
     }
-
 }

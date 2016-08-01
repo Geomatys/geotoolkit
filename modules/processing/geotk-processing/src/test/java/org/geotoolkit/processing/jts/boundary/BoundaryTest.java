@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.jts.boundary;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
@@ -32,6 +31,7 @@ import org.geotoolkit.processing.jts.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -63,7 +63,7 @@ public class BoundaryTest extends AbstractProcessTest {
 
         final Geometry geom = fact.createPolygon(ring, null) ;
 
-        CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom, crs1);
 
         // Process

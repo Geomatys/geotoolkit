@@ -3,7 +3,6 @@ package org.geotoolkit.data.geojson.utils;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParser;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.io.wkt.Convention;
@@ -31,6 +30,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.logging.Level;
 
+import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -93,7 +93,7 @@ public final class GeoJSONUtils extends Static {
         ArgumentChecks.ensureNonNull("crs", crs);
 
         try {
-            if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
+            if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
                 return "urn:ogc:def:crs:OGC:1.3:CRS84";
             }
 

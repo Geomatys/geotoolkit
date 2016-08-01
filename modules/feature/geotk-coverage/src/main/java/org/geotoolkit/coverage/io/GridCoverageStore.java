@@ -70,6 +70,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 
+import org.apache.sis.util.Utilities;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
@@ -494,8 +495,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * IMPLEMENTATION NOTE: It could have been more efficient to compute the transform
          * from the requested envelope to the source grid (by concatenation of the various
          * transformation steps), so we could have performed only one shape transformation.
-         * However we want to use the CRS.transform(CoordinateOperation, ...) method rather
-         * than the CRS.transform(MathTransform, ...) method, in order to handle the cases
+         * However we want to use the Envelopes.transform(CoordinateOperation, ...) method rather
+         * than the Envelopes.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
         Shape shapeToRead = gridToCRS.createTransformedShape(gridExtent); // Will be clipped later.
@@ -510,7 +511,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         Envelope envelopeInDataCRS = envelope;
         MathTransform requestToDataCRS = null;
         final CoordinateReferenceSystem dataCRS = gridGeometry.getCoordinateReferenceSystem2D();
-        if (requestCRS != null && dataCRS != null && !CRS.equalsIgnoreMetadata(requestCRS, dataCRS)) {
+        if (requestCRS != null && dataCRS != null && !Utilities.equalsIgnoreMetadata(requestCRS, dataCRS)) {
             final CoordinateOperation op = createOperation(requestCRS, dataCRS);
             requestToDataCRS = op.getMathTransform();
             if (requestToDataCRS.isIdentity()) {
@@ -654,7 +655,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             CoordinateReferenceSystem crs = CRSUtilities.getCRS2D(requestCRS); // X_DIMENSION, Y_DIMENSION
             if (crs == null) {
                 crs = dataCRS; // 'dataCRS' is already 2D.
-            } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {
+            } else if (dataCRS != null && !Utilities.equalsIgnoreMetadata(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
                 geodeticBounds = org.geotoolkit.geometry.Envelopes.transform(op, geodeticBounds, geodeticBounds);
                 ensureNonEmpty(geodeticBounds);

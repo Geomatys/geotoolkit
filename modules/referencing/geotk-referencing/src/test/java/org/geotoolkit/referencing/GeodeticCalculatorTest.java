@@ -37,8 +37,8 @@ import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -55,7 +55,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
+public final strictfp class GeodeticCalculatorTest extends TestBase {
     /**
      * Small tolerance value for floating point comparisons.
      */

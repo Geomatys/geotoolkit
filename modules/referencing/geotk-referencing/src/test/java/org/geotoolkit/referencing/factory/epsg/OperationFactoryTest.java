@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.factory.epsg;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
@@ -26,9 +25,6 @@ import org.opengis.referencing.operation.ConcatenatedOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-
-import org.apache.sis.util.Classes;
 import org.junit.*;
 
 import static org.junit.Assume.*;
@@ -110,10 +106,6 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
         for (final CoordinateOperation op : ((ConcatenatedOperation) operation).getOperations()) {
             if (op instanceof Transformation) {
                 count++;
-            } else {
-                assertTrue("Expected Conversion but got " +
-                        Classes.getShortName(AbstractCoordinateOperation.getType(op)) + ". ",
-                        (op instanceof Conversion));
             }
         }
         assertEquals("The coordinate operation should contains exactly 1 transformation", 1, count);

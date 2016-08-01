@@ -173,9 +173,9 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M04</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.7-jdk7</sis.version>
-    <sis.build.helper>0.8-jdk7-SNAPSHOT</sis.build.helper>
+    <geoapi.version>4.0.0-MC0010</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.8-jdk7-MC0027</sis.version>
+    <sis.build.helper>0.7-jdk7</sis.build.helper>
     <sis.epsg.version>0.7</sis.epsg.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>
@@ -1064,6 +1064,11 @@
       <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
+    </repository>
+    <repository>
+      <id>dev</id>
+      <name>Geomatys internal repository</name>
+      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
     </repository>
     <repository>
       <id>unidata</id>

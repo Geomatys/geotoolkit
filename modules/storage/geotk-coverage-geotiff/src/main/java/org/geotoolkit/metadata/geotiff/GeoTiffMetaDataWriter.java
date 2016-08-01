@@ -52,9 +52,9 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -151,7 +151,7 @@ public class GeoTiffMetaDataWriter {
         final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
         int o = 0;
         for (final CoordinateReferenceSystem c : crss) {
-            if (CRS.equalsIgnoreMetadata(c, CommonCRS.Temporal.JAVA.crs())) return o;
+            if (Utilities.equalsIgnoreMetadata(c, CommonCRS.Temporal.JAVA.crs())) return o;
             o += c.getCoordinateSystem().getDimension();
         }
         return -1;

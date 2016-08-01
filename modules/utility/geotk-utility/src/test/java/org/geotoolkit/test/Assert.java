@@ -99,27 +99,6 @@ public strictfp class Assert extends org.apache.sis.test.Assert {
     }
 
     /**
-     * Asserts that two rectangles have the same location and the same size.
-     *
-     * @param expected The expected rectangle.
-     * @param actual   The rectangle to compare with the expected one.
-     * @param tolx     The horizontal tolerance threshold on location.
-     * @param toly     The vertical tolerance threshold on location.
-     *
-     * @since 3.20
-     */
-    public static void assertRectangleEquals(final RectangularShape expected, final RectangularShape actual, final double tolx, final double toly) {
-        assertEquals("Min X",    expected.getMinX(),    actual.getMinX(),    tolx);
-        assertEquals("Min Y",    expected.getMinY(),    actual.getMinY(),    toly);
-        assertEquals("Max X",    expected.getMaxX(),    actual.getMaxX(),    tolx);
-        assertEquals("Max Y",    expected.getMaxY(),    actual.getMaxY(),    toly);
-        assertEquals("Center X", expected.getCenterX(), actual.getCenterX(), tolx);
-        assertEquals("Center Y", expected.getCenterY(), actual.getCenterY(), toly);
-        assertEquals("Width",    expected.getWidth(),   actual.getWidth(),   tolx*2);
-        assertEquals("Height",   expected.getHeight(),  actual.getHeight(),  toly*2);
-    }
-
-    /**
      * Asserts that two images have the same origin and the same size.
      *
      * @param expected The image having the expected size.

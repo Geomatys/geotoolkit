@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.geotoolkit.internal.referencing.MathTransformWrapper;
+import org.apache.sis.referencing.operation.transform.MathTransformWrapper;
 
 
 /**
@@ -75,6 +75,6 @@ final strictfp class PrivateTransform2D extends MathTransformWrapper implements 
      */
     @Override
     public MathTransform2D inverse() throws NoninvertibleTransformException {
-        return new PrivateTransform2D((MathTransform2D) super.inverse());
+        return new PrivateTransform2D((MathTransform2D) transform.inverse());
     }
 }

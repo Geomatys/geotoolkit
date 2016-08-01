@@ -45,7 +45,7 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
@@ -150,7 +150,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
         }
 
         try {
-            
+
             /*
              * geomCRS attribut should be null, we looking for find another way to define geometry CoordinateReferenceSystem.
              * It may be already stipulate in JTS geometry.
@@ -169,7 +169,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 geomCRS = covCrs;
             }
 
-            final MathTransform covToGeomCRS = CRS.findMathTransform(covCrs, geomCRS);
+            final MathTransform covToGeomCRS = CRS.findOperation(covCrs, geomCRS, null).getMathTransform();
 
             //-- next read only interest area.
             final Envelope envGeom     = jtsGeom.getEnvelopeInternal();
@@ -210,9 +210,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final MathTransform gridToCrs  = gg2d.getGridToCRS(PixelInCell.CELL_CENTER);
             final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
             final RenderedImage mnt        = dem.getRenderedImage();
-            
+
             final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
-            
+
             final MathTransform gridToGeom = MathTransforms.concatenate(gridToCrs, covToGeomCRS);
             final StepPixelAreaCalculator stePixCalculator;
 
@@ -264,7 +264,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             }else{
                 hconverter = gsd.getUnits().getConverterToAny(METER);
             }
-            
+
             while (pixPoint[1] < maxy) {
                 if(isCanceled()) break;
                 pixPoint[0] = debx;
@@ -281,7 +281,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
                         //-- get interpolate value
                         double h = interpol.interpolate(pixPoint[0], pixPoint[1], bandIndex);
-                        
+
                         //-- projet h in geophysic value
                         h = zmt.transform(h);
 

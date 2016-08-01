@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -141,7 +141,7 @@ public class J2DScaleBarUtilities {
         final MathTransform2D displayToObjective;
         final MathTransform2D objectiveToDisplay;
         try{
-            final MathTransform transform = CRS.findMathTransform(displayCRS, objectiveCRS,true);
+            final MathTransform transform = CRS.findOperation(displayCRS, objectiveCRS, null).getMathTransform();
             final MathTransform inverse   = transform.inverse();
             if(!(transform instanceof MathTransform2D) || !(inverse instanceof MathTransform2D)){
                 throw new PortrayalException("MathTransform is not 2D.");

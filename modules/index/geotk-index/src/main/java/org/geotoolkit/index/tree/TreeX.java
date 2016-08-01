@@ -23,8 +23,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.SpatialFilterType;
 import static org.geotoolkit.filter.SpatialFilterType.*;
 import static org.geotoolkit.internal.tree.TreeUtilities.*;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.Utilities;
 
 /**
  * Logics operate.
@@ -35,23 +35,23 @@ public final class TreeX {
 
     private TreeX() {
     }
-    
+
     /**
      * Effectuate different logics operations on tree.
-     * 
+     *
      * @param tree
      * @param areaSearch area of search.
      * @param logicFilter different logic operation.
      * @return integer table which contain all tree identifier from data which match with search criterion. (area and logic filter)
      * @throws StoreIndexException if problem during search action.
      * @see SpatialFilterType
-     * @see Tree#searchID(org.opengis.geometry.Envelope) 
+     * @see Tree#searchID(org.opengis.geometry.Envelope)
      */
     public static int[] search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("TreeX search : tree", tree);
         ArgumentChecks.ensureNonNull("TreeX search : Envelope", regionSearch);
         ArgumentChecks.ensureNonNull("TreeX search : SpatialFilterType", logicFilter);
-        if (!CRS.equalsIgnoreMetadata(regionSearch.getCoordinateReferenceSystem(), tree.getCrs())) 
+        if (!Utilities.equalsIgnoreMetadata(regionSearch.getCoordinateReferenceSystem(), tree.getCrs()))
             throw new IllegalArgumentException("TreeX search : the 2 CRS within tree and region search should be equals.");
         final TreeElementMapper tEM = tree.getTreeElementMapper();
         TreeIdentifierIterator iterSearch = tree.search(regionSearch);
@@ -62,7 +62,7 @@ public final class TreeX {
             switch (logicFilter) {
                 case INTERSECTS : case BBOX : {
                     return tree.searchID(regionSearch);
-                } 
+                }
                 case CONTAINS : {
                     while (iterSearch.hasNext()) {
                         final int currentTreeID = iterSearch.nextInt();
@@ -82,7 +82,7 @@ public final class TreeX {
                     final GeneralEnvelope treeExtends = new GeneralEnvelope(tree.getCrs());
                     treeExtends.setEnvelope(tree.getExtent());
                     final TreeIdentifierIterator allIter = tree.search(treeExtends);
-                    
+
                     while (allIter.hasNext()) {
                         final int currentTreeID = allIter.nextInt();
                          final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
@@ -98,7 +98,7 @@ public final class TreeX {
                     }
                 } break;
                 case WITHIN : {
-                    
+
                     while (iterSearch.hasNext()) {
                         final int currentTreeID = iterSearch.nextInt();
                          final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
@@ -144,13 +144,13 @@ public final class TreeX {
                     }
                 } break;
                 case OVERLAPS : {
-                    
+
                     while (iterSearch.hasNext()) {
                         final int currentTreeID = iterSearch.nextInt();
                          final Envelope envelop = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
                          final double[] env = getCoords(envelop);
-                        if (intersects(getCoords(regionSearch), env, false) 
-                        && !contains(env, getCoords(regionSearch), true) 
+                        if (intersects(getCoords(regionSearch), env, false)
+                        && !contains(env, getCoords(regionSearch), true)
                         && !contains(getCoords(regionSearch), env, true)) {
                             if (currentPosition == tabResultLength) {
                                 tabResultLength = tabResultLength << 1;

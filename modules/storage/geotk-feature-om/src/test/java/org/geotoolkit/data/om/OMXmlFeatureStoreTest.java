@@ -36,7 +36,7 @@ import org.geotoolkit.data.om.xml.XmlObservationStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
@@ -45,7 +45,7 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  */
 public class OMXmlFeatureStoreTest extends AbstractReadingTests{
-    
+
     private static FeatureStore store;
     private static final Set<GenericName> names = new HashSet<>();
     private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
@@ -73,7 +73,7 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setDefaultGeometry(NamesExt.create(nsOM, "position"));
 
             int size = 1;
-            GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
             env.setRange(0, 65400.0, 65400.0);
             env.setRange(1, 1731368.0, 1731368.0);
 
@@ -126,7 +126,7 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
         final ClassLoader cl = getContextClassLoader();
         return cl.getResourceAsStream(url);
     }
-    
+
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override

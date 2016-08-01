@@ -29,7 +29,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 
@@ -56,6 +56,7 @@ import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * @author crossley
@@ -70,13 +71,7 @@ public final class GeometryUtils {
     private static final Envelope WHOLE_WORLD;
 
     static{
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
-        } catch (Exception ex){
-            LOGGER.warning("could not get crs for EPSG:4326");
-        }
-
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
         final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
 
         final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] {-90,-180});
@@ -109,7 +104,7 @@ public final class GeometryUtils {
 
         if (unit.equals(NonSI.DEGREE_ANGLE)) {
             try {
-                envelope = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
+                envelope = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
             } catch (TransformException ex) {
                 LOGGER.severe("unable to reproject the envelope:" + ex.getMessage());
             }
@@ -420,16 +415,10 @@ public final class GeometryUtils {
     public static DirectPosition ensureWGS84(DirectPosition dp) {
     	CoordinateReferenceSystem crs = dp.getCoordinateReferenceSystem();
     	int dim = crs.getCoordinateSystem().getDimension();
-    	boolean isProjectedCRS = crs instanceof ProjectedCRS;
     	CoordinateReferenceSystem bcrs = crs instanceof ProjectedCRS
 			? ((ProjectedCRS) crs).getBaseCRS() : crs;
 
-	GeographicCRS wgs84crs = null;
-        try {
-                wgs84crs = (GeographicCRS) CRS.decode("EPSG:4979");
-        } catch (Exception nsace){
-                LOGGER.warning("could not get crs for EPSG:4979");
-        }
+        GeographicCRS wgs84crs = CommonCRS.WGS84.geographic3D();
 
         //have doubts about following line, was the commented out 2nd clause to condition doing anything - colin
         if (bcrs.equals(wgs84crs)) {    // || bcrs.equals(CRSUtils.WGS84_PROJ)) {
@@ -450,7 +439,7 @@ public final class GeometryUtils {
         //same equality issues as above
         DirectPosition dp2 = new JTSGeometryFactory(wgs84crs).createDirectPosition();
         try{
-            MathTransform transform = CRS.findMathTransform(crs, wgs84crs);
+            MathTransform transform = CRS.findOperation(crs, wgs84crs, null).getMathTransform();
             transform.transform(dp, dp2);
         } catch (FactoryException fe) {
         	LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "

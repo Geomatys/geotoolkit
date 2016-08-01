@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.referencing;
 
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -15,8 +15,8 @@ public class IdentifierRead {
      */
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:27582");
+
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:27582");
         System.out.println(crs);
     }
 

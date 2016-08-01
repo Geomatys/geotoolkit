@@ -27,7 +27,6 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -37,6 +36,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * Decorate a coverage reader changing behavior to match overriden properties
@@ -127,7 +127,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
             //find requested envelope
             if(queryEnv==null && queryCrs!=null){
                 try {
-                    queryEnv = CRS.transform(overrideGridGeometry.getEnvelope(),queryCrs);
+                    queryEnv = Envelopes.transform(overrideGridGeometry.getEnvelope(),queryCrs);
                 } catch (TransformException ex) {
                     throw new CoverageStoreException(ex.getMessage(), ex);
                 }
@@ -151,7 +151,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
                 coverageEnv = overrideGridGeometry.getEnvelope();
             }else{
                 try {
-                    coverageEnv = CRS.transform(queryEnv, overrideGridGeometry.getCoordinateReferenceSystem());
+                    coverageEnv = Envelopes.transform(queryEnv, overrideGridGeometry.getCoordinateReferenceSystem());
                 } catch (TransformException ex) {
                     throw new CoverageStoreException(ex.getMessage(), ex);
                 }
@@ -172,7 +172,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
                     final MathTransform overrideCrsToGrid = overrideGridGeometry.getGridToCRS().inverse();
                     fixedToOriginal = MathTransforms.concatenate(overrideCrsToGrid, originalGridGeometry.getGridToCRS());
                     originalToFixed = fixedToOriginal.inverse();
-                    coverageEnv = CRS.transform(fixedToOriginal, coverageEnv);
+                    coverageEnv = Envelopes.transform(fixedToOriginal, coverageEnv);
                     coverageEnv = GeneralEnvelope.castOrCopy(coverageEnv);
                     ((GeneralEnvelope)coverageEnv).setCoordinateReferenceSystem(
                             originalGridGeometry.getCoordinateReferenceSystem());

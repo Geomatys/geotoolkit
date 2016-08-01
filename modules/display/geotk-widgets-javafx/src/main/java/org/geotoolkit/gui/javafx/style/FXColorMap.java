@@ -63,7 +63,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
@@ -74,7 +74,7 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.style.StyleConstants;
@@ -280,7 +280,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 }
 
                 readParam = new GridCoverageReadParam();
-                readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
                 readParam.setResolution(high[0]-low[0], high[1]-low[1]);
                 readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
 
@@ -691,7 +691,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     }
 
                     GridCoverageReadParam readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setResolution(res);
 

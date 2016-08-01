@@ -25,7 +25,7 @@ import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -98,7 +98,7 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
             if(mapCrs){
                 //reproject geometry in map crs for simplification
-                final MathTransform trs = CRS.findMathTransform(dataCRS,mapCRS,true);
+                final MathTransform trs = CRS.findOperation(dataCRS,mapCRS, null).getMathTransform();
                 geom = JTS.transform(geom, trs);
             }
 
@@ -114,7 +114,7 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
             if(mapCrs){
                 //reproject geometry in data crs
-                final MathTransform trs = CRS.findMathTransform(mapCRS,dataCRS,true);
+                final MathTransform trs = CRS.findOperation(mapCRS, dataCRS, null).getMathTransform();
                 current = JTS.transform(current, trs);
             }
 

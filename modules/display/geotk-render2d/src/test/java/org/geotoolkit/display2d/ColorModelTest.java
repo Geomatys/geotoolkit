@@ -78,13 +78,14 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.test.Assert;
 
+import org.apache.sis.geometry.Envelopes;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -152,11 +153,11 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
 
         //create a serie of envelopes for tests --------------------------------
-        GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         envelopes.add(env);
-        env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -12, 31);
         env.setRange(1, -5, 46);
         envelopes.add(env);
@@ -168,7 +169,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -5, 46);
         env.setRange(1, -12, 31);
         envelopes.add(env);
-        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:3395"));
         env.setRange(0, -1200000, 3100000);
         env.setRange(1, -500000, 4600000);
         envelopes.add(env);
@@ -188,7 +189,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         //create some coverages ------------------------------------------------
 
-        env = new GeneralEnvelope(CRS.decode("EPSG:32738"));
+        env = new GeneralEnvelope(CRS.forCode("EPSG:32738"));
         env.setRange(0,  695035,  795035);
         env.setRange(1, 7545535, 7645535);
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -201,7 +202,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         GridCoverage2D coverage = gcb.getGridCoverage2D();
         coverages.add(coverage);
 
-        env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0,  -10,  25);
         env.setRange(1, -56, -21);
         img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -215,7 +216,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs").createCompoundCRS(CRS.decode("EPSG:4326"),
+        CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("4D crs").createCompoundCRS(CommonCRS.WGS84.geographic(),
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());
 
@@ -251,7 +252,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNoDataCM() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -273,7 +274,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testSolidColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -294,7 +295,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testSolidColorBackgroundWithAA() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -314,7 +315,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testAlphaColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -333,7 +334,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testOpaqueUnpredictableBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -360,7 +361,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         context.layers().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
         context.layers().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -397,7 +398,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         context.layers().add(MapBuilder.createCoverageLayer(coverages.get(0), SF.style(SF.rasterSymbolizer()), "test"));
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -423,7 +424,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     public void testJPEGOutput() throws NoSuchAuthorityCodeException, FactoryException, IOException, PortrayalException{
         final MapContext context = MapBuilder.createContext();
 
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -472,7 +473,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
-        final Envelope envelope = CRS.transform(env, CRS.decode("EPSG:3031"));
+        final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 
         final BufferedImage result = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(800, 600), Color.WHITE),
@@ -523,7 +524,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
 
-        final Envelope envelope = CRS.transform(env, CRS.decode("EPSG:3031"));
+        final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 
         final BufferedImage result = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(800, 600), Color.WHITE),

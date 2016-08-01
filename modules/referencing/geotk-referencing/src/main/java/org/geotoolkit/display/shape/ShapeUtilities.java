@@ -33,9 +33,6 @@ import static java.lang.Math.*;
  * Static methods operating on shapes from the {@link java.awt.geom} package.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.20
- *
- * @since 1.1
  * @module
  */
 public final class ShapeUtilities extends Static {
@@ -54,7 +51,10 @@ public final class ShapeUtilities extends Static {
      * @param  a The first line segment.
      * @param  b The second line segment.
      * @return The intersection point, or {@code null} if none.
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Shapes2D#intersectionPoint(Line2D, Line2D)}.
      */
+    @Deprecated
     public static Point2D.Double intersectionPoint(final Line2D a, final Line2D b) {
         return org.apache.sis.internal.referencing.j2d.ShapeUtilities.intersectionPoint(
                 a.getX1(), a.getY1(), a.getX2(), a.getY2(),
@@ -80,7 +80,10 @@ public final class ShapeUtilities extends Static {
      * @return The nearest point on the given line.
      *
      * @see #colinearPoint(Line2D, Point2D, double)
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Shapes2D#nearestColinearPoint(Line2D, Point2D)}.
      */
+    @Deprecated
     public static Point2D.Double nearestColinearPoint(final Line2D segment, final Point2D point) {
         return org.apache.sis.internal.referencing.j2d.ShapeUtilities.nearestColinearPoint(
                 segment.getX1(), segment.getY1(),
@@ -111,7 +114,10 @@ public final class ShapeUtilities extends Static {
      * @return A point on the given line located at the given distance from the given point.
      *
      * @see #nearestColinearPoint(Line2D, Point2D)
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Shapes2D#colinearPoint(Line2D, Point2D, double)}.
      */
+    @Deprecated
     public static Point2D.Double colinearPoint(Line2D line, Point2D point, double distance) {
         return org.apache.sis.internal.referencing.j2d.ShapeUtilities.colinearPoint(
                 line.getX1(), line.getY1(), line.getX2(), line.getY2(),
@@ -194,14 +200,16 @@ public final class ShapeUtilities extends Static {
     }
 
     /**
-     * Returns a circle passing by the 3 given points. The distance between the returned
-     * point and any of the given points will be constant; it is the circle radius.
+     * Returns a circle passing by the 3 given points.
      *
      * @param  P1 The first point.
      * @param  P2 The second point.
      * @param  P3 The third point.
      * @return A circle passing by the given points.
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Shapes2D#circle(Point2D, Point2D, Point2D)
      */
+    @Deprecated
     public static Ellipse2D.Double fitCircle(final Point2D P1, final Point2D P2, final Point2D P3) {
         final Point2D center = org.apache.sis.internal.referencing.j2d.ShapeUtilities.circleCentre(
                 P1.getX(), P1.getY(),
@@ -211,110 +219,6 @@ public final class ShapeUtilities extends Static {
         return new Ellipse2D.Double(center.getX() - radius,
                                     center.getY() - radius,
                                     2*radius, 2*radius);
-    }
-
-    /**
-     * Finds the extremum of the unique cubic curve which fit the two given points and derivatives.
-     * First, this method finds the A, B, C and D coefficients for the following equation:
-     *
-     * <p><center><var>y</var> = A + B<var>x</var> + C<var>x</var><sup>2</sup> + D<var>x</var><sup>3</sup></center></p>
-     *
-     * Next, this method finds the extremum by finding the (<var>x</var>,<var>y</var>) values
-     * that satisfy the following equation (which is the derivative of the above equation):
-     *
-     * <p><center>B + 2C<var>x</var> + 3D<var>x</var><sup>2</sup> = 0</center></p>
-     *
-     * A cubic curve can have two extremum, which are returned in a {@link Line2D} construct in
-     * no particular order. The length of the returned line is the distance separating the two
-     * extremum (often a useful information for determining if a quadratic equation would be a
-     * sufficient approximation).
-     * <p>
-     * The line returned by this method may contains {@linkplain Double#NaN NaN} values if the
-     * given geometry is actually a line segment ({@code dy1} = {@code dy2} = slope from P1 to
-     * P2).
-     *
-     * @param  P1   The first point.
-     * @param  dy1  The &part;<var>x</var>/&part;<var>y</var> value at the first point.
-     * @param  P2   The second point.
-     * @param  dy2  The &part;<var>x</var>/&part;<var>y</var> value at the second point.
-     * @return The two points located on the extremum of the fitted cubic curve.
-     *
-     * @since 3.20
-     */
-    public static Line2D.Double cubicCurveExtremum(final Point2D P1, final double dy1,
-                                                   final Point2D P2, final double dy2)
-    {
-        return cubicCurveExtremum(
-                P1.getX(), P1.getY(), dy1,
-                P2.getX(), P2.getY(), dy2);
-    }
-
-    /**
-     * Finds the extremum of the unique cubic curve which fit the two given points and derivatives.
-     * First, this method finds the A, B, C and D coefficients for the following equation:
-     *
-     * <blockquote><var>y</var> = A + B<var>x</var> + C<var>x</var><sup>2</sup> + D<var>x</var><sup>3</sup></blockquote>
-     *
-     * Next, this method finds the extremum by finding the (<var>x</var>,<var>y</var>) values
-     * that satisfy the following equation (which is the derivative of the above equation):
-     *
-     * <blockquote>B + 2C<var>x</var> + 3D<var>x</var><sup>2</sup> = 0</blockquote>
-     *
-     * A cubic curve can have two extremum, which are returned in a {@link Line2D} construct in
-     * no particular order. The length of the returned line is the distance separating the two
-     * extremum (often a useful information for determining if a quadratic equation would be a
-     * sufficient approximation).
-     *
-     * <p>The line returned by this method may contains {@linkplain Double#NaN NaN} values if the
-     * given geometry is actually a line segment ({@code dy1} = {@code dy2} = slope from P1 to P2).</p>
-     *
-     * @param  x1   The <var>x</var> ordinate of the first point.
-     * @param  y1   The <var>y</var> ordinate of the first point.
-     * @param  dy1  The &part;<var>x</var>/&part;<var>y</var> value at the first point.
-     * @param  x2   The <var>x</var> ordinate of the second point.
-     * @param  y2   The <var>y</var> ordinate of the second point.
-     * @param  dy2  The &part;<var>x</var>/&part;<var>y</var> value at the second point.
-     * @return The two points located on the extremum of the fitted cubic curve.
-     *
-     * @since 3.20
-     *
-     * @deprecated Use {@link #cubicCurveExtremum(Point2D, double, Point2D, double)} instead.
-     */
-    // Note: in Apache SIS, this is CurveExtremum.resolve(...).
-    @Deprecated
-    public static Line2D.Double cubicCurveExtremum(double x1, double y1, final double dy1,
-                                                   double x2, double y2, final double dy2)
-    {
-        /*
-         * Equation for a cubic curve is y = A + Bx + Cx² + Dx³.
-         * Before to compute, translate the curve such that (x1,y1) = (0,0),
-         * which simplify a lot the equation. In such case:
-         *
-         *   A = 0
-         *   B = dy1
-         *   C and D: see code below.
-         */
-        x2 -= x1;
-        y2 -= y1;
-        final double d = (dy2 - dy1)   / x2;
-        final double w = (dy1 - y2/x2) / x2;
-        final double D = (2*w + d)     / x2;
-        final double C = -3*w - d;
-        /*
-         * For location the minimum, we search the location where the derivative is null:
-         *
-         *    B + 2Cx + 3Dx² == 0    ⇒    x = (-b ± √(b² - 4ac)) / (2a)
-         *
-         * where, a = 3*D,  b = 2*C  and  c = B = dy1
-         */
-        final double a  = 3*D;
-        final double b  = 2*C;
-        final double q  = -0.5*(b + copySign(sqrt(b*b - 4*a*dy1), b));
-        final double r1 = q / a;
-        final double r2 = dy1 / q;
-        return new Line2D.Double(
-                x1 + r1, y1 + r1*(dy1 + r1*(C + r1*D)),
-                x1 + r2, y1 + r2*(dy1 + r2*(C + r2*D)));
     }
 
     /**

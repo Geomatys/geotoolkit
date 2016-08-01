@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.test.coverage.image.ImageWriterTestCase;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -111,7 +111,7 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCa
          * We use a simple Mercator projection.
          */
         try {
-            new ReferencingBuilder(metadata).setCoordinateReferenceSystem(CRS.parseWKT(WKT.PROJCS_MERCATOR));
+            new ReferencingBuilder(metadata).setCoordinateReferenceSystem(CRS.fromWKT(WKT.PROJCS_MERCATOR));
         } catch (FactoryException e) {
             fail(e.toString());
         }

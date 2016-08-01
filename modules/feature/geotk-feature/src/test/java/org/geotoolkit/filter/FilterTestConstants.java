@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -37,7 +36,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Attribute;
 
@@ -48,9 +46,8 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -81,14 +78,7 @@ public class FilterTestConstants {
     public static final Object CANDIDATE_1;
 
     static{
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
 
         Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(5, 5);

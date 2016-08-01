@@ -17,7 +17,6 @@
 package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.nio.PosixPathMatcher;
 import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
@@ -25,7 +24,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
@@ -34,14 +32,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -54,6 +49,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
+import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.*;
 
 /**
@@ -278,12 +274,12 @@ public class MIFManager {
              * We check if mif conversion will modify the defined CRS. If it is the case, we store the modified CRS.
              * This CRS will serve us as file writing, as we will have to reproject our features to fit the final system.
              */
-            if (!CRS.equalsIgnoreMetadata(mifCRS, CommonCRS.WGS84.normalizedGeographic())) {
+            if (!Utilities.equalsIgnoreMetadata(mifCRS, CommonCRS.WGS84.normalizedGeographic())) {
                 try {
                     final String mifCRSDefinition = ProjectionUtils.crsToMIFSyntax(mifCRS);
                     if (mifCRSDefinition != null && !mifCRSDefinition.isEmpty()) {
                         writtenCRS = ProjectionUtils.buildCRSFromMIF(mifCRSDefinition);
-                        if (CRS.equalsIgnoreMetadata(mifCRS, writtenCRS)) {
+                        if (Utilities.equalsIgnoreMetadata(mifCRS, writtenCRS)) {
                             writtenCRS = null;
                         }
                     }

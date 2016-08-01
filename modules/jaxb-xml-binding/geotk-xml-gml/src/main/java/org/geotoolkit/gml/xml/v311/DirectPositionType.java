@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
@@ -300,7 +300,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
             try {
-                return CRS.decode(srsName);
+                return CRS.forCode(srsName);
             } catch (FactoryException ex) {
                 Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
             }

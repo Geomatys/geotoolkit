@@ -98,7 +98,7 @@ import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
@@ -670,7 +670,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 final String srid = SRIDGenerator.toSRS(jts.getSRID(), SRIDGenerator.Version.V1);
                 CoordinateReferenceSystem crs;
                 try {
-                    crs = CRS.decode(srid);
+                    crs = CRS.forCode(srid);
                 } catch (Exception ex) {
                     Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     crs = null;

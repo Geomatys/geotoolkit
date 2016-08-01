@@ -40,7 +40,7 @@ import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -57,6 +57,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -371,7 +372,7 @@ public class DefaultSession extends AbstractSession {
                     }else if(replace){
                         try {
                             //reproject bbox
-                            final Envelope env = CRS.transform(bb, crs);
+                            final Envelope env = Envelopes.transform(bb, crs);
                             bb = new DefaultBoundingBox(env);
                             return FF.literal(bb);
                         } catch (TransformException ex) {
@@ -389,7 +390,7 @@ public class DefaultSession extends AbstractSession {
                             return FF.literal(geom);
                         }else if(replace){
                             //reproject geometry
-                            final MathTransform trs = CRS.findMathTransform(cdtcrs, crs);
+                            final MathTransform trs = CRS.findOperation(cdtcrs, crs, null).getMathTransform();
                             geom = JTS.transform(geom, trs);
                             JTS.setCRS(geom, crs);
                             return FF.literal(geom);

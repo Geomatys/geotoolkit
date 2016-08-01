@@ -149,7 +149,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         properties.put(ProjectedCRS.NAME_KEY, identifiers[0]);
         properties.put(ProjectedCRS.IDENTIFIERS_KEY, identifiers);
         final ProjectedCRS crs = factories.getCRSFactory().createProjectedCRS(properties,
-                new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, PredefinedCS.GEODETIC_2D),
+                new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, CommonCRS.defaultGeographic().getCoordinateSystem()),
                 new DefiningConversion("Miller", param), PredefinedCS.PROJECTED);
         crsMap.put(key, crs);
         return crs;

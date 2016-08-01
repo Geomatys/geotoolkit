@@ -20,11 +20,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -54,6 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  * A visitor which can be applied to the
@@ -131,7 +130,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                 temporalCRS = CRS.getTemporalComponent(timeRange.getCoordinateReferenceSystem());
                 if (temporalCRS != null) {
                     try {
-                        timeRange = org.geotoolkit.referencing.CRS.transform(timeRange, temporalCRS);
+                        timeRange = Envelopes.transform(timeRange, temporalCRS);
                     } catch (TransformException e) {
                         // Should never happen since temporalCRS is a component of layer CRS.
                         Logging.unexpectedException(null, AbstractGraphicVisitor.class, "getCoverageValues", e);

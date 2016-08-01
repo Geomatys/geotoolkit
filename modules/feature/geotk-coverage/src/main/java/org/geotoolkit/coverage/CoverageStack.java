@@ -74,7 +74,8 @@ import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.palette.IIOReadProgressAdapter;
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import org.apache.sis.geometry.Envelopes;
+import static org.apache.sis.util.Utilities.equalsIgnoreMetadata;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 
@@ -566,7 +567,7 @@ public class CoverageStack extends AbstractCoverage {
      *     CoordinateReferenceSystem crs3D = new CompoundCRS(crs3D, timeCRS);
      *
      *     List<Coverage> coverages = new ArrayList<Coverage>();
-     *     GeneralEnvelope envelope = new GeneralEnvelope(PredefinedCRS.WGS84_3D);
+     *     GeneralEnvelope envelope = new GeneralEnvelope(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED));
      *     envelope.setRange(0, westLongitudeBound, eastLongitudeBound);
      *     envelope.setRange(1, southLatitudeBound, northLatitudeBound);
      *     for (int i=0; i<...; i++) {
@@ -884,7 +885,7 @@ public class CoverageStack extends AbstractCoverage {
                     }
                 }
                 try {
-                    candidate = CRS.transform(operation, candidate);
+                    candidate = Envelopes.transform(operation, candidate);
                 } catch (TransformException exception) {
                     throw new MismatchedReferenceSystemException(Errors.format(errorCode, exception));
                 }

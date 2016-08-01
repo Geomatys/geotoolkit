@@ -26,7 +26,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.OSMTileMapClient;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -39,71 +39,71 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class OSMTMSPyramidSet extends CachedPyramidSet{
-    
-    public static final double BASE_TILE_SIZE = 256d;    
+
+    public static final double BASE_TILE_SIZE = 256d;
     public static final CoordinateReferenceSystem GOOGLE_MERCATOR;
-    public static final Envelope MERCATOR_EXTEND;        
+    public static final Envelope MERCATOR_EXTEND;
     static {
         try {
-            GOOGLE_MERCATOR = CRS.decode("EPSG:3857");
-            
-            //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E) 
+            GOOGLE_MERCATOR = CRS.forCode("EPSG:3857");
+
+            //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
             //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
             MERCATOR_EXTEND = new GeneralEnvelope(GOOGLE_MERCATOR);
             ((GeneralEnvelope)MERCATOR_EXTEND).setRange(0, -20037508.342789244d, 20037508.342789244d);
             ((GeneralEnvelope)MERCATOR_EXTEND).setRange(1, -20037508.342789244d, 20037508.342789244d);
-            
+
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException(ex);
         } catch (FactoryException ex) {
             throw new RuntimeException(ex);
-        }       
+        }
     }
-    
+
     public OSMTMSPyramidSet(final OSMTileMapClient server, final int maxScale, boolean cacheImage) {
         super(server,true,cacheImage);
-        
+
         final DefaultPyramid pyramid = new DefaultPyramid(this,GOOGLE_MERCATOR);
-        
-        final int tileWidth = (int) BASE_TILE_SIZE;        
-        final int tileHeight = (int) BASE_TILE_SIZE;        
+
+        final int tileWidth = (int) BASE_TILE_SIZE;
+        final int tileHeight = (int) BASE_TILE_SIZE;
         final Envelope extent = MERCATOR_EXTEND;
-                
+
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(GOOGLE_MERCATOR);
         upperLeft.setOrdinate(0, extent.getMinimum(0));
         upperLeft.setOrdinate(1, extent.getMaximum(1));
-        
+
         final double scale0Resolution = extent.getSpan(0) / BASE_TILE_SIZE;
-        
+
         for(int i=0; i<=maxScale; i++){
-            
+
             final int size = (int) Math.pow(2, i);
             final double scale = scale0Resolution / size;
-            
+
             final OSMTMSMosaic mosaic = new OSMTMSMosaic(
-                    pyramid, upperLeft, 
-                    new Dimension(size, size), 
+                    pyramid, upperLeft,
+                    new Dimension(size, size),
                     new Dimension(tileWidth,tileHeight),
                     scale,
                     i);
-            
+
             pyramid.getMosaicsInternal().add(mosaic);
         }
-        
-        getPyramids().add(pyramid);        
+
+        getPyramids().add(pyramid);
     }
 
     @Override
     protected OSMTileMapClient getServer() {
         return (OSMTileMapClient) server;
     }
-    
+
     @Override
     public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final GetTileRequest request = getServer().createGetTile();
         request.setScaleLevel( ((OSMTMSMosaic)mosaic).getScaleLevel() );
         request.setTileCol(col);
-        request.setTileRow(row);  
+        request.setTileRow(row);
         return request;
     }
 

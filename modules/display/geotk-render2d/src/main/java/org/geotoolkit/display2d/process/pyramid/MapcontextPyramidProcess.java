@@ -39,7 +39,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -137,10 +137,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         Pyramid pyramid = null;
         try {
             final Envelope clipEnv = ReferencingUtilities.intersectEnvelopes(ctxEnv, envelope);
-            final MathTransform destCRS_to_ctxCRS = CRS.findMathTransform(CRSUtilities.getCRS2D(destCRS), CRSUtilities.getCRS2D(ctxCRS), true);
+            final MathTransform destCRS_to_ctxCRS = CRS.findOperation(CRSUtilities.getCRS2D(destCRS), CRSUtilities.getCRS2D(ctxCRS), null).getMathTransform();
 
             for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
-                if (CRS.equalsApproximatively(destCRS, candidate.getCoordinateReferenceSystem())) {
+                if (org.geotoolkit.referencing.CRS.equalsApproximatively(destCRS, candidate.getCoordinateReferenceSystem())) {
                     pyramid = candidate;
                     break;
                 }

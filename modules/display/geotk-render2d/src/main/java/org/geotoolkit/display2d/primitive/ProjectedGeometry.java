@@ -29,7 +29,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -104,8 +104,8 @@ public class ProjectedGeometry  {
             if(dataCRS != null && this.dataCRS!=dataCRS){
                 this.dataCRS = dataCRS;
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
-                dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
-                dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
+                dataToObjective = (MathTransform2D) CRS.findOperation(dataCRS, params.context.getObjectiveCRS2D(), null).getMathTransform();
+                dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, params.displayCRS, null).getMathTransform();
             }
         } catch (Exception ex) {
             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);

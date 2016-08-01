@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.test.gui.ShapeTestBase;
 import org.geotoolkit.test.referencing.WKT;
@@ -79,7 +79,7 @@ public final strictfp class ProjectedShapeTest extends ShapeTestBase {
      */
     @Test
     public void testWithLambert() throws FactoryException, TransformException {
-        final ProjectedCRS crs = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        final ProjectedCRS crs = (ProjectedCRS) CRS.fromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
         final GeneralPath path = new GeneralPath();
         path.moveTo(10.000000f,  10.0000000f);
         path.lineTo(56.666667f,  -6.6666667f);

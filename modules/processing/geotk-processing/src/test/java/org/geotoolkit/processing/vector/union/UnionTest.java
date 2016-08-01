@@ -32,7 +32,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -79,7 +79,7 @@ public class UnionTest extends AbstractProcessTest {
 
         //Expected Features out
         final FeatureCollection featureListResult = buildResultList();
-        
+
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -90,8 +90,8 @@ public class UnionTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();
@@ -103,7 +103,7 @@ public class UnionTest extends AbstractProcessTest {
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
         ftb.add("color", String.class);
-        ftb.add("geom3", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom3", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("att", Integer.class);
 
         ftb.setDefaultGeometry("geom3");
@@ -117,7 +117,7 @@ public class UnionTest extends AbstractProcessTest {
         ftb.add("name", String.class);
         ftb.add("color", String.class);
         ftb.add("att", Integer.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();

@@ -53,7 +53,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.geotoolkit.referencing.CRS;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.MismatchedFeatureException;
@@ -328,7 +327,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
-        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geographic();
 
         FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
@@ -361,14 +360,14 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
+        retyped = GenericReprojectFeatureIterator.wrap(reader, CommonCRS.WGS84.geographic(), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"), new Hints());
+        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CommonCRS.WGS84.geographic(), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -702,7 +701,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         //build a reprojected type for reproject iterator
         builder.reset();
         builder.setName(NAME);
-        builder.add("att_geom", Point.class, CRS.decode("EPSG:4326"));
+        builder.add("att_geom", Point.class, CommonCRS.WGS84.geographic());
         builder.add("att_string", String.class);
         builder.add("att_double", Double.class);
         FeatureType reprojectedType = builder.buildSimpleFeatureType();

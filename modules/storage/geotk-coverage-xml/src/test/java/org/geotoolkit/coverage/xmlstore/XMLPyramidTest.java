@@ -25,12 +25,13 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Test XML Binding for {@link XMLPyramid} from different versions.
@@ -53,7 +54,7 @@ public class XMLPyramidTest extends org.geotoolkit.test.TestBase {
      */
     private static CoordinateReferenceSystem CRS_TEST;
     private static CoordinateReferenceSystem getCRSTest() throws FactoryException {
-        if (CRS_TEST == null) CRS_TEST = CRS.decode("EPSG:3395");
+        if (CRS_TEST == null) CRS_TEST = CRS.forCode("EPSG:3395");
         return CRS_TEST;
     }
 
@@ -107,7 +108,7 @@ public class XMLPyramidTest extends org.geotoolkit.test.TestBase {
         XMLOldPyramid oldPyram = new XMLOldPyramid(getCRSTest());
         save(oldPyram);
         XMLPyramid newPyram = read(getMainfile());
-        Assert.assertTrue(CRS.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
+        Assert.assertTrue(Utilities.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
     }
 
     /**
@@ -120,7 +121,7 @@ public class XMLPyramidTest extends org.geotoolkit.test.TestBase {
         final XMLSerializePyramid oldSerializedPyram = new XMLSerializePyramid(getCRSTest());
         save(oldSerializedPyram);
         final XMLPyramid newPyram = read(getMainfile());
-        Assert.assertTrue(CRS.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
+        Assert.assertTrue(Utilities.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
     }
 
     /**
@@ -137,6 +138,6 @@ public class XMLPyramidTest extends org.geotoolkit.test.TestBase {
         final XMLPyramid newPyram = read(getMainfile());
         final CoordinateReferenceSystem expectedCrs = getCRSTest();
         final CoordinateReferenceSystem resultCrs = newPyram.getCoordinateReferenceSystem();
-        Assert.assertTrue(CRS.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
+        Assert.assertTrue(Utilities.equalsIgnoreMetadata(getCRSTest(), newPyram.getCoordinateReferenceSystem()));
     }
 }

@@ -64,6 +64,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -239,7 +240,7 @@ public final class JTS {
         ArgumentChecks.ensureNonNull("crs", crs);
         final CoordinateReferenceSystem geomCrs = findCoordinateReferenceSystem(geom);
         if(geomCrs==null) return geom;
-        final MathTransform trs = org.geotoolkit.referencing.CRS.findMathTransform(geomCrs, crs);
+        final MathTransform trs = CRS.findOperation(geomCrs, crs, null).getMathTransform();
         return transform(geom, trs);
     }
 
@@ -312,14 +313,14 @@ public final class JTS {
      */
     public static Envelope toGeographic(final Envelope envelope, final CoordinateReferenceSystem crs)
             throws TransformException {
-        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
+        if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
             return envelope;
         }
 
         final MathTransform transform;
 
         try {
-            transform = org.geotoolkit.referencing.CRS.findMathTransform(crs, CommonCRS.WGS84.normalizedGeographic(), true);
+            transform = CRS.findOperation(crs, CommonCRS.WGS84.normalizedGeographic(), null).getMathTransform();
         } catch (FactoryException exception) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.CantTransformEnvelope, exception));
@@ -662,7 +663,7 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         } else if (srsName != null) {
             try {
-                crs = org.geotoolkit.referencing.CRS.decode(srsName);
+                crs = CRS.forCode(srsName);
             } catch (NoSuchAuthorityCodeException e) {
                 // e.printStackTrace();
             } catch (FactoryException e) {
@@ -800,7 +801,7 @@ public final class JTS {
             final int srid = geom.getSRID();
             if (srid != 0 && srid != -1) {
                 final String srs = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
-                crs = org.geotoolkit.referencing.CRS.decode(srs);
+                crs = CRS.forCode(srs);
             }
         }
         return crs;
@@ -1236,7 +1237,7 @@ public final class JTS {
         }
 
         //convert geometry
-        final MathTransform mt = org.geotoolkit.referencing.CRS.findMathTransform(crsGeom, crsTarget);
+        final MathTransform mt = CRS.findOperation(crsGeom, crsTarget, null).getMathTransform();
         final Geometry result = transform(geom, mt);
         setCRS(result, crsTarget);
 

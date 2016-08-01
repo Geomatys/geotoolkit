@@ -18,7 +18,7 @@ package org.geotoolkit.display2d;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -27,6 +27,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test Resolution class.
@@ -36,18 +38,18 @@ import org.opengis.util.FactoryException;
 public abstract class ResolutionCRSTest extends ResolutionTest {
 
     private final CoordinateReferenceSystem targetCrs;
-    private final CoordinateReferenceSystem crsBase = CRS.decode("EPSG:4326");
+    private final CoordinateReferenceSystem crsBase = CommonCRS.WGS84.geographic();
     protected final GeneralDirectPosition lowerCorner = new GeneralDirectPosition(crsBase);
     protected final GeneralDirectPosition upperCorner = new GeneralDirectPosition(crsBase);
 
     public ResolutionCRSTest(CoordinateReferenceSystem crs1, CoordinateReferenceSystem crs2, double[] res, double ratio) throws NoninvertibleTransformException, NoSuchAuthorityCodeException, FactoryException {
-        super(CRS.findMathTransform(crs1, crs2), res, ratio);
+        super(CRS.findOperation(crs1, crs2, null).getMathTransform(), res, ratio);
         targetCrs = crs2;
     }
 
     @Override
     protected void testFractEnvelope(Envelope envelopeDest) throws MismatchedDimensionException, TransformException {
-        super.testFractEnvelope(CRS.transform(envelopeDest, targetCrs));
+        super.testFractEnvelope(Envelopes.transform(envelopeDest, targetCrs));
     }
 
     /**

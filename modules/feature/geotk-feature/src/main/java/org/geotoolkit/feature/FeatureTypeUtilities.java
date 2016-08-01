@@ -41,7 +41,7 @@ import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.metadata.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.type.*;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -571,7 +571,7 @@ public final class FeatureTypeUtilities {
                         final String srid = h.split("=")[1];
                         Integer.parseInt(srid);
                         try {
-                            crs = CRS.decode("EPSG:" + srid);
+                            crs = CRS.forCode("EPSG:" + srid);
                         } catch (Exception e) {
                             final String msg = "Error decoding srs: " + srid;
                             throw new MismatchedFeatureException(msg, e);
@@ -1031,7 +1031,7 @@ public final class FeatureTypeUtilities {
         }
         return isSimple;
     }
-    
+
     /** Exact equality based on typeNames, namespace, attributes and ancestors */
     public static boolean equals(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {

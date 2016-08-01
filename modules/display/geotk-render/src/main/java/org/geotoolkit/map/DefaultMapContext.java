@@ -34,6 +34,8 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -69,12 +71,12 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         ensureNonNull("crs", crs);
 
         synchronized (this) {
-            if(CRS.equalsIgnoreMetadata(this.crs,crs)) return;
+            if(Utilities.equalsIgnoreMetadata(this.crs,crs)) return;
 
             if(this.area != null){
                 try {
                     //update the area of interest
-                    final Envelope newEnv = CRS.transform(area, crs);
+                    final Envelope newEnv = Envelopes.transform(area, crs);
                     setAreaOfInterest(newEnv);
                 } catch (TransformException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
@@ -115,10 +117,10 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param onlyVisible
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public Envelope getBounds(boolean onlyVisible) throws IOException {
@@ -128,16 +130,16 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         CoordinateReferenceSystem sourceCrs;
         for(final MapLayer layer : layers){
             if(onlyVisible && !layer.isVisible()) continue;
-            
+
             env = new GeneralEnvelope(layer.getBounds());
             sourceCrs = env.getCoordinateReferenceSystem();
 
             if (!env.isAllNaN()) {
 
                 boolean addToResult = false;
-                if ((sourceCrs != null) && (crs != null) && !CRS.equalsIgnoreMetadata(sourceCrs,crs)) {
+                if ((sourceCrs != null) && (crs != null) && !Utilities.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
-                        env = new GeneralEnvelope(CRS.transform(env, crs));
+                        env = new GeneralEnvelope(Envelopes.transform(env, crs));
                         addToResult = true;
                     } catch (TransformException e) {
                         LOGGER.log(Level.WARNING,

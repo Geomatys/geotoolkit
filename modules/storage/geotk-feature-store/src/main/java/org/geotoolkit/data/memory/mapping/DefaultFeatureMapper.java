@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -33,6 +33,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -49,14 +50,14 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     /**
      * Create a default mapping for properties with the same names.
-     * 
+     *
      * @param typeSource
-     * @param typeTarget 
+     * @param typeTarget
      */
     public DefaultFeatureMapper(final FeatureType typeSource, final FeatureType typeTarget) {
         this.typeSource = typeSource;
         this.typeTarget = typeTarget;
-        
+
         mapping = new HashMap<>();
         defaults = new HashMap<>();
 
@@ -66,9 +67,9 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 mapping.put(desc, Collections.singletonList(targetDesc));
             }
         }
-        
+
     }
-    
+
     public DefaultFeatureMapper(final FeatureType typeSource, final FeatureType typeTarget,
             final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping,
             final Map<PropertyDescriptor, Object> defaults) {
@@ -141,10 +142,10 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
                 final CoordinateReferenceSystem sourceCRS = sourceGeomDesc.getCoordinateReferenceSystem();
                 final CoordinateReferenceSystem targetCRS = targetGeomDesc.getCoordinateReferenceSystem();
-                if(!CRS.equalsIgnoreMetadata(sourceCRS,targetCRS)){
+                if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
-                        candidateGeom = JTS.transform(candidateGeom, CRS.findMathTransform(sourceCRS, targetCRS, true));
+                        candidateGeom = JTS.transform(candidateGeom, CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;

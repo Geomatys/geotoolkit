@@ -49,7 +49,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.processing.coverage.AbstractProcessTest;
@@ -213,7 +213,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
             }
         }
 
-        final CoordinateReferenceSystem crs2d = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem crs2d = CRS.forCode("EPSG:3395");
         AffineTransform2D gridToCRS;
         if (pixPos == PixelInCell.CELL_CENTER) {
             gridToCRS = new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5);
@@ -231,8 +231,8 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         final FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("FeatureCoverage");
-        typeBuilder.add("position", Point.class, CRS.decode("EPSG:3395"));
-        typeBuilder.add("cellgeom", Polygon.class, CRS.decode("EPSG:3395"));
+        typeBuilder.add("position", Point.class, CRS.forCode("EPSG:3395"));
+        typeBuilder.add("cellgeom", Polygon.class, CRS.forCode("EPSG:3395"));
         typeBuilder.add("orientation", String.class);
 
         for (int i = 0; i < 3; i++) {

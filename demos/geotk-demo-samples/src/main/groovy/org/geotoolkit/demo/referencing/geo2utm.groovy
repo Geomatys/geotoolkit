@@ -26,18 +26,18 @@ import java.text.DecimalFormat
 import org.opengis.geometry.DirectPosition
 import org.opengis.referencing.operation.MathTransform
 import org.opengis.referencing.crs.CoordinateReferenceSystem
-import org.geotoolkit.referencing.CRS
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS
-import org.geotoolkit.geometry.DirectPosition2D
-import org.geotoolkit.geometry.GeneralDirectPosition
+import org.apache.sis.referencing.CRS
+import org.apache.sis.referencing.crs.DefaultGeographicCRS
+import org.apache.sis.geometry.DirectPosition2D
+import org.apache.sis.geometry.GeneralDirectPosition
 
 def file = new File(args[0])
 
 // Get the MathTransform once for all before to loop over the lines.
 // The 3 first lines below are costly, so better to execute them only once.
-CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326")  // WGS84 (lat, lon)
-CoordinateReferenceSystem targetCRS = CRS.decode('EPSG:32610') // UTM Zone 10N
-MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS)
+CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:4326")  // WGS84 (lat, lon)
+CoordinateReferenceSystem targetCRS = CRS.forCode('EPSG:32610') // UTM Zone 10N
+MathTransform tr = CRS.findOperation(sourceCRS, targetCRS).getMathTransform();
 DirectPosition sourcePt   = new DirectPosition2D(sourceCRS)
 DirectPosition targetPt   = new DirectPosition2D(targetCRS)
 DirectPosition previousPt = new DirectPosition2D(targetCRS)

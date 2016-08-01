@@ -19,7 +19,7 @@ package org.geotoolkit.wmts;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -28,6 +28,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 /**
@@ -43,17 +44,16 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     GeneralEnvelope envelop;
 
     public WMTSUtilitiesTest() throws NoSuchAuthorityCodeException, FactoryException {
-        crs1 = CRS.decode("EPSG:3395");
-        crs2 = CRS.decode("EPSG:2154");
-        crs3 = CRS.decode("EPSG:3031");
-        crsGeo = CRS.decode("EPSG:4326");
-        crsLambertZ1 = CRS.decode("EPSG:27571");
-        crsLambertZ2 = CRS.decode("EPSG:27572");
-        crs84 = CRS.decode("CRS:84");
+        crs1 = CRS.forCode("EPSG:3395");
+        crs2 = CRS.forCode("EPSG:2154");
+        crs3 = CRS.forCode("EPSG:3031");
+        crsGeo = CommonCRS.WGS84.geographic();
+        crsLambertZ1 = CRS.forCode("EPSG:27571");
+        crsLambertZ2 = CRS.forCode("EPSG:27572");
+        crs84 = CommonCRS.defaultGeographic();
         envelop = new GeneralEnvelope(crsGeo);
         envelop.setRange(0, 0, 50);
         envelop.setRange(1, 40, 50);
-
     }
 
     /**

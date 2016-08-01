@@ -51,7 +51,6 @@ import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
@@ -63,6 +62,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -727,13 +727,13 @@ public class RenderingContext2D implements RenderingContext{
      * @return double[] of 2 dimensions
      */
     public double[] getResolution(final CoordinateReferenceSystem crs) {
-        if (CRS.equalsIgnoreMetadata(objectiveCRS, crs)) {
+        if (Utilities.equalsIgnoreMetadata(objectiveCRS, crs)) {
             return getResolution();
         } else {
             final double[] newRes = new double[2];
 
             assert resolution.length == 2 : "RenderingContext2D : Resolution array should have length equals to 2. Founded length : "+resolution.length;
-            assert CRS.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D";
+            assert Utilities.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D";
 
             try {
                 final CoordinateReferenceSystem target2DCRS = CRSUtilities.getCRS2D(crs);

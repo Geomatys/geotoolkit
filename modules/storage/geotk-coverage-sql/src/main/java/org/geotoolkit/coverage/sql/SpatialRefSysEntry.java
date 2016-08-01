@@ -270,14 +270,14 @@ final class SpatialRefSysEntry {
         SingleCRS sourceCRS = horizontalCRS;
         SingleCRS targetCRS = database.horizontalCRS;
         if (sourceCRS != null && targetCRS != null) {
-            toDatabaseHorizontalCRS = (MathTransform2D) org.geotoolkit.referencing.CRS.findMathTransform(sourceCRS, targetCRS, true);
+            toDatabaseHorizontalCRS = (MathTransform2D) CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         }
         sourceCRS = verticalCRS;
         targetCRS = database.verticalCRS;
         if (sourceCRS != null && targetCRS != null) {
             MathTransform tr;
             try {
-                tr = org.geotoolkit.referencing.CRS.findMathTransform(sourceCRS, targetCRS, true);
+                tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
             } catch (OperationNotFoundException e) {
                 final Matrix matrix;
                 try {

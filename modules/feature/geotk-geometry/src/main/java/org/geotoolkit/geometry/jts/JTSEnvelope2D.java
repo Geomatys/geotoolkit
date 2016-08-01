@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -37,6 +37,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 /**
  * A JTS envelope associated with a
@@ -268,7 +270,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
         if (crs != null) {
             final CoordinateReferenceSystem other = bbox.getCoordinateReferenceSystem();
             if (other != null) {
-                if (!CRS.equalsIgnoreMetadata(crs, other)) {
+                if (!Utilities.equalsIgnoreMetadata(crs, other)) {
                     throw new MismatchedReferenceSystemException(Errors.format(
                             Errors.Keys.MismatchedCoordinateReferenceSystem));
                 }
@@ -463,8 +465,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @return The transformed envelope.
      * @throws FactoryException if the math transform can't be determined.
      * @throws TransformException if at least one coordinate can't be transformed.
-     *
-     * @see CRS#transform(CoordinateOperation, org.opengis.geometry.Envelope)
      */
     public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS, final boolean lenient)
             throws TransformException, FactoryException {
@@ -486,8 +486,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @return The transformed envelope.
      * @throws FactoryException if the math transform can't be determined.
      * @throws TransformException if at least one coordinate can't be transformed.
-     *
-     * @see CRS#transform(CoordinateOperation, org.opengis.geometry.Envelope)
      *
      * @since 2.3
      */
@@ -512,7 +510,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
         CoordinateOperationFactory coordinateOperationFactory = CRS.getCoordinateOperationFactory(lenient);
 
         final CoordinateOperation operation = coordinateOperationFactory.createOperation(crs, targetCRS);
-        final GeneralEnvelope transformed = CRS.transform(operation, this);
+        final GeneralEnvelope transformed = Envelopes.transform(operation, this);
         transformed.setCoordinateReferenceSystem(targetCRS);
 
         /*

@@ -27,7 +27,6 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
-import org.geotoolkit.internal.io.JNDI;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
@@ -1002,13 +1001,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         } else if (EngineeringDatum.class.isAssignableFrom(type)) {
             object = PredefinedCRS.CARTESIAN_2D.getDatum(); // Unknown datum.
         } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
-            object = PredefinedCS.GEODETIC_2D;
+            object = CommonCRS.defaultGeographic().getCoordinateSystem();
         } else if (CartesianCS.class.isAssignableFrom(type)) {
             object = PredefinedCS.CARTESIAN_2D;
         } else if (GeographicCRS.class.isAssignableFrom(type)) {
             object = CommonCRS.WGS84.normalizedGeographic();
         } else if (GeocentricCRS.class.isAssignableFrom(type)) {
-            object = PredefinedCRS.GEOCENTRIC;
+            object = CommonCRS.WGS84.geocentric();
         } else {
             object = null;
         }

@@ -31,7 +31,7 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.StringUtilities;
@@ -49,6 +49,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -194,9 +195,9 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         //if we don't know the crs, we will assume it's the objective crs already
         if(candidateCrs != null){
             //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
+            if (!Utilities.equalsIgnoreMetadata(this.crs,candidateCrs)) {
                 try {
-                    candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
+                    candidate = JTS.transform(candidate, CRS.findOperation(candidateCrs, this.crs, null).getMathTransform());
                 } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
                     Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;

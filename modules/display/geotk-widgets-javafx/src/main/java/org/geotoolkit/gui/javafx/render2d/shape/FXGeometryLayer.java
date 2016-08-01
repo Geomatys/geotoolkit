@@ -54,10 +54,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  */
 public class FXGeometryLayer extends Pane implements FXMapDecoration{
-    
+
     private FXMap map;
     private final ObservableList<Geometry> geoms = FXCollections.observableArrayList();
-    
+
     private final PropertyChangeListener canvasListener = new PropertyChangeListener() {
 
         @Override
@@ -75,8 +75,8 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     public FXGeometryLayer() {
         geoms.addListener((ListChangeListener.Change<? extends Geometry> c) -> {
             updateGraphics();
-        });             
-        
+        });
+
         //clip content
         widthProperty().addListener(new ChangeListener(){
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -88,7 +88,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 setClip(new Rectangle(getWidth(), getHeight()));
             }
         });
-        
+
         //disable cache, may have many and large geometries
         setCache(false);
         setCacheShape(false);
@@ -101,14 +101,14 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     public Paint getFill() {
         return fill;
     }
-    
+
     public ObservableList<Geometry> getGeometries() {
         return geoms;
     }
-    
+
     private synchronized void updateGraphics(){
         final CoordinateReferenceSystem dispCrs = (map==null) ? null : map.getCanvas().getDisplayCRS();
-        
+
         final List<Node> shapes = new ArrayList<>();
         final List<Coordinate> coords = new ArrayList<>();
         //defensive copy
@@ -116,10 +116,10 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             if(geom==null) continue;
             try{
                 final CoordinateReferenceSystem geomcrs = CRS.getHorizontalComponent(JTS.findCoordinateReferenceSystem(geom));
-                if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(geomcrs, dispCrs)){
+                if(dispCrs==null || geomcrs==null || Utilities.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    geom = JTS.transform(geom, org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                    geom = JTS.transform(geom, CRS.findOperation(geomcrs, dispCrs, null).getMathTransform());
                 }
 
                 coords.addAll(Arrays.asList(geom.getCoordinates()));
@@ -132,7 +132,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         //create circles where there are points
         if(!coords.isEmpty()){
             final Group group = new Group();
@@ -154,10 +154,10 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             Geometry candidate = editGeom.geometry.get();
             try{
                 final CoordinateReferenceSystem geomcrs = CRS.getHorizontalComponent(JTS.findCoordinateReferenceSystem(candidate));
-                if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(geomcrs, dispCrs)){
+                if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.Utilities.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    candidate = JTS.transform(editGeom.geometry.get(), org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                    candidate = JTS.transform(editGeom.geometry.get(), org.geotoolkit.referencing.CRS.findOperation(geomcrs, dispCrs, null).getMathTransform());
                 }
             }catch(Exception ex){
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
@@ -178,14 +178,14 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         }
 
 
-        //JAVAFX BUG : 
+        //JAVAFX BUG :
         //getChildren().setAll(shapes);
         Platform.runLater(() -> {
             getChildren().setAll(shapes);
         });
-           
+
     }
-    
+
     protected Node createVerticeNode(Coordinate c, boolean selected){
         final Circle circle = new Circle(c.x, c.y, 5);
         circle.setFill(selected ? Color.BLUE : Color.WHITE);
@@ -209,7 +209,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         }
         this.map = map;
         if(this.map!=null){
-            this.map.getCanvas().addPropertyChangeListener(canvasListener);   
+            this.map.getCanvas().addPropertyChangeListener(canvasListener);
         }
     }
 
@@ -226,5 +226,5 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     public void setNodeSelection(EditionHelper.EditionGeometry editGeom) {
         this.editGeom = editGeom;
     }
-        
+
 }

@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.processing.util.converter.StringToFeatureTypeConverter;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
 
@@ -56,7 +56,7 @@ public class FeatureTypeConverterTest extends org.geotoolkit.test.TestBase {
         ftb.setName("Person");
         ftb.add("name", String.class);
         ftb.add("age",Integer.class);
-        ftb.add("position", Point.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Point.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("position");
         final FeatureType sft = ftb.buildFeatureType();

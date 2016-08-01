@@ -17,16 +17,13 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Set;
 import java.util.List;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.opengis.geometry.*;
-import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
@@ -38,7 +35,6 @@ import org.apache.sis.util.Version;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
@@ -47,9 +43,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -135,194 +129,6 @@ public final class CRS extends Static {
     }
 
     /**
-     * Gets the list of the codes that are supported by the given authority. For example
-     * {@code getSupportedCodes("EPSG")} may returns {@code "EPSG:2000"}, {@code "EPSG:2001"},
-     * {@code "EPSG:2002"}, <i>etc</i>. It may also returns {@code "2000"}, {@code "2001"},
-     * {@code "2002"}, <i>etc.</i> without the {@code "EPSG:"} prefix. Whatever the authority
-     * name is prefixed or not is factory implementation dependent.
-     * <p>
-     * If there is more than one factory for the given authority, then this method merges the
-     * code set of all of them. If a factory fails to provide a set of supported code, then
-     * this particular factory is ignored. Please be aware of the following potential issues:
-     * <p>
-     * <ul>
-     *   <li>If there is more than one EPSG databases (for example an Access and a PostgreSQL ones),
-     *       then this method will connect to all of them even if their content are identical.</li>
-     *
-     *   <li>If two factories format their codes differently (e.g. {@code "4326"} and
-     *       {@code "EPSG:4326"}), then the returned set will contain a lot of synonymous
-     *       codes.</li>
-     *
-     *   <li>For any code <var>c</var> in the returned set, there is no warranty that
-     *       <code>{@linkplain #decode decode}(c)</code> will use the same authority
-     *       factory than the one that formatted <var>c</var>.</li>
-     *
-     *   <li>This method doesn't report connection problems since it doesn't throw any exception.
-     *       {@link FactoryException}s are logged as warnings and otherwise ignored.</li>
-     * </ul>
-     * <p>
-     * If a more determinist behavior is wanted, consider the code below instead.
-     * The following code exploit only one factory, the "preferred" one.
-     *
-     * {@preformat java
-     *     factory = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
-     *     Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
-     *     String code = ...  // Choose a code here.
-     *     CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem(code);
-     * }
-     *
-     * @param  authority The authority name (for example {@code "EPSG"}).
-     * @return The set of supported codes. May be empty, but never null.
-     *
-     * @see AuthorityFactory#getAuthorityCodes(Class)
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.factory.MultiAuthoritiesFactory#getAuthorityCodes(Class)}.
-     */
-    @Deprecated
-    public static Set<String> getSupportedCodes(final String authority) { // LGPL
-        ensureNonNull("authority", authority);
-        try {
-            return org.apache.sis.referencing.CRS.getAuthorityFactory(authority)
-                    .getAuthorityCodes(CoordinateReferenceSystem.class);
-        } catch (FactoryException e) {
-            throw new RuntimeException(e);  // TODO
-        }
-    }
-
-    /**
-     * Returns a Coordinate Reference System for the specified code.
-     * Note that the code needs to mention the authority. Examples:
-     * <p>
-     * <ul>
-     *   <li>{@code EPSG:4326}</li>
-     *   <li>{@code AUTO:42001,9001,0,30}</li>
-     * </ul>
-     * <p>
-     * If there is more than one factory implementation for the same authority, then all additional
-     * factories are {@linkplain org.geotoolkit.referencing.factory.FallbackAuthorityFactory fallbacks}
-     * to be used only when the first acceptable factory failed to create the requested CRS object.
-     *
-     * {@section Common codes}
-     * A few commonly used codes are:
-     * <p>
-     * <ul>
-     *   <li>Geographic CRS:
-     *   <ul>
-     *     <li>WGS 84 (2D only): EPSG:4326</li>
-     *     <li>WGS 84 with ellipsoidal height: EPSG:4979</li>
-     *   </ul></li>
-     *   <li>Simple projected CRS:
-     *   <ul>
-     *     <li>Mercator: 3395</li>
-     *   </ul></li>
-     *   <li>Universal Transverse Mercator (UTM) projections:
-     *   <ul>
-     *     <li>WGS 84 (northern hemisphere): EPSG:32600 + <var>zone</var></li>
-     *     <li>WGS 84 (southern hemisphere): EPSG:32700 + <var>zone</var></li>
-     *     <li>WGS 72 (northern hemisphere): EPSG:32200 + <var>zone</var></li>
-     *     <li>WGS 72 (southern hemisphere): EPSG:32300 + <var>zone</var></li>
-     *     <li>NAD 83 (northern hemisphere): EPSG:26900 + <var>zone</var> (zone 1 to 23 only)</li>
-     *     <li>NAD 27 (northern hemisphere): EPSG:26700 + <var>zone</var> (zone 1 to 22 only)</li>
-     *   </ul></li>
-     * </ul>
-     *
-     * {@section Caching}
-     * CRS objects created by previous calls to this method are
-     * {@linkplain org.geotoolkit.referencing.factory.CachingAuthorityFactory cached}
-     * using {@linkplain java.lang.ref.WeakReference weak references}. Subsequent calls to this
-     * method with the same authority code should be fast, unless the CRS object has been garbage
-     * collected.
-     *
-     * @param  code The Coordinate Reference System authority code.
-     * @return The Coordinate Reference System for the provided code.
-     * @throws NoSuchAuthorityCodeException If the code could not be understood.
-     * @throws FactoryException if the CRS creation failed for an other reason.
-     *
-     * @see #getSupportedCodes(String)
-     * @see org.apache.sis.measure.Units#valueOfEPSG(int)
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     *
-     * @deprecated Moved to {@link org.apache.sis.referencing.CRS#forCode(String)}.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem decode(final String code)
-            throws NoSuchAuthorityCodeException, FactoryException
-    {
-        return org.apache.sis.referencing.CRS.forCode(code);
-    }
-
-    /**
-     * Returns a Coordinate Reference System for the specified code, maybe forcing the axis order
-     * to (<var>longitude</var>, <var>latitude</var>). The {@code code} argument value is parsed
-     * as in <code>{@linkplain #decode(String) decode}(code)</code>. The {@code longitudeFirst}
-     * argument is the value to be given to the {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
-     * FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint.
-     * <p>
-     * <b>Example:</b> by default, {@code CRS.decode("EPSG:4326")} returns a Geographic CRS with
-     * (<var>latitude</var>, <var>longitude</var>) axis order, while {@code CRS.decode("EPSG:4326", true)}
-     * returns the same CRS except for axis order, which is  (<var>longitude</var>, <var>latitude</var>).
-     *
-     * @param  code The Coordinate Reference System authority code.
-     * @param  longitudeFirst {@code true} if axis order should be forced to
-     *         (<var>longitude</var>, <var>latitude</var>), {@code false} if no order should
-     *         be forced (i.e. the standard specified by the authority is respected).
-     * @return The Coordinate Reference System for the provided code.
-     * @throws NoSuchAuthorityCodeException If the code could not be understood.
-     * @throws FactoryException if the CRS creation failed for an other reason.
-     *
-     * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
-     * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
-     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
-     *
-     * @category factory
-     * @since 2.3
-     *
-     * @deprecated "Longitude first factory" no longer supported. Use a standard factory instead,
-     *             and invoke AbstractCRS.forConvention(AxesConvention) if desired.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem decode(String code, final boolean longitudeFirst)
-            throws NoSuchAuthorityCodeException, FactoryException
-    {
-        CoordinateReferenceSystem crs = org.apache.sis.referencing.CRS.forCode(code);
-        if (longitudeFirst) {
-            crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
-        }
-        return crs;
-    }
-
-    /**
-     * Parses a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
-     * Known Text</cite></A> (WKT) into a CRS object. This convenience method is a
-     * shorthand for the following:
-     *
-     * {@preformat java
-     *     FactoryFinder.getCRSFactory(null).createFromWKT(wkt);
-     * }
-     *
-     * @param wkt The WKT string to parse.
-     * @return The parsed coordinate reference system.
-     * @throws FactoryException if the given WKT can't be parsed.
-     *
-     * @see Envelopes#parseWKT(String)
-     * @see CoordinateReferenceSystem#toWKT()
-     *
-     * @category factory
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.CRS#fromWKT(String)}.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
-        return org.apache.sis.referencing.CRS.fromWKT(wkt);
-    }
-
-    /**
      * Returns the domain of validity for the specified coordinate reference system,
      * or {@code null} if unknown. The returned envelope is expressed in terms of the
      * specified CRS.
@@ -367,7 +173,7 @@ public final class CRS extends Static {
                             if (candidate != null) {
                                 final CoordinateReferenceSystem sourceCRS =
                                         candidate.getCoordinateReferenceSystem();
-                                if (sourceCRS == null || equalsIgnoreMetadata(sourceCRS, crs)) {
+                                if (sourceCRS == null || Utilities.equalsIgnoreMetadata(sourceCRS, crs)) {
                                     if (envelope == null) {
                                         envelope = candidate;
                                     } else {
@@ -404,7 +210,7 @@ public final class CRS extends Static {
                     merged.translate(-org.apache.sis.referencing.CRS.getGreenwichLongitude(sourceCRS), 0);
                     merged.setCoordinateReferenceSystem(sourceCRS);
                     try {
-                        envelope = transform(envelope, targetCRS);
+                        envelope = Envelopes.transform(envelope, targetCRS);
                     } catch (TransformException exception) {
                         /*
                          * The envelope is probably outside the range of validity for this CRS.
@@ -419,64 +225,6 @@ public final class CRS extends Static {
             }
         }
         return envelope;
-    }
-
-    /**
-     * Returns {@code true} if the given CRS is horizontal. This method is provided because there is
-     * a direct way to determine if a CRS is vertical or temporal, but no direct way to determine if
-     * it is horizontal. So this method complements the check for spatio-temporal components as below:
-     * <p>
-     * <ul>
-     *   <li>{@code if (crs instanceof TemporalCRS)} determines if the CRS is for the temporal component.</li>
-     *   <li>{@code if (crs instanceof VerticalCRS)} determines if the CRS is for the vertical component.</li>
-     *   <li>{@code if (CRS.isHorizontalCRS(crs))} determines if the CRS is for the horizontal component.</li>
-     * </ul>
-     * <p>
-     * This method considers a CRS as horizontal if it is two-dimensional and comply
-     * with one of the following conditions:
-     * <p>
-     * <ul>
-     *   <li>It is an instance of {@link GeographicCRS}.</li>
-     *   <li>It is an instance of {@link ProjectedCRS} (actually this is not explicitly
-     *       checked, since this condition is a special case of the condition below).</li>
-     *   <li>It is an instance of {@link GeneralDerivedCRS} based on a horizontal CRS
-     *       and using a {@link GeodeticDatum}.</li>
-     * </ul>
-     * <p>
-     * The last condition ({@code GeneralDerivedCRS} based on a horizontal CRS) allows for example
-     * to express the coordinates of a projected CRS (which use a Cartesian coordinate system) in
-     * a {@linkplain org.opengis.referencing.cs.PolarCS polar coordinate system} and still consider
-     * the result as horizontal. However this assumes that the axes of the derived CRS are coplanar
-     * with the axes of the base CRS. This is not always true since a derived CRS could be created
-     * for an inclined plane, for example a plane fitting the slope of a mountain. ISO 19111 does
-     * not specify how to handle this case. In the Geotk implementation, we suggest to define a new
-     * {@linkplain Datum datum} for inclined plane which is not a geodetic datum.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return {@code true} if the given CRS is non-null and comply with one of the above
-     *         conditions, or {@code false} otherwise.
-     *
-     * @category information
-     * @since 3.05
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class,
-     *             with a more conservative semantic.
-     */
-    @Deprecated
-    public static boolean isHorizontalCRS(CoordinateReferenceSystem crs) {
-        if (crs instanceof SingleCRS) {
-            final int dimension = crs.getCoordinateSystem().getDimension();
-            if (dimension == 2) {
-                final Datum datum = ((SingleCRS) crs).getDatum();
-                if (datum instanceof GeodeticDatum) {
-                    while (crs instanceof GeneralDerivedCRS) {
-                        crs = ((GeneralDerivedCRS) crs).getBaseCRS();
-                    }
-                    return (crs instanceof GeographicCRS);
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -730,48 +478,6 @@ compare:    for (final SingleCRS component : actualComponents) {
     /////////////////////////////////////////////////
 
     /**
-     * Compares the specified objects for equality, ignoring metadata. If this method returns
-     * {@code true}, then:
-     *
-     * <ul>
-     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming
-     *       a set of coordinate values using one transform will produce the same results than
-     *       transforming the same coordinates with the other transform.</p></li>
-     *
-     *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
-     *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
-     *       CoordinateReferenceSystem) findMathTransform}(crs1, crs2)</code> will return
-     *       an identity transform.</p></li>
-     * </ul>
-     *
-     * If a more lenient comparison - allowing slight differences in numerical values - is wanted,
-     * then {@link #equalsApproximatively(Object, Object)} can be used instead.
-     *
-     * {@section Implementation note}
-     * This is a convenience method for the following method call:
-     *
-     * {@preformat java
-     *     return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
-     * }
-     *
-     * @param  object1 The first object to compare (may be null).
-     * @param  object2 The second object to compare (may be null).
-     * @return {@code true} if both objects are equal, ignoring metadata.
-     *
-     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#IGNORE_METADATA
-     *
-     * @category information
-     * @since 2.2
-     *
-     * @deprecated Moved to Apache SIS {@link Utilities} class.
-     */
-    @Deprecated
-    public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
-        return Utilities.equalsIgnoreMetadata(object1, object2);
-    }
-
-    /**
      * Compares the specified objects for equality, ignoring metadata and slight differences
      * in numerical values. If this method returns {@code true}, then:
      *
@@ -805,243 +511,6 @@ compare:    for (final SingleCRS component : actualComponents) {
      */
     public static boolean equalsApproximatively(final Object object1, final Object object2) {
         return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
-    }
-
-    /**
-     * Grabs a transform between two Coordinate Reference Systems. This convenience method is a
-     * shorthand for the following:
-     *
-     * {@preformat java
-     *     CoordinateOperationFactory factory = FactoryFinder.getCoordinateOperationFactory(null);
-     *     CoordinateOperation operation = factory.createOperation(sourceCRS, targetCRS);
-     *     MathTransform transform = operation.getMathTransform();
-     * }
-     *
-     * Note that some metadata like {@linkplain CoordinateOperation#getCoordinateOperationAccuracy
-     * coordinate operation accuracy} are lost by this method. If those metadata are wanted, use the
-     * {@linkplain CoordinateOperationFactory coordinate operation factory} directly.
-     * <p>
-     * Sample use:
-     *
-     * {@preformat java
-     *     CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:42102");
-     *     CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
-     *     MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-     * }
-     *
-     * @param  sourceCRS The source CRS.
-     * @param  targetCRS The target CRS.
-     * @return The math transform from {@code sourceCRS} to {@code targetCRS}.
-     * @throws FactoryException If no math transform can be created for the specified source and
-     *         target CRS.
-     *
-     * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
-     *
-     * @category transform
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
-     */
-    // LGPL - we will define findOperation instead.
-    @Deprecated
-    public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
-                                                  final CoordinateReferenceSystem targetCRS)
-            throws FactoryException
-    {
-        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
-    }
-
-    /**
-     * Grab a transform between two Coordinate Reference Systems.
-     *
-     * @param  sourceCRS The source CRS.
-     * @param  targetCRS The target CRS.
-     * @param  lenient ignored.
-     * @return The math transform from {@code sourceCRS} to {@code targetCRS}.
-     * @throws FactoryException If no math transform can be created for the specified source and
-     *         target CRS.
-     *
-     * @see Hints#LENIENT_DATUM_SHIFT
-     * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
-     *
-     * @category transform
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
-     */
-    @Deprecated
-    public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
-                                                  final CoordinateReferenceSystem targetCRS,
-                                                  boolean lenient) // LGPL
-            throws FactoryException
-    {
-        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
-    }
-
-    /**
-     * Grab a transform between two Coordinate Reference Systems for the given area of interest.
-     * This method may returns a more accurate transform than {@link #findMathTransform(CoordinateReferenceSystem,
-     * CoordinateReferenceSystem, boolean)} for that area in some cases.
-     *
-     * @param  sourceCRS The source CRS.
-     * @param  targetCRS The target CRS.
-     * @param  areaOfInterest The geographic area of interest.
-     * @param  lenient ignored.
-     * @return The math transform from {@code sourceCRS} to {@code targetCRS} in the given area of interest.
-     * @throws FactoryException If no math transform can be created for the specified source and target CRS.
-     *
-     * @since 4.0-M2
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class as {@code findOperation}.
-     */
-    @Deprecated
-    public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
-                                                  final CoordinateReferenceSystem targetCRS,
-                                                  final GeographicBoundingBox areaOfInterest,
-                                                  boolean lenient)
-            throws FactoryException
-    {
-        return org.apache.sis.referencing.CRS.findOperation(sourceCRS, targetCRS, areaOfInterest).getMathTransform();
-    }
-
-    // Note: the above 4 transform methods simply delegate their work to the Envelopes class.
-    // We keep those methods mostly for historical reasons.  Some Geotk code still reference
-    // those methods instead than Envelopes. We do that when the CRS class is used anyway so
-    // there is no advantage to reference one more class.
-
-    /**
-     * Transforms the given envelope to the specified CRS. If any argument is null, or if the
-     * {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} is null or the same
-     * instance than the given target CRS, then the given envelope is returned unchanged.
-     * Otherwise a new transformed envelope is returned.
-     * <p>
-     * See {@link Envelopes#transform(Envelope, CoordinateReferenceSystem)} for more information.
-     * This method delegates its work to the above-cited {@code Envelopes} class and is defined
-     * in this {@code CRS} class only for convenience.
-     *
-     * @param  envelope The envelope to transform (may be {@code null}).
-     * @param  targetCRS The target CRS (may be {@code null}).
-     * @return A new transformed envelope, or directly {@code envelope} if no change was required.
-     * @throws TransformException If a transformation was required and failed.
-     *
-     * @category transform
-     * @since 2.5
-     *
-     * @deprecated Moved to Apache SIS {@link Envelopes} class.
-     */
-    @Deprecated
-    public static Envelope transform(Envelope envelope, final CoordinateReferenceSystem targetCRS)
-            throws TransformException
-    {
-        return Envelopes.transform(envelope, targetCRS);
-    }
-
-    /**
-     * Transforms an envelope using the given {@linkplain MathTransform math transform}.
-     * The transformation is only approximative: the returned envelope may be bigger than
-     * necessary, or smaller than required if the bounding box contains a pole.
-     * <p>
-     * See {@link Envelopes#transform(MathTransform, Envelope)} for more information.
-     * This method delegates its work to the above-cited {@code Envelopes} class and
-     * is defined in this {@code CRS} class only for convenience.
-     *
-     * @param  transform The transform to use.
-     * @param  envelope Envelope to transform, or {@code null}. This envelope will not be modified.
-     * @return The transformed envelope, or {@code null} if {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @category transform
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link Envelopes} class.
-     */
-    @Deprecated
-    public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
-            throws TransformException
-    {
-        return Envelopes.transform(transform, envelope);
-    }
-
-    /**
-     * Transforms an envelope using the given {@linkplain CoordinateOperation coordinate operation}.
-     * The transformation is only approximative: the returned envelope may be bigger than the
-     * smallest possible bounding box, but should not be smaller in most cases.
-     * <p>
-     * See {@link Envelopes#transform(CoordinateOperation, Envelope)} for more information.
-     * This method delegates its work to the above-cited {@code Envelopes} class and is defined
-     * in this {@code CRS} class only for convenience.
-     *
-     * @param  operation The operation to use.
-     * @param  envelope Envelope to transform, or {@code null}. This envelope will not be modified.
-     * @return The transformed envelope, or {@code null} if {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @category transform
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link Envelopes} class.
-     */
-    @Deprecated
-    public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
-            throws TransformException
-    {
-        return Envelopes.transform(operation, envelope);
-    }
-
-    /**
-     * Transforms a rectangular envelope using the given {@linkplain MathTransform math transform}.
-     * The transformation is only approximative: the returned envelope may be bigger than
-     * necessary, or smaller than required if the bounding box contains a pole.
-     * <p>
-     * See {@link Envelopes#transform(MathTransform2D, Rectangle2D, Rectangle2D)} for more
-     * information. This method delegates its work to the above-cited {@code Envelopes} class
-     * and is defined in this {@code CRS} class only for convenience.
-     *
-     * @param  transform   The transform to use. Source and target dimension must be 2.
-     * @param  envelope    The rectangle to transform (may be {@code null}).
-     * @param  destination The destination rectangle (may be {@code envelope}).
-     *         If {@code null}, a new rectangle will be created and returned.
-     * @return {@code destination}, or a new rectangle if {@code destination} was non-null
-     *         and {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @category transform
-     * @since 2.4
-     */
-    // See the above comment about why some Geotk code still reference this method.
-    public static Rectangle2D transform(final MathTransform2D transform,
-                                        final Rectangle2D     envelope,
-                                              Rectangle2D     destination)
-            throws TransformException
-    {
-        return org.geotoolkit.geometry.Envelopes.transform(transform, envelope, destination);
-    }
-
-    /**
-     * Transforms a rectangular envelope using the given {@linkplain CoordinateOperation coordinate
-     * operation}. The transformation is only approximative: the returned envelope may be bigger
-     * than the smallest possible bounding box, but should not be smaller in most cases.
-     * <p>
-     * See {@link Envelopes#transform(CoordinateOperation, Rectangle2D, Rectangle2D)} for more
-     * information. This method delegates its work to the above-cited {@code Envelopes} class
-     * and is defined in this {@code CRS} class only for convenience.
-     *
-     * @param  operation The operation to use. Source and target dimension must be 2.
-     * @param  envelope The rectangle to transform (may be {@code null}).
-     * @param  destination The destination rectangle (may be {@code envelope}).
-     *         If {@code null}, a new rectangle will be created and returned.
-     * @return {@code destination}, or a new rectangle if {@code destination} was non-null
-     *         and {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @category transform
-     * @since 2.4
-     */
-    // See the above comment about why some Geotk code still reference this method.
-    public static Rectangle2D transform(final CoordinateOperation operation,
-                                        final Rectangle2D         envelope,
-                                              Rectangle2D         destination)
-            throws TransformException
-    {
-        return org.geotoolkit.geometry.Envelopes.transform(operation, envelope, destination);
     }
 
     /**
@@ -1098,7 +567,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * i.e. the caller <strong>must</strong> have a reasonable fallback (otherwise it
      * should propagate the exception).
      */
-    static void unexpectedException(final String methodName, final Exception exception) {
+    private static void unexpectedException(final String methodName, final Exception exception) {
         Logging.unexpectedException(null, CRS.class, methodName, exception);
     }
 }

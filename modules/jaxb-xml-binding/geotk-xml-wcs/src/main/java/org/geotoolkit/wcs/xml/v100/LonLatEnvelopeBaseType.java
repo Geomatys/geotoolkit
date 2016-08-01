@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -71,7 +71,7 @@ public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         try {
-            return CRS.decode(getSrsName());
+            return CRS.forCode(getSrsName());
         } catch (FactoryException ex) {
             Logging.getLogger("org.geotoolkit.wcs.xml.v100").log(Level.SEVERE, null, ex);
         }

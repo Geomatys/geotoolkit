@@ -30,9 +30,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -42,6 +40,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 /**
  * Manipulate a SceneDef as a CoverageReader.
@@ -121,7 +121,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
             crs = paramEnv.getCoordinateReferenceSystem();
         }else if(crs != null && paramEnv != null){
             //check the envelope crs matches given crs
-            if(!CRS.equalsIgnoreMetadata(paramEnv.getCoordinateReferenceSystem(),crs)){
+            if(!Utilities.equalsIgnoreMetadata(paramEnv.getCoordinateReferenceSystem(),crs)){
                 throw new CoverageStoreException("Invalid parameters : envelope crs do not match given crs.");
             }
         }else if(paramEnv != null){
@@ -131,7 +131,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
             //use the given crs
             paramEnv = getGridGeometry(0).getEnvelope();
             try {
-                paramEnv = CRS.transform(paramEnv, crs);
+                paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
             }

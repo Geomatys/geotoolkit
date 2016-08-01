@@ -22,8 +22,10 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.TestBase;
+import org.apache.sis.geometry.Envelopes;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -36,7 +38,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Martin Desruisseaux (Geomatys)
  */
 @DependsOn(CRS_WithEpsgTest.class)
-public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
+public final strictfp class CRS_WithGridTest extends TestBase {
     /**
      * Tests transformation NADCON grids.
      *
@@ -52,11 +54,11 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
         final DirectPosition2D sourcePt, targetPt;
         final CoordinateReferenceSystem sourceCRS, targetCRS;
 
-        sourceCRS = CRS.decode("EPSG:26769"); // NAD27 Idaho, in feets.
-        targetCRS = CRS.decode("EPSG:26969"); // NAD83 Idaho, in metres.
+        sourceCRS = CRS.forCode("EPSG:26769"); // NAD27 Idaho, in feets.
+        targetCRS = CRS.forCode("EPSG:26969"); // NAD83 Idaho, in metres.
         sourcePt  = new DirectPosition2D(30000.0, 40000.0);
         targetPt  = new DirectPosition2D();
-        tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
         assertSame(targetPt, tr.transform(sourcePt, targetPt));
 
         assertEquals(356671.38, targetPt.x, 1E-2);
@@ -78,11 +80,11 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
         assumeTrue(false /*Files.isDirectory(Installation.NADCON.directory(true))*/);
         assumeTrue(false /*isEpsgFactoryAvailable()*/);
 
-        final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993
-        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:27582"); // Nouvelle Triangulation Française (Paris)
+        final CoordinateReferenceSystem sourceCRS = CRS.forCode("EPSG:2154");  // Réseau Géodésique Français 1993
+        final CoordinateReferenceSystem targetCRS = CRS.forCode("EPSG:27582"); // Nouvelle Triangulation Française (Paris)
         final GeneralEnvelope source = new GeneralEnvelope("BOX(-2000000 4000000, 2000000 4000000)");
         source.setCoordinateReferenceSystem(sourceCRS);
-        final Envelope target = CRS.transform(source, targetCRS);
+        final Envelope target = Envelopes.transform(source, targetCRS);
 
         assertEquals(-2033792.23, target.getMinimum(0), 1E-2);
         assertEquals( 1976167.67, target.getMaximum(0), 1E-2);

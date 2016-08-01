@@ -74,7 +74,7 @@ public class GeoJSONCRS implements Serializable {
 
     public CoordinateReferenceSystem getCRS() throws FactoryException, MalformedURLException {
         if (type.equals(CRS_NAME)) {
-            return org.geotoolkit.referencing.CRS.decode(properties.get(NAME));
+            return org.apache.sis.referencing.CRS.forCode(properties.get(NAME));
         } else if (type.equals(CRS_LINK)) {
             final String href = properties.get(HREF);
             final String crsType = properties.get(TYPE);

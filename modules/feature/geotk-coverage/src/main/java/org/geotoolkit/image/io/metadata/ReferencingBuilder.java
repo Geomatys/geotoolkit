@@ -38,7 +38,6 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -53,6 +52,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -312,7 +312,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 } else if (ProjectedCRS.class.isAssignableFrom(type)) {
                     final GeographicCRS baseCRS = factory.createGeographicCRS(
                             Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
-                            getDatum(GeodeticDatum.class), PredefinedCS.GEODETIC_2D);
+                            getDatum(GeodeticDatum.class), CommonCRS.defaultGeographic().getCoordinateSystem());
                     final CartesianCS derivedCS = getCoordinateSystem(CartesianCS.class);
                     return baseType.cast(factory.createProjectedCRS(properties, baseCRS,
                             getConversionFromBase(baseCRS, derivedCS), derivedCS));

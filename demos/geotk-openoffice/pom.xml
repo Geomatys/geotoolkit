@@ -12,9 +12,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit</groupId>
+    <groupId>org.geotoolkit.demo</groupId>
     <artifactId>demos</artifactId>
-    <version>4.x-SNAPSHOT</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
 
@@ -70,7 +70,7 @@
   <!-- ===========================================================
            Dependency Management
            We must declare transitive dependencies explicitely,
-           otherwise they will not be included by geotk-unopkg.
+           otherwise they will not be included by sis-unopkg.
        =========================================================== -->
   <dependencies>
     <dependency>
@@ -84,10 +84,6 @@
     <dependency>
       <groupId>java3d</groupId>
       <artifactId>vecmath</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.jcip</groupId>
-      <artifactId>jcip-annotations</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
@@ -159,9 +155,9 @@
 
       <!-- Create the oxt file. -->
       <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-unopkg</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-build-helper</artifactId>
+        <version>${sis.version}</version>
         <configuration>
           <oxtName>geotk-${project.version}</oxtName>
           <pack200>true</pack200>

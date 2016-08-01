@@ -43,7 +43,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 
 import org.opengis.util.GenericName;
@@ -411,7 +411,7 @@ public class OGC110toGTTransformer {
         DirectPositionType lower = entry.getLowerCorner();
         DirectPositionType upper = entry.getUpperCorner();
 
-        GeneralEnvelope genv = new GeneralEnvelope(CRS.decode(srs));
+        GeneralEnvelope genv = new GeneralEnvelope(CRS.forCode(srs));
         genv.setRange(0, lower.getOrdinate(0), upper.getOrdinate(0));
         genv.setRange(1, lower.getOrdinate(1), upper.getOrdinate(1));
 

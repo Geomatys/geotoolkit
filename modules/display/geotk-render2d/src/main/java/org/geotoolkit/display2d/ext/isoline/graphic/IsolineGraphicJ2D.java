@@ -48,7 +48,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.processing.ProcessListenerAdapter;
 import org.geotoolkit.processing.coverage.kriging.KrigingDescriptor;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.feature.Feature;
@@ -57,6 +56,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.geometry.Envelopes;
 
 /**
  *
@@ -92,7 +92,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     public void setIsoLineStyle(final MutableStyle isoLineStyle) {
         this.isoLineStyle = isoLineStyle;
     }
-    
+
     public void setIsoPointStyle(final MutableStyle isoPointStyle) {
         this.isoPointStyle = isoPointStyle;
     }
@@ -104,7 +104,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     public MutableStyle getIsoLineStyle() {
         return isoLineStyle;
     }
-    
+
     public MutableStyle getIsoPointStyle() {
         return isoPointStyle;
     }
@@ -124,9 +124,9 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         if (!item.isVisible()) {
             return;
         }
-        
+
         final CanvasMonitor monitor = context.getMonitor();
-        
+
         final Graphics2D g2 = context.getGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -140,7 +140,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
 
         double minx = Double.NaN;
         double miny = Double.NaN;
@@ -167,26 +167,26 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }finally {
                 iterator.close();
             }
-            
+
             if(coordinates.isEmpty()){
                 //nothing to render
                 return;
             }
-            
+
             final CoordinateReferenceSystem crs = collection.getFeatureType().getCoordinateReferenceSystem();
-            
+
             final GeneralEnvelope env = new GeneralEnvelope(crs);
             env.setRange(0, minx, maxx);
             env.setRange(1, miny, maxy);
-            final Envelope objenv = CRS.transform(env, context.getObjectiveCRS2D());
+            final Envelope objenv = Envelopes.transform(env, context.getObjectiveCRS2D());
             final double[] res = context.getResolution();
-                        
+
             if(objenv.getSpan(0) <= res[0]*8 || objenv.getSpan(1) <= res[1]*8){
                 //envelope is too small, do not paint
                 return;
             }
-            
-            
+
+
             final ProcessListener redirect = new ProcessListenerAdapter(){
                 @Override
                 public void failed(ProcessEvent event) {
@@ -201,7 +201,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     }
                 }
             };
-            
+
             final ProcessDescriptor desc = KrigingDescriptor.INSTANCE;
             final ParameterValueGroup input = desc.getInputDescriptor().createValue();
             Parameters.getOrCreate(KrigingDescriptor.IN_POINTS, input)
@@ -213,7 +213,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             Parameters.getOrCreate(KrigingDescriptor.IN_DIMENSION, input)
                     .setValue(new Dimension(150, 150));
             final Process p = desc.createProcess(input);
-            
+
             p.addListener(redirect);
             final ParameterValueGroup output;
             try {
@@ -224,8 +224,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }
             final GridCoverage2D coverage = Parameters.value(KrigingDescriptor.OUT_COVERAGE, output);
             final FeatureCollection isolines = Parameters.value(KrigingDescriptor.OUT_LINES, output);
-            
-            if(coverage != null){            
+
+            if(coverage != null){
                 if(interpolateCoverageColor){
                     //paint with the black and white palette
                     try {
@@ -241,13 +241,13 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     graphic.paint(context);
                 }
             }
-            
+
             if(isolines != null && isoLineStyle != null){
                 final FeatureMapLayer flayer = MapBuilder.createFeatureLayer(isolines, isoLineStyle);
                 final StatelessFeatureLayerJ2D graphic = new StatelessFeatureLayerJ2D(getCanvas(), flayer);
                 graphic.paint(context);
             }
-            
+
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
         } catch (FeatureStoreRuntimeException ex) {

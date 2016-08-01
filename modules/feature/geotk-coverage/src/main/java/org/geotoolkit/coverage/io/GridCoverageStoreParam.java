@@ -30,12 +30,12 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.util.Cloneable;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
+import org.apache.sis.util.Utilities;
 import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
 
@@ -128,7 +128,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
     {
         if (crs != null && envelope != null) {
             final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
-            if (envelopeCRS != null && !CRS.equalsIgnoreMetadata(crs, envelopeCRS)) {
+            if (envelopeCRS != null && !Utilities.equalsIgnoreMetadata(crs, envelopeCRS)) {
                 throw new MismatchedReferenceSystemException(Errors.format(
                         Errors.Keys.MismatchedCoordinateReferenceSystem));
             }

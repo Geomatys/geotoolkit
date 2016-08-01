@@ -69,7 +69,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
@@ -109,6 +109,8 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  *
@@ -606,7 +608,7 @@ public class OracleDialect extends AbstractSQLDialect{
         CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
         if (crs == null && srid!=0) {
             try {
-                crs = CRS.decode("EPSG:" + srid,true);
+                crs = AbstractCRS.castOrCopy(CRS.forCode("EPSG:" + srid)).forConvention(AxesConvention.RIGHT_HANDED);
                 CRS_CACHE.put(srid, crs);
             } catch(Exception e) {
                 if(featurestore.getLogger().isLoggable(Level.FINE)) {
@@ -646,7 +648,7 @@ public class OracleDialect extends AbstractSQLDialect{
             } else {
                 return null;
             }
-            
+
         }else{
             if(String.class.equals(binding)){
                 //solve nclob string

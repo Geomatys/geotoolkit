@@ -51,6 +51,8 @@ import org.geotoolkit.wcs.xml.GetCoverage;
 import org.geotoolkit.wcs.xml.StringUtilities;
 import org.geotoolkit.wcs.xml.InterpolationMethod;
 import org.geotoolkit.wcs.xml.DomainSubset;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -180,7 +182,7 @@ public class GetCoverageType implements GetCoverage {
             return null;
         }
         final BoundingBoxType boundingBox = domainSubset.getBoundingBox().getValue();
-        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(boundingBox.getCrs(), true);
+        final CoordinateReferenceSystem objCrs = AbstractCRS.castOrCopy(CRS.forCode(boundingBox.getCrs())).forConvention(AxesConvention.RIGHT_HANDED);
 
         //final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
@@ -258,7 +260,7 @@ public class GetCoverageType implements GetCoverage {
         {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(
+        final CoordinateReferenceSystem objCrs = CRS.forCode(
                 output.getGridCRS().getSrsName().getValue());
         final BoundingBoxType boundingBox = domainSubset.getBoundingBox().getValue();
 

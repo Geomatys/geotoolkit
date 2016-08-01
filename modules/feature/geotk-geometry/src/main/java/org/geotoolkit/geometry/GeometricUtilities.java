@@ -26,11 +26,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.opengis.geometry.DirectPosition;
@@ -39,11 +40,12 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * A utility class containing methods to manipulate geometries.
@@ -617,21 +619,20 @@ public class GeometricUtilities {
      * @throws org.opengis.referencing.operation.TransformException
      */
     public static Object reprojectGeometry(final String targetCRSName, final String sourceCRSName, final Object geometry) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
-        final CoordinateReferenceSystem targetCRS = CRS.decode(targetCRSName,true);
-        final CoordinateReferenceSystem sourceCRS = CRS.decode(sourceCRSName,true);
+        final CoordinateReferenceSystem targetCRS = AbstractCRS.castOrCopy(CRS.forCode(targetCRSName)).forConvention(AxesConvention.RIGHT_HANDED);
+        final CoordinateReferenceSystem sourceCRS = AbstractCRS.castOrCopy(CRS.forCode(sourceCRSName)).forConvention(AxesConvention.RIGHT_HANDED);
 
         if (geometry instanceof GeneralEnvelope) {
             final GeneralEnvelope env = (GeneralEnvelope) geometry;
             if (env.getCoordinateReferenceSystem() == null) {
                 env.setCoordinateReferenceSystem(sourceCRS);
             }
-            return CRS.transform((GeneralEnvelope) geometry, targetCRS);
+            return Envelopes.transform((GeneralEnvelope) geometry, targetCRS);
 
         } else if (geometry instanceof GeneralDirectPosition) {
-            final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
             final CoordinateOperation operation;
             try {
-                operation = factory.createOperation(sourceCRS, targetCRS);
+                operation = CRS.findOperation(sourceCRS, targetCRS, null);
             } catch (FactoryException exception) {
                 throw new TransformException("transform exception: " + exception.getMessage());
             }
@@ -645,10 +646,9 @@ public class GeometricUtilities {
             final GeneralDirectPosition pt1 = new GeneralDirectPosition(line.getX1(), line.getY1());
             final GeneralDirectPosition pt2 = new GeneralDirectPosition(line.getX2(), line.getY2());
 
-            final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
             final CoordinateOperation operation;
             try {
-                operation = factory.createOperation(sourceCRS, targetCRS);
+                operation = CRS.findOperation(sourceCRS, targetCRS, null);
             } catch (FactoryException exception) {
                 throw new TransformException("transform exception: " + exception.getMessage());
             }
@@ -681,7 +681,7 @@ public class GeometricUtilities {
       double[] lowerCorner ={Double.parseDouble(bbox[1]),Double.parseDouble(bbox[0])};
       double[] upperCorner ={Double.parseDouble(bbox[3]),Double.parseDouble(bbox[2])};
       GeneralEnvelope env = new GeneralEnvelope(lowerCorner,upperCorner);
-      env.setCoordinateReferenceSystem( CRS.decode(sourceCRSName,true));
+      env.setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode(sourceCRSName)).forConvention(AxesConvention.RIGHT_HANDED));
       env = (GeneralEnvelope) reprojectGeometry(targetCRSName, sourceCRSName, env);
       lowerCorner = env.getLowerCorner().getCoordinate();
       upperCorner = env.getUpperCorner().getCoordinate();

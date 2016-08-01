@@ -28,12 +28,13 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Utilities;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
@@ -104,7 +105,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          * which has been initialized to the current locale and is not refreshed after the call
          * to Locale.setDefault(Locale.FRANCE).
          */
-        final String localizedName = PredefinedCS.GEODETIC_2D.getName().getCode();
+        final String localizedName = CommonCRS.defaultGeographic().getCoordinateSystem().getName().getCode();
         expected = expected.replace("“Géodésique 2D”", '"' + localizedName + '"');
         assertMultilinesEquals(decodeQuotes(expected), metadata.toString());
     }
@@ -120,7 +121,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     @Ignore("Referencing parameter names changed.")
     public void testFormatProjectedCRS() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final CoordinateReferenceSystem crs = CRS.fromWKT(WKT.PROJCS_MERCATOR);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
@@ -170,7 +171,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     @Ignore("Referencing parameter names changed.")
     public void testFormatTransverseMercatorCRS() throws FactoryException {
-        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_UTM_10N);
+        final CoordinateReferenceSystem crs = CRS.fromWKT(WKT.PROJCS_UTM_10N);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
@@ -225,7 +226,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     private static void assertEqualsIgnoreMetadata(final String message,
             final IdentifiedObject object1, final IdentifiedObject object2)
     {
-        assertTrue(message, CRS.equalsIgnoreMetadata(object1, object2));
+        assertTrue(message, Utilities.equalsIgnoreMetadata(object1, object2));
     }
 
     /**
@@ -259,13 +260,13 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         datum = ((GeographicCRS) crs).getDatum();
 
         assertNotSame(CommonCRS.WGS84.normalizedGeographic(), crs);
-        assertNotSame(PredefinedCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
-        assertNotSame(CommonCRS.WGS84.datum(),          builder.getDatum(Datum.class));
+        assertNotSame(CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem(), builder.getCoordinateSystem(CoordinateSystem.class));
+        assertNotSame(CommonCRS.WGS84.datum(), builder.getDatum(Datum.class));
 
         assertEqualsIgnoreMetadata("PrimeMeridian", CommonCRS.WGS84.primeMeridian(),  datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     CommonCRS.WGS84.ellipsoid(),      datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         CommonCRS.WGS84.datum(),          datum);
-        assertEqualsIgnoreMetadata("CS",            PredefinedCS.GEODETIC_2D,         crs.getCoordinateSystem());
+        assertEqualsIgnoreMetadata("CS",            CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem(), crs.getCoordinateSystem());
         assertEqualsIgnoreMetadata("CRS",           CommonCRS.WGS84.normalizedGeographic(), crs);
     }
 
@@ -279,7 +280,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following should have been tested by testFormatProjectedCRS()
          */
-        final ProjectedCRS originalCRS = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final ProjectedCRS originalCRS = (ProjectedCRS) CRS.fromWKT(WKT.PROJCS_MERCATOR);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(originalCRS);

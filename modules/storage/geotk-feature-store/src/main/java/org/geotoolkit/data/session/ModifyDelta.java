@@ -31,8 +31,9 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.feature.Feature;
@@ -142,13 +143,13 @@ public class ModifyDelta extends AbstractDelta{
                                 break;
                             }
                         }
-                        
+
                         if(hasgeoModified){
                             final FeatureType original = session.getFeatureStore().getFeatureType(feature.getType().getName());
                             final CoordinateReferenceSystem originalCRS = original.getCoordinateReferenceSystem();
-                            if(!CRS.equalsIgnoreMetadata(originalCRS,crs)){
+                            if(!Utilities.equalsIgnoreMetadata(originalCRS,crs)){
                                 final CoordinateSequenceMathTransformer trs =
-                                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(originalCRS, crs, true));
+                                        new CoordinateSequenceMathTransformer(CRS.findOperation(originalCRS, crs, null).getMathTransform());
                                 GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                 transformer.setCoordinateReferenceSystem(crs);
                                 feature = GenericTransformFeatureIterator.apply(feature, transformer);

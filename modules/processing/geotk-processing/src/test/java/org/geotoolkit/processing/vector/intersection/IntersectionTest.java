@@ -32,7 +32,7 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -90,8 +90,8 @@ public class IntersectionTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();
@@ -102,7 +102,7 @@ public class IntersectionTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();

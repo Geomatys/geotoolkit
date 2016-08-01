@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
@@ -72,7 +72,6 @@ import static org.geotoolkit.util.Utilities.listNullEquals;
  *
  * @module pending
  */
-import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeType", propOrder = {
     "lowerCorner",
@@ -476,7 +475,7 @@ public class EnvelopeType implements Envelope, Expression {
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
             try {
-                return CRS.decode(srsName);
+                return CRS.forCode(srsName);
             } catch (NoSuchAuthorityCodeException ex) {
                 LOGGER.log(Level.SEVERE, "NoSuchAuthorityCodeException while looking for GML envelope crs:" + srsName, ex);
             } catch (FactoryException ex) {

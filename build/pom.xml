@@ -52,16 +52,6 @@
            Modules included in the build
        =========================================================== -->
   <modules>
-    <module>maven</module>
     <module>tools</module>
   </modules>
-  <profiles>
-    <profile>
-      <modules>
-        <module>maven</module>
-        <module>tools</module>
-        <module>shell</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

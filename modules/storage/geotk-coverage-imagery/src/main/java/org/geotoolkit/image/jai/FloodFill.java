@@ -34,7 +34,7 @@ import java.awt.image.WritableRenderedImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.ImageLayout;
 
-import org.geotoolkit.util.collection.IntegerList;
+import org.apache.sis.util.collection.IntegerList;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -184,8 +184,8 @@ public abstract class FloodFill extends OpImage {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.PointOutsideCoverage_1,
                         new StringBuilder().append(point.x).append(',').append(point.y).toString()));
             }
-            stack.addInteger(x);
-            stack.addInteger(y);
+            stack.addInt(x);
+            stack.addInt(y);
         }
         /*
          * Now process to the filling tile by tile.
@@ -267,8 +267,8 @@ public abstract class FloodFill extends OpImage {
                 // the information that we put in 'globalStack'.
                 if (imageBounds.contains(x,y)) {
                     synchronized (globalStack) {
-                        globalStack.addInteger(x - imageBounds.x);
-                        globalStack.addInteger(y - imageBounds.y);
+                        globalStack.addInt(x - imageBounds.x);
+                        globalStack.addInt(y - imageBounds.y);
                     }
                 }
                 break;
@@ -302,13 +302,13 @@ public abstract class FloodFill extends OpImage {
                         if ((omitCheck = !omitCheck) == true) {
                             if (border == raster) {
                                 // Found a point which need further examination in this tile.
-                                stack.addInteger(x       - xmin);
-                                stack.addInteger(checkAt - ymin);
+                                stack.addInt(x       - xmin);
+                                stack.addInt(checkAt - ymin);
                             } else if (imageBounds.contains(x, checkAt)) {
                                 // Found a point which need further examination in an other tile.
                                 synchronized (globalStack) {
-                                    globalStack.addInteger(x       - imageBounds.x);
-                                    globalStack.addInteger(checkAt - imageBounds.y);
+                                    globalStack.addInt(x       - imageBounds.x);
+                                    globalStack.addInt(checkAt - imageBounds.y);
                                 }
                             }
                         }
@@ -342,8 +342,8 @@ public abstract class FloodFill extends OpImage {
                 if (x++ == xmax) {
                     if (imageBounds.contains(x,y)) {
                         synchronized (globalStack) {
-                            globalStack.addInteger(x - imageBounds.x);
-                            globalStack.addInteger(y - imageBounds.y);
+                            globalStack.addInt(x - imageBounds.x);
+                            globalStack.addInt(y - imageBounds.y);
                         }
                     }
                     break;

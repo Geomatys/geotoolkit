@@ -61,7 +61,7 @@ import org.geotoolkit.display2d.ext.text.DefaultTextTemplate;
 import org.geotoolkit.display2d.ext.text.GraphicTextJ2D;
 import org.geotoolkit.display2d.ext.text.TextTemplate;
 import org.geotoolkit.display2d.service.PortrayalExtension;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
@@ -194,7 +194,7 @@ public final class DecorationXMLParser {
             CoordinateReferenceSystem crs = null;
             if (params.get(PARAM_CRS) != null) {
                 try {
-                    crs = CRS.decode(params.get(PARAM_CRS));
+                    crs = CRS.forCode(params.get(PARAM_CRS));
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }

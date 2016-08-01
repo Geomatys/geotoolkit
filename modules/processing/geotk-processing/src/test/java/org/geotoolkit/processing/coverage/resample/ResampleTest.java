@@ -34,7 +34,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.coverage.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -85,7 +85,7 @@ public class ResampleTest extends AbstractProcessTest {
         //set the input parameters
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("Source").setValue(coverage);
-        input.parameter("CoordinateReferenceSystem").setValue(CRS.decode("EPSG:3395"));
+        input.parameter("CoordinateReferenceSystem").setValue(CRS.forCode("EPSG:3395"));
         final Process p = desc.createProcess(input);
         //get the result
         ParameterValueGroup output = p.call();
@@ -97,7 +97,7 @@ public class ResampleTest extends AbstractProcessTest {
         assertTrue(res instanceof GridCoverage2D);
         GridCoverage2D toTest = (GridCoverage2D)res;
 
-        assertEquals(toTest.getCoordinateReferenceSystem(), CRS.decode("EPSG:3395"));
+        assertEquals(toTest.getCoordinateReferenceSystem(), CRS.forCode("EPSG:3395"));
 
     }
 

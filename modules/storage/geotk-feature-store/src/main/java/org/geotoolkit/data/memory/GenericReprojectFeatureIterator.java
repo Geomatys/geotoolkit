@@ -39,7 +39,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.data.memory.GenericTransformFeatureIterator.FF;
@@ -57,6 +57,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Basic support for a  FeatureIterator that reprojects the geometry attribute.
@@ -106,7 +107,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
         if(original != null){
             //the crs is defined on the feature type
             final CoordinateSequenceMathTransformer trs =
-                    new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                    new CoordinateSequenceMathTransformer(CRS.findOperation(original, targetCRS, null).getMathTransform());
             GeometryCSTransformer ts = new GeometryCSTransformer(trs);
             ts.setCoordinateReferenceSystem(targetCRS);
             return ts;
@@ -181,7 +182,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                             if(original != null){
                                 try {
                                     final CoordinateSequenceMathTransformer trs =
-                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                            new CoordinateSequenceMathTransformer(CRS.findOperation(original, targetCRS, null).getMathTransform());
                                     final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
@@ -270,7 +271,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                             if(original != null){
                                 try {
                                     final CoordinateSequenceMathTransformer trs =
-                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                            new CoordinateSequenceMathTransformer(CRS.findOperation(original, targetCRS, null).getMathTransform());
                                     final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
@@ -363,7 +364,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                             if(original != null){
                                 try {
                                     final CoordinateSequenceMathTransformer trs =
-                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                            new CoordinateSequenceMathTransformer(CRS.findOperation(original, targetCRS, null).getMathTransform());
                                     final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
                                     JTS.setCRS(geom, targetCRS);
@@ -447,7 +448,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
 
             final CoordinateReferenceSystem original =desc.getCoordinateReferenceSystem();
 
-            if (CRS.equalsIgnoreMetadata(original, crs)) {
+            if (Utilities.equalsIgnoreMetadata(original, crs)) {
                 //no need to wrap it, already in the asked projection
                 return reader;
             }
@@ -522,7 +523,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                         if(original != null){
                             try {
                                 final CoordinateSequenceMathTransformer trs =
-                                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                        new CoordinateSequenceMathTransformer(CRS.findOperation(original, targetCRS, null).getMathTransform());
                                 final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                 Geometry geom = transformer.transform((Geometry) value);
                                 geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));

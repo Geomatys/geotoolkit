@@ -29,7 +29,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -352,8 +352,8 @@ public class LayerCoverageReader extends GridCoverageReader {
                         for (int i=center.getDimension(); --i>=0;) {
                             center.setOrdinate(i, envelope.getMedian(i));
                         }
-                        resolution = CRS.deltaTransform(CRS.findMathTransform(crs,
-                                envelope.database.horizontalCRS, true), center, resolution);
+                        resolution = org.geotoolkit.referencing.CRS.deltaTransform(CRS.findOperation(crs,
+                                envelope.database.horizontalCRS, null).getMathTransform(), center, resolution);
                     }
                     hr = new DoubleDimension2D(resolution[0], resolution[1]);
                 }

@@ -100,6 +100,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 import org.w3c.dom.Node;
 
 /**
@@ -365,7 +366,7 @@ public class WPSConvertersUtils {
 
         try {
             // Set the envelope crs to 4326 because of client request :
-            final CoordinateReferenceSystem outCRS = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+            final CoordinateReferenceSystem outCRS = CommonCRS.WGS84.geographic();
             Envelope env =null;
             Integer crsCode = null;
             if (object instanceof GridCoverage2D) {
@@ -949,7 +950,7 @@ public class WPSConvertersUtils {
         if (jsonGeometry.getCrs() != null)
             crs = jsonGeometry.getCrs().getCRS();
         else
-            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+            crs = CommonCRS.WGS84.geographic();
 
         return GeometryUtils.toJTS(jsonGeometry, crs);
     }

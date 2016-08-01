@@ -47,7 +47,7 @@ import org.geotoolkit.feature.type.PropertyType;
  *  Property property = ...;
  *
  *  //set the value
- *  property.setValue( &quot;foo&quot; );
+ *  property.setValue( "foo" );
  *
  *  //get the value
  *  String value = (String) property.getValue();
@@ -195,11 +195,11 @@ public interface Property extends org.opengis.feature.Property {
      *  GeometryAttribute attribute = ...;
      *
      *  //set the crs
-     *  CoordinateReferenceSystem crs = CRS.decode(&quot;EPSG:4326&quot;);
+     *  CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
      *  attribute.setCRS( crs );
      *
      *  //set the srs
-     *  attribute.getUserData().put( &quot;srs&quot;, &quot;EPSG:4326&quot; );
+     *  attribute.getUserData().put("srs", "EPSG:4326");
      * </code>
      * </pre>
      *

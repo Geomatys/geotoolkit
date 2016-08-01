@@ -62,11 +62,15 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.referencing.CRS;
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -192,7 +196,7 @@ public final class ReferencingUtilities {
 
         final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
 
-        if (CRS.equalsIgnoreMetadata(srcCRS, targetCrs)) {
+        if (Utilities.equalsIgnoreMetadata(srcCRS, targetCrs)) {
             assert targetMinOrdi + oldResolution.length <= newResolution.length : "First horizontal index from target CRS + old resolution array length " +
                     "should be lesser than new resolution array length.";
             System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);
@@ -281,7 +285,7 @@ public final class ReferencingUtilities {
 
     /**
      * Transform the given envelope to the given crs.
-     * Unlike CRS.transform this method handle growing number of dimensions by filling
+     * Unlike Envelopes.transform this method handle growing number of dimensions by filling
      * other axes with default values.
      *
      * @param env source Envelope
@@ -291,7 +295,7 @@ public final class ReferencingUtilities {
      */
     public static Envelope transform(Envelope env, CoordinateReferenceSystem targetCRS) throws TransformException{
         try {
-            return CRS.transform(env, targetCRS);
+            return Envelopes.transform(env, targetCRS);
         } catch (TransformException ex) {
             //we tried...
         }
@@ -316,14 +320,14 @@ public final class ReferencingUtilities {
 
                 //try conversion
                 try {
-                    final MathTransform trs = CRS.findMathTransform(sourcePart, targetPart, true);
+                    final MathTransform trs = CRS.findOperation(sourcePart, targetPart, null).getMathTransform();
                     //we could transform by using two coordinate, but envelope conversion allows to handle
                     //crs singularities more efficiently
                     final GeneralEnvelope partSource = new GeneralEnvelope(sourcePart);
                     for(int i=0;i<sourcePartDimension;i++){
                         partSource.setRange(i, env.getMinimum(sourceAxeIndex+i), env.getMaximum(sourceAxeIndex+i));
                     }
-                    final Envelope partResult = CRS.transform(trs, partSource);
+                    final Envelope partResult = Envelopes.transform(trs, partSource);
                     for(int i=0;i<targetPartDimension;i++){
                         result.setRange(targetAxeIndex+i, partResult.getMinimum(i), partResult.getMaximum(i));
                     }
@@ -446,7 +450,7 @@ public final class ReferencingUtilities {
 
             try {
                 final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
-                final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
+                final MathTransform trs = CRS.findOperation(realTemporal, temporalDim, null).getMathTransform();
                 final double[] coords = new double[2];
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
                 coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
@@ -457,7 +461,7 @@ public final class ReferencingUtilities {
             }
             try {
                 final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-                final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
+                final MathTransform trs = CRS.findOperation(realElevation, verticalDim, null).getMathTransform();
                 final double[] coords = new double[2];
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
                 coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
@@ -477,7 +481,7 @@ public final class ReferencingUtilities {
 
             try {
                 final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
-                final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
+                final MathTransform trs = CRS.findOperation(realTemporal, temporalDim, null).getMathTransform();
                 final double[] coords = new double[2];
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
                 coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
@@ -499,7 +503,7 @@ public final class ReferencingUtilities {
 
             try {
                 final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-                final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
+                final MathTransform trs = CRS.findOperation(realElevation, verticalDim, null).getMathTransform();
                 final double[] coords = new double[2];
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
                 coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
@@ -574,7 +578,7 @@ public final class ReferencingUtilities {
     public static Envelope transform2DCRS(final Envelope env, final CoordinateReferenceSystem crs2D) throws TransformException{
         final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS = change2DComponent(originalCRS, crs2D);
-        return CRS.transform(env, targetCRS);
+        return Envelopes.transform(env, targetCRS);
     }
 
     /**
@@ -590,7 +594,7 @@ public final class ReferencingUtilities {
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem flipped = setLongitudeFirst(crs);
-        return CRS.transform(env, flipped);
+        return Envelopes.transform(env, flipped);
     }
 
     /**
@@ -632,7 +636,7 @@ public final class ReferencingUtilities {
             //try to change the crs axis
             final String id = IdentifiedObjects.lookupIdentifier(singlecrs, true);
             if(id != null){
-                return CRS.decode(id, true);
+                return AbstractCRS.castOrCopy(CRS.forCode(id)).forConvention(AxesConvention.RIGHT_HANDED);
             }else{
                 //TODO how to manage custom crs ? might be a derivedCRS.
                 throw new FactoryException("Failed to create flipped axis for crs : " + singlecrs);
@@ -830,7 +834,7 @@ public final class ReferencingUtilities {
         final CoordinateReferenceSystem destCRS = destination.getCoordinateReferenceSystem();
 
         // If they're the same, we can return the source envelope.
-        if (CRS.equalsApproximatively(sourceCRS, destCRS)) {
+        if (org.geotoolkit.referencing.CRS.equalsApproximatively(sourceCRS, destCRS)) {
             destination = new GeneralEnvelope(source);
         }
 
@@ -872,7 +876,7 @@ public final class ReferencingUtilities {
                     continue;
                 }
 
-                if (CRS.equalsApproximatively(srcCurrent, destCurrent)) {
+                if (org.geotoolkit.referencing.CRS.equalsApproximatively(srcCurrent, destCurrent)) {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     destination.subEnvelope(destLowerAxis, destLowerAxis+ srcSubEnvelope.getDimension()).setEnvelope(srcSubEnvelope);
                     usedCRS.add(destCurrent);
@@ -942,7 +946,7 @@ public final class ReferencingUtilities {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     srcSubEnvelope.setCoordinateReferenceSystem(srcCurrent);
                     try {
-                        final Envelope tmp = CRS.transform(srcSubEnvelope, destCurrent);
+                        final Envelope tmp = Envelopes.transform(srcSubEnvelope, destCurrent);
                         destination.subEnvelope(destLowerAxis, destLowerAxis + tmp.getDimension()).setEnvelope(tmp);
                     } catch (TransformException e) {
                         // If we can't transform it, we just have to go to the next iteration.
@@ -982,7 +986,7 @@ public final class ReferencingUtilities {
         final CoordinateReferenceSystem filterCRS = filterEnvelope.getCoordinateReferenceSystem();
 
         if (resultEnvelope.getDimension() <= filterEnvelope.getDimension()) {
-            resultEnvelope.intersect(CRS.transform(filterEnvelope, inputCRS));
+            resultEnvelope.intersect(Envelopes.transform(filterEnvelope, inputCRS));
         } else {
             /* If source CRS got more dimensions than the one given as filter,
              * we need to isolate each component of the filter to insert them
@@ -1014,10 +1018,10 @@ public final class ReferencingUtilities {
                 } else if (toFind.size() == 1) {
                     tmpCRS = toFind.get(0);
                 } else {
-                    tmpCRS = CRS.getCompoundCRS((CompoundCRS) inputCRS, toFind.toArray(new SingleCRS[toFind.size()]));
+                    tmpCRS = org.geotoolkit.referencing.CRS.getCompoundCRS((CompoundCRS) inputCRS, toFind.toArray(new SingleCRS[toFind.size()]));
                 }
-                final GeneralEnvelope tmpFilter = new GeneralEnvelope(CRS.transform(filterEnvelope, tmpCRS));
-                final GeneralEnvelope tmpResult = new GeneralEnvelope(CRS.transform(resultEnvelope, tmpCRS));
+                final GeneralEnvelope tmpFilter = new GeneralEnvelope(Envelopes.transform(filterEnvelope, tmpCRS));
+                final GeneralEnvelope tmpResult = new GeneralEnvelope(Envelopes.transform(resultEnvelope, tmpCRS));
                 tmpResult.intersect(tmpFilter);
 
                 /* Re-injection pass. For each component crs of the above computed

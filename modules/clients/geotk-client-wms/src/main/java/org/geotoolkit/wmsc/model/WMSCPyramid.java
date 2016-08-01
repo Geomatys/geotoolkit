@@ -19,7 +19,7 @@ package org.geotoolkit.wmsc.model;
 import java.util.List;
 import org.geotoolkit.storage.coverage.DefaultPyramid;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -31,35 +31,35 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class WMSCPyramid extends DefaultPyramid{
-        
+
     private final TileSet tileset;
     private final GeneralDirectPosition upperleft;
-    
+
     public WMSCPyramid(final WMSCPyramidSet set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
-        super(set,CRS.decode(tileset.getSRS()));        
+        super(set,CRS.forCode(tileset.getSRS()));
         this.tileset = tileset;
-        
+
         this.upperleft = new GeneralDirectPosition(getCoordinateReferenceSystem());
         this.upperleft.setOrdinate(0, tileset.getBoundingBox().getMinx());
         this.upperleft.setOrdinate(1, tileset.getBoundingBox().getMiny());
-                
+
         final List<Double> ress = tileset.getResolutions();
         if(ress == null){
             return;
         }
-        
+
         for(Double res : tileset.getResolutions()){
             getMosaicsInternal().add(new WMSCMosaic(this, res));
         }
-        
+
     }
 
     public TileSet getTileset() {
         return tileset;
     }
-     
+
     public DirectPosition getUpperLeftCorner(){
         return upperleft;
     }
-    
+
 }

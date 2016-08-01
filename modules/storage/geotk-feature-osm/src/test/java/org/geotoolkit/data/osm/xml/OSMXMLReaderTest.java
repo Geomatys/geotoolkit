@@ -30,7 +30,6 @@ import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.junit.After;
@@ -39,6 +38,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.Utilities;
 import static org.junit.Assert.*;
 
 /**
@@ -77,7 +77,7 @@ public class OSMXMLReaderTest extends org.geotoolkit.test.TestBase {
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
         assertNotNull(env);
-        assertTrue(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
+        assertTrue(Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
         assertEquals(-0.108157396316528d, env.getMinimum(0),DELTA);
         assertEquals(-0.107599496841431d, env.getMaximum(0),DELTA);
         assertEquals(51.5073601795557d, env.getMinimum(1),DELTA);
@@ -167,7 +167,7 @@ public class OSMXMLReaderTest extends org.geotoolkit.test.TestBase {
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
         assertNotNull(env);
-        assertTrue(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
+        assertTrue(Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic()));
         assertEquals(-0.108157396316528d, env.getMinimum(0),DELTA);
         assertEquals(-0.107599496841431d, env.getMaximum(0),DELTA);
         assertEquals(51.5073601795557d, env.getMinimum(1),DELTA);

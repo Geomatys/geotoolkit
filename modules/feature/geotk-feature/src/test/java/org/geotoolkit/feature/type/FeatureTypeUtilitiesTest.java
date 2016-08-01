@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class FeatureTypeUtilitiesTest extends org.geotoolkit.test.TestBase {
         ftb.add(NamesExt.valueOf("attGeom2"), Point.class, CommonCRS.WGS84.normalizedGeographic(),0,1,false,null);
         final FeatureType ft = ftb.buildFeatureType();
 
-        final CoordinateReferenceSystem crs = CRS.decode("EPSG:27582");
+        final CoordinateReferenceSystem crs = CRS.forCode("EPSG:27582");
         final FeatureType res = FeatureTypeUtilities.transform(ft, crs);
 
 

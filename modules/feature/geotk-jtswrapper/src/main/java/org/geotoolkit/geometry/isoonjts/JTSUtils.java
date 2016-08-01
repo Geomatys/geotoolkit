@@ -37,7 +37,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolyg
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.opengis.util.FactoryException;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -94,7 +94,7 @@ public final class JTSUtils {
             if(srid != 0){
                 final String strCRS = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
                 try {
-                    crs = CRS.decode(strCRS);
+                    crs = CRS.forCode(strCRS);
                 } catch (FactoryException ex) {
                     Logging.getLogger("org.geotoolkit.geometry.isoonjts").log(Level.SEVERE, null, ex);
                 }

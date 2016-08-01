@@ -28,18 +28,17 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
-import org.opengis.util.FactoryException;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -52,7 +51,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
     private static String EPSG_VERSION;
 
     public ExecuteTest() {
-        EPSG_VERSION = CRS.getVersion("EPSG").toString();
+        EPSG_VERSION = org.geotoolkit.referencing.CRS.getVersion("EPSG").toString();
     }
 
     @Test
@@ -64,7 +63,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
 
             final GeometryFactory gf = new GeometryFactory();
             final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
-            JTS.setCRS(point, CRS.decode("EPSG:4326"));
+            JTS.setCRS(point, CommonCRS.WGS84.geographic());
 
             final List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
             inputs.add(new WPSInputLiteral("literal", "10"));
@@ -94,11 +93,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
             assertXmlEquals(expected, result, "xmlns:*");
 
             WPSMarshallerPool.getInstance().recycle(marshaller);
-        } catch (FactoryException ex) {
-            fail(ex.getLocalizedMessage());
-        } catch (UnconvertibleObjectException ex) {
-            fail(ex.getLocalizedMessage());
-        } catch (JAXBException ex) {
+        } catch (UnconvertibleObjectException | JAXBException ex) {
             fail(ex.getLocalizedMessage());
         }
     }

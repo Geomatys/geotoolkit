@@ -13,12 +13,8 @@ The Geotoolkit.org library
   These modules currently provide the experimental rendering module, a feature model, a coverage model,
   and the symbology extension modules.
 
-  The Geotk metadata module has already migrated to Apache SIS.
-  The Geotk referencing module is in process of being migrated to Apache SIS.
-
-  The Geotk project plans to extend the library both by expanding the current modules and
-  providing more modules for the library. The referencing module will be extended to handle new
-  projections. The coverage module will be extended by formalizing an API for image operations.
+  Most of Geotk referencing and metadata modules have already migrated to Apache SIS.
+  Some Geotk raster and feature functionalities are in process of being migrated to Apache SIS.
 
 
 * Apache SIS and Geotk 3.<x>/4.<x> series
@@ -28,9 +24,6 @@ The Geotoolkit.org library
   which will be replaced by the SIS equivalent. In many cases, migrating to SIS is just a
   matter of replacing the <<<org.geotoolkit>>> package name by <<<org.apache.sis>>> in the
   <<<import>>> declarations. However in some cases, the changes are more consistent.
-  Non-trivial replacements are indicated in the comments of the <<<@deprecated>>> tags.
-
-    * {{{./3.x/UpgradeTo4.xml}Ant script for automatic renaming of some package names}}.
 
   To reduce the annoyance, this replacement is performed only on the 4.<x> series of Geotk versions.
   The Geotk 3.<x> series still have no dependency to SIS, and their classes are not deprecated.
@@ -40,14 +33,18 @@ The Geotoolkit.org library
 
 * Latest releases
 
-  Latest Geotoolkit.org release is Geotk-4.0-M4, released September 2015.
+  Latest Geotoolkit.org milestone is Geotk-4.0-M5, released June 2016.
   This release is a milestone toward migration to Apache SIS.
 
     * The <<<4.0-M0>>> release contains deprecated classes with links to their SIS replacement, mostly in the utility and metadata modules.
 
     * The <<<4.0-M1>>> release is very similar to the The <<<4.0-M0>>> one, with deprecated classes removed.
 
-    * The <<<4.0-M3>>> release have many classes from the referencing packages removed in favor of SIS replacements.
+    * The <<<4.0-M3>>> release has many classes from the referencing packages removed in favor of SIS replacements.
+
+    * The <<<4.0-M4>>> release has Well Known Text (WKT) and some more referencing services migrated to SIS.
+
+    * The <<<4.0-M5>>> release has support of EPSG geodetic dataset and more referencing services migrated to SIS.
 
 
 * License
@@ -70,11 +67,7 @@ The Geotoolkit.org library
   Geotk either from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}} or from the
   {{{http://jenkins.geotoolkit.org/job/Geotoolkit/}automated build page}}. The
   Maven\ 2 repository enables projects which use that built tool to declare a dependency on
-  Geotk and have Maven automatically find and download the required binary archives. The
-  automated build page provides bundles which group several Geotk modules into a single JAR
-  file. The bundle <<<geotk-bundle-4.x-SNAPSHOT.pack.gz>>> contains a full set of Geotk modules
-  providing the full functionality of the library. Other bundles are provided which contain
-  different subsets of the project. A source bundle and a Javadoc bundle are also available.
+  Geotk and have Maven automatically find and download the required binary archives.
 
   The {{{./use.html}Introduction to Geotoolkit.org}} provides a brief explanation of how to create
   applications which use the library. The {{{./guides.html}developer guide}} (work in progress) will

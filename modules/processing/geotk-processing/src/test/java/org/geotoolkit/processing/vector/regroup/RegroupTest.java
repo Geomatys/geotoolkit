@@ -35,7 +35,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -114,8 +114,8 @@ public class RegroupTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("RegroupTest");
         ftb.add("type", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("color", String.class);
         ftb.add("height", Integer.class);
 
@@ -127,7 +127,7 @@ public class RegroupTest extends AbstractProcessTest {
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("RegroupTest");
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("geom1");
@@ -140,7 +140,7 @@ public class RegroupTest extends AbstractProcessTest {
         ftb.setName("RegroupTest");
 
         ftb.add("type", String.class);
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom2");
         final FeatureType sft = ftb.buildFeatureType();

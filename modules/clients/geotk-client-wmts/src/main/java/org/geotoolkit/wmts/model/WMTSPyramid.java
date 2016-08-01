@@ -18,11 +18,13 @@ package org.geotoolkit.wmts.model;
 
 import java.util.logging.Level;
 import org.geotoolkit.storage.coverage.DefaultPyramid;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.wmts.xml.v100.*;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -45,10 +47,10 @@ public class WMTSPyramid extends DefaultPyramid{
         try {
             // WMTS is made for display like WMS, so longitude is expected to be on the X axis.
             // Note : this is not written in the spec.
-            crs = CRS.decode(crsstr,true);
+            crs = AbstractCRS.castOrCopy(CRS.forCode(crsstr)).forConvention(AxesConvention.RIGHT_HANDED);
         } catch (NoSuchAuthorityCodeException ex) {
             try {
-                crs = CRS.decode("EPSG:"+crsstr);
+                crs = CRS.forCode("EPSG:"+crsstr);
             } catch (Exception e) {
                 e.addSuppressed(ex);
                 Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, e);

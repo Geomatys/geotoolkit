@@ -36,7 +36,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.measure.Units;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
-import org.apache.sis.referencing.cs.DefaultSphericalCS;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 
 import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
@@ -62,19 +61,6 @@ public final class PredefinedCS extends Static {
                     name(Vocabulary.Keys.Projected),
                     Axes.EASTING,
                     Axes.NORTHING);
-
-    /**
-     * A three-dimensional Cartesian CS with geocentric
-     * <var>{@linkplain Axes#GEOCENTRIC_X x}</var>,
-     * <var>{@linkplain Axes#GEOCENTRIC_Y y}</var>,
-     * <var>{@linkplain Axes#GEOCENTRIC_Z z}</var>
-     * axis in metres.
-     */
-    public static final DefaultCartesianCS GEOCENTRIC = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.Geocentric),
-                    Axes.GEOCENTRIC_X,
-                    Axes.GEOCENTRIC_Y,
-                    Axes.GEOCENTRIC_Z);
 
     /**
      * A two-dimensional Cartesian CS with
@@ -110,54 +96,6 @@ public final class PredefinedCS extends Static {
                     name(Vocabulary.Keys.Grid),
                     Axes.COLUMN,
                     Axes.ROW);
-
-    /**
-     * A two-dimensional Cartesian CS with
-     * <var>{@linkplain Axes#DISPLAY_X display x}</var>,
-     * <var>{@linkplain Axes#DISPLAY_Y display y}</var>
-     * axis.
-     */
-    public static final DefaultCartesianCS DISPLAY = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.Display),
-                    Axes.DISPLAY_X,
-                    Axes.DISPLAY_Y);
-
-    /**
-     * A three-dimensional spherical CS with
-     * <var>{@linkplain Axes#SPHERICAL_LONGITUDE longitude}</var>,
-     * <var>{@linkplain Axes#SPHERICAL_LATITUDE latitude}</var>,
-     * <var>{@linkplain Axes#GEOCENTRIC_RADIUS radius}</var>
-     * axis.
-     */
-    public static final DefaultSphericalCS SPHERICAL = new DefaultSphericalCS(
-                    name(Vocabulary.Keys.Geocentric),
-                    Axes.SPHERICAL_LONGITUDE,
-                    Axes.SPHERICAL_LATITUDE,
-                    Axes.GEOCENTRIC_RADIUS);
-
-    /**
-     * A two-dimensional ellipsoidal CS with
-     * <var>{@linkplain Axes#GEODETIC_LONGITUDE geodetic longitude}</var>,
-     * <var>{@linkplain Axes#GEODETIC_LATITUDE geodetic latitude}</var>
-     * axis in decimal degrees.
-     */
-    public static final DefaultEllipsoidalCS GEODETIC_2D = new DefaultEllipsoidalCS(
-                    name(Vocabulary.Keys.Geodetic2d),
-                    Axes.GEODETIC_LONGITUDE,
-                    Axes.GEODETIC_LATITUDE);
-
-    /**
-     * A three-dimensional ellipsoidal CS with
-     * <var>{@linkplain Axes#GEODETIC_LONGITUDE geodetic longitude}</var>,
-     * <var>{@linkplain Axes#GEODETIC_LATITUDE geodetic latitude}</var>,
-     * <var>{@linkplain Axes#ELLIPSOIDAL_HEIGHT ellipsoidal height}</var>
-     * axis.
-     */
-    public static final DefaultEllipsoidalCS GEODETIC_3D = new DefaultEllipsoidalCS(
-                    name(Vocabulary.Keys.Geodetic3d),
-                    Axes.GEODETIC_LONGITUDE,
-                    Axes.GEODETIC_LATITUDE,
-                    Axes.ELLIPSOIDAL_HEIGHT);
 
     /**
      * Creates a comparator.
@@ -208,7 +146,7 @@ public final class PredefinedCS extends Static {
         }
     }
 
-    static DefaultEllipsoidalCS createEllipsoidal(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
+    private static DefaultEllipsoidalCS createEllipsoidal(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
         switch (axis.length) {
             case 2: return new DefaultEllipsoidalCS(properties, axis[0], axis[1]);
             case 3: return new DefaultEllipsoidalCS(properties, axis[0], axis[1], axis[2]);

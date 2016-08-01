@@ -25,10 +25,11 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.operation.transform.EllipsoidToCentricTransform;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -67,8 +68,8 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
          * Gets the math transform from WGS84 to a geocentric transform.
          */
         final Ellipsoid                 ellipsoid = CommonCRS.WGS84.ellipsoid();
-        final CoordinateReferenceSystem sourceCRS = PredefinedCRS.WGS84_3D;
-        final CoordinateReferenceSystem targetCRS = PredefinedCRS.GEOCENTRIC;
+        final CoordinateReferenceSystem sourceCRS = AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED);
+        final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geocentric();
         final CoordinateOperation       operation = opFactory.createOperation(sourceCRS, targetCRS);
         transform = operation.getMathTransform();
         final int dimension = transform.getSourceDimensions();

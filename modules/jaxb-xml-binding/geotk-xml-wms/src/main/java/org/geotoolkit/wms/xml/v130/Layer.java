@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
@@ -511,7 +511,7 @@ public class Layer implements AbstractLayer {
 
         final BoundingBox bbox = getBoundingBox().get(0);
         try {
-            GeneralEnvelope env = new GeneralEnvelope(CRS.decode(bbox.getCRS()));
+            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode(bbox.getCRS()));
             env.setRange(0, bbox.getMinx(), bbox.getMaxx());
             env.setRange(1, bbox.getMiny(), bbox.getMaxy());
             return env;

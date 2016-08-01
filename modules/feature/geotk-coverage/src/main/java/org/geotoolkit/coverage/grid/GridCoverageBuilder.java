@@ -73,7 +73,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -84,6 +84,8 @@ import static java.awt.image.DataBuffer.*;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 
 /**
@@ -793,7 +795,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * method is equivalent to the following code (omitting exception handling):
      *
      * {@preformat java
-     *     setCoordinateReferenceSystem(CRS.decode(code, true));
+     *     setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode(code)).forConvention(AxesConvention.RIGHT_HANDED));
      * }
      *
      * See {@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)} for information about
@@ -803,12 +805,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @throws IllegalArgumentException if the given authority code is illegal.
      *
      * @see #crs
-     * @see CRS#decode(String, boolean)
+     * @see CRS#forCode(String)
      */
     public void setCoordinateReferenceSystem(final String code) throws IllegalArgumentException {
         CoordinateReferenceSystem crs = null;
         if (code != null) try {
-            crs = CRS.decode(code, true);
+            crs = AbstractCRS.castOrCopy(CRS.forCode(code)).forConvention(AxesConvention.RIGHT_HANDED);
         } catch (FactoryException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.IllegalCoordinateReferenceSystem), exception);

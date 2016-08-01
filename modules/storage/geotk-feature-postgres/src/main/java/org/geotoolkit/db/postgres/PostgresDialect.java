@@ -72,7 +72,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.coverage.Coverage;
@@ -120,11 +120,13 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
 
 /**
  * Postgres/Postgis dialect.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 final class PostgresDialect extends AbstractSQLDialect{
@@ -138,15 +140,15 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<Integer, CoordinateReferenceSystem>();
-    
+
     private static final Map<Integer,Class> TYPE_TO_CLASS = new HashMap<Integer, Class>();
     private static final Map<String,Class> TYPENAME_TO_CLASS = new HashMap<String, Class>();
     private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<Class,String>();
     private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<String, String>();
     private static final Set<String> IGNORE_TABLES = new HashSet<String>();
-        
+
     private static final FilterCapabilities FILTER_CAPABILITIES;
-    
+
     static {
         //fill base types
         TYPE_TO_CLASS.put(Types.VARCHAR,        String.class);
@@ -167,14 +169,14 @@ final class PostgresDialect extends AbstractSQLDialect{
         TYPE_TO_CLASS.put(Types.NUMERIC,        BigDecimal.class);
         TYPE_TO_CLASS.put(Types.DATE,           Date.class);
         TYPE_TO_CLASS.put(Types.TIME,           Time.class);
-        TYPE_TO_CLASS.put(Types.TIMESTAMP,      Timestamp.class);     
+        TYPE_TO_CLASS.put(Types.TIMESTAMP,      Timestamp.class);
         TYPE_TO_CLASS.put(Types.BLOB,           byte[].class);
         TYPE_TO_CLASS.put(Types.BINARY,         byte[].class);
-        TYPE_TO_CLASS.put(Types.CLOB,           String.class);   
+        TYPE_TO_CLASS.put(Types.CLOB,           String.class);
         TYPE_TO_CLASS.put(Types.VARBINARY,      byte[].class);
         TYPE_TO_CLASS.put(Types.ARRAY,          Array.class);
-        
-        
+
+
 //NAME IN CREATE QUERY          SQL TYPE     SQL TPE NAME
 /*serial                            4           serial      */ TYPENAME_TO_CLASS.put("serial", Integer.class);
 /*bigserial                         -5          bigserial   */ TYPENAME_TO_CLASS.put("bigserial", Long.class);
@@ -288,7 +290,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTION", GeometryCollection.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
         TYPENAME_TO_CLASS.put("RASTER", Coverage.class);
-        
+
         CLASS_TO_TYPENAME.put(Geometry.class, "GEOMETRY");
         CLASS_TO_TYPENAME.put(Point.class, "POINT");
         CLASS_TO_TYPENAME.put(LineString.class, "LINESTRING");
@@ -297,7 +299,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         CLASS_TO_TYPENAME.put(MultiLineString.class, "MULTILINESTRING");
         CLASS_TO_TYPENAME.put(MultiPolygon.class, "MULTIPOLYGON");
         CLASS_TO_TYPENAME.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
-                
+
         TYPE_TO_ST_TYPE_MAP.put("GEOMETRY","ST_Geometry");
         TYPE_TO_ST_TYPE_MAP.put("POINT","ST_Point");
         TYPE_TO_ST_TYPE_MAP.put("LINESTRING","ST_LineString");
@@ -314,8 +316,8 @@ final class PostgresDialect extends AbstractSQLDialect{
         //postgis 2 raster
         IGNORE_TABLES.add("raster_columns");
         IGNORE_TABLES.add("raster_overviews");
-     
-        
+
+
         //filter capabilities
         final String version = null;
         //ID capabilities, support : EID, FID
@@ -342,12 +344,12 @@ final class PostgresDialect extends AbstractSQLDialect{
         };
         final SpatialOperators spatialOperators = new DefaultSpatialOperators(spatialOperatrs);
         final SpatialCapabilities spatialCapa = new DefaultSpatialCapabilities(geometryOperands, spatialOperators);
-        
+
         //scalar capabilities
         //support : AND, OR, NOT
-        final boolean logical = true; 
+        final boolean logical = true;
         //support : =, <>, <, <=, >, >=, LIKE, BEETWEN, NULL
-        final Operator[] comparaisonOps = new Operator[]{ 
+        final Operator[] comparaisonOps = new Operator[]{
             new DefaultOperator(PropertyIsEqualTo.NAME),
             new DefaultOperator(PropertyIsNotEqualTo.NAME),
             new DefaultOperator(PropertyIsLessThan.NAME),
@@ -360,28 +362,28 @@ final class PostgresDialect extends AbstractSQLDialect{
         };
         final ComparisonOperators comparisonOperators = new DefaultComparisonOperators(comparaisonOps);
         //support : +, -, *, /
-        final boolean arithmeticSimple = true; 
+        final boolean arithmeticSimple = true;
         //support various functions
         final FunctionName[] functionNames = new FunctionName[0];
         final Functions functions = new DefaultFunctions(functionNames);
         final ArithmeticOperators arithmeticOperators = new DefaultArithmeticOperators(arithmeticSimple, functions);
         final ScalarCapabilities scalarCapa = new DefaultScalarCapabilities(logical, comparisonOperators, arithmeticOperators);
-        
+
         //temporal capabilities
         final TemporalOperand[] temporalOperands = new TemporalOperand[0];
         final TemporalOperator[] temporalOperatrs = new TemporalOperator[0];
         final TemporalOperators temporalOperators = new DefaultTemporalOperators(temporalOperatrs);
         final TemporalCapabilities temporalCapa = new DefaultTemporalCapabilities(temporalOperands, temporalOperators);
-        
+
         FILTER_CAPABILITIES = new DefaultFilterCapabilities(version, idCapa, spatialCapa, scalarCapa, temporalCapa);
     }
-        
+
     private final DefaultJDBCFeatureStore featurestore;
-    
+
     //readers
     private final ThreadLocal<WKBReader> wkbReader = new ThreadLocal<WKBReader>();
     private final PostgisHexEWKB ewkbReader;
-    
+
     //cache
     private Version version = null;
 
@@ -398,7 +400,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public boolean supportGlobalMetadata() {
         return true;
     }
-    
+
     @Override
     public FilterCapabilities getFilterCapabilities() {
         return FILTER_CAPABILITIES;
@@ -418,7 +420,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             throw new RuntimeException(ex.getMessage(),ex);
         }
     }
-    
+
     @Override
     public String getTableEscape() {
         return "\"";
@@ -426,10 +428,10 @@ final class PostgresDialect extends AbstractSQLDialect{
 
     @Override
     public Class getJavaType(int sqlType, String sqlTypeName) {
-        
+
         Class c = null;
         sqlTypeName = sqlTypeName.toLowerCase();
-        
+
         if(sqlType == Types.ARRAY){
             //special case for array types
             if(sqlTypeName.startsWith("_")){
@@ -437,7 +439,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             }
             c = TYPENAME_TO_CLASS.get(sqlTypeName);
             if(c==null) c = TYPENAME_TO_CLASS.get(sqlTypeName.toUpperCase());
-            
+
             if(c == null){
                 c = Object.class;
             }
@@ -445,13 +447,13 @@ final class PostgresDialect extends AbstractSQLDialect{
         }else{
             c = TYPENAME_TO_CLASS.get(sqlTypeName);
             if(c==null) c = TYPENAME_TO_CLASS.get(sqlTypeName.toUpperCase());
-            
+
             if(c == null){
                 //try relying on base type.
                 c = TYPE_TO_CLASS.get(sqlType);
             }
         }
-        
+
         if(c == null){
             featurestore.getLogger().log(Level.INFO, "No definied mapping for type : {0} {1}", new Object[]{sqlType, sqlTypeName});
             c = Object.class;
@@ -467,7 +469,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             if(sqlName == null) throw new SQLException("No database mapping for type "+ javaType);
             sqlName = sqlName+"[]";
         }
-        
+
         if(sqlName == null) throw new SQLException("No database mapping for type "+ javaType);
         return sqlName;
     }
@@ -510,10 +512,10 @@ final class PostgresDialect extends AbstractSQLDialect{
         if(version != null){
             return version;
         }
-        
+
         Connection cx = null;
         Statement statement = null;
-        ResultSet result = null;        
+        ResultSet result = null;
         try {
             cx = featurestore.getDataSource().getConnection();
             statement = cx.createStatement();
@@ -529,14 +531,14 @@ final class PostgresDialect extends AbstractSQLDialect{
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),cx,statement,result);
         }
-        
+
         return version;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO CREATE SQL QUERIES ///////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public String encodeFilter(Filter filter, ComplexType type) {
         final FilterToSQL fts = getFilterToSQL(type);
@@ -550,7 +552,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             //geometry type, will be added as a constraint in the postcreate method
             sqlTypeName = "GEOMETRY";
         }
-        
+
         if(length == null){
             sql.append(sqlTypeName);
         }else{
@@ -565,7 +567,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             }
         }
     }
-    
+
     @Override
     public void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints) {
         double res = 0;
@@ -587,8 +589,8 @@ final class PostgresDialect extends AbstractSQLDialect{
             sql.append("),'base64')");
             return;
         }
-                
-        
+
+
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
@@ -612,7 +614,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                 } else {
                     sql.append("ST_AsBinary(st_simplify(");
                     encodeColumnName(sql, gatt.getLocalName());
-                    sql.append(",").append(res).append(")"); 
+                    sql.append(",").append(res).append(")");
                 }
             }
             sql.append(") ");
@@ -639,7 +641,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             sql.append(" OFFSET ").append(offset);
         }
     }
-    
+
     @Override
     public void encodeValue(StringBuilder sql, Object value, Class type) {
         //turn the value into a literal and use FilterToSQL to encode it
@@ -656,7 +658,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                 //postgis does not handle linear rings, convert to just a line string
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
-            
+
             if(value.isEmpty() && ((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
                 //empty geometries are interpreted as Geometrycollection in postgis < 2
                 //this breaks the column geometry type constraint so we replace those by null
@@ -678,7 +680,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             throw new DataStoreException(ex);
         }
     }
-    
+
     @Override
     public void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType) {
         if(Integer.class.isAssignableFrom(binding) || Short.class.isAssignableFrom(binding)){
@@ -704,10 +706,10 @@ final class PostgresDialect extends AbstractSQLDialect{
             st = cx.createStatement();
 
             // register all geometry columns in the database
-            for (PropertyDescriptor att : featureType.getDescriptors()) {                
+            for (PropertyDescriptor att : featureType.getDescriptors()) {
                 if (att instanceof GeometryDescriptor) {
                     final GeometryDescriptor gd = (GeometryDescriptor) att;
-                    
+
                     // lookup or reverse engineer the srid
                     int srid = -1;
                     if (gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID) != null) {
@@ -724,7 +726,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                                     + "insertion, assuming -1", e);
                         }
                     }
-                    
+
                     Class binding = gd.getType().getBinding();
                     if(Coverage.class.isAssignableFrom(binding)){
                         //postgis raster type
@@ -736,16 +738,16 @@ final class PostgresDialect extends AbstractSQLDialect{
                         sb.append("', '");
                         sb.append(att.getName().tip().toString());
                         sb.append("', ");
-                        sb.append("true"); 
+                        sb.append("true");
                         sb.append(", false, false, false, false, false, false, false, false, false, false, false);");
                         final String sql = sb.toString();
                         featurestore.getLogger().fine( sql );
                         st.execute( sql );
-                        
+
                         //add the srid in the comments
                         //the view crs is not set until a first raster in added, so we store it in the comments
                         st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().tip().toString()+"\".\""+att.getName().tip().toString()+"\" IS '"+srid+"';");
-                        
+
                         continue;
                     }
 
@@ -839,12 +841,12 @@ final class PostgresDialect extends AbstractSQLDialect{
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),st);
         }
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////
     // PRIMARY KEY CALCULATION METHOS //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public Object nextValue(final ColumnMetaModel column, final Connection cx) throws SQLException, DataStoreException {
         if(column.getType() == ColumnMetaModel.Type.SEQUENCED){
@@ -863,11 +865,11 @@ final class PostgresDialect extends AbstractSQLDialect{
         }
         return null;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO READ FROM RESULTSET //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void decodeColumnType(final AttributeTypeBuilder atb, final Connection cx,
             String typeName, final int datatype, final String schemaName,
@@ -875,15 +877,15 @@ final class PostgresDialect extends AbstractSQLDialect{
 
         super.decodeColumnType(atb, cx, typeName, datatype,
                     schemaName, tableName,columnName);
-        
+
         typeName = typeName.toUpperCase();
-        
+
         //postgis raster type
         if("RASTER".equals(typeName)){
             atb.setBinding(Coverage.class);
             return;
         }
-        
+
         if (!TYPE_TO_ST_TYPE_MAP.containsKey(typeName)) {
             return;
         }
@@ -932,7 +934,7 @@ final class PostgresDialect extends AbstractSQLDialect{
 
 
     @Override
-    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, 
+    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx,
             final ResultSet rs, final int columnIndex, boolean customQuery) throws SQLException {
 
         final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)rs.getMetaData();
@@ -978,7 +980,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),null,statement,result);
         }
-        
+
 
         // decode the type
         Class geometryClass = null;
@@ -992,7 +994,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         atb.setName(columnName);
         atb.setBinding(geometryClass);
     }
-    
+
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,
             Map metas, final Connection cx) throws SQLException{
@@ -1001,7 +1003,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         Statement statement = null;
         ResultSet result = null;
         Integer srid = null;
-        
+
         //search in the geometry columns
         try {
             final StringBuilder sb = new StringBuilder("SELECT SRID FROM GEOMETRY_COLUMNS WHERE ");
@@ -1023,7 +1025,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
         }
-        
+
         if(srid==null || srid==0){
             //search the raster columns view
             try {
@@ -1047,7 +1049,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                 JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
             }
         }
-        
+
         if(srid==null || srid==0){
             //still nothing ? search in the comment, if it is a raster column the srid
             //can not be set until there is a real data. so we stored the srid in the comment
@@ -1059,20 +1061,20 @@ final class PostgresDialect extends AbstractSQLDialect{
                     //we tryed
                 }
             }
-            
+
         }
-        
+
 
         return srid;
     }
 
-    
+
     @Override
     public CoordinateReferenceSystem createCRS(int srid, Connection cx) throws SQLException {
         CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
         if (crs == null) {
             try {
-                crs = CRS.decode("EPSG:" + srid,true);
+                crs = AbstractCRS.castOrCopy(CRS.forCode("EPSG:" + srid)).forConvention(AxesConvention.RIGHT_HANDED);
                 CRS_CACHE.put(srid, crs);
             } catch(Exception e) {
                 if(featurestore.getLogger().isLoggable(Level.FINE)) {
@@ -1083,9 +1085,9 @@ final class PostgresDialect extends AbstractSQLDialect{
         }
         return crs;
     }
-    
+
     @Override
-    public Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs, 
+    public Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs,
             int i) throws SQLException{
         final Class binding = descriptor.getType().getBinding();
         if(binding.isArray()){
@@ -1127,10 +1129,10 @@ final class PostgresDialect extends AbstractSQLDialect{
             return rs.getObject(i);
         }
     }
-    
+
     private Object rebuildArray(Object candidate, Class componentType, int depth){
         if(candidate==null) return null;
-        
+
         if(candidate.getClass().isArray()){
             final int size = Array.getLength(candidate);
             final int[] dims = new int[depth];
@@ -1145,12 +1147,12 @@ final class PostgresDialect extends AbstractSQLDialect{
             return ObjectConverters.convert(candidate, componentType);
         }
     }
-    
-    
+
+
     @Override
-    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
+    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         String column) throws IOException, SQLException {
-        
+
         switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
                 return ewkbReader.read(rs.getString(column));
@@ -1171,9 +1173,9 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
+    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         int column) throws IOException, SQLException {
-        
+
         GeometryEncoding ge = null;
         final Map userData = descriptor.getType().getUserData();
         if(userData!=null){
@@ -1185,10 +1187,10 @@ final class PostgresDialect extends AbstractSQLDialect{
             if(obj instanceof String){
                 ge = GeometryEncoding.WKT;
             }else{
-                ge = GeometryEncoding.HEXEWKB; 
+                ge = GeometryEncoding.HEXEWKB;
             }
         }
-        
+
         switch(ge){
             case HEXEWKB:
                 return ewkbReader.read(rs.getString(column));
@@ -1219,7 +1221,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             data = Base64.decode(data);
             final WKBRasterReader reader = new WKBRasterReader();
             return reader.readCoverage(data, null);
-            
+
         } catch (IOException | FactoryException ex) {
             throw new SQLException("Failed to uncompressed base64 : "+ex.getMessage(),ex);
         }
@@ -1232,17 +1234,17 @@ final class PostgresDialect extends AbstractSQLDialect{
             data = Base64.decode(data);
             final WKBRasterReader reader = new WKBRasterReader();
             return reader.readCoverage(data, null);
-            
+
         } catch (IOException | FactoryException ex) {
             throw new SQLException("Failed to uncompressed base64 : "+ex.getMessage(),ex);
         }
     }
-    
+
     public CoordinateReferenceSystem decodeCRS(final int srid, final Connection cx) throws SQLException{
         CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
         if (crs == null) {
             try {
-                crs = CRS.decode("EPSG:" + srid,true);
+                crs = AbstractCRS.castOrCopy(CRS.forCode("EPSG:" + srid)).forConvention(AxesConvention.RIGHT_HANDED);
                 CRS_CACHE.put(srid, crs);
             } catch(Exception e) {
                 if(featurestore.getLogger().isLoggable(Level.FINE)) {
@@ -1253,5 +1255,5 @@ final class PostgresDialect extends AbstractSQLDialect{
         }
         return crs;
     }
-    
+
 }

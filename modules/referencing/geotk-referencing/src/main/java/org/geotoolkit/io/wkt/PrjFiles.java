@@ -32,7 +32,7 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.apache.sis.io.wkt.Warnings;
@@ -186,7 +186,7 @@ public final class PrjFiles extends Static {
             throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
         }
         try {
-            return CRS.parseWKT(wkt);
+            return CRS.fromWKT(wkt);
         } catch (FactoryException e) {
             throw new ContentFormatException(e.getLocalizedMessage(), e);
         }

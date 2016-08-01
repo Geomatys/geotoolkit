@@ -57,7 +57,6 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
 
@@ -76,6 +75,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.apache.sis.util.Utilities;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
@@ -251,7 +251,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             crs = paramEnv.getCoordinateReferenceSystem();
         } else {
             try {
-                paramEnv = CRS.transform(paramEnv, crs);
+                paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
             }
@@ -360,12 +360,12 @@ public class PyramidalModelReader extends GridCoverageReader{
         final Envelope mosEnvelope                = mosaic.getEnvelope();
 
         //-- check CRS conformity
-        if (!(CRS.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
+        if (!(Utilities.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
             throw new IllegalArgumentException("the wantedEnvelope is not define in same CRS than mosaic. Expected : "
                                                 +mosEnvelope.getCoordinateReferenceSystem()+". Found : "+wantedCRS);
 
         final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
-        assert CRS.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
+        assert Utilities.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
 
         final ViewType currentViewType = getPyramidalModel().getPackMode();
 
@@ -674,7 +674,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             final Double z = entry.getKey();
             final Object obj = entry.getValue();
 
-            final org.geotoolkit.geometry.GeneralEnvelope sliceEnvelop = new org.geotoolkit.geometry.GeneralEnvelope(crs);
+            final GeneralEnvelope sliceEnvelop = new GeneralEnvelope(crs);
             for (int i = 0; i < nbDim; i++) {
                 if (i == axisIndex) {
                     sliceEnvelop.setRange(i, z, z);

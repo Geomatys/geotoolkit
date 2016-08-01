@@ -72,7 +72,7 @@ import org.geotoolkit.filter.temporal.DefaultTContains;
 import org.geotoolkit.filter.temporal.DefaultTEquals;
 import org.geotoolkit.filter.temporal.DefaultTOverlaps;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -193,7 +193,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         CoordinateReferenceSystem crs = null;
         FactoryException firstException = null;
         try {
-            crs = CRS.decode(srs);
+            crs = CRS.forCode(srs);
         } catch (FactoryException ex) {
             firstException = ex;
         }
@@ -207,7 +207,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
             final String test = "EPSG:"+srs;
 
             try {
-                crs = CRS.decode(test);
+                crs = CRS.forCode(test);
             } catch (FactoryException ex) {
                 if(firstException == null){
                     firstException = ex;
@@ -221,7 +221,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
             final String test = "CRS:"+srs;
 
             try {
-                crs = CRS.decode(test);
+                crs = CRS.forCode(test);
             } catch (FactoryException ex) {
                 if(firstException == null){
                     firstException = ex;

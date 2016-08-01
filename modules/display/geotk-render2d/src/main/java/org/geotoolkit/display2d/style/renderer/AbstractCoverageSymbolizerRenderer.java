@@ -52,7 +52,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixResolutionWithCRS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
@@ -65,7 +64,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -75,6 +74,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  * Abstract renderer for symbolizer which only apply on coverages data.
@@ -355,7 +355,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ////////////////////////////////////////////////////////////////////
 
         final CoordinateReferenceSystem coverageCRS   = dataCoverage.getCoordinateReferenceSystem();
-        assert CRS.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
+        assert Utilities.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
 
         final CoordinateReferenceSystem coverageCRS2D = CRSUtilities.getCRS2D(coverageCRS);
 
@@ -363,7 +363,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          * But mathematics don't lie, so if they really describe the same transformation, conversion from
          * one to another will give us an identity matrix.
          */
-        final MathTransform coverageToObjective = CRS.findMathTransform(coverageCRS2D, renderingContextObjectiveCRS2D);
+        final MathTransform coverageToObjective = CRS.findOperation(coverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
 
         if (coverageToObjective.isIdentity())
             return dataCoverage;
@@ -388,7 +388,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //----------------------------- DISPLAY -------------------------------//
         //-- compute output grid Envelope into rendering context display
         //-- get destination image size
-        final GeneralEnvelope dispEnv = CRS.transform(objToDisp, outputRenderingCoverageEnv2D);
+        final GeneralEnvelope dispEnv = Envelopes.transform(objToDisp, outputRenderingCoverageEnv2D);
         final int width               = (int) Math.ceil(dispEnv.getSpan(0));
         final int height              = (int) Math.ceil(dispEnv.getSpan(1));
 
@@ -469,7 +469,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ArgumentChecks.ensureNonNull("coverageEnvelope",  coverageEnvelope);
 
         final CoordinateReferenceSystem requestCRS = requestedEnvelope.getCoordinateReferenceSystem();
-        if (!CRS.equalsIgnoreMetadata(requestCRS, coverageEnvelope.getCoordinateReferenceSystem()))
+        if (!Utilities.equalsIgnoreMetadata(requestCRS, coverageEnvelope.getCoordinateReferenceSystem()))
             throw new IllegalArgumentException("requestedEnvelope and coverage envelope will be able to have same CRS : "
                     + "\n Expected CRS : "+requestCRS
                     + "\n Found : "+coverageEnvelope.getCoordinateReferenceSystem());
@@ -537,11 +537,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final MathTransform crsToGrid2D = gridToCrs2D.inverse();
         final Envelope env2D = Envelopes.transform(env, grigrid.getCoordinateReferenceSystem2D());
 
-        final GeneralEnvelope gridEnv2D = CRS.transform(crsToGrid2D,env2D);
+        final GeneralEnvelope gridEnv2D = Envelopes.transform(crsToGrid2D,env2D);
         gridEnv2D.setRange(0, Math.floor(gridEnv2D.getMinimum(0)-nbPoint), Math.ceil(gridEnv2D.getMaximum(0)+nbPoint));
         gridEnv2D.setRange(1, Math.floor(gridEnv2D.getMinimum(1)-nbPoint), Math.ceil(gridEnv2D.getMaximum(1)+nbPoint));
 
-        final Envelope geoEnv2D = CRS.transform(gridToCrs2D,gridEnv2D);
+        final Envelope geoEnv2D = Envelopes.transform(gridToCrs2D,gridEnv2D);
 
         final int horizontalAxis = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
         env.setRange(horizontalAxis,     geoEnv2D.getMinimum(0), geoEnv2D.getMaximum(0));

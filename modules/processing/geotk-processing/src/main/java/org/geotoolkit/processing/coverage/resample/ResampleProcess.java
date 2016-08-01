@@ -75,6 +75,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -372,7 +373,7 @@ public class ResampleProcess extends AbstractProcess {
          */
         MathTransform allSteps, allSteps2D;
         final MathTransform step1, step2, step3 ;
-        if (CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+        if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             /*
              * Note: targetGG should not be null, otherwise 'existingCoverage(...)' should
              *       have already detected that this resample is not doing anything.
@@ -414,7 +415,7 @@ public class ResampleProcess extends AbstractProcess {
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
             targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
             targetEnvelope.setCoordinateReferenceSystem(targetCRS);
-            // 'targetCRS' may be different than the one set by CRS.transform(...).
+            // 'targetCRS' may be different than the one set by Envelopes.transform(...).
             /*
              * If the target GridGeometry is incomplete, provides default
              * values for the missing fields. Three cases may occurs:
@@ -849,7 +850,7 @@ public class ResampleProcess extends AbstractProcess {
             reducedCRS = sourceCRS;
         }
         GridGeometry gridGeometry = source.getGridGeometry();
-        if (targetCRS == null || CRS.equalsIgnoreMetadata(reducedCRS, targetCRS)) {
+        if (targetCRS == null || Utilities.equalsIgnoreMetadata(reducedCRS, targetCRS)) {
             /*
              * Same CRS (or unknown target CRS, which we treat as same), so we will keep the same
              * "gridToCRS" transform. Basically the result will be the same as if we did a crop,
@@ -875,7 +876,7 @@ public class ResampleProcess extends AbstractProcess {
             GridEnvelope gridEnvelope;
             try {
                 final GeneralEnvelope transformed;
-                transformed = CRS.transform(CRS.getCoordinateOperationFactory(true)
+                transformed = Envelopes.transform(CRS.getCoordinateOperationFactory(true)
                         .createOperation(targetCRS, reducedCRS), target);
                 final Envelope reduced;
                 final MathTransform gridToCRS;

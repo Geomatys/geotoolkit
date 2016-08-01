@@ -6,7 +6,7 @@ import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -18,6 +18,8 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -58,12 +60,12 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
                     if(lo instanceof Geometry){
                         Geometry geom = (Geometry)lo;
                         final CoordinateReferenceSystem sourceCRS = JTS.findCoordinateReferenceSystem(geom);
-                        if(CRS.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
-                        final MathTransform trs = CRS.findMathTransform(sourceCRS, targetCrs);
+                        if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCrs)) break out;
+                        final MathTransform trs = CRS.findOperation(sourceCRS, targetCrs, null).getMathTransform();
                         geom = JTS.transform(geom, trs);
                         l = ff.literal(geom);
                     }else if(lo instanceof Envelope){
-                        Envelope env = CRS.transform((Envelope) lo, targetCrs);
+                        Envelope env = Envelopes.transform((Envelope) lo, targetCrs);
                         l = ff.literal(new DefaultBoundingBox(env));
                     }
                 }catch (Exception ex){

@@ -29,7 +29,7 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 
 import org.opengis.filter.expression.Expression;
@@ -49,6 +49,7 @@ import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.coverage.Coverage;
+import org.apache.sis.util.Utilities;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -66,7 +67,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
     static{
         try {
-            MERCATOR = CRS.decode("EPSG:3395");
+            MERCATOR = CRS.forCode("EPSG:3395");
         } catch (FactoryException ex) {
             throw new RuntimeException("Could not load EPSG:3395 mercator projection.",ex);
         }
@@ -148,7 +149,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //one or bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Geometry[]{leftGeom, rightGeom};
-        }else if(CRS.equalsIgnoreMetadata(leftCRS, rightCRS)){
+        } else if (Utilities.equalsIgnoreMetadata(leftCRS, rightCRS)) {
             //both are in the same CRS, nothing to reproject
             return new Geometry[]{leftGeom, rightGeom};
         }
@@ -156,7 +157,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         //we choose to reproject the right operand.
         //there is no special reason to make this choice but we must make one.
         //perhaps there could be a way to determine a the best crs ?
-        final MathTransform trs = CRS.findMathTransform(rightCRS, leftCRS);
+        final MathTransform trs = CRS.findOperation(rightCRS, leftCRS, null).getMathTransform();
 
         return new Geometry[]{leftGeom, JTS.transform(rightGeom, trs)};
     }
@@ -176,7 +177,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Object[]{leftGeom, rightGeom, null};
-        }else if(leftCRS == null || rightCRS == null || CRS.equalsIgnoreMetadata(leftCRS, rightCRS) ){
+        } else if (leftCRS == null || rightCRS == null || Utilities.equalsIgnoreMetadata(leftCRS, rightCRS)) {
             //both are in the same CRS
 
             final CoordinateReferenceSystem geomCRS = (leftCRS == null) ? rightCRS : leftCRS;
@@ -188,7 +189,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
                 if(SI.METRE.isCompatible(unit)){
                     //in that case we reproject to mercator EPSG:3395
-                    final MathTransform trs = CRS.findMathTransform(geomCRS, MERCATOR);
+                    final MathTransform trs = CRS.findOperation(geomCRS, MERCATOR, null).getMathTransform();
 
                     return new Object[]{
                         JTS.transform(leftGeom,trs),
@@ -210,12 +211,12 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
             if(leftCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 matchingCRS = leftCRS;
-                final MathTransform trs = CRS.findMathTransform(rightCRS, matchingCRS);
+                final MathTransform trs = CRS.findOperation(rightCRS, matchingCRS, null).getMathTransform();
                 rightMatch = JTS.transform(rightGeom, trs);
                 leftMatch = leftGeom;
             }else if(rightCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 matchingCRS = rightCRS;
-                final MathTransform trs = CRS.findMathTransform(leftCRS, matchingCRS);
+                final MathTransform trs = CRS.findOperation(leftCRS, matchingCRS, null).getMathTransform();
                 leftMatch = JTS.transform(leftGeom, trs);
                 rightMatch = rightGeom;
             }else{
@@ -224,9 +225,9 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                     //in that case we reproject to mercator EPSG:3395
                     matchingCRS = MERCATOR;
 
-                    MathTransform trs = CRS.findMathTransform(leftCRS, matchingCRS);
+                    MathTransform trs = CRS.findOperation(leftCRS, matchingCRS, null).getMathTransform();
                     leftMatch = JTS.transform(leftGeom, trs);
-                    trs = CRS.findMathTransform(rightCRS, matchingCRS);
+                    trs = CRS.findOperation(rightCRS, matchingCRS, null).getMathTransform();
                     rightMatch = JTS.transform(rightGeom, trs);
 
                 }else{

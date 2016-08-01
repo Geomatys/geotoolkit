@@ -59,6 +59,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
 
+import org.apache.sis.util.Utilities;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -231,7 +232,7 @@ public class CoordinateFormat extends Format {
      * @param crs The new coordinate reference system, or {@code null} if unknown.
      */
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
-        if (!CRS.equalsIgnoreMetadata(this.crs, (this.crs = crs))) {
+        if (!Utilities.equalsIgnoreMetadata(this.crs, (this.crs = crs))) {
             initialize();
         }
     }
@@ -574,7 +575,7 @@ public class CoordinateFormat extends Format {
                     Errors.Keys.MismatchedDimension_3, "point", dimension, formats.length));
         }
         final CoordinateReferenceSystem pointCRS = point.getCoordinateReferenceSystem();
-        if (!CRS.equalsIgnoreMetadata(pointCRS, crs) && pointCRS != null && crs != null) {
+        if (!Utilities.equalsIgnoreMetadata(pointCRS, crs) && pointCRS != null && crs != null) {
             if (transform == null) {
                 transform = new TransformedDirectPosition(null, crs, null);
             }

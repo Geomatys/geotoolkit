@@ -52,6 +52,8 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.wcs.xml.GetCoverage;
 import org.geotoolkit.wcs.xml.StringUtilities;
 import org.geotoolkit.wcs.xml.DomainSubset;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * <p>An xml binding class for a getCoverage request.
@@ -218,8 +220,8 @@ public class GetCoverageType implements GetCoverage {
         {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(
-                domainSubset.getSpatialSubSet().getEnvelope().getSrsName(), true);
+        final CoordinateReferenceSystem objCrs = AbstractCRS.castOrCopy(CRS.forCode(
+                domainSubset.getSpatialSubSet().getEnvelope().getSrsName())).forConvention(AxesConvention.RIGHT_HANDED);
         final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
         /*
@@ -303,7 +305,7 @@ public class GetCoverageType implements GetCoverage {
         if (output == null || output.getCrs() == null || output.getCrs().getValue() == null) {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(output.getCrs().getValue());
+        final CoordinateReferenceSystem objCrs = CRS.forCode(output.getCrs().getValue());
         final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
         /*

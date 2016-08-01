@@ -20,11 +20,11 @@ import org.geotoolkit.wmts.v100.GetFeatureInfo100;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 
@@ -45,7 +45,7 @@ public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetFeatureInfo100() throws NoSuchAuthorityCodeException, FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
+        final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);

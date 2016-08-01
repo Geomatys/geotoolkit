@@ -45,6 +45,7 @@ import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.apache.sis.util.Utilities;
 
 /**
  * Utilities methods that provide conversion functionnalities between real objects and queries
@@ -122,7 +123,7 @@ public final class RequestsUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
+        if (Utilities.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
         final Set<Identifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();

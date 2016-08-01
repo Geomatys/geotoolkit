@@ -37,7 +37,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NamesExt;
@@ -49,6 +48,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -137,7 +138,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             crs = wantedEnv.getCoordinateReferenceSystem();
         }else if(crs != null && wantedEnv != null){
             //check the envelope crs matches given crs
-            if(!CRS.equalsIgnoreMetadata(wantedEnv.getCoordinateReferenceSystem(),crs)){
+            if(!Utilities.equalsIgnoreMetadata(wantedEnv.getCoordinateReferenceSystem(),crs)){
                 throw new CoverageStoreException("Invalid parameters : envelope crs do not match given crs.");
             }
         }else if(wantedEnv != null){
@@ -147,7 +148,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             //use the given crs
             wantedEnv = ref.getBounds();
             try {
-                wantedEnv = CRS.transform(wantedEnv, crs);
+                wantedEnv = Envelopes.transform(wantedEnv, crs);
             } catch (TransformException ex) {
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
             }
@@ -193,7 +194,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             image = ImageIO.read(stream);
 
             final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-            final Envelope env2D = CRS.transform(env, crs2d);
+            final Envelope env2D = Envelopes.transform(env, crs2d);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();

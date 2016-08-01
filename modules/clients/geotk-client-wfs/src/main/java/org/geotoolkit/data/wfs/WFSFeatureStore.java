@@ -62,7 +62,7 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wfs.xml.FeatureTypeList;
 import org.geotoolkit.wfs.xml.TransactionResponse;
@@ -81,6 +81,8 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 
 /**
  * WFS Datastore, This implementation is read only.
@@ -135,7 +137,10 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                     final int last = defaultCRS.lastIndexOf(':');
                     defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
                 }
-                crs = CRS.decode(defaultCRS,getLongitudeFirst());
+                crs = CRS.forCode(defaultCRS);
+                if (getLongitudeFirst()) {
+                    crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+                }
                 sft = requestType(typeName);
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
@@ -183,7 +188,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 final BoundingBox bbox = ftt.getBoundingBox().get(0);
                 try {
                     final String crsVal = bbox.getCrs();
-                    crs = crsVal != null ? CRS.decode(crsVal) : CommonCRS.WGS84.normalizedGeographic();
+                    crs = crsVal != null ? CRS.forCode(crsVal) : CommonCRS.WGS84.normalizedGeographic();
                     final GeneralEnvelope env = new GeneralEnvelope(crs);
                     final Integer dims        = bbox.getDimensions();
                     final List<Double> upper  = bbox.getUpperCorner();

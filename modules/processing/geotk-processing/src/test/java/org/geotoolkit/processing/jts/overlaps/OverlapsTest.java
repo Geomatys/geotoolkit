@@ -25,7 +25,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.jts.AbstractProcessTest;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * JUnit test of Overlaps process
@@ -115,10 +116,10 @@ public class OverlapsTest extends AbstractProcessTest {
 
         Geometry geom2 = fact.createPolygon(ring2, null);
 
-        final CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom1, crs1);
 
-        final CoordinateReferenceSystem crs2 = CRS.decode("EPSG:4326");
+        final CoordinateReferenceSystem crs2 = CommonCRS.WGS84.geographic();
         JTS.setCRS(geom2, crs2);
 
         // Process
@@ -132,7 +133,7 @@ public class OverlapsTest extends AbstractProcessTest {
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
-        final MathTransform mt = CRS.findMathTransform(crs2, crs1);
+        final MathTransform mt = CRS.findOperation(crs2, crs1, null).getMathTransform();
         geom2 = JTS.transform(geom2, mt);
 
         final Boolean expected = geom1.overlaps(geom2);

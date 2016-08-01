@@ -18,8 +18,6 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +27,6 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -47,11 +44,12 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import ucar.nc2.NCdumpW;
 
 import org.junit.*;
@@ -99,10 +97,6 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         super(NetcdfImageWriter.class);
     }
 
-    private static Map<String,String> name(final String name) {
-        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
-    }
-
     /**
      * Tests the creation of a NetCDF file using {@code "CRS:84"} on the whole world.
      *
@@ -126,7 +120,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testEPSG4326() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         testWriteRead(env, "EPSG4326.cdl");
@@ -142,7 +136,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testEPSG4088() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4088"));
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:4088"));
         env.setRange(0, -2E7, 2E7);
         env.setRange(1, -1E7, 1E7);
         skipRead = true;
@@ -192,7 +186,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("Not yet implemented")
     public void testXYZ() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(PredefinedCRS.WGS84_3D);
+        final GeneralEnvelope env = new GeneralEnvelope(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED));
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         env.setRange(2,   10,  12); final GridCoverage2D coverage1 = createGridCoverage(env, "data", 100);
@@ -211,8 +205,8 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Ignore("Not yet implemented")
     public void testXYZT() throws Exception {
         final CoordinateReferenceSystem crs = new GeodeticObjectBuilder().addName("WGS84 + z + t")
-                                                                         .createCompoundCRS(PredefinedCRS.WGS84_3D,
-                                                                                            CommonCRS.Temporal.JAVA.crs());
+                .createCompoundCRS(AbstractCRS.castOrCopy(CommonCRS.WGS84.geographic3D()).forConvention(AxesConvention.RIGHT_HANDED),
+                CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);

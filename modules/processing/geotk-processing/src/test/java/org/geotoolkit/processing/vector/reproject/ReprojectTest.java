@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -41,6 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -69,7 +70,7 @@ public class ReprojectTest extends AbstractProcessTest {
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
-        in.parameter("crs_in").setValue(CRS.decode("EPSG:27582"));
+        in.parameter("crs_in").setValue(CRS.forCode("EPSG:27582"));
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //FeatureCollection out
@@ -83,8 +84,8 @@ public class ReprojectTest extends AbstractProcessTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:4326"));
-        //ftb.add("geom2", Geometry.class, CRS.decode("EPSG:4326"));
+        ftb.add("geom1", Geometry.class, CommonCRS.WGS84.geographic());
+        //ftb.add("geom2", Geometry.class, CommonCRS.WGS84.geographic());
 
         ftb.setDefaultGeometry("geom1");
         final FeatureType sft = ftb.buildFeatureType();

@@ -45,7 +45,6 @@ import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -55,9 +54,7 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -66,18 +63,6 @@ import org.opengis.util.FactoryException;
 public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
-    private static final double DELTA = 0.00000001;
-    private static final CoordinateReferenceSystem CRS_4326;
-
-    static{
-        try {
-            CRS_4326 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        } catch (FactoryException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        }
-    }
 
     private static ParameterValueGroup params;
     private CoverageStore store;
@@ -122,7 +107,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
     public void testVersioning() throws DataStoreException, VersioningException {
         reload();
 
-        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CRS_4326);
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CommonCRS.WGS84.geographic());
         final Dimension dimension = new Dimension(20, 20);
         final Calendar calendar = Calendar.getInstance(GMT0);
         upperLeft.setOrdinate(0, -90);
@@ -147,7 +132,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CRS_4326);
+        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.RED));
 
@@ -168,7 +153,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CRS_4326);
+        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.BLUE));
 
@@ -189,7 +174,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
-        pyramid = cref.createPyramid(CRS_4326);
+        pyramid = cref.createPyramid(CommonCRS.WGS84.geographic());
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.GREEN));
 
@@ -269,5 +254,4 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
             }
         }
     }
-
 }

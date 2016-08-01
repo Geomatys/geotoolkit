@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.test.Assert.*;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
@@ -36,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.Utilities;
 
 /**
  *
@@ -68,7 +68,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         final Envelope convertedEnvelope = convertedCvg.getEnvelope();
         final Envelope expectedEnvelope = expectedCvg.getEnvelope();
 
-        assertTrue(CRS.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
         assertTrue(expectedEnvelope.getMinimum(0) == convertedEnvelope.getMinimum(0));
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));
@@ -101,7 +101,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         final Envelope convertedEnvelope = convertedCvg.getEnvelope();
         final Envelope expectedEnvelope = expectedCvg.getEnvelope();
 
-        assertTrue(CRS.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsIgnoreMetadata(expectedEnvelope.getCoordinateReferenceSystem(), convertedEnvelope.getCoordinateReferenceSystem()));
         assertTrue(expectedEnvelope.getMinimum(0) == convertedEnvelope.getMinimum(0));
         assertTrue(expectedEnvelope.getMinimum(1) == convertedEnvelope.getMinimum(1));
         assertTrue(expectedEnvelope.getMaximum(0) == convertedEnvelope.getMaximum(0));

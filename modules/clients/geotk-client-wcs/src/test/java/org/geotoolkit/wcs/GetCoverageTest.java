@@ -20,12 +20,12 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wcs.v100.GetCoverage100;
 import org.junit.Test;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 
@@ -46,7 +46,7 @@ public class GetCoverageTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetCoverage100() throws NoSuchAuthorityCodeException, FactoryException {
-        final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
+        final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);

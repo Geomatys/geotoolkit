@@ -67,6 +67,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.internal.referencing.Formulas;
+import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.Equirectangular;
 import org.apache.sis.internal.referencing.provider.Mercator1SP;
 import org.apache.sis.internal.referencing.provider.Mercator2SP;
@@ -96,9 +97,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
@@ -107,6 +107,8 @@ import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
 
@@ -146,7 +148,7 @@ final class GeoTiffCRSReader {
 
     public GeoTiffCRSReader() {
         try {
-            epsgFactory = (GeodeticAuthorityFactory) org.apache.sis.referencing.CRS.getAuthorityFactory("EPSG");
+            epsgFactory = (GeodeticAuthorityFactory) CRS.getAuthorityFactory("EPSG");
         } catch (FactoryException e) {
             throw new IllegalStateException(e);
         }
@@ -226,7 +228,7 @@ final class GeoTiffCRSReader {
                 }
                 // it is an EPSG crs let's create it.
                 //TODO : jsorel : are we sure of this ? always long/lat order ?
-                final ProjectedCRS pcrs = (ProjectedCRS) CRS.decode(projCode.toString(), true);
+                final ProjectedCRS pcrs = (ProjectedCRS) AbstractCRS.castOrCopy(CRS.forCode(projCode.toString())).forConvention(AxesConvention.RIGHT_HANDED);
                 // //
                 // We have nothing to do with the unit of measure
                 // //
@@ -301,7 +303,7 @@ final class GeoTiffCRSReader {
                     geogCode.insert(0, "EPSG:");
                 }
                 //TODO : jsorel : are we sure of this ? always long/lat order ?
-                gcs = (GeographicCRS) CRS.decode(geogCode.toString(), true);
+                gcs = (GeographicCRS) AbstractCRS.castOrCopy(CRS.forCode(geogCode.toString())).forConvention(AxesConvention.RIGHT_HANDED);
                 if (angularUnit != null
                         && !angularUnit.equals(gcs.getCoordinateSystem().getAxis(0).getUnit())) {
                     // //
@@ -310,7 +312,7 @@ final class GeoTiffCRSReader {
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                            PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException ex) {
                 throw new IOException(ex);
@@ -367,7 +369,7 @@ final class GeoTiffCRSReader {
         // make the user defined GCS from all the components...
         props.put("name", name);
         return crsFactory.createGeographicCRS(props, datum,
-                PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
     }
 
     /**
@@ -933,13 +935,13 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("albers_Conic_Equal_Area")
                     || code == CT_AlbersEqualArea) {
-                parameters = mtFactory.getDefaultParameters(code(AlbersEqualArea.PARAMETERS));
+                parameters = mtFactory.getDefaultParameters("Albers Equal Area");
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
-                parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
-                parameters.parameter(code(AlbersEqualArea.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
-                parameters.parameter(code(AlbersEqualArea.FALSE_EASTING)).setValue(getFalseEasting(metadata));
-                parameters.parameter(code(AlbersEqualArea.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
+                parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.EASTING_AT_FALSE_ORIGIN)).setValue(getFalseEasting(metadata));
+                parameters.parameter(code(AlbersEqualArea.NORTHING_AT_FALSE_ORIGIN)).setValue(getFalseNorthing(metadata));
                 return parameters;
             }
 
@@ -1050,13 +1052,13 @@ final class GeoTiffCRSReader {
                     geogCode.insert(0, "EPSG:");
                 }
 
-                final CoordinateReferenceSystem decCRS = CRS.decode(geogCode.toString(), true);
+                final CoordinateReferenceSystem decCRS = AbstractCRS.castOrCopy(CRS.forCode(geogCode.toString())).forConvention(AxesConvention.RIGHT_HANDED);
                 //-- all CRS must be Geodetic
                 if (!(decCRS instanceof GeodeticCRS))
                     throw new IllegalArgumentException("Impossible to define CRS from none Geodetic base. found : "+decCRS.toWKT());
 
                 if (decCRS instanceof GeographicCRS) {
-                    gcs = (GeographicCRS) CRS.decode(geogCode.toString(), true);
+                    gcs = (GeographicCRS) AbstractCRS.castOrCopy(CRS.forCode(geogCode.toString())).forConvention(AxesConvention.RIGHT_HANDED);
                 } else {
                     //-- Try to build it from datum and re-create Geographic CRS.
                     LOGGER.log(Level.WARNING, "Impossible to build Projected CRS from none Geographic base CRS, replaced by Geographic CRS.");
@@ -1075,7 +1077,7 @@ final class GeoTiffCRSReader {
                     // //
                     gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
+                            PredefinedCS.usingUnit(CommonCRS.defaultGeographic().getCoordinateSystem(), angularUnit));
                 }
             } catch (FactoryException fe) {
                 throw new IOException(fe);

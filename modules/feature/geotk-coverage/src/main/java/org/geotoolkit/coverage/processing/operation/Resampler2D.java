@@ -69,7 +69,6 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelopes;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -81,6 +80,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Workaround;
 
+import org.apache.sis.util.Utilities;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 
@@ -318,7 +318,7 @@ final class Resampler2D extends GridCoverage2D {
          *                 step 1         step 3
          */
         final MathTransform step1, step2, step3, allSteps, allSteps2D;
-        if (CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+        if (Utilities.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             /*
              * Note: targetGG should not be null, otherwise 'existingCoverage(...)' should
              *       have already detected that this resample is not doing anything.
@@ -360,7 +360,7 @@ final class Resampler2D extends GridCoverage2D {
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
             targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
             targetEnvelope.setCoordinateReferenceSystem(targetCRS);
-            // 'targetCRS' may be different than the one set by CRS.transform(...).
+            // 'targetCRS' may be different than the one set by Envelopes.transform(...).
             /*
              * If the target GridGeometry is incomplete, provides default
              * values for the missing fields. Three cases may occurs:
@@ -705,8 +705,8 @@ final class Resampler2D extends GridCoverage2D {
               final CoordinateReferenceSystem targetCRS, final GridGeometry2D targetGG)
     {
         while (!equivalent(coverage.getGridGeometry(), targetGG) ||
-              (!CRS.equalsIgnoreMetadata(targetCRS, coverage.getCoordinateReferenceSystem()) &&
-               !CRS.equalsIgnoreMetadata(targetCRS, coverage.getCoordinateReferenceSystem2D())))
+              (!Utilities.equalsIgnoreMetadata(targetCRS, coverage.getCoordinateReferenceSystem()) &&
+               !Utilities.equalsIgnoreMetadata(targetCRS, coverage.getCoordinateReferenceSystem2D())))
         {
             if (!(coverage instanceof Resampler2D)) {
                 return null;

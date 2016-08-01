@@ -17,7 +17,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStores;
 
@@ -56,7 +56,7 @@ public class FeatureStoreReadingDemo {
 
         //advanced querying -------------------------------------------------------------------
         final QueryBuilder qb = new QueryBuilder(typeName);
-        qb.setCRS(CRS.decode("EPSG:3395"));
+        qb.setCRS(CRS.forCode("EPSG:3395"));
         qb.setProperties(new String[]{"the_geom","LONG_NAME","SQKM"});
         qb.setFilter(FF.equals(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
         final Query query = qb.buildQuery();
@@ -101,7 +101,7 @@ public class FeatureStoreReadingDemo {
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
         parameters.parameter(pathId).setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp").toURI());
-        
+
         final FeatureStore store = (FeatureStore) DataStores.open(parameters);
         return store;
     }
