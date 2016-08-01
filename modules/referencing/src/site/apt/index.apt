@@ -15,10 +15,9 @@ Referencing
 
   * Supported coordinate operations
 
-     * {{{./operation-parameters.html}List of operation methods}}
-       ({{{../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}Javadoc}})
+     * {{{http://sis.apache.org/tables/CoordinateOperationMethods.html}List of operation methods}}
 
-     * {{{./supported-codes.html}List of authority codes}}
+     * {{{http://sis.apache.org/tables/CoordinateReferenceSystems.html}List of authority codes}}
 
   * {{{http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html}Well Known Text (WKT) format}}
 
