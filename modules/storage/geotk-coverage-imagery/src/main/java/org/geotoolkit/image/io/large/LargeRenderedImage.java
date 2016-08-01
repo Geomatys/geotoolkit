@@ -228,10 +228,6 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             sourceReadParam = null;
         }
 
-        //-- build a more appropriate SampleModel for this LargeRenderedImage.
-        final SampleModel tmpSm      = tmpImage.getSampleModel();
-        final PlanarConfiguration pC = PlanarConfiguration.valueOf(ImageUtils.getPlanarConfiguration(tmpSm));
-        sm = ImageUtils.createSampleModel(pC, SampleType.valueOf(tmpSm.getDataType()), width, height, tmpSm.getNumBands());
 
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance();
         this.tileGridXOffset = 0;
@@ -242,6 +238,12 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         } else {
             tileWidth = tileHeight = DEFAULT_TILE_SIZE;
         }
+
+        //-- build a more appropriate SampleModel for this LargeRenderedImage.
+        final SampleModel tmpSm      = tmpImage.getSampleModel();
+        final PlanarConfiguration pC = PlanarConfiguration.valueOf(ImageUtils.getPlanarConfiguration(tmpSm));
+        sm = ImageUtils.createSampleModel(pC, SampleType.valueOf(tmpSm.getDataType()), tileWidth, tileHeight, tmpSm.getNumBands());
+
         this.nbrTileX = (width + tileWidth - 1)   / tileWidth;
         this.nbrTileY = (height + tileHeight - 1) / tileHeight;
         isRead = new boolean[nbrTileY][nbrTileX];

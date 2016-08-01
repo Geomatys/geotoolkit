@@ -1066,6 +1066,11 @@
       <url>http://maven.geotoolkit.org</url>
     </repository>
     <repository>
+      <id>dev</id>
+      <name>Geomatys internal repository</name>
+      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
       <id>unidata</id>
       <name>unidata</name>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
