@@ -116,6 +116,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      *
      * @throws NullPointerException DOCUMENT ME!
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
+     * @throws java.net.MalformedURLException If we fail parsing input URI
      */
     public ShapefileFeatureStore(final URI uri) throws DataStoreException,MalformedURLException {
         this(uri, null);
@@ -128,6 +129,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      *
      * @param uri
      * @param namespace
+     * @throws java.net.MalformedURLException If we fail parsing input URI
+     * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
      */
     public ShapefileFeatureStore(final URI uri, final String namespace)
             throws DataStoreException,MalformedURLException {
@@ -143,6 +146,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @param namespace
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
+     * @throws java.net.MalformedURLException If we fail parsing input URI
+     * @throws org.apache.sis.storage.DataStoreException If input data analysis fails.
      */
     public ShapefileFeatureStore(final URI uri, final String namespace, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
@@ -174,7 +179,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             dbfCharset = DEFAULT_STRING_CHARSET;
         }
 
-        if (!shpFiles.isLocal() || !shpFiles.exists(SHP)) {
+        if (!shpFiles.isWritable() || !shpFiles.exists(SHP)) {
             this.useMemoryMappedBuffer = false;
         } else {
             this.useMemoryMappedBuffer = useMemoryMapped;
@@ -202,7 +207,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
     @Override
     public boolean isWritable(final GenericName typeName) throws DataStoreException {
-        return shpFiles.isLocal();
+        return shpFiles.isWritable();
     }
 
     public GenericName getName() throws DataStoreException{
@@ -252,9 +257,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * Gets the bounding box of the file represented by this data store as a
      * whole (that is, off all of the features in the shapefile)
      *
+     * @param query A query to specify which data to use for envelope computing.
      * @return The bounding box of the datasource or null if unknown and too
      *         expensive for the method to calculate.
-     * @throws DataSourceException DOCUMENT ME!
+     * @throws DataStoreException If reading of source features fails.
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
@@ -418,6 +424,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * existing local resources or throw an IOException if the featurestore is
      * remote.
      *
+     * @param typeName Name to use in this store for the given feature type.
      * @param featureType The desired FeatureType.
      * @throws DataStoreException If the featurestore is remote.
      *
@@ -425,8 +432,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      */
     @Override
     public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
-        if (!shpFiles.isLocal()) {
-            throw new DataStoreException("Cannot create FeatureType on remote shapefile");
+        if (!isWritable(typeName)) {
+            throw new DataStoreException("Read-only acces prevent type creation.");
         }
 
         if(typeName == null){
@@ -442,8 +449,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
 
-        //delete the files
-        shpFiles.delete();
+        try {
+            //delete the files
+            shpFiles.delete();
+        } catch (IOException ex) {
+            throw new DataStoreException("Cannot reset datastore content", ex);
+        }
 
         final AccessManager locker = shpFiles.createLocker();
 
@@ -629,7 +640,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * combined dbf/shp reader.
      *
      * @param readDbf - if true, the dbf fill will be opened and read
-     * @throws IOException
+     * @param read3D - for shp reader, read 3d coordinate or not.
+     * @param resample - for shp reader, decimate coordinates while reading
+     * @return A reader for reading of data attributes.
+     * @throws DataStoreException If we fails reading underlyig data.
      */
     protected ShapefileAttributeReader getAttributesReader(final boolean readDbf,
             final boolean read3D, final double[] resample) throws DataStoreException {
