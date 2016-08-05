@@ -74,7 +74,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
             @Override
             public void run() {
                 try {
-                    if (shpFiles.isLocal()) {
+                    if (shpFiles.isWritable()) {
                         if (indexedShapefileFeatureStore.needsGeneration(ShpFileType.FIX)) {
                             IndexedFidWriter.generate(shpFiles);
                         }

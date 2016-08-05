@@ -74,19 +74,17 @@ public class ShpFilesTestStream {
     @Test
     public void testIsLocalURL() throws IOException {
         ShpFiles files = new ShpFiles("http://someurl.com/file.shp");
-        assertFalse(files.isLocal());
+        assertFalse(files.isWritable());
     }
 
     @Test
     public void testIsLocalFiles() throws IOException {
-        assertTrue(files.isLocal());
+        assertTrue(files.isWritable());
     }
 
     @Test
     public void testDelete() throws IOException {
-
-        assertTrue(files.delete());
-
+        files.delete();
         for (File file : map.values()) {
             assertFalse(file.exists());
         }
@@ -131,7 +129,7 @@ public class ShpFilesTestStream {
         }catch(Throwable e){
         }
     }
-    
+
     @Test
     public void testGetInputStream() throws IOException {
         writeDataToFiles();
@@ -160,7 +158,7 @@ public class ShpFilesTestStream {
 
         ShpFileType[] types = ShpFileType.values();
         for (ShpFileType shpFileType : types) {
-            
+
             OutputStream out = files.getOutputStream(shpFileType);
             try {
                 out.write((byte)2);
@@ -183,10 +181,10 @@ public class ShpFilesTestStream {
     @Test
     public void testGetReadChannelURL() throws IOException {
         ShpFiles files = new ShpFiles(ShapeTestData.url("shapes/statepop.shp"));
-        
-//        assertFalse(files.isLocal());
-        
-        ReadableByteChannel read = files.getReadChannel(SHP);        
+
+//        assertFalse(files.isWritable());
+
+        ReadableByteChannel read = files.getReadChannel(SHP);
         read.close();
     }
     private void doRead(final ShpFileType shpFileType) throws IOException {

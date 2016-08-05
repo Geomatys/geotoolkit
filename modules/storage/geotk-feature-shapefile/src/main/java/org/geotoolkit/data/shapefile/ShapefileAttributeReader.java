@@ -37,7 +37,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 public class ShapefileAttributeReader {
 
     private final AccessManager locker;
-    
+
     protected final PropertyDescriptor[] metaData;
     protected final boolean[] narrowing;
     protected final int[] attributIndex;
@@ -54,15 +54,15 @@ public class ShapefileAttributeReader {
 
     /**
      * Create the shapefile attribute reader
-     * 
+     *
      * @param locker - to aquiere different readers and writers.
      * @param atts - the attributes that we are going to read.
      * @param read3D - for shp reader, read 3d coordinate or not.
-     * @param memoryMapper - for shp and dbf reader
+     * @param memoryMapped - for shp and dbf reader
      * @param resample - for shp reader, decimate coordinates while reading
      * @param readDBF - true to open a dbf reader
      * @param charset - for dbf reader
-     * @param estimateRes - avoid reading geometry if under this resolution, 
+     * @param estimateRes - avoid reading geometry if under this resolution,
      *                      while return an approximate geometry
      */
     public ShapefileAttributeReader(final AccessManager locker,

@@ -24,7 +24,6 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
@@ -235,17 +234,17 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         }catch(IllegalArgumentException ex){
             throw new DataStoreException(ex.getMessage(),ex);
         }
-        final boolean isLocal = shpFiles.isLocal();
 
-        if (isLocal && !shpFiles.exists(ShpFileType.SHP)) {
+        if (!shpFiles.exists(ShpFileType.SHP)) {
             throw new DataStoreException("Shapefile not found:" + shpFiles.get(ShpFileType.SHP));
         }
 
-        final boolean useMemoryMappedBuffer = isLocal && shpFiles.exists(ShpFileType.SHP) && isMemoryMapped.booleanValue();
-        final boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
+        final boolean isWritable = shpFiles.isWritable();
+        final boolean useMemoryMappedBuffer = shpFiles.exists(ShpFileType.SHP) && isMemoryMapped;
+        final boolean createIndex = isCreateSpatialIndex && isWritable;
 
         IndexType treeIndex = IndexType.NONE;
-        if (isLocal) {
+        if (isWritable) {
             if (createIndex) {
                 treeIndex = IndexType.QIX; // default
             } else {
@@ -298,7 +297,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         }
         final ShpFiles shpFiles = new ShpFiles(uri);
 
-        final boolean isLocal = shpFiles.isLocal();
+        final boolean isLocal = shpFiles.isWritable();
         if (!isLocal || shpFiles.exists(ShpFileType.SHP)) {
             LOGGER.fine("File already exists: " + shpFiles.get(ShpFileType.SHP));
         }
@@ -316,7 +315,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
             throw new DataStoreException("Uri for shapefile malformed: " + uri, mue);
         }
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, new Class[]{

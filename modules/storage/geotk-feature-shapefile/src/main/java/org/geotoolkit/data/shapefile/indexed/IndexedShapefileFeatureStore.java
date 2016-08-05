@@ -18,13 +18,13 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import com.vividsolutions.jts.geom.Envelope;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureReader;
@@ -43,7 +43,6 @@ import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.lock.ShpFiles.toFile;
 
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
@@ -153,7 +152,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         this.useIndex = treeType != IndexType.NONE;
         maxDepth = -1;
         try {
-            if (shpFiles.isLocal() && createIndex
+            if (shpFiles.isWritable() && createIndex
                     && needsGeneration(treeType.shpFileType)) {
                 createSpatialIndex();
             }
@@ -163,7 +162,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                     .getLocalizedMessage());
         }
         try {
-            if (shpFiles.isLocal() && needsGeneration(FIX)) {
+            if (shpFiles.isWritable() && needsGeneration(FIX)) {
                 //regenerate index
                 IndexedFidWriter.generate(shpFiles);
             }
@@ -326,7 +325,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final AccessManager locker = shpFiles.createLocker();
 
         CloseableCollection<ShpData> goodRecs = null;
-        if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
+        if (filter instanceof Id && shpFiles.isWritable() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
 
             final TreeSet<Identifier> idsSet = new TreeSet<Identifier>(IDENTIFIER_COMPARATOR);
@@ -481,73 +480,41 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @param indexType the type of index to check
      * @return true if the index for the given type exists and is useable.
      */
-    public boolean indexUseable(final ShpFileType indexType) {
-        if (shpFiles.isLocal()) {
+    boolean indexUseable(final ShpFileType indexType) throws IOException {
+        if (shpFiles.isWritable()) {
             if (needsGeneration(indexType) || !shpFiles.exists(indexType)) {
                 return false;
             }
         } else {
 
             ReadableByteChannel read = null;
-            try {
-                read = shpFiles.getReadChannel(indexType);
+            try (ReadableByteChannel reader = shpFiles.getReadChannel(indexType)) {
             } catch (IOException e) {
                 return false;
-            } finally {
-                //todo replace by ARM in JDK 1.7
-                if (read != null) {
-                    try {
-                        read.close();
-                    } catch (IOException e) {
-                        ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
-                                "could not close stream", e);
-                    }
-                }
             }
         }
 
         return true;
     }
 
-    final boolean needsGeneration(final ShpFileType indexType) {
-        if (!shpFiles.isLocal()){
+    final boolean needsGeneration(final ShpFileType indexType) throws IOException {
+        if (!shpFiles.isWritable()){
             throw new IllegalStateException(
                     "This method only applies if the files are local and the file can be created");
         }
 
-        final URI indexURI = shpFiles.getURI(indexType);
-        final URI shpURI = shpFiles.getURI(SHP);
-
-        if (indexURI == null) {
-            return true;
-        }
         // indexes require both the SHP and SHX so if either or missing then
         // you don't need to index
         if (!shpFiles.exists(SHX) || !shpFiles.exists(SHP)) {
             return false;
-        }
-
-        final File indexFile = toFile(indexURI);
-        final File shpFile = toFile(shpURI);
-        final long indexLastModified = indexFile.lastModified();
-        final long shpLastModified = shpFile.lastModified();
-        final boolean shpChangedMoreRecently = indexLastModified < shpLastModified;
-        return !indexFile.exists() || shpChangedMoreRecently;
-    }
-
-    /**
-     * Returns true if the indices already exist and do not need to be
-     * regenerated or cannot be generated (IE isn't local).
-     *
-     * @return true if the indices already exist and do not need to be regenerated.
-     */
-    public boolean isIndexed() {
-        if (shpFiles.isLocal()) {
+        } else if (!shpFiles.exists(indexType)) {
             return true;
         }
-        return !needsGeneration(FIX) && !needsGeneration(treeType.shpFileType);
-    }
 
+        final Path indexFile = shpFiles.getPath(indexType);
+        final Path shpFile = shpFiles.getPath(SHP);
+        return Files.getLastModifiedTime(indexFile).compareTo(Files.getLastModifiedTime(shpFile)) < 0;
+    }
 
     /**
      * QuadTree Query
@@ -684,7 +651,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @throws TreeException
      */
     public void buildQuadTree(final int maxDepth) throws TreeException {
-        if (shpFiles.isLocal()) {
+        if (shpFiles.isWritable()) {
             shpFiles.unloadIndexes();
             getLogger().fine("Creating spatial index for " + shpFiles.get(SHP));
 
@@ -713,7 +680,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         //generate proper indexes
         try {
-            if (shpFiles.isLocal() && useIndex
+            if (shpFiles.isWritable() && useIndex
                     && needsGeneration(treeType.shpFileType)) {
                 createSpatialIndex();
             }
@@ -722,7 +689,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
         }
         try {
-            if (shpFiles.isLocal() && needsGeneration(FIX)) {
+            if (shpFiles.isWritable() && needsGeneration(FIX)) {
                 //regenerate index
                 IndexedFidWriter.generate(shpFiles);
             }
@@ -731,7 +698,4 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
 
     }
-
-
-
 }
