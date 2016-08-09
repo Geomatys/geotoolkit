@@ -34,7 +34,6 @@ import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
@@ -102,6 +101,7 @@ public final class CRS extends Static {
      * @category factory
      * @since 2.4
      */
+    @Deprecated
     public static CoordinateOperationFactory getCoordinateOperationFactory(final boolean lenient) {
         return DefaultFactories.forBuildin(CoordinateOperationFactory.class);
     }
@@ -156,75 +156,12 @@ public final class CRS extends Static {
      *
      * @category information
      * @since 2.2
+     *
+     * @deprecated Moved to Apache SIS as {@link return org.apache.sis.referencing.CRS#getDomainOfValidity}.
      */
+    @Deprecated
     public static Envelope getEnvelope(final CoordinateReferenceSystem crs) {
-        Envelope envelope = null;
-        GeneralEnvelope merged = null;
-        if (crs != null) {
-            final Extent domainOfValidity = crs.getDomainOfValidity();
-            if (domainOfValidity != null) {
-                for (final GeographicExtent extent : domainOfValidity.getGeographicElements()) {
-                    if (Boolean.FALSE.equals(extent.getInclusion())) {
-                        continue;
-                    }
-                    if (extent instanceof BoundingPolygon) {
-                        for (final Geometry geometry : ((BoundingPolygon) extent).getPolygons()) {
-                            final Envelope candidate = geometry.getEnvelope();
-                            if (candidate != null) {
-                                final CoordinateReferenceSystem sourceCRS =
-                                        candidate.getCoordinateReferenceSystem();
-                                if (sourceCRS == null || Utilities.equalsIgnoreMetadata(sourceCRS, crs)) {
-                                    if (envelope == null) {
-                                        envelope = candidate;
-                                    } else {
-                                        if (merged == null) {
-                                            envelope = merged = new GeneralEnvelope(envelope);
-                                        }
-                                        merged.add(envelope);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        /*
-         * If no envelope was found, uses the geographic bounding box as a fallback. We will
-         * need to transform it from WGS84 to the supplied CRS. This step was not required in
-         * the previous block because the later selected only envelopes in the right CRS.
-         */
-        if (envelope == null) {
-            final GeographicBoundingBox bounds = org.apache.sis.referencing.CRS.getGeographicBoundingBox(crs);
-            if (bounds != null && !Boolean.FALSE.equals(bounds.getInclusion())) {
-                /*
-                 * We do not assign WGS84 unconditionally to the geographic bounding box, because
-                 * it is not defined to be on a particular datum; it is only approximative bounds.
-                 * We try to get the GeographicCRS from the user-supplied CRS in order to reduce
-                 * the amount of transformation needed.
-                 */
-                final SingleCRS targetCRS = org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
-                final GeographicCRS sourceCRS = org.apache.sis.internal.referencing.ReferencingUtilities.toNormalizedGeographicCRS(targetCRS);
-                if (sourceCRS != null) {
-                    envelope = merged = new GeneralEnvelope(bounds);
-                    merged.translate(-org.apache.sis.referencing.CRS.getGreenwichLongitude(sourceCRS), 0);
-                    merged.setCoordinateReferenceSystem(sourceCRS);
-                    try {
-                        envelope = Envelopes.transform(envelope, targetCRS);
-                    } catch (TransformException exception) {
-                        /*
-                         * The envelope is probably outside the range of validity for this CRS.
-                         * It should not occurs, since the envelope is supposed to describe the
-                         * CRS area of validity. Logs a warning and returns null, since it is a
-                         * legal return value according this method contract.
-                         */
-                        unexpectedException("getEnvelope", exception);
-                        envelope = null;
-                    }
-                }
-            }
-        }
-        return envelope;
+        return org.apache.sis.referencing.CRS.getDomainOfValidity(crs);
     }
 
     /**
@@ -508,9 +445,12 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS as {@link Utilities#equalsApproximatively(Object, Object)}.
      */
+    @Deprecated
     public static boolean equalsApproximatively(final Object object1, final Object object2) {
-        return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
+        return Utilities.equalsApproximatively(object1, object2);
     }
 
     /**
@@ -560,14 +500,5 @@ compare:    for (final SingleCRS component : actualComponents) {
             }
         }
         return result;
-    }
-
-    /**
-     * Invoked when an unexpected exception occurred. Those exceptions must be non-fatal,
-     * i.e. the caller <strong>must</strong> have a reasonable fallback (otherwise it
-     * should propagate the exception).
-     */
-    private static void unexpectedException(final String methodName, final Exception exception) {
-        Logging.unexpectedException(null, CRS.class, methodName, exception);
     }
 }

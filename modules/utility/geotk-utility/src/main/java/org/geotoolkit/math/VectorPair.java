@@ -21,6 +21,7 @@ import java.awt.geom.Line2D;
 import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 
+import org.apache.sis.math.Vector;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 
@@ -155,8 +156,8 @@ public class VectorPair implements Serializable {
             }
             if (indices != null) {
                 indices = ArraysExt.resize(indices, count);
-                this.X = X.view(indices);
-                this.Y = Y.view(indices);
+                this.X = X.pick(indices);
+                this.Y = Y.pick(indices);
             }
         }
     }
@@ -280,7 +281,7 @@ public class VectorPair implements Serializable {
                 Yi = ArraysExt.resize(Yi, size);
             }
         }
-        this.X = X.view(Xi);
-        this.Y = Y.view(Yi);
+        this.X = X.pick(Xi);
+        this.Y = Y.pick(Yi);
     }
 }

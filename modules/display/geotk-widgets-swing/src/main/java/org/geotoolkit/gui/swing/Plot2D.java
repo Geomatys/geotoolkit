@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
 import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 
-import org.geotoolkit.math.Vector;
+import org.apache.sis.math.Vector;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.axis.Axis2D;
 import org.geotoolkit.display.axis.AbstractGraduation;
@@ -325,7 +325,7 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final float[] x, final float[] y)
             throws MismatchedSizeException
     {
-        return addSeries(properties(name, color), Vector.create(x), Vector.create(y));
+        return addSeries(properties(name, color), Vector.create(x, false), Vector.create(y, false));
     }
 
     /**
@@ -342,7 +342,7 @@ public class Plot2D extends ZoomPane {
     public Series addSeries(final String name, final Paint color, final double[] x, final double[] y)
             throws MismatchedSizeException
     {
-        return addSeries(properties(name, color), Vector.create(x), Vector.create(y));
+        return addSeries(properties(name, color), Vector.create(x, false), Vector.create(y, false));
     }
 
     /**
