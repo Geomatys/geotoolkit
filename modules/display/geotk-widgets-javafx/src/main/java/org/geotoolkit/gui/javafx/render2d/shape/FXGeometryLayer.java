@@ -42,6 +42,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;

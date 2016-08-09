@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -81,9 +80,9 @@ public final class AccessManager {
     }
 
     private final ShpFiles files;
-    private final List<AccessEntry> readEntries = new ArrayList<AccessEntry>();
-    private final List<AccessEntry> writeEntries = new ArrayList<AccessEntry>();
-    private final List<StorageFile> tempFiles = new ArrayList<StorageFile>();
+    private final List<AccessEntry> readEntries = new ArrayList<>();
+    private final List<AccessEntry> writeEntries = new ArrayList<>();
+    private final List<StorageFile> tempFiles = new ArrayList<>();
 
     /**
      * Can only be created by a shpFiles object.
@@ -94,11 +93,11 @@ public final class AccessManager {
     }
 
     private void getReadLock(){
-        files.aquiereReadLock();
+        files.acquireReadLock();
     }
 
     private void getWriteLock(){
-        files.aquiereWriteLock();
+        files.acquireWriteLock();
     }
 
     private void releaseReadLock(){
@@ -118,7 +117,7 @@ public final class AccessManager {
             return null;
         }
 
-        if (files.isLocal() && !files.exists(ShpFileType.DBF)) {
+        if (files.isWritable() && !files.exists(ShpFileType.DBF)) {
             return null;
         }
 
@@ -135,7 +134,7 @@ public final class AccessManager {
         final ReadableByteChannel shpChannel = toClosingChannel(files.getReadChannel(shpUrl),false);
         final URI shxUrl = files.getURI(ShpFileType.SHX);
         final ReadableByteChannel shxChannel;
-        if (shxUrl == null || (files.isLocal() && !files.exists(shxUrl)) ) {
+        if (shxUrl == null || (files.isWritable() && !files.exists(shxUrl)) ) {
             //shx does not exist
             shxChannel = null;
         }else{
@@ -155,7 +154,7 @@ public final class AccessManager {
             return null;
         }
 
-        if (files.isLocal() && !files.exists(shxUrl)) {
+        if (files.isWritable() && !files.exists(shxUrl)) {
             return null;
         }
 
@@ -174,7 +173,7 @@ public final class AccessManager {
     }
 
     public IndexedFidWriter getFIXWriter(final StorageFile storage) throws IOException{
-        if (!files.isLocal()) {
+        if (!files.isWritable()) {
             throw new IllegalArgumentException(
                     "Currently only local files are supported for writing");
         }

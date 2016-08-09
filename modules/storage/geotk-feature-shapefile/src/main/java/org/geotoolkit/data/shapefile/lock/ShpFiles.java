@@ -19,8 +19,6 @@ package org.geotoolkit.data.shapefile.lock;
 
 import java.io.*;
 import java.net.*;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.*;
@@ -34,7 +32,6 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.LOGGER;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.QIX;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
@@ -83,7 +80,7 @@ public final class ShpFiles {
      * Searches for all the files and adds then to the map of files.
      *
      * @param path any one of the shapefile files
-     * @throws FileNotFoundException if the shapefile associated with file is not found
+     * @throws IllegalArgumentException if the shapefile associated with file is not found
      */
     public ShpFiles(final Object path) throws IllegalArgumentException {
         this(path,false);
@@ -93,10 +90,11 @@ public final class ShpFiles {
      * Searches for all the files and adds then to the map of files.
      *
      * @param path any one of the shapefile files
+     * @param loadQix If we should use quad-tree index on input files.
      */
     public ShpFiles(final Object path, final boolean loadQix) throws IllegalArgumentException {
         URI uri = null;
-        
+
         if(path instanceof String){
             try {
                 uri = URI.create(path.toString());
@@ -104,24 +102,24 @@ public final class ShpFiles {
                 uri = Paths.get(path.toString()).toUri();
             }
         }else if(path instanceof Path){
-            
+
             uri = ((Path) path).toUri();
-            
+
         }else if(path instanceof URI){
-            
+
             uri = (URI) path;
-            
+
         }else if(path instanceof File){
-            
+
             uri = ((File) path).toURI();
-            
+
         }else if(path instanceof URL){
             try {
                 uri = ((URL) path).toURI();
             } catch (URISyntaxException ex) {
                 throw new IllegalArgumentException(
                         "URL object can not be converted to a valid URI",ex);
-            }    
+            }
         }else{
             throw new IllegalArgumentException(
                     "Path object can not be converted to a valid URI : " +path);
@@ -150,23 +148,16 @@ public final class ShpFiles {
                 extensionWithPeriod = type.extensionWithPeriod.toLowerCase();
             }
 
-            final URI newURI;
-            try {
-                // TODO find a better way
-                newURI = URI.create(base+extensionWithPeriod);
-                uris.put(type, newURI);
-            } catch (IllegalArgumentException e) {
-                // shouldn't happen because the starting url was constructable
-                throw new RuntimeException(e);
-            }
-
+            // TODO find a better way
+            final URI newURI = URI.create(base + extensionWithPeriod);
+            uris.put(type, newURI);
         }
 
         // if the files are local check each file to see if it exists
         // if not then search for a file of the same name but try all combinations of the
         // different cases that the extension can be made up of.
         // IE Shp, SHP, Shp, ShP etc...
-        if( isLocal() ){
+        if( isWritable() ){
             for (final Entry<ShpFileType, URI> entry : uris.entrySet()) {
                 if( !exists(entry.getKey()) ){
                     URI value = entry.getValue();
@@ -187,7 +178,7 @@ public final class ShpFiles {
         return locker;
     }
 
-    void aquiereReadLock(){
+    void acquireReadLock(){
         readWriteLock.readLock().lock();
     }
 
@@ -195,7 +186,7 @@ public final class ShpFiles {
         readWriteLock.readLock().unlock();
     }
 
-    void aquiereWriteLock(){
+    void acquireWriteLock(){
         readWriteLock.writeLock().lock();
     }
 
@@ -236,46 +227,30 @@ public final class ShpFiles {
     }
 
     /**
-     * Acquire a File for read only purposes. It is recommended that get*Stream or
-     * get*Channel methods are used when reading or writing to the file is
+     * Acquire a Path for read only purposes. It is recommended that get*Stream
+     * or get*Channel methods are used when reading or writing to the file is
      * desired.
      *
      *
      * @see #getInputStream(ShpFileType, FileReader)
      * @see #getReadChannel(ShpFileType, FileReader)
-     * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType, org.geotoolkit.data.shapefile.FileWriter)
+     * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType,
+     * org.geotoolkit.data.shapefile.FileWriter)
      *
-     * @param type
-     *                the type of the file desired.
-     * @return the File type requested
-     */
-    public File getFile(final ShpFileType type) {
-        if(!isLocal() ){
-            throw new IllegalStateException("This method only applies if the files are local");
-        }
-        final URI uri = getURI(type);
-        return toFile(uri);
-    }
-
-    /**
-     * Acquire a Path for read only purposes. It is recommended that get*Stream or
-     * get*Channel methods are used when reading or writing to the file is
-     * desired.
-     *
-     *
-     * @see #getInputStream(ShpFileType, FileReader)
-     * @see #getReadChannel(ShpFileType, FileReader)
-     * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType, org.geotoolkit.data.shapefile.FileWriter)
-     *
-     * @param type
-     *                the type of the file desired.
+     * @param type the type of the file desired.
      * @return the Path type requested
+     *
+     * @throws IllegalArgumentException If the given shapefile type has no valid
+     * URI associated.
+     * @throws FileSystemNotFoundException The file system, identified by the
+     * URI of the input shapefile type, does not exist and cannot be created
+     * automatically, or the provider identified by the URI's scheme component
+     * is not installed
+     * @throws SecurityException if a security manager is installed and it
+     * denies an unspecified permission to access the file system
      */
     public Path getPath(final ShpFileType type) {
-        if(!isLocal() ){
-            throw new IllegalStateException("This method only applies if the files are local");
-        }
-        return toPath(getURI(type));
+        return Paths.get(getURI(type));
     }
 
     /**
@@ -301,36 +276,54 @@ public final class ShpFiles {
      *
      * @return true if local, false if remote
      */
-    public boolean isLocal() {
-        return isLocal(uris.get(ShpFileType.SHP));
+    public boolean isWritable() {
+        try {
+            Path path = getPath(SHP);
+            if (!Files.exists(path)) {
+
+                /* If the file to test does not exist, we must ensure that it's
+                 * first existing parent is writable, i.e we can create new data
+                 * in it.
+                 */
+                if (path.getFileSystem().isReadOnly()) {
+                    return false;
+                }
+
+                path = path.getParent();
+                while (!(Files.exists(path) || path.equals(path.getRoot()))) {
+                    path = path.getParent();
+                }
+
+            }
+            return Files.isWritable(path);
+
+        } catch (Exception e) {
+            // if not a path, maybe it's a simple URL access for download. In all
+            // case, we'll need NIO API for writing purpose.
+            LOGGER.log(Level.FINE, "SHP URI cannot be converted to NIO Path.", e);
+            return false;
+        }
     }
 
     /**
-     * Delete all the shapefile files. If the files are not local or the one
-     * files cannot be deleted return false.
+     * Delete all the shapefile files.
+     *
+     * @throws IOException e If we failed deleting any of the files, or if the
+     * store is read-only.
      */
-    public boolean delete() {
-        aquiereWriteLock();
+    public void delete() throws IOException {
+        if (!isWritable())
+            throw new IOException("Read-only datastore");
 
-        boolean retVal = true;
-        try{
-            if (isLocal()) {
-                final Collection<URI> values = uris.values();
-                for (URI uri : values) {
-                    final Path p = toPath(uri);
-                    try {
-                        Files.deleteIfExists(p);
-                    } catch (IOException e) {
-                        retVal = false;
-                    }
-                }
-            } else {
-                retVal = false;
+        acquireWriteLock();
+        try {
+            for (URI uri : uris.values()) {
+                Files.deleteIfExists(Paths.get(uri));
             }
-        }finally{
+
+        } finally {
             releaseWriteLock();
         }
-        return retVal;
     }
 
     /**
@@ -344,22 +337,9 @@ public final class ShpFiles {
      *                 if a problem occurred opening the stream.
      */
     public InputStream getInputStream(final ShpFileType type) throws IOException {
-        final URI uri = getURI(type);
-
-        try {
-            return IOUtilities.open(uri);
-        }catch(Throwable e){
-            if( e instanceof IOException ){
-                throw (IOException) e;
-            } else if( e instanceof RuntimeException){
-                throw (RuntimeException) e;
-            } else if( e instanceof Error ){
-                throw (Error) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+            return IOUtilities.open(getURI(type));
     }
+
     /**
      * Opens a output stream for the indicated file.
      *
@@ -371,21 +351,7 @@ public final class ShpFiles {
      *                 if a problem occurred opening the stream.
      */
     public OutputStream getOutputStream(final ShpFileType type) throws IOException {
-        final URI uri = getURI(type);
-
-        try {
-            return IOUtilities.openWrite(uri, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-        } catch (Throwable e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            } else if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else if (e instanceof Error) {
-                throw (Error) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return IOUtilities.openWrite(getURI(type), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
     }
 
     /**
@@ -397,10 +363,9 @@ public final class ShpFiles {
      * channel is closed.
      * </p>
      *
-     * @param type
-     *                the type of file to open the channel to.
-     * @param requestor
-     *                the object requesting the channel
+     * @param type the type of file to open the channel to.
+     * @return A read-only channel on the requested file.
+     * @throws java.io.IOException If we cannot open a channel on input data.
      *
      */
     public ReadableByteChannel getReadChannel(final ShpFileType type) throws IOException {
@@ -409,37 +374,7 @@ public final class ShpFiles {
     }
 
     public ReadableByteChannel getReadChannel(final URI uri) throws IOException {
-        ReadableByteChannel channel = null;
-        try {
-            if (isLocal()) {
-                final File file = toFile(uri);
-
-                if (!file.exists()) {
-                    throw new FileNotFoundException(file.toString());
-                }
-                if (!file.canRead()) {
-                    throw new IOException("File is unreadable : " + file);
-                }
-
-                final RandomAccessFile raf = new RandomAccessFile(file, "r");
-                channel = raf.getChannel();
-
-            } else {
-                final InputStream in = IOUtilities.open(uri);
-                channel = Channels.newChannel(in);
-            }
-        } catch (Throwable e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            } else if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else if (e instanceof Error) {
-                throw (Error) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
-        return channel;
+        return Files.newByteChannel(Paths.get(uri), StandardOpenOption.READ);
     }
 
     /**
@@ -463,36 +398,11 @@ public final class ShpFiles {
      *                 if there is an error opening the stream
      */
     public WritableByteChannel getWriteChannel(final ShpFileType type) throws IOException {
-        final URI uri = getURI(type);
-        return getWriteChannel(uri);
+        return getWriteChannel(getURI(type));
     }
 
     public WritableByteChannel getWriteChannel(final URI uri) throws IOException {
-
-        try {
-            final WritableByteChannel channel;
-            if (isLocal()) {
-                final File file = toFile(uri);
-                final RandomAccessFile raf = new RandomAccessFile(file, "rw");
-                channel = raf.getChannel();
-                ((FileChannel) channel).lock();
-            } else {
-                final OutputStream out = IOUtilities.openWrite(uri);
-                channel = Channels.newChannel(out);
-            }
-
-            return channel;
-        } catch (Throwable e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            } else if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else if (e instanceof Error) {
-                throw (Error) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return Files.newByteChannel(Paths.get(uri));
     }
 
     public String getTypeName() {
@@ -518,7 +428,20 @@ public final class ShpFiles {
         if (uri == null) {
             return false;
         }
-        return Files.exists(toPath(uri));
+
+        try {
+            return Files.exists(Paths.get(uri));
+        } catch (Exception e) {
+            // If we were not able to transform input into path, maybe it's an http URL.
+            try {
+                uri.toURL().openConnection().connect();
+                return true;
+            } catch (IOException e1) {
+                e1.addSuppressed(e);
+                LOGGER.log(Level.FINE, "Cannot connect to ".concat(uri.toString()), e1);
+                return false;
+            }
+        }
     }
 
 
@@ -567,59 +490,6 @@ public final class ShpFiles {
         return null;
     }
 
-
-    /**
-     * Try to convert an URI into a Path.
-     * @param uri
-     * @return
-     */
-    public static Path toPath(final URI uri) {
-        try {
-            return Paths.get(uri);
-        } catch (IllegalArgumentException | FileSystemNotFoundException e1) {
-            //fallback with old api
-            return toFile(uri).toPath();
-        }
-    }
-
-    public static File toFile(final URI uri) {
-        try {
-            return new File(uri);
-        } catch (IllegalArgumentException ex) {
-            //should not happen, in case try the old way
-            //throw new RuntimeException(ex);
-
-            String string = uri.toString();
-            if(!ShpFiles.isLocal(uri)){
-                try {
-                    string = URLDecoder.decode(string, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    // Shouldn't happen
-                }
-            }
-
-            final String path3;
-            final String simplePrefix = "file:/";
-            final String standardPrefix = simplePrefix + "/";
-
-            if (string.startsWith(standardPrefix)) {
-                path3 = string.substring(standardPrefix.length());
-            } else if (string.startsWith(simplePrefix)) {
-                path3 = string.substring(simplePrefix.length() - 1);
-            } else {
-                final String auth = uri.getAuthority();
-                final String path2 = uri.getPath().replace("%20", " ");
-                if (auth != null && !auth.equals("")) {
-                    path3 = "//" + auth + path2;
-                } else {
-                    path3 = path2;
-                }
-            }
-
-            return new File(path3);
-        }
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Indexes files : store only one of each for all readers //////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -641,7 +511,7 @@ public final class ShpFiles {
     public synchronized QuadTree getQIX() throws StoreException{
         if(quadTree == null){
 
-            if (!isLocal()) {
+            if (!isWritable()) {
                 return null;
             }
             final URI treeURI = getURI(QIX);
@@ -676,11 +546,11 @@ public final class ShpFiles {
 
     @Override
     public String toString() {
-        return Trees.toString("ShpFiles", uris.entrySet());
-    }
+        final StringBuilder builder = new StringBuilder("Shapefile URIs :");
+        for (final Map.Entry<ShpFileType, URI> entry : uris.entrySet()) {
+            builder.append(System.lineSeparator()).append(entry.getKey().name()).append(" -> ").append(entry.getValue());
+        }
 
-    public static boolean isLocal(final URI uri){
-        return "file".equalsIgnoreCase(uri.getScheme());
+        return builder.toString();
     }
-
 }

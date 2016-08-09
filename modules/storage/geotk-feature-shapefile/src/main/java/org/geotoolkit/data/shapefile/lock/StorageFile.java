@@ -21,8 +21,6 @@ import org.geotoolkit.nio.IOUtilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,11 +33,10 @@ import java.util.logging.Level;
 import static java.nio.file.StandardOpenOption.*;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
-import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
 
 /**
  * Encapsulates the idea of a file for writing data to and then later updating the original.
- * 
+ *
  * @author jesse
  * @module pending
  */
@@ -61,7 +58,7 @@ public final class StorageFile implements Comparable<StorageFile> {
 
     /**
      * Returns the storage file
-     * 
+     *
      * @return the storage file
      */
     public Path getFile() {
@@ -70,13 +67,12 @@ public final class StorageFile implements Comparable<StorageFile> {
 
     public FileChannel getWriteChannel() throws IOException {
         return FileChannel.open(tempFile, READ, CREATE, WRITE);
-//        return new RandomAccessFile(tempFile, "rw").getChannel();
     }
 
     /**
      * Replaces the file that the temporary file is acting as a transactional type cache for. Acts
      * similar to a commit.
-     * 
+     *
      * @see #replaceOriginals(StorageFile...)
      * @throws IOException
      */
@@ -89,7 +85,7 @@ public final class StorageFile implements Comparable<StorageFile> {
      * {@link #replaceOriginal()}. However, all files that are part of the same {@link ShpFiles}
      * are done within a lock so all of the updates for all the Files of a Shapefile can be updated
      * within a single lock.
-     * 
+     *
      * @param storageFiles files to execute the replace functionality.
      * @throws IOException
      */
@@ -105,18 +101,10 @@ public final class StorageFile implements Comparable<StorageFile> {
 
             final Path storage = storageFile.getFile();
 
-            final URI url = storageFile.getSrcURLForWrite();
+            final Path dest = storageFile.shpFiles.getPath(storageFile.type);
             try {
-                Path dest = toPath(url);
-
                 if (storage.equals(dest))
                     return;
-
-                try {
-                    Files.deleteIfExists(dest);
-                } catch (IOException ex) {
-                    LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
-                }
 
                 if (Files.exists(storage)) {
                     try {
@@ -133,10 +121,6 @@ public final class StorageFile implements Comparable<StorageFile> {
         }
     }
 
-    private URI getSrcURLForWrite() {
-        return shpFiles.getURI(type);
-    }
-
     /**
      * Just groups together files that have the same ShpFiles instance
      */
@@ -146,7 +130,7 @@ public final class StorageFile implements Comparable<StorageFile> {
         if (this == o) {
             return 0;
         }
-        
+
         // assume two StorageFile that do not share the same ShpFiles
         // are not given the same temp file
         return getFile().compareTo(o.getFile());
