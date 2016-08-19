@@ -17,6 +17,7 @@
 package org.geotoolkit.wps.io;
 
 import java.awt.image.RenderedImage;
+import java.net.URLConnection;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -119,6 +120,7 @@ public class WPSIOTest extends org.geotoolkit.test.TestBase {
              fail();
         } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
+        WPSIO.checkSupportedFormat(URLConnection.class, WPSIO.IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null);
     }
 
 
@@ -180,6 +182,16 @@ public class WPSIOTest extends org.geotoolkit.test.TestBase {
         assertEquals(ReferenceType.class, converter.getSourceClass());
         assertEquals(GridCoverage2D.class, converter.getTargetClass());
 
+        // URL connections
+        converter = WPSIO.getConverter(URLConnection.class, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
+        assertNotNull(converter);
+        assertEquals(URLConnection.class, converter.getSourceClass());
+        assertEquals(ReferenceType.class, converter.getTargetClass());
+
+        converter = WPSIO.getConverter(URLConnection.class, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
+        assertNotNull(converter);
+        assertEquals(ReferenceType.class, converter.getSourceClass());
+        assertEquals(URLConnection.class, converter.getTargetClass());
     }
 
     @Test
