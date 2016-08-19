@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
@@ -146,6 +148,9 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, WPSMimeType.TEXT_PLAIN.val(), WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, WPSMimeType.APP_JSON.val(), WPSEncoding.UTF8.getValue(), null, true));
+
+        FORMATSUPPORTS.add(new FormatSupport(URL.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(URLConnection.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_OCTET.val(), null, null, true));
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP.val(), null, null, true));
