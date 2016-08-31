@@ -53,4 +53,18 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
      */
     @Override
     public abstract ReferenceType convert(S source, Map<String, Object> params) throws UnconvertibleObjectException;
+
+    protected void mapParameters(final ReferenceType reference, Map<String, Object> params) {
+        Object value = params.get(SCHEMA);
+        if (value != null)
+            reference.setSchema(value.toString());
+
+        value = params.get(MIME);
+        if (value != null)
+            reference.setMimeType(value.toString());
+
+        value = params.get(ENCODING);
+        if (value != null)
+            reference.setEncoding(value.toString());
+    }
 }
