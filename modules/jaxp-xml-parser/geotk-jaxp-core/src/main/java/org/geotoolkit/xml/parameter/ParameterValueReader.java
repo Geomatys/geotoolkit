@@ -17,6 +17,7 @@
 package org.geotoolkit.xml.parameter;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -112,14 +113,15 @@ public class ParameterValueReader extends StaxStreamReader {
         final GeneralParameterValue result;
 
         if(desc instanceof ParameterDescriptor){
-            final String text = reader.getElementText();
-            if (!text.isEmpty()) {
-                Class targetClass = ((ParameterDescriptor) desc).getValueClass();
-                Object converted = null;
-                //HACK for Path support
-                // we don't use ObjectConverters to convert Path from a String because
-                // there is an already existing converter that doesn't use protocol (URI scheme)
-                if (Path.class.isAssignableFrom(targetClass)) {
+            Class targetClass = ((ParameterDescriptor) desc).getValueClass();
+            Object converted = null;
+            
+            //HACK for Path support
+            // we don't use ObjectConverters to convert Path from a String because
+            // there is an already existing converter that doesn't use protocol (URI scheme)
+            if (Path.class.isAssignableFrom(targetClass)) {
+                final String text = reader.getElementText();
+                if (!text.isEmpty()) {
                     URI uri = URI.create(text);
                     if (uri.getScheme() != null) {
                         //may target a path on another file system
@@ -128,13 +130,45 @@ public class ParameterValueReader extends StaxStreamReader {
                         //assume path is on current file system (relative of absolute)
                         converted = Paths.get(text);
                     }
-                } else {
+                }
+            } else if (targetClass.isArray()) {
+                List<Object> converteds = new ArrayList<>();
+                boucle:
+                while (reader.hasNext()) {
+
+                    switch (reader.next()) {
+                        case XMLStreamConstants.START_ELEMENT:
+
+                            converteds.add(ObjectConverters.convert(reader.getElementText(), targetClass.getComponentType()));
+                            break;
+
+                        case XMLStreamConstants.END_ELEMENT:
+                            if (desc.getName().getCode().equals(reader.getLocalName())
+                                    && URI_PARAMETER.contains(reader.getNamespaceURI())) {
+                                break boucle;
+                            }
+                            break;
+                    }
+
+                }
+
+                converted = Array.newInstance(targetClass.getComponentType(), converteds.size());
+                for (int i = 0 ; i < converteds.size(); i++) {
+                    Array.set(converted, i, converteds.get(i));
+                }
+
+            } else {
+                final String text = reader.getElementText();
+                if (!text.isEmpty()) {
                     converted = ObjectConverters.convert(text, targetClass);
                 }
+            }
+            if (converted != null) {
                 result = new Parameter((ParameterDescriptor) desc,converted);
             } else {
                 result = null;
             }
+            
         } else if(desc instanceof ParameterDescriptorGroup){
             result = this.readValueGroup();
         } else {
