@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.Input;
 
 
 /**
@@ -57,7 +58,7 @@ import org.geotoolkit.ows.xml.v110.LanguageStringType;
     "reference",
     "data"
 })
-public class InputType {
+public class InputType implements Input{
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;
@@ -78,6 +79,7 @@ public class InputType {
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -102,6 +104,7 @@ public class InputType {
      *     {@link LanguageStringType }
      *     
      */
+    @Override
     public LanguageStringType getTitle() {
         return title;
     }
@@ -126,6 +129,7 @@ public class InputType {
      *     {@link LanguageStringType }
      *     
      */
+    @Override
     public LanguageStringType getAbstract() {
         return _abstract;
     }

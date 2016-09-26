@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
     "literalData",
     "boundingBoxData"
 })
-public class DataType {
+public class DataType implements org.geotoolkit.wps.xml.DataType{
 
     @XmlElement(name = "ComplexData")
     protected ComplexDataType complexData;
@@ -70,6 +70,7 @@ public class DataType {
      *     {@link ComplexDataType }
      *     
      */
+    @Override
     public ComplexDataType getComplexData() {
         return complexData;
     }
@@ -94,6 +95,7 @@ public class DataType {
      *     {@link LiteralDataType }
      *     
      */
+    @Override
     public LiteralDataType getLiteralData() {
         return literalData;
     }
@@ -118,6 +120,7 @@ public class DataType {
      *     {@link BoundingBoxType }
      *     
      */
+    @Override
     public BoundingBoxType getBoundingBoxData() {
         return boundingBoxData;
     }

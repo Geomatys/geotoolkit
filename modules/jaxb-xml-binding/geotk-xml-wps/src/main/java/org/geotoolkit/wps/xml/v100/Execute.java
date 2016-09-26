@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
     "responseForm"
 })
 @XmlRootElement(name = "Execute")
-public class Execute extends RequestBaseType {
+public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.Execute {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;
@@ -70,6 +70,7 @@ public class Execute extends RequestBaseType {
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -94,6 +95,7 @@ public class Execute extends RequestBaseType {
      *     {@link DataInputsType }
      *     
      */
+    @Override
     public DataInputsType getDataInputs() {
         return dataInputs;
     }
@@ -118,6 +120,7 @@ public class Execute extends RequestBaseType {
      *     {@link ResponseFormType }
      *     
      */
+    @Override
     public ResponseFormType getResponseForm() {
         return responseForm;
     }

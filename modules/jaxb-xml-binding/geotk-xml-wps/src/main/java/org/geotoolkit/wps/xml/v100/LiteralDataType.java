@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "LiteralDataType", propOrder = {
     "value"
 })
-public class LiteralDataType {
+public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
 
     @XmlValue
     protected String value;
@@ -70,6 +70,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -94,6 +95,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getDataType() {
         return dataType;
     }
@@ -118,6 +120,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getUom() {
         return uom;
     }

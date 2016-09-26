@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.ResponseForm;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "responseDocument",
     "rawDataOutput"
 })
-public class ResponseFormType {
+public class ResponseFormType implements ResponseForm {
 
     @XmlElement(name = "ResponseDocument")
     protected ResponseDocumentType responseDocument;

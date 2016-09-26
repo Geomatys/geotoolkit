@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
     "content"
 })
 //@XmlSeeAlso(org.geotoolkit.wps.xml.v100.ext.GeoJSONType.class)
-public class ComplexDataType {
+public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
 
     @XmlMixed
     @XmlElementRefs({

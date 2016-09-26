@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.DataInputs;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataInputsType", propOrder = {
     "input"
 })
-public class DataInputsType {
+public class DataInputsType implements DataInputs {
 
     @XmlElement(name = "Input", required = true)
     protected List<InputType> input;
@@ -58,28 +59,16 @@ public class DataInputsType {
     /**
      * Gets the value of the input property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the input property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInput().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link InputType }
      * 
      * 
+     * @return 
      */
+    @Override
     public List<InputType> getInput() {
         if (input == null) {
-            input = new ArrayList<InputType>();
+            input = new ArrayList<>();
         }
         return this.input;
     }
