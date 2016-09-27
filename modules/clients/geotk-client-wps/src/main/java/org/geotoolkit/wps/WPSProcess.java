@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import org.geotoolkit.ows.xml.v110.ExceptionType;
@@ -141,14 +142,32 @@ public class WPSProcess extends AbstractProcess {
             final URL statusLocation = security.secure(new URL(((ExecuteResponse) respObj).getStatusLocation()));
             Object tmpResponse;
             int timeLapse = 3000;
+
+            //we tolerate a few unmarshalling or IO errors, the servers behave differentely
+            //and may not offer the result file right from the start
+            int failCount = 0;
             while (true) {
                 //timeLapse = Math.min(timeLapse * 2, maxTimeLapse);
                 synchronized (this) {
                     wait(timeLapse);
                 }
-                tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
-                if (tmpResponse instanceof JAXBElement) {
-                    tmpResponse = ((JAXBElement) tmpResponse).getValue();
+
+                try{
+                    tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
+                    if (tmpResponse instanceof JAXBElement) {
+                        tmpResponse = ((JAXBElement) tmpResponse).getValue();
+                    }
+                    failCount = 0;
+                }catch(UnmarshalException | IOException ex){
+                    if(failCount<5){
+                        failCount++;
+                        continue;
+                    }else{
+                        //server seems to have a issue or can't provide status
+                        //informations in any case we don't known what is
+                        //happenning so we consider the process failed
+                        throw ex;
+                    }
                 }
 
                 if (tmpResponse instanceof ExecuteResponse) {

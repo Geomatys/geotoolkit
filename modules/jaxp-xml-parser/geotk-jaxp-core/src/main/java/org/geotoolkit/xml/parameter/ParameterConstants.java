@@ -26,6 +26,8 @@ final class ParameterConstants {
     // URI for parameter documents
     public static final String URI_PARAMETER = "http://www.geotoolkit.org/parameter";
     public static final String PREFIX_PARAMETER = "param";
+    
+    public static final String ENTRY_PARAMETER = "entry";
 
     // SCHEMA
     public static final String URI_XSD = "http://www.w3.org/2001/XMLSchema";

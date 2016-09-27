@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.xml.parameter;
 
+import java.lang.reflect.Array;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.sis.util.ObjectConverters;
@@ -75,7 +76,20 @@ public class ParameterValueWriter extends StaxStreamWriter {
         if (generalParameterValue instanceof ParameterValueGroup) {
             this.writeParameterValueGroup((ParameterValueGroup) generalParameterValue);
         } else {
-            this.writeParameterValue((ParameterValue) generalParameterValue);
+            ParameterValue param = (ParameterValue) generalParameterValue;
+            final Class valueClass = param.getDescriptor().getValueClass();
+            if (valueClass.isArray()) {
+                final Object values = param.getValue();
+                final int size = Array.getLength(values);
+                for (int i = 0; i < size; i++) {
+                    writer.writeStartElement(URI_PARAMETER, ENTRY_PARAMETER);
+                    this.writeParameterValue(Array.get(values, i));
+                    writer.writeEndElement();
+                }
+                
+            } else {
+                this.writeParameterValue(param.getValue());
+            }
         }
         writer.writeEndElement();
     }
@@ -86,9 +100,8 @@ public class ParameterValueWriter extends StaxStreamWriter {
      * @param parameter
      * @throws XMLStreamException
      */
-    private void writeParameterValue(final ParameterValue parameter)
+    private void writeParameterValue(final Object value)
             throws XMLStreamException {
-        final Object value = parameter.getValue();
         if(value != null){
             //HACK for Path support
             // we don't use ObjectConverters to convert Path into a String because
