@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlValue;
     "value"
 })
 @XmlRootElement(name = "ValuesReference")
-public class ValuesReference {
+public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
 
     @XmlValue
     protected String value;
@@ -89,6 +89,7 @@ public class ValuesReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -101,6 +102,7 @@ public class ValuesReference {
      *     {@link String }
      *     
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -113,6 +115,7 @@ public class ValuesReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getReference() {
         return reference;
     }
@@ -125,6 +128,7 @@ public class ValuesReference {
      *     {@link String }
      *     
      */
+    @Override
     public void setReference(String value) {
         this.reference = value;
     }

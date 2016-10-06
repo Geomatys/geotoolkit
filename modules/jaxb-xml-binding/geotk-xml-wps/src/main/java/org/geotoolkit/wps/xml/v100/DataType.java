@@ -61,6 +61,22 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
     protected LiteralDataType literalData;
     @XmlElement(name = "BoundingBoxData")
     protected BoundingBoxType boundingBoxData;
+    
+    public DataType() {
+        
+    }
+    
+    public DataType(ComplexDataType complexData) {
+        this.complexData = complexData;
+    }
+    
+    public DataType(LiteralDataType literalData) {
+        this.literalData = literalData;
+    }
+    
+    public DataType(BoundingBoxType boundingBoxData) {
+        this.boundingBoxData = boundingBoxData;
+    }
 
     /**
      * Gets the value of the complexData property.

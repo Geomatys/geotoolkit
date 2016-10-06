@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.DomainMetadata;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DomainMetadataType", propOrder = {
     "value"
 })
-public class DomainMetadataType {
+public class DomainMetadataType implements DomainMetadata {
 
     @XmlValue
     private String value;
@@ -89,6 +90,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -101,6 +103,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -113,6 +116,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getReference() {
         return reference;
     }
@@ -125,6 +129,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setReference(String value) {
         this.reference = value;
     }

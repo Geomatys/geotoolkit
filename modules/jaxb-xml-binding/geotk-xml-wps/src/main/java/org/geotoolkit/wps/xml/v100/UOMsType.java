@@ -56,31 +56,25 @@ public class UOMsType {
     @XmlElement(name = "UOM", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected List<DomainMetadataType> uom;
 
+    public UOMsType() {
+        
+    }
+    
+    public UOMsType(List<DomainMetadataType> uom) {
+        this.uom = uom;
+    }
+    
     /**
      * Reference to a UOM supported for this input or output. Gets the value of the uom property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uom property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUOM().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link DomainMetadataType }
      * 
      * 
      */
     public List<DomainMetadataType> getUOM() {
         if (uom == null) {
-            uom = new ArrayList<DomainMetadataType>();
+            uom = new ArrayList<>();
         }
         return this.uom;
     }

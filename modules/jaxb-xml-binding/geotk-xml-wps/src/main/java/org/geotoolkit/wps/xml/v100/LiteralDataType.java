@@ -62,6 +62,16 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
     @XmlSchemaType(name = "anyURI")
     protected String uom;
 
+    public LiteralDataType() {
+        
+    }
+    
+    public LiteralDataType(final String value, final String dataType, final String uom) {
+        this.dataType = dataType;
+        this.uom      = uom;
+        this.value    = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 
@@ -83,6 +93,7 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setValue(final String value) {
         this.value = value;
     }
@@ -108,6 +119,7 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setDataType(final String value) {
         this.dataType = value;
     }
@@ -133,6 +145,7 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setUom(final String value) {
         this.uom = value;
     }

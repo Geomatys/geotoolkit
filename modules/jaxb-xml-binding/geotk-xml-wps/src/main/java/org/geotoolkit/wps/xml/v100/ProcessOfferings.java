@@ -55,12 +55,19 @@ public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings
     @XmlElement(name = "Process", required = true)
     protected List<ProcessBriefType> process;
 
+    public ProcessOfferings() {
+        
+    }
+    
+    public ProcessOfferings(List<ProcessBriefType> process) {
+        this.process = process;
+    }
+    
     /**
      * Gets the value of the process property.
      * 
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link ProcessBriefType }
-     * 
      * 
      */
     public List<ProcessBriefType> getProcess() {

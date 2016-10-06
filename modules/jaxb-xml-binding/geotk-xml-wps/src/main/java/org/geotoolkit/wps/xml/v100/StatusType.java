@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.ows.xml.v110.ExceptionReport;
+import org.geotoolkit.wps.xml.StatusInfo;
 
 
 /**
@@ -59,7 +61,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "processSucceeded",
     "processFailed"
 })
-public class StatusType {
+public class StatusType implements StatusInfo {
 
     @XmlElement(name = "ProcessAccepted")
     protected String processAccepted;
@@ -74,6 +76,34 @@ public class StatusType {
     @XmlAttribute(required = true)
     protected XMLGregorianCalendar creationTime;
 
+    public StatusType() {
+        
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, String processAccepted, String processSucceeded) {
+        this.creationTime = creationTime;
+        this.processAccepted = processAccepted;
+        this.processSucceeded = processSucceeded;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ProcessStartedType processStarted, ProcessStartedType processPaused) {
+        this.creationTime = creationTime;
+        this.processStarted = processStarted;
+        this.processPaused = processPaused;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ProcessFailedType processFailed) {
+        this.creationTime = creationTime;
+        this.processFailed = processFailed;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ExceptionReport processFailed) {
+        this.creationTime = creationTime;
+        if (processFailed != null) {
+            this.processFailed = new ProcessFailedType(processFailed);
+        }
+    }
+    
     /**
      * Gets the value of the processAccepted property.
      * 

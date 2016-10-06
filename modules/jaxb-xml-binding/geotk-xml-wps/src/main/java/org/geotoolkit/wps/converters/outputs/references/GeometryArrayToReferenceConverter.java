@@ -32,9 +32,8 @@ import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  *
@@ -57,20 +56,20 @@ public class GeometryArrayToReferenceConverter extends AbstractReferenceOutputCo
     }
 
     @Override
-    public ReferenceType convert(Geometry[] source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(Geometry[] source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (params.get(TMP_DIR_PATH) == null)
             throw new UnconvertibleObjectException("The output directory should be defined");
 
         if (source == null)
             throw new UnconvertibleObjectException("The output data should be defined");
 
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String)params.get(IOTYPE));
-        ReferenceType reference = null;
-
-        if (ioType.equals(WPSIO.IOType.INPUT))
-            reference = new InputReferenceType();
-        else
-            reference = new OutputReferenceType();
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        }
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
 
         reference.setMimeType((String)params.get(MIME));
         reference.setEncoding((String)params.get(ENCODING));

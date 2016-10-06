@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessSummary;
 
 
 /**
@@ -57,9 +60,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     ProcessDescriptionType.class
 })
-public class ProcessBriefType
-    extends DescriptionType
-{
+public class ProcessBriefType extends DescriptionType implements ProcessSummary {
 
     @XmlElement(name = "Profile")
     @XmlSchemaType(name = "anyURI")
@@ -69,31 +70,25 @@ public class ProcessBriefType
     @XmlAttribute(namespace = "http://www.opengis.net/wps/1.0.0", required = true)
     protected String processVersion;
 
+    public ProcessBriefType() {
+        
+    }
+    
+    public ProcessBriefType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, String processVersion) {
+        super(identifier, title, _abstract);
+        this.processVersion = processVersion;
+    }
+    
     /**
      * Gets the value of the profile property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the profile property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProfile().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
      * 
      */
     public List<String> getProfile() {
         if (profile == null) {
-            profile = new ArrayList<String>();
+            profile = new ArrayList<>();
         }
         return this.profile;
     }

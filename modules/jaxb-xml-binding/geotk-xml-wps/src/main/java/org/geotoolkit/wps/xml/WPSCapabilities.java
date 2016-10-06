@@ -17,10 +17,12 @@
 
 package org.geotoolkit.wps.xml;
 
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface WPSCapabilities {
+public interface WPSCapabilities extends AbstractCapabilitiesBase {
 
 }

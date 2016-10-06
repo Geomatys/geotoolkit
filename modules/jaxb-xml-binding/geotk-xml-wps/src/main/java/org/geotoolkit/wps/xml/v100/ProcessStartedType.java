@@ -63,6 +63,15 @@ public class ProcessStartedType {
     @XmlAttribute
     protected Integer percentCompleted;
 
+    public ProcessStartedType() {
+        
+    }
+    
+    public ProcessStartedType(String value, Integer percentCompleted) {
+        this.percentCompleted = percentCompleted;
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

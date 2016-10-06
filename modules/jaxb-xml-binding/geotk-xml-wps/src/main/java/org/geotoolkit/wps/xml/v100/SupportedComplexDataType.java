@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
 
 
 /**
@@ -54,13 +56,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     SupportedComplexDataInputType.class
 })
-public class SupportedComplexDataType {
+public class SupportedComplexDataType implements ComplexDataTypeDescription {
 
     @XmlElement(name = "Default", namespace = "", required = true)
     protected ComplexDataCombinationType _default;
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected ComplexDataCombinationsType supported;
 
+    public SupportedComplexDataType() {
+        
+    }
+    
+    public SupportedComplexDataType(ComplexDataDescriptionType defaultFormat, List<ComplexDataDescriptionType> supported) {
+        if (defaultFormat != null) {
+            this._default = new ComplexDataCombinationType(defaultFormat);
+        }
+        if (supported != null) {
+            this.supported = new ComplexDataCombinationsType(supported);
+        }
+    }
+    
     /**
      * Gets the value of the default property.
      * 

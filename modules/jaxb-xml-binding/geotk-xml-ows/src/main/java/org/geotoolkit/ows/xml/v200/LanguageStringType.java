@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.LanguageString;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "LanguageStringType", propOrder = {
     "value"
 })
-public class LanguageStringType {
+public class LanguageStringType implements LanguageString {
 
     @XmlValue
     private String value;
@@ -86,6 +87,7 @@ public class LanguageStringType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -110,6 +112,7 @@ public class LanguageStringType {
      *     {@link String }
      *     
      */
+    @Override
     public String getLang() {
         return lang;
     }

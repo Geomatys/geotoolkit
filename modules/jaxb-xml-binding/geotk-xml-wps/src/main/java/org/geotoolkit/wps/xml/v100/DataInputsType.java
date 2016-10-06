@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wps.xml.DataInputs;
 
 
 /**
@@ -51,10 +50,18 @@ import org.geotoolkit.wps.xml.DataInputs;
 @XmlType(name = "DataInputsType", propOrder = {
     "input"
 })
-public class DataInputsType implements DataInputs {
+public class DataInputsType {
 
     @XmlElement(name = "Input", required = true)
     protected List<InputType> input;
+    
+    public DataInputsType() {
+        
+    }
+    
+    public DataInputsType(List<InputType> input) {
+        this.input = input;
+    }
 
     /**
      * Gets the value of the input property.
@@ -65,7 +72,6 @@ public class DataInputsType implements DataInputs {
      * 
      * @return 
      */
-    @Override
     public List<InputType> getInput() {
         if (input == null) {
             input = new ArrayList<>();

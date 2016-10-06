@@ -24,7 +24,7 @@ import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,11 +36,11 @@ public class UrlConnectionToReferenceConverterTest extends AbstractWPSConverterT
 
     @Test
     public void convert() throws Exception {
-        final WPSObjectConverter<URLConnection, ReferenceType> converter = WPSConverterRegistry.getInstance().getConverter(URLConnection.class, ReferenceType.class);
+        final WPSObjectConverter<URLConnection, Reference> converter = WPSConverterRegistry.getInstance().getConverter(URLConnection.class, Reference.class);
         final URL url = new URL("https://toto.titi/tata");
         URLConnection conn = url.openConnection();
 
-        ReferenceType ref = converter.convert(conn, Collections.singletonMap(AbstractReferenceInputConverter.IOTYPE, (Object) WPSIO.IOType.OUTPUT));
+        Reference ref = converter.convert(conn, Collections.singletonMap(AbstractReferenceInputConverter.IOTYPE, (Object) WPSIO.IOType.OUTPUT));
         Assert.assertEquals("Href differs !", url.toExternalForm(), ref.getHref());
     }
 }

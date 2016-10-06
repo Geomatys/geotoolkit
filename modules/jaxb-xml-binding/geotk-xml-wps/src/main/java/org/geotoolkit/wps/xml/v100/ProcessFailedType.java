@@ -54,6 +54,13 @@ public class ProcessFailedType {
     @XmlElement(name = "ExceptionReport", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected ExceptionReport exceptionReport;
 
+    public ProcessFailedType() {
+        
+    }
+    
+    public ProcessFailedType( ExceptionReport exceptionReport) {
+        this.exceptionReport = exceptionReport;
+    }
     /**
      * Gets the value of the exceptionReport property.
      * 

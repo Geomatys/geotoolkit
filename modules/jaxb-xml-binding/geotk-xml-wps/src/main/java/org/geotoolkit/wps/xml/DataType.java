@@ -25,7 +25,6 @@ import org.geotoolkit.ows.xml.BoundingBox;
 public interface DataType {
     
     ComplexDataType getComplexData();
-
     
     LiteralDataType getLiteralData();
     

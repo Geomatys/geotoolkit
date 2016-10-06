@@ -1,4 +1,6 @@
 /*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 2016, Geomatys
  *
@@ -18,6 +20,17 @@ package org.geotoolkit.wps.xml;
  *
  * @author guilhem
  */
-public interface ResponseForm {
+public interface Format {
     
+    String getMimeType();
+    
+    void setMimeType(final String value);
+    
+    String getEncoding();
+    
+    void setEncoding(final String value);
+    
+    String getSchema();
+    
+    void setSchema(final String value);
 }

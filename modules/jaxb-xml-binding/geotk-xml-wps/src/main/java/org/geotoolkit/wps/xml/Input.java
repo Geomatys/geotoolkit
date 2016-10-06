@@ -32,4 +32,6 @@ public interface Input {
     LanguageString getAbstract();
     
     DataType getData();
+    
+    Reference getReference();
 }

@@ -39,7 +39,7 @@ import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.feature.type.FeatureType;
 
 /**
@@ -47,24 +47,24 @@ import org.geotoolkit.feature.type.FeatureType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConverter<ReferenceType, T> {
+public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConverter<Reference, T> {
 
     @Override
-    public Class<ReferenceType> getSourceClass() {
-        return ReferenceType.class;
+    public Class<Reference> getSourceClass() {
+        return Reference.class;
     }
 
     @Override
     public abstract Class<T> getTargetClass();
 
     /**
-     * Convert a ReferenceType {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}.
+     * Convert a Reference {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}.
      * @param source ReferenceType
      * @return Object
      * @throws UnconvertibleObjectException
      */
     @Override
-    public abstract T convert(final ReferenceType source, Map<String, Object> params) throws UnconvertibleObjectException;
+    public abstract T convert(final Reference source, Map<String, Object> params) throws UnconvertibleObjectException;
 
      /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
@@ -76,7 +76,7 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
      * @throws JAXBException
      * @throws IOException
      */
-    protected XmlFeatureReader getFeatureReader(final ReferenceType source) throws MalformedURLException, JAXBException, IOException {
+    protected XmlFeatureReader getFeatureReader(final Reference source) throws MalformedURLException, JAXBException, IOException {
 
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
@@ -98,7 +98,7 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
         return featureReader;
     }
 
-    protected InputStream getInputStreamFromReference (final ReferenceType source) throws UnconvertibleObjectException {
+    protected InputStream getInputStreamFromReference (final Reference source) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("source", source);
         String method = null;
@@ -106,6 +106,10 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
         if (source instanceof InputReferenceType) {
             method = ((InputReferenceType) source).getMethod();
         } else if (source instanceof OutputReferenceType) {
+            method = "GET";
+            
+        // WPS 2.0 TODO    
+        } else {
             method = "GET";
         }
 

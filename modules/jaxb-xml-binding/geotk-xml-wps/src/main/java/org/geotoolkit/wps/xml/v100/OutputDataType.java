@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataOutput;
 
 
 /**
@@ -49,15 +52,27 @@ import javax.xml.bind.annotation.XmlType;
     "reference",
     "data"
 })
-public class OutputDataType
-    extends DescriptionType
-{
+public class OutputDataType extends DescriptionType implements DataOutput {
 
     @XmlElement(name = "Reference")
     protected OutputReferenceType reference;
     @XmlElement(name = "Data")
     protected DataType data;
 
+    public OutputDataType() {
+        
+    }
+    
+    public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, OutputReferenceType reference) {
+        super(identifier, title, _abstract);
+        this.reference = reference;
+    }
+    
+    public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType reference) {
+        super(identifier, title, _abstract);
+        this.data = data;
+    }
+    
     /**
      * Gets the value of the reference property.
      * 

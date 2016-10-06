@@ -70,34 +70,32 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
 
+    
+    public ComplexDataType() {
+        
+    }
+    
+    public ComplexDataType(String encoding, final String mimeType, final String schema) {
+        this.encoding = encoding;
+        this.mimeType = mimeType;
+        this.schema   = schema;
+    }
+    
     /**
-     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding).  May be an ows:Manifest data structure.Gets the value of the content property.
+     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding). 
+     * May be an ows:Manifest data structure.Gets the value of the content property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     *  @return Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link String }
      *
-     *
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return this.content;
     }
@@ -110,6 +108,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -134,6 +133,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -158,6 +158,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getSchema() {
         return schema;
     }

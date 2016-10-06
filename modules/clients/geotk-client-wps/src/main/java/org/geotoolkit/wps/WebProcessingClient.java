@@ -772,7 +772,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
 
                     if ("literal".equals(type)) {
-                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(inputClazz), unit));
+                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(getVersion().code, inputClazz), unit));
 
                     } else if ("bbox".equals(type)) {
                         final Envelope envelop = (Envelope) value;

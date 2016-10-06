@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.Format;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "encoding",
     "schema"
 })
-public class ComplexDataDescriptionType {
+public class ComplexDataDescriptionType implements Format{
 
     @XmlElement(name = "MimeType", namespace = "", required = true)
     protected String mimeType;
@@ -64,6 +65,16 @@ public class ComplexDataDescriptionType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
 
+    public ComplexDataDescriptionType() {
+        
+    }
+    
+    public ComplexDataDescriptionType( String encoding, String mimetype, String schema) {
+        this.encoding = encoding;
+        this.mimeType = mimetype;
+        this.schema = schema;
+    }
+    
     /**
      * Gets the value of the mimeType property.
      * 
@@ -72,6 +83,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -84,6 +96,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setMimeType(final String value) {
         this.mimeType = value;
     }
@@ -96,6 +109,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -108,6 +122,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setEncoding(final String value) {
         this.encoding = value;
     }
@@ -120,6 +135,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSchema() {
         return schema;
     }
@@ -132,6 +148,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
     }

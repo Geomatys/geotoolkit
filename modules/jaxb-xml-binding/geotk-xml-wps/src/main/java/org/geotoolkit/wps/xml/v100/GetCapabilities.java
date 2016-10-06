@@ -16,15 +16,19 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
 import org.apache.sis.util.Version;
+import org.geotoolkit.ows.xml.AcceptFormats;
+import org.geotoolkit.ows.xml.Sections;
 
 
 /**
@@ -54,7 +58,7 @@ import org.apache.sis.util.Version;
     "acceptVersions"
 })
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilities implements RequestBase {
+public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
 
     @XmlElement(name = "AcceptVersions")
     private AcceptVersionsType acceptVersions;
@@ -65,6 +69,18 @@ public class GetCapabilities implements RequestBase {
     @XmlAttribute
     private String updateSequence;
 
+    public GetCapabilities() {
+        
+    }
+    
+    public GetCapabilities(String service, String language, String updateSequence, AcceptVersionsType versions) {
+        this.acceptVersions = versions;
+        this.language = language;
+        this.service = service;
+        this.updateSequence = updateSequence;
+    }
+    
+    
     /**
      * Gets the value of the acceptVersions property.
      * 
@@ -73,6 +89,7 @@ public class GetCapabilities implements RequestBase {
      *     {@link AcceptVersionsType }
      *     
      */
+    @Override
     public AcceptVersionsType getAcceptVersions() {
         return acceptVersions;
     }
@@ -131,6 +148,14 @@ public class GetCapabilities implements RequestBase {
         return language;
     }
 
+    @Override
+    public List<String> getLanguages() {
+        if (language != null) {
+            return Arrays.asList(language);
+        }
+        return new ArrayList<>();
+    }
+    
     /**
      * Sets the value of the language property.
      * 
@@ -146,6 +171,7 @@ public class GetCapabilities implements RequestBase {
     /**
      * @return the updateSequence
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -174,6 +200,26 @@ public class GetCapabilities implements RequestBase {
             return new Version(acceptVersions.getVersion().get(0));
         } 
         return null;
+    }
+
+    @Override
+    public Sections getSections() {
+        return null; // not implemented in 1.0.0
+    }
+
+    @Override
+    public String getFirstAcceptFormat() {
+        return null; // not implemented in 1.0.0
+    }
+
+    @Override
+    public boolean containsSection(String sectionName) {
+        return false;
+    }
+
+    @Override
+    public AcceptFormats getAcceptFormats() {
+        return null; // not implemented in 1.0.0
     }
 
 }

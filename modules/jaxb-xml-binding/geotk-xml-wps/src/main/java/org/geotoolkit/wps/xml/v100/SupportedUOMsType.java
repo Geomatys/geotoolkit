@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -68,6 +69,23 @@ public class SupportedUOMsType {
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected UOMsType supported;
 
+    public SupportedUOMsType() {
+        
+    }
+    
+    public SupportedUOMsType(SupportedUOMsType.Default _default, UOMsType supported) {
+        this._default = _default;
+        this.supported = supported;
+    }
+    
+    public SupportedUOMsType(DomainMetadataType _default, List<DomainMetadataType> supported) {
+        if (_default != null) {
+            this._default = new Default(_default);
+        }
+        if (supported != null) {
+            this.supported = new UOMsType(supported);
+        }
+    }
     /**
      * Gets the value of the default property.
      * 
@@ -145,6 +163,14 @@ public class SupportedUOMsType {
         @XmlElement(name = "UOM", namespace = "http://www.opengis.net/ows/1.1", required = true)
         protected DomainMetadataType uom;
 
+        public Default() {
+            
+        }
+        
+        public Default(DomainMetadataType uom) {
+            this.uom = uom;
+        }
+        
         /**
          * Reference to the default UOM supported for this Input/Output
          * 

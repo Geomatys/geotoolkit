@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.wps.xml.DocumentOutputDefinition;
+import org.geotoolkit.wps.xml.OutputDefinition;
 
 
 /**
@@ -57,7 +59,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 @XmlSeeAlso({
     DocumentOutputDefinitionType.class
 })
-public class OutputDefinitionType {
+public class OutputDefinitionType implements OutputDefinition {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;
@@ -73,6 +75,22 @@ public class OutputDefinitionType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
 
+    public OutputDefinitionType() {
+        
+    }
+    
+    public OutputDefinitionType(CodeType identifier) {
+        this.identifier = identifier;
+    }
+    
+    public OutputDefinitionType(CodeType identifier, String uom, String mimeType, String encoding, String schema) {
+        this.identifier = identifier;
+        this.encoding = encoding;
+        this.mimeType = mimeType;
+        this.schema = schema;
+        this.uom = uom;
+    }
+    
     /**
      * Unambiguous identifier or name of an output, unique for this process. 
      * 
@@ -81,6 +99,7 @@ public class OutputDefinitionType {
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -105,6 +124,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getUom() {
         return uom;
     }
@@ -117,6 +137,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setUom(final String value) {
         this.uom = value;
     }
@@ -129,6 +150,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -141,6 +163,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setMimeType(final String value) {
         this.mimeType = value;
     }
@@ -153,6 +176,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -165,6 +189,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setEncoding(final String value) {
         this.encoding = value;
     }
@@ -177,6 +202,7 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSchema() {
         return schema;
     }
@@ -189,8 +215,19 @@ public class OutputDefinitionType {
      *     {@link String }
      *     
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
+    }
+
+    @Override
+    public boolean isReference() {
+        return false;
+    }
+
+    @Override
+    public DocumentOutputDefinition asDoc() {
+        return new DocumentOutputDefinitionType(identifier, uom, mimeType, encoding, schema);
     }
 
 }

@@ -53,6 +53,14 @@ public class ComplexDataCombinationType {
     @XmlElement(name = "Format", namespace = "", required = true)
     protected ComplexDataDescriptionType format;
 
+    public ComplexDataCombinationType() {
+        
+    }
+    
+    public ComplexDataCombinationType(ComplexDataDescriptionType format) {
+        this.format = format;
+    }
+    
     /**
      * Gets the value of the format property.
      * 

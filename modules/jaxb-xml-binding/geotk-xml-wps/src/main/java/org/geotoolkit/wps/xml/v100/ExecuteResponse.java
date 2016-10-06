@@ -72,7 +72,7 @@ import javax.xml.bind.annotation.XmlType;
     "processOutputs"
 })
 @XmlRootElement(name = "ExecuteResponse")
-public class ExecuteResponse extends ResponseBaseType {
+public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.wps.xml.ExecuteResponse {
 
     @XmlElement(name = "Process", required = true)
     protected ProcessBriefType process;
@@ -92,6 +92,19 @@ public class ExecuteResponse extends ResponseBaseType {
     protected String statusLocation;
 
     public ExecuteResponse() {}
+    
+    public ExecuteResponse(final String version, final String service, final String lang, final String serviceInstance, final ProcessBriefType process,
+            DataInputsType dataInputs, OutputDefinitionsType outputDefinitions, List<OutputDataType> output, StatusType status) {
+        super(service, version, lang);
+        this.serviceInstance = serviceInstance;
+        this.process = process;
+        this.dataInputs = dataInputs;
+        this.outputDefinitions = outputDefinitions;
+        if (output != null) {
+            this.processOutputs = new ProcessOutputs(output);
+        }
+        this.status = status;
+    }
 
     public ExecuteResponse(final ExecuteResponse other) {
         this.setService(other.getService());
@@ -270,6 +283,7 @@ public class ExecuteResponse extends ResponseBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public void setStatusLocation(final String value) {
         this.statusLocation = value;
     }
@@ -303,31 +317,25 @@ public class ExecuteResponse extends ResponseBaseType {
         @XmlElement(name = "Output", required = true)
         protected List<OutputDataType> output;
 
+        public ProcessOutputs() {
+            
+        }
+        public ProcessOutputs(List<OutputDataType> output) {
+            this.output = output;
+        }
+
         /**
          * Gets the value of the output property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the output property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getOutput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link OutputDataType }
          * 
          * 
+         * @return 
          */
         public List<OutputDataType> getOutput() {
             if (output == null) {
-                output = new ArrayList<OutputDataType>();
+                output = new ArrayList<>();
             }
             return this.output;
         }

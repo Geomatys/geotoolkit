@@ -81,7 +81,7 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
      * @param exceptionCode
      */
     public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
-        exception = new ArrayList<ExceptionType>();
+        exception = new ArrayList<>();
         this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
         this.version = version;
     }

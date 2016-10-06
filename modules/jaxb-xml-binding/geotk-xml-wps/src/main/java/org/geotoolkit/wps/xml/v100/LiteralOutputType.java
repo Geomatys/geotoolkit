@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
 /**
@@ -55,13 +56,22 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 @XmlSeeAlso({
     LiteralInputType.class
 })
-public class LiteralOutputType {
+public class LiteralOutputType implements LiteralDataDescription {
 
     @XmlElement(name = "DataType", namespace = "http://www.opengis.net/ows/1.1")
     protected DomainMetadataType dataType;
     @XmlElement(name = "UOMs", namespace = "")
     protected SupportedUOMsType uoMs;
 
+    public LiteralOutputType() {
+        
+    }
+    
+    public LiteralOutputType(DomainMetadataType dataType, SupportedUOMsType uoMs) {
+        this.dataType = dataType;
+        this.uoMs = uoMs;
+    }
+    
     /**
      * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string. 
      * 

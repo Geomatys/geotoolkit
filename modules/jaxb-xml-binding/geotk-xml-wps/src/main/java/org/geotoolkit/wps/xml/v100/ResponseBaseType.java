@@ -61,6 +61,16 @@ public class ResponseBaseType implements WPSResponse {
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace", required = true)
     protected String lang;
 
+    public ResponseBaseType() {
+        
+    }
+    
+    public ResponseBaseType(String service, String version, String lang) {
+        this.service = service;
+        this.version = version;
+        this.lang    = lang;
+    }
+    
     /**
      * Gets the value of the service property.
      * 

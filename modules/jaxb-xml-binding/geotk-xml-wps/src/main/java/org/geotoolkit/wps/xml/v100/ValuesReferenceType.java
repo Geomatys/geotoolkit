@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.ValueReference;
 
 
 /**
@@ -46,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValuesReferenceType")
-public class ValuesReferenceType {
+public class ValuesReferenceType implements ValueReference {
 
     @XmlAttribute(namespace = "http://www.opengis.net/ows/1.1")
     @XmlSchemaType(name = "anyURI")
@@ -100,6 +101,16 @@ public class ValuesReferenceType {
      *     
      */
     public void setValuesForm(final String value) {
+        this.valuesForm = value;
+    }
+
+    @Override
+    public String getValue() {
+        return valuesForm;
+    }
+
+    @Override
+    public void setValue(String value) {
         this.valuesForm = value;
     }
 

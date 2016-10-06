@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.InputDescription;
 
 
 /**
@@ -57,9 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     "literalData",
     "boundingBoxData"
 })
-public class InputDescriptionType
-    extends DescriptionType
-{
+public class InputDescriptionType extends DescriptionType implements InputDescription {
 
     @XmlElement(name = "ComplexData", namespace = "")
     protected SupportedComplexDataInputType complexData;
@@ -69,11 +70,31 @@ public class InputDescriptionType
     protected SupportedCRSsType boundingBoxData;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger minOccurs;
+    protected Integer minOccurs;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger maxOccurs;
+    protected Integer maxOccurs;
 
+    public InputDescriptionType() {
+        
+    }
+    
+    public InputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            Integer minOccur, Integer maxOccur, DataDescription dataDescription) {
+        super(identifier, title, _abstract);
+        this.minOccurs = minOccur;
+        this.maxOccurs = maxOccur;
+        if (dataDescription instanceof SupportedComplexDataInputType) {
+            this.complexData = (SupportedComplexDataInputType) dataDescription;
+        } else if (dataDescription instanceof LiteralInputType) {
+            this.literalData = (LiteralInputType) dataDescription;
+        } else if (dataDescription instanceof SupportedCRSsType) {
+            this.boundingBoxData = (SupportedCRSsType) dataDescription;
+        } else if (dataDescription != null) {
+            throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
+        }
+    }
+    
     /**
      * Gets the value of the complexData property.
      * 
@@ -151,10 +172,10 @@ public class InputDescriptionType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMinOccurs() {
+    public Integer getMinOccurs() {
         return minOccurs;
     }
 
@@ -163,10 +184,10 @@ public class InputDescriptionType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMinOccurs(final BigInteger value) {
+    public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
     }
 
@@ -175,10 +196,10 @@ public class InputDescriptionType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMaxOccurs() {
+    public Integer getMaxOccurs() {
         return maxOccurs;
     }
 
@@ -187,10 +208,10 @@ public class InputDescriptionType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMaxOccurs(final BigInteger value) {
+    public void setMaxOccurs(final Integer value) {
         this.maxOccurs = value;
     }
 

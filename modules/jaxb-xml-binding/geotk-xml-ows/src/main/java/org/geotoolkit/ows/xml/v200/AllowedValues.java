@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "valueOrRange"
 })
 @XmlRootElement(name = "AllowedValues")
-public class AllowedValues {
+public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
 
     @XmlElements({
         @XmlElement(name = "Value", type = ValueType.class),
@@ -64,6 +64,11 @@ public class AllowedValues {
     public AllowedValues() {
         
     }
+    
+    public AllowedValues(final List<Object> valueOrRange){
+        this.valueOrRange = valueOrRange;
+    }
+    
     /**
      *  Build an allowed value with the specified list of value.
      */

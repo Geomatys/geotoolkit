@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
-import java.math.BigInteger;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -43,22 +43,30 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedComplexDataInputType")
-public class SupportedComplexDataInputType
-    extends SupportedComplexDataType
-{
+public class SupportedComplexDataInputType extends SupportedComplexDataType {
 
+    public SupportedComplexDataInputType() {
+        
+    }
+    
+    public SupportedComplexDataInputType(ComplexDataDescriptionType defaultFormat, List<ComplexDataDescriptionType> supported, Integer maximumMegabytes) {
+        super(defaultFormat, supported);
+        this.maximumMegabytes = maximumMegabytes;
+        
+    }
+    
     @XmlAttribute
-    protected BigInteger maximumMegabytes;
+    protected Integer maximumMegabytes;
 
     /**
      * Gets the value of the maximumMegabytes property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMaximumMegabytes() {
+    public Integer getMaximumMegabytes() {
         return maximumMegabytes;
     }
 
@@ -67,10 +75,10 @@ public class SupportedComplexDataInputType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMaximumMegabytes(final BigInteger value) {
+    public void setMaximumMegabytes(final Integer value) {
         this.maximumMegabytes = value;
     }
 

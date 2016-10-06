@@ -71,6 +71,24 @@ public class InputType implements Input{
     @XmlElement(name = "Data")
     protected DataType data;
 
+    public InputType() {
+        
+    }
+    
+    public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, InputReferenceType reference) {
+        this.identifier = identifier;
+        this.title = title;
+        this._abstract = _abstract;
+        this.reference = reference;
+    }
+    
+    public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType data) {
+        this.identifier = identifier;
+        this.title = title;
+        this._abstract = _abstract;
+        this.data = data;
+    }
+    
     /**
      * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
      * 
@@ -154,6 +172,7 @@ public class InputType implements Input{
      *     {@link InputReferenceType }
      *     
      */
+    @Override
     public InputReferenceType getReference() {
         return reference;
     }

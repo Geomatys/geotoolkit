@@ -55,31 +55,25 @@ public class ComplexDataCombinationsType {
     @XmlElement(name = "Format", namespace = "", required = true)
     protected List<ComplexDataDescriptionType> format;
 
+    public ComplexDataCombinationsType() {
+        
+    }
+    
+    public ComplexDataCombinationsType(List<ComplexDataDescriptionType> format) {
+        this.format = format;
+    }
+    
     /**
      * Gets the value of the format property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the format property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFormat().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     *  @return Objects of the following type(s) are allowed in the list
      * {@link ComplexDataDescriptionType }
      * 
      * 
      */
     public List<ComplexDataDescriptionType> getFormat() {
         if (format == null) {
-            format = new ArrayList<ComplexDataDescriptionType>();
+            format = new ArrayList<>();
         }
         return this.format;
     }

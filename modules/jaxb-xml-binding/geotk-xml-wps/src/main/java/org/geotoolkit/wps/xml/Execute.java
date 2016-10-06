@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml;
 
+import java.util.List;
 import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.ows.xml.RequestBase;
 
@@ -27,8 +28,20 @@ public interface Execute extends RequestBase {
     
     AbstractCodeType getIdentifier();
     
-    DataInputs getDataInputs();
+    List<? extends Input> getInput();
     
-    ResponseForm getResponseForm();
+    List<? extends OutputDefinition> getOutput();
+    
+    String getLanguage();
+    
+    boolean isLineage();
+    
+    boolean isRawOutput();
+    
+    boolean isDocumentOutput();
+    
+    boolean isStatus();
+
+    boolean isStoreExecuteResponse();
     
 }

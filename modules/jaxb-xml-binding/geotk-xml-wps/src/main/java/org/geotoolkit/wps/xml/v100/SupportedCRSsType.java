@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.DataDescription;
 
 
 /**
@@ -61,13 +63,22 @@ import javax.xml.bind.annotation.XmlType;
     "_default",
     "supported"
 })
-public class SupportedCRSsType {
+public class SupportedCRSsType implements DataDescription {
 
     @XmlElement(name = "Default", namespace = "", required = true)
     protected SupportedCRSsType.Default _default;
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected CRSsType supported;
 
+    public SupportedCRSsType() {
+        
+    }
+    
+    public SupportedCRSsType(String _default, final List<String> supported) {
+        this._default = new Default(_default);
+        this.supported  = new CRSsType(supported);
+    }
+    
     /**
      * Gets the value of the default property.
      * 
@@ -146,6 +157,14 @@ public class SupportedCRSsType {
         @XmlSchemaType(name = "anyURI")
         protected String crs;
 
+        public Default() {
+            
+        }
+        
+        public Default(String crs) {
+            this.crs = crs;
+        }
+        
         /**
          * Gets the value of the crs property.
          * 

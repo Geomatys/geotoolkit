@@ -79,6 +79,11 @@ public class ValueType implements Value {
         return value;
     }
 
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -105,4 +110,6 @@ public class ValueType implements Value {
     public String toString() {
         return value;
     }
+
+    
 }

@@ -20,6 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.OutputDescription;
 
 
 /**
@@ -50,9 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "literalOutput",
     "boundingBoxOutput"
 })
-public class OutputDescriptionType
-    extends DescriptionType
-{
+public class OutputDescriptionType extends DescriptionType  implements OutputDescription {
 
     @XmlElement(name = "ComplexOutput", namespace = "")
     protected SupportedComplexDataInputType complexOutput;
@@ -61,6 +63,24 @@ public class OutputDescriptionType
     @XmlElement(name = "BoundingBoxOutput", namespace = "")
     protected SupportedCRSsType boundingBoxOutput;
 
+    public OutputDescriptionType() {
+        
+    }
+    
+    public OutputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            DataDescription dataDescription) {
+        super(identifier, title, _abstract);
+        if (dataDescription instanceof SupportedComplexDataInputType) {
+            this.complexOutput = (SupportedComplexDataInputType) dataDescription;
+        } else if (dataDescription instanceof LiteralOutputType) {
+            this.literalOutput = (LiteralOutputType) dataDescription;
+        } else if (dataDescription instanceof SupportedCRSsType) {
+            this.boundingBoxOutput = (SupportedCRSsType) dataDescription;
+        } else if (dataDescription != null) {
+            throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
+        }
+    }
+    
     /**
      * Gets the value of the complexOutput property.
      * 

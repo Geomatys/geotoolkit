@@ -24,7 +24,13 @@ public interface LiteralDataType {
     
     String getValue();
     
+    void setValue(final String value);
+    
     String getDataType();
     
+    void setDataType(String datatype);
+    
     String getUom();
+    
+    void setUom(String uom);
 }

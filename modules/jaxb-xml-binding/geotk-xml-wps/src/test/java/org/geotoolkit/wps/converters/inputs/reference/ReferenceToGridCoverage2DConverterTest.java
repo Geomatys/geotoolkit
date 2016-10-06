@@ -29,13 +29,13 @@ import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  *
@@ -47,16 +47,16 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversion() throws UnconvertibleObjectException, IOException  {
-        final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
+        final WPSObjectConverter<Reference, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, GridCoverage2D.class);
 
         final URL coverage = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage.tiff");
         assertNotNull(coverage);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.MIME, "image/geotiff");
 
-        final ReferenceType reference = new InputReferenceType();
+        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(coverage.toString());
         reference.setMimeType("image/x-geotiff");
         reference.setEncoding(null);
@@ -80,7 +80,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
     public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
 
-        final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
+        final WPSObjectConverter<Reference, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, GridCoverage2D.class);
 
         final URL coverageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage_geotiff_base64");
         assertNotNull(coverageBase64);
@@ -89,7 +89,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.ENCODING, "base64");
 
-        final ReferenceType reference = new InputReferenceType();
+        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(coverageBase64.toString());
         reference.setMimeType("image/x-geotiff");
         reference.setEncoding("base64");

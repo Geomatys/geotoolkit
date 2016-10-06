@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.xml.v100;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.Reference;
 
 
 /**
@@ -85,7 +87,7 @@ import javax.xml.bind.annotation.XmlType;
     "body",
     "bodyReference"
 })
-public class InputReferenceType implements ReferenceType {
+public class InputReferenceType implements Reference {
 
     @XmlElement(name = "Header")
     protected List<InputReferenceType.Header> header;
@@ -107,23 +109,19 @@ public class InputReferenceType implements ReferenceType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
 
+    public InputReferenceType() {
+        
+    }
+    
+    public InputReferenceType(String href, String mimeType, String encoding) {
+        this.href = href;
+        this.mimeType = mimeType;
+        this.encoding = encoding;
+    }
+    
     /**
      * Gets the value of the header property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the header property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getHeader().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link InputReferenceType.Header }
      * 
@@ -144,6 +142,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link Object }
      *     
      */
+    @Override
     public Object getBody() {
         if (body != null) {
             return body.getContent();
@@ -199,6 +198,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -211,6 +211,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setHref(final String value) {
         this.href = value;
     }
@@ -251,6 +252,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -263,6 +265,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setMimeType(final String value) {
         this.mimeType = value;
     }
@@ -275,6 +278,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -287,6 +291,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setEncoding(final String value) {
         this.encoding = value;
     }
@@ -299,6 +304,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSchema() {
         return schema;
     }
@@ -311,6 +317,7 @@ public class InputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
     }

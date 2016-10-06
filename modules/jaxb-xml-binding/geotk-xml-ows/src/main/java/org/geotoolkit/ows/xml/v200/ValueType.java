@@ -53,7 +53,7 @@ public class ValueType implements Value {
     @XmlValue
     private String value;
 
-    ValueType(){
+    protected ValueType(){
     }
     
     public ValueType(final Value that){

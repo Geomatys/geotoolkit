@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wps.xml.ResponseForm;
 
 
 /**
@@ -51,13 +50,25 @@ import org.geotoolkit.wps.xml.ResponseForm;
     "responseDocument",
     "rawDataOutput"
 })
-public class ResponseFormType implements ResponseForm {
+public class ResponseFormType {
 
     @XmlElement(name = "ResponseDocument")
     protected ResponseDocumentType responseDocument;
     @XmlElement(name = "RawDataOutput")
     protected OutputDefinitionType rawDataOutput;
 
+    public ResponseFormType() {
+        
+    }
+    
+    public ResponseFormType(ResponseDocumentType responseDocument) {
+        this.responseDocument = responseDocument;
+    }
+    
+    public ResponseFormType(OutputDefinitionType rawDataOutput) {
+        this.rawDataOutput = rawDataOutput;
+    }
+    
     /**
      * Gets the value of the responseDocument property.
      * 

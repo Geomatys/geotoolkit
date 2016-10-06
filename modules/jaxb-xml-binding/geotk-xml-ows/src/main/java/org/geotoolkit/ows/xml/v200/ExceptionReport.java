@@ -70,6 +70,23 @@ public class ExceptionReport implements ExceptionResponse{
     private String lang;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    ExceptionReport() {}
+    
+    /**
+     * Build a new full exception with the specified text, code and locator.
+     * 
+     * @param exceptionText 
+     * @param exceptionCode
+     */
+    public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
+        exception = new ArrayList<>();
+        this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
+        this.version = version;
+    }
+    
+    /**
      * Unordered list of one or more Exception elements
      *             that each describes an error. These Exception elements shall be
      *             interpreted by clients as being independent of one another (not
@@ -78,7 +95,7 @@ public class ExceptionReport implements ExceptionResponse{
      */
     public List<ExceptionType> getException() {
         if (exception == null) {
-            exception = new ArrayList<ExceptionType>();
+            exception = new ArrayList<>();
         }
         return this.exception;
     }

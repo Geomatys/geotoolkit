@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessDescription;
 
 
 /**
@@ -75,9 +78,7 @@ import javax.xml.bind.annotation.XmlType;
     "dataInputs",
     "processOutputs"
 })
-public class ProcessDescriptionType
-    extends ProcessBriefType
-{
+public class ProcessDescriptionType extends ProcessBriefType implements ProcessDescription {
 
     @XmlElement(name = "DataInputs", namespace = "")
     protected ProcessDescriptionType.DataInputs dataInputs;
@@ -88,6 +89,25 @@ public class ProcessDescriptionType
     @XmlAttribute
     protected Boolean statusSupported;
 
+
+    public ProcessDescriptionType() {
+        
+    }
+    
+    public ProcessDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            String processVersion,final boolean supportStorage, final boolean statusSupported, List<InputDescriptionType> inputs,
+             List<OutputDescriptionType> outputs) {
+        super(identifier, title, _abstract, processVersion);
+        this.statusSupported = statusSupported;
+        this.storeSupported = supportStorage;
+        if (inputs != null && !inputs.isEmpty()) {
+            this.dataInputs = new DataInputs(inputs);
+        }
+        if (outputs != null && !outputs.isEmpty()) {
+            this.processOutputs = new ProcessOutputs(outputs);
+        }
+    }
+    
     /**
      * Gets the value of the dataInputs property.
      * 
@@ -221,31 +241,25 @@ public class ProcessDescriptionType
         @XmlElement(name = "Input", namespace = "", required = true)
         protected List<InputDescriptionType> input;
 
+        public DataInputs() {
+            
+        }
+        
+        public DataInputs(List<InputDescriptionType> input) {
+            this.input = input;
+        }
+        
         /**
          * Gets the value of the input property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the input property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getInput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
+         * @return Objects of the following type(s) are allowed in the list
          * {@link InputDescriptionType }
          * 
          * 
          */
         public List<InputDescriptionType> getInput() {
             if (input == null) {
-                input = new ArrayList<InputDescriptionType>();
+                input = new ArrayList<>();
             }
             return this.input;
         }
@@ -281,31 +295,25 @@ public class ProcessDescriptionType
         @XmlElement(name = "Output", namespace = "", required = true)
         protected List<OutputDescriptionType> output;
 
+        public ProcessOutputs() {
+            
+        }
+        
+        public ProcessOutputs(List<OutputDescriptionType> output) {
+            this.output = output;
+        }
+        
         /**
          * Gets the value of the output property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the output property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getOutput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
+         * @return Objects of the following type(s) are allowed in the list
          * {@link OutputDescriptionType }
          * 
          * 
          */
         public List<OutputDescriptionType> getOutput() {
             if (output == null) {
-                output = new ArrayList<OutputDescriptionType>();
+                output = new ArrayList<>();
             }
             return this.output;
         }

@@ -77,6 +77,16 @@ public class DescriptionType {
     @XmlElement(name = "Metadata", namespace = "http://www.opengis.net/ows/1.1")
     protected List<MetadataType> metadata;
 
+    public DescriptionType() {
+        
+    }
+    
+    public DescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract) {
+        this._abstract = _abstract;
+        this.title = title;
+        this.identifier = identifier;
+    }
+    
     /**
      * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
      * 
