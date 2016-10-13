@@ -26,7 +26,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -38,6 +37,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.referencing.operation.TransformException;
 
@@ -96,7 +96,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         //we adjust coefficient for rendering ------------------------------
         float coeff;
-        if(symbolUnit.equals(NonSI.PIXEL)){
+        if(symbolUnit.equals(Units.POINT)){
             //symbol is in display unit
             coeff = 1;
         }else{
@@ -222,7 +222,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         renderingContext.switchToDisplayCRS();
         //we adjust coefficient for rendering ------------------------------
         float coeff;
-        if(symbolUnit.equals(NonSI.PIXEL)){
+        if(symbolUnit.equals(Units.POINT)){
             //symbol is in display unit
             coeff = 1;
         }else{
@@ -352,7 +352,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         //we adjust coefficient for rendering ----------------------------------
         float coeff = 1;
-        if(symbolUnit.equals(NonSI.PIXEL)){
+        if(symbolUnit.equals(Units.POINT)){
             //symbol is in display unit
             coeff = 1;
         }else{

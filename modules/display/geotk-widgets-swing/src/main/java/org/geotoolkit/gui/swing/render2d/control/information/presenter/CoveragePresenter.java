@@ -23,7 +23,7 @@ import java.awt.ComponentOrientation;
 import java.awt.Insets;
 import java.util.List;
 import java.util.Map.Entry;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;

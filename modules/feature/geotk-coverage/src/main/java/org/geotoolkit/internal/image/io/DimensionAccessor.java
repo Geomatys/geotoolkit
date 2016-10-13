@@ -25,7 +25,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.SampleDimension;

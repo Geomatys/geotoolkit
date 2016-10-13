@@ -22,7 +22,7 @@ import java.awt.geom.AffineTransform;
 import javax.media.jai.KernelJAI;
 import javax.media.jai.ParameterList;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;

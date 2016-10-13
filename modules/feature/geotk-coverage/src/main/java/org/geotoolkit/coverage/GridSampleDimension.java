@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import javax.media.jai.JAI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.PaletteInterpretation;

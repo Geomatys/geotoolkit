@@ -18,10 +18,10 @@
 package org.geotoolkit.gui.swing.image;
 
 import java.awt.Color;
-import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
 import static java.awt.Color.*;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.display.axis.NumberGraduation;
 
@@ -47,7 +47,7 @@ public final strictfp class ColorRampTest extends SwingTestBase<ColorRamp> {
      */
     @Override
     protected ColorRamp create(final int index) {
-        final NumberGraduation graduation = new NumberGraduation(SI.CELSIUS);
+        final NumberGraduation graduation = new NumberGraduation(Units.CELSIUS);
         graduation.setMinimum(-3);
         graduation.setMaximum(40);
 

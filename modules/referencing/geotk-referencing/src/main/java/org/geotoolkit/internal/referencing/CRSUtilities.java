@@ -19,8 +19,7 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.List;
 import java.util.ArrayList;
-import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
+import javax.measure.Unit;
 import javax.measure.quantity.Angle;
 
 import org.opengis.referencing.*;
@@ -172,7 +171,7 @@ public final class CRSUtilities extends Static {
      * The preference will be given to the longitude axis, if found.
      */
     public static Unit<Angle> getAngularUnit(final CoordinateSystem coordinateSystem) {
-        Unit<Angle> unit = NonSI.DEGREE_ANGLE;
+        Unit<Angle> unit = Units.DEGREE;
         for (int i=coordinateSystem.getDimension(); --i>=0;) {
             final CoordinateSystemAxis axis = coordinateSystem.getAxis(i);
             final Unit<?> candidate = axis.getUnit();

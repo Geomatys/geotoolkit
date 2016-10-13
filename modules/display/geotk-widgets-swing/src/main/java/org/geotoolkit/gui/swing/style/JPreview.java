@@ -27,8 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -50,6 +49,7 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.TextSymbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  * This component ables to display preview of SLD norm object (PointSymbolizer,
@@ -59,7 +59,7 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class JPreview extends JPanel implements ComponentListener {
-    
+
     private BufferedImage image = null;
     private final double[] disp = new double[] {0d,0d};
     /**
@@ -85,8 +85,8 @@ public class JPreview extends JPanel implements ComponentListener {
 
     public Object getTarget() {
         return targetObj;
-    }   
-    
+    }
+
     /**
      * This methods parses settled object and tries to create a preview of it
      *
@@ -100,7 +100,7 @@ public class JPreview extends JPanel implements ComponentListener {
             //both null
             return;
         }
-        
+
         this.targetObj = obj;
         image = null;
         repaint();
@@ -110,35 +110,35 @@ public class JPreview extends JPanel implements ComponentListener {
         if(image==null) updateImage();
         return image;
     }
-    
+
     private void updateImage() {
-        
+
         //There is already an image or there is no object to draw => exit
         if (image != null || this.targetObj == null) {
             return;
         }
 
-        int glyphSize = Math.min(getWidth(), getHeight());       
+        int glyphSize = Math.min(getWidth(), getHeight());
         glyphSize = Math.max(24, glyphSize);
-        final Dimension dim = new Dimension(glyphSize, glyphSize);  
+        final Dimension dim = new Dimension(glyphSize, glyphSize);
 
         image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
         final Rectangle rect = new Rectangle(dim);
         final Graphics2D g = image.createGraphics();
-        
+
         this.disp[0] = 0d;
         this.disp[1] = 0d;
 
-        try {           
+        try {
             // Main type
             if (this.targetObj instanceof PointSymbolizer) {
-                DefaultGlyphService.render((PointSymbolizer) targetObj, rect, g, null);   
+                DefaultGlyphService.render((PointSymbolizer) targetObj, rect, g, null);
                 this.disp[0] = ((PointSymbolizer) targetObj).getGraphic().getDisplacement().getDisplacementX().evaluate(null, Double.class);
                 this.disp[1] = ((PointSymbolizer) targetObj).getGraphic().getDisplacement().getDisplacementY().evaluate(null, Double.class);
 
             } else if (targetObj instanceof LineSymbolizer) {
                 DefaultGlyphService.render((LineSymbolizer) targetObj, rect, g, null);
-                this.disp[0] = ((LineSymbolizer) targetObj).getPerpendicularOffset().evaluate(null, Double.class);               
+                this.disp[0] = ((LineSymbolizer) targetObj).getPerpendicularOffset().evaluate(null, Double.class);
 
             } else if (targetObj instanceof PolygonSymbolizer) {
                 DefaultGlyphService.render((PolygonSymbolizer) targetObj, rect, g, null);
@@ -147,7 +147,7 @@ public class JPreview extends JPanel implements ComponentListener {
 
             } else if (targetObj instanceof TextSymbolizer) {
                 DefaultGlyphService.render((TextSymbolizer) targetObj, rect, g, null);
-                
+
                 if(((TextSymbolizer) targetObj).getLabelPlacement() instanceof  PointPlacement) {
                     PointPlacement pp = (PointPlacement) ((TextSymbolizer) targetObj).getLabelPlacement();
                     this.disp[0] = pp.getDisplacement().getDisplacementX().evaluate(null, Double.class);
@@ -155,14 +155,14 @@ public class JPreview extends JPanel implements ComponentListener {
                 }
 
             } else if (targetObj instanceof RasterSymbolizer) {
-                DefaultGlyphService.render((RasterSymbolizer) targetObj, rect, g, null); 
-            } 
+                DefaultGlyphService.render((RasterSymbolizer) targetObj, rect, g, null);
+            }
             // Sub-type
             else if (targetObj instanceof GraphicalSymbol) {
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
                 final String geometry = null; //use the default geometry of the feature
-                final Unit unit = NonSI.PIXEL;
+                final Unit unit = Units.POINT;
                 final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
 
                 //the visual element
@@ -171,32 +171,32 @@ public class JPreview extends JPanel implements ComponentListener {
                 final Expression rotation = StyleConstants.LITERAL_ONE_FLOAT;
                 final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
                 final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
-                
+
                 final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
 
                 symbols.add((GraphicalSymbol) targetObj);
                 final Graphic graphic = GO2Utilities.STYLE_FACTORY.graphic(symbols, opacity, size, rotation, anchor, disp);
 
                 final PointSymbolizer symbolizer = GO2Utilities.STYLE_FACTORY.pointSymbolizer(name, geometry, desc, unit, graphic);
-                DefaultGlyphService.render(symbolizer, rect, g, null);               
-                
-               
+                DefaultGlyphService.render(symbolizer, rect, g, null);
+
+
             } else if (targetObj instanceof Stroke) {
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
                 final String geometry = null; //use the default geometry of the feature
-                final Unit unit = NonSI.PIXEL;
+                final Unit unit = Units.POINT;
                 final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
 
                 final LineSymbolizer symbolizer = GO2Utilities.STYLE_FACTORY.lineSymbolizer(name, geometry, desc, unit, (Stroke) targetObj, offset);
 
                 DefaultGlyphService.render(symbolizer, rect, g, null);
-                
+
             } else if (targetObj instanceof Fill) {
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
                 final String geometry = null; //use the default geometry of the feature
-                final Unit unit = NonSI.PIXEL;
+                final Unit unit = Units.POINT;
                 final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
 
                 //the visual element
@@ -222,12 +222,12 @@ public class JPreview extends JPanel implements ComponentListener {
                 final PointSymbolizer symbolizer = GO2Utilities.STYLE_FACTORY.pointSymbolizer(name, geometry, desc, unit, graphic);
 
                 DefaultGlyphService.render(symbolizer, rect, g, null);
-               
+
             } else if (targetObj instanceof ExternalGraphic) {
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
                 final String geometry = null; //use the default geometry of the feature
-                final Unit unit = NonSI.PIXEL;
+                final Unit unit = Units.POINT;
                 final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
 
                 //the visual element
@@ -243,15 +243,15 @@ public class JPreview extends JPanel implements ComponentListener {
 
                 final PointSymbolizer symbolizer = GO2Utilities.STYLE_FACTORY.pointSymbolizer(name, geometry, desc, unit, graphic);
 
-                DefaultGlyphService.render(symbolizer, rect, g, null);               
-                
-                
-            }  
-            
+                DefaultGlyphService.render(symbolizer, rect, g, null);
+
+
+            }
+
             setPreferredSize(dim);
             revalidate();
 
-        } catch (NullPointerException ex) {           
+        } catch (NullPointerException ex) {
             //Do nothing because we probably try to draw a symbolizer to size 0
         }
     }
@@ -272,10 +272,10 @@ public class JPreview extends JPanel implements ComponentListener {
         updateImage();
 
         if (this.image != null) {
-            
+
             final AffineTransform trs = new AffineTransform();
             trs.translate(disp[0] + (getWidth() - image.getWidth()) / 2, disp[1] + (getHeight() - image.getHeight()) / 2);
-            
+
             g.drawImage(image, trs, null);
         }
 

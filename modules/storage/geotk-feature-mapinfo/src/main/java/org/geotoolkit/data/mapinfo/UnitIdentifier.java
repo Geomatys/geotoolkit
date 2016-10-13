@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.data.mapinfo;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.measure.Units;
 
 /**
  * A class which binds mapinfo unit codes with Geotk unit constants.
@@ -43,7 +42,7 @@ public class UnitIdentifier {
         } else {
             Matcher strMatch = Pattern.compile("\\w+").matcher(code);
             if(strMatch.find()) {
-                result = Unit.valueOf(strMatch.group());
+                result = Units.valueOf(strMatch.group());
             }
         }
         return result;
@@ -72,16 +71,16 @@ public class UnitIdentifier {
     }
 
     static {
-        UNIT_TABLE.put(0, NonSI.MILE);
-        UNIT_TABLE.put(1, SI.KILOMETRE);
-        UNIT_TABLE.put(2, NonSI.INCH);
-        UNIT_TABLE.put(3, NonSI.FOOT);
-        UNIT_TABLE.put(4, NonSI.YARD);
-        UNIT_TABLE.put(5, SI.MILLIMETRE);
-        UNIT_TABLE.put(6, SI.CENTIMETRE);
-        UNIT_TABLE.put(7, SI.METRE);
-        UNIT_TABLE.put(8, NonSI.FOOT_SURVEY_US);
-        UNIT_TABLE.put(9, NonSI.NAUTICAL_MILE);
+        UNIT_TABLE.put(0, Units.MILE);
+        UNIT_TABLE.put(1, Units.KILOMETRE);
+        UNIT_TABLE.put(2, Units.INCH);
+        UNIT_TABLE.put(3, Units.FOOT);
+//      UNIT_TABLE.put(4, Units.YARD);      // TODO: pending completion of JSR-275 replacement.
+        UNIT_TABLE.put(5, Units.MILLIMETRE);
+        UNIT_TABLE.put(6, Units.CENTIMETRE);
+        UNIT_TABLE.put(7, Units.METRE);
+        UNIT_TABLE.put(8, Units.FOOT_SURVEY_US);
+        UNIT_TABLE.put(9, Units.NAUTICAL_MILE);
         // 30
         // 31
         // 32

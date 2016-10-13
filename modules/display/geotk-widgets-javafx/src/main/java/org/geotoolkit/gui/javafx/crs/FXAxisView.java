@@ -25,24 +25,24 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
-import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.temporal.object.TemporalConstants;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Display a graphic timeline or numberline for a crs axis.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXAxisView extends Control {
-    
+
     public static enum SelectionType {
         SINGLE,
         RANGE
     }
-    
+
     private final ObjectProperty<CoordinateReferenceSystem> crs = new SimpleObjectProperty<>();
     private final DoubleProperty minScale = new SimpleDoubleProperty(0.000001);
     private final DoubleProperty maxScale = new SimpleDoubleProperty(Double.MAX_VALUE);
@@ -58,15 +58,15 @@ public class FXAxisView extends Control {
     private final ObjectProperty<SelectionType> selectionType = new SimpleObjectProperty<>();
     private final ObjectProperty<Number> rangeMin = new SimpleObjectProperty<>();
     private final ObjectProperty<Number> rangeMax = new SimpleObjectProperty<>();
-    
+
     public FXAxisView(){
         getStyleClass().add("axis-view");
-        
+
         //adjust min/max valid range based on CRS.
-        crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
+        crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable,
                 CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
-            final boolean temporal = crs==null || SI.SECOND.isCompatible(
-                    crs.get().getCoordinateSystem().getAxis(0).getUnit());            
+            final boolean temporal = crs==null || Units.SECOND.isCompatible(
+                    crs.get().getCoordinateSystem().getAxis(0).getUnit());
             if(temporal){
                 minScale.set(30.0/TemporalConstants.YEAR_MS);
                 maxScale.set(1.0/TemporalConstants.MINUTE_MS);
@@ -75,44 +75,44 @@ public class FXAxisView extends Control {
                 maxScale.set(Double.MAX_VALUE);
             }
         });
-        
+
         crs.set(CommonCRS.Temporal.JAVA.crs());
         scale.set(1.0);
     }
- 
+
     @Override
     public String getUserAgentStylesheet() {
         return FXAxisView.class.getResource("fxaxisview.css").toExternalForm();
     }
-    
+
     public DoubleProperty scaleProperty() {
         return scale;
     }
-    
+
     public DoubleProperty offsetProperty() {
         return offset;
     }
-        
+
     public IntegerProperty orientationProperty() {
         return orientation;
     }
-            
+
     public ObjectProperty<CoordinateReferenceSystem> crsProperty() {
         return crs;
     }
-    
+
     public ObjectProperty<SelectionType> selectionTypeProperty() {
         return selectionType;
     }
-    
+
     public ObjectProperty<Number> rangeMinProperty() {
         return rangeMin;
     }
-    
+
     public ObjectProperty<Number> rangeMaxProperty() {
         return rangeMax;
     }
-    
+
     public double getGraphicValueAt(final double d) {
         return scale.get() * d + offset.get();
     }
@@ -132,16 +132,16 @@ public class FXAxisView extends Control {
     }
 
     /**
-     * 
+     *
      * @param tr amount to add to translation
      */
     public void translate(final double tr) {
         offset.set(offset.get()+tr);
     }
-    
+
     /**
      * Set center of the axisview on given position.
-     * 
+     *
      * @param position in crs unit
      */
     public void moveTo(double position){
@@ -149,5 +149,5 @@ public class FXAxisView extends Control {
         final double newOffset = currentCenter - scale.get()*position;
         offset.set(newOffset);
     }
-   
+
 }

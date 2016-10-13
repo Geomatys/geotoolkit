@@ -18,9 +18,9 @@ package org.geotoolkit.processing.vector.douglaspeucker;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.SI;
 import org.apache.sis.parameter.ParameterBuilder;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -52,13 +52,13 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
 
     /**Process name : douglaspeucker */
     public static final String NAME = "douglasPeucker";
-    
+
     private static final Map ACCURACY_PROPERTIES = new HashMap();
     static{
         ACCURACY_PROPERTIES.put(IdentifiedObject.NAME_KEY, "accuracy_in");
         ACCURACY_PROPERTIES.put(IdentifiedObject.REMARKS_KEY, "Input simplification accuracy.");
     }
-    
+
     /**
      * Mandatory - Simplification accuracy
      */
@@ -66,8 +66,8 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
             .addName("accuracy_in")
             .setRemarks("Input simplification accuracy.")
             .setRequired(true)
-            .create(1.0, SI.METRE);
-    
+            .create(1.0, Units.METRE);
+
      /**
      * Optional - Simplification behavior
      */

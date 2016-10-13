@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.lang.reflect.InvocationTargetException;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -585,7 +585,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                                 }
                             } catch (IllegalArgumentException e) {
                                 // May occurs if the units are not convertible.
-                                // We are interested in the ConversionException cause.
+                                // We are interested in the IncommensurableException cause.
                                 final Throwable cause = e.getCause();
                                 throw new CoverageStoreException(e.getLocalizedMessage(),
                                         (cause instanceof Exception) ? (Exception) cause : e);
@@ -648,7 +648,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                         convertedRange = sd.getRange();
                     } else try {
                         convertedRange = range.convertTo(sd.getUnits());
-                    } catch (ConversionException e) {
+                    } catch (IncommensurableException e) {
                         if (conversionError == null) {
                             conversionError = e;
                         }

@@ -30,10 +30,10 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
+import org.apache.sis.measure.Units;
 
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -142,7 +142,7 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return NonSI.PIXEL;
+        return Units.POINT;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
     public Expression getGeometry() {
         return null;
     }
-    
+
     @Override
     public Object accept(StyleVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);

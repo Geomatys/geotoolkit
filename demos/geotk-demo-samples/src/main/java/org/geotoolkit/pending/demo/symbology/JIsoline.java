@@ -14,8 +14,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Map;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.geotoolkit.data.FeatureStore;
@@ -28,6 +27,7 @@ import org.geotoolkit.filter.function.math.MathFunctionFactory;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.style.MutableStyle;
@@ -45,7 +45,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * @author sorel
  */
 public class JIsoline extends JAbstractMapPane{
-  
+
 
     public JIsoline() throws DataStoreException, MalformedURLException, URISyntaxException {
         super(createContext());
@@ -97,7 +97,7 @@ public class JIsoline extends JAbstractMapPane{
                     "Temperature",
                     (String)null,
                     SF.description("Temperature", "Temperature"),
-                    NonSI.PIXEL,
+                    Units.POINT,
                     FF.function(MathFunctionFactory.ROUND, FF.property("value")),
                     SF.font(9),
                     SF.linePlacement(FF.literal(3),FF.literal(100),FF.literal(600),true,true,true),
@@ -112,12 +112,12 @@ public class JIsoline extends JAbstractMapPane{
     }
 
     private static MutableStyle createStationStyle(){
-        
+
         //general informations
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression label = FF.property("A_temp");
         final Font font = SF.font(
                 FF.literal("Arial"),
@@ -130,7 +130,7 @@ public class JIsoline extends JAbstractMapPane{
 
         final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
         final MutableStyle style = SF.style(DEFAULT_POINT_SYMBOLIZER,symbol);
-        
+
         return style;
     }
 

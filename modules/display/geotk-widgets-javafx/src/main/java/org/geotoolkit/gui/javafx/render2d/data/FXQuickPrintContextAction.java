@@ -31,12 +31,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
-import javax.measure.unit.SI;
+import org.apache.sis.measure.Units;
 import javax.swing.SwingConstants;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.DecorationXMLParser;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
@@ -92,7 +91,7 @@ public class FXQuickPrintContextAction extends FXMapAction {
                             false, 4, NumberFormat.getNumberInstance(),
                             Color.DARK_GRAY, Color.GRAY, Color.WHITE,
                             10,true,false, new Font("Serial", Font.BOLD, 10),true,
-                            SI.KILOMETRE);
+                            Units.KILOMETRE);
     private static final ScaleBarTemplate SCALEBAR_METER_TEMPLATE = new DefaultScaleBarTemplate(
                             new DefaultBackgroundTemplate(
                                     new BasicStroke(1),
@@ -103,12 +102,12 @@ public class FXQuickPrintContextAction extends FXMapAction {
                             false, 4, NumberFormat.getNumberInstance(),
                             Color.DARK_GRAY, Color.GRAY, Color.WHITE,
                             10,true,false, new Font("Serial", Font.BOLD, 10),true,
-                            SI.METRE);
+                            Units.METRE);
     private static final NorthArrowTemplate NORTH_ARROW_TEMPLATE = new DefaultNorthArrowTemplate(
                     null,
                     DecorationXMLParser.class.getResource("/org/geotoolkit/icon/boussole.svg"),
                     new Dimension(100,100));
-    
+
 
     public FXQuickPrintContextAction(FXMap map) {
         super(map,GeotkFX.getString(FXQuickPrintContextAction.class,"label"),
@@ -169,7 +168,7 @@ public class FXQuickPrintContextAction extends FXMapAction {
             final OutputDef odef = new OutputDef(mimetype, docFile);
             DefaultPortrayalService.portray(cdef, sdef, vdef, odef);
 
-            
+
         } catch (PortrayalException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }

@@ -24,13 +24,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
-import javax.measure.unit.SI;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
+import org.apache.sis.measure.Units;
 import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
@@ -136,7 +136,7 @@ public final strictfp class GeodeticCalculatorTest extends TestBase {
         final double R = 20000 / PI;
         final DefaultEllipsoid ellipsoid  = DefaultEllipsoid.createEllipsoid(
                 Collections.singletonMap(DefaultEllipsoid.NAME_KEY, "Test"),
-                R,R, SI.KILOMETRE);
+                R,R, Units.KILOMETRE);
         final GeodeticCalculator calculator = new GeodeticCalculator(ellipsoid);
         calculator.setStartingGeographicPoint(0, 45);
         for (int i=0; i<DATA.length; i+=3) {

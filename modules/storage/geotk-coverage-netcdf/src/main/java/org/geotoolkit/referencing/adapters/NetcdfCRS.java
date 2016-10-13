@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.io.IOException;
 import javax.imageio.IIOException;
-import javax.measure.unit.SI;
 
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.*;
@@ -507,7 +506,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 throw new IIOException(Errors.format(Errors.Keys.UnknownUnit_1, unitSymbol), e);
             }
             datum = new DefaultTemporalDatum(singletonMap(NAME_KEY, unitSymbol), unit.getDateOrigin());
-            getAxis(0).unit = Units.multiply(SI.SECOND, unit.getTimeUnit().getValueInSeconds());
+            getAxis(0).unit = Units.multiply(Units.SECOND, unit.getTimeUnit().getValueInSeconds());
         }
 
         /**

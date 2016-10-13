@@ -24,8 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 
@@ -80,6 +79,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.InternationalString;
+import org.apache.sis.measure.Units;
 
 /**
  * Transform old SLD v1.0.0 symbology in GT classes.
@@ -390,7 +390,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         if(pst == null) return null;
 
         final Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = visitGeom( pst.getGeometry());
         final String name = null;
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
@@ -406,7 +406,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
         final Stroke stroke = visit(lst.getStroke());
         final Expression offset = filterFactory.literal(0);
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = visitGeom( lst.getGeometry());
         final String name = null;
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
@@ -424,7 +424,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         final Fill fill = visit(pst.getFill());
         final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
         final Expression offset = filterFactory.literal(0);
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = visitGeom( pst.getGeometry());
         final String name = null;
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
@@ -445,7 +445,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         final ContrastEnhancement enchance = visit(rst.getContrastEnhancement());
         final ShadedRelief relief = visit(rst.getShadedRelief());
         final Symbolizer outline = visit(rst.getImageOutline());
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = visitGeom( rst.getGeometry());
         final String name = "";
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
@@ -464,7 +464,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         final LabelPlacement placement = (tst.getLabelPlacement() == null) ? styleFactory.pointPlacement() : visit(tst.getLabelPlacement());
         final Halo halo = visit(tst.getHalo());
         final Fill fill = visit(tst.getFill());
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = visitGeom( tst.getGeometry());
         final String name = null;
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;

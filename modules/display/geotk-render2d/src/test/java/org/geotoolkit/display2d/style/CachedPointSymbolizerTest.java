@@ -22,7 +22,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -69,7 +69,7 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
             final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
             symbols.add(mark);
             final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(12), LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
-            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
+            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, Units.POINT, graphic);
 
             final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer, null);
             final float margin = cached.getMargin(null, ctx);
@@ -83,7 +83,7 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
             final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
             symbols.add(mark);
             final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(12), LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, SF.displacement(10, 15));
-            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
+            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, Units.POINT, graphic);
 
             final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer, null);
             final float margin = cached.getMargin(null, ctx);
@@ -97,7 +97,7 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
             final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
             symbols.add(mark);
             final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(12), LITERAL_ONE_FLOAT, SF.anchorPoint(0, 1.7), SF.displacement(10, 15));
-            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
+            final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, Units.POINT, graphic);
 
             final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer, null);
             final float margin = cached.getMargin(null, ctx);

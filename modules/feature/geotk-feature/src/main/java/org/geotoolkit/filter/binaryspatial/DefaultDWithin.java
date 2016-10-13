@@ -20,8 +20,8 @@ package org.geotoolkit.filter.binaryspatial;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.logging.Level;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.Unit;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;

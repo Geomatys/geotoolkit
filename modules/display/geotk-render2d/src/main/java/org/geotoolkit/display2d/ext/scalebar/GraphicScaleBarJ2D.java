@@ -25,7 +25,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import javax.measure.unit.SI;
 import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -35,6 +34,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.measure.Units;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -51,7 +51,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
                             new Dimension(500, 40),10,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
-                            3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METRE);
+                            3,true,false, new Font("Serial", Font.PLAIN, 12),true,Units.METRE);
 
 
     public GraphicScaleBarJ2D(final J2DCanvas canvas){

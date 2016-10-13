@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

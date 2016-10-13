@@ -25,7 +25,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;

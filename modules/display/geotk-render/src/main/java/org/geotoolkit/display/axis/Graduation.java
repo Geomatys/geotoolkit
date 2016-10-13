@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.awt.Font;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.apache.sis.util.Localized;
 

@@ -22,9 +22,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -41,6 +39,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -72,10 +71,10 @@ public class JConfigDialog extends javax.swing.JDialog {
 
 
         List<Unit> list = new ArrayList<Unit>();
-        list.add(SI.METRE);
-        list.add(SI.KILOMETRE);
-        list.add(NonSI.FOOT);
-        list.add(NonSI.MILE);
+        list.add(Units.METRE);
+        list.add(Units.KILOMETRE);
+        list.add(Units.FOOT);
+        list.add(Units.MILE);
 
         guiUnit.setModel(new ListComboBoxModel(list));
 

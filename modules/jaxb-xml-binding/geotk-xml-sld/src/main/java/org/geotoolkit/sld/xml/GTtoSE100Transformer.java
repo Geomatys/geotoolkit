@@ -21,9 +21,7 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.logging.Level;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
@@ -119,6 +117,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.GenericName;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -133,8 +132,6 @@ public class GTtoSE100Transformer implements StyleVisitor{
     private static final String GENERIC_POLYGON = "generic:polygon";
     private static final String GENERIC_TEXT = "generic:text";
     private static final String GENERIC_RASTER = "generic:raster";
-
-    private static final String VERSION = "1.0.0";
 
     private final org.geotoolkit.sld.xml.v100.ObjectFactory sld_factory_v100;
     private final org.geotoolkit.ogc.xml.v100.ObjectFactory ogc_factory;
@@ -456,9 +453,9 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a Unit to the corresponding SLD string.
      */
     public String visitUOM(final Unit<Length> uom) {
-        if(uom.equals(SI.METRE)){
+        if(uom.equals(Units.METRE)){
             return "http://www.opengeospatial.org/se/units/metre";
-        }else if(uom.equals(NonSI.FOOT) ){
+        }else if(uom.equals(Units.FOOT) ){
             return "http://www.opengeospatial.org/se/units/foot";
         }else{
             return "http://www.opengeospatial.org/se/units/pixel";

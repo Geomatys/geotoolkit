@@ -27,8 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -53,6 +52,7 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.X364;
+import org.apache.sis.measure.Units;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.MapBuilder;
@@ -305,7 +305,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
                 final String geometry = null; //use the default geometry of the feature
-                final Unit unit = NonSI.PIXEL;
+                final Unit unit = Units.POINT;
                 final Expression offset = StyleConstants.LITERAL_ZERO_FLOAT;
                 //the visual element
                 final Expression color = SF.literal(Color.BLUE);

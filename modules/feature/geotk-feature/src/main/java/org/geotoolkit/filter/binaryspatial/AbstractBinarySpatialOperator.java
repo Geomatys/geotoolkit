@@ -23,8 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
@@ -187,7 +186,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 return new Object[]{leftGeom,rightGeom,geomCRS};
             }else{
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
-                if(SI.METRE.isCompatible(unit)){
+                if(Units.METRE.isCompatible(unit)){
                     //in that case we reproject to mercator EPSG:3395
                     final MathTransform trs = CRS.findOperation(geomCRS, MERCATOR, null).getMathTransform();
 
@@ -221,7 +220,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 rightMatch = rightGeom;
             }else{
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
-                if(SI.METRE.isCompatible(unit)){
+                if(Units.METRE.isCompatible(unit)){
                     //in that case we reproject to mercator EPSG:3395
                     matchingCRS = MERCATOR;
 

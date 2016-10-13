@@ -35,8 +35,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.*;
+import org.apache.sis.measure.Units;
 
-import javax.measure.unit.NonSI;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -144,7 +144,7 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
                 SF.selectedChannelType(guiColorMapPane.getSelectedBand(),DEFAULT_CONTRAST_ENHANCEMENT));
 
         final RasterSymbolizer rasterSymbolizer = SF.rasterSymbolizer(
-                name,DEFAULT_GEOM,desc, NonSI.PIXEL,LITERAL_ONE_FLOAT,
+                name, DEFAULT_GEOM, desc, Units.POINT, LITERAL_ONE_FLOAT,
                 selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         final TextSymbolizer textSymbolizer = guiShowTextCB.isSelected() ? guiTextSymbolizerPane.create() : null;

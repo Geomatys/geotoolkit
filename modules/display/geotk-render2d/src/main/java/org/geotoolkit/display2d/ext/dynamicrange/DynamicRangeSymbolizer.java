@@ -21,8 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,6 +38,7 @@ import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -57,7 +57,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     public static final String PROPERTY_HISTO = "histo";
     public static final String PROPERTY_HISTO_MIN = "histo_min";
     public static final String PROPERTY_HISTO_MAX = "histo_max";
-    
+
     @XmlElement(name = "Channel",namespace="http://geotoolkit.org")
     private List<DRChannel> channels;
 
@@ -76,17 +76,17 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     public String getGeometryPropertyName() {
         return null;
     }
-    
+
     @Override
     public Expression getGeometry() {
         return null;
     }
-    
+
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return NonSI.PIXEL;
+        return Units.POINT;
     }
-    
+
     @Override
     public String getExtensionName() {
         return NAME;
@@ -104,12 +104,12 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class DRChannel {
-        
+
         public static final String BAND_RED = "R";
         public static final String BAND_GREEN = "G";
         public static final String BAND_BLUE = "B";
         public static final String BAND_ALPHA = "A";
-        
+
         @XmlElement(name = "Band",namespace="http://geotoolkit.org")
         private String band;
         @XmlElement(name = "ColorSpaceComponent",namespace="http://geotoolkit.org")
@@ -143,7 +143,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
             ArgumentChecks.ensureNonNull("colorSpaceComponant", colorSpaceComponant);
             this.colorSpaceComponent = colorSpaceComponant;
         }
-        
+
         public DRBound getLower() {
             return lower;
         }
@@ -163,13 +163,13 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
     }
-    
+
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class DRBound {
-        
+
         public static final String MODE_EXPRESSION = "EXPRESSION";
         public static final String MODE_PERCENT = "PERCENT";
-        
+
         @XmlElement(name = "Mode",namespace="http://geotoolkit.org")
         private String mode;
         @XmlElement(name = "Value",namespace="http://geotoolkit.org")
@@ -177,7 +177,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
 
         @XmlTransient
         private Expression valueExp;
-        
+
         public DRBound() {
             setMode(MODE_EXPRESSION);
         }
@@ -193,7 +193,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
             ArgumentChecks.ensureNonNull("mode", mode);
             this.mode = mode;
         }
-        
+
         public Expression getValue() {
             if(valueExp==null && value!=null){
                 valueExp = new StyleXmlIO().getTransformer110().visitExpression(value);
@@ -209,7 +209,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
             this.valueExp = value;
             this.value = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
     }
 
     public static FeatureType buildBandType(){

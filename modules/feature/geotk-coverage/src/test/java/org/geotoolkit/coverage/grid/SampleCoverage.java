@@ -41,7 +41,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.Color.decode;
-import static javax.measure.unit.SI.*;
+import static org.apache.sis.measure.Units.*;
 import static org.apache.sis.measure.NumberRange.create;
 import static org.junit.Assert.*;
 
@@ -105,7 +105,7 @@ public strictfp enum SampleCoverage {
                         MathTransforms.concatenate(
                         (MathTransform1D) MathTransforms.linear(0.015, -1.985),
                         exp()))
-        }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),
+        }, KILOGRAM.divide(1E6).divide(CUBIC_METRE))),
 
     /**
      * A float coverage. Because we use only one tile with one band, the code below

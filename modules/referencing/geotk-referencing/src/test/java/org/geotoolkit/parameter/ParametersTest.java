@@ -23,7 +23,7 @@ import org.opengis.parameter.*;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.junit.*;

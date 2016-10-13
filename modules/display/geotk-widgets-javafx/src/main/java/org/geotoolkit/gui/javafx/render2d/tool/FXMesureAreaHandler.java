@@ -44,8 +44,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.MeasureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -55,10 +54,11 @@ import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.Loggers;
+import org.apache.sis.measure.Units;
 
 /**
  * Map tool to calculate areas.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXMesureAreaHandler extends AbstractNavigationHandler {
@@ -71,14 +71,14 @@ public class FXMesureAreaHandler extends AbstractNavigationHandler {
     private final Label uiArea = new Label();
     private final ChoiceBox<Unit> uiUnit = new ChoiceBox<>();
     private final HBox pane = new HBox(10,uiArea,uiUnit);
-    
-    
+
+
     public FXMesureAreaHandler() {
-        super();       
+        super();
         uiArea.setMaxHeight(Double.MAX_VALUE);
-        uiUnit.setItems(FXCollections.observableArrayList(Unit.valueOf("km2"),SI.SQUARE_METRE));
+        uiUnit.setItems(FXCollections.observableArrayList(Units.valueOf("km2"), Units.SQUARE_METRE));
         uiUnit.getSelectionModel().selectFirst();
-        
+
         pane.setAlignment(Pos.CENTER);
         pane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY)));
         pane.setPadding(new Insets(10, 10, 10, 10));
@@ -119,7 +119,7 @@ public class FXMesureAreaHandler extends AbstractNavigationHandler {
         super.uninstall(component);
         return true;
     }
-    
+
     private void updateGeometry(){
         final List<Geometry> geoms = new ArrayList<>();
         if(coords.size() == 1){
@@ -142,24 +142,24 @@ public class FXMesureAreaHandler extends AbstractNavigationHandler {
             geoms.add(geom);
         }
         layer.getGeometries().setAll(geoms);
-        
+
         if(geoms.isEmpty()){
             uiArea.setText("-");
         }else{
             uiArea.setText(NumberFormat.getNumberInstance().format(
-                    MeasureUtilities.calculateArea(geoms.get(0), 
+                    MeasureUtilities.calculateArea(geoms.get(0),
                     map.getCanvas().getObjectiveCRS2D(), uiUnit.getValue())));
         }
-        
+
     }
-    
-    
+
+
     private class MouseListen extends FXPanMouseListen {
 
         public MouseListen() {
             super(FXMesureAreaHandler.this);
         }
-        
+
         @Override
         public void mouseClicked(final MouseEvent e) {
             if (mousebutton == MouseButton.PRIMARY) {
@@ -182,5 +182,5 @@ public class FXMesureAreaHandler extends AbstractNavigationHandler {
             }
         }
     }
-    
+
 }

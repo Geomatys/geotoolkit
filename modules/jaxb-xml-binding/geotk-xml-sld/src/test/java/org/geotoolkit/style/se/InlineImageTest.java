@@ -4,7 +4,6 @@ package org.geotoolkit.style.se;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Collections;
-import javax.measure.unit.NonSI;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import static junit.framework.Assert.*;
@@ -21,6 +20,7 @@ import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -40,7 +40,7 @@ public class InlineImageTest extends org.geotoolkit.test.TestBase {
         final ExternalGraphic external = SF.externalGraphic(new ImageIcon(image), Collections.EMPTY_LIST);
         final Graphic graphic = SF.graphic(Collections.singletonList((GraphicalSymbol)external),
                 LITERAL_ONE_FLOAT, LITERAL_ONE_FLOAT, LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
-        final PointSymbolizer ips = SF.pointSymbolizer("",geometry,DEFAULT_DESCRIPTION,NonSI.PIXEL, graphic);
+        final PointSymbolizer ips = SF.pointSymbolizer("", geometry, DEFAULT_DESCRIPTION, Units.POINT, graphic);
         final MutableStyle style = SF.style(ips);
 
         final File f = File.createTempFile("sld", ".xml");

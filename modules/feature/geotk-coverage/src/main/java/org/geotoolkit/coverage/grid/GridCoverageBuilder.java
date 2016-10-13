@@ -40,7 +40,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.*;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 
@@ -250,7 +250,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  *     // Use sample values in the range 1 inclusive to 255 exclusive
  *     // and define elevation in metres as (sample value) / 10.
  *     builder.variable(0).setName("Elevation");
- *     builder.variable(0).setUnit(SI.METRE);
+ *     builder.variable(0).setUnit(Units.METRE);
  *     builder.variable(0).setSampleRange(1, 256);
  *     builder.variable(0).setLinearTransform(0.1, 0);
  *     builder.variable(0).addNodataValue("No data", 0, Color.GRAY);

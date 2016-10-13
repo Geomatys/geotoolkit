@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.temporal.object;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.sis.measure.Units;
 import org.opengis.temporal.IntervalLength;
 import static org.junit.Assert.*;
 
@@ -38,7 +38,7 @@ public class DefaultIntervalLengthTest extends org.geotoolkit.test.TestBase {
 
     @Before
     public void setUp() {
-        Unit unit1 = SI.SECOND, unit2 = SI.SECOND.times(3600);
+        Unit unit1 = Units.SECOND, unit2 = Units.SECOND.multiply(3600);
         int radix1 = 10, radix2 = 10;
         int factor1 = 3, factor2 = 6;
         int value1 = 7, value2 = 12;

@@ -10,7 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javax.measure.unit.SI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -21,7 +21,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Alexis Manin (Geomatys)
  */
 public class ParameterTestApp extends Application {
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Locale.setDefault(Locale.FRENCH);
@@ -58,16 +58,16 @@ public class ParameterTestApp extends Application {
 
         ParameterValueGroup editGroup = groupBuilder.addName("My parameter group").createGroup(
                 builder.addName("first").setRemarks("Here are my remarks.").setRequired(true).create(String.class, null),
-                builder.addName("second").setRequired(true).create(0.0, SI.METRE),
+                builder.addName("second").setRequired(true).create(0.0, Units.METRE),
                 builder.addName("third").setRemarks("A path to be set").setRequired(false).create(Path.class, null),
                 innerGroup,
                 anotherGroup,
                 builder.addName("last").setRemarks("The last parameter.").setRequired(false).create(String.class, null)
         ).createValue();
-        
+
         final ScrollPane scrollPane = new ScrollPane(new FXParameterGroupPane(PGCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue()));
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         return scrollPane;
-    }    
+    }
 }

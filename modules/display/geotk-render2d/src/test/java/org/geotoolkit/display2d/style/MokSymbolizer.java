@@ -19,9 +19,9 @@ package org.geotoolkit.display2d.style;
 
 import java.util.Collections;
 import java.util.Map;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.style.AbstractSymbolizer;
 import org.geotoolkit.style.DefaultDescription;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
@@ -36,7 +36,7 @@ import org.opengis.style.StyleVisitor;
 public class MokSymbolizer extends AbstractSymbolizer implements ExtensionSymbolizer{
 
     public MokSymbolizer(){
-        super(NonSI.PIXEL,null,"mok",new DefaultDescription(
+        super(Units.POINT, null, "mok", new DefaultDescription(
                 new SimpleInternationalString(""),
                 new SimpleInternationalString("")));
     }

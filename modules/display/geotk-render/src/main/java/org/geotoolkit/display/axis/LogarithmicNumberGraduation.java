@@ -18,7 +18,7 @@
 package org.geotoolkit.display.axis;
 
 import java.text.NumberFormat;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 
 /**

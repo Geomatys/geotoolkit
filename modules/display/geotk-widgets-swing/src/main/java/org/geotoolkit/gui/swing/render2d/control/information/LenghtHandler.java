@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.render2d.CanvasHandler;
@@ -51,7 +51,7 @@ public class LenghtHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap(new Unit[] {(Unit)SI.KILOMETRE,SI.METRE});
+    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap(new Unit[] {(Unit)Units.KILOMETRE,Units.METRE});
 
     private final MouseListen mouseInputListener;
 

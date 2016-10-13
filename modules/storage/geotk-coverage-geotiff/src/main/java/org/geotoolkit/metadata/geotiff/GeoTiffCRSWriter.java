@@ -17,9 +17,7 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import java.io.IOException;
 
@@ -41,6 +39,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
@@ -545,27 +544,27 @@ public final class GeoTiffCRSWriter {
 
         // getting the linear unit
         final Unit linearUnit = ReferencingUtilities.getUnit(projectedCRS.getCoordinateSystem());
-        if (linearUnit != null && !SI.METRE.isCompatible(linearUnit)) {
+        if (linearUnit != null && !Units.METRE.isCompatible(linearUnit)) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.NonLinearUnit_1, linearUnit));
         }
-        if (SI.METRE.isCompatible(linearUnit)) {
-            if (SI.METRE.equals(linearUnit)) {
+        if (Units.METRE.isCompatible(linearUnit)) {
+            if (Units.METRE.equals(linearUnit)) {
                 stack.addShort(ProjLinearUnitsGeoKey,Linear_Meter);
                 stack.addDouble(ProjLinearUnitSizeGeoKey, 1.0);
             }
-            if (NonSI.NAUTICAL_MILE.equals(linearUnit)) {
+            if (Units.NAUTICAL_MILE.equals(linearUnit)) {
                 stack.addShort(ProjLinearUnitsGeoKey,Linear_Mile_International_Nautical);
-                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(SI.METRE).convert(1));
+                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(Units.METRE).convert(1));
             }
-            if (NonSI.FOOT.equals(linearUnit)) {
+            if (Units.FOOT.equals(linearUnit)) {
                 stack.addShort(ProjLinearUnitsGeoKey,  Linear_Foot);
-                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(SI.METRE).convert(1));
+                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(Units.METRE).convert(1));
             }
-            if (NonSI.YARD.equals(linearUnit)) {
-                stack.addShort(ProjLinearUnitsGeoKey,Linear_Yard_Sears);// ??
-                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(SI.METRE).convert(1));
-            }
+//            if (Units.YARD.equals(linearUnit)) {      // TODO: pending completion of migration of JSR-275 to JSR-363.
+//                stack.addShort(ProjLinearUnitsGeoKey,Linear_Yard_Sears);// ??
+//                stack.addDouble(ProjLinearUnitSizeGeoKey, linearUnit.getConverterTo(Units.METRE).convert(1));
+//            }
         }
     }
 
@@ -592,12 +591,12 @@ public final class GeoTiffCRSWriter {
 
 
         final Unit base;
-        if (SI.METRE.isCompatible(unit)) {
-            base = SI.METRE;
-        } else if (SI.SECOND.isCompatible(unit)) {
-            base = SI.SECOND;
-        } else if (SI.RADIAN.isCompatible(unit) && !Unit.ONE.equals(unit)) {
-            base = SI.RADIAN;
+        if (Units.METRE.isCompatible(unit)) {
+            base = Units.METRE;
+        } else if (Units.SECOND.isCompatible(unit)) {
+            base = Units.SECOND;
+        } else if (Units.RADIAN.isCompatible(unit) && !Units.ONE.equals(unit)) {
+            base = Units.RADIAN;
         } else {
             base = null;
         }

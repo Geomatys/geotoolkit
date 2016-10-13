@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.NonSI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
@@ -251,7 +251,7 @@ public final class DatumIdentifier {
         PrimeMeridian pMeridian = CommonCRS.WGS84.primeMeridian();
         if(parameters.length > 8 && !InternalUtilities.epsilonEqual(parameters[8], 0)) {
             pMeridian = new DefaultPrimeMeridian(Collections.singletonMap(PrimeMeridian.NAME_KEY,
-                    "Greenwich" + ((parameters[8] > 0) ? "+" + parameters[8] : parameters[8])), parameters[8], NonSI.DEGREE_ANGLE);
+                    "Greenwich" + ((parameters[8] > 0) ? "+" + parameters[8] : parameters[8])), parameters[8], Units.DEGREE);
         }
 
         final Map<String, Object> properties = new HashMap<String, Object>();

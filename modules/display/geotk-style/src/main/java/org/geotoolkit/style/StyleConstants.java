@@ -20,10 +20,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.style.function.DefaultInterpolate;
@@ -62,7 +62,7 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * Default values used for styles.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  * @Static
@@ -78,7 +78,7 @@ public final class StyleConstants {
     public static final Literal     DEFAULT_ANCHOR_POINT_X;
     public static final Literal     DEFAULT_ANCHOR_POINT_Y;
     public static final AnchorPoint DEFAULT_ANCHOR_POINT;
-    
+
     public static final Literal             DEFAULT_CONTRAST_ENHANCEMENT_GAMMA;
     public static final ContrastEnhancement DEFAULT_CONTRAST_ENHANCEMENT;
 
@@ -86,8 +86,8 @@ public final class StyleConstants {
     public static final float        DEFAULT_DISPLACEMENT_Yf = 0f;
     public static final Literal      DEFAULT_DISPLACEMENT_X;
     public static final Literal      DEFAULT_DISPLACEMENT_Y;
-    public static final Displacement DEFAULT_DISPLACEMENT; 
-    
+    public static final Displacement DEFAULT_DISPLACEMENT;
+
     public static final Literal DEFAULT_FILL_COLOR;
     public static final Literal DEFAULT_FILL_OPACITY;
     public static final Fill    DEFAULT_FILL;
@@ -126,7 +126,7 @@ public final class StyleConstants {
     public static final Literal DEFAULT_FONT_WEIGHT;
     public static final Literal DEFAULT_FONT_SIZE;
     public static final Font    DEFAULT_FONT;
-    
+
     public static final Literal DEFAULT_GRAPHIC_OPACITY;
     public static final Literal DEFAULT_GRAPHIC_ROTATION;
     public static final Literal DEFAULT_GRAPHIC_SIZE;
@@ -134,11 +134,11 @@ public final class StyleConstants {
     public static final Mark    DEFAULT_GRAPHICAL_SYMBOL;
     public static final Literal DEFAULT_GRAPHIC_STROKE_INITIAL_GAP;
     public static final Literal DEFAULT_GRAPHIC_STROKE_GAP;
-            
+
     public static final Fill       DEFAULT_HALO_FILL;
     public static final Literal    DEFAULT_HALO_RADIUS;
     public static final Halo       DEFAULT_HALO;
-    
+
     public static final Literal       DEFAULT_LINEPLACEMENT_OFFSET;
     public static final Literal       DEFAULT_LINEPLACEMENT_INITIAL_GAP;
     public static final Literal       DEFAULT_LINEPLACEMENT_GAP;
@@ -146,7 +146,7 @@ public final class StyleConstants {
     public static final boolean       DEFAULT_LINEPLACEMENT_REPEATED;
     public static final boolean       DEFAULT_LINEPLACEMENT_GENERALIZE;
     public static final LinePlacement DEFAULT_LINEPLACEMENT;
-    
+
     public static final Literal        DEFAULT_POINTPLACEMENT_ROTATION;
     public static final PointPlacement DEFAULT_POINTPLACEMENT;
 
@@ -184,63 +184,63 @@ public final class StyleConstants {
     public static final Literal DIAGRAM_SUBTYPE_PERCENT;
     public static final Literal DEFAULT_DIAGRAM_TYPE;
     public static final Literal DEFAULT_DIAGRAM_SUBTYPE;
-    
+
     public static final Literal      DEFAULT_SHADED_RELIEF_FACTOR;
     public static final ShadedRelief DEFAULT_SHADED_RELIEF;
-    
+
     public static final Literal DEFAULT_LINE_OFFSET;
-    
+
     public static final Literal DEFAULT_POLYGON_OFFSET;
-    
+
     public static final Literal          DEFAULT_RASTER_OPACITY;
     public static final ChannelSelection DEFAULT_RASTER_CHANNEL_RGB;
     public static final ChannelSelection DEFAULT_RASTER_CHANNEL_GRAY;
     public static final OverlapBehavior  DEFAULT_RASTER_OVERLAP;
     public static final ColorMap         DEFAULT_RASTER_COLORMAP;
     public static final Symbolizer       DEFAULT_RASTER_OUTLINE;
-    
+
     public static final Literal     DEFAULT_FALLBACK;
     public static final Literal     DEFAULT_CATEGORIZE_LOOKUP;
     public static final Literal     CATEGORIZE_LESS_INFINITY;
-    
+
     public static final Unit        DEFAULT_UOM;
     public static final String      DEFAULT_GEOM;
     public static final Description DEFAULT_DESCRIPTION;
-    
+
     public static final PointSymbolizer     DEFAULT_POINT_SYMBOLIZER;
     public static final LineSymbolizer      DEFAULT_LINE_SYMBOLIZER;
     public static final PolygonSymbolizer   DEFAULT_POLYGON_SYMBOLIZER;
     public static final TextSymbolizer      DEFAULT_TEXT_SYMBOLIZER;
     public static final RasterSymbolizer    DEFAULT_RASTER_SYMBOLIZER;
-    
+
     static {
         final MutableStyleFactory SF = new DefaultStyleFactory();
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
         LITERAL_ZERO_FLOAT = FF.literal(0);
         LITERAL_HALF_FLOAT = FF.literal(0.5f);
         LITERAL_ONE_FLOAT = FF.literal(1);
-        
-        DEFAULT_UOM = NonSI.PIXEL;
-        DEFAULT_GEOM = null;        
+
+        DEFAULT_UOM = Units.POINT;
+        DEFAULT_GEOM = null;
         DEFAULT_DESCRIPTION = new DefaultDescription(
-                new SimpleInternationalString(""), 
+                new SimpleInternationalString(""),
                 new SimpleInternationalString(""));
-        
+
         DEFAULT_ANCHOR_POINT_X = LITERAL_HALF_FLOAT;
         DEFAULT_ANCHOR_POINT_Y = LITERAL_HALF_FLOAT;
         DEFAULT_ANCHOR_POINT = new DefaultAnchorPoint(DEFAULT_ANCHOR_POINT_X,DEFAULT_ANCHOR_POINT_Y);
-        
+
         DEFAULT_CONTRAST_ENHANCEMENT_GAMMA = LITERAL_ONE_FLOAT;
         DEFAULT_CONTRAST_ENHANCEMENT = new DefaultContrastEnhancement(ContrastMethod.NONE,LITERAL_ONE_FLOAT);
-        
+
         DEFAULT_DISPLACEMENT_X = LITERAL_ZERO_FLOAT;
         DEFAULT_DISPLACEMENT_Y = LITERAL_ZERO_FLOAT;
         DEFAULT_DISPLACEMENT = new DefaultDisplacement(DEFAULT_DISPLACEMENT_X,DEFAULT_DISPLACEMENT_Y);
-        
+
         DEFAULT_FILL_COLOR = SF.literal(Color.GRAY);
         DEFAULT_FILL_OPACITY = LITERAL_ONE_FLOAT;
         DEFAULT_FILL = new DefaultFill(null, DEFAULT_FILL_COLOR, DEFAULT_FILL_OPACITY);
-        
+
         STROKE_JOIN_MITRE = FF.literal(STROKE_JOIN_MITRE_STRING);
         STROKE_JOIN_ROUND = FF.literal(STROKE_JOIN_ROUND_STRING);
         STROKE_JOIN_BEVEL = FF.literal(STROKE_JOIN_BEVEL_STRING);
@@ -253,9 +253,9 @@ public final class StyleConstants {
         DEFAULT_STROKE_JOIN = STROKE_JOIN_BEVEL;
         DEFAULT_STROKE_CAP = STROKE_CAP_SQUARE;
         DEFAULT_STROKE_OFFSET = LITERAL_ZERO_FLOAT;
-        DEFAULT_STROKE = new DefaultStroke(DEFAULT_STROKE_COLOR, DEFAULT_STROKE_OPACITY, 
+        DEFAULT_STROKE = new DefaultStroke(DEFAULT_STROKE_COLOR, DEFAULT_STROKE_OPACITY,
                 DEFAULT_STROKE_WIDTH, DEFAULT_STROKE_JOIN, DEFAULT_STROKE_CAP, null, DEFAULT_STROKE_OFFSET);
-                
+
         FONT_STYLE_NORMAL = FF.literal(FONT_STYLE_NORMAL_STRING);
         FONT_STYLE_ITALIC = FF.literal(FONT_STYLE_ITALIC_STRING);
         FONT_STYLE_OBLIQUE = FF.literal(FONT_STYLE_OBLIQUE_STRING);
@@ -265,11 +265,11 @@ public final class StyleConstants {
         DEFAULT_FONT_WEIGHT = FONT_WEIGHT_NORMAL;
         DEFAULT_FONT_SIZE = FF.literal(10);
         DEFAULT_FONT = new DefaultFont(Collections.singletonList((Expression)new DefaultLiteral<>("Serif")), DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_SIZE);
-        
+
         DEFAULT_HALO_RADIUS = LITERAL_ONE_FLOAT;
         DEFAULT_HALO_FILL = new DefaultFill(null, SF.literal(Color.WHITE), DEFAULT_FILL_OPACITY);
         DEFAULT_HALO = new DefaultHalo(DEFAULT_HALO_FILL, DEFAULT_HALO_RADIUS);
-        
+
         MARK_SQUARE = FF.literal(MARK_SQUARE_STRING);
         MARK_CIRCLE = FF.literal(MARK_CIRCLE_STRING);
         MARK_TRIANGLE = FF.literal(MARK_TRIANGLE_STRING);
@@ -291,41 +291,41 @@ public final class StyleConstants {
         DIAGRAM_SUBTYPE_PERCENT = FF.literal(DIAGRAM_SUBTYPE_PERCENT_STRING);
         DEFAULT_DIAGRAM_SUBTYPE = DIAGRAM_SUBTYPE_NORMAL;
 
-        
+
         DEFAULT_GRAPHICAL_SYMBOL = new DefaultMark(MARK_SQUARE, DEFAULT_FILL, DEFAULT_STROKE);
         DEFAULT_GRAPHIC_STROKE_INITIAL_GAP = FF.literal(LITERAL_ZERO_FLOAT);
         DEFAULT_GRAPHIC_STROKE_GAP = FF.literal(LITERAL_ZERO_FLOAT);
-                
+
         DEFAULT_GRAPHIC_OPACITY = LITERAL_ONE_FLOAT;
         DEFAULT_GRAPHIC_ROTATION = LITERAL_ZERO_FLOAT;
         DEFAULT_GRAPHIC_SIZE = FF.literal(6);
-        
+
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         symbols.add(DEFAULT_GRAPHICAL_SYMBOL);
-        DEFAULT_GRAPHIC = new DefaultGraphic(symbols, DEFAULT_GRAPHIC_OPACITY, 
+        DEFAULT_GRAPHIC = new DefaultGraphic(symbols, DEFAULT_GRAPHIC_OPACITY,
                 DEFAULT_GRAPHIC_SIZE, DEFAULT_GRAPHIC_ROTATION, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
-        
+
         DEFAULT_LINEPLACEMENT_OFFSET = LITERAL_ZERO_FLOAT;
         DEFAULT_LINEPLACEMENT_INITIAL_GAP = LITERAL_ZERO_FLOAT;
         DEFAULT_LINEPLACEMENT_GAP = LITERAL_ZERO_FLOAT;
         DEFAULT_LINEPLACEMENT_ALIGNED = true;
         DEFAULT_LINEPLACEMENT_REPEATED = false;
         DEFAULT_LINEPLACEMENT_GENERALIZE = false;
-        DEFAULT_LINEPLACEMENT = new DefaultLinePlacement(DEFAULT_LINEPLACEMENT_OFFSET, 
-                DEFAULT_LINEPLACEMENT_INITIAL_GAP, DEFAULT_LINEPLACEMENT_GAP, DEFAULT_LINEPLACEMENT_REPEATED, 
+        DEFAULT_LINEPLACEMENT = new DefaultLinePlacement(DEFAULT_LINEPLACEMENT_OFFSET,
+                DEFAULT_LINEPLACEMENT_INITIAL_GAP, DEFAULT_LINEPLACEMENT_GAP, DEFAULT_LINEPLACEMENT_REPEATED,
                 DEFAULT_LINEPLACEMENT_ALIGNED, DEFAULT_LINEPLACEMENT_GENERALIZE);
-        
+
         DEFAULT_POINTPLACEMENT_ROTATION = LITERAL_ZERO_FLOAT;
-        DEFAULT_POINTPLACEMENT = new DefaultPointPlacement(DEFAULT_ANCHOR_POINT, 
+        DEFAULT_POINTPLACEMENT = new DefaultPointPlacement(DEFAULT_ANCHOR_POINT,
                 DEFAULT_DISPLACEMENT, DEFAULT_POINTPLACEMENT_ROTATION);
-                
+
         DEFAULT_SHADED_RELIEF_FACTOR = FF.literal(0);
         DEFAULT_SHADED_RELIEF = new DefaultShadedRelief(false, DEFAULT_SHADED_RELIEF_FACTOR);
-        
+
         DEFAULT_LINE_OFFSET = LITERAL_ZERO_FLOAT;
-        
+
         DEFAULT_POLYGON_OFFSET = LITERAL_ZERO_FLOAT;
-        
+
         DEFAULT_RASTER_OPACITY = LITERAL_ONE_FLOAT;
         final SelectedChannelType red = new DefaultSelectedChannelType("0", DEFAULT_CONTRAST_ENHANCEMENT);
         final SelectedChannelType green = new DefaultSelectedChannelType("1", DEFAULT_CONTRAST_ENHANCEMENT);
@@ -334,50 +334,50 @@ public final class StyleConstants {
         final SelectedChannelType gray = new DefaultSelectedChannelType("0", DEFAULT_CONTRAST_ENHANCEMENT);
         DEFAULT_RASTER_CHANNEL_GRAY = new DefaultChannelSelection(gray);
         DEFAULT_RASTER_OVERLAP = OverlapBehavior.LATEST_ON_TOP;
-        
+
         DEFAULT_FALLBACK = SF.literal(Color.RED);
         DEFAULT_CATEGORIZE_LOOKUP = FF.literal("RASTER_DATA");
         DEFAULT_RASTER_COLORMAP = new DefaultColorMap(new DefaultInterpolate(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList<InterpolationPoint>(), Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK));
         DEFAULT_RASTER_OUTLINE = null;
-        
+
         CATEGORIZE_LESS_INFINITY = FF.literal("CATEGORIZE_LESS_INFINITY");
-        
+
         DEFAULT_POINT_SYMBOLIZER = new DefaultPointSymbolizer(
-                DEFAULT_GRAPHIC, 
-                DEFAULT_UOM, 
-                null, 
-                null, 
+                DEFAULT_GRAPHIC,
+                DEFAULT_UOM,
+                null,
+                null,
                 DEFAULT_DESCRIPTION);
-        
+
         DEFAULT_LINE_SYMBOLIZER = new DefaultLineSymbolizer(
-                DEFAULT_STROKE, 
-                DEFAULT_LINE_OFFSET, 
-                DEFAULT_UOM, 
-                null, 
-                null, 
+                DEFAULT_STROKE,
+                DEFAULT_LINE_OFFSET,
+                DEFAULT_UOM,
+                null,
+                null,
                 DEFAULT_DESCRIPTION);
-        
+
         DEFAULT_POLYGON_SYMBOLIZER = new DefaultPolygonSymbolizer(
-                DEFAULT_STROKE, 
-                DEFAULT_FILL, 
-                DEFAULT_DISPLACEMENT, 
-                DEFAULT_POLYGON_OFFSET, 
-                DEFAULT_UOM, 
-                null, 
-                null, 
+                DEFAULT_STROKE,
+                DEFAULT_FILL,
+                DEFAULT_DISPLACEMENT,
+                DEFAULT_POLYGON_OFFSET,
+                DEFAULT_UOM,
+                null,
+                null,
                 DEFAULT_DESCRIPTION);
-        
+
         DEFAULT_TEXT_SYMBOLIZER = new DefaultTextSymbolizer(
                 FF.literal("Label"),
-                DEFAULT_FONT, 
-                DEFAULT_POINTPLACEMENT, 
-                DEFAULT_HALO, 
+                DEFAULT_FONT,
+                DEFAULT_POINTPLACEMENT,
+                DEFAULT_HALO,
                 SF.fill(Color.BLACK),
-                DEFAULT_UOM, 
-                null, 
-                null, 
+                DEFAULT_UOM,
+                null,
+                null,
                 DEFAULT_DESCRIPTION);
-    
+
         DEFAULT_RASTER_SYMBOLIZER = new DefaultRasterSymbolizer(
                 DEFAULT_RASTER_OPACITY,
                 null,
@@ -390,7 +390,7 @@ public final class StyleConstants {
                 null,
                 null,
                 DEFAULT_DESCRIPTION);
-        
+
     }
 
     private StyleConstants(){}

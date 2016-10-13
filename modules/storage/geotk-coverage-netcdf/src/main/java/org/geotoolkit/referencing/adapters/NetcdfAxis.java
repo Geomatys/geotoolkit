@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.imageio.IIOException;
-import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
+import javax.measure.Unit;
 
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -440,8 +438,8 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             if (type != null) {
                 switch (type) {
                     case Lat:
-                    case Lon:  unit = NonSI.DEGREE_ANGLE; break;
-                    case GeoZ: unit = SI.METRE; break;
+                    case Lon:  unit = Units.DEGREE; break;
+                    case GeoZ: unit = Units.METRE; break;
                 }
             }
             this.unit = unit;

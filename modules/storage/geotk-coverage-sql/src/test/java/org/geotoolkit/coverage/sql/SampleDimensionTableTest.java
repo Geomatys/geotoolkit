@@ -18,8 +18,8 @@
 package org.geotoolkit.coverage.sql;
 
 import java.sql.SQLException;
-import javax.measure.unit.SI;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -68,7 +68,7 @@ public final strictfp class SampleDimensionTableTest extends CatalogTestBase {
         assertEquals("The format should have exactly 1 band.", 1, dimensions.length);
         final GridSampleDimension dim = dimensions[0];
         assertEquals("SST [-3 … 32.25°C]", dim.getDescription().toString());
-        assertEquals(SI.CELSIUS, dim.getUnits());
+        assertEquals(Units.CELSIUS, dim.getUnits());
         CategoryTableTest.checkTemperatureCategories(dim.getCategories().toArray(new Category[0]));
     }
 }

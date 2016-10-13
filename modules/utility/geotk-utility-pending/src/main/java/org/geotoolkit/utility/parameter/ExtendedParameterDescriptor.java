@@ -19,7 +19,7 @@ package org.geotoolkit.utility.parameter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Range;

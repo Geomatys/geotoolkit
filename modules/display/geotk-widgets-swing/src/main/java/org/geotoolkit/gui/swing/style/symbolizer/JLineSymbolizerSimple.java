@@ -19,8 +19,7 @@ package org.geotoolkit.gui.swing.style.symbolizer;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -34,6 +33,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  * This class able to display LineSymbolizer tool pane
@@ -94,14 +94,14 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
         String name = "lineSymbolizer";
         String geomName = null;
         Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        Unit unit = NonSI.PIXEL;
+        Unit unit = Units.POINT;
         if(oldSymbolizer!=null){
             name = oldSymbolizer.getName();
             geomName = oldSymbolizer.getGeometryPropertyName();
             desc = oldSymbolizer.getDescription();
             unit = oldSymbolizer.getUnitOfMeasure();
         }
-        
+
         return getStyleFactory().lineSymbolizer(
                 name,
                 geomName,
@@ -115,7 +115,7 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

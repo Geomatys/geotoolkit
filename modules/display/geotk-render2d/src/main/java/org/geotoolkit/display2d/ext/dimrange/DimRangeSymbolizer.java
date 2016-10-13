@@ -19,9 +19,9 @@ package org.geotoolkit.display2d.ext.dimrange;
 
 import java.util.Collections;
 import java.util.Map;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.style.AbstractSymbolizer;
 import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Units;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
@@ -38,7 +38,7 @@ public class DimRangeSymbolizer extends AbstractSymbolizer implements ExtensionS
     private final MeasurementRange dimRange;
 
     public DimRangeSymbolizer(final MeasurementRange range) {
-        super(NonSI.PIXEL, null, "", null);
+        super(Units.POINT, null, "", null);
         this.dimRange = range;
     }
 

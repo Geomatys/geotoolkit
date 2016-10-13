@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.AxisDirection;
@@ -46,9 +46,9 @@ import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static javax.measure.unit.SI.METRE;
-import static javax.measure.unit.NonSI.DAY;
-import static javax.measure.unit.NonSI.DEGREE_ANGLE;
+import static org.apache.sis.measure.Units.METRE;
+import static org.apache.sis.measure.Units.DAY;
+import static org.apache.sis.measure.Units.DEGREE;
 
 
 /**
@@ -124,8 +124,8 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
      *
      * @see #assertExpectedAxes(CoordinateSystem, boolean)
      */
-    private static final Unit<?>[] AXIS_UNITS = new Unit<?>[] {DEGREE_ANGLE, DEGREE_ANGLE,  METRE, DAY},
-                         PROJECTED_AXIS_UNITS = new Unit<?>[] {METRE,        METRE,         METRE, DAY};
+    private static final Unit<?>[] AXIS_UNITS = new Unit<?>[] {DEGREE, DEGREE, METRE, DAY},
+                         PROJECTED_AXIS_UNITS = new Unit<?>[] {METRE,  METRE,  METRE, DAY};
 
     /**
      * The first part of expected metadata (without the sample dimensions).

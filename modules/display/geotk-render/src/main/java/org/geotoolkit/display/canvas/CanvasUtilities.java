@@ -21,9 +21,9 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -78,10 +78,10 @@ public final class CanvasUtilities {
         final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
 
         final double distance;
-        if (unit.isCompatible(SI.METRE)) {
+        if (unit.isCompatible(Units.METRE)) {
             final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
             final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
-            final UnitConverter conv = unit.getConverterTo(SI.METRE);
+            final UnitConverter conv = unit.getConverterTo(Units.METRE);
             distance = conv.convert(p1.distance(p2));
         } else {
             /*

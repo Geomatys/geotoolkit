@@ -40,8 +40,8 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import org.apache.sis.measure.UnitFormat;
 
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.PaletteInterpretation;
@@ -231,7 +231,7 @@ public class ColorRamp implements Serializable {
             final Unit<?> unit = graduation.getUnit();
             if (unit != null) {
                 if (unitFormat == null) {
-                    unitFormat = (locale != null) ? UnitFormat.getInstance(locale) : UnitFormat.getInstance();
+                    unitFormat = UnitFormat.getInstance(locale != null ? locale : Locale.getDefault());
                 }
                 units = unitFormat.format(unit);
             }

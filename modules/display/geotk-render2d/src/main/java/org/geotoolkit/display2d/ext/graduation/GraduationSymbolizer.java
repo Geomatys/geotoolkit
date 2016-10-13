@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,35 +45,36 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Font;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
+import org.apache.sis.measure.Units;
 
 /**
  * Draw graduation along a LineStrings or polygon boundary.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GraduationSymbolizerType")
 @XmlRootElement(name="GraduationSymbolizer",namespace="http://geotoolkit.org")
 public class GraduationSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
-    
+
     public static final Literal SIDE_LEFT = new DefaultLiteral("LEFT");
     public static final Literal SIDE_RIGHT = new DefaultLiteral("RIGHT");
     public static final Literal SIDE_BOTH = new DefaultLiteral("BOTH");
-    
+
     public static final Literal DIRECTION_FORWARD = new DefaultLiteral(false);
     public static final Literal DIRECTION_REVERSE = new DefaultLiteral(true);
-    
+
     /**
      * Definition of each graduation.
      */
     @XmlElement(name = "Graduation",namespace="http://geotoolkit.org")
     private List<Graduation> graduations = new ArrayList<>();
-    
+
     public GraduationSymbolizer(){}
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return NonSI.PIXEL;
+        return Units.POINT;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
     public Expression getGeometry() {
         return null;
     }
-    
+
     @Override
     public String getExtensionName() {
         return "graduation";
@@ -151,7 +151,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Graduation {
-        
+
         @XmlElement(name = "Size",namespace="http://geotoolkit.org")
         private ParameterValueType size;
         @XmlElement(name = "Start",namespace="http://geotoolkit.org")
@@ -221,9 +221,9 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.sizeExp = value;
             this.size = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
-         * Starting value of the graduation. 
+         * Starting value of the graduation.
          * normally graduation starts at 0 but another value may be used
          */
         public Expression getStart() {
@@ -237,7 +237,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.startExp = value;
             this.start = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Graduate geometry in point iteration order or reverse order.
          */
@@ -252,7 +252,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.reverseExp = value;
             this.reverse = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Side of graduation, side in relation to the line segment direction.
          * Value can be : LEFT, RIGHT, BOTH
@@ -284,7 +284,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.offsetExp = value;
             this.offset = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Step between each tick of the graduation.
          */
@@ -299,7 +299,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.stepExp = value;
             this.step = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Step between each tick of the graduation.
          */
@@ -314,7 +314,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.unitExp = value;
             this.unit = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Graduation text format
          */
@@ -329,7 +329,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.formatExp = value;
             this.format = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }
-        
+
         /**
          * Tick text font.
          * Use null for no text.
@@ -346,7 +346,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.fontExp = value;
             this.font = new StyleXmlIO().getTransformerXMLv110().visit(fontExp, null);
         }
-        
+
         /**
          * Tick stroke.
          */
@@ -361,7 +361,7 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
             this.strokeExp = value;
             this.stroke = new StyleXmlIO().getTransformerXMLv110().visit(strokeExp, null);
         }
-        
+
     }
-    
+
 }

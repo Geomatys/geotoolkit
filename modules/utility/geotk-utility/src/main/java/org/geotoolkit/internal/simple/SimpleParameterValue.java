@@ -19,7 +19,7 @@ package org.geotoolkit.internal.simple;
 
 import java.net.URI;
 import java.io.Serializable;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;

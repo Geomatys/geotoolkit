@@ -38,7 +38,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.Icon;
 
 import org.geotoolkit.factory.Factory;

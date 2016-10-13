@@ -52,7 +52,7 @@
   <dependencies>
     <dependency>
       <groupId>javax.measure</groupId>
-      <artifactId>jsr-275</artifactId>
+      <artifactId>unit-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>
@@ -94,6 +94,20 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>   <!-- Temporary, while we migrate from JSR-275 to JSR-363. -->
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>${project.build.directory}/derby.log</value>
+            </property>
+          </systemProperties>
+        </configuration>
       </plugin>
     </plugins>
   </build>

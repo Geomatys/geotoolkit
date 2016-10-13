@@ -25,7 +25,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.InputStream;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.Map3D;

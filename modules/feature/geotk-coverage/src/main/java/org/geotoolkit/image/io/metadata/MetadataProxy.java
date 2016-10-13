@@ -29,8 +29,8 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
 import javax.imageio.metadata.IIOMetadataFormat;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
+import javax.measure.Quantity;
+import javax.measure.Unit;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;

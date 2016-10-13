@@ -98,7 +98,7 @@ Downloading Geotoolkit.org Binaries
 *----------------------------------------+------------------------------------+---------------------------+
 || File                                  || Content                           || Prerequites             ||
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-metadata.pack.gz>>>    | • jsr-275.jar\                     | • Java 7                  |
+| <<<geotk-bundle-metadata.pack.gz>>>    | • unit-api.jar.jar\                | • Java 7                  |
 |                                        | • jcip-annotations.jar\            |                           |
 |                                        | • geoapi-pending.jar\              |                           |
 |                                        | • geotk-utility.jar\               |                           |

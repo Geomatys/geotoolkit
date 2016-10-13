@@ -16,14 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.graduation;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Font;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -34,13 +27,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import org.apache.sis.util.ArraysExt;
+import javax.measure.UnitConverter;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -62,11 +53,11 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Graduation symbolizer renderer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedGraduationSymbolizer>{
-    
+
     private Object candidate;
     private static final class GradInfo{
         private CachedGraduationSymbolizer.CachedGraduation grad;
@@ -78,28 +69,28 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         private Literal side;
         private NumberFormat format;
     }
-    
-    
+
+
     //reused variables
     private final Point2D start = new Point2D.Double();
     private final Point2D end = new Point2D.Double();
     private final List<Integer> nextNearest = new ArrayList<>();
-        
+
     public GraduationSymbolizerRenderer(SymbolizerRendererService service, CachedGraduationSymbolizer symbol, RenderingContext2D context) {
         super(service, symbol, context);
     }
 
     @Override
-    public void portray(ProjectedObject graphic) throws PortrayalException {        
+    public void portray(ProjectedObject graphic) throws PortrayalException {
         final ProjectedGeometry projGeom = graphic.getGeometry(null);
         if(projGeom==null) return;
-        
+
         final CoordinateReferenceSystem displayCrs = renderingContext.getDisplayCRS();
         final List<CachedGraduationSymbolizer.CachedGraduation> grads = symbol.getCachedGraduations();
         if(grads.isEmpty()) return;
-        
+
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        
+
         //precalculate values
         candidate = graphic.getCandidate();
         final List<GradInfo> forwardCandidates = new ArrayList<>();
@@ -121,16 +112,16 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             }else{
                 info.side = GraduationSymbolizer.SIDE_RIGHT;
             }
-            
+
             //get unit
             final Expression unitExp = grad.getUnit();
             final String unitStr = (unitExp==null) ? null : unitExp.evaluate(candidate, String.class);
-            final Unit unit = (unitStr==null) ? SI.METRE : Unit.valueOf(unitStr);
+            final Unit unit = (unitStr==null) ? Units.METRE : Units.valueOf(unitStr);
             //adjust unit to ellipsoid unit, for path walker
             final Ellipsoid ellipsoid = CRS.getEllipsoid(displayCrs);
             final UnitConverter converter = unit.getConverterTo(ellipsoid.getAxisUnit());
             info.stepGeo = (float)converter.convert(info.stepReal);
-            
+
             //avoid 0 and very small values
             if(info.stepGeo>=0.0000001){
                 if(Boolean.FALSE.equals(grad.getReverse().evaluate(candidate, Boolean.class))){
@@ -141,13 +132,13 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             }
         }
         if(forwardCandidates.isEmpty() && backwardCandidates.isEmpty())return;
-        
-        
+
+
         renderingContext.switchToDisplayCRS();
         try {
             final Geometry geom = projGeom.getDataGeometryJTS();
             final Geometry displayGeom = JTS.transform(geom,projGeom.getDataToDisplay());
-            
+
             if(!forwardCandidates.isEmpty()){
                 final Shape dispShape = new JTSGeometryJ2D(displayGeom);
                 final GradInfo[] gradInfos = forwardCandidates.toArray(new GradInfo[forwardCandidates.size()]);
@@ -160,25 +151,25 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(walker,gradInfos);
             }
-            
+
         } catch (TransformException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }catch(IllegalArgumentException ex){
             //may happen with geodetic calculator when geometry goes outside the valid envelope
         }
-        
+
     }
 
     private void portray(GeodeticPathWalker walker, GradInfo[] gradInfos) throws TransformException{
-        
+
         //store current distance for each graduation
         final float[] distances = new float[gradInfos.length];
-                
+
         float currentDistance = 0;
-        
+
         //render the first tick at 0
         renderTick(walker, gradInfos[0], distances[0]);
-                
+
         //walk over the path rendering closest tick each time
         while(!walker.isFinished()){
             nextNearest.clear();
@@ -207,15 +198,15 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
             renderTick(walker, gradInfos[nextNearest.get(0)], currentDistance);
         }
-        
+
     }
-    
+
     private void renderTick(GeodeticPathWalker walker, GradInfo info, double distance){
         walker.getPosition(start);
-        
+
         //ensure the point is in the visible area
         if(!renderingContext.getCanvasDisplayBounds().contains(start)) return;
-        
+
         double angle = walker.getRotation();
 
         if(info.side==GraduationSymbolizer.SIDE_LEFT || info.side==GraduationSymbolizer.SIDE_BOTH){
@@ -224,16 +215,16 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         if(info.side==GraduationSymbolizer.SIDE_RIGHT || info.side==GraduationSymbolizer.SIDE_BOTH){
             renderTick(info, distance, angle + Math.PI/2);
         }
-        
+
     }
-    
+
     private void renderTick(GradInfo info, double distance, double angle){
         final CachedGraduationSymbolizer.CachedGraduation cgrad = info.grad;
         final CachedStroke cs = cgrad.getCachedStroke();
 
         //render tick
         end.setLocation(
-                start.getX() + Math.cos(angle)*info.size, 
+                start.getX() + Math.cos(angle)*info.size,
                 start.getY() + Math.sin(angle)*info.size );
         final Line2D tick = new Line2D.Double(start, end);
         DefaultLineSymbolizerRenderer.portray(symbol, g2d, tick, cs, candidate, coeff, hints);
@@ -243,7 +234,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         final Font font = cgrad.getCachedFont().getJ2dFont(candidate, coeff);
 
         final Rectangle2D bounds = g2d.getFontMetrics().getStringBounds(text, g2d);
-        
+
         //ensure text is always upside down
         boolean flip = false;
         angle = (angle+Math.PI*2) % (Math.PI*2);
@@ -254,49 +245,49 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                     end.getY()+Math.sin(angle)*bounds.getWidth());
             angle -= Math.PI;
         }
-        
-        
+
+
         g2d.rotate(angle, end.getX(), end.getY());
         g2d.setFont(font);
-        final float height = (float)bounds.getMaxY();            
+        final float height = (float)bounds.getMaxY();
         g2d.drawString(text, (float)end.getX()+(flip?-2:+2), (float)end.getY()+height/2);
         g2d.rotate(-angle, end.getX(), end.getY());
     }
-    
-    
-    /** 
+
+
+    /**
      * Picking not supported.
-     * 
+     *
      * @param graphic
      * @param mask
      * @param filter
-     * @return 
+     * @return
      */
     @Override
     public boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
-    /** 
+    /**
      * Picking not supported.
-     * 
+     *
      * @param graphic
      * @param mask
      * @param filter
-     * @return 
+     * @return
      */
     @Override
     public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
-    
+
     /**
      * Coverage no supported.
-     * 
+     *
      * @param graphic
-     * @throws PortrayalException 
+     * @throws PortrayalException
      */
     @Override
     public void portray(ProjectedCoverage graphic) throws PortrayalException {
-    }    
+    }
 }

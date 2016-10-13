@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.xmlstore;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +29,7 @@ import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;
+import org.apache.sis.measure.Units;
 
 /**
  * Permit to marshall / unmarshall {@link SampleDimension}.
@@ -45,30 +46,30 @@ public class XMLSampleDimension {
      */
     @XmlElement(name="name")
     public String name;
-    
+
     /**
      * String which define in which unit is exprimate this {@link SampleDimension}.
      */
     @XmlElement(name="unit")
     public String unit;
-    
+
     /**
      * String which define internal {@link SampleDimension} datatype.
-     * @see #getSampleType() 
+     * @see #getSampleType()
      */
     @XmlElement(name="type")
     public String type;
-    
+
     /**
      * Define all internal {@link XMLCategory}.
      */
     @XmlElement(name="category")
     public List<XMLCategory> categories;
-    
+
 
     /**
      * Set {@link Unit} in relation with this {@link SampleDimension}.
-     * 
+     *
      * @param unit the unit of this {@link SampleDimension}, may be {@code null}.
      */
     public void setUnit(Unit unit) {
@@ -77,22 +78,22 @@ public class XMLSampleDimension {
 
     /**
      * Returns the {@link Unit} in relation with this {@link SampleDimension}.<br><br>
-     * In case where internal {@link XMLSampleDimension#unit} is not defined 
-     * the default returned value is {@link Unit#ONE}.
-     * 
-     * @return the sample {@link Unit} or {@link Unit#ONE} if it is not defined.
-     * @see Unit#valueOf(java.lang.CharSequence) 
-     * @see Unit#ONE
+     * In case where internal {@link XMLSampleDimension#unit} is not defined
+     * the default returned value is {@link Units#ONE}.
+     *
+     * @return the sample {@link Unit} or {@link Units#ONE} if it is not defined.
+     * @see Unit#valueOf(java.lang.CharSequence)
+     * @see Units#ONE
      */
     public Unit getUnit() {
-        if (this.unit == null || unit.isEmpty()) return Unit.ONE;
-        return Unit.valueOf(unit);
+        if (this.unit == null || unit.isEmpty()) return Units.ONE;
+        return Units.valueOf(unit);
     }
 
     /**
      * Set type of this sample dimension.
-     * 
-     * @param sdt 
+     *
+     * @param sdt
      * @see SampleDimensionType
      */
     public void setSampleType(SampleDimensionType sdt) {
@@ -101,7 +102,7 @@ public class XMLSampleDimension {
 
     /**
      * Returns the data type of this {@link SampleDimension}.
-     * 
+     *
      * @return the data type of this {@link SampleDimension}.
      * @throws IllegalArgumentException if {@link XMLSampleDimension#type} is not known.
      */
@@ -115,9 +116,9 @@ public class XMLSampleDimension {
     }
 
     /**
-     * Returns the equivalent of this internal datatype exprimate by an integer 
+     * Returns the equivalent of this internal datatype exprimate by an integer
      * in correlation with {@link DataBuffer} static values.
-     * 
+     *
      * @return Returns the equivalent of this internal datatype exprimate by an integer.
      * @see DataBuffer#TYPE_BYTE
      * @see DataBuffer#TYPE_DOUBLE
@@ -132,7 +133,7 @@ public class XMLSampleDimension {
 
     /**
      * Returns {@link GridSampleDimension} from internal marshalled values.
-     * 
+     *
      * @return GridSampleDimension.
      * @see #categories
      * @see #name
@@ -143,17 +144,17 @@ public class XMLSampleDimension {
         Category[] cats = null;
         if (categories != null) {
             cats = new Category[categories.size()];
-            for(int i = 0; i < cats.length; i++) { 
+            for(int i = 0; i < cats.length; i++) {
                 cats[i] = categories.get(i).buildCategory(getDataType());
             }
         }
         //-- gridSampleDimension constructor accept cats null.
         return new GridSampleDimension(name, cats, getUnit());
     }
-    
+
     /**
      * Copy and fill informations from given {@link GridSampleDimension}.
-     * 
+     *
      * @param gsd {@link GridSampleDimension} reference.
      */
     public void fill(final GridSampleDimension gsd) {

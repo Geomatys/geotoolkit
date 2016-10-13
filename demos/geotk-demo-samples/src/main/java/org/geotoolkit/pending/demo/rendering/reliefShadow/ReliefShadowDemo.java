@@ -4,8 +4,7 @@ package org.geotoolkit.pending.demo.rendering.reliefShadow;
 import java.io.File;
 import java.net.URL;
 import javax.imageio.ImageReader;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
@@ -19,13 +18,13 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
-import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.cs.AxisDirection;
@@ -39,18 +38,18 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
 
 /**
- * Show how to use {@link ElevationModel} to add shadow on image in renderer. 
+ * Show how to use {@link ElevationModel} to add shadow on image in renderer.
  *
  * @author Remi Marechal (Geomatys).
  */
 public class ReliefShadowDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF    = FactoryFinder.getFilterFactory(null);
-    
+
     /**
      * Create {@link GridCoverageReader} which will be return by {@link ElevationModel} to read DEM.
      */
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
 
@@ -60,12 +59,12 @@ public class ReliefShadowDemo {
 
         ImageReader covPath = XImageIO.getReaderByFormatName("tiff-wf", reliefPath, Boolean.FALSE, false);
         covPath.setInput(reliefPath);
-        
+
         FileCoverageStore store = new FileCoverageStore(reliefPath.toURL(), "AUTO");
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
-        
+
 //        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
-        
+
         /*
          * Coverage which will be shadowed.
          */
@@ -78,18 +77,18 @@ public class ReliefShadowDemo {
 
         File cloudFile = new File(ReliefShadowDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
         //create a mapcontext
-        final MapContext context  = MapBuilder.createContext();        
+        final MapContext context  = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(cloudFile);
         final double azimuth = 45;
         final double altitude = 2;
         final double scale = 0.4;
         final ElevationModel elevModel = new ElevationModel(ref, azimuth, altitude, scale, AxisDirection.UP);
-        
+
         /*
-         * Define Elevation Model object to get informations necessary to compute shadow on coverage. 
+         * Define Elevation Model object to get informations necessary to compute shadow on coverage.
          */
         cl.setElevationModel(elevModel);
-        
+
         MutableStyle style = customRaster();
         cl.setStyle(style);
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -98,7 +97,7 @@ public class ReliefShadowDemo {
         context.layers().add(cl);
         JMap2DFrame.show(context);
     }
-    
+
     /*
      * Define style.
      */
@@ -107,7 +106,7 @@ public class ReliefShadowDemo {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final ChannelSelection channels = null;
         final OverlapBehavior overlap = null;
@@ -126,5 +125,5 @@ public class ReliefShadowDemo {
                 channels,overlap,colormap,enhance,relief,outline);
         final MutableStyle style = SF.style(symbol);
         return style;
-    }    
+    }
 }

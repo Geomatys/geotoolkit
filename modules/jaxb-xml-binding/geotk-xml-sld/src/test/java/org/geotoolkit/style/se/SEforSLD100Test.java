@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
-import javax.measure.unit.NonSI;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -42,6 +41,7 @@ import org.geotoolkit.sld.xml.GTtoSE100Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SE100toGTTransformer;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.measure.Units;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -333,7 +333,7 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(pointSymbol);
 
         assertEquals(pointSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(NonSI.PIXEL, pointSymbol.getUnitOfMeasure());
+        assertEquals(Units.POINT, pointSymbol.getUnitOfMeasure());
         assertNotNull(pointSymbol.getGraphic());
 
         assertEquals(pointSymbol.getGraphic().getOpacity().evaluate(null, Float.class), 0.7f);
@@ -387,7 +387,7 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(lineSymbol);
 
         assertEquals(lineSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(NonSI.PIXEL, lineSymbol.getUnitOfMeasure());
+        assertEquals(Units.POINT, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
 
         assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
@@ -425,7 +425,7 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(polySymbol);
 
         assertEquals(polySymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(NonSI.PIXEL, polySymbol.getUnitOfMeasure());
+        assertEquals(Units.POINT, polySymbol.getUnitOfMeasure());
         assertNotNull(polySymbol.getStroke());
 
         assertEquals(polySymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
@@ -467,7 +467,7 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(textSymbol);
 
         assertEquals(textSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(NonSI.PIXEL, textSymbol.getUnitOfMeasure());
+        assertEquals(Units.POINT, textSymbol.getUnitOfMeasure());
         assertNotNull(textSymbol.getFill());
 
         assertEquals(textSymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f);
@@ -512,7 +512,7 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(rasterSymbol);
 
         assertEquals(rasterSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(NonSI.PIXEL, rasterSymbol.getUnitOfMeasure());
+        assertEquals(Units.POINT, rasterSymbol.getUnitOfMeasure());
 
         assertNotNull(rasterSymbol.getChannelSelection());
         assertEquals(rasterSymbol.getChannelSelection().getRGBChannels()[0].getChannelName(), "band_1");

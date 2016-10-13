@@ -94,7 +94,7 @@ import org.geotoolkit.temporal.object.ISODateParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
 import java.awt.*;
@@ -115,6 +115,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.sis.measure.Units;
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import static org.geotoolkit.util.DomUtilities.firstElement;
 import static org.geotoolkit.util.DomUtilities.getListElements;
@@ -373,10 +374,10 @@ public final class DimapAccessor extends Static {
 
             Unit unit = null;
             try {
-                Unit.valueOf(physicUnit.trim());
+                Units.valueOf(physicUnit.trim());
             } catch (Exception ex) {
                 //catch anything, this doesn't always throw parse exception
-                unit = Unit.ONE;
+                unit = Units.ONE;
             }
 
             //transform sample to geophysics
@@ -1013,7 +1014,7 @@ public final class DimapAccessor extends Static {
 
                     physicalUnit = physicalUnit.substring(physicalUnit.indexOf("(") + 1, physicalUnit.indexOf(")"));
 
-                    //final Unit unit = Unit.valueOf(physicalUnit);
+                    //final Unit unit = Units.valueOf(physicalUnit);
 
                     final DefaultBand dimension = getBandDimension(metadata, bandIndex);
                     dimension.setBitsPerValue(nbits);

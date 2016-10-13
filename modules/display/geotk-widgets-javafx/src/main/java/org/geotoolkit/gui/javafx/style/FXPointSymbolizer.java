@@ -20,7 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_GRAPHIC;

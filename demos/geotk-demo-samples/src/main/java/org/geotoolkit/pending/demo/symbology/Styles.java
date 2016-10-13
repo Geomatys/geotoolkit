@@ -57,12 +57,9 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import java.awt.*;
 import java.io.File;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -72,6 +69,7 @@ import java.util.Map;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
+import org.apache.sis.measure.Units;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.style.ExternalMark;
@@ -89,7 +87,7 @@ public class Styles {
     protected static final MutableSLDFactory SLDF = new DefaultSLDFactory();
     protected static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    
+
     //////////////////////////////////////////////////////////////////////
     // POINT SYMBOLIZER //////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -106,7 +104,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
 
         //the visual element
         final Expression size = FF.literal(12);
@@ -133,7 +131,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
 
         //the visual element
         final Expression size = FF.literal(12);
@@ -154,14 +152,14 @@ public class Styles {
         final MutableStyle style = SF.style(symbolizer);
         return style;
     }
-    
+
     public static MutableStyle ttfPoint() throws URISyntaxException{
 
         //general informations
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
 
         //the visual element
         final Expression size = FF.literal(32);
@@ -171,14 +169,14 @@ public class Styles {
         final Displacement disp = DEFAULT_DISPLACEMENT;
 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        
+
         final Stroke stroke = SF.stroke(Color.BLACK, 1);
         final Fill fill = SF.fill(Color.RED);
         final ExternalMark external = SF.externalMark(
                     SF.onlineResource(IconBuilder.FONTAWESOME.toURI()),
                     "ttf",FontAwesomeIcons.ICON_DELICIOUS.codePointAt(0));
         final Mark mark = SF.mark(external, fill, stroke);
-        
+
         symbols.add(mark);
         final Graphic graphic = SF.graphic(symbols, opacity, size, rotation, anchor, disp);
 
@@ -186,14 +184,14 @@ public class Styles {
         final MutableStyle style = SF.style(symbolizer);
         return style;
     }
-    
+
     public static MutableStyle ttfPoint2() throws URISyntaxException{
 
         //general informations
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
 
         //the visual element
         final Expression size = FF.literal(12);
@@ -203,12 +201,12 @@ public class Styles {
         final Displacement disp = DEFAULT_DISPLACEMENT;
 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        
+
         final Stroke stroke = SF.stroke(Color.BLACK, 1);
         final Fill fill = SF.fill(Color.RED);
         final Expression external = FF.literal("ttf:Dialog?char=0x2A");
         final Mark mark = SF.mark(external, fill, stroke);
-        
+
         symbols.add(mark);
         final Graphic graphic = SF.graphic(symbols, opacity, size, rotation, anchor, disp);
 
@@ -216,7 +214,7 @@ public class Styles {
         final MutableStyle style = SF.style(symbolizer);
         return style;
     }
-    
+
 
     //////////////////////////////////////////////////////////////////////
     // LINE SYMBOLIZER //////////////////////////////////////////////////
@@ -234,7 +232,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression offset = LITERAL_ZERO_FLOAT;
 
         //the visual element
@@ -254,7 +252,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression offset = LITERAL_ONE_FLOAT;
 
         //the visual element
@@ -278,7 +276,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = SI.METRE;
+        final Unit unit = Units.METRE;
         final Expression offset = LITERAL_ZERO_FLOAT;
 
         //the visual element
@@ -298,7 +296,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression offset = LITERAL_ONE_FLOAT;
 
         //the stroke fill
@@ -335,7 +333,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression offset = LITERAL_ONE_FLOAT;
 
         //the stroke fill
@@ -387,7 +385,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Displacement disp = DEFAULT_DISPLACEMENT;
         final Expression offset = LITERAL_ZERO_FLOAT;
 
@@ -411,7 +409,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Displacement disp = DEFAULT_DISPLACEMENT;
         final Expression offset = LITERAL_ZERO_FLOAT;
 
@@ -452,7 +450,7 @@ public class Styles {
                 "mySymbol",
                 (String)null,
                 DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                Units.POINT,
                 null,
                 SF.fill(Color.DARK_GRAY),
                 SF.displacement(3, -4),
@@ -471,7 +469,7 @@ public class Styles {
                 "mySymbol",
                 (String)null,
                 DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                Units.POINT,
                 null,
                 SF.fill(new Color(255,0, 0)),
                 DEFAULT_DISPLACEMENT,
@@ -481,7 +479,7 @@ public class Styles {
                 "mySymbol",
                 (String)null,
                 DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                Units.POINT,
                 null,
                 SF.fill(new Color(255, 70, 70)),
                 DEFAULT_DISPLACEMENT,
@@ -491,7 +489,7 @@ public class Styles {
                 "mySymbol",
                 (String)null,
                 DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                Units.POINT,
                 null,
                 SF.fill(new Color(255, 140, 140)),
                 DEFAULT_DISPLACEMENT,
@@ -501,7 +499,7 @@ public class Styles {
                 "mySymbol",
                 (String)null,
                 DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                Units.POINT,
                 null,
                 SF.fill(new Color(255, 210, 210)),
                 DEFAULT_DISPLACEMENT,
@@ -527,7 +525,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression label = FF.property("CNTRY_NAME");
         final Font font = SF.font(
                 FF.literal("Arial"),
@@ -550,7 +548,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression label = FF.property("CNTRY_NAME");
         final Font font = SF.font(
                 FF.literal("Arial"),
@@ -582,7 +580,7 @@ public class Styles {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final ChannelSelection channels = null;
         final OverlapBehavior overlap = null;
@@ -618,7 +616,7 @@ public class Styles {
         final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
         final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
         final Symbolizer outline = null;
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = DEFAULT_GEOM;
         final String name = "raster symbol name";
         final Description desc = DEFAULT_DESCRIPTION;
@@ -648,7 +646,7 @@ public class Styles {
         final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
         final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
         final Symbolizer outline = null;
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = DEFAULT_GEOM;
         final String name = "raster symbol name";
         final Description desc = DEFAULT_DESCRIPTION;

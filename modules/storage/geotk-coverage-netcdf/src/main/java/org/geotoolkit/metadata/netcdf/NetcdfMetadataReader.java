@@ -29,11 +29,9 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.io.IOException;
-import javax.measure.unit.Unit;
-import javax.measure.unit.SI;
-import javax.measure.unit.NonSI;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 
 import ucar.nc2.Group;
 import ucar.nc2.Attribute;
@@ -66,7 +64,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
-import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
@@ -101,6 +98,7 @@ import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.measure.Units;
 
 import static java.util.Collections.singleton;
 import static org.apache.sis.util.iso.Types.toInternationalString;
@@ -387,11 +385,11 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                  * A few cases found in NetCDF file. This is a temporary patch
                  * while we wait for a more efficient Unit parser.
                  */
-                case "meter2 second-1": return SI.METRE.times(SI.METRES_PER_SECOND);
+                case "meter2 second-1": return Units.METRE.multiply(Units.METRES_PER_SECOND);
                 case "meter second-1":  // Fall through
-                case "m s**-1":         return SI.METRES_PER_SECOND;
-                case "kg m**-2":        return SI.KILOGRAM.times(SI.METRE.pow(-2));
-                case "m of water":      return SI.METRE;
+                case "m s**-1":         return Units.METRES_PER_SECOND;
+                case "kg m**-2":        return Units.KILOGRAM.multiply(Units.METRE.pow(-2));
+                case "m of water":      return Units.METRE;
             }
             try {
                 return Units.valueOf(unit);
@@ -871,8 +869,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         final Number zmax = getNumericValue(group, VERTICAL .MAXIMUM);
         if (xmin != null || xmax != null || ymin != null || ymax != null) {
             extent = new DefaultExtent();
-            final UnitConverter cλ = getConverterTo(getUnitValue(group, LONGITUDE.UNITS), NonSI.DEGREE_ANGLE);
-            final UnitConverter cφ = getConverterTo(getUnitValue(group, LATITUDE .UNITS), NonSI.DEGREE_ANGLE);
+            final UnitConverter cλ = getConverterTo(getUnitValue(group, LONGITUDE.UNITS), Units.DEGREE);
+            final UnitConverter cφ = getConverterTo(getUnitValue(group, LATITUDE .UNITS), Units.DEGREE);
             extent.getGeographicElements().add(new DefaultGeographicBoundingBox(
                     valueOf(xmin, cλ), valueOf(xmax, cλ),
                     valueOf(ymin, cφ), valueOf(ymax, cφ)));
@@ -881,7 +879,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            final UnitConverter c = getConverterTo(getUnitValue(group, VERTICAL.UNITS), SI.METRE);
+            final UnitConverter c = getConverterTo(getUnitValue(group, VERTICAL.UNITS), Units.METRE);
             double min = valueOf(zmin, c);
             double max = valueOf(zmax, c);
             if (CF.POSITIVE_DOWN.equals(getStringValue(group, VERTICAL.POSITIVE))) {
@@ -945,7 +943,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     private UnitConverter getConverterTo(final Unit<?> source, final Unit<?> target) {
         if (source != null) try {
             return source.getConverterToAny(target);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             warning("getConverterTo", e);
         }
         return null;

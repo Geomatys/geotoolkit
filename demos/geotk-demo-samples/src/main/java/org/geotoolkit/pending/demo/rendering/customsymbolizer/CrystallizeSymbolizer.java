@@ -1,7 +1,7 @@
 
 package org.geotoolkit.pending.demo.rendering.customsymbolizer;
 
-import javax.measure.unit.NonSI;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 import org.geotoolkit.style.StyleConstants;
 
@@ -10,7 +10,7 @@ public class CrystallizeSymbolizer extends AbstractExtensionSymbolizer{
     private final float edgeThickness;
 
     public CrystallizeSymbolizer(float edgeThickness){
-        super(NonSI.PIXEL, null, "crystal", StyleConstants.DEFAULT_DESCRIPTION);
+        super(Units.POINT, null, "crystal", StyleConstants.DEFAULT_DESCRIPTION);
         this.edgeThickness = edgeThickness;
     }
 

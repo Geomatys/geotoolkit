@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.referencing;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;

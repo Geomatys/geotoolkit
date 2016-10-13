@@ -23,7 +23,7 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValue;

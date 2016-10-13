@@ -30,9 +30,9 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JComponent;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
@@ -57,7 +57,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,
-                            SI.KILOMETRE);
+                            Units.KILOMETRE);
 
     private final Dimension scaleDimension = new Dimension(500, 40);
     private final BufferedImage buffer = new BufferedImage(scaleDimension.width, scaleDimension.height, BufferedImage.TYPE_INT_ARGB);

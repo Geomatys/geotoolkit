@@ -27,7 +27,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import javax.measure.unit.SI;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
@@ -40,6 +39,7 @@ import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.report.graphic.map.CanvasRenderer;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.measure.Units;
 
 /**
  * Jasper Report renderer used to render scale bar graphic.
@@ -53,7 +53,7 @@ public class ScaleBarRenderer implements JRRenderable{
                             null,new Dimension(300,30),6,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
-                            3,true,false, new Font("Serial", Font.PLAIN, 8),true,SI.METRE);
+                            3,true,false, new Font("Serial", Font.PLAIN, 8),true,Units.METRE);
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private CanvasRenderer canvas = null;

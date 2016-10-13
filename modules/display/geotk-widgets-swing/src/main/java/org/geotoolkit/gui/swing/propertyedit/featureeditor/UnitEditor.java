@@ -22,14 +22,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import javax.measure.Unit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.geotoolkit.feature.type.PropertyType;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -39,9 +40,18 @@ import org.geotoolkit.feature.type.PropertyType;
 public class UnitEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
-    private final static List<Unit> UNITS = new ArrayList<Unit>(SI.getInstance().getUnits());
+    private final static List<Unit> UNITS = new ArrayList<>();
     static {
-        UNITS.addAll(NonSI.getInstance().getUnits());
+        for (final Field field : Units.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) try {
+                final Object obj = field.get(null);
+                if (obj instanceof Unit<?>) {
+                    UNITS.add((Unit) obj);
+                }
+            } catch (IllegalAccessException e) {
+                // Ignore.
+            }
+        }
     }
 
     public UnitEditor() {

@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;

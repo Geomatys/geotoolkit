@@ -21,12 +21,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -72,7 +72,7 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
     private final ThreshholdsBelongTo belongTo;
 
     public PatternSymbolizer(final Expression channel, final Map<Expression,List <Symbolizer>> ranges, final ThreshholdsBelongTo belong) {
-        super(NonSI.PIXEL, null, "", null);
+        super(Units.POINT, null, "", null);
         this.channel = channel;
         this.thredholds.putAll(ranges);
         this.belongTo = belong;
@@ -81,7 +81,7 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
     public Expression getChannel(){
         return channel;
     }
-    
+
     public ThreshholdsBelongTo getBelongTo(){
         return belongTo;
     }

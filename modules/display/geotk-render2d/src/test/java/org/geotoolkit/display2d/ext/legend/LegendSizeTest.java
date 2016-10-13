@@ -25,7 +25,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
-import javax.measure.unit.Unit;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.dimrange.DimRangeSymbolizer;
 import org.geotoolkit.map.MapBuilder;
@@ -80,7 +80,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testDimRangeLegend() {
 
-        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Unit.ONE));
+        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Units.ONE));
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(dr));
 

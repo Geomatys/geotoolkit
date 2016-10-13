@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 

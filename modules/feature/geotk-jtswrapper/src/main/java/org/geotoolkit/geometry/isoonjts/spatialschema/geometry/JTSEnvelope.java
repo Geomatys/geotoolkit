@@ -9,9 +9,6 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
-
-import javax.measure.unit.NonSI;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -21,6 +18,7 @@ import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.measure.Units;
 
 /**
  * A minimum bounding box or rectangle. Regardless of dimension, an {@code Envelope} can
@@ -57,7 +55,7 @@ public class JTSEnvelope implements Envelope {
         lowerCorner = null;
         upperCorner = null;
     }
-    
+
     /**
      * Creates a new {@code EnvelopeImpl}.
      * @param lowerCorner
@@ -124,21 +122,21 @@ public class JTSEnvelope implements Envelope {
     public final DirectPosition getLowerCorner() {
         return new GeneralDirectPosition(lowerCorner);
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public String toString() {
-        final double[] bbox = GeometryUtils.getBBox(this, NonSI.DEGREE_ANGLE);
-        
+        final double[] bbox = GeometryUtils.getBBox(this, Units.DEGREE);
+
         final StringBuffer returnable = new StringBuffer("Envelope[").append(bbox[0]);
         for (int i = 1; i < bbox.length; i++) {
             returnable.append(",").append(bbox[i]);
         }
         return returnable.append("]").toString();
     }
-    
+
     /**
      * {@inheritDoc }
      */

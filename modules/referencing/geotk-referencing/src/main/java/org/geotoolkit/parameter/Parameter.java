@@ -25,9 +25,9 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -185,7 +185,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         try {
             return actual.getConverterToAny(unit).convert(doubleValue());
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
     }
@@ -328,7 +328,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         final UnitConverter converter;
         try {
             converter = actual.getConverterToAny(unit);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         final double[] values = doubleValueList().clone();
@@ -481,7 +481,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         final Double converted;
         try {
             converted = unit.getConverterToAny(targetUnit).convert(value);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         ensureValidValue(descriptor, converted);
@@ -613,7 +613,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         final UnitConverter converter;
         try {
             converter = unit.getConverterToAny(targetUnit);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         for (int i=0; i<converted.length; i++) {

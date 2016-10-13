@@ -20,7 +20,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
-import javax.measure.unit.SI;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -36,6 +35,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.measure.Units;
 import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.opengis.metadata.content.TransferFunctionType;
@@ -173,7 +173,7 @@ public class HGTReader extends SpatialImageReader {
         dac.setFillSampleValues(Short.MIN_VALUE);
         dac.setValidSampleValue(Short.MIN_VALUE + 1, Short.MAX_VALUE);
         dac.setTransfertFunction(1, 0, TransferFunctionType.LINEAR);
-        dac.setUnits(SI.METRE);
+        dac.setUnits(Units.METRE);
 
         if (fileInput == null) {
             throw new IOException("No valid input set.");

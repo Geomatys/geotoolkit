@@ -19,8 +19,7 @@ package org.geotoolkit.gui.swing.style.symbolizer;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -36,10 +35,11 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Description;
 import org.opengis.style.PolygonSymbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  * PolygonSymbolizer editor.
- * 
+ *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
@@ -47,8 +47,8 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
 
     private MapLayer layer = null;
     private PolygonSymbolizer oldSymbolizer = null;
-    
-    /** 
+
+    /**
      * Creates new form JPolygonSymbolizerPane and sets range of number component
      */
     public JPolygonSymbolizerSimple() {
@@ -60,27 +60,27 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
         guiDisplacementX.setExpressionVisible(false);
         guiDisplacementY.setExpressionVisible(false);
         guiOffset.setExpressionVisible(false);
-        
+
         guiFillControlPane.addPropertyChangeListener(this);
         guiStrokeControlPane.addPropertyChangeListener(this);
         guiOffset.addPropertyChangeListener(this);
         guiDisplacementX.addPropertyChangeListener(this);
         guiDisplacementY.addPropertyChangeListener(this);
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void setLayer(final MapLayer layer){
         this.layer = layer;
-        
+
         guiFillControlPane.setLayer(layer);
         guiDisplacementY.setLayer(layer);
         guiDisplacementX.setLayer(layer);
         guiStrokeControlPane.setLayer(layer);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -88,7 +88,7 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
     public MapLayer getLayer(){
         return layer;
     }
- 
+
     /**
      * {@inheritDoc }
      */
@@ -100,7 +100,7 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
             guiFillControlPane.parse(symbol.getFill());
             guiDisplacementX.parse(symbol.getDisplacement().getDisplacementX());
             guiDisplacementY.parse(symbol.getDisplacement().getDisplacementY());
-            guiOffset.parse(symbol.getPerpendicularOffset());  
+            guiOffset.parse(symbol.getPerpendicularOffset());
         }
     }
 
@@ -112,21 +112,21 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
         String name = "polygonSymbolizer";
         String geomName = null;
         Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        Unit unit = NonSI.PIXEL;
+        Unit unit = Units.POINT;
         if(oldSymbolizer!=null){
             name = oldSymbolizer.getName();
             geomName = oldSymbolizer.getGeometryPropertyName();
             desc = oldSymbolizer.getDescription();
             unit = oldSymbolizer.getUnitOfMeasure();
         }
-        
+
         return getStyleFactory().polygonSymbolizer(
                     name,
                     geomName,
                     desc,
                     unit,
                     guiStrokeControlPane.create(),
-                    guiFillControlPane.create(), 
+                    guiFillControlPane.create(),
                     getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
                     guiOffset.create());
     }
@@ -142,7 +142,7 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -30,11 +30,9 @@ import java.util.TimeZone;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Duration;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Time;
 
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.TemporalDatum;
@@ -50,7 +48,6 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.AngleFormat;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
@@ -59,6 +56,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
 
+import org.apache.sis.measure.Units;
+import org.apache.sis.measure.UnitFormat;
 import org.apache.sis.util.Utilities;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -293,7 +292,7 @@ public class CoordinateFormat extends Format {
                 else                                      type = ANGLE;
                 types       [i] = type;
                 formats     [i] = getAngleFormat();
-                toFormatUnit[i] = unit.asType(javax.measure.quantity.Angle.class).getConverterTo(NonSI.DEGREE_ANGLE);
+                toFormatUnit[i] = unit.asType(javax.measure.quantity.Angle.class).getConverterTo(Units.DEGREE);
                 negate      [i] = neg;
                 continue;
             }
@@ -309,7 +308,7 @@ public class CoordinateFormat extends Format {
                     }
                     types       [i] = DATE;
                     formats     [i] = getDateFormat();
-                    toFormatUnit[i] = unit.asType(Duration.class).getConverterTo(Units.MILLISECOND);
+                    toFormatUnit[i] = unit.asType(Time.class).getConverterTo(Units.MILLISECOND);
                     epochs      [i] = ((TemporalDatum) datum).getOrigin().getTime();
                     negate      [i] = neg;
                     continue;

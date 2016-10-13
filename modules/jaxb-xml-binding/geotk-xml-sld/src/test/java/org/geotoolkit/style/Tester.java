@@ -24,9 +24,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -240,7 +239,7 @@ public class Tester {
     private static PointSymbolizer createPointSymbolizer(){
         String name = "Point symbolizer name";
         Description desc = STYLE_FACTORY.description("Point symbolizer title", "Point symbolizer description");
-        Unit uom = NonSI.PIXEL;
+        Unit uom = Units.POINT;
         String geom = "geom";
 
         List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
@@ -259,7 +258,7 @@ public class Tester {
     private static LineSymbolizer createLineSymbolizer(){
         String name = "the line symbolizer name";
         Description desc = STYLE_FACTORY.description("Line symbolizer title", "Line symbolizer description");
-        Unit uom = SI.METRE;
+        Unit uom = Units.METRE;
         String geom = "geom";
 
         Stroke stroke = STYLE_FACTORY.stroke(Color.RED, 3, new float[]{3,6});
@@ -271,7 +270,7 @@ public class Tester {
     private static PolygonSymbolizer createPolygonSymbolizer(){
         String name = "Polygon symbolizer name";
         Description desc = STYLE_FACTORY.description("Polygon symbolizer title", "Polygon symbolizer description");
-        Unit uom = NonSI.FOOT;
+        Unit uom = Units.FOOT;
         String geom = "geom";
 
         Stroke stroke = STYLE_FACTORY.stroke(Color.RED, 3, new float[]{3,6});
@@ -285,7 +284,7 @@ public class Tester {
     private static TextSymbolizer createTextSymbolizer(){
         String name = "Text symbolizer name";
         Description desc = STYLE_FACTORY.description("Text symbolizer title", "Text symbolizer description");
-        Unit uom = NonSI.FOOT;
+        Unit uom = Units.FOOT;
         String geom = "geom";
 
         Fill fill = STYLE_FACTORY.fill(Color.ORANGE);
@@ -300,7 +299,7 @@ public class Tester {
     private static RasterSymbolizer createRasterSymbolizer(){
         String name = "Raster symbolizer name";
         Description desc = STYLE_FACTORY.description("Raster symbolizer title", "Raster symbolizer description");
-        Unit uom = SI.METRE;
+        Unit uom = Units.METRE;
         String geom = "geom";
 
         Expression opacity = FILTER_FACTORY.literal(0.5);

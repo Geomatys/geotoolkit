@@ -33,9 +33,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
@@ -235,6 +233,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -865,9 +864,9 @@ public class GTtoSE110Transformer implements StyleVisitor {
             return null;
         }
 
-        if (uom.equals(SI.METRE)) {
+        if (uom.equals(Units.METRE)) {
             return "http://www.opengeospatial.org/se/units/metre";
-        } else if (uom.equals(NonSI.FOOT)) {
+        } else if (uom.equals(Units.FOOT)) {
             return "http://www.opengeospatial.org/se/units/foot";
         } else {
             return "http://www.opengeospatial.org/se/units/pixel";

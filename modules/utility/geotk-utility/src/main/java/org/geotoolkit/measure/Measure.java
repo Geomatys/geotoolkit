@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.measure;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.internal.util.Numerics;
 
 // Related to JDK7

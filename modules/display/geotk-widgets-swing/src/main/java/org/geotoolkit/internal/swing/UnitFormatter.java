@@ -22,8 +22,8 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.text.InternationalFormatter;
 
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import org.apache.sis.measure.UnitFormat;
 
 import org.apache.sis.measure.Units;
 

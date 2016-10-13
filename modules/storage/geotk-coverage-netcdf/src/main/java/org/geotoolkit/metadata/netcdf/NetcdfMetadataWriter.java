@@ -29,10 +29,9 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.io.IOException;
 import java.net.URI;
-import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 import ucar.nc2.NetcdfFileWriteable;
 import ucar.nc2.units.DateFormatter;
 
@@ -50,6 +49,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.util.InternationalString;
 import org.opengis.util.ControlledVocabulary;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
@@ -177,7 +177,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
 
     /**
      * The vertical and temporal units, or {@code null} if unknown. As a special case, we
-     * use {@link Unit#ONE} when a minimal and maximal values where specified without units.
+     * use {@link Units#ONE} when a minimal and maximal values where specified without units.
      *
      * @see #getUnit(SingleCRS)
      */
@@ -252,7 +252,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
     }
 
     /**
-     * Returns the units of measurement of the given CRS, or {@code Unit#ONE} if unspecified.
+     * Returns the units of measurement of the given CRS, or {@code Units#ONE} if unspecified.
      *
      * @see #verticalUnit
      * @see #temporalUnit
@@ -264,12 +264,12 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                 return unit;
             }
         }
-        return Unit.ONE;
+        return Units.ONE;
     }
 
     /**
      * Formats the given units as a NetCDF unit. This method handles a few units in a special way
-     * in order to match the NetCDF conventions. For example the {@linkplain NonSI#DEGREE_ANGLE
+     * in order to match the NetCDF conventions. For example the {@linkplain Units#DEGREE
      * angular degrees} are formatted as {@code "degrees"} instead than {@code "°"}.
      *
      * @param  unit The unit to format, or {@code null}.
@@ -277,10 +277,10 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      *         or {@code null} if the given unit was null.
      */
     private static String toString(final Unit<?> unit) {
-        if (unit == null || unit.equals(Unit.ONE)) {
+        if (unit == null || unit.equals(Units.ONE)) {
             return null;
         }
-        if (unit.equals(NonSI.DEGREE_ANGLE)) {
+        if (unit.equals(Units.DEGREE)) {
             return "degrees";
         }
         return unit.toString();
@@ -718,8 +718,8 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             if (element instanceof GeographicBoundingBox) {
                 final GeographicBoundingBox bbox = (GeographicBoundingBox) element;
                 if (!Boolean.FALSE.equals(bbox.getInclusion())) {
-                    addExtent(null, 0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude(), NonSI.DEGREE_ANGLE);
-                    addExtent(null, 1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude(), NonSI.DEGREE_ANGLE);
+                    addExtent(null, 0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude(), Units.DEGREE);
+                    addExtent(null, 1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude(), Units.DEGREE);
                 }
             }
         }
@@ -733,7 +733,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             temporalUnit = addExtent(temporalUnit, 3,
                     Double.NaN, // TODO
                     Double.NaN, // TODO
-                    Unit.ONE);  // TODO
+                    Units.ONE);  // TODO
         }
     }
 
@@ -746,7 +746,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
      * @param  dimension The dimension to set, from 0 inclusive to {@value #NUM_DIMENSIONS} exclusive.
      * @param  min       The minimal value, or {@code NaN} if unknown.
      * @param  max       The minimal value, or {@code NaN} if unknown.
-     * @param  unit      The unit of measurement, or {@link Unit#ONE} if unknown.
+     * @param  unit      The unit of measurement, or {@link Units#ONE} if unknown.
      * @return The unit of measurement to retain.
      */
     private Unit<?> addExtent(Unit<?> oldUnit, int dimension, double min, double max, final Unit<?> unit) {
@@ -756,7 +756,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             final UnitConverter c = unit.getConverterToAny(oldUnit);
             min = c.convert(min);
             max = c.convert(max);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             warning("addExtent", e);
             return oldUnit;
         }

@@ -19,10 +19,8 @@ package org.geotoolkit.gui.javafx.layer.style;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javax.measure.unit.NonSI;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXColorMap;
@@ -45,23 +43,24 @@ import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleColorMapPane extends FXLayerStylePane {
-    
+
     @FXML
     private FXColorMap uiColorMap;
     @FXML
     private Button uiApply;
-    
+
     private CoverageMapLayer layer;
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
-    
+
     public FXStyleColorMapPane() {
         GeotkFX.loadJRXML(this,FXStyleColorMapPane.class);
     }
@@ -70,7 +69,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     public String getTitle() {
         return GeotkFX.getString(this,"title");
     }
-    
+
     @Override
     public String getCategory() {
         return GeotkFX.getString(this,"category");
@@ -89,7 +88,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
         final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
         final RasterSymbolizer symbol = GO2Utilities.STYLE_FACTORY.rasterSymbolizer(
-                "",DEFAULT_GEOM,desc,NonSI.PIXEL,LITERAL_ONE_FLOAT,
+                "", DEFAULT_GEOM, desc, Units.POINT, LITERAL_ONE_FLOAT,
                 selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         if(parentRule!=null){
@@ -113,13 +112,13 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
 
         grid.add(uiApply, 4, 8);
     }
-    
+
     @Override
     public boolean init(MapLayer candidate, Object StyleElement) {
-        if(!(candidate instanceof CoverageMapLayer)) return false;       
-        
+        if(!(candidate instanceof CoverageMapLayer)) return false;
+
         layer = (CoverageMapLayer)candidate;
-        
+
         RasterSymbolizer rs = null;
         parentRule = null;
         parentIndex = 0;
@@ -137,19 +136,19 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
                 }
             }
         }
-        
+
         uiColorMap.setLayer(layer);
         if(rs!=null){
             final ColorMap cm = rs.getColorMap();
             uiColorMap.valueProperty().set(cm);
         }
-        
+
         return true;
     }
-    
+
     @Override
     public MutableStyle getMutableStyle() {
         return null;
     }
-    
+
 }

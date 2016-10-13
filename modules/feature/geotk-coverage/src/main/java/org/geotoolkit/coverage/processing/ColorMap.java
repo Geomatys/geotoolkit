@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.IncommensurableException;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -241,7 +241,7 @@ public class ColorMap implements Serializable {
      * [0..500] metres and if a range of [100..400] metres is defined as below:
      *
      * {@preformat java
-     *     setRelativeRange("Height", MeasurementRange.create(0, 100, SI.METRE));
+     *     setRelativeRange("Height", MeasurementRange.create(0, 100, Units.METRE));
      *     setColors("Height", myColorPalette);
      * }
      *
@@ -393,7 +393,7 @@ public class ColorMap implements Serializable {
             try {
                 final MeasurementRange<?> range = (MeasurementRange<?>) scale;
                 scale = range.convertTo(units);
-            } catch (ConversionException e) {
+            } catch (IncommensurableException e) {
                 Logging.unexpectedException(AbstractCoverageProcessor.LOGGER, ColorMap.class, "recolor", e);
                 return null; // This is allowed by this method contract.
             }

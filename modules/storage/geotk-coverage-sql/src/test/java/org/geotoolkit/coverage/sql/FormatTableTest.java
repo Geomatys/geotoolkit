@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.sql.SQLException;
-import javax.measure.unit.SI;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -160,7 +160,7 @@ public final strictfp class FormatTableTest extends CatalogTestBase {
         /*
          * Following entry should be found for the PNG format only.
          */
-        GridSampleDimension search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        GridSampleDimension search = new GridSampleDimension("Temperature", categories, Units.CELSIUS);
         FormatEntry found = table.find("NetCDF", Arrays.asList(search));
         assertNull("Should be defined for the PNG format, not NetCDF.", found);
         found = table.find("PNG", Arrays.asList(search));
@@ -171,17 +171,17 @@ public final strictfp class FormatTableTest extends CatalogTestBase {
          * The entry should not be found anymore.
          */
         categories[1] = new Category("Temperature", null, 1, 256, 0.15, -4);
-        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        search = new GridSampleDimension("Temperature", categories, Units.CELSIUS);
         found = table.find("PNG", Arrays.asList(search));
         assertNull("Should not found because the transfer function is different.", found);
 
         categories[1] = new Category("Temperature", null, 1, 255, 0.15, -3);
-        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        search = new GridSampleDimension("Temperature", categories, Units.CELSIUS);
         found = table.find("PNG", Arrays.asList(search));
         assertNull("Should not found because the range is different.", found);
 
         categories[1] = new Category("Temperature", null, 1, 256, 0.15, -3);
-        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        search = new GridSampleDimension("Temperature", categories, Units.CELSIUS);
         found = table.find("PNG", Arrays.asList(search));
         assertNotNull("Should found since the category has been restored.", found);
         assertEquals(TEMPERATURE, found.getIdentifier());
@@ -203,7 +203,7 @@ public final strictfp class FormatTableTest extends CatalogTestBase {
                     new Category("Clouds",      null, 3),
                     new Category("Land",        null, 7),
                     new Category("Temperature", null, 10, 255, 0.1, 5)
-                }, SI.CELSIUS),
+                }, Units.CELSIUS),
             new GridSampleDimension("Quality",
                 new Category[] {
                     new Category("No data", null, 0),

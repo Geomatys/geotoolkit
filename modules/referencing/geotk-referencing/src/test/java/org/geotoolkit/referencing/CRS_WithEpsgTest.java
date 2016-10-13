@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing;
 
 import java.util.Locale;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.datum.GeodeticDatum;
@@ -366,7 +366,7 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
                  "removed in a future version if we implement non-linear unit conversions.");
         } catch (OperationNotFoundException e) {
             assertTrue("The operation should have failed because of a unit conversion error.",
-                    e.getCause() instanceof ConversionException);
+                    e.getCause() instanceof IncommensurableException);
         }
         sourceCRS = CommonCRS.WGS84.geographic3D();
         tr = CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();

@@ -21,12 +21,9 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.image.RenderedImage;
-import javax.measure.converter.ConversionException;
-import javax.measure.converter.UnitConverter;
+import javax.measure.IncommensurableException;
+import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.unit.BaseUnit;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -59,6 +56,8 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 
 /**
  * Process which compute volume from DEM (Digital Elevation Model) got
@@ -77,7 +76,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
     /**
      * Default measure unit use to compute volume (Meter).
      */
-    private final static BaseUnit<Length> METER = SI.METRE;
+    private final static Unit<Length> METER = Units.METRE;
 
     /**
      * Step move on grid X and grid Y axis.<br/>
@@ -258,7 +257,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             double volume = 0;
 
             final UnitConverter hconverter;
-            if(gsd.getUnits() == null || Unit.ONE.equals(gsd.getUnits())){
+            if(gsd.getUnits() == null || Units.ONE.equals(gsd.getUnits())){
                 //-- unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
             }else{
@@ -402,7 +401,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
          * @param unitConverters table of {@link UnitConverter} for each axis from CRS.
          * @param resolution resolution from {@link GridGeometry2D#getResolution() }.
          */
-        GeographicStepPixelAreaCalculator(final double pixelWidth, final CoordinateReferenceSystem crs, final MathTransform gridToCrs) throws ConversionException {
+        GeographicStepPixelAreaCalculator(final double pixelWidth, final CoordinateReferenceSystem crs, final MathTransform gridToCrs) throws IncommensurableException {
             super(pixelWidth);
             this.gridToCrs       = gridToCrs;
             this.lowGridPosition = new double[2];

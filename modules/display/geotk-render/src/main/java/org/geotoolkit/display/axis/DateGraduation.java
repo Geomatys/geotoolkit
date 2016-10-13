@@ -23,9 +23,9 @@ import java.text.DateFormat;
 import java.util.Objects;
 import java.awt.RenderingHints;
 
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Duration;
-import javax.measure.converter.UnitConverter;
+import javax.measure.Unit;
+import javax.measure.quantity.Time;
+import javax.measure.UnitConverter;
 
 import org.apache.sis.measure.Units;
 
@@ -93,7 +93,7 @@ public class DateGraduation extends AbstractGraduation {
      * @param  unit The unit, or {@code null} if unknown. Must be compatible with
      *         {@linkplain org.geotoolkit.measure.Units#MILLISECOND milliseconds}.
      */
-    public DateGraduation(final TimeZone timezone, final Unit<Duration> unit) {
+    public DateGraduation(final TimeZone timezone, final Unit<Time> unit) {
         super(Units.ensureTemporal(unit));
         this.timezone = (TimeZone) timezone.clone();
     }
@@ -103,8 +103,8 @@ public class DateGraduation extends AbstractGraduation {
      */
     @Override
     @SuppressWarnings("unchecked") // Checked by constructor and setters.
-    public Unit<Duration> getUnit() {
-        return (Unit<Duration>) super.getUnit();
+    public Unit<Time> getUnit() {
+        return (Unit<Time>) super.getUnit();
     }
 
     /**
@@ -114,7 +114,7 @@ public class DateGraduation extends AbstractGraduation {
     private UnitConverter fromMillis() {
         assert Thread.holdsLock(this);
         if (fromMillis == null) {
-            Unit<Duration> unit = getUnit();
+            Unit<Time> unit = getUnit();
             if (unit == null) {
                 unit = MILLISECOND;
             }
@@ -129,7 +129,7 @@ public class DateGraduation extends AbstractGraduation {
     private UnitConverter toMillis() {
         assert Thread.holdsLock(this);
         if (toMillis == null) {
-            Unit<Duration> unit = getUnit();
+            Unit<Time> unit = getUnit();
             if (unit == null) {
                 unit = MILLISECOND;
             }

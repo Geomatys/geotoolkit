@@ -35,9 +35,9 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javax.measure.converter.UnitConverter;
+import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;

@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import javax.xml.bind.JAXBException;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.processing.AbstractProcess;
@@ -68,6 +67,7 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.measure.Units;
 
 import static org.geotoolkit.process.mapfile.MapfileToSLDDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -273,7 +273,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final String name = "";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Displacement disp = DEFAULT_DISPLACEMENT;
         final Expression offset = LITERAL_ZERO_FLOAT;
 
@@ -339,7 +339,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
             final Expression width = FF.add(expWidth, FF.multiply(expOutlineWidth,FF.literal(2)));
             final Stroke stroke = SF.stroke(expOutlineColor,expOpacity,width,explinejoin,explinecap,null,LITERAL_ZERO_FLOAT);
             final LineSymbolizer outline = SF.lineSymbolizer(
-                    "",(String)null,DEFAULT_DESCRIPTION,NonSI.PIXEL,stroke,LITERAL_ZERO_FLOAT);
+                    "",(String)null,DEFAULT_DESCRIPTION,Units.POINT,stroke,LITERAL_ZERO_FLOAT);
             symbolizers.add(outline);
         }
 
@@ -348,7 +348,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
             final String name = "";
             final Description desc = DEFAULT_DESCRIPTION;
             final String geometry = null; //use the default geometry of the feature
-            final Unit unit = NonSI.PIXEL;
+            final Unit unit = Units.POINT;
             final Expression offset = LITERAL_ZERO_FLOAT;
 
             //the visual element
@@ -423,7 +423,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final String name = "";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Font font = SF.font(
                 FF.literal("Arial"),
                 FONT_STYLE_NORMAL,
@@ -505,7 +505,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final String name = "";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
 
         //the visual element
         final Expression opacity = LITERAL_ONE_FLOAT;

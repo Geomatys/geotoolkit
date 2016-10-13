@@ -25,8 +25,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import javax.measure.quantity.Length;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -74,7 +74,7 @@ public class BufferTest extends AbstractProcessTest {
 
         // Inputs
         final FeatureCollection featureList = buildFeatureCollectionInput1();
-        Unit<Length> unit = SI.METRE;
+        Unit<Length> unit = Units.METRE;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "buffer");

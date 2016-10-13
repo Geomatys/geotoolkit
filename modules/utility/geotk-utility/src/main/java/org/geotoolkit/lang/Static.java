@@ -39,7 +39,7 @@ package org.geotoolkit.lang;
  * <tr><td>{@link org.geotoolkit.math.XMath}</td>
  *     <td>Additions to the {@link java.lang.Math} methods.</td></tr>
  * <tr><td>{@link org.geotoolkit.measure.Units}</td>
- *     <td>Test if a {@linkplain javax.measure.unit.Unit unit} is angular, linear or temporal.</td></tr>
+ *     <td>Test if a {@linkplain javax.measure.Unit unit} is angular, linear or temporal.</td></tr>
  * <tr><td>{@link org.geotoolkit.referencing.operation.matrix.XAffineTransform}</td>
  *     <td>Get the scale factors or rotation angle from an {@linkplain java.awt.geom.AffineTransform affine transform}.</td></tr>
  * <tr><td>{@link org.geotoolkit.display.shape.ShapeUtilities}</td>

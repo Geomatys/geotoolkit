@@ -18,9 +18,9 @@
 package org.geotoolkit.util;
 
 import java.util.Date;
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Range;
@@ -76,10 +76,10 @@ public class DateRange extends Range<Date> {
      *
      * @param  range The range to convert.
      * @param  origin The date to use as the origin.
-     * @throws ConversionException if the given range doesn't have a
+     * @throws IncommensurableException if the given range doesn't have a
      *         {@linkplain MeasurementRange#getUnits unit} compatible with milliseconds.
      */
-    public DateRange(final MeasurementRange<?> range, final Date origin) throws ConversionException {
+    public DateRange(final MeasurementRange<?> range, final Date origin) throws IncommensurableException {
         this(range, getConverter(range.unit()), origin.getTime());
     }
 
@@ -88,7 +88,7 @@ public class DateRange extends Range<Date> {
      * call in constructors").
      */
     private DateRange(final MeasurementRange<?> range, final UnitConverter converter, final long origin)
-            throws ConversionException
+            throws IncommensurableException
     {
         super(Date.class,
               new Date(origin + Math.round(converter.convert(range.getMinDouble()))), range.isMinIncluded(),
@@ -119,9 +119,9 @@ public class DateRange extends Range<Date> {
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors").
      */
-    private static UnitConverter getConverter(final Unit<?> source) throws ConversionException {
+    private static UnitConverter getConverter(final Unit<?> source) throws IncommensurableException {
         if (source == null) {
-            throw new ConversionException(Errors.format(Errors.Keys.NoUnit));
+            throw new IncommensurableException(Errors.format(Errors.Keys.NoUnit));
         }
         return source.getConverterToAny(Units.MILLISECOND);
     }

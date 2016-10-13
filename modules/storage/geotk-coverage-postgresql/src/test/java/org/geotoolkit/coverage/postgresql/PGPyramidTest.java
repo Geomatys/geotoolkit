@@ -50,9 +50,9 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 
-import javax.measure.unit.SI;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -193,13 +193,13 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
                 NumberRange.create(1, true, 100, true), NumberRange.create(-50.0, true, 45.6, true));
         final Category nodataCat = new Category(
                 Vocabulary.formatInternational(Vocabulary.Keys.Nodata), new Color(0,0,0,0), Double.NaN);
-        final GridSampleDimension dim1 = new GridSampleDimension("dim0",new Category[]{dataCat,nodataCat}, SI.CELSIUS);
+        final GridSampleDimension dim1 = new GridSampleDimension("dim0",new Category[]{dataCat,nodataCat}, Units.CELSIUS);
         dimensions.add(0, dim1);
 
         // dim 2
         final Category dataCat2 = new Category("data", new Color[]{Color.WHITE, Color.BLACK}, 1, 55, 2.0, 0.0);
         final Category nodataCat2 = Category.NODATA;
-        final GridSampleDimension dim2 = new GridSampleDimension("dim1",new Category[]{dataCat2,nodataCat2}, SI.METRE);
+        final GridSampleDimension dim2 = new GridSampleDimension("dim1",new Category[]{dataCat2,nodataCat2}, Units.METRE);
         dimensions.add(1, dim2);
 
         //test create SampleDimensions
@@ -216,8 +216,8 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
 
         assertEquals("dim0", resultDim1.getDescription().toString());
         assertEquals("dim1", resultDim2.getDescription().toString());
-        assertEquals(SI.CELSIUS, resultDim1.getUnits());
-        assertEquals(SI.METRE, resultDim2.getUnits());
+        assertEquals(Units.CELSIUS, resultDim1.getUnits());
+        assertEquals(Units.METRE, resultDim2.getUnits());
 
 
         List<Category> resultCat1 = resultDim1.getCategories();

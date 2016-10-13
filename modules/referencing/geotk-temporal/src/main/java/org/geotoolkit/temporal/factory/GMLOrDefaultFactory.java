@@ -42,8 +42,8 @@ import org.opengis.temporal.TemporalFactory;
 import org.opengis.temporal.TemporalPosition;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.InternationalString;
-import javax.measure.quantity.Duration;
-import javax.measure.unit.Unit;
+import javax.measure.quantity.Time;
+import javax.measure.Unit;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -149,7 +149,7 @@ public final class GMLOrDefaultFactory implements TemporalFactory {
     }
 
     @Override
-    public TemporalCoordinateSystem createTemporalCoordinateSystem(Identifier name, Extent domainOfValidity, Date origin, Unit<Duration> interval) {
+    public TemporalCoordinateSystem createTemporalCoordinateSystem(Identifier name, Extent domainOfValidity, Date origin, Unit<Time> interval) {
         return delegate.createTemporalCoordinateSystem(name, domainOfValidity, origin, interval);
     }
 

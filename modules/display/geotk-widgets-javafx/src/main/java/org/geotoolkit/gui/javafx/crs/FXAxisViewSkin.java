@@ -43,13 +43,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javax.measure.unit.SI;
 import static javax.swing.SwingConstants.EAST;
 import static javax.swing.SwingConstants.NORTH;
 import static javax.swing.SwingConstants.SOUTH;
 import static javax.swing.SwingConstants.WEST;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.measure.Range;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
@@ -77,13 +75,13 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         SUBDIVISIONS.add(new TimeSubdivision.Quarter());
         SUBDIVISIONS.add(new TimeSubdivision.Minute());
     }
-    
+
     private final Group root = new Group();
     private final Rectangle background = new Rectangle();
-    
+
     private double mouseCoord = 0.0;
     private double lastMouseCoord = 0.0;
-    
+
     public FXAxisViewSkin(final FXAxisView control) {
         super(control);
         background.widthProperty().bind(control.widthProperty());
@@ -93,23 +91,23 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         root.setAutoSizeChildren(false);
         root.setManaged(false);
         root.setCache(false);
-        
-        
+
+
         //TODO : control always grow, find a way to avoid it
         control.setMinSize(100,70);
         control.setMaxHeight(70);
-        
+
         final Stop[] stops = new Stop[] { new Stop(0, CBASE), new Stop(1, CTOP)};
         final LinearGradient mask = new LinearGradient(0.0, 1.0, 0.0, 0.0, true, CycleMethod.NO_CYCLE, stops);
         background.setFill(mask);
-        
-        
+
+
         final ChangeListener listener = new ChangeListener() {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 updateGraphic();
             }
         };
-                
+
         control.scaleProperty().addListener(listener);
         control.offsetProperty().addListener(listener);
         control.crsProperty().addListener(listener);
@@ -117,9 +115,9 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         control.heightProperty().addListener(listener);
         control.rangeMinProperty().addListener(listener);
         control.rangeMaxProperty().addListener(listener);
-        
+
         updateGraphic();
-        
+
         control.setOnMouseMoved((MouseEvent event) -> {
             lastMouseCoord = event.getX();
         });
@@ -134,8 +132,8 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
             control.translate(mouseCoord-lastMouseCoord);
             lastMouseCoord = mouseCoord;
         });
-        
-        
+
+
         final MenuItem removeRange = new MenuItem("remove range");
         removeRange.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -153,30 +151,30 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                 control.rangeMaxProperty().set(val);
             }
         });
-        
+
         final ContextMenu menu = new ContextMenu(removeRange, markRange);
         control.setContextMenu(menu);
-        
+
     }
 
     private void updateGraphic(){
-        
+
         final FXAxisView view = (FXAxisView) getNode();
         CoordinateReferenceSystem crs = view.crsProperty().get();
         if(crs==null) crs = CommonCRS.Temporal.JAVA.crs();
-        
-        final boolean temporal = SI.SECOND.isCompatible(crs.getCoordinateSystem().getAxis(0).getUnit());
-        
+
+        final boolean temporal = Units.SECOND.isCompatible(crs.getCoordinateSystem().getAxis(0).getUnit());
+
         final Bounds area = view.getLayoutBounds();
-        
+
         final int orientation = view.orientationProperty().get();
         final boolean horizontal = orientation == NORTH || orientation == SOUTH;
         final boolean flipText = orientation == NORTH || orientation == WEST;
         final double extent = (horizontal) ? area.getWidth() : area.getHeight();
 
-        
+
         final Collection<Shape> ticks = new ArrayList<>();
-        
+
         if(!temporal){
             //draw number graduations ------------------------------------------
             final int spacing = 200;
@@ -230,7 +228,7 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
 
         }else{
             //draw time graduations --------------------------------------------
-            
+
             Color lineColor = Color.GRAY;
             Color textColor = Color.GRAY;
 
@@ -241,15 +239,15 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
 
             //draw the two background gradient
             final Rectangle mask1 = new Rectangle(0, 0, width, height-compactBandHeight);
-            mask1.setFill(new LinearGradient(0.0, 0.0, 0.0, 1.0, true, 
+            mask1.setFill(new LinearGradient(0.0, 0.0, 0.0, 1.0, true,
                     CycleMethod.NO_CYCLE, new Stop(0, Color.WHITE), new Stop(1,  Color.LIGHTGRAY)));
             ticks.add(mask1);
             final Rectangle mask2 = new Rectangle(0, height-compactBandHeight, width, compactBandHeight);
-            mask2.setFill(new LinearGradient(0.0, 0.0, 0.0, 1.0, true, 
+            mask2.setFill(new LinearGradient(0.0, 0.0, 0.0, 1.0, true,
                     CycleMethod.NO_CYCLE, new Stop(0, Color.GRAY), new Stop(1,  Color.LIGHTGRAY)));
             ticks.add(mask2);
 
-            
+
             final long beginInterval = (long) view.getAxisValueAt(0);
             final long endInterval = (long) view.getAxisValueAt(width);
 
@@ -297,11 +295,11 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                 break;
             }
 
-            lineColor = Color.BLACK;            
+            lineColor = Color.BLACK;
             final Line separator = new Line(0, height-compactBandHeight, width, height-compactBandHeight);
             separator.setFill(lineColor);
             ticks.add(separator);
-            
+
 
             //draw compacts
             textColor = Color.WHITE;
@@ -314,9 +312,9 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                 final Text textShape = new Text(x, height-fm.getMaxDescent()-3,text);
                 textShape.setFill(textColor);
                 ticks.add(textShape);
-                        
+
                 x += fm.computeStringWidth(text);
-                
+
                 //last element, we draw possible other lines
                 if(i==compact.size()-1){
 
@@ -339,15 +337,15 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
 
             }
         }
-        
-        
+
+
         //update the selection
         final Number rangeMin = view.rangeMinProperty().get();
         final Number rangeMax = view.rangeMaxProperty().get();
         if(rangeMin!=null && rangeMax!=null){
             double min = view.getGraphicValueAt(rangeMin.doubleValue());
             double max = view.getGraphicValueAt(rangeMax.doubleValue());
-            
+
             if(max > 0 && min < area.getWidth()){
                 //clip value in visible range
                 min = XMath.clamp(min, -10, area.getWidth()+10);
@@ -370,17 +368,17 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
                 ticks.add(border2);
             }
         }
-        
+
         root.getChildren().setAll(ticks);
-        
+
     }
-    
-    
+
+
 
     @Override
     public void dispose() {
         super.dispose();
         getChildren().remove(root);
     }
-    
+
 }

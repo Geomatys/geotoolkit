@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.TransferFunctionType;

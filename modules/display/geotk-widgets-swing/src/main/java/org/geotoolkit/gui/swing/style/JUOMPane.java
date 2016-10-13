@@ -20,9 +20,7 @@ package org.geotoolkit.gui.swing.style;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -30,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -46,9 +45,9 @@ public class JUOMPane extends StyleElementEditor<Unit>{
 
     @Override
     public void parse(final Unit target) {
-        if(SI.METRE.equals(target)){
+        if(Units.METRE.equals(target)){
             jcb_uom.setSelectedIndex(1);
-        }else if(NonSI.FOOT.equals(target)){
+        }else if(Units.FOOT.equals(target)){
             jcb_uom.setSelectedIndex(2);
         }else {
             jcb_uom.setSelectedIndex(0);
@@ -59,11 +58,11 @@ public class JUOMPane extends StyleElementEditor<Unit>{
     public Unit<Length> create() {
         switch(jcb_uom.getSelectedIndex()){
             case 1 :
-                return SI.METRE;
+                return Units.METRE;
             case 2 :
-                return NonSI.FOOT;
+                return Units.FOOT;
             default :
-                return NonSI.PIXEL;
+                return Units.POINT;
         }
     }
 
@@ -71,7 +70,7 @@ public class JUOMPane extends StyleElementEditor<Unit>{
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabel};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -117,7 +116,7 @@ public class JUOMPane extends StyleElementEditor<Unit>{
         firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_jcb_uomItemStateChanged
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JLabel guiLabel;
     private JComboBox jcb_uom;

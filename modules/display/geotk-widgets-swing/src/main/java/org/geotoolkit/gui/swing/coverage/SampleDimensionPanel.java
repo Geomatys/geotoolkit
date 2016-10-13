@@ -35,7 +35,7 @@ import javax.swing.DefaultComboBoxModel;
 import java.text.ParseException;
 
 import org.opengis.util.InternationalString;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;

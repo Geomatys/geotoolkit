@@ -17,7 +17,7 @@
 package org.geotoolkit.style;
 
 import java.util.Objects;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.util.Classes;
 
 import org.opengis.filter.expression.Expression;

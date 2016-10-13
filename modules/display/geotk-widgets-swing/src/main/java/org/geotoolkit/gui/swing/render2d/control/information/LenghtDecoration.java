@@ -32,7 +32,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.Collection;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

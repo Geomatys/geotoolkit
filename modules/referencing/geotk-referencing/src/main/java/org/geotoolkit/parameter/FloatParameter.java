@@ -21,8 +21,8 @@
 package org.geotoolkit.parameter;
 
 import java.net.URI;
-import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.IncommensurableException;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
@@ -169,7 +169,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
         }
         try {
             return thisUnit.getConverterToAny(unit).convert(doubleValue());
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
     }
@@ -341,7 +341,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
                 }
                 try {
                     converted = unit.getConverterToAny(targetUnit).convert(value);
-                } catch (ConversionException e) {
+                } catch (IncommensurableException e) {
                     throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
                 }
             }
