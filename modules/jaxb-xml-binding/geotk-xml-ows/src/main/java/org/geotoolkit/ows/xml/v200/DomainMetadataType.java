@@ -17,6 +17,7 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -134,4 +135,33 @@ public class DomainMetadataType implements DomainMetadata {
         this.reference = value;
     }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DomainMetadataType) {
+        final DomainMetadataType that = (DomainMetadataType) object;
+        return Objects.equals(this.reference, that.reference) &&
+               Objects.equals(this.value,     that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 29 * hash + (this.reference != null ? this.reference.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return "class: DomainMetadataType value=" + value + " reference=" + reference;
+        
+    }
 }

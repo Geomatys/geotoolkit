@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -61,6 +62,7 @@ public class ProcessFailedType {
     public ProcessFailedType( ExceptionReport exceptionReport) {
         this.exceptionReport = exceptionReport;
     }
+    
     /**
      * Gets the value of the exceptionReport property.
      * 
@@ -85,4 +87,35 @@ public class ProcessFailedType {
         this.exceptionReport = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (exceptionReport != null) {
+            sb.append("exceptionReport:").append(exceptionReport).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessFailedType) {
+            final ProcessFailedType that = (ProcessFailedType) object;
+            return Objects.equals(this.exceptionReport, that.exceptionReport);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.exceptionReport);
+        return hash;
+    }
 }

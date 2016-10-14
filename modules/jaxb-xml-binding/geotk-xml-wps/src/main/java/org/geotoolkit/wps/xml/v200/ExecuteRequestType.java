@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.wps.xml.Execute;
@@ -78,6 +79,7 @@ import org.geotoolkit.wps.xml.Execute;
     "input",
     "output"
 })
+@XmlRootElement(name = "Execute")
 public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/2.0", required = true)
@@ -234,11 +236,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
 
     @Override
     public boolean isStatus() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isStoreExecuteResponse() {
-        return "document".equalsIgnoreCase(response); // TODO see with async parameter
+        return "async".equalsIgnoreCase(mode); // TODO see with async parameter
     }
 }

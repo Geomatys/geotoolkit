@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -106,13 +107,15 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
         
     }
     
-    public StatusInfo(String status) {
+    public StatusInfo(String status, String jobId) {
         this.status = status;
+        this.jobID = jobId;
     }
     
-    public StatusInfo(String status, Integer percentCompleted) {
+    public StatusInfo(String status, Integer percentCompleted, String jobId) {
         this.status = status;
         this.percentCompleted = percentCompleted;
+        this.jobID = jobId;
     }
     
     /**
@@ -259,4 +262,60 @@ public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
         this.percentCompleted = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (jobID != null) {
+            sb.append("jobID:").append(jobID).append('\n');
+        }
+        if (estimatedCompletion != null) {
+            sb.append("estimatedCompletion:").append(estimatedCompletion).append('\n');
+        }
+        if (expirationDate != null) {
+            sb.append("expirationDate:").append(expirationDate).append('\n');
+        }
+        if (nextPoll != null) {
+            sb.append("nextPoll:").append(nextPoll).append('\n');
+        }
+        if (percentCompleted != null) {
+            sb.append("percentCompleted:").append(percentCompleted).append('\n');
+        }
+        if (status != null) {
+            sb.append("status:").append(status).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StatusInfo) {
+            final StatusInfo that = (StatusInfo) object;
+            return Objects.equals(this.estimatedCompletion, that.estimatedCompletion) &&
+                   Objects.equals(this.expirationDate, that.expirationDate) &&
+                   Objects.equals(this.jobID, that.jobID) &&
+                   Objects.equals(this.nextPoll, that.nextPoll) &&
+                   Objects.equals(this.percentCompleted, that.percentCompleted) &&
+                   Objects.equals(this.status, that.status);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.jobID);
+        hash = 79 * hash + Objects.hashCode(this.status);
+        hash = 79 * hash + Objects.hashCode(this.expirationDate);
+        hash = 79 * hash + Objects.hashCode(this.estimatedCompletion);
+        hash = 79 * hash + Objects.hashCode(this.nextPoll);
+        hash = 79 * hash + Objects.hashCode(this.percentCompleted);
+        return hash;
+    }
 }

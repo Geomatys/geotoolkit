@@ -51,6 +51,7 @@ import org.geotoolkit.wps.converters.outputs.reference.FeatureToReferenceConvert
 import org.geotoolkit.wps.converters.outputs.reference.GeometryArrayToReferenceConverterTest;
 import org.geotoolkit.wps.converters.outputs.reference.GeometryToReferenceConverterTest;
 import org.geotoolkit.wps.io.WPSIOTest;
+import org.geotoolkit.wps.xml.XMLBindingTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -93,7 +94,8 @@ import org.junit.runners.Suite;
         DoubleArrayToStringConverterTest.class,
         FloatArrayToStringConverterTest.class,
         IntegeArrayToStringConverterTest.class,
-        CDATATest.class
+        CDATATest.class,
+        XMLBindingTest.class
 
 })
 

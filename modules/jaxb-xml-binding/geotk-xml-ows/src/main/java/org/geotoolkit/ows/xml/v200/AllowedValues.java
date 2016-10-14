@@ -20,6 +20,7 @@ package org.geotoolkit.ows.xml.v200;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -126,5 +127,39 @@ public class AllowedValues implements org.geotoolkit.ows.xml.AllowedValues {
             }
         }
         return values;
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AllowedValues) {
+            final AllowedValues that = (AllowedValues) object;
+            return Objects.equals(this.valueOrRange,   that.valueOrRange);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.valueOrRange != null ? this.valueOrRange.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[AllowedValues]").append("\n");
+        if (valueOrRange != null) {
+            sb.append("valueOrRange:\n ");
+            for (Object obj : valueOrRange) {
+                sb.append(obj).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

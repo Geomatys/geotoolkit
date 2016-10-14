@@ -31,4 +31,6 @@ public interface ComplexDataType {
     String getEncoding();
     
     String getSchema();
+    
+    void setSchema(String schema);
 }

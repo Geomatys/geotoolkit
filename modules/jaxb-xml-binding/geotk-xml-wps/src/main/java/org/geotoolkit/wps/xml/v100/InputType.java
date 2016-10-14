@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -213,4 +214,55 @@ public class InputType implements Input{
         this.data = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append('\n');
+        }
+        if (reference != null) {
+            sb.append("reference:").append(reference).append('\n');
+        }
+        if (data != null) {
+            sb.append("data:").append(data).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InputType) {
+            final InputType that = (InputType) object;
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.data, that.data) &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.reference, that.reference) &&
+                   Objects.equals(this.title, that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.identifier);
+        hash = 97 * hash + Objects.hashCode(this.title);
+        hash = 97 * hash + Objects.hashCode(this._abstract);
+        hash = 97 * hash + Objects.hashCode(this.reference);
+        hash = 97 * hash + Objects.hashCode(this.data);
+        return hash;
+    }
 }

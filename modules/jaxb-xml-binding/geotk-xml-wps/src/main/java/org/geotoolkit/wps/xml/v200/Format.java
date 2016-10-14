@@ -18,6 +18,7 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.math.BigInteger;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -77,6 +78,14 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         this.mimeType = mimeType;
         this.schema   = schema;
         this.maximumMegabytes = maximumMegabytes;
+    }
+    
+    public Format(final String encoding, final String mimeType, final String schema, final Integer maximumMegabytes, final boolean _default) {
+        this.encoding = encoding;
+        this.mimeType = mimeType;
+        this.schema   = schema;
+        this.maximumMegabytes = maximumMegabytes;
+        this._default = _default;
     }
     
     /**
@@ -190,6 +199,9 @@ public class Format implements org.geotoolkit.wps.xml.Format{
      *     
      */
     public Boolean isDefault() {
+        if (_default == null) {
+            return false;
+        }
         return _default;
     }
 
@@ -205,4 +217,55 @@ public class Format implements org.geotoolkit.wps.xml.Format{
         this._default = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        if (maximumMegabytes != null) {
+            sb.append("maximumMegabytes:").append(maximumMegabytes).append('\n');
+        }
+        if (_default != null) {
+            sb.append("_default:").append(_default).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Format) {
+            final Format that = (Format) object;
+            return Objects.equals(this.encoding, that.encoding) && 
+                   Objects.equals(this.mimeType, that.mimeType) && 
+                   Objects.equals(this._default, that._default) && 
+                   Objects.equals(this.maximumMegabytes, that.maximumMegabytes) && 
+                   Objects.equals(this.schema, that.schema);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.mimeType);
+        hash = 97 * hash + Objects.hashCode(this.encoding);
+        hash = 97 * hash + Objects.hashCode(this.schema);
+        hash = 97 * hash + Objects.hashCode(this.maximumMegabytes);
+        hash = 97 * hash + Objects.hashCode(this._default);
+        return hash;
+    }
 }

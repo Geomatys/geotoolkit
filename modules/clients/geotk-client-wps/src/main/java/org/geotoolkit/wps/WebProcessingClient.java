@@ -1004,7 +1004,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     } else if (outputType.getComplexData() != null) {
 
                         try {
-                            outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
+                            outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex("1.0.0", outputType.getComplexData(), clazz));
                         } catch (UnconvertibleObjectException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         }

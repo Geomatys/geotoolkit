@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
@@ -171,6 +173,7 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
     }
@@ -178,19 +181,69 @@ public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      *
-     * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
-     *
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
-     *
-     *
      * @return
      *     always non-null
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        if (content != null) {
+            sb.append("content:\n");
+            for (Object o : content) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("Other attributes:\n");
+            for (Entry o : otherAttributes.entrySet()) {
+                sb.append("key:").append(o.getKey()).append(" value:").append(o.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComplexDataType) {
+            final ComplexDataType that = (ComplexDataType) object;
+            return Objects.equals(this.content, that.content) &&
+                   Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.otherAttributes, that.otherAttributes) &&
+                   Objects.equals(this.mimeType, that.mimeType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.content);
+        hash = 71 * hash + Objects.hashCode(this.mimeType);
+        hash = 71 * hash + Objects.hashCode(this.encoding);
+        hash = 71 * hash + Objects.hashCode(this.schema);
+        hash = 71 * hash + Objects.hashCode(this.otherAttributes);
+        return hash;
     }
 
 }

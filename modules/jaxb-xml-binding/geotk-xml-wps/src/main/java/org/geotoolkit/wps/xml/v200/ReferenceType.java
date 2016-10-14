@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -248,6 +249,63 @@ public class ReferenceType implements Reference {
         this.schema = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (href != null) {
+            sb.append("href:").append(href).append('\n');
+        }
+        if (body != null) {
+            sb.append("body:").append(body).append('\n');
+        }
+        if (bodyReference != null) {
+            sb.append("bodyReference:").append(bodyReference).append('\n');
+        }
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ReferenceType) {
+            final ReferenceType that = (ReferenceType) object;
+            return Objects.equals(this.body, that.body) &&
+                   Objects.equals(this.bodyReference, that.bodyReference) &&
+                   Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.mimeType, that.mimeType) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.href, that.href);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.body);
+        hash = 67 * hash + Objects.hashCode(this.bodyReference);
+        hash = 67 * hash + Objects.hashCode(this.href);
+        hash = 67 * hash + Objects.hashCode(this.mimeType);
+        hash = 67 * hash + Objects.hashCode(this.encoding);
+        hash = 67 * hash + Objects.hashCode(this.schema);
+        return hash;
+    }
+
 
     /**
      * <p>Java class for anonymous complex type.
@@ -299,7 +357,37 @@ public class ReferenceType implements Reference {
         public void setHref(String value) {
             this.href = value;
         }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (href != null) {
+                sb.append("href:").append(href).append('\n');
+            }
+            return sb.toString();
+        }
+    
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof BodyReference) {
+                final BodyReference that = (BodyReference) object;
+                return Objects.equals(this.href, that.href);
+            }
+            return false;
+        }
 
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 61 * hash + Objects.hashCode(this.href);
+            return hash;
+        }
     }
-
 }

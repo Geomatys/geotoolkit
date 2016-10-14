@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -139,6 +140,51 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary 
      */
     public void setProcessVersion(final String value) {
         this.processVersion = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (processVersion != null) {
+            sb.append("Process version:").append(processVersion).append('\n');
+        }
+        if (wsdl != null) {
+            sb.append("wsdl:").append(wsdl).append('\n');
+        }
+        if (profile != null) {
+            sb.append("Profiles:\n");
+            for (String out : profile) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessBriefType && super.equals(object)) {
+            final ProcessBriefType that = (ProcessBriefType) object;
+            return Objects.equals(this.processVersion, that.processVersion) &&
+                   Objects.equals(this.profile, that.profile) &&
+                   Objects.equals(this.wsdl, that.wsdl);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + Objects.hashCode(this.profile);
+        hash = 43 * hash + Objects.hashCode(this.wsdl);
+        hash = 43 * hash + Objects.hashCode(this.processVersion);
+        return hash;
     }
 
 }

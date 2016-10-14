@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -215,4 +216,55 @@ public class InputDescriptionType extends DescriptionType implements InputDescri
         this.maxOccurs = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (boundingBoxData != null) {
+            sb.append("BoundingBox data:").append(boundingBoxData).append('\n');
+        }
+        if (complexData != null) {
+            sb.append("Complex data:").append(complexData).append('\n');
+        }
+        if (literalData != null) {
+            sb.append("Literal data:").append(literalData).append('\n');
+        }
+        if (maxOccurs != null) {
+            sb.append("Max occurs:").append(maxOccurs).append('\n');
+        }
+        if (minOccurs != null) {
+            sb.append("Min occurs:").append(minOccurs).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InputDescriptionType && super.equals(object)) {
+            final InputDescriptionType that = (InputDescriptionType) object;
+            return Objects.equals(this.boundingBoxData, that.boundingBoxData) &&
+                   Objects.equals(this.complexData, that.complexData) &&
+                   Objects.equals(this.literalData, that.literalData) &&
+                   Objects.equals(this.minOccurs, that.minOccurs) &&
+                   Objects.equals(this.maxOccurs, that.maxOccurs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.complexData);
+        hash = 47 * hash + Objects.hashCode(this.literalData);
+        hash = 47 * hash + Objects.hashCode(this.boundingBoxData);
+        hash = 47 * hash + Objects.hashCode(this.minOccurs);
+        hash = 47 * hash + Objects.hashCode(this.maxOccurs);
+        return hash;
+    }
 }

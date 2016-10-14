@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -148,6 +149,48 @@ public class LiteralDataType implements org.geotoolkit.wps.xml.LiteralDataType {
     @Override
     public void setUom(final String value) {
         this.uom = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (dataType != null) {
+            sb.append("dataType:").append(dataType).append('\n');
+        }
+        if (uom != null) {
+            sb.append("uom:").append(uom).append('\n');
+        }
+        if (value != null) {
+            sb.append("value:").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralDataType) {
+            final LiteralDataType that = (LiteralDataType) object;
+            return Objects.equals(this.dataType, that.dataType) &&
+                   Objects.equals(this.uom, that.uom) &&
+                   Objects.equals(this.value, that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.value);
+        hash = 97 * hash + Objects.hashCode(this.dataType);
+        hash = 97 * hash + Objects.hashCode(this.uom);
+        return hash;
     }
 
 }

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -131,6 +132,35 @@ public class ValuesReference implements org.geotoolkit.ows.xml.ValueReference {
     @Override
     public void setReference(String value) {
         this.reference = value;
+    }
+    
+     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (reference != null) {
+            sb.append("reference:").append(reference).append('\n');
+        }
+        if (value != null) {
+            sb.append("value:").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ValuesReference) {
+            final ValuesReference that = (ValuesReference) object;
+            return Objects.equals(this.reference, that.reference) &&
+                   Objects.equals(this.value, that.value);
+        }
+        return false;
     }
 
 }

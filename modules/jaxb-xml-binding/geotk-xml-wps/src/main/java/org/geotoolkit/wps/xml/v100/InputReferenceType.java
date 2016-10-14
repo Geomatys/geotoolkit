@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -191,7 +192,8 @@ public class InputReferenceType implements Reference {
     }
 
     /**
-     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. This attribute shall contain a URL from which this input/output can be electronically retrieved. 
+     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. 
+     * This attribute shall contain a URL from which this input/output can be electronically retrieved. 
      * 
      * @return
      *     possible object is
@@ -204,7 +206,8 @@ public class InputReferenceType implements Reference {
     }
 
     /**
-     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. This attribute shall contain a URL from which this input/output can be electronically retrieved. 
+     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. 
+     * This attribute shall contain a URL from which this input/output can be electronically retrieved. 
      * 
      * @param value
      *     allowed object is
@@ -322,6 +325,75 @@ public class InputReferenceType implements Reference {
         this.schema = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (href != null) {
+            sb.append("href:").append(href).append('\n');
+        }
+        if (body != null) {
+            sb.append("body:").append(body).append('\n');
+        }
+        if (bodyReference != null) {
+            sb.append("bodyReference:").append(bodyReference).append('\n');
+        }
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (header != null) {
+            sb.append("header:");
+            for (Header h : header) {
+                sb.append(h).append('\n');
+            }
+        }
+        if (method != null) {
+            sb.append("method:").append(method).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InputReferenceType) {
+            final InputReferenceType that = (InputReferenceType) object;
+            return Objects.equals(this.body, that.body) &&
+                   Objects.equals(this.bodyReference, that.bodyReference) &&
+                   Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.header, that.header) &&
+                   Objects.equals(this.method, that.method) &&
+                   Objects.equals(this.mimeType, that.mimeType) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.href, that.href);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + Objects.hashCode(this.header);
+        hash = 71 * hash + Objects.hashCode(this.body);
+        hash = 71 * hash + Objects.hashCode(this.bodyReference);
+        hash = 71 * hash + Objects.hashCode(this.href);
+        hash = 71 * hash + Objects.hashCode(this.method);
+        hash = 71 * hash + Objects.hashCode(this.mimeType);
+        hash = 71 * hash + Objects.hashCode(this.encoding);
+        hash = 71 * hash + Objects.hashCode(this.schema);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -349,7 +421,8 @@ public class InputReferenceType implements Reference {
         protected String href;
 
         /**
-         * Reference to a remote document to be used as the body of the an HTTP POST request message. This attribute shall contain a URL from which this input can be electronically retrieved. 
+         * Reference to a remote document to be used as the body of the an HTTP POST request message. 
+         * This attribute shall contain a URL from which this input can be electronically retrieved. 
          * 
          * @return
          *     possible object is
@@ -361,7 +434,8 @@ public class InputReferenceType implements Reference {
         }
 
         /**
-         * Reference to a remote document to be used as the body of the an HTTP POST request message. This attribute shall contain a URL from which this input can be electronically retrieved. 
+         * Reference to a remote document to be used as the body of the an HTTP POST request message.
+         * This attribute shall contain a URL from which this input can be electronically retrieved. 
          * 
          * @param value
          *     allowed object is
@@ -371,12 +445,47 @@ public class InputReferenceType implements Reference {
         public void setHref(final String value) {
             this.href = value;
         }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (href != null) {
+                sb.append("href:").append(href).append('\n');
+            }
+            return sb.toString();
+        }
+    
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof BodyReference) {
+                final BodyReference that = (BodyReference) object;
+                return Objects.equals(this.href, that.href);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + Objects.hashCode(this.href);
+            return hash;
+        }
 
     }
     
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Body {
 
+        @XmlAnyElement(lax = true)
+        private Object content;
+        
         public Body() {
             
         }
@@ -385,15 +494,44 @@ public class InputReferenceType implements Reference {
             this.content = content;
         }
         
-        @XmlAnyElement(lax = true)
-        private Object content;
-
         public Object getContent() {
             return content;
         }
 
         public void setContent(final Object value) {
             this.content = value;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (content != null) {
+                sb.append("content:").append(content).append('\n');
+            }
+            return sb.toString();
+        }
+    
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Body) {
+                final Body that = (Body) object;
+                return Objects.equals(this.content, that.content);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 61 * hash + Objects.hashCode(this.content);
+            return hash;
         }
     }
 
@@ -470,6 +608,43 @@ public class InputReferenceType implements Reference {
          */
         public void setValue(final String value) {
             this.value = value;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (key != null) {
+                sb.append("key:").append(key).append('\n');
+            }
+            if (value != null) {
+                sb.append("value:").append(value).append('\n');
+            }
+            return sb.toString();
+        }
+    
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Header) {
+                final Header that = (Header) object;
+                return Objects.equals(this.key, that.key) &&
+                       Objects.equals(this.value, that.value);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 97 * hash + Objects.hashCode(this.key);
+            hash = 97 * hash + Objects.hashCode(this.value);
+            return hash;
         }
 
     }

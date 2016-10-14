@@ -5,7 +5,7 @@ import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  * A converter to transform a File into ComplexOutput data for wps ExecuteResponse query.
@@ -56,7 +59,12 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
             throw new UnconvertibleObjectException("Mandatory parameters are missing.");
         }
 
-        final ComplexDataType complex = new ComplexDataType();
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        } 
+
         String mime = (String) params.get(MIME);
         String encoding = (String) params.get(ENCODING);
 
@@ -64,6 +72,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
             mime = WPSMimeType.APP_OCTET.val();
             encoding = WPSEncoding.BASE64.getValue();
         }
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, mime,encoding, null);
 
         //Plain text
         if (mime.startsWith("text")) {

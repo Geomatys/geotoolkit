@@ -23,13 +23,13 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.gml.GeometrytoJTS;
-import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 
@@ -76,10 +76,9 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
                 WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType()) ) {
                 dataMimeTypeIdentifier = "GML";
-                AbstractGeometryType abstractGeo = (AbstractGeometryType) data.get(0);
+                AbstractGeometry abstractGeo = (AbstractGeometry) data.get(0);
                 return GeometrytoJTS.toJTS(abstractGeo);
-            }
-            else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
+            } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
                 dataMimeTypeIdentifier = "GeoJSON";
                 final String content = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(source);
                 final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
@@ -88,10 +87,9 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                     throw new UnconvertibleObjectException("Expected a GeoJSONGeometry and found a " + jsonObject.getClass().getName());
 
                 return WPSConvertersUtils.convertGeoJSONGeometryToGeometry(((GeoJSONFeature) jsonObject).getGeometry());
-            }
-            else
+            } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
-
+            }
         }catch(ClassCastException ex){
             throw new UnconvertibleObjectException("Invalid data input : empty " + dataMimeTypeIdentifier + " geometry.",ex);
         }catch (FactoryException ex) {

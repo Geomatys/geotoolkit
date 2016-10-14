@@ -21,8 +21,7 @@ import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.feature.util.converter.StringToDateConverter;
-import org.geotoolkit.gml.xml.v311.BoundingShapeType;
-import org.geotoolkit.ows.xml.v110.BoundingBoxType;
+import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.processing.util.converter.StringToCRSConverter;
 import org.geotoolkit.processing.util.converter.StringToFilterConverter;
 import org.geotoolkit.processing.util.converter.StringToNumberRangeConverter;
@@ -36,7 +35,7 @@ import org.geotoolkit.wps.converters.inputs.references.*;
 import org.geotoolkit.wps.converters.outputs.complex.*;
 import org.geotoolkit.wps.converters.outputs.literal.*;
 import org.geotoolkit.wps.converters.outputs.references.*;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.wps.xml.Reference;
 
@@ -172,7 +171,7 @@ public class WPSConverterRegistry {
 
     /**
      * Return all converter that match a possible target class used by WPS INPUT.
-     * e.g. : {@link BoundingShapeType}, {@link ComplexDataType}, {@link ReferenceType}, {@link String}
+     * e.g. : {@link BoundingBox}, {@link ComplexDataType}, {@link ReferenceType}, {@link String}
      *
      * @param target
      * @return all input converter for the source class.
@@ -183,7 +182,7 @@ public class WPSConverterRegistry {
         for (final WPSObjectConverter converter : converters) {
             if (converter.getTargetClass().isAssignableFrom(target)) {
                 final Class sourceClass = converter.getSourceClass();
-                if (BoundingBoxType.class.isAssignableFrom(sourceClass) || ComplexDataType.class.isAssignableFrom(sourceClass)
+                if (BoundingBox.class.isAssignableFrom(sourceClass) || ComplexDataType.class.isAssignableFrom(sourceClass)
                         || Reference.class.isAssignableFrom(sourceClass) || String.class.isAssignableFrom(sourceClass)) {
                     inputConverters.add(converter);
                 }
@@ -194,7 +193,7 @@ public class WPSConverterRegistry {
 
     /**
      * Return all converter that match a possible source class used by WPS OUPTUT.
-     * e.g. : {@link BoundingShapeType}, {@link ComplexDataType}, {@link Reference}, {@link String}
+     * e.g. : {@link BoundingBox}, {@link ComplexDataType}, {@link Reference}, {@link String}
      *
      * @param source
      * @return all input converter for the source class.
@@ -205,7 +204,7 @@ public class WPSConverterRegistry {
         for (final WPSObjectConverter converter : converters) {
             if (converter.getSourceClass().isAssignableFrom(source)) {
                 final Class targetClass = converter.getTargetClass();
-                if (BoundingBoxType.class.isAssignableFrom(targetClass) || ComplexDataType.class.isAssignableFrom(targetClass)
+                if (BoundingBox.class.isAssignableFrom(targetClass) || ComplexDataType.class.isAssignableFrom(targetClass)
                         || Reference.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
                     inputConverters.add(converter);
                 }

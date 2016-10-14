@@ -38,6 +38,7 @@ public final class WPSMarshallerPool {
                     + "org.geotoolkit.wps.xml.v200:"
                     + "org.geotoolkit.gml.xml.v311:"
                     + "org.geotoolkit.ows.xml.v110:"
+                    + "org.geotoolkit.ows.xml.v200:"
                     + "org.apache.sis.internal.jaxb.geometry:"
                     + "org.geotoolkit.mathml.xml"), null);
         } catch (JAXBException ex) {

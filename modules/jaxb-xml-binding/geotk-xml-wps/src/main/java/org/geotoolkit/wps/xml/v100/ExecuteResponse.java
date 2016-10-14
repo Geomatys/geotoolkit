@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -289,6 +290,68 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (serviceInstance != null) {
+            sb.append("Service instance:").append(serviceInstance).append('\n');
+        }
+        if (statusLocation != null) {
+            sb.append("Status location:").append(statusLocation).append('\n');
+        }
+        if (dataInputs != null) {
+            sb.append("Data inputs:\n").append(dataInputs).append('\n');
+        }
+        if (outputDefinitions != null) {
+            sb.append("Output definitions:\n").append(outputDefinitions).append('\n');
+        }
+        if (process != null) {
+            sb.append("Process:\n").append(process).append('\n');
+        }
+        if (processOutputs != null) {
+            sb.append("Process outputs:\n").append(processOutputs).append('\n');
+        }
+        if (status != null) {
+            sb.append("Status:\n").append(status).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExecuteResponse && super.equals(object)) {
+            final ExecuteResponse that = (ExecuteResponse) object;
+            return Objects.equals(this.dataInputs, that.dataInputs) &&
+                   Objects.equals(this.outputDefinitions, that.outputDefinitions) &&
+                   Objects.equals(this.process, that.process) &&
+                   Objects.equals(this.processOutputs, that.processOutputs) &&
+                   Objects.equals(this.serviceInstance, that.serviceInstance) &&
+                   Objects.equals(this.statusLocation, that.statusLocation) &&
+                   Objects.equals(this.status, that.status);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.process);
+        hash = 89 * hash + Objects.hashCode(this.status);
+        hash = 89 * hash + Objects.hashCode(this.dataInputs);
+        hash = 89 * hash + Objects.hashCode(this.outputDefinitions);
+        hash = 89 * hash + Objects.hashCode(this.processOutputs);
+        hash = 89 * hash + Objects.hashCode(this.serviceInstance);
+        hash = 89 * hash + Objects.hashCode(this.statusLocation);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -339,7 +402,41 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
             }
             return this.output;
         }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");
+            if (output != null) {
+                sb.append("Outputs:\n");
+                for (OutputDataType out : output) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
 
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ProcessOutputs) {
+                final ProcessOutputs that = (ProcessOutputs) object;
+                return Objects.equals(this.output, that.output);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 83 * hash + Objects.hashCode(this.output);
+            return hash;
+        }
     }
-
 }

@@ -110,6 +110,4 @@ public class ValueType implements Value {
     public String toString() {
         return value;
     }
-
-    
 }

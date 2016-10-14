@@ -22,7 +22,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;

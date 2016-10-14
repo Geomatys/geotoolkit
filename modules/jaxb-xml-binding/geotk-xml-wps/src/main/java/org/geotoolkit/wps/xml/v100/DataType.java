@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -152,5 +153,46 @@ public class DataType implements org.geotoolkit.wps.xml.DataType{
     public void setBoundingBoxData(final BoundingBoxType value) {
         this.boundingBoxData = value;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (boundingBoxData != null) {
+            sb.append("boundingBoxData:").append(boundingBoxData).append('\n');
+        }
+        if (complexData != null) {
+            sb.append("complexData:").append(complexData).append('\n');
+        }
+        if (literalData != null) {
+            sb.append("literalData:").append(literalData).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataType) {
+            final DataType that = (DataType) object;
+            return Objects.equals(this.boundingBoxData, that.boundingBoxData) &&
+                   Objects.equals(this.complexData, that.complexData) &&
+                   Objects.equals(this.literalData, that.literalData);
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.complexData);
+        hash = 71 * hash + Objects.hashCode(this.literalData);
+        hash = 71 * hash + Objects.hashCode(this.boundingBoxData);
+        return hash;
+    }
 }

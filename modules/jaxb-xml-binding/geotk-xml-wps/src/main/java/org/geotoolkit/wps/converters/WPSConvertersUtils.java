@@ -263,12 +263,13 @@ public class WPSConvertersUtils {
     /**
      * Get an convert data from a reference for an expected binding
      *
+     * @param wpsVersion
      * @param expectedClass
      * @param complex
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
+    public static Object convertFromComplex(final String wpsVersion, final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
 
         final String mime = complex.getMimeType();
         final String encoding = complex.getEncoding();
@@ -280,6 +281,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
 
         ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
 
@@ -300,6 +302,7 @@ public class WPSConvertersUtils {
     /**
      * Get an convert an object int a {@link ComplexDataType complex}.
      *
+     * @param wpsVersion
      * @param object
      * @param mime
      * @param encoding
@@ -308,7 +311,7 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
+    public static ComplexDataType convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
@@ -321,6 +324,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
 
         ensureParametersDefined(object.getClass(), WPSIO.IOType.OUTPUT, parameters);
 

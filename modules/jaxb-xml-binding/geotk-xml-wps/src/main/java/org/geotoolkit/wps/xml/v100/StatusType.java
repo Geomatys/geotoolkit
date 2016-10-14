@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -248,4 +249,60 @@ public class StatusType implements StatusInfo {
         this.creationTime = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (creationTime != null) {
+            sb.append("creationTime:").append(creationTime).append('\n');
+        }
+        if (processAccepted != null) {
+            sb.append("processAccepted:").append(processAccepted).append('\n');
+        }
+        if (processFailed != null) {
+            sb.append("processFailed:").append(processFailed).append('\n');
+        }
+        if (processPaused != null) {
+            sb.append("processPaused:").append(processPaused).append('\n');
+        }
+        if (processStarted != null) {
+            sb.append("processStarted:").append(processStarted).append('\n');
+        }
+        if (processSucceeded != null) {
+            sb.append("processSucceeded:").append(processSucceeded).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StatusType) {
+            final StatusType that = (StatusType) object;
+            return Objects.equals(this.creationTime, that.creationTime) &&
+                   Objects.equals(this.processAccepted, that.processAccepted) &&
+                   Objects.equals(this.processFailed, that.processFailed) &&
+                   Objects.equals(this.processPaused, that.processPaused) &&
+                   Objects.equals(this.processStarted, that.processStarted) &&
+                   Objects.equals(this.processSucceeded, that.processSucceeded);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.processAccepted);
+        hash = 59 * hash + Objects.hashCode(this.processStarted);
+        hash = 59 * hash + Objects.hashCode(this.processPaused);
+        hash = 59 * hash + Objects.hashCode(this.processSucceeded);
+        hash = 59 * hash + Objects.hashCode(this.processFailed);
+        hash = 59 * hash + Objects.hashCode(this.creationTime);
+        return hash;
+    }
 }

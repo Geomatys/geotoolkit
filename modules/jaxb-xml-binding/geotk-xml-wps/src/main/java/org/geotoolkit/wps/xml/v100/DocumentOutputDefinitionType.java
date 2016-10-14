@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -81,7 +82,9 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     
     
     /**
-     * Title of the process output, normally available for display to a human. This element should be used if the client wishes to customize the Title in the execute response. This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
+     * Title of the process output, normally available for display to a human. 
+     * This element should be used if the client wishes to customize the Title in the execute response.
+     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
      * 
      * @return
      *     possible object is
@@ -94,7 +97,9 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     }
 
     /**
-     * Title of the process output, normally available for display to a human. This element should be used if the client wishes to customize the Title in the execute response. This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
+     * Title of the process output, normally available for display to a human. 
+     * This element should be used if the client wishes to customize the Title in the execute response. 
+     * This element should not be used if the Title provided for this output in the ProcessDescription is adequate. 
      * 
      * @param value
      *     allowed object is
@@ -106,7 +111,9 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     }
 
     /**
-     * Brief narrative description of a process output, normally available for display to a human. This element should be used if the client wishes to customize the Abstract in the execute response. This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
+     * Brief narrative description of a process output, normally available for display to a human. 
+     * This element should be used if the client wishes to customize the Abstract in the execute response. 
+     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
      * 
      * @return
      *     possible object is
@@ -119,7 +126,9 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     }
 
     /**
-     * Brief narrative description of a process output, normally available for display to a human. This element should be used if the client wishes to customize the Abstract in the execute response. This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
+     * Brief narrative description of a process output, normally available for display to a human. 
+     * This element should be used if the client wishes to customize the Abstract in the execute response. 
+     * This element should not be used if the Abstract provided for this output in the ProcessDescription is adequate. 
      * 
      * @param value
      *     allowed object is
@@ -171,5 +180,47 @@ public class DocumentOutputDefinitionType extends OutputDefinitionType implement
     @Override
     public DocumentOutputDefinition asDoc() {
         return this;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (asReference != null) {
+            sb.append("asReference:\n").append(asReference).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DocumentOutputDefinitionType && super.equals(object)) {
+            final DocumentOutputDefinitionType that = (DocumentOutputDefinitionType) object;
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.asReference, that.asReference) &&
+                   Objects.equals(this.title, that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.title);
+        hash = 23 * hash + Objects.hashCode(this._abstract);
+        hash = 23 * hash + Objects.hashCode(this.asReference);
+        return hash;
     }
 }

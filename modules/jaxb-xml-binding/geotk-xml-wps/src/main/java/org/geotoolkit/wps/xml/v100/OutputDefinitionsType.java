@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,4 +78,39 @@ public class OutputDefinitionsType {
         return this.output;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[OutputDefinitionsType]\n");
+        if (output != null) {
+            sb.append("Outputs:\n");
+            for (DocumentOutputDefinitionType out : output) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDefinitionsType) {
+            final OutputDefinitionsType that = (OutputDefinitionsType) object;
+            return Objects.equals(this.output, that.output);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.output);
+        return hash;
+    }
 }

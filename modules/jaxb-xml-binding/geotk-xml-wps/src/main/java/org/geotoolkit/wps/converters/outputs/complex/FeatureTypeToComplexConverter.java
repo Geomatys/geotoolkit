@@ -23,8 +23,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 
 
@@ -65,10 +68,12 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
         if (!(source instanceof FeatureType)) {
             throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureType.");
         }
-        final ComplexDataType complex = new ComplexDataType();
-
-        complex.setMimeType((String) params.get(MIME));
-        complex.setEncoding((String) params.get(ENCODING));
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        } 
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), null);
 
         try {
 

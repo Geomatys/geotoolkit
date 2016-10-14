@@ -19,6 +19,7 @@ package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.wps.xml.ExecuteResponse;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -57,7 +59,7 @@ import org.geotoolkit.wps.xml.ExecuteResponse;
     "output"
 })
 @XmlRootElement(name = "Result")
-public class Result implements ExecuteResponse {
+public class Result implements ExecuteResponse, WPSResponse {
 
     @XmlElement(name = "JobID")
     protected String jobID;
@@ -71,8 +73,9 @@ public class Result implements ExecuteResponse {
         
     }
     
-    public Result(List<DataOutputType> output) {
+    public Result(List<DataOutputType> output, String jobID) {
         this.output = output;
+        this.jobID = jobID;
     }
     /**
      * 
@@ -132,8 +135,7 @@ public class Result implements ExecuteResponse {
     /**
      * Gets the value of the output property.
      * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link DataOutputType }
+     * @return Objects of the following type(s) are allowed in the list {@link DataOutputType }
      * 
      * 
      */
@@ -151,6 +153,51 @@ public class Result implements ExecuteResponse {
     @Override
     public void setStatusLocation(String location) {
         // do nothing in this implementation
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (expirationDate != null) {
+            sb.append("expirationDate:").append(expirationDate).append('\n');
+        }
+        if (jobID != null) {
+            sb.append("jobID:").append(jobID).append('\n');
+        }
+        if (output != null) {
+            sb.append("output:\n");
+            for (DataOutputType out : output) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Result) {
+            final Result that = (Result) object;
+            return Objects.equals(this.expirationDate, that.expirationDate) &&
+                   Objects.equals(this.jobID, that.jobID) &&
+                   Objects.equals(this.output, that.output);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.jobID);
+        hash = 73 * hash + Objects.hashCode(this.expirationDate);
+        hash = 73 * hash + Objects.hashCode(this.output);
+        return hash;
     }
 
 }

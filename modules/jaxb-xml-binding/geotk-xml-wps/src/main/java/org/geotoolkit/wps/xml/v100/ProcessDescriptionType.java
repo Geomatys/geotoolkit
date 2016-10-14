@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -212,6 +213,52 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
         this.statusSupported = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (statusSupported != null) {
+            sb.append("Status supported:").append(statusSupported).append('\n');
+        }
+        if (storeSupported != null) {
+            sb.append("Store supported:").append(storeSupported).append('\n');
+        }
+        if (dataInputs != null) {
+            sb.append("Data inputs:").append(dataInputs).append('\n');
+        }
+        if (processOutputs != null) {
+            sb.append("Process outputs:").append(processOutputs).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessDescriptionType && super.equals(object)) {
+            final ProcessDescriptionType that = (ProcessDescriptionType) object;
+            return Objects.equals(this.dataInputs, that.dataInputs) &&
+                   Objects.equals(this.processOutputs, that.processOutputs) &&
+                   Objects.equals(this.storeSupported, that.storeSupported) &&
+                   Objects.equals(this.statusSupported, that.statusSupported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.dataInputs);
+        hash = 23 * hash + Objects.hashCode(this.processOutputs);
+        hash = 23 * hash + Objects.hashCode(this.storeSupported);
+        hash = 23 * hash + Objects.hashCode(this.statusSupported);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -262,6 +309,42 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
                 input = new ArrayList<>();
             }
             return this.input;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[DataInputs]\n");
+            if (input != null) {
+                sb.append("Inputs:\n");
+                for (InputDescriptionType out : input) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof DataInputs) {
+                final DataInputs that = (DataInputs) object;
+                return Objects.equals(this.input, that.input);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 89 * hash + Objects.hashCode(this.input);
+            return hash;
         }
 
     }
@@ -316,6 +399,42 @@ public class ProcessDescriptionType extends ProcessBriefType implements ProcessD
                 output = new ArrayList<>();
             }
             return this.output;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");
+            if (output != null) {
+                sb.append("Outputs:\n");
+                for (OutputDescriptionType out : output) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ProcessOutputs) {
+                final ProcessOutputs that = (ProcessOutputs) object;
+                return Objects.equals(this.output, that.output);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 89 * hash + Objects.hashCode(this.output);
+            return hash;
         }
 
     }

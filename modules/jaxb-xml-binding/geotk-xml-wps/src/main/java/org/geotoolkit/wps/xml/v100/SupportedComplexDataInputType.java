@@ -17,6 +17,7 @@
 package org.geotoolkit.wps.xml.v100;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -82,4 +83,35 @@ public class SupportedComplexDataInputType extends SupportedComplexDataType {
         this.maximumMegabytes = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (maximumMegabytes != null) {
+            sb.append("Maximum megabytes:").append(maximumMegabytes).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SupportedComplexDataInputType && super.equals(object)) {
+            final SupportedComplexDataInputType that = (SupportedComplexDataInputType) object;
+            return Objects.equals(this.maximumMegabytes, that.maximumMegabytes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.maximumMegabytes);
+        return hash;
+    }
 }

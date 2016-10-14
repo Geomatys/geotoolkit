@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -230,4 +231,55 @@ public class OutputDefinitionType implements OutputDefinition {
         return new DocumentOutputDefinitionType(identifier, uom, mimeType, encoding, schema);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        if (uom != null) {
+            sb.append("uom:").append(uom).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDefinitionType) {
+            final OutputDefinitionType that = (OutputDefinitionType) object;
+            return Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.uom, that.uom) &&
+                   Objects.equals(this.mimeType, that.mimeType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.identifier);
+        hash = 97 * hash + Objects.hashCode(this.uom);
+        hash = 97 * hash + Objects.hashCode(this.mimeType);
+        hash = 97 * hash + Objects.hashCode(this.encoding);
+        hash = 97 * hash + Objects.hashCode(this.schema);
+        return hash;
+    }
 }

@@ -143,7 +143,7 @@ public class WPSXmlFactory {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.ComplexDataType(encoding, mimeType, schema);
         } else if ("2.0.0".equals(version)) {
-            final org.geotoolkit.wps.xml.v200.Format format = new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null);
+            final org.geotoolkit.wps.xml.v200.Format format = new org.geotoolkit.wps.xml.v200.Format(encoding, mimeType, schema, null, true);
             return new org.geotoolkit.wps.xml.v200.ComplexDataType(Arrays.asList(format));
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
@@ -181,7 +181,7 @@ public class WPSXmlFactory {
     }
     
     public static ExecuteResponse buildExecuteResponse(final String version, final String service, final String lang, final String serviceInstance, final ProcessSummary processSum,
-            List<? extends Input> inputs, List<DocumentOutputDefinition> outputs, List<DataOutput> dataOutput, StatusInfo status) {
+            List<? extends Input> inputs, List<DocumentOutputDefinition> outputs, List<DataOutput> dataOutput, StatusInfo status, final String jobId) {
         if ("1.0.0".equals(version)) {
             org.geotoolkit.wps.xml.v100.DataInputsType dataInputs = null;
             if (inputs != null) {
@@ -232,7 +232,7 @@ public class WPSXmlFactory {
                     outData200.add((org.geotoolkit.wps.xml.v200.DataOutputType)po);
                 }
             }
-            return new org.geotoolkit.wps.xml.v200.Result(outData200);
+            return new org.geotoolkit.wps.xml.v200.Result(outData200, jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
@@ -832,16 +832,16 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
-    public static StatusInfo buildStatusInfoAccepted(String version, XMLGregorianCalendar creationDate, String acceptedStatus) {
+    public static StatusInfo buildStatusInfoAccepted(String version, XMLGregorianCalendar creationDate, String acceptedStatus, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, acceptedStatus, null);
         } else if ("2.0.0".equals(version)) {
-           return new org.geotoolkit.wps.xml.v200.StatusInfo(acceptedStatus);
+           return new org.geotoolkit.wps.xml.v200.StatusInfo(acceptedStatus, jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
-    public static StatusInfo buildStatusInfoFailed(String version, XMLGregorianCalendar creationDate, ExceptionResponse exceptionReport) {
+    public static StatusInfo buildStatusInfoFailed(String version, XMLGregorianCalendar creationDate, ExceptionResponse exceptionReport, String jobId) {
         if ("1.0.0".equals(version)) {
             if (exceptionReport != null && !(exceptionReport instanceof org.geotoolkit.ows.xml.v110.ExceptionReport)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 exception report.");
@@ -849,25 +849,25 @@ public class WPSXmlFactory {
             
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, (org.geotoolkit.ows.xml.v110.ExceptionReport) exceptionReport);
         } else if ("2.0.0".equals(version)) {
-           return new org.geotoolkit.wps.xml.v200.StatusInfo("Process failed:" + exceptionReport.toString());
+           return new org.geotoolkit.wps.xml.v200.StatusInfo("Process failed:" + exceptionReport.toString(), jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
-    public static StatusInfo buildStatusInfoPaused(String version, XMLGregorianCalendar creationDate, Integer progression, String msg) {
+    public static StatusInfo buildStatusInfoPaused(String version, XMLGregorianCalendar creationDate, Integer progression, String msg, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, null, new org.geotoolkit.wps.xml.v100.ProcessStartedType(msg, progression));
         } else if ("2.0.0".equals(version)) {
-           return new org.geotoolkit.wps.xml.v200.StatusInfo(msg, progression);
+           return new org.geotoolkit.wps.xml.v200.StatusInfo(msg, progression, jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
-    public static StatusInfo buildStatusInfoStarted(String version, XMLGregorianCalendar creationDate, Integer progression, String msg) {
+    public static StatusInfo buildStatusInfoStarted(String version, XMLGregorianCalendar creationDate, Integer progression, String msg, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, new org.geotoolkit.wps.xml.v100.ProcessStartedType(msg, progression), null);
         } else if ("2.0.0".equals(version)) {
-           return new org.geotoolkit.wps.xml.v200.StatusInfo(msg, progression);
+           return new org.geotoolkit.wps.xml.v200.StatusInfo(msg, progression, jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
@@ -881,11 +881,11 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
-    public static StatusInfo buildStatusInfoSucceed(String version, XMLGregorianCalendar creationDate, String succeedStatus) {
+    public static StatusInfo buildStatusInfoSucceed(String version, XMLGregorianCalendar creationDate, String succeedStatus, String jobId) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wps.xml.v100.StatusType(creationDate, null, succeedStatus);
         } else if ("2.0.0".equals(version)) {
-           return new org.geotoolkit.wps.xml.v200.StatusInfo(succeedStatus);
+           return new org.geotoolkit.wps.xml.v200.StatusInfo(succeedStatus, jobId);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }

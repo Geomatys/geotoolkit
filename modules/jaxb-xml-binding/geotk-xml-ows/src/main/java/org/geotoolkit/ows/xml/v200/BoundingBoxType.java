@@ -19,6 +19,8 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -71,6 +74,7 @@ import org.apache.sis.util.logging.Logging;
 @XmlSeeAlso({
     WGS84BoundingBoxType.class
 })
+@XmlRootElement(name = "BoundingBox")
 public class BoundingBoxType implements BoundingBox {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ows.xml.v200");
@@ -202,6 +206,57 @@ public class BoundingBoxType implements BoundingBox {
      */
     public void setDimensions(Integer value) {
         this.dimensions = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (crs != null) {
+            sb.append("crs:").append(crs).append('\n');
+        }
+        if (dimensions != null) {
+            sb.append("dimensions:").append(dimensions).append('\n');
+        }
+        if (lowerCorner != null) {
+            sb.append("lower corner: ");
+            for (Double d: lowerCorner) {
+                sb.append(d).append(' ');
+            }
+        }
+        if (upperCorner != null) {
+            sb.append("upper corner: ");
+            for (Double d: upperCorner) {
+                sb.append(d).append(' ');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BoundingBoxType) {
+            final BoundingBoxType that = (BoundingBoxType) object;
+            return Objects.equals(this.crs        , that.crs)         &&
+                   Objects.equals(this.dimensions , that.dimensions)  &&
+                   Objects.equals(this.lowerCorner, that.lowerCorner) &&
+                   Objects.equals(this.upperCorner, that.upperCorner);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + (this.lowerCorner != null ? this.lowerCorner.hashCode() : 0);
+        hash = 43 * hash + (this.upperCorner != null ? this.upperCorner.hashCode() : 0);
+        hash = 43 * hash + (this.crs != null ? this.crs.hashCode() : 0);
+        return hash;
     }
 
 }

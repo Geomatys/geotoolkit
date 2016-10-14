@@ -29,7 +29,7 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
 
 /**

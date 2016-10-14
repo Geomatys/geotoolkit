@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "processOffering"
 })
 @XmlRootElement(name = "ProcessOfferings")
-public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings {
+public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings, WPSResponse {
 
     @XmlElement(name = "ProcessOffering", required = true)
     protected List<ProcessOffering> processOffering;

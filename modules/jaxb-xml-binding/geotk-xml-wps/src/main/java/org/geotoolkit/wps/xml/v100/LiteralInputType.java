@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -180,4 +181,50 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
         this.defaultValue = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (allowedValues != null) {
+            sb.append("allowedValues:").append(allowedValues).append('\n');
+        }
+        if (anyValue != null) {
+            sb.append("anyValue:").append(anyValue).append('\n');
+        }
+        if (defaultValue != null) {
+            sb.append("defaultValue:").append(defaultValue).append('\n');
+        }
+        if (valuesReference != null) {
+            sb.append("valuesReference:").append(valuesReference).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralInputType && super.equals(object)) {
+            final LiteralInputType that = (LiteralInputType) object;
+            return Objects.equals(this.allowedValues, that.allowedValues) &&
+                   Objects.equals(this.anyValue, that.anyValue) &&
+                   Objects.equals(this.defaultValue, that.defaultValue) &&
+                   Objects.equals(this.valuesReference, that.valuesReference);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.allowedValues);
+        hash = 97 * hash + Objects.hashCode(this.anyValue);
+        hash = 97 * hash + Objects.hashCode(this.valuesReference);
+        hash = 97 * hash + Objects.hashCode(this.defaultValue);
+        return hash;
+    }
 }

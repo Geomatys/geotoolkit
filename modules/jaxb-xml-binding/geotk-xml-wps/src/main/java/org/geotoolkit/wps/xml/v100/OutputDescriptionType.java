@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,7 +55,7 @@ import org.geotoolkit.wps.xml.OutputDescription;
     "literalOutput",
     "boundingBoxOutput"
 })
-public class OutputDescriptionType extends DescriptionType  implements OutputDescription {
+public class OutputDescriptionType extends DescriptionType implements OutputDescription {
 
     @XmlElement(name = "ComplexOutput", namespace = "")
     protected SupportedComplexDataInputType complexOutput;
@@ -152,5 +153,46 @@ public class OutputDescriptionType extends DescriptionType  implements OutputDes
     public void setBoundingBoxOutput(final SupportedCRSsType value) {
         this.boundingBoxOutput = value;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (boundingBoxOutput != null) {
+            sb.append("boundingBoxOutput:").append(boundingBoxOutput).append('\n');
+        }
+        if (complexOutput != null) {
+            sb.append("complexOutput:").append(complexOutput).append('\n');
+        }
+        if (literalOutput != null) {
+            sb.append("literalOutput:\n").append(literalOutput).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDescriptionType && super.equals(object)) {
+            final OutputDescriptionType that = (OutputDescriptionType) object;
+            return Objects.equals(this.boundingBoxOutput, that.boundingBoxOutput) &&
+                   Objects.equals(this.complexOutput, that.complexOutput) &&
+                   Objects.equals(this.literalOutput, that.literalOutput);
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.complexOutput);
+        hash = 83 * hash + Objects.hashCode(this.literalOutput);
+        hash = 83 * hash + Objects.hashCode(this.boundingBoxOutput);
+        return hash;
+    }
 }

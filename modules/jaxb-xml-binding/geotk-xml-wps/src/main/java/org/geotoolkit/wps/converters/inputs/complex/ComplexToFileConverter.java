@@ -4,7 +4,7 @@ import net.iharder.Base64;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
