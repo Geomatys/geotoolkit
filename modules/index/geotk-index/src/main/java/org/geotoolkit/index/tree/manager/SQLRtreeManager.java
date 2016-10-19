@@ -135,11 +135,8 @@ public class SQLRtreeManager extends AbstractRtreeManager {
 
     public static Tree resetTree(final Path directory, final Tree tree, final Object owner) throws StoreIndexException, IOException, SQLException {
         if (tree != null) {
-            close(directory, tree, owner);
-        }
-        final Path treeFile   = directory.resolve("tree.bin");
-        if (Files.exists(treeFile)) {
-            Files.delete(treeFile);
+            tree.flush();
+            tree.clear();
         }
         if ("postgres".equals(System.getProperty(JDBC_TYPE_KEY))) {
             LucenePostgresSQLTreeEltMapper.resetDB(directory);
@@ -153,7 +150,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                 mapper.close();
             }
         }
-        return get(directory, owner);
+        return tree;
     }
 
 
