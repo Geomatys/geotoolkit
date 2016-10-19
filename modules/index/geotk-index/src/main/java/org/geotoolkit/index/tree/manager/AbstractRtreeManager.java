@@ -42,7 +42,7 @@ public class AbstractRtreeManager {
 
     public static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.defaultGeographic();
 
-    public static void close(final Path directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
+    public static boolean close(final Path directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
         final List<Object> owners = TREE_OWNERS.get(directory);
         if (owners != null) {
             owners.remove(owner);
@@ -55,6 +55,7 @@ public class AbstractRtreeManager {
                             rTree.getTreeElementMapper().close();
                         }
                     }
+                    return true;
                 }
             } else {
                 LOGGER.config("R-tree is used by another object. Not closing");
@@ -62,6 +63,7 @@ public class AbstractRtreeManager {
         } else {
             throw new StoreIndexException("Trying to close a R-Tree not managed by the RTreeManager system");
         }
+        return false;
     }
 
 }

@@ -102,7 +102,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public int[] searchID(final Envelope regionSearch) throws StoreIndexException {
+    public synchronized int[] searchID(final Envelope regionSearch) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("Envelope regionSearch", regionSearch);
         final Node root = getRoot();
          final double[] regSearch = TreeUtilities.getCoords(regionSearch);
@@ -131,7 +131,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public int insert(final E object) throws IllegalArgumentException , StoreIndexException{
+    public synchronized int insert(final E object) throws IllegalArgumentException , StoreIndexException{
         try {
             ArgumentChecks.ensureNonNull("insert : object", object);
             final Envelope env = treeEltMap.getEnvelope(object);
@@ -426,7 +426,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc }.
      */
     @Override
-    public boolean remove(final E object) throws StoreIndexException {
+    public synchronized boolean remove(final E object) throws StoreIndexException {
         try {
             ArgumentChecks.ensureNonNull("Object to remove", object);
             final Envelope env = treeEltMap.getEnvelope(object);
@@ -567,7 +567,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public void clear() throws StoreIndexException {
+    public synchronized void clear() throws StoreIndexException {
         setRoot(null);
     }
 
@@ -609,7 +609,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc }.
      */
     @Override
-    public void flush() throws StoreIndexException {
+    public synchronized void flush() throws StoreIndexException {
         try {
             treeAccess.setTreeIdentifier(treeIdentifier);
             treeAccess.setEltNumber(eltCompteur);
