@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "jobID"
 })
 @XmlRootElement(name = "GetStatus")
-public class GetStatus extends RequestBaseType {
+public class GetStatus extends RequestBaseType implements org.geotoolkit.wps.xml.GetStatus {
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
