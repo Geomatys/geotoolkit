@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.wps.xml.DataOutput;
 
 
@@ -168,6 +170,11 @@ public class DataOutputType implements DataOutput {
      */
     public String getId() {
         return id;
+    }
+    
+    @Override
+    public AbstractCodeType getIdentifier() {
+        return new CodeType(id);
     }
 
     /**

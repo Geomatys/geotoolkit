@@ -48,11 +48,20 @@ import javax.xml.bind.annotation.XmlType;
     "jobID"
 })
 @XmlRootElement(name = "GetResult")
-public class GetResult extends RequestBaseType {
+public class GetResult extends RequestBaseType implements org.geotoolkit.wps.xml.GetResult {
 
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
 
+    public GetResult() {
+        
+    }
+    
+    public GetResult(final String service, final String jobId) {
+        super(service);
+        this.jobID = jobId;
+    }
+    
     /**
      * Gets the value of the jobID property.
      * 
@@ -61,6 +70,7 @@ public class GetResult extends RequestBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public String getJobID() {
         return jobID;
     }

@@ -53,6 +53,15 @@ public class GetStatus extends RequestBaseType implements org.geotoolkit.wps.xml
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
 
+    public GetStatus() {
+        
+    }
+    
+    public GetStatus(final String service, final String jobId) {
+        super(service);
+        this.jobID = jobId;
+    }
+    
     /**
      * Gets the value of the jobID property.
      * 

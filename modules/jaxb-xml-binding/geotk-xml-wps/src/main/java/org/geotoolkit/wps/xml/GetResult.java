@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wps.xml;
 
-import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.RequestBase;
 
 /**
  *
  * @author guilhem
  */
-public interface DataOutput {
- 
-    AbstractCodeType getIdentifier();
+public interface GetResult extends RequestBase {
+    
+    String getJobID();
 }

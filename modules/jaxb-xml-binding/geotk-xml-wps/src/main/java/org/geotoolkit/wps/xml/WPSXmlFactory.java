@@ -1033,4 +1033,22 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
+    public static GetResult buildGetResult(String version, String service, String jobId) {
+        if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("GetResult operation does not exist in WPS 1.0.0");
+        } else if ("2.0.0".equals(version)) {
+           return new org.geotoolkit.wps.xml.v200.GetResult(service, jobId);
+        }
+        throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
+    }
+    
+    public static GetStatus buildGetStatus(String version, String service, String jobId) {
+        if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("GetResult operation does not exist in WPS 1.0.0");
+        } else if ("2.0.0".equals(version)) {
+           return new org.geotoolkit.wps.xml.v200.GetStatus(service, jobId);
+        }
+        throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
+    }
+
 }
