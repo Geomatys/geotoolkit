@@ -101,7 +101,7 @@ public class FXSymbolizerInfo extends GridPane{
     }
 
     public void initialize() {
-        uiUnit.setItems(FXCollections.observableArrayList(Units.POINT,Units.METRE, Units.INCH, Units.MILE, Units.FOOT));
+        uiUnit.setItems(FXCollections.observableArrayList(Units.POINT,Units.METRE, Units.INCH, Units.STATUTE_MILE, Units.FOOT));
         uiUnit.getSelectionModel().select(0);
         uiUnit.setConverter(new StringConverter<Unit>() {
 
@@ -110,7 +110,7 @@ public class FXSymbolizerInfo extends GridPane{
                 if(object == Units.POINT) return "pixel";
                 else if(object == Units.METRE) return "metre";
                 else if(object == Units.INCH) return "inch";
-                else if(object == Units.MILE) return "mile";
+                else if(object == Units.STATUTE_MILE) return "mile";
                 else if(object == Units.FOOT) return "foot";
                 else return "pixel";
             }
@@ -120,7 +120,7 @@ public class FXSymbolizerInfo extends GridPane{
                 if("pixel".equals(string)) return Units.POINT;
                 else if("metre".equals(string)) return Units.METRE;
                 else if("inch".equals(string)) return Units.INCH;
-                else if("mile".equals(string)) return Units.MILE;
+                else if("mile".equals(string)) return Units.STATUTE_MILE;
                 else if("foot".equals(string)) return Units.FOOT;
                 else return Units.POINT;
             }
