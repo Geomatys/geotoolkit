@@ -80,7 +80,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testDimRangeLegend() {
 
-        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Units.ONE));
+        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Units.UNITY));
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(dr));
 

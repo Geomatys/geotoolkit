@@ -344,7 +344,7 @@ final class NetcdfDimension {
         if (!name.equals(longName)) {
             addAttribute(CDM.LONG_NAME, longName);
         }
-        if (unit != null && !unit.equals(Units.ONE)) {
+        if (unit != null && !unit.equals(Units.UNITY)) {
             addAttribute(CDM.UNITS, getUnitSymbol(unit, direction));
         }
         addAttribute(CF.POSITIVE, positive);

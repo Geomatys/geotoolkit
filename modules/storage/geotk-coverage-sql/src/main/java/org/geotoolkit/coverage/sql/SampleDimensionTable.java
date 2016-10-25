@@ -116,7 +116,7 @@ final class SampleDimensionTable extends Table {
      */
     private UnitFormat getUnitFormat() {
         if (unitFormat == null) {
-            unitFormat = UnitFormat.getInstance(Locale.FRANCE);
+            unitFormat = new UnitFormat(Locale.FRANCE);
         }
         return unitFormat;
     }
@@ -152,7 +152,7 @@ final class SampleDimensionTable extends Table {
                     if (unitSymbol != null) {
                         unitSymbol = unitSymbol.trim();
                         if (unitSymbol.isEmpty()) {
-                            unit = Units.ONE;
+                            unit = Units.UNITY;
                         } else {
                             try {
                                 unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);

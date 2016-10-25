@@ -89,8 +89,8 @@ public class Logarithmic extends MathTransformProvider {
     public static final ParameterDescriptor<Double> OFFSET;
     static {
         final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
-        BASE = builder.addName("base").createBounded(0, Double.POSITIVE_INFINITY, 10, Units.ONE);
-        OFFSET = builder.addName("offset").create(0, Units.ONE);
+        BASE = builder.addName("base").createBounded(0, Double.POSITIVE_INFINITY, 10, Units.UNITY);
+        OFFSET = builder.addName("offset").create(0, Units.UNITY);
     }
 
     /**

@@ -33,7 +33,6 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jdk8.JDK8;
-import org.apache.sis.internal.util.PatchedUnitFormat;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
@@ -728,7 +727,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
      * @since 3.07
      */
     public void setAttribute(final String attribute, final Unit<?> value) {
-        setAttribute(attribute, (value != null) ? PatchedUnitFormat.toString(value) : null);
+        setAttribute(attribute, (value != null) ? value.toString() : null);
     }
 
     /**

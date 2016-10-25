@@ -31,10 +31,10 @@ import org.apache.sis.measure.Units;
  */
 public class UnitIdentifier {
 
-    private static final HashMap<Integer, Unit> UNIT_TABLE = new HashMap<Integer, Unit>();
+    private static final HashMap<Integer, Unit<?>> UNIT_TABLE = new HashMap<>();
 
-    public static Unit getUnitFromCode(String code) {
-        Unit result = null;
+    public static Unit<?> getUnitFromCode(String code) {
+        Unit<?> result = null;
         Matcher codeMatch = Pattern.compile("\\d+").matcher(code);
         if(codeMatch.find()) {
             final int intCode = Integer.decode(codeMatch.group());
@@ -52,7 +52,7 @@ public class UnitIdentifier {
      * @param code The integer which is mapinfo unit code.
      * @return Return the {@link Unit} object pointed by given mapInfo code, or null if we can't find equivalent.
      */
-    public static Unit getUnitFromCode(int code) {
+    public static Unit<?> getUnitFromCode(int code) {
         return UNIT_TABLE.get(code);
     }
 
@@ -61,8 +61,8 @@ public class UnitIdentifier {
      * @param source The {@link Unit} to get map
      * @return
      */
-    public static int getCodeFromUnit(Unit source) {
-        for(Map.Entry<Integer, Unit> pair : UNIT_TABLE.entrySet()) {
+    public static int getCodeFromUnit(Unit<?> source) {
+        for(Map.Entry<Integer, Unit<?>> pair : UNIT_TABLE.entrySet()) {
             if(pair.getValue().equals(source)) {
                 return pair.getKey();
             }
@@ -71,7 +71,7 @@ public class UnitIdentifier {
     }
 
     static {
-        UNIT_TABLE.put(0, Units.MILE);
+        UNIT_TABLE.put(0, Units.STATUTE_MILE);
         UNIT_TABLE.put(1, Units.KILOMETRE);
         UNIT_TABLE.put(2, Units.INCH);
         UNIT_TABLE.put(3, Units.FOOT);
@@ -79,7 +79,7 @@ public class UnitIdentifier {
         UNIT_TABLE.put(5, Units.MILLIMETRE);
         UNIT_TABLE.put(6, Units.CENTIMETRE);
         UNIT_TABLE.put(7, Units.METRE);
-        UNIT_TABLE.put(8, Units.FOOT_SURVEY_US);
+        UNIT_TABLE.put(8, Units.US_SURVEY_FOOT);
         UNIT_TABLE.put(9, Units.NAUTICAL_MILE);
         // 30
         // 31

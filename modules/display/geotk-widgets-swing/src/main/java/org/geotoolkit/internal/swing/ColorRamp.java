@@ -231,7 +231,7 @@ public class ColorRamp implements Serializable {
             final Unit<?> unit = graduation.getUnit();
             if (unit != null) {
                 if (unitFormat == null) {
-                    unitFormat = UnitFormat.getInstance(locale != null ? locale : Locale.getDefault());
+                    unitFormat = new UnitFormat(locale != null ? locale : Locale.getDefault());
                 }
                 units = unitFormat.format(unit);
             }

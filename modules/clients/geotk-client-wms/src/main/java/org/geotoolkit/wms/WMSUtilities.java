@@ -247,7 +247,7 @@ public final class WMSUtilities {
                 CoordinateReferenceSystem dimCRS = null;
                 final String dimName = dim.getName();
                 final String dimUnitSymbol = dim.getUnitSymbol();
-                final Unit<?> unit = dimUnitSymbol != null ? Units.valueOf(dimUnitSymbol) : Units.ONE;
+                final Unit<?> unit = dimUnitSymbol != null ? Units.valueOf(dimUnitSymbol) : Units.UNITY;
 
                 //create CRS
                 if ("time".equals(dimName)) {

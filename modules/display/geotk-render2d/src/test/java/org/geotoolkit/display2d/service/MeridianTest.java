@@ -619,7 +619,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         gcb.setRenderedImage(image);
         gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setSampleDimensions(new double[]{0, 0, 0}, new double[]{255, 255, 255}, Units.ONE, null);
+        gcb.setSampleDimensions(new double[]{0, 0, 0}, new double[]{255, 255, 255}, Units.UNITY, null);
         final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer();

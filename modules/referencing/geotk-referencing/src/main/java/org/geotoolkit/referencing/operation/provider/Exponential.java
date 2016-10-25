@@ -89,7 +89,7 @@ public class Exponential extends MathTransformProvider {
     public static final ParameterDescriptor<Double> SCALE;
     static {
         final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
-        SCALE = builder.addName("scale").create(1, Units.ONE);
+        SCALE = builder.addName("scale").create(1, Units.UNITY);
     }
 
     /**

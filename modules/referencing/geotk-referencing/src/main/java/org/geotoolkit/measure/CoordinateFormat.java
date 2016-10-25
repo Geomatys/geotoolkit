@@ -525,7 +525,7 @@ public class CoordinateFormat extends Format {
      */
     private UnitFormat getUnitFormat() {
         if (unitFormat == null) {
-            unitFormat = UnitFormat.getInstance(locale);
+            unitFormat = new UnitFormat(locale);
         }
         return unitFormat;
     }

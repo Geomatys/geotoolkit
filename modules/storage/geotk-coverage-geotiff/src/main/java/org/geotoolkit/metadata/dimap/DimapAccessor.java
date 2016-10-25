@@ -377,7 +377,7 @@ public final class DimapAccessor extends Static {
                 Units.valueOf(physicUnit.trim());
             } catch (Exception ex) {
                 //catch anything, this doesn't always throw parse exception
-                unit = Units.ONE;
+                unit = Units.UNITY;
             }
 
             //transform sample to geophysics

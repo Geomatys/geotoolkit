@@ -257,7 +257,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             double volume = 0;
 
             final UnitConverter hconverter;
-            if(gsd.getUnits() == null || Units.ONE.equals(gsd.getUnits())){
+            if(gsd.getUnits() == null || Units.UNITY.equals(gsd.getUnits())){
                 //-- unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
             }else{

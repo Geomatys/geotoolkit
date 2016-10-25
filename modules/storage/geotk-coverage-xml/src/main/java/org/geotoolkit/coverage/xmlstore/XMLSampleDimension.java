@@ -79,14 +79,14 @@ public class XMLSampleDimension {
     /**
      * Returns the {@link Unit} in relation with this {@link SampleDimension}.<br><br>
      * In case where internal {@link XMLSampleDimension#unit} is not defined
-     * the default returned value is {@link Units#ONE}.
+     * the default returned value is {@link Units#UNITY}.
      *
-     * @return the sample {@link Unit} or {@link Units#ONE} if it is not defined.
+     * @return the sample {@link Unit} or {@link Units#UNITY} if it is not defined.
      * @see Unit#valueOf(java.lang.CharSequence)
-     * @see Units#ONE
+     * @see Units#UNITY
      */
     public Unit getUnit() {
-        if (this.unit == null || unit.isEmpty()) return Units.ONE;
+        if (this.unit == null || unit.isEmpty()) return Units.UNITY;
         return Units.valueOf(unit);
     }
 

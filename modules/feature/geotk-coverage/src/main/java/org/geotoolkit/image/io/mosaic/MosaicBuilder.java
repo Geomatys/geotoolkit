@@ -35,7 +35,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.math.Fraction;
+import org.apache.sis.math.Fraction;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
@@ -467,7 +467,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
                 continue;
             }
             // Note: Fraction rounding mode must be the same than in getSubsamplings().
-            final int n = MathFunctions.divisors(Fraction.round(imageSize, i)).length;
+            final int n = MathFunctions.divisors(new Fraction(imageSize, i).round()).length;
             if (n < numDivisors) {
                 continue;
             }

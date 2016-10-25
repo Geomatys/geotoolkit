@@ -74,7 +74,7 @@ public class JConfigDialog extends javax.swing.JDialog {
         list.add(Units.METRE);
         list.add(Units.KILOMETRE);
         list.add(Units.FOOT);
-        list.add(Units.MILE);
+        list.add(Units.STATUTE_MILE);
 
         guiUnit.setModel(new ListComboBoxModel(list));
 

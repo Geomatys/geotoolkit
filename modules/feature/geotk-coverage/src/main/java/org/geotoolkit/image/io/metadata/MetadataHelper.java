@@ -587,10 +587,10 @@ public class MetadataHelper implements Localized {
         final UnitFormat    uf;
         if (locale != null) {
             nf = NumberFormat.getInstance(locale);
-            uf = UnitFormat  .getInstance(locale);
+            uf = new UnitFormat(locale);
         } else {
             nf = NumberFormat.getInstance();
-            uf = UnitFormat  .getInstance(Locale.getDefault());
+            uf = new UnitFormat(Locale.getDefault());
         }
         InternalUtilities.configure(nf, minSize, 9);
         if (sameSize && sameUnits) {

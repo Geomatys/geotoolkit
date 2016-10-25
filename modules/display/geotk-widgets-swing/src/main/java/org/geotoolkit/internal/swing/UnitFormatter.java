@@ -53,7 +53,7 @@ public final class UnitFormatter extends InternationalFormatter {
      * @param locale The locale for units parsing and formatting.
      */
     public UnitFormatter(final Locale locale) {
-        super(UnitFormat.getInstance(locale));
+        super(new UnitFormat(locale));
     }
 
     /**

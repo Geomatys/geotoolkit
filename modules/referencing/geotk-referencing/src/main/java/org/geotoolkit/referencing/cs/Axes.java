@@ -185,7 +185,7 @@ public final class Axes {
      * The abbreviation is lower case "<var>i</var>".
      */
     public static final DefaultCoordinateSystemAxis COLUMN = create(
-            Vocabulary.Keys.Column, "i", AxisDirection.COLUMN_POSITIVE, Units.ONE);
+            Vocabulary.Keys.Column, "i", AxisDirection.COLUMN_POSITIVE, Units.UNITY);
 
     /**
      * A default axis for row indices in a {@linkplain org.opengis.coverage.grid.GridCoverage grid
@@ -195,7 +195,7 @@ public final class Axes {
      * The abbreviation is lower case "<var>j</var>".
      */
     public static final DefaultCoordinateSystemAxis ROW = create(
-            Vocabulary.Keys.Row, "j", AxisDirection.ROW_POSITIVE, Units.ONE);
+            Vocabulary.Keys.Row, "j", AxisDirection.ROW_POSITIVE, Units.UNITY);
 
     /**
      * Constructs an axis with a name and an abbreviation as a resource bundle key.

@@ -177,7 +177,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
 
     /**
      * The vertical and temporal units, or {@code null} if unknown. As a special case, we
-     * use {@link Units#ONE} when a minimal and maximal values where specified without units.
+     * use {@link Units#UNITY} when a minimal and maximal values where specified without units.
      *
      * @see #getUnit(SingleCRS)
      */
@@ -252,7 +252,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
     }
 
     /**
-     * Returns the units of measurement of the given CRS, or {@code Units#ONE} if unspecified.
+     * Returns the units of measurement of the given CRS, or {@code Units#UNITY} if unspecified.
      *
      * @see #verticalUnit
      * @see #temporalUnit
@@ -264,7 +264,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                 return unit;
             }
         }
-        return Units.ONE;
+        return Units.UNITY;
     }
 
     /**
@@ -277,7 +277,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      *         or {@code null} if the given unit was null.
      */
     private static String toString(final Unit<?> unit) {
-        if (unit == null || unit.equals(Units.ONE)) {
+        if (unit == null || unit.equals(Units.UNITY)) {
             return null;
         }
         if (unit.equals(Units.DEGREE)) {
@@ -733,7 +733,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             temporalUnit = addExtent(temporalUnit, 3,
                     Double.NaN, // TODO
                     Double.NaN, // TODO
-                    Units.ONE);  // TODO
+                    Units.UNITY);  // TODO
         }
     }
 
@@ -746,7 +746,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
      * @param  dimension The dimension to set, from 0 inclusive to {@value #NUM_DIMENSIONS} exclusive.
      * @param  min       The minimal value, or {@code NaN} if unknown.
      * @param  max       The minimal value, or {@code NaN} if unknown.
-     * @param  unit      The unit of measurement, or {@link Units#ONE} if unknown.
+     * @param  unit      The unit of measurement, or {@link Units#UNITY} if unknown.
      * @return The unit of measurement to retain.
      */
     private Unit<?> addExtent(Unit<?> oldUnit, int dimension, double min, double max, final Unit<?> unit) {

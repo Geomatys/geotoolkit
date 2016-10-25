@@ -146,7 +146,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     static final ParameterDescriptor<Double> INVERSE_FLATTENING = createDescriptor(new NamedIdentifier[] {
             new NamedIdentifier(NETCDF, MapProjectionDescriptor.INVERSE_FLATTENING)
-        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Units.ONE, false);
+        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the
@@ -392,7 +392,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "ScaleAtNatOrigin"),
             new NamedIdentifier(GEOTIFF, "ScaleAtCenter"),
             new NamedIdentifier(PROJ4,   "k")
-        }, 1, 0, Double.POSITIVE_INFINITY, Units.ONE, true);
+        }, 1, 0, Double.POSITIVE_INFINITY, Units.UNITY, true);
 
     /**
      * All known names for the {@code "X_Scale"} parameter.
@@ -407,7 +407,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters X_SCALE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(ESRI, "X_Scale")
-        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.ONE, false);
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the {@code "Y_Scale"} parameter.
@@ -422,7 +422,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters Y_SCALE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(ESRI, "Y_Scale")
-        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.ONE, false);
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the

@@ -595,7 +595,7 @@ public final class GeoTiffCRSWriter {
             base = Units.METRE;
         } else if (Units.SECOND.isCompatible(unit)) {
             base = Units.SECOND;
-        } else if (Units.RADIAN.isCompatible(unit) && !Units.ONE.equals(unit)) {
+        } else if (Units.RADIAN.isCompatible(unit) && !Units.UNITY.equals(unit)) {
             base = Units.RADIAN;
         } else {
             base = null;

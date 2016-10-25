@@ -269,7 +269,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
     private CoordinateReferenceSystem buildCrs1DFromName(final String crsName) {
         final EngineeringDatum customDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", crsName));
-        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", crsName), "u", AxisDirection.valueOf(crsName), Units.ONE);
+        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", crsName), "u", AxisDirection.valueOf(crsName), Units.UNITY);
         final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", crsName), csAxis);
         return new DefaultEngineeringCRS(Collections.singletonMap("name", crsName), customDatum, customCs);
     }
