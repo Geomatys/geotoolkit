@@ -99,8 +99,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                 isSVG = uri != null && uri.toString().toLowerCase().endsWith(".svg");
 
                 if (!isSVG) {
-                    final Path path = Paths.get(uri);
-                    try (InputStream in = IOUtilities.open(path)){
+                    try (InputStream in = IOUtilities.open(uri)){
                         cachedImage = ImageIO.read(in);
                     } catch (IOException ex) {
                         LOGGER.log(Level.INFO, "CacheExternal, can read image for path : "+ uri.toString()+" : "+ex.getMessage());
