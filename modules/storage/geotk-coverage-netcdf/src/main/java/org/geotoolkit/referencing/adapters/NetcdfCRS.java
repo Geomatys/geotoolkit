@@ -506,7 +506,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 throw new IIOException(Errors.format(Errors.Keys.UnknownUnit_1, unitSymbol), e);
             }
             datum = new DefaultTemporalDatum(singletonMap(NAME_KEY, unitSymbol), unit.getDateOrigin());
-            getAxis(0).unit = Units.multiply(Units.SECOND, unit.getTimeUnit().getValueInSeconds());
+            getAxis(0).unit = Units.SECOND.multiply(unit.getTimeUnit().getValueInSeconds());
         }
 
         /**
