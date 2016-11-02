@@ -27,27 +27,29 @@ import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 /**
  * ISO-8601 parser for date that match the patterns :
- * yyyy
- * yyyyZ
- * yyyy'Z'
- * yyyy-MM
- * yyyy-MMZ
- * yyyy-MM'Z'
- * yyyy-MM-dd
- * yyyy-MM-ddZ
- * yyyy-MM-dd'Z'
- * yyyy-MM-dd'T'HH:mm:ss
- * yyyy-MM-dd'T'HH:mm:ssZ
- * yyyy-MM-dd'T'HH:mm:ss'Z'
- * yyyy-MM-dd'T'HH:mm:ss.SSS
- * yyyy-MM-dd'T'HH:mm:ss.SSSZ
- * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
- * yyyyMM
- * yyyyMMZ
- * yyyyMM'Z'
- * yyyyMMdd
- * yyyyMMddZ
- * yyyyMMdd'Z'
+ * <ul>
+ * <li>yyyy</li>
+ * <li>yyyyZ</li>
+ * <li>yyyy'Z'</li>
+ * <li>yyyy-MM</li>
+ * <li>yyyy-MMZ</li>
+ * <li>yyyy-MM'Z'</li>
+ * <li>yyyy-MM-dd</li>
+ * <li>yyyy-MM-ddZ</li>
+ * <li>yyyy-MM-dd'Z'</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ss</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ssZ</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ss'Z'</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ss.SSS</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ss.SSSZ</li>
+ * <li>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</li>
+ * <li>yyyyMM</li>
+ * <li>yyyyMMZ</li>
+ * <li>yyyyMM'Z'</li>
+ * <li>yyyyMMdd</li>
+ * <li>yyyyMMddZ</li>
+ * <li>yyyyMMdd'Z'</li>
+ * </ul>
  * 
  * @author Johann Sorel (Geomatys)
  * @author Olivier Terral (Geomatys)

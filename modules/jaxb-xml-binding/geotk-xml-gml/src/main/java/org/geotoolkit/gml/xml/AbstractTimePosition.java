@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.temporal.TemporalPosition;
 
 /**
@@ -56,6 +57,14 @@ public abstract class AbstractTimePosition {
 
     protected Date parseDate(final String value) {
         if (value != null && !value.isEmpty()) {
+
+            //test iso date first
+            final ISODateParser parser = new ISODateParser();
+            try {
+                return parser.parseToDate(value);
+            }catch(NumberFormatException ex){
+            }
+            //fallback types
             for (DateFormat df : FORMATTERS) {
                 try {
                     synchronized (df) {
