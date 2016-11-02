@@ -143,11 +143,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
         } else {
             final Path mapperDir = directory.resolve("treemap-db");
             if (Files.exists(mapperDir)) {
-                final String dbUrl = "jdbc:derby:" + directory.toAbsolutePath().toString() + "/treemap-db;create=true;";
-                final DefaultDataSource source = new DefaultDataSource(dbUrl);
-                final LuceneDerbySQLTreeEltMapper mapper = new LuceneDerbySQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, source);
-                mapper.clear();
-                mapper.close();
+                tree.getTreeElementMapper().clear();
             }
         }
         return tree;

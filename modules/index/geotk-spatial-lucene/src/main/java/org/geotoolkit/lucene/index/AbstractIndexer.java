@@ -276,7 +276,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                             indexDocument(writer, entry);
                             nbEntries++;
                         } catch (IndexingException ex) {
-                            LOGGER.warning("Metadata IO exeption while indexing metadata: " + identifier + " " + ex.getMessage() + "\nmove to next metadata...");
+                            LOGGER.log(Level.WARNING,"Metadata IO exeption while indexing metadata: " + identifier + " " + ex.getMessage() + "\nmove to next metadata...",ex);
                         }
                     } else {
                          LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
@@ -309,18 +309,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param writer An Lucene index writer.
      * @param meta The object to index.
      */
-    public void indexDocument(final IndexWriter writer, final E meta) {
-        try {
-            final int docId = writer.maxDoc();
-            //adding the document in a specific model. in this case we use a MDwebDocument.
-            writer.addDocument(createDocument(meta, docId));
-            LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
-
-        } catch (IndexingException ex) {
-            LOGGER.log(Level.WARNING, "indexingException " +ex.getMessage(), ex);
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, IO_SINGLE_MSG + ex.getMessage(), ex);
-        }
+    public void indexDocument(final IndexWriter writer, final E meta) throws IndexingException, IOException {
+        final int docId = writer.maxDoc();
+        //adding the document in a specific model. in this case we use a MDwebDocument.
+        writer.addDocument(createDocument(meta, docId));
+        LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
     }
 
     /**
