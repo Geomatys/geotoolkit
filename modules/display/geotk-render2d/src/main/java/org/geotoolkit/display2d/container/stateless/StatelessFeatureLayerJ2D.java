@@ -95,6 +95,7 @@ import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -812,6 +813,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
             try{
                 env = Envelopes.transform(bbox, layerCRS);
+                if(GeneralEnvelope.castOrCopy(env).isEmpty()){
+                    //possible NaN values or out of crs validity area
+                    GeneralEnvelope benv = GeneralEnvelope.castOrCopy(bbox);
+                    benv.normalize();
+                    env = Envelopes.transform(benv, layerCRS);
+                }
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
