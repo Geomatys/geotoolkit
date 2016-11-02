@@ -75,7 +75,12 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         final int inputNbBand = inputSampleModel.getNumBands();
         final BufferedImage resultImage = new BufferedImage(inputImage.getWidth(), inputImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         final WritableRaster raster = resultImage.getRaster();
-        
+
+        for (int i=0;i<bands.length;i++) {
+            if (bands[i] > (inputNbBand-1)) {
+                throw new ProcessException("Unvalid configuration, band "+bands[i]+" do not exist.", this);
+            }
+        }
         
         //copy datas
         final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
