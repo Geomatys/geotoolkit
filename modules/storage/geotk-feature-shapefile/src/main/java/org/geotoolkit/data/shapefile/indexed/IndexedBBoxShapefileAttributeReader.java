@@ -175,12 +175,21 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
      * @return Geometry
      */
     private static PreparedGeometry toGeometry(final Envelope env) {
+        double minx = env.getMinX();
+        double miny = env.getMinY();
+        double maxx = env.getMaxX();
+        double maxy = env.getMaxY();
+        if(Double.isNaN(minx)) minx = Double.NEGATIVE_INFINITY;
+        if(Double.isNaN(miny)) miny = Double.NEGATIVE_INFINITY;
+        if(Double.isNaN(maxx)) maxx = Double.POSITIVE_INFINITY;
+        if(Double.isNaN(maxy)) maxy = Double.POSITIVE_INFINITY;
+
         final Coordinate[] coords = new Coordinate[5];
-        coords[0] = new Coordinate(env.getMinX(), env.getMinY());
-        coords[1] = new Coordinate(env.getMinX(), env.getMaxY());
-        coords[2] = new Coordinate(env.getMaxX(), env.getMaxY());
-        coords[3] = new Coordinate(env.getMaxX(), env.getMinY());
-        coords[4] = new Coordinate(env.getMinX(), env.getMinY());
+        coords[0] = new Coordinate(minx, miny);
+        coords[1] = new Coordinate(minx, maxy);
+        coords[2] = new Coordinate(maxx, maxy);
+        coords[3] = new Coordinate(maxx, miny);
+        coords[4] = new Coordinate(minx, miny);
         final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords);
         Geometry geom = GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]);
         return PREPARED_FACTORY.create(geom);
