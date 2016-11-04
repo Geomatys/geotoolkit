@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiCurve;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -52,6 +53,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "curveMember",
     "curveMembers"
 })
+@XmlRootElement(name="MultiCurve")
 public class MultiCurveType extends AbstractGeometricAggregateType implements MultiCurve {
 
     private List<CurvePropertyType> curveMember;

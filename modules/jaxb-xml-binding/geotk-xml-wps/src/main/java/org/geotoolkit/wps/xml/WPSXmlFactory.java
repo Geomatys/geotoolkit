@@ -29,6 +29,7 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.AllowedValues;
 import org.geotoolkit.ows.xml.AnyValue;
@@ -726,6 +727,15 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
     
+    public static AcceptFormats buildAcceptFormats(String version, String... formats) {
+        if ("1.0.0".equals(version)) {
+           return new org.geotoolkit.ows.xml.v110.AcceptFormatsType(formats);
+        } else if ("2.0.0".equals(version)) {
+           return new org.geotoolkit.ows.xml.v200.AcceptFormatsType(formats);
+        }
+        throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
+    }
+    
     public static LiteralDataDescription buildLiteralInputDataDescription(String version, DomainMetadata dataType, Object uoMs, AllowedValues allowedValues, 
             AnyValue anyValue, ValueReference valuesReference, String defaultValue) {
         if ("1.0.0".equals(version)) {
@@ -956,7 +966,7 @@ public class WPSXmlFactory {
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }
 
-    public static GetCapabilities buildGetCapabilities(String version, String service, String language, String updateSequence, AcceptVersions versions) {
+    public static GetCapabilities buildGetCapabilities(String version, String service, String language, String updateSequence, AcceptVersions versions, final AcceptFormats formats) {
         if ("1.0.0".equals(version)) {
             if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
                 throw new IllegalArgumentException("Unexpected object class for 1.0.0 acceptversion.");
@@ -966,7 +976,13 @@ public class WPSXmlFactory {
             if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v200.AcceptVersionsType)) {
                 throw new IllegalArgumentException("Unexpected object class for 2.0.0 acceptversion.");
             }
-           return new org.geotoolkit.wps.xml.v200.GetCapabilitiesType((org.geotoolkit.ows.xml.v200.AcceptVersionsType)versions, null, null, updateSequence, service);
+            if (formats != null && !(formats instanceof org.geotoolkit.ows.xml.v200.AcceptFormatsType)) {
+                throw new IllegalArgumentException("Unexpected object class for 2.0.0 acceptversion.");
+            }
+           return new org.geotoolkit.wps.xml.v200.GetCapabilitiesType((org.geotoolkit.ows.xml.v200.AcceptVersionsType)versions,
+                                                                       null, 
+                                                                       (org.geotoolkit.ows.xml.v200.AcceptFormatsType)formats,
+                                                                       updateSequence, service);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }

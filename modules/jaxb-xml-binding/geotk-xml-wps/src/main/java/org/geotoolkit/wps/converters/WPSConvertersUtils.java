@@ -118,6 +118,16 @@ public class WPSConvertersUtils {
     public static final int    FRACTION_DIGITS      = 12;                 // Number of fractions digits to write for floating point numbers
 
     /**
+     * GML VERSION.
+     */
+    private static final Map<String, String> GML_VERSION = new HashMap<>();
+    
+    static {
+        GML_VERSION.put("1.0.0", "3.1.1");
+        GML_VERSION.put("2.0.0", "3.2.1");
+    }
+    
+    /**
      * Fix the CRS problem for a Feature or a FeatureCollection
      *
      * @param dataValue a Feature or a FeatureCollection
@@ -325,6 +335,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
         parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
 
         ensureParametersDefined(object.getClass(), WPSIO.IOType.OUTPUT, parameters);
 
@@ -337,21 +348,23 @@ public class WPSConvertersUtils {
     }
 
 
-    public static ComplexDataType convertToWMSComplex(String version, Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
+    public static ComplexDataType convertToWMSComplex(String wpsVersion, Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
             throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mimeType, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
         parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mimeType);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
 
-        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(version, encoding, mimeType, schema);
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding, mimeType, schema);
 
         final Map<String,Object> jsonMap = new HashMap<>();
         jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
@@ -462,6 +475,7 @@ public class WPSConvertersUtils {
     /**
      * Get an convert an object int a {@link ReferenceType reference}.
      *
+     * @param version WPS version
      * @param object
      * @param mime
      * @param encoding
@@ -471,7 +485,7 @@ public class WPSConvertersUtils {
      * @return an {@link Reference input/output reference}.
      * @throws UnconvertibleObjectException
      */
-    public static Reference convertToReference(final Object object, final String mime, final String encoding, final String schema,
+    public static Reference convertToReference(final String version, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params, final WPSIO.IOType iotype) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
@@ -484,6 +498,8 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, version);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(version));
         parameters.put(WPSObjectConverter.IOTYPE, iotype.toString());
 
         ensureParametersDefined(object.getClass(), iotype, params);

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.MultiSurface;
@@ -54,6 +55,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "surfaceMember",
     "surfaceMembers"
 })
+@XmlRootElement(name="MultiSurface")
 public class MultiSurfaceType extends AbstractGeometricAggregateType implements MultiSurface {
 
     private List<SurfacePropertyType> surfaceMember;
