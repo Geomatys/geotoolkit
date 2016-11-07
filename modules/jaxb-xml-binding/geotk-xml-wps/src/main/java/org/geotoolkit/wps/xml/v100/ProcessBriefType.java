@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +26,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessSummary;
 
 
 /**
@@ -57,9 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     ProcessDescriptionType.class
 })
-public class ProcessBriefType
-    extends DescriptionType
-{
+public class ProcessBriefType extends DescriptionType implements ProcessSummary {
 
     @XmlElement(name = "Profile")
     @XmlSchemaType(name = "anyURI")
@@ -69,31 +71,25 @@ public class ProcessBriefType
     @XmlAttribute(namespace = "http://www.opengis.net/wps/1.0.0", required = true)
     protected String processVersion;
 
+    public ProcessBriefType() {
+        
+    }
+    
+    public ProcessBriefType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, String processVersion) {
+        super(identifier, title, _abstract);
+        this.processVersion = processVersion;
+    }
+    
     /**
      * Gets the value of the profile property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the profile property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProfile().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
      * 
      */
     public List<String> getProfile() {
         if (profile == null) {
-            profile = new ArrayList<String>();
+            profile = new ArrayList<>();
         }
         return this.profile;
     }
@@ -144,6 +140,51 @@ public class ProcessBriefType
      */
     public void setProcessVersion(final String value) {
         this.processVersion = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (processVersion != null) {
+            sb.append("Process version:").append(processVersion).append('\n');
+        }
+        if (wsdl != null) {
+            sb.append("wsdl:").append(wsdl).append('\n');
+        }
+        if (profile != null) {
+            sb.append("Profiles:\n");
+            for (String out : profile) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessBriefType && super.equals(object)) {
+            final ProcessBriefType that = (ProcessBriefType) object;
+            return Objects.equals(this.processVersion, that.processVersion) &&
+                   Objects.equals(this.profile, that.profile) &&
+                   Objects.equals(this.wsdl, that.wsdl);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + Objects.hashCode(this.profile);
+        hash = 43 * hash + Objects.hashCode(this.wsdl);
+        hash = 43 * hash + Objects.hashCode(this.processVersion);
+        return hash;
     }
 
 }

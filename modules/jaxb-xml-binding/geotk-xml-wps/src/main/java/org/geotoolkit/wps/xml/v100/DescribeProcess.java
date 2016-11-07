@@ -51,38 +51,31 @@ import org.geotoolkit.ows.xml.v110.CodeType;
     "identifier"
 })
 @XmlRootElement(name = "DescribeProcess")
-public class DescribeProcess
-    extends RequestBaseType
-{
+public class DescribeProcess extends RequestBaseType implements org.geotoolkit.wps.xml.DescribeProcess {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected List<CodeType> identifier;
+    
+    public DescribeProcess() {
+        
+    }
+    
+    public DescribeProcess(String service, String language, List<CodeType> identifiers) {
+        super(service, language);
+        this.identifier = identifiers;
+    }
 
     /**
      * Unordered list of one or more identifiers of the processes for which the client is requesting detailed descriptions. This element shall be repeated for each process for which a description is requested. These Identifiers are unordered, but the WPS shall return the process descriptions in the order in which they were requested.Gets the value of the identifier property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identifier property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentifier().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link CodeType }
      * 
      * 
      */
+    @Override
     public List<CodeType> getIdentifier() {
         if (identifier == null) {
-            identifier = new ArrayList<CodeType>();
+            identifier = new ArrayList<>();
         }
         return this.identifier;
     }

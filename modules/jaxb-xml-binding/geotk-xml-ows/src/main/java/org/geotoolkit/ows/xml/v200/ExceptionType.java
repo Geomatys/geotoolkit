@@ -63,12 +63,30 @@ public class ExceptionType {
     private String locator;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    public ExceptionType() {}
+    
+    /**
+     *  build a new Exception code.
+     * 
+     * @param exceptionText
+     * @param exceptionCode
+     */
+    public ExceptionType(final String exceptionText, final String exceptionCode, final String locator) {
+        this.exceptionText = new ArrayList<>();
+        this.exceptionText.add(exceptionText);
+        this.exceptionCode = exceptionCode;
+        this.locator       = locator;
+    }
+    
+    /**
      * Gets the value of the exceptionText property.
      * 
      */
     public List<String> getExceptionText() {
         if (exceptionText == null) {
-            exceptionText = new ArrayList<String>();
+            exceptionText = new ArrayList<>();
         }
         return this.exceptionText;
     }

@@ -50,38 +50,31 @@ import javax.xml.bind.annotation.XmlType;
     "processDescription"
 })
 @XmlRootElement(name = "ProcessDescriptions")
-public class ProcessDescriptions
-    extends ResponseBaseType
-{
+public class ProcessDescriptions extends ResponseBaseType implements org.geotoolkit.wps.xml.ProcessOfferings {
 
     @XmlElement(name = "ProcessDescription", namespace = "", required = true)
     protected List<ProcessDescriptionType> processDescription;
 
+    public ProcessDescriptions() {
+        
+    }
+    
+    public ProcessDescriptions(String lang, List<ProcessDescriptionType> processDescription) {
+        super("WPS", "1.0.0", lang);
+        this.processDescription = processDescription;
+    }
+    
     /**
      * Gets the value of the processDescription property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the processDescription property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProcessDescription().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link ProcessDescriptionType }
      * 
      * 
      */
     public List<ProcessDescriptionType> getProcessDescription() {
         if (processDescription == null) {
-            processDescription = new ArrayList<ProcessDescriptionType>();
+            processDescription = new ArrayList<>();
         }
         return this.processDescription;
     }

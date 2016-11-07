@@ -31,7 +31,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  *
@@ -54,7 +54,7 @@ public class ReferenceToGeometryArrayConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Geometry[] convert(ReferenceType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public Geometry[] convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
             try {
                 final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));

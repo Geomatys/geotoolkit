@@ -29,7 +29,7 @@ import net.iharder.Base64;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  *
@@ -60,7 +60,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
      * @return RenderedImage.
      */
     @Override
-    public RenderedImage convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public RenderedImage convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 

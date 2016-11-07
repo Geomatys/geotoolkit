@@ -111,19 +111,20 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Build the base of a Capabilities document.
      */
     public CapabilitiesBaseType(final String version, final String updateSequence) {
-        this(null, null, null, version, updateSequence);
+        this(null, null, null, version, updateSequence, null);
     }
     
     /**
      * Build the base of a Capabilities document.
      */
     public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
-            final OperationsMetadata operationsMetadata, final String version, final String updateSequence) {
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, CapabilitiesBaseType.Languages languages) {
         this.operationsMetadata    = operationsMetadata;
         this.serviceIdentification = serviceIdentification;
         this.serviceProvider       = serviceProvider;
         this.updateSequence        = updateSequence;
         this.version               = version;
+        this.languages = languages;
     }   
     
     /**
@@ -306,8 +307,16 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     @XmlType(name = "", propOrder = {
         "language"
     })
-    public static class Languages {
+    public static class Languages implements org.geotoolkit.ows.xml.Languages {
 
+        public Languages() {
+            
+        }
+        
+        public Languages(List<String> language) {
+            this.language = language;
+        }
+        
         @XmlElement(name = "Language", required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "language")
@@ -319,7 +328,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
          */
         public List<String> getLanguage() {
             if (language == null) {
-                language = new ArrayList<String>();
+                language = new ArrayList<>();
             }
             return this.language;
         }

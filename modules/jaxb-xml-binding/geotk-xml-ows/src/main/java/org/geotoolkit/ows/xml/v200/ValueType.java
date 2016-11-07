@@ -17,6 +17,7 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -53,7 +54,7 @@ public class ValueType implements Value {
     @XmlValue
     private String value;
 
-    ValueType(){
+    protected ValueType(){
     }
     
     public ValueType(final Value that){
@@ -91,6 +92,33 @@ public class ValueType implements Value {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ValueType) {
+            final ValueType that = (ValueType) object;
+            return Objects.equals(this.value, that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return value;
     }
 
 }

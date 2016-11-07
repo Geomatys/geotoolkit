@@ -21,6 +21,6 @@ package org.geotoolkit.wps.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface ProcessOfferings {
+public interface ProcessOfferings extends WPSResponse {
 
 }

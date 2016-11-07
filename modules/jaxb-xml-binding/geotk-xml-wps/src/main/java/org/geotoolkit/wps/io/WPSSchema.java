@@ -23,8 +23,10 @@ package org.geotoolkit.wps.io;
  */
 public enum WPSSchema {
 
+    OGC_FEATURE_3_2_1("http://schemas.opengis.net/gml/3.2.1/feature.xsd"),
     OGC_FEATURE_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"),
     OGC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"),
+    OGC_GML_3_2_1("http://schemas.opengis.net/gml/3.2.1/gml.xsd"),
     OGC_SLD_1_1_0("http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd"),
     MATHML_3("http://www.w3.org/Math/XMLSchema/mathml3/mathml3.xsd");
     public final String schema;

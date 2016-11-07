@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.Input;
 
 
 /**
@@ -57,7 +59,7 @@ import org.geotoolkit.ows.xml.v110.LanguageStringType;
     "reference",
     "data"
 })
-public class InputType {
+public class InputType implements Input{
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;
@@ -70,6 +72,24 @@ public class InputType {
     @XmlElement(name = "Data")
     protected DataType data;
 
+    public InputType() {
+        
+    }
+    
+    public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, InputReferenceType reference) {
+        this.identifier = identifier;
+        this.title = title;
+        this._abstract = _abstract;
+        this.reference = reference;
+    }
+    
+    public InputType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType data) {
+        this.identifier = identifier;
+        this.title = title;
+        this._abstract = _abstract;
+        this.data = data;
+    }
+    
     /**
      * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
      * 
@@ -78,6 +98,7 @@ public class InputType {
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getIdentifier() {
         return identifier;
     }
@@ -102,6 +123,7 @@ public class InputType {
      *     {@link LanguageStringType }
      *     
      */
+    @Override
     public LanguageStringType getTitle() {
         return title;
     }
@@ -126,6 +148,7 @@ public class InputType {
      *     {@link LanguageStringType }
      *     
      */
+    @Override
     public LanguageStringType getAbstract() {
         return _abstract;
     }
@@ -150,6 +173,7 @@ public class InputType {
      *     {@link InputReferenceType }
      *     
      */
+    @Override
     public InputReferenceType getReference() {
         return reference;
     }
@@ -190,4 +214,55 @@ public class InputType {
         this.data = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append('\n');
+        }
+        if (reference != null) {
+            sb.append("reference:").append(reference).append('\n');
+        }
+        if (data != null) {
+            sb.append("data:").append(data).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InputType) {
+            final InputType that = (InputType) object;
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.data, that.data) &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.reference, that.reference) &&
+                   Objects.equals(this.title, that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.identifier);
+        hash = 97 * hash + Objects.hashCode(this.title);
+        hash = 97 * hash + Objects.hashCode(this._abstract);
+        hash = 97 * hash + Objects.hashCode(this.reference);
+        hash = 97 * hash + Objects.hashCode(this.data);
+        return hash;
+    }
 }

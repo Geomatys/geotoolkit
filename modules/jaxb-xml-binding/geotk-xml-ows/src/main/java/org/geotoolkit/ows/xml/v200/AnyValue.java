@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "AnyValue")
-public class AnyValue {
+public class AnyValue implements org.geotoolkit.ows.xml.AnyValue {
 
      public AnyValue() {
         

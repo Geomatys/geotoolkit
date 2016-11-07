@@ -32,9 +32,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  * Implementation of ObjectConverter to convert a FeatureCollection into a {@link ComplexDataType}.
@@ -74,13 +76,16 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
             throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
 
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setEncoding((String) params.get(ENCODING));
-        complex.setMimeType((String) params.get(MIME));
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        } 
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), null);
 
         final FeatureType ft = source.getFeatureType();
         final String namespace = NamesExt.getNamespace(ft.getName());
-        final Map<String, String> schemaLocation = new HashMap<String, String>();
+        final Map<String, String> schemaLocation = new HashMap<>();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
 

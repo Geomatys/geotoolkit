@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a File.
@@ -56,7 +56,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
      * @return File.
      */
     @Override
-    public File convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public File convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         File file;
         InputStream in = null;

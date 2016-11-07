@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,6 +54,14 @@ public class ComplexDataCombinationType {
     @XmlElement(name = "Format", namespace = "", required = true)
     protected ComplexDataDescriptionType format;
 
+    public ComplexDataCombinationType() {
+        
+    }
+    
+    public ComplexDataCombinationType(ComplexDataDescriptionType format) {
+        this.format = format;
+    }
+    
     /**
      * Gets the value of the format property.
      * 
@@ -77,4 +86,35 @@ public class ComplexDataCombinationType {
         this.format = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (format != null) {
+            sb.append("format:").append(format).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComplexDataCombinationType) {
+            final ComplexDataCombinationType that = (ComplexDataCombinationType) object;
+            return Objects.equals(this.format, that.format);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.format);
+        return hash;
+    }
 }

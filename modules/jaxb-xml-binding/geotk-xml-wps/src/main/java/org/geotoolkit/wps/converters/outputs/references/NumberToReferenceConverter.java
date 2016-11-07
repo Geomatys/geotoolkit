@@ -22,10 +22,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.IOTYPE;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  * Implementation of ObjectConverter to convert a {@code Number} into a {@link OutputReferenceType reference}.
@@ -52,7 +53,7 @@ public class NumberToReferenceConverter extends AbstractReferenceOutputConverter
     }
 
     @Override
-    public ReferenceType convert(final Number source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(final Number source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");
@@ -63,13 +64,13 @@ public class NumberToReferenceConverter extends AbstractReferenceOutputConverter
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference = null ;
-
-        if (ioType.equals(WPSIO.IOType.INPUT)) {
-            reference = new InputReferenceType();
-        } else {
-            reference = new OutputReferenceType();
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
         }
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+
 
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));

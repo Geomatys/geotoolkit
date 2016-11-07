@@ -27,10 +27,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -42,7 +41,7 @@ import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 /**
- * Implementation of ObjectConverter to convert a FeatureCollection into a {@link org.geotoolkit.wps.xml.v100.ComplexDataType}.
+ * Implementation of ObjectConverter to convert a FeatureCollection into a {@link Reference}.
  *
  * @author Quentin Boileau (Geomatys).
  * @author Theo Zozime
@@ -70,7 +69,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");
@@ -88,20 +87,21 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         if (!(source instanceof FeatureCollection)) {
             throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference = null;
 
-        if (ioType.equals(WPSIO.IOType.INPUT)) {
-            reference = new InputReferenceType();
-        } else {
-            reference = new OutputReferenceType();
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
         }
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+        
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
 
         final FeatureType ft = source.getFeatureType();
         final String namespace = NamesExt.getNamespace(ft.getName());
-        final Map<String, String> schemaLocation = new HashMap<String, String>();
+        final Map<String, String> schemaLocation = new HashMap<>();
 
         final String randomFileName = UUID.randomUUID().toString();
 

@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
 /**
@@ -55,13 +57,22 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 @XmlSeeAlso({
     LiteralInputType.class
 })
-public class LiteralOutputType {
+public class LiteralOutputType implements LiteralDataDescription {
 
     @XmlElement(name = "DataType", namespace = "http://www.opengis.net/ows/1.1")
     protected DomainMetadataType dataType;
     @XmlElement(name = "UOMs", namespace = "")
     protected SupportedUOMsType uoMs;
 
+    public LiteralOutputType() {
+        
+    }
+    
+    public LiteralOutputType(DomainMetadataType dataType, SupportedUOMsType uoMs) {
+        this.dataType = dataType;
+        this.uoMs = uoMs;
+    }
+    
     /**
      * Data type of this set of values (e.g. integer, real, etc). This data type metadata should be included for each quantity whose data type is not a string. 
      * 
@@ -108,6 +119,43 @@ public class LiteralOutputType {
      */
     public void setUOMs(final SupportedUOMsType value) {
         this.uoMs = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (dataType != null) {
+            sb.append("Data type:").append(dataType).append('\n');
+        }
+        if (uoMs != null) {
+            sb.append("uoMs:").append(uoMs).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralOutputType) {
+            final LiteralOutputType that = (LiteralOutputType) object;
+            return Objects.equals(this.dataType, that.dataType) &&
+                   Objects.equals(this.uoMs, that.uoMs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.dataType);
+        hash = 67 * hash + Objects.hashCode(this.uoMs);
+        return hash;
     }
 
 }

@@ -32,7 +32,7 @@ import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollec
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 /**

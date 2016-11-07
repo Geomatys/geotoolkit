@@ -369,7 +369,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
          */
         public List<String> getLanguage() {
             if (language == null) {
-                language = new ArrayList<String>();
+                language = new ArrayList<>();
             }
             return this.language;
         }

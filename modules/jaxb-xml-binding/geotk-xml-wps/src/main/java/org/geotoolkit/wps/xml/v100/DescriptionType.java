@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,8 +78,19 @@ public class DescriptionType {
     @XmlElement(name = "Metadata", namespace = "http://www.opengis.net/ows/1.1")
     protected List<MetadataType> metadata;
 
+    public DescriptionType() {
+        
+    }
+    
+    public DescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract) {
+        this._abstract = _abstract;
+        this.title = title;
+        this.identifier = identifier;
+    }
+    
     /**
-     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
+     * Unambiguous identifier or name of a process, unique for this server
+     * , or unambiguous identifier or name of an output, unique for this process. 
      * 
      * @return
      *     possible object is
@@ -90,7 +102,8 @@ public class DescriptionType {
     }
 
     /**
-     * Unambiguous identifier or name of a process, unique for this server, or unambiguous identifier or name of an output, unique for this process. 
+     * Unambiguous identifier or name of a process, unique for this server,
+     * or unambiguous identifier or name of an output, unique for this process. 
      * 
      * @param value
      *     allowed object is
@@ -126,7 +139,8 @@ public class DescriptionType {
     }
 
     /**
-     * Brief narrative description of a process or output, normally available for display to a human. 
+     * Brief narrative description of a process or output, 
+     * normally available for display to a human. 
      * 
      * @return
      *     possible object is
@@ -138,7 +152,8 @@ public class DescriptionType {
     }
 
     /**
-     * Brief narrative description of a process or output, normally available for display to a human. 
+     * Brief narrative description of a process or output, 
+     * normally available for display to a human. 
      * 
      * @param value
      *     allowed object is
@@ -150,32 +165,69 @@ public class DescriptionType {
     }
 
     /**
-     * Optional unordered list of additional metadata about this process/input/output. A list of optional and/or required metadata elements for this process/input/output could be specified in an Application Profile for this service. Gets the value of the metadata property.
+     * Optional unordered list of additional metadata about this process/input/output. 
+     * A list of optional and/or required metadata elements for this process/input/output could be specified in an Application Profile for this service. 
+     * Gets the value of the metadata property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metadata property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetadata().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MetadataType }
+     * @return Objects of the following type(s) are allowed in the list {@link MetadataType }
      * 
      * 
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<MetadataType>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (identifier != null) {
+            sb.append("Identifier:\n").append(identifier).append('\n');
+        }
+        if (title != null) {
+            sb.append("Title:\n").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("Abstract:\n").append(_abstract).append('\n');
+        }
+        if (metadata != null) {
+            sb.append("metadata:\n");
+            for (MetadataType out : metadata) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DescriptionType) {
+            final DescriptionType that = (DescriptionType) object;
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.metadata, that.metadata);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.identifier);
+        hash = 29 * hash + Objects.hashCode(this.title);
+        hash = 29 * hash + Objects.hashCode(this._abstract);
+        hash = 29 * hash + Objects.hashCode(this.metadata);
+        return hash;
     }
 
 }

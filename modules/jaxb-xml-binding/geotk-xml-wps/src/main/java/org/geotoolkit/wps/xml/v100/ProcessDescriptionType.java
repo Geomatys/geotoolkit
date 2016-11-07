@@ -18,11 +18,15 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessDescription;
 
 
 /**
@@ -75,9 +79,7 @@ import javax.xml.bind.annotation.XmlType;
     "dataInputs",
     "processOutputs"
 })
-public class ProcessDescriptionType
-    extends ProcessBriefType
-{
+public class ProcessDescriptionType extends ProcessBriefType implements ProcessDescription {
 
     @XmlElement(name = "DataInputs", namespace = "")
     protected ProcessDescriptionType.DataInputs dataInputs;
@@ -88,6 +90,25 @@ public class ProcessDescriptionType
     @XmlAttribute
     protected Boolean statusSupported;
 
+
+    public ProcessDescriptionType() {
+        
+    }
+    
+    public ProcessDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            String processVersion,final boolean supportStorage, final boolean statusSupported, List<InputDescriptionType> inputs,
+             List<OutputDescriptionType> outputs) {
+        super(identifier, title, _abstract, processVersion);
+        this.statusSupported = statusSupported;
+        this.storeSupported = supportStorage;
+        if (inputs != null && !inputs.isEmpty()) {
+            this.dataInputs = new DataInputs(inputs);
+        }
+        if (outputs != null && !outputs.isEmpty()) {
+            this.processOutputs = new ProcessOutputs(outputs);
+        }
+    }
+    
     /**
      * Gets the value of the dataInputs property.
      * 
@@ -192,6 +213,52 @@ public class ProcessDescriptionType
         this.statusSupported = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (statusSupported != null) {
+            sb.append("Status supported:").append(statusSupported).append('\n');
+        }
+        if (storeSupported != null) {
+            sb.append("Store supported:").append(storeSupported).append('\n');
+        }
+        if (dataInputs != null) {
+            sb.append("Data inputs:").append(dataInputs).append('\n');
+        }
+        if (processOutputs != null) {
+            sb.append("Process outputs:").append(processOutputs).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ProcessDescriptionType && super.equals(object)) {
+            final ProcessDescriptionType that = (ProcessDescriptionType) object;
+            return Objects.equals(this.dataInputs, that.dataInputs) &&
+                   Objects.equals(this.processOutputs, that.processOutputs) &&
+                   Objects.equals(this.storeSupported, that.storeSupported) &&
+                   Objects.equals(this.statusSupported, that.statusSupported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.dataInputs);
+        hash = 23 * hash + Objects.hashCode(this.processOutputs);
+        hash = 23 * hash + Objects.hashCode(this.storeSupported);
+        hash = 23 * hash + Objects.hashCode(this.statusSupported);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -221,33 +288,63 @@ public class ProcessDescriptionType
         @XmlElement(name = "Input", namespace = "", required = true)
         protected List<InputDescriptionType> input;
 
+        public DataInputs() {
+            
+        }
+        
+        public DataInputs(List<InputDescriptionType> input) {
+            this.input = input;
+        }
+        
         /**
          * Gets the value of the input property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the input property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getInput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
+         * @return Objects of the following type(s) are allowed in the list
          * {@link InputDescriptionType }
          * 
          * 
          */
         public List<InputDescriptionType> getInput() {
             if (input == null) {
-                input = new ArrayList<InputDescriptionType>();
+                input = new ArrayList<>();
             }
             return this.input;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[DataInputs]\n");
+            if (input != null) {
+                sb.append("Inputs:\n");
+                for (InputDescriptionType out : input) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof DataInputs) {
+                final DataInputs that = (DataInputs) object;
+                return Objects.equals(this.input, that.input);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 89 * hash + Objects.hashCode(this.input);
+            return hash;
         }
 
     }
@@ -281,33 +378,63 @@ public class ProcessDescriptionType
         @XmlElement(name = "Output", namespace = "", required = true)
         protected List<OutputDescriptionType> output;
 
+        public ProcessOutputs() {
+            
+        }
+        
+        public ProcessOutputs(List<OutputDescriptionType> output) {
+            this.output = output;
+        }
+        
         /**
          * Gets the value of the output property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the output property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getOutput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
+         * @return Objects of the following type(s) are allowed in the list
          * {@link OutputDescriptionType }
          * 
          * 
          */
         public List<OutputDescriptionType> getOutput() {
             if (output == null) {
-                output = new ArrayList<OutputDescriptionType>();
+                output = new ArrayList<>();
             }
             return this.output;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");
+            if (output != null) {
+                sb.append("Outputs:\n");
+                for (OutputDescriptionType out : output) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ProcessOutputs) {
+                final ProcessOutputs that = (ProcessOutputs) object;
+                return Objects.equals(this.output, that.output);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 89 * hash + Objects.hashCode(this.output);
+            return hash;
         }
 
     }

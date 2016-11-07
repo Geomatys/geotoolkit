@@ -51,7 +51,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
-import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -69,10 +68,8 @@ import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.Reference;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
@@ -101,6 +98,8 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.ows.xml.DomainMetadata;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 import org.w3c.dom.Node;
 
 /**
@@ -118,6 +117,16 @@ public class WPSConvertersUtils {
     public static final String WMS_LAYER_NAME       = "WMS_LAYER_NAME";   //WMS instance url
     public static final int    FRACTION_DIGITS      = 12;                 // Number of fractions digits to write for floating point numbers
 
+    /**
+     * GML VERSION.
+     */
+    private static final Map<String, String> GML_VERSION = new HashMap<>();
+    
+    static {
+        GML_VERSION.put("1.0.0", "3.1.1");
+        GML_VERSION.put("2.0.0", "3.2.1");
+    }
+    
     /**
      * Fix the CRS problem for a Feature or a FeatureCollection
      *
@@ -264,12 +273,13 @@ public class WPSConvertersUtils {
     /**
      * Get an convert data from a reference for an expected binding
      *
+     * @param wpsVersion
      * @param expectedClass
      * @param complex
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
+    public static Object convertFromComplex(final String wpsVersion, final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
 
         final String mime = complex.getMimeType();
         final String encoding = complex.getEncoding();
@@ -277,10 +287,11 @@ public class WPSConvertersUtils {
 
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
 
         ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
 
@@ -301,6 +312,7 @@ public class WPSConvertersUtils {
     /**
      * Get an convert an object int a {@link ComplexDataType complex}.
      *
+     * @param wpsVersion
      * @param object
      * @param mime
      * @param encoding
@@ -309,19 +321,21 @@ public class WPSConvertersUtils {
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
+    public static ComplexDataType convertToComplex(final String wpsVersion, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
         parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
 
         ensureParametersDefined(object.getClass(), WPSIO.IOType.OUTPUT, parameters);
 
@@ -334,26 +348,25 @@ public class WPSConvertersUtils {
     }
 
 
-    public static ComplexDataType convertToWMSComplex(Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
+    public static ComplexDataType convertToWMSComplex(String wpsVersion, Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
             throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mimeType, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
         parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mimeType);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, wpsVersion);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(wpsVersion));
 
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setEncoding(encoding);
-        complex.setMimeType(mimeType);
-        complex.setSchema(schema);
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding, mimeType, schema);
 
-        final Map<String,Object> jsonMap = new HashMap<String, Object>();
+        final Map<String,Object> jsonMap = new HashMap<>();
         jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
         jsonMap.put("type", "WMS");
         jsonMap.put("version", "1.3.0");
@@ -436,7 +449,7 @@ public class WPSConvertersUtils {
      * @return an object
      * @throws UnconvertibleObjectException if something went wrong
      */
-    public static Object convertFromReference(final ReferenceType reference, final Class expectedClass) throws UnconvertibleObjectException {
+    public static Object convertFromReference(final Reference reference, final Class expectedClass) throws UnconvertibleObjectException {
 
         final String mime = reference.getMimeType();
         final String encoding = reference.getEncoding();
@@ -462,28 +475,31 @@ public class WPSConvertersUtils {
     /**
      * Get an convert an object int a {@link ReferenceType reference}.
      *
+     * @param version WPS version
      * @param object
      * @param mime
      * @param encoding
      * @param schema
      * @param params
      * @param iotype the io type requested (INPUT/OUTPUT)
-     * @return an {@link InputReferenceType input reference} if ioType is set to INPUT, or an {@link OutputReferenceType output reference} otherwise.
+     * @return an {@link Reference input/output reference}.
      * @throws UnconvertibleObjectException
      */
-    public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
+    public static Reference convertToReference(final String version, final Object object, final String mime, final String encoding, final String schema,
             final Map<String, Object> params, final WPSIO.IOType iotype) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
         parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.WPSVERSION, version);
+        parameters.put(WPSObjectConverter.GMLVERSION, GML_VERSION.get(version));
         parameters.put(WPSObjectConverter.IOTYPE, iotype.toString());
 
         ensureParametersDefined(object.getClass(), iotype, params);
@@ -493,44 +509,45 @@ public class WPSConvertersUtils {
             throw new UnconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        return (ReferenceType) converter.convert(object, parameters);
+        return (Reference) converter.convert(object, parameters);
     }
 
     /**
      * Create the DomaineMetaData object for a literal
      *
+     * @param version WPS version
      * @param clazz
      * @return
      * @throws UnconvertibleObjectException
      */
-    public static DomainMetadataType createDataType(final Class clazz) {
+    public static DomainMetadata createDataType(final String version, final Class clazz) {
 
 
         if (clazz.equals(Double.class)) {
-            return new DomainMetadataType("Double", "http://www.w3.org/TR/xmlschema-2/#double");
+            return WPSXmlFactory.buildDomainMetadata(version, "Double", "http://www.w3.org/TR/xmlschema-2/#double");
 
         } else if (clazz.equals(Float.class)) {
-            return new DomainMetadataType("Float", "http://www.w3.org/TR/xmlschema-2/#float");
+            return WPSXmlFactory.buildDomainMetadata(version, "Float", "http://www.w3.org/TR/xmlschema-2/#float");
 
         } else if (clazz.equals(Boolean.class)) {
-            return new DomainMetadataType("Boolean", "http://www.w3.org/TR/xmlschema-2/#boolean");
+            return WPSXmlFactory.buildDomainMetadata(version, "Boolean", "http://www.w3.org/TR/xmlschema-2/#boolean");
 
         } else if (clazz.equals(Integer.class)) {
-            return new DomainMetadataType("Integer", "http://www.w3.org/TR/xmlschema-2/#integer");
+            return WPSXmlFactory.buildDomainMetadata(version, "Integer", "http://www.w3.org/TR/xmlschema-2/#integer");
 
         } else if (clazz.equals(Long.class)) {
-            return new DomainMetadataType("Long", "http://www.w3.org/TR/xmlschema-2/#long");
+            return WPSXmlFactory.buildDomainMetadata(version, "Long", "http://www.w3.org/TR/xmlschema-2/#long");
 
         } else if (clazz.equals(String.class) || WPSIO.isSupportedInputClass(clazz) || WPSIO.isSupportedOutputClass(clazz)) {
-            return new DomainMetadataType("String", "http://www.w3.org/TR/xmlschema-2/#string");
+            return WPSXmlFactory.buildDomainMetadata(version, "String", "http://www.w3.org/TR/xmlschema-2/#string");
 
         } else {
            return null;
         }
     }
 
-    public static String getDataTypeString(final Class clazz) {
-        String ref = createDataType(clazz).getReference();;
+    public static String getDataTypeString(final String version, final Class clazz) {
+        String ref = createDataType(version, clazz).getReference();
 
         if (ref == null) {
             ref = "http://www.w3.org/TR/xmlschema-2/#string";
@@ -685,12 +702,13 @@ public class WPSConvertersUtils {
      * Convert a feature into a ParameterValueGroup.
      *
      * This function will try to convert objects if their types doesn't match between feature and parameter.
-     *
+     * Then fill a ParameterValueGroup which contains data of the feature in parameter.
+     * 
+     * @param version WPS version
      * @param toConvert The feature to transform.
      * @param toFill The descriptor of the ParameterValueGroup which will be created.
-     * @return A ParameterValueGroup which contains data of the feature in parameter.
      */
-    public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws UnconvertibleObjectException {
+    public static void featureToParameterGroup(String version, ComplexAttribute toConvert, ParameterValueGroup toFill) throws UnconvertibleObjectException {
         ArgumentChecks.ensureNonNull("feature", toConvert);
         ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
 
@@ -707,7 +725,7 @@ public class WPSConvertersUtils {
                     Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
                 } else {
                     if (prop.getValue().getClass().isAssignableFrom(URI.class)) {
-                        ReferenceType type = UriToReference((URI) prop.getValue(), WPSIO.IOType.INPUT, null);
+                        Reference type = UriToReference(version, (URI) prop.getValue(), WPSIO.IOType.INPUT, null);
                         WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
                         Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
                     }
@@ -718,7 +736,7 @@ public class WPSConvertersUtils {
                 for (Property complex : propCollection) {
                     if (complex instanceof ComplexAttribute) {
                         ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
-                        featureToParameterGroup((ComplexAttribute) complex, childGroup);
+                        featureToParameterGroup(version, (ComplexAttribute) complex, childGroup);
                         filledGroups++;
                     }
                 }
@@ -734,22 +752,21 @@ public class WPSConvertersUtils {
 
     /**
      * Convert an URI into a wps reference.
+     * 
+     * @param version WPS version
      * @param toConvert The source URI.
      * @param type The type of reference (input or output), can be null.
      * @param mimeType Mime type of the data pointed by the URI, can be null.
+     * 
      * @return A reference equivalent to the input URI.
      */
-    public static ReferenceType UriToReference(URI toConvert, WPSIO.IOType type, String mimeType) {
-        ReferenceType ref;
+    public static Reference UriToReference(String version, URI toConvert, WPSIO.IOType type, String mimeType) {
+        Reference ref;
         if(WPSIO.IOType.INPUT.equals(type)) {
-            ref = new InputReferenceType();
+            ref = WPSXmlFactory.buildInputReference(version, "UTF-8", mimeType, toConvert.toString());
         } else {
-            ref = new OutputReferenceType();
+            ref = WPSXmlFactory.buildOutputReference(version, "UTF-8", mimeType, toConvert.toString());
         }
-        ref.setHref(toConvert.toString());
-        ref.setMimeType(mimeType);
-        ref.setEncoding("UTF-8");
-
         return ref;
     }
 

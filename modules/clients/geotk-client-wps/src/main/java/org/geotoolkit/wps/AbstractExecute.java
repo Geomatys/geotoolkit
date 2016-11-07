@@ -405,7 +405,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         parameters.put(WPSConvertersUtils.OUT_STORAGE_URL, storageURL);
         parameters.put(WPSConvertersUtils.OUT_STORAGE_DIR, storageDirectory);
         //Try to convert the complex input.
-        final ComplexDataType complex = WPSConvertersUtils.convertToComplex(inputData, mime, echoding, schema, parameters);
+        final ComplexDataType complex = (ComplexDataType) WPSConvertersUtils.convertToComplex("1.0.0", inputData, mime, echoding, schema, parameters);
 
         datatype.setComplexData(complex);
         inputType.setData(datatype);

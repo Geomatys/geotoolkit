@@ -23,8 +23,12 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 /**
  * Convert an RenderedImage to ComplexDataType using Base64 encoding.
@@ -60,7 +64,6 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
             throw new UnconvertibleObjectException("The requested output data is not an instance of RenderedImage.");
         }
 
-        final ComplexDataType complex = new ComplexDataType();
         final String mime = (String) params.get(MIME);
         final String encoding = (String) params.get(ENCODING);
 
@@ -71,9 +74,13 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
         if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
             throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
         }
-
-        complex.setMimeType((String) params.get(MIME));
-        complex.setEncoding(encoding);
+        
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        } 
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, encoding,mime, null);
 
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
         try {

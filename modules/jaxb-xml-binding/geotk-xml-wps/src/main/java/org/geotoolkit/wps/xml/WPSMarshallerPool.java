@@ -35,8 +35,10 @@ public final class WPSMarshallerPool {
             instance = new MarshallerPoolProxy(JAXBContext.newInstance(
                       "org.geotoolkit.wps.xml.v100.ext:"
                     + "org.geotoolkit.wps.xml.v100:"
+                    + "org.geotoolkit.wps.xml.v200:"
                     + "org.geotoolkit.gml.xml.v311:"
                     + "org.geotoolkit.ows.xml.v110:"
+                    + "org.geotoolkit.ows.xml.v200:"
                     + "org.apache.sis.internal.jaxb.geometry:"
                     + "org.geotoolkit.mathml.xml"), null);
         } catch (JAXBException ex) {

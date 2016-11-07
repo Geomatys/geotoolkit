@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.Reference;
 
 
 /**
@@ -46,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputReferenceType")
-public class OutputReferenceType implements ReferenceType {
+public class OutputReferenceType implements Reference {
 
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -60,6 +62,16 @@ public class OutputReferenceType implements ReferenceType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
 
+    public OutputReferenceType() {
+        
+    }
+    
+    public OutputReferenceType(String href, String mimeType, String encoding) {
+        this.href = href;
+        this.mimeType = mimeType;
+        this.encoding = encoding;
+    }
+    
     /**
      * Gets the value of the href property.
      * 
@@ -68,6 +80,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -80,6 +93,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setHref(final String value) {
         this.href = value;
     }
@@ -92,6 +106,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -104,6 +119,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setMimeType(final String value) {
         this.mimeType = value;
     }
@@ -116,6 +132,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -128,6 +145,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setEncoding(final String value) {
         this.encoding = value;
     }
@@ -140,6 +158,7 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSchema() {
         return schema;
     }
@@ -152,8 +171,60 @@ public class OutputReferenceType implements ReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
     }
 
+    @Override
+    public Object getBody() {
+        return null; // no body for output reference
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (href != null) {
+            sb.append("href:").append(href).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputReferenceType) {
+            final OutputReferenceType that = (OutputReferenceType) object;
+            return Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.href, that.href) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.mimeType, that.mimeType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.href);
+        hash = 29 * hash + Objects.hashCode(this.mimeType);
+        hash = 29 * hash + Objects.hashCode(this.encoding);
+        hash = 29 * hash + Objects.hashCode(this.schema);
+        return hash;
+    }
 }

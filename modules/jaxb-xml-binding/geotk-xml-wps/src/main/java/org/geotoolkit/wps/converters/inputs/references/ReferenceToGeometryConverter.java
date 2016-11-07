@@ -33,7 +33,6 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
@@ -43,6 +42,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.wps.xml.Reference;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -77,7 +77,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Geometry convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -55,33 +56,61 @@ public class OutputDefinitionsType {
     @XmlElement(name = "Output", required = true)
     protected List<DocumentOutputDefinitionType> output;
 
+    public OutputDefinitionsType() {
+        
+    }
+    
+    public OutputDefinitionsType(List<DocumentOutputDefinitionType> output) {
+        this.output = output;
+    }
     /**
      * Gets the value of the output property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the output property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOutput().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link DocumentOutputDefinitionType }
      * 
      * 
      */
     public List<DocumentOutputDefinitionType> getOutput() {
         if (output == null) {
-            output = new ArrayList<DocumentOutputDefinitionType>();
+            output = new ArrayList<>();
         }
         return this.output;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[OutputDefinitionsType]\n");
+        if (output != null) {
+            sb.append("Outputs:\n");
+            for (DocumentOutputDefinitionType out : output) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDefinitionsType) {
+            final OutputDefinitionsType that = (OutputDefinitionsType) object;
+            return Objects.equals(this.output, that.output);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.output);
+        return hash;
+    }
 }

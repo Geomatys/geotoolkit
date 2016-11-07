@@ -74,7 +74,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
      * Build a new Capabilities document.
      */
     public CapabilitiesType(final String version, final String updateSequence) {
-        super(null, null, null, version, updateSequence);
+        super(null, null, null, version, updateSequence, null);
     }
     
     /**
@@ -83,7 +83,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType contents,
             final ServiceMetadataType serviceMetadata) {
-        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence, null);
         this.contents = contents;
         this.serviceMetadata = serviceMetadata;
     }

@@ -24,8 +24,8 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.wps.xml.Reference;
 
 
 /**
@@ -57,7 +57,7 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
      * @return FeatureType.
      */
     @Override
-    public FeatureType convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public FeatureType convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

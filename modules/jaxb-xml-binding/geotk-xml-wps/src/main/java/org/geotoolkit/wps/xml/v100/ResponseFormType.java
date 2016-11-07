@@ -57,6 +57,18 @@ public class ResponseFormType {
     @XmlElement(name = "RawDataOutput")
     protected OutputDefinitionType rawDataOutput;
 
+    public ResponseFormType() {
+        
+    }
+    
+    public ResponseFormType(ResponseDocumentType responseDocument) {
+        this.responseDocument = responseDocument;
+    }
+    
+    public ResponseFormType(OutputDefinitionType rawDataOutput) {
+        this.rawDataOutput = rawDataOutput;
+    }
+    
     /**
      * Gets the value of the responseDocument property.
      * 

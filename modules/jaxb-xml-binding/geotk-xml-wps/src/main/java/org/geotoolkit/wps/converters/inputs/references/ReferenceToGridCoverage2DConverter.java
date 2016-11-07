@@ -32,7 +32,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a GridCoverage2D.
@@ -64,7 +64,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
      * @return GridCoverage2D.
      */
     @Override
-    public GridCoverage2D convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public GridCoverage2D convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 

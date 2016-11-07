@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.DataDescription;
 
 
 /**
@@ -61,13 +64,22 @@ import javax.xml.bind.annotation.XmlType;
     "_default",
     "supported"
 })
-public class SupportedCRSsType {
+public class SupportedCRSsType implements DataDescription {
 
     @XmlElement(name = "Default", namespace = "", required = true)
     protected SupportedCRSsType.Default _default;
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected CRSsType supported;
 
+    public SupportedCRSsType() {
+        
+    }
+    
+    public SupportedCRSsType(String _default, final List<String> supported) {
+        this._default = new Default(_default);
+        this.supported  = new CRSsType(supported);
+    }
+    
     /**
      * Gets the value of the default property.
      * 
@@ -116,6 +128,42 @@ public class SupportedCRSsType {
         this.supported = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (_default != null) {
+            sb.append("_default:").append(_default).append('\n');
+        }
+        if (supported != null) {
+            sb.append("supported:").append(supported).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SupportedCRSsType) {
+            final SupportedCRSsType that = (SupportedCRSsType) object;
+            return Objects.equals(this._default, that._default) &&
+                   Objects.equals(this.supported, that.supported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this._default);
+        hash = 83 * hash + Objects.hashCode(this.supported);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -146,6 +194,14 @@ public class SupportedCRSsType {
         @XmlSchemaType(name = "anyURI")
         protected String crs;
 
+        public Default() {
+            
+        }
+        
+        public Default(String crs) {
+            this.crs = crs;
+        }
+        
         /**
          * Gets the value of the crs property.
          * 
@@ -168,6 +224,38 @@ public class SupportedCRSsType {
          */
         public void setCRS(final String value) {
             this.crs = value;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (crs != null) {
+                sb.append("crs:").append(crs).append('\n');
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Default) {
+                final Default that = (Default) object;
+                return Objects.equals(this.crs, that.crs);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 17 * hash + Objects.hashCode(this.crs);
+            return hash;
         }
 
     }

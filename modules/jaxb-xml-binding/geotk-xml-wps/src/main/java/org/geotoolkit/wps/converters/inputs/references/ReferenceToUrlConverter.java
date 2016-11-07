@@ -17,11 +17,11 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  * Implementation of ObjectConverter to convert a reference into an URL.
@@ -48,7 +48,7 @@ public class ReferenceToUrlConverter extends AbstractReferenceInputConverter<URL
     }
 
     @Override
-    public URL convert(ReferenceType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public URL convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
         try {
             return new URL(source.getHref());
         } catch (IOException ex) {

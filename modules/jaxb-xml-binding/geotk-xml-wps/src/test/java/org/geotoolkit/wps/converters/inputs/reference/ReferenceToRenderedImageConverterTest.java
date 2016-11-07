@@ -29,8 +29,8 @@ import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.converters.inputs.references.AbstractReferenceInputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -43,15 +43,15 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
     
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
-        final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
+        final WPSObjectConverter<Reference, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, RenderedImage.class);
         
         final URL image = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image.tiff");
         assertNotNull(image);
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         
-        final ReferenceType reference = new InputReferenceType();
+        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(image.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding(null);
@@ -65,16 +65,16 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
     
     @Test
     public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
-        final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
+        final WPSObjectConverter<Reference, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(Reference.class, RenderedImage.class);
         
         final URL imageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image_tiff_base64");
         assertNotNull(imageBase64);
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
         parameters.put(AbstractReferenceInputConverter.ENCODING, "base64");
         
-        final ReferenceType reference = new InputReferenceType();
+        final Reference reference = WPSXmlFactory.buildInOutReference("1.0.0", WPSIO.IOType.INPUT);
         reference.setHref(imageBase64.toString());
         reference.setMimeType("image/tiff");
         reference.setEncoding("base64");

@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.ValueReference;
 
 
 /**
@@ -46,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValuesReferenceType")
-public class ValuesReferenceType {
+public class ValuesReferenceType implements ValueReference {
 
     @XmlAttribute(namespace = "http://www.opengis.net/ows/1.1")
     @XmlSchemaType(name = "anyURI")
@@ -63,6 +65,7 @@ public class ValuesReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public String getReference() {
         return reference;
     }
@@ -75,6 +78,7 @@ public class ValuesReferenceType {
      *     {@link String }
      *     
      */
+    @Override
     public void setReference(final String value) {
         this.reference = value;
     }
@@ -103,4 +107,50 @@ public class ValuesReferenceType {
         this.valuesForm = value;
     }
 
+    @Override
+    public String getValue() {
+        return valuesForm;
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.valuesForm = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (reference != null) {
+            sb.append("reference:").append(reference).append('\n');
+        }
+        if (valuesForm != null) {
+            sb.append("valuesForm:").append(valuesForm).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ValuesReferenceType) {
+            final ValuesReferenceType that = (ValuesReferenceType) object;
+            return Objects.equals(this.reference, that.reference) &&
+                   Objects.equals(this.valuesForm, that.valuesForm);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(this.reference);
+        hash = 79 * hash + Objects.hashCode(this.valuesForm);
+        return hash;
+    }
 }

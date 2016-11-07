@@ -35,15 +35,14 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
- * Implementation of ObjectConverter to convert a {@link GridCoverage2D coverage} into a {@link OutputReferenceType reference}.
+ * Implementation of ObjectConverter to convert a {@link GridCoverage2D coverage} into a {@link Reference reference}.
  *
  * @author Quentin Boileau (Geomatys).
  */
@@ -70,7 +69,7 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final GridCoverage2D source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(final GridCoverage2D source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");
@@ -81,13 +80,12 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference = null ;
-
-        if (ioType.equals(WPSIO.IOType.INPUT)) {
-            reference = new InputReferenceType();
-        } else {
-            reference = new OutputReferenceType();
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
         }
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
 
         final String encodingStr = (String) params.get(ENCODING);
         final String mimeStr = (String) params.get(MIME) != null ? (String) params.get(MIME) : WPSMimeType.IMG_GEOTIFF.val();

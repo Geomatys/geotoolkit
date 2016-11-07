@@ -223,7 +223,35 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     @Override
     public AbstractCapabilitiesCore applySections(Sections sections) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sections == null) {
+            return this;
+        }
+        ServiceIdentification si = null;
+        ServiceProvider       sp = null;
+        OperationsMetadata    om = null;
+        ProcessOfferings      po = null;
+        WSDL                  ws = null;
+        
+        //we enter the information for service identification.
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+
+        //we enter the information for service provider.
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        //we enter the operation Metadata
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+            om = getOperationsMetadata();
+        }
+        if (sections.containsSection("ProccessOfferings") || sections.containsSection("All")) {
+            po = getProcessOfferings();
+        }
+        if (sections.containsSection("WSDL") || sections.containsSection("All")) {
+            ws = getWSDL();
+        }
+        return new WPSCapabilitiesType(si, sp, om, "1.0.0", getUpdateSequence(), po, getLanguages(), ws);
     }
 
 }
