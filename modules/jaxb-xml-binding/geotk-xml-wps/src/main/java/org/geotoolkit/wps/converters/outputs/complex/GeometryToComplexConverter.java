@@ -29,8 +29,13 @@ import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.SCHEMA;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.WPSVERSION;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -72,11 +77,13 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             throw new UnconvertibleObjectException("The requested output data is not an instance of Geometry JTS.");
         }
 
-        final ComplexDataType complex = new ComplexDataType();
-
-        complex.setMimeType((String) params.get(MIME));
-        complex.setSchema((String) params.get(SCHEMA));
-        complex.setEncoding((String) params.get(ENCODING));
+         String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
+        } 
+        final ComplexDataType complex = WPSXmlFactory.buildComplexDataType(wpsVersion, (String) params.get(ENCODING),(String) params.get(MIME), (String) params.get(SCHEMA));
+        
         String gmlVersion = (String) params.get(GMLVERSION);
         if (gmlVersion == null) {
             gmlVersion = "3.1.1";

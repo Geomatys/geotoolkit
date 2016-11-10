@@ -31,8 +31,8 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.wps.xml.Reference;
 import org.opengis.util.FactoryException;
 
 /**
@@ -61,7 +61,7 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Feature convert(ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public Feature convert(Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

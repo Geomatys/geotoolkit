@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -72,7 +73,7 @@ import javax.xml.bind.annotation.XmlType;
     "processOutputs"
 })
 @XmlRootElement(name = "ExecuteResponse")
-public class ExecuteResponse extends ResponseBaseType {
+public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.wps.xml.ExecuteResponse {
 
     @XmlElement(name = "Process", required = true)
     protected ProcessBriefType process;
@@ -92,6 +93,19 @@ public class ExecuteResponse extends ResponseBaseType {
     protected String statusLocation;
 
     public ExecuteResponse() {}
+    
+    public ExecuteResponse(final String version, final String service, final String lang, final String serviceInstance, final ProcessBriefType process,
+            DataInputsType dataInputs, OutputDefinitionsType outputDefinitions, List<OutputDataType> output, StatusType status) {
+        super(service, version, lang);
+        this.serviceInstance = serviceInstance;
+        this.process = process;
+        this.dataInputs = dataInputs;
+        this.outputDefinitions = outputDefinitions;
+        if (output != null) {
+            this.processOutputs = new ProcessOutputs(output);
+        }
+        this.status = status;
+    }
 
     public ExecuteResponse(final ExecuteResponse other) {
         this.setService(other.getService());
@@ -270,11 +284,74 @@ public class ExecuteResponse extends ResponseBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public void setStatusLocation(final String value) {
         this.statusLocation = value;
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (serviceInstance != null) {
+            sb.append("Service instance:").append(serviceInstance).append('\n');
+        }
+        if (statusLocation != null) {
+            sb.append("Status location:").append(statusLocation).append('\n');
+        }
+        if (dataInputs != null) {
+            sb.append("Data inputs:\n").append(dataInputs).append('\n');
+        }
+        if (outputDefinitions != null) {
+            sb.append("Output definitions:\n").append(outputDefinitions).append('\n');
+        }
+        if (process != null) {
+            sb.append("Process:\n").append(process).append('\n');
+        }
+        if (processOutputs != null) {
+            sb.append("Process outputs:\n").append(processOutputs).append('\n');
+        }
+        if (status != null) {
+            sb.append("Status:\n").append(status).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExecuteResponse && super.equals(object)) {
+            final ExecuteResponse that = (ExecuteResponse) object;
+            return Objects.equals(this.dataInputs, that.dataInputs) &&
+                   Objects.equals(this.outputDefinitions, that.outputDefinitions) &&
+                   Objects.equals(this.process, that.process) &&
+                   Objects.equals(this.processOutputs, that.processOutputs) &&
+                   Objects.equals(this.serviceInstance, that.serviceInstance) &&
+                   Objects.equals(this.statusLocation, that.statusLocation) &&
+                   Objects.equals(this.status, that.status);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.process);
+        hash = 89 * hash + Objects.hashCode(this.status);
+        hash = 89 * hash + Objects.hashCode(this.dataInputs);
+        hash = 89 * hash + Objects.hashCode(this.outputDefinitions);
+        hash = 89 * hash + Objects.hashCode(this.processOutputs);
+        hash = 89 * hash + Objects.hashCode(this.serviceInstance);
+        hash = 89 * hash + Objects.hashCode(this.statusLocation);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -303,35 +380,63 @@ public class ExecuteResponse extends ResponseBaseType {
         @XmlElement(name = "Output", required = true)
         protected List<OutputDataType> output;
 
+        public ProcessOutputs() {
+            
+        }
+        public ProcessOutputs(List<OutputDataType> output) {
+            this.output = output;
+        }
+
         /**
          * Gets the value of the output property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the output property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getOutput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link OutputDataType }
          * 
          * 
+         * @return 
          */
         public List<OutputDataType> getOutput() {
             if (output == null) {
-                output = new ArrayList<OutputDataType>();
+                output = new ArrayList<>();
             }
             return this.output;
         }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");
+            if (output != null) {
+                sb.append("Outputs:\n");
+                for (OutputDataType out : output) {
+                    sb.append(out).append('\n');
+                }
+            }
+            return sb.toString();
+        }
 
+        /**
+         * Verify that this entry is identical to the specified object.
+         *
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ProcessOutputs) {
+                final ProcessOutputs that = (ProcessOutputs) object;
+                return Objects.equals(this.output, that.output);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 83 * hash + Objects.hashCode(this.output);
+            return hash;
+        }
     }
-
 }

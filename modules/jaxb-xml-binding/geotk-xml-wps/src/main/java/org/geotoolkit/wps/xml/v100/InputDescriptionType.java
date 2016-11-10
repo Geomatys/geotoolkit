@@ -16,13 +16,17 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
-import java.math.BigInteger;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.InputDescription;
 
 
 /**
@@ -57,9 +61,7 @@ import javax.xml.bind.annotation.XmlType;
     "literalData",
     "boundingBoxData"
 })
-public class InputDescriptionType
-    extends DescriptionType
-{
+public class InputDescriptionType extends DescriptionType implements InputDescription {
 
     @XmlElement(name = "ComplexData", namespace = "")
     protected SupportedComplexDataInputType complexData;
@@ -69,11 +71,31 @@ public class InputDescriptionType
     protected SupportedCRSsType boundingBoxData;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger minOccurs;
+    protected Integer minOccurs;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger maxOccurs;
+    protected Integer maxOccurs;
 
+    public InputDescriptionType() {
+        
+    }
+    
+    public InputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            Integer minOccur, Integer maxOccur, DataDescription dataDescription) {
+        super(identifier, title, _abstract);
+        this.minOccurs = minOccur;
+        this.maxOccurs = maxOccur;
+        if (dataDescription instanceof SupportedComplexDataInputType) {
+            this.complexData = (SupportedComplexDataInputType) dataDescription;
+        } else if (dataDescription instanceof LiteralInputType) {
+            this.literalData = (LiteralInputType) dataDescription;
+        } else if (dataDescription instanceof SupportedCRSsType) {
+            this.boundingBoxData = (SupportedCRSsType) dataDescription;
+        } else if (dataDescription != null) {
+            throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
+        }
+    }
+    
     /**
      * Gets the value of the complexData property.
      * 
@@ -151,10 +173,10 @@ public class InputDescriptionType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMinOccurs() {
+    public Integer getMinOccurs() {
         return minOccurs;
     }
 
@@ -163,10 +185,10 @@ public class InputDescriptionType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMinOccurs(final BigInteger value) {
+    public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
     }
 
@@ -175,10 +197,10 @@ public class InputDescriptionType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMaxOccurs() {
+    public Integer getMaxOccurs() {
         return maxOccurs;
     }
 
@@ -187,11 +209,62 @@ public class InputDescriptionType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMaxOccurs(final BigInteger value) {
+    public void setMaxOccurs(final Integer value) {
         this.maxOccurs = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (boundingBoxData != null) {
+            sb.append("BoundingBox data:").append(boundingBoxData).append('\n');
+        }
+        if (complexData != null) {
+            sb.append("Complex data:").append(complexData).append('\n');
+        }
+        if (literalData != null) {
+            sb.append("Literal data:").append(literalData).append('\n');
+        }
+        if (maxOccurs != null) {
+            sb.append("Max occurs:").append(maxOccurs).append('\n');
+        }
+        if (minOccurs != null) {
+            sb.append("Min occurs:").append(minOccurs).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InputDescriptionType && super.equals(object)) {
+            final InputDescriptionType that = (InputDescriptionType) object;
+            return Objects.equals(this.boundingBoxData, that.boundingBoxData) &&
+                   Objects.equals(this.complexData, that.complexData) &&
+                   Objects.equals(this.literalData, that.literalData) &&
+                   Objects.equals(this.minOccurs, that.minOccurs) &&
+                   Objects.equals(this.maxOccurs, that.maxOccurs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.complexData);
+        hash = 47 * hash + Objects.hashCode(this.literalData);
+        hash = 47 * hash + Objects.hashCode(this.boundingBoxData);
+        hash = 47 * hash + Objects.hashCode(this.minOccurs);
+        hash = 47 * hash + Objects.hashCode(this.maxOccurs);
+        return hash;
+    }
 }

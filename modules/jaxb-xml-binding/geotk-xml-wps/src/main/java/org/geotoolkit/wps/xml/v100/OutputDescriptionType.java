@@ -16,10 +16,15 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataDescription;
+import org.geotoolkit.wps.xml.OutputDescription;
 
 
 /**
@@ -50,9 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "literalOutput",
     "boundingBoxOutput"
 })
-public class OutputDescriptionType
-    extends DescriptionType
-{
+public class OutputDescriptionType extends DescriptionType implements OutputDescription {
 
     @XmlElement(name = "ComplexOutput", namespace = "")
     protected SupportedComplexDataInputType complexOutput;
@@ -61,6 +64,24 @@ public class OutputDescriptionType
     @XmlElement(name = "BoundingBoxOutput", namespace = "")
     protected SupportedCRSsType boundingBoxOutput;
 
+    public OutputDescriptionType() {
+        
+    }
+    
+    public OutputDescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, 
+            DataDescription dataDescription) {
+        super(identifier, title, _abstract);
+        if (dataDescription instanceof SupportedComplexDataInputType) {
+            this.complexOutput = (SupportedComplexDataInputType) dataDescription;
+        } else if (dataDescription instanceof LiteralOutputType) {
+            this.literalOutput = (LiteralOutputType) dataDescription;
+        } else if (dataDescription instanceof SupportedCRSsType) {
+            this.boundingBoxOutput = (SupportedCRSsType) dataDescription;
+        } else if (dataDescription != null) {
+            throw new IllegalArgumentException("unecpected data description type:" + dataDescription.getClass().getName());
+        }
+    }
+    
     /**
      * Gets the value of the complexOutput property.
      * 
@@ -132,5 +153,46 @@ public class OutputDescriptionType
     public void setBoundingBoxOutput(final SupportedCRSsType value) {
         this.boundingBoxOutput = value;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (boundingBoxOutput != null) {
+            sb.append("boundingBoxOutput:").append(boundingBoxOutput).append('\n');
+        }
+        if (complexOutput != null) {
+            sb.append("complexOutput:").append(complexOutput).append('\n');
+        }
+        if (literalOutput != null) {
+            sb.append("literalOutput:\n").append(literalOutput).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDescriptionType && super.equals(object)) {
+            final OutputDescriptionType that = (OutputDescriptionType) object;
+            return Objects.equals(this.boundingBoxOutput, that.boundingBoxOutput) &&
+                   Objects.equals(this.complexOutput, that.complexOutput) &&
+                   Objects.equals(this.literalOutput, that.literalOutput);
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.complexOutput);
+        hash = 83 * hash + Objects.hashCode(this.literalOutput);
+        hash = 83 * hash + Objects.hashCode(this.boundingBoxOutput);
+        return hash;
+    }
 }

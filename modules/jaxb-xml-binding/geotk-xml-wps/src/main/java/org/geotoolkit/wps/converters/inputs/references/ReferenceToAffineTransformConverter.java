@@ -28,8 +28,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  *
@@ -55,7 +55,7 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
     }
 
     @Override
-    public AffineTransform convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public AffineTransform convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

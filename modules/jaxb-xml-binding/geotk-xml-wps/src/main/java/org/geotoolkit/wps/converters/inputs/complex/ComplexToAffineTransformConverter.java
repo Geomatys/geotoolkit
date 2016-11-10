@@ -23,7 +23,7 @@ import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 
 /**
  *

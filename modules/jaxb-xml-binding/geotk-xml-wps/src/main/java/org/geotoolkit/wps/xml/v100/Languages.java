@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "supported"
 })
 @XmlRootElement(name = "Languages")
-public class Languages implements org.geotoolkit.wps.xml.Languages {
+public class Languages implements org.geotoolkit.ows.xml.Languages {
 
     @XmlElement(name = "Default", required = true)
     private Languages.Default _default;

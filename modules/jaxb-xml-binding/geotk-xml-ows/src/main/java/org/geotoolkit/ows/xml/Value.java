@@ -24,4 +24,6 @@ package org.geotoolkit.ows.xml;
 public interface Value {
 
     String getValue();
+    
+    void setValue(String value);
 }

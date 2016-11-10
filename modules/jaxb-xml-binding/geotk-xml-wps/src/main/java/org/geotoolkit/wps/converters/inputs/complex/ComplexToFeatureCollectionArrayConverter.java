@@ -27,7 +27,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 /**

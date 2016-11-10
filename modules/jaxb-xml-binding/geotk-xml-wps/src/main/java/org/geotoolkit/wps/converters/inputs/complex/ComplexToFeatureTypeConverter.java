@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.w3c.dom.Node;
 

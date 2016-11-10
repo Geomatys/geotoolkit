@@ -21,7 +21,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
 import org.junit.Test;
 
 /**
@@ -33,7 +33,7 @@ public class ReferenceToFeatureConverterTest extends org.geotoolkit.test.TestBas
     @Test
     public void testJSONConversion() throws IOException {
         Feature feature = ConvertersTestUtils.initAndRunInputConversion(
-                                                    ReferenceType.class,
+                                                    Reference.class,
                                                     Feature.class,
                                                     "/inputs/feature.json",
                                                     WPSMimeType.APP_GEOJSON.val(),

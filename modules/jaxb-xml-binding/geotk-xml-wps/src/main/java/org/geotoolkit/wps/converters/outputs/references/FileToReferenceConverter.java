@@ -19,9 +19,8 @@ package org.geotoolkit.wps.converters.outputs.references;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +52,7 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
     }
 
     @Override
-    public ReferenceType convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public Reference convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");
@@ -64,13 +63,12 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference;
-
-        if (ioType.equals(WPSIO.IOType.INPUT)) {
-            reference = new InputReferenceType();
-        } else {
-            reference = new OutputReferenceType();
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
         }
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
 
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));

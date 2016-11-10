@@ -77,7 +77,7 @@ public class ExceptionType implements Serializable {
      * @param exceptionCode
      */
     public ExceptionType(final String exceptionText, final String exceptionCode, final String locator) {
-        this.exceptionText = new ArrayList<String>();
+        this.exceptionText = new ArrayList<>();
         this.exceptionText.add(exceptionText);
         this.exceptionCode = exceptionCode;
         this.locator       = locator;

@@ -773,7 +773,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
 
                     if ("literal".equals(type)) {
-                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(inputClazz), unit));
+                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(getVersion().code, inputClazz), unit));
 
                     } else if ("bbox".equals(type)) {
                         final Envelope envelop = (Envelope) value;
@@ -1005,7 +1005,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     } else if (outputType.getComplexData() != null) {
 
                         try {
-                            outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
+                            outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex("1.0.0", outputType.getComplexData(), clazz));
                         } catch (UnconvertibleObjectException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         }

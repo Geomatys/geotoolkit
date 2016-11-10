@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -56,33 +57,61 @@ public class UOMsType {
     @XmlElement(name = "UOM", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected List<DomainMetadataType> uom;
 
+    public UOMsType() {
+        
+    }
+    
+    public UOMsType(List<DomainMetadataType> uom) {
+        this.uom = uom;
+    }
+    
     /**
      * Reference to a UOM supported for this input or output. Gets the value of the uom property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uom property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUOM().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     * @return Objects of the following type(s) are allowed in the list
      * {@link DomainMetadataType }
      * 
      * 
      */
     public List<DomainMetadataType> getUOM() {
         if (uom == null) {
-            uom = new ArrayList<DomainMetadataType>();
+            uom = new ArrayList<>();
         }
         return this.uom;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (uom != null) {
+            sb.append("uom:");
+            for (DomainMetadataType u : uom) {
+                sb.append(u).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof UOMsType) {
+            final UOMsType that = (UOMsType) object;
+            return Objects.equals(this.uom, that.uom);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.uom);
+        return hash;
+    }
 }

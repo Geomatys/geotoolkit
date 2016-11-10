@@ -17,12 +17,14 @@
 
 package org.geotoolkit.ows.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.DomainMetadata;
 
 
 /**
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DomainMetadataType", propOrder = {
     "value"
 })
-public class DomainMetadataType {
+public class DomainMetadataType implements DomainMetadata {
 
     @XmlValue
     private String value;
@@ -89,6 +91,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -101,6 +104,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -113,6 +117,7 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public String getReference() {
         return reference;
     }
@@ -125,8 +130,38 @@ public class DomainMetadataType {
      *     {@link String }
      *     
      */
+    @Override
     public void setReference(String value) {
         this.reference = value;
     }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DomainMetadataType) {
+        final DomainMetadataType that = (DomainMetadataType) object;
+        return Objects.equals(this.reference, that.reference) &&
+               Objects.equals(this.value,     that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 29 * hash + (this.reference != null ? this.reference.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return "class: DomainMetadataType value=" + value + " reference=" + reference;
+        
+    }
 }

@@ -28,9 +28,9 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.OutputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
+
 import org.opengis.util.FactoryException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -67,17 +67,18 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
      * @return either an empty String or a String equals to ".json"
      */
     private static String getFileExtension(String mimeType) {
-        if (mimeType.equals(WPSMimeType.APP_GEOJSON.val()))
+        if (WPSMimeType.APP_GEOJSON.val().equals(mimeType)) {
             return ".json";
-        else
+        } else {
             return "";
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Geometry source, final Map<String,Object> params) throws UnconvertibleObjectException {
+    public Reference convert(final Geometry source, final Map<String,Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
             throw new UnconvertibleObjectException("The output directory should be defined.");
@@ -91,14 +92,13 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference = null ;
-
-        if (ioType.equals(WPSIO.IOType.INPUT)) {
-            reference = new InputReferenceType();
-        } else {
-            reference = new OutputReferenceType();
+        String wpsVersion  = (String) params.get(WPSVERSION);
+        if (wpsVersion == null) {
+            LOGGER.warning("No WPS version set using default 1.0.0");
+            wpsVersion = "1.0.0";
         }
-
+        Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
+        
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
@@ -115,18 +115,20 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             geometryStream = new FileOutputStream(geometryFile);
             if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
-                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType()) || 
+                reference.getMimeType() == null) { // default to XML
+                
                 final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
                 m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
                 reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
                 WPSMarshallerPool.getInstance().recycle(m);
-            }
-            else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
+            
+            } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
                 GeoJSONStreamWriter.writeSingleGeometry(geometryStream, source, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
                 reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
-            }
-            else
+            } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
+            }
 
         } catch (FactoryException ex) {
             throw new UnconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);

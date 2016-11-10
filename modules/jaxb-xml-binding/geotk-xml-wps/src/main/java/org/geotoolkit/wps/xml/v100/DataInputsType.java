@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,34 +55,64 @@ public class DataInputsType {
 
     @XmlElement(name = "Input", required = true)
     protected List<InputType> input;
+    
+    public DataInputsType() {
+        
+    }
+    
+    public DataInputsType(List<InputType> input) {
+        this.input = input;
+    }
 
     /**
      * Gets the value of the input property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the input property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInput().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link InputType }
      * 
      * 
+     * @return 
      */
     public List<InputType> getInput() {
         if (input == null) {
-            input = new ArrayList<InputType>();
+            input = new ArrayList<>();
         }
         return this.input;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[DataInputsType]\n");
+        if (input != null) {
+            sb.append("Inputs:\n");
+            for (InputType out : input) {
+                sb.append(out).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     *
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataInputsType) {
+            final DataInputsType that = (DataInputsType) object;
+            return Objects.equals(this.input, that.input);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.input);
+        return hash;
+    }
 }

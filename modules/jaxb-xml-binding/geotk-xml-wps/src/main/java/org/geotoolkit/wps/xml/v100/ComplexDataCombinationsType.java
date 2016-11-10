@@ -18,6 +18,7 @@ package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -55,33 +56,62 @@ public class ComplexDataCombinationsType {
     @XmlElement(name = "Format", namespace = "", required = true)
     protected List<ComplexDataDescriptionType> format;
 
+    public ComplexDataCombinationsType() {
+        
+    }
+    
+    public ComplexDataCombinationsType(List<ComplexDataDescriptionType> format) {
+        this.format = format;
+    }
+    
     /**
      * Gets the value of the format property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the format property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFormat().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     *  @return Objects of the following type(s) are allowed in the list
      * {@link ComplexDataDescriptionType }
      * 
      * 
      */
     public List<ComplexDataDescriptionType> getFormat() {
         if (format == null) {
-            format = new ArrayList<ComplexDataDescriptionType>();
+            format = new ArrayList<>();
         }
         return this.format;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (format != null) {
+            sb.append("format:");
+            for (ComplexDataDescriptionType c : format) {
+                sb.append(c).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComplexDataCombinationsType) {
+            final ComplexDataCombinationsType that = (ComplexDataCombinationsType) object;
+            return Objects.equals(this.format, that.format);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.format);
+        return hash;
     }
 
 }

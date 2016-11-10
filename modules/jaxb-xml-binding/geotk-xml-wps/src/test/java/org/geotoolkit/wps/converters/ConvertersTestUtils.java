@@ -55,9 +55,9 @@ import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.WPSXmlFactory;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -157,9 +157,9 @@ public final class ConvertersTestUtils {
             final ComplexDataType complex = ConvertersTestUtils.createComplex(mimeType, encoding, schema, resource);
 
             return converter.convert((SourceType) complex, param);
-        } else if (sourceClass.equals(ReferenceType.class)) {
+        } else if (sourceClass.equals(Reference.class)) {
             final URL resource = ConvertersTestUtils.class.getResource(resourcePath);
-            final ReferenceType reference = ConvertersTestUtils.createReference(mimeType, encoding, schema, resource);
+            final Reference reference = ConvertersTestUtils.createReference("1.0.0", mimeType, encoding, schema, resource);
 
             return converter.convert((SourceType) reference, param);
         } else {
@@ -259,7 +259,7 @@ public final class ConvertersTestUtils {
         Map<String, Object> parametersMap = null;
         if (targetClass.equals(ComplexDataType.class))
             parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding);
-        else if (targetClass.equals(ReferenceType.class)) {
+        else if (targetClass.equals(Reference.class)) {
             tmpDirPath = Files.createTempDirectory(UUID.randomUUID().toString());
             parametersMap = ConvertersTestUtils.createParameters(mimeType, encoding, tmpDirPath.toString(), WPSIO.IOType.OUTPUT.toString());
         }
@@ -326,8 +326,8 @@ public final class ConvertersTestUtils {
      * @param url must be set
      * @return the reference with its field filled using the above parameters
      */
-    public static final ReferenceType createReference(String mimeType, String encoding, String schema, URL url) {
-        final ReferenceType reference = new InputReferenceType();
+    public static final Reference createReference(String version, String mimeType, String encoding, String schema, URL url) {
+        final Reference reference = WPSXmlFactory.buildInOutReference(version, WPSIO.IOType.INPUT);
         reference.setMimeType(mimeType);
         reference.setEncoding(encoding);
         reference.setSchema(schema);

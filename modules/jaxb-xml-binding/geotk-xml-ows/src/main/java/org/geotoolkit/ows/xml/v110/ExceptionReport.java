@@ -65,7 +65,7 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 public class ExceptionReport implements ExceptionResponse, Serializable {
 
     @XmlElement(name = "Exception", required = true)
-    private List<ExceptionType> exception = new ArrayList<ExceptionType>();
+    private List<ExceptionType> exception = new ArrayList<>();
     @XmlAttribute(required = true)
     private String version;
 
@@ -81,7 +81,7 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
      * @param exceptionCode
      */
     public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
-        exception = new ArrayList<ExceptionType>();
+        exception = new ArrayList<>();
         this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
         this.version = version;
     }

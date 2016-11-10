@@ -17,13 +17,13 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 
 /**
@@ -52,7 +52,7 @@ public class ReferenceToUrlConnectionConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public URLConnection convert(ReferenceType source, Map<String, Object> params) throws UnconvertibleObjectException {
+    public URLConnection convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
         try {
             URLConnection con = new URL(source.getHref()).openConnection();
             if (source instanceof InputReferenceType) {

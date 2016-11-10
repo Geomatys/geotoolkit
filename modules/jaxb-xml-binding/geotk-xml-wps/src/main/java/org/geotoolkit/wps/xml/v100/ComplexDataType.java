@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
@@ -51,7 +53,7 @@ import org.w3c.dom.Element;
     "content"
 })
 //@XmlSeeAlso(org.geotoolkit.wps.xml.v100.ext.GeoJSONType.class)
-public class ComplexDataType {
+public class ComplexDataType implements org.geotoolkit.wps.xml.ComplexDataType {
 
     @XmlMixed
     @XmlElementRefs({
@@ -70,34 +72,32 @@ public class ComplexDataType {
     @XmlSchemaType(name = "anyURI")
     protected String schema;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
 
+    
+    public ComplexDataType() {
+        
+    }
+    
+    public ComplexDataType(String encoding, final String mimeType, final String schema) {
+        this.encoding = encoding;
+        this.mimeType = mimeType;
+        this.schema   = schema;
+    }
+    
     /**
-     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding).  May be an ows:Manifest data structure.Gets the value of the content property.
+     * Complex data (such as an image), including a definition of the complex value data structure (i.e., schema, format, and encoding). 
+     * May be an ows:Manifest data structure.Gets the value of the content property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+     *  @return Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link String }
      *
-     *
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return this.content;
     }
@@ -110,6 +110,7 @@ public class ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -134,6 +135,7 @@ public class ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getEncoding() {
         return encoding;
     }
@@ -158,6 +160,7 @@ public class ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public String getSchema() {
         return schema;
     }
@@ -170,6 +173,7 @@ public class ComplexDataType {
      *     {@link String }
      *
      */
+    @Override
     public void setSchema(final String value) {
         this.schema = value;
     }
@@ -177,19 +181,69 @@ public class ComplexDataType {
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      *
-     * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
-     *
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
-     *
-     *
      * @return
      *     always non-null
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (schema != null) {
+            sb.append("schema:").append(schema).append('\n');
+        }
+        if (content != null) {
+            sb.append("content:\n");
+            for (Object o : content) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("Other attributes:\n");
+            for (Entry o : otherAttributes.entrySet()) {
+                sb.append("key:").append(o.getKey()).append(" value:").append(o.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComplexDataType) {
+            final ComplexDataType that = (ComplexDataType) object;
+            return Objects.equals(this.content, that.content) &&
+                   Objects.equals(this.encoding, that.encoding) &&
+                   Objects.equals(this.schema, that.schema) &&
+                   Objects.equals(this.otherAttributes, that.otherAttributes) &&
+                   Objects.equals(this.mimeType, that.mimeType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.content);
+        hash = 71 * hash + Objects.hashCode(this.mimeType);
+        hash = 71 * hash + Objects.hashCode(this.encoding);
+        hash = 71 * hash + Objects.hashCode(this.schema);
+        hash = 71 * hash + Objects.hashCode(this.otherAttributes);
+        return hash;
     }
 
 }

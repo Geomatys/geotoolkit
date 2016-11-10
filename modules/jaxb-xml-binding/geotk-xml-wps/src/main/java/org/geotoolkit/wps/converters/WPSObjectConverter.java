@@ -34,6 +34,7 @@ public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
     public static final String TMP_DIR_PATH = "tempDirectoryPath";
     public static final String TMP_DIR_URL  = "tempDirectoryUrl";
     public static final String IOTYPE       = "ioType";
+    public static final String WPSVERSION   = "wpsVersion";
     public static final String GMLVERSION   = "gmlVersion";
 
     

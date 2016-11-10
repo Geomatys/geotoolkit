@@ -68,6 +68,16 @@ public class BasicIdentificationType extends DescriptionType {
     @XmlElementRef(name = "Metadata", namespace = "http://www.opengis.net/ows/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends MetadataType>> metadata;
 
+    public BasicIdentificationType() {
+        
+    }
+    
+    public BasicIdentificationType(CodeType identifier, final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords) {
+        super(title, _abstract, keywords);
+        this.identifier = identifier;
+    }
+    
     /**
      * Optional unique identifier or name of this
      *               dataset.

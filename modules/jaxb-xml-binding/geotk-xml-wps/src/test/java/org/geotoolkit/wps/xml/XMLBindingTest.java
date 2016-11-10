@@ -19,6 +19,7 @@ package org.geotoolkit.wps.xml;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -26,12 +27,17 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v321.CoordinatesType;
+import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataInputsType;
 import org.geotoolkit.wps.xml.v100.Execute;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.InputType;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.DataInputType;
+import org.geotoolkit.wps.xml.v200.ExecuteRequestType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -152,6 +158,26 @@ public class XMLBindingTest extends org.geotoolkit.test.TestBase {
         input.setReference(ref);
         dataInput.getInput().add(input);
         executeRoot.setDataInputs(dataInput);
+
+
+        Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
+        m.marshal(executeRoot, System.out);
+
+    }
+    
+    @Test
+    public void testMarshallingExecuteV2() throws JAXBException, IOException {
+        final ExecuteRequestType executeBody = new ExecuteRequestType();
+        executeBody.setIdentifier(new org.geotoolkit.ows.xml.v200.CodeType("integrated execute"));
+
+        PointType pt = new PointType(new CoordinatesType());
+        org.geotoolkit.wps.xml.v200.Format format = new org.geotoolkit.wps.xml.v200.Format("UTF8","tex/xml", "http://kk.com", null, true);
+        final org.geotoolkit.wps.xml.v200.ComplexDataType complex = new org.geotoolkit.wps.xml.v200.ComplexDataType(Arrays.asList(format));
+        complex.getContent().add(pt);
+        Data data = new Data(complex);
+        final ExecuteRequestType executeRoot = new ExecuteRequestType();
+        DataInputType dataInput = new DataInputType("input1", data);
+        executeRoot.getInput().add(dataInput);
 
 
         Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();

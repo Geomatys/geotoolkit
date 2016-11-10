@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.ows.xml.v110.ExceptionReport;
+import org.geotoolkit.wps.xml.StatusInfo;
 
 
 /**
@@ -59,7 +62,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "processSucceeded",
     "processFailed"
 })
-public class StatusType {
+public class StatusType implements StatusInfo {
 
     @XmlElement(name = "ProcessAccepted")
     protected String processAccepted;
@@ -74,6 +77,34 @@ public class StatusType {
     @XmlAttribute(required = true)
     protected XMLGregorianCalendar creationTime;
 
+    public StatusType() {
+        
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, String processAccepted, String processSucceeded) {
+        this.creationTime = creationTime;
+        this.processAccepted = processAccepted;
+        this.processSucceeded = processSucceeded;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ProcessStartedType processStarted, ProcessStartedType processPaused) {
+        this.creationTime = creationTime;
+        this.processStarted = processStarted;
+        this.processPaused = processPaused;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ProcessFailedType processFailed) {
+        this.creationTime = creationTime;
+        this.processFailed = processFailed;
+    }
+    
+    public StatusType(XMLGregorianCalendar creationTime, ExceptionReport processFailed) {
+        this.creationTime = creationTime;
+        if (processFailed != null) {
+            this.processFailed = new ProcessFailedType(processFailed);
+        }
+    }
+    
     /**
      * Gets the value of the processAccepted property.
      * 
@@ -218,4 +249,60 @@ public class StatusType {
         this.creationTime = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (creationTime != null) {
+            sb.append("creationTime:").append(creationTime).append('\n');
+        }
+        if (processAccepted != null) {
+            sb.append("processAccepted:").append(processAccepted).append('\n');
+        }
+        if (processFailed != null) {
+            sb.append("processFailed:").append(processFailed).append('\n');
+        }
+        if (processPaused != null) {
+            sb.append("processPaused:").append(processPaused).append('\n');
+        }
+        if (processStarted != null) {
+            sb.append("processStarted:").append(processStarted).append('\n');
+        }
+        if (processSucceeded != null) {
+            sb.append("processSucceeded:").append(processSucceeded).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StatusType) {
+            final StatusType that = (StatusType) object;
+            return Objects.equals(this.creationTime, that.creationTime) &&
+                   Objects.equals(this.processAccepted, that.processAccepted) &&
+                   Objects.equals(this.processFailed, that.processFailed) &&
+                   Objects.equals(this.processPaused, that.processPaused) &&
+                   Objects.equals(this.processStarted, that.processStarted) &&
+                   Objects.equals(this.processSucceeded, that.processSucceeded);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.processAccepted);
+        hash = 59 * hash + Objects.hashCode(this.processStarted);
+        hash = 59 * hash + Objects.hashCode(this.processPaused);
+        hash = 59 * hash + Objects.hashCode(this.processSucceeded);
+        hash = 59 * hash + Objects.hashCode(this.processFailed);
+        hash = 59 * hash + Objects.hashCode(this.creationTime);
+        return hash;
+    }
 }

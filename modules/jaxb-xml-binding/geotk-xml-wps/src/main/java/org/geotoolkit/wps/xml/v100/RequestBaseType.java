@@ -62,6 +62,19 @@ public class RequestBaseType implements RequestBase {
     @XmlAttribute
     protected String language;
 
+    public RequestBaseType() {
+        
+    }
+    
+    public RequestBaseType(String language) {
+        this.language = language;
+    }
+    
+    public RequestBaseType(String service, String language) {
+        this.language = language;
+        this.service = service;
+    }
+    
     /**
      * Gets the value of the service property.
      * 

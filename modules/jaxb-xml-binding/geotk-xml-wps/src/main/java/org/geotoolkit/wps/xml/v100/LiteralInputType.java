@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.AllowedValues;
 import org.geotoolkit.ows.xml.v110.AnyValue;
+import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
 /**
@@ -54,9 +57,7 @@ import org.geotoolkit.ows.xml.v110.AnyValue;
     "valuesReference",
     "defaultValue"
 })
-public class LiteralInputType
-    extends LiteralOutputType
-{
+public class LiteralInputType extends LiteralOutputType implements LiteralDataDescription {
 
     @XmlElement(name = "AllowedValues", namespace = "http://www.opengis.net/ows/1.1")
     protected AllowedValues allowedValues;
@@ -67,8 +68,22 @@ public class LiteralInputType
     @XmlElement(name = "DefaultValue", namespace = "")
     protected String defaultValue;
 
+    public LiteralInputType() {
+        
+    }
+    
+    public LiteralInputType(DomainMetadataType dataType, SupportedUOMsType uoMs, AllowedValues allowedValues, 
+            AnyValue anyValue, ValuesReferenceType valuesReference, String defaultValue) {
+        super(dataType, uoMs);
+        this.allowedValues = allowedValues;
+        this.anyValue = anyValue;
+        this.defaultValue = defaultValue;
+        this.valuesReference = valuesReference;
+    }
+    
     /**
-     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. Notice that these values and ranges can be displayed to a human client. 
+     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. 
+     * Notice that these values and ranges can be displayed to a human client. 
      * 
      * @return
      *     possible object is
@@ -80,7 +95,8 @@ public class LiteralInputType
     }
 
     /**
-     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. Notice that these values and ranges can be displayed to a human client. 
+     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. 
+     * Notice that these values and ranges can be displayed to a human client. 
      * 
      * @param value
      *     allowed object is
@@ -92,7 +108,8 @@ public class LiteralInputType
     }
 
     /**
-     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, except for data type, on the allowable value of this input. 
+     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, 
+     * except for data type, on the allowable value of this input. 
      * 
      * @return
      *     possible object is
@@ -104,7 +121,8 @@ public class LiteralInputType
     }
 
     /**
-     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, except for data type, on the allowable value of this input. 
+     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, 
+     * except for data type, on the allowable value of this input. 
      * 
      * @param value
      *     allowed object is
@@ -163,4 +181,50 @@ public class LiteralInputType
         this.defaultValue = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (allowedValues != null) {
+            sb.append("allowedValues:").append(allowedValues).append('\n');
+        }
+        if (anyValue != null) {
+            sb.append("anyValue:").append(anyValue).append('\n');
+        }
+        if (defaultValue != null) {
+            sb.append("defaultValue:").append(defaultValue).append('\n');
+        }
+        if (valuesReference != null) {
+            sb.append("valuesReference:").append(valuesReference).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralInputType && super.equals(object)) {
+            final LiteralInputType that = (LiteralInputType) object;
+            return Objects.equals(this.allowedValues, that.allowedValues) &&
+                   Objects.equals(this.anyValue, that.anyValue) &&
+                   Objects.equals(this.defaultValue, that.defaultValue) &&
+                   Objects.equals(this.valuesReference, that.valuesReference);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.allowedValues);
+        hash = 97 * hash + Objects.hashCode(this.anyValue);
+        hash = 97 * hash + Objects.hashCode(this.valuesReference);
+        hash = 97 * hash + Objects.hashCode(this.defaultValue);
+        return hash;
+    }
 }

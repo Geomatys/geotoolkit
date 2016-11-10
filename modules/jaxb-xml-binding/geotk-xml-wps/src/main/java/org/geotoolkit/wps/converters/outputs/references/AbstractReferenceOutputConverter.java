@@ -19,21 +19,21 @@ package org.geotoolkit.wps.converters.outputs.references;
 import java.util.Map;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.wps.xml.Reference;
+import org.geotoolkit.wps.xml.ComplexDataType;
 
 /**
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConverter<S, ReferenceType> {
+public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConverter<S, Reference> {
 
     @Override
     public abstract Class<S> getSourceClass();
 
     @Override
-    public Class<ReferenceType> getTargetClass() {
-        return ReferenceType.class;
+    public Class<Reference> getTargetClass() {
+        return Reference.class;
     }
 
     /**
@@ -52,9 +52,9 @@ public abstract class AbstractReferenceOutputConverter<S> extends WPSDefaultConv
      * @throws UnconvertibleObjectException if an error occurs durring the convertion processing.
      */
     @Override
-    public abstract ReferenceType convert(S source, Map<String, Object> params) throws UnconvertibleObjectException;
+    public abstract Reference convert(S source, Map<String, Object> params) throws UnconvertibleObjectException;
 
-    protected void mapParameters(final ReferenceType reference, Map<String, Object> params) {
+    protected void mapParameters(final Reference reference, Map<String, Object> params) {
         Object value = params.get(SCHEMA);
         if (value != null)
             reference.setSchema(value.toString());

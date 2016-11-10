@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -68,6 +70,23 @@ public class SupportedUOMsType {
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected UOMsType supported;
 
+    public SupportedUOMsType() {
+        
+    }
+    
+    public SupportedUOMsType(SupportedUOMsType.Default _default, UOMsType supported) {
+        this._default = _default;
+        this.supported = supported;
+    }
+    
+    public SupportedUOMsType(DomainMetadataType _default, List<DomainMetadataType> supported) {
+        if (_default != null) {
+            this._default = new Default(_default);
+        }
+        if (supported != null) {
+            this.supported = new UOMsType(supported);
+        }
+    }
     /**
      * Gets the value of the default property.
      * 
@@ -117,6 +136,43 @@ public class SupportedUOMsType {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (_default != null) {
+            sb.append("_default:").append(_default).append('\n');
+        }
+        if (supported != null) {
+            sb.append("supported:").append(supported).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SupportedUOMsType) {
+            final SupportedUOMsType that = (SupportedUOMsType) object;
+            return Objects.equals(this._default, that._default) &&
+                   Objects.equals(this.supported, that.supported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + Objects.hashCode(this._default);
+        hash = 31 * hash + Objects.hashCode(this.supported);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -145,6 +201,14 @@ public class SupportedUOMsType {
         @XmlElement(name = "UOM", namespace = "http://www.opengis.net/ows/1.1", required = true)
         protected DomainMetadataType uom;
 
+        public Default() {
+            
+        }
+        
+        public Default(DomainMetadataType uom) {
+            this.uom = uom;
+        }
+        
         /**
          * Reference to the default UOM supported for this Input/Output
          * 
@@ -167,6 +231,38 @@ public class SupportedUOMsType {
          */
         public void setUOM(final DomainMetadataType value) {
             this.uom = value;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+            if (uom != null) {
+                sb.append("uom:").append(uom).append('\n');
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify that this entry is identical to the specified object.
+         * @param object Object to compare
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Default) {
+                final Default that = (Default) object;
+                return Objects.equals(this.uom, that.uom);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 67 * hash + Objects.hashCode(this.uom);
+            return hash;
         }
 
     }

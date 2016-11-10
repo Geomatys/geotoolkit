@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
 
 
 /**
@@ -54,13 +57,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     SupportedComplexDataInputType.class
 })
-public class SupportedComplexDataType {
+public class SupportedComplexDataType implements ComplexDataTypeDescription {
 
     @XmlElement(name = "Default", namespace = "", required = true)
     protected ComplexDataCombinationType _default;
     @XmlElement(name = "Supported", namespace = "", required = true)
     protected ComplexDataCombinationsType supported;
 
+    public SupportedComplexDataType() {
+        
+    }
+    
+    public SupportedComplexDataType(ComplexDataDescriptionType defaultFormat, List<ComplexDataDescriptionType> supported) {
+        if (defaultFormat != null) {
+            this._default = new ComplexDataCombinationType(defaultFormat);
+        }
+        if (supported != null) {
+            this.supported = new ComplexDataCombinationsType(supported);
+        }
+    }
+    
     /**
      * Gets the value of the default property.
      * 
@@ -109,4 +125,40 @@ public class SupportedComplexDataType {
         this.supported = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (_default != null) {
+            sb.append("_default:").append(_default).append('\n');
+        }
+        if (supported != null) {
+            sb.append("supported:").append(supported).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SupportedComplexDataType) {
+            final SupportedComplexDataType that = (SupportedComplexDataType) object;
+            return Objects.equals(this._default, that._default) &&
+                   Objects.equals(this.supported, that.supported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this._default);
+        hash = 79 * hash + Objects.hashCode(this.supported);
+        return hash;
+    }
 }

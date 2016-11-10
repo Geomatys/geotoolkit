@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.DataOutput;
 
 
 /**
@@ -49,15 +53,27 @@ import javax.xml.bind.annotation.XmlType;
     "reference",
     "data"
 })
-public class OutputDataType
-    extends DescriptionType
-{
+public class OutputDataType extends DescriptionType implements DataOutput {
 
     @XmlElement(name = "Reference")
     protected OutputReferenceType reference;
     @XmlElement(name = "Data")
     protected DataType data;
 
+    public OutputDataType() {
+        
+    }
+    
+    public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, OutputReferenceType reference) {
+        super(identifier, title, _abstract);
+        this.reference = reference;
+    }
+    
+    public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType data) {
+        super(identifier, title, _abstract);
+        this.data = data;
+    }
+    
     /**
      * Gets the value of the reference property.
      * 
@@ -104,6 +120,43 @@ public class OutputDataType
      */
     public void setData(final DataType value) {
         this.data = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (data != null) {
+            sb.append("data:").append(data).append('\n');
+        }
+        if (reference != null) {
+            sb.append("reference:").append(reference).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     * @param object Object to compare
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputDataType && super.equals(object)) {
+            final OutputDataType that = (OutputDataType) object;
+            return Objects.equals(this.data, that.data) &&
+                   Objects.equals(this.reference, that.reference);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.reference);
+        hash = 29 * hash + Objects.hashCode(this.data);
+        return hash;
     }
 
 }

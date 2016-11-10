@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -51,8 +52,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "solidMember",
     "solidMembers"
 })
-public class MultiSolidType
-    extends AbstractGeometricAggregateType
+@XmlRootElement(name="MultiSolid")
+public class MultiSolidType extends AbstractGeometricAggregateType
 {
 
     private List<SolidPropertyType> solidMember;

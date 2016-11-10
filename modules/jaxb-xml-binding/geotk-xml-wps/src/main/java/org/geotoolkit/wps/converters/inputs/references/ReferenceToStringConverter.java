@@ -18,11 +18,11 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import org.geotoolkit.wps.xml.Reference;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a String.
@@ -55,7 +55,7 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
      * @return File.
      */
     @Override
-    public String convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public String convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         String result = null;
         InputStream in = null;

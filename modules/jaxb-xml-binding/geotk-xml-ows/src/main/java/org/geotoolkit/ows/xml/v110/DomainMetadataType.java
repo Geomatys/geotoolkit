@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.DomainMetadata;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DomainMetadataType", propOrder = {
     "value"
 })
-public class DomainMetadataType {
+public class DomainMetadataType implements DomainMetadata {
 
     @XmlValue
     private String value;
@@ -74,7 +75,9 @@ public class DomainMetadataType {
     }
     
     /**
-     * Build a new Domaint metadata.
+     * Build a new Domain metadata.
+     * @param value
+     * @param reference
      */
     public DomainMetadataType(final String value, final String reference){
         this.reference = reference;
@@ -85,6 +88,7 @@ public class DomainMetadataType {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -92,10 +96,22 @@ public class DomainMetadataType {
     /**
      * Gets the value of the reference property.
      */
+    @Override
     public String getReference() {
         return reference;
     }
 
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setReference(String value) {
+        this.reference = reference;
+    }
+
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
