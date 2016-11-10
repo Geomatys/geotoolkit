@@ -25,7 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import javax.imageio.ImageIO;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;

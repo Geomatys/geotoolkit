@@ -19,8 +19,7 @@ package org.geotoolkit.processing.vector.buffer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import javax.measure.unit.SI;
-
+import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -121,7 +120,7 @@ public class BufferProcess extends AbstractProcess {
                 final Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, SI.METRE);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, Units.METRE);
 
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);

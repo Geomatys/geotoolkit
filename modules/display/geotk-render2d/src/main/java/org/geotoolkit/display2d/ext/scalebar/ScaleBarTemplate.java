@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Paint;
 import java.text.NumberFormat;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**

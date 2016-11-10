@@ -29,15 +29,15 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.FieldPosition;
 import java.util.Arrays;
-import javax.measure.converter.ConversionException;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.IncommensurableException;
+import javax.measure.UnitConverter;
+import javax.measure.Unit;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.math.MathFunctions;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
@@ -179,8 +179,8 @@ public class J2DScaleBarUtilities {
         try {
 
             if (ellipsoid != null && ellipsoid instanceof DefaultEllipsoid) {
-                final UnitConverter xConverter = mapUnitX.getConverterToAny(NonSI.DEGREE_ANGLE);
-                final UnitConverter yConverter = mapUnitY.getConverterToAny(NonSI.DEGREE_ANGLE);
+                final UnitConverter xConverter = mapUnitX.getConverterToAny(Units.DEGREE);
+                final UnitConverter yConverter = mapUnitY.getConverterToAny(Units.DEGREE);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
                 logicalLength = ((DefaultEllipsoid)ellipsoid).orthodromicDistance(P1.getX(), P1.getY(), P2.getX(), P2.getY());
@@ -192,7 +192,7 @@ public class J2DScaleBarUtilities {
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
                 logicalLength = P1.distance(P2);
             }
-        } catch (ConversionException exception) {
+        } catch (IncommensurableException exception) {
             // Should not occurs, unless the user is using a very particular coordinate system.
             throw new PortrayalException(exception);
         }

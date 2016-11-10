@@ -21,7 +21,7 @@
     <jar href="geotk-utility-3.13.jar" download="lazy"/>
     <jar href="geoapi-pending-2.3-M8.jar" download="lazy"/>
     <jar href="vecmath-1.5.2.jar" download="lazy"/>
-    <jar href="jsr-275-0.9.3.jar" download="lazy"/>
+    <jar href="unit-api-1.0.jar" download="lazy"/>
     <jar href="swingx-1.6.jar" download="lazy"/>
     <property name="jnlp.packEnabled" value="true"/>
   </resources>

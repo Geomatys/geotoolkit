@@ -27,7 +27,7 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;

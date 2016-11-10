@@ -18,14 +18,13 @@ package org.geotoolkit.wmts;
 
 import java.util.List;
 import java.util.Map;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.referencing.CRS;
@@ -112,8 +111,8 @@ public final class WMTSUtilities {
         final Unit axi0Unit = cs.getAxis(0).getUnit();
 
         //in case axis in not in a meter compatible unit
-        if(!SI.METRE.isCompatible(axi0Unit)){
-            if(NonSI.DEGREE_ANGLE.equals(axi0Unit)){
+        if(!Units.METRE.isCompatible(axi0Unit)){
+            if(Units.DEGREE.equals(axi0Unit)){
                 //axis is in degree, likely a geographic crs
                 return EARTH_PERIMETER / 360d ;
             }else{
@@ -122,7 +121,7 @@ public final class WMTSUtilities {
         }
 
         //convert 1 unit of the crs unit in meter
-        return axi0Unit.getConverterTo(SI.METRE).convert(1);
+        return axi0Unit.getConverterTo(Units.METRE).convert(1);
     }
 
     /**

@@ -26,8 +26,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -49,6 +48,7 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  * Random style builder. This is a convini class if you dont need special styles.
@@ -83,7 +83,7 @@ public class RandomStyleBuilder extends Factory {
 
     public  static PointSymbolizer createRandomPointSymbolizer() {
 
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
 
@@ -107,7 +107,7 @@ public class RandomStyleBuilder extends Factory {
 
     public  static LineSymbolizer createRandomLineSymbolizer() {
 
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
 
@@ -119,7 +119,7 @@ public class RandomStyleBuilder extends Factory {
 
     public  static PolygonSymbolizer createRandomPolygonSymbolizer() {
 
-        final Unit uom = NonSI.PIXEL;
+        final Unit uom = Units.POINT;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
 

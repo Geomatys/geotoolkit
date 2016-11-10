@@ -19,8 +19,7 @@ package org.geotoolkit.gui.swing.style.symbolizer;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -40,6 +39,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Description;
 import org.opengis.style.TextSymbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  * TextSymbolizer editor
@@ -101,25 +101,25 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
      */
     @Override
     public TextSymbolizer create() {
-        
+
         String name = "textSymbolizer";
         String geomName = null;
         Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        Unit unit = NonSI.PIXEL;
+        Unit unit = Units.POINT;
         if(oldSymbolizer!=null){
             name = oldSymbolizer.getName();
             geomName = oldSymbolizer.getGeometryPropertyName();
             desc = oldSymbolizer.getDescription();
             unit = oldSymbolizer.getUnitOfMeasure();
         }
-        
+
         return getStyleFactory().textSymbolizer(
                     name,
                     geomName,
                     desc,
                     unit,
                     guiLabel.create(),
-                    guiFont.create(), 
+                    guiFont.create(),
                     guiLabelPlacement.create(),
                     guiHalo.create(),
                     guiFill.create());
@@ -129,7 +129,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

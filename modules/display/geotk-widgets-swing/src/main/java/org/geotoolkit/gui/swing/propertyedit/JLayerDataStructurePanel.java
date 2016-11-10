@@ -22,7 +22,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
 import java.util.logging.Level;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLDocument;

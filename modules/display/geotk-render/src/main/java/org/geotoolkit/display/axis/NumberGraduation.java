@@ -20,9 +20,9 @@ package org.geotoolkit.display.axis;
 import java.text.NumberFormat;
 import java.awt.RenderingHints;
 
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 
 import org.geotoolkit.resources.Errors;
 
@@ -229,7 +229,7 @@ public class NumberGraduation extends AbstractGraduation {
                 final UnitConverter converter;
                 try {
                     converter = oldUnit.getConverterToAny(unit);
-                } catch (ConversionException e) {
+                } catch (IncommensurableException e) {
                     throw new IllegalArgumentException(Errors.format(
                             Errors.Keys.IncompatibleUnit_1, unit), e);
                 }

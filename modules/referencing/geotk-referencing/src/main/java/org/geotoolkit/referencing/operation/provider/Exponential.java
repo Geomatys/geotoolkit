@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import javax.measure.unit.Unit;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,6 +33,7 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
@@ -89,7 +89,7 @@ public class Exponential extends MathTransformProvider {
     public static final ParameterDescriptor<Double> SCALE;
     static {
         final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
-        SCALE = builder.addName("scale").create(1, Unit.ONE);
+        SCALE = builder.addName("scale").create(1, Units.UNITY);
     }
 
     /**

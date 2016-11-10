@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.amended;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
-import javax.measure.unit.NonSI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
@@ -64,10 +64,10 @@ public class AmendedCoverageStoreTest extends org.geotoolkit.test.TestBase {
                             Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCS"),
                             new DefaultCoordinateSystemAxis(
                                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"AxisX"),
-                                    "x", AxisDirection.DISPLAY_LEFT, NonSI.PIXEL),
+                                    "x", AxisDirection.DISPLAY_LEFT, Units.POINT),
                             new DefaultCoordinateSystemAxis(
                                     Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"AxisY"),
-                                    "y", AxisDirection.DISPLAY_DOWN, NonSI.PIXEL)));
+                                    "y", AxisDirection.DISPLAY_DOWN, Units.POINT)));
         } catch (FactoryException ex) {
             throw new IllegalStateException(ex);
         }

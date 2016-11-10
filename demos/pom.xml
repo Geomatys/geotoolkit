@@ -59,7 +59,7 @@
   <dependencies>
     <dependency>
       <groupId>javax.measure</groupId>
-      <artifactId>jsr-275</artifactId>
+      <artifactId>unit-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>

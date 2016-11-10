@@ -32,7 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 
-import org.geotoolkit.math.Vector;
+import org.apache.sis.math.Vector;
 import org.geotoolkit.math.VectorPair;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.gui.swing.Dialog;
@@ -291,9 +291,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
          */
         final Vector x  = Vector.createSequence(ms,     1, 1+ns);
         final Vector xm = Vector.createSequence(ms-0.5, 1, 1+ns);
-        final VectorPair upper = new VectorPair(x,  Vector.create(high));
-        final VectorPair main  = new VectorPair(xm, Vector.create(cost));
-        final VectorPair lower = new VectorPair(x,  Vector.create(low ));
+        final VectorPair upper = new VectorPair(x,  Vector.create(high, false));
+        final VectorPair main  = new VectorPair(xm, Vector.create(cost, false));
+        final VectorPair lower = new VectorPair(x,  Vector.create(low,  false));
         upper.makeStepwise(+2);
         main .makeStepwise( 0);
         lower.makeStepwise(-2);

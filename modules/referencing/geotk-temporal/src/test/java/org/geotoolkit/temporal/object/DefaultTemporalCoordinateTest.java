@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Date;
-import javax.measure.unit.NonSI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
@@ -50,8 +50,8 @@ public class DefaultTemporalCoordinateTest extends org.geotoolkit.test.TestBase 
         Number coordinateValue = 100;
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
 
-        TemporalCoordinateSystem frame1 = FACTORY.createTemporalCoordinateSystem(name, new DefaultExtent(), new Date(200000000), NonSI.DAY);
-        TemporalCoordinateSystem frame2 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), new Date(200001000), NonSI.HOUR);
+        TemporalCoordinateSystem frame1 = FACTORY.createTemporalCoordinateSystem(name, new DefaultExtent(), new Date(200000000), Units.DAY);
+        TemporalCoordinateSystem frame2 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), new Date(200001000), Units.HOUR);
 
         temporalCoordinate1 = FACTORY.createTemporalCoordinate(frame1, IndeterminateValue.NOW, coordinateValue);
         temporalCoordinate2 = FACTORY.createTemporalCoordinate(frame2, IndeterminateValue.AFTER, coordinateValue);

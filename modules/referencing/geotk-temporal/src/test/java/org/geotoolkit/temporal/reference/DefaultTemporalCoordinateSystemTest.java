@@ -19,14 +19,13 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Calendar;
 import java.util.Date;
-import javax.measure.quantity.Duration;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.quantity.Time;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
-import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,11 +53,11 @@ public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.Tes
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Coordinate2");
         Calendar cal = Calendar.getInstance();
         cal.set(2000, 1, 1);
-        temporalCoordinateSystem1 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), cal.getTime(), NonSI.DAY);
+        temporalCoordinateSystem1 = FACTORY.createTemporalCoordinateSystem(name1, new DefaultExtent(), cal.getTime(), Units.DAY);
         temporalCoordinate1 = FACTORY.createTemporalCoordinate(temporalCoordinateSystem1, null, 50785.48);
 
         cal.set(1981, 6, 25);
-        temporalCoordinateSystem2 = FACTORY.createTemporalCoordinateSystem(name2, new DefaultExtent(), cal.getTime(), NonSI.WEEK);
+        temporalCoordinateSystem2 = FACTORY.createTemporalCoordinateSystem(name2, new DefaultExtent(), cal.getTime(), Units.WEEK);
         temporalCoordinate2 = FACTORY.createTemporalCoordinate(temporalCoordinateSystem2, null, 285);
     }
 
@@ -104,7 +103,7 @@ public class DefaultTemporalCoordinateSystemTest extends org.geotoolkit.test.Tes
      */
     @Test
     public void testGetInterval() {
-        Unit<Duration> result = temporalCoordinateSystem1.getInterval();
+        Unit<Time> result = temporalCoordinateSystem1.getInterval();
         assertFalse(temporalCoordinateSystem2.getInterval().equals(result));
     }
 

@@ -9,8 +9,8 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.junit.Test;
 import org.geotoolkit.feature.type.*;
 import org.opengis.util.FactoryException;
+import org.apache.sis.measure.Units;
 
-import javax.measure.unit.SI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -113,7 +113,7 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         final ComplexType complexAtt2 = ftb.buildType();
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("date", new Date());
-        userMap.put("unit", SI.KILOMETRE);
+        userMap.put("unit", Units.KILOMETRE);
 
         ftb.reset();
         ftb.setName("complexFT");

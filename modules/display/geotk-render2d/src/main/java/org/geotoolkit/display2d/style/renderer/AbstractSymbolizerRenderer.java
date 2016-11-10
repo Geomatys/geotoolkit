@@ -20,13 +20,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.Iterator;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.filter.expression.Expression;
@@ -66,7 +66,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
         this.symbolUnit = symbol.getSource().getUnitOfMeasure();
         this.coeff = renderingContext.getUnitCoefficient(symbolUnit);
-        this.dispGeom = (NonSI.PIXEL == symbolUnit);
+        this.dispGeom = (Units.POINT == symbolUnit);
         final Symbolizer symbolizer = symbol.getSource();
         this.geomPropertyName = symbolizer.getGeometry();
     }

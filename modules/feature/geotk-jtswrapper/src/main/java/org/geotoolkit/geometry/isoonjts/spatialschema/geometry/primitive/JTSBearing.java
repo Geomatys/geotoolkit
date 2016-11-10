@@ -10,10 +10,9 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import javax.measure.quantity.Angle;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.opengis.geometry.primitive.Bearing;
+import org.apache.sis.measure.Units;
 
 
 /**
@@ -31,16 +30,16 @@ import org.opengis.geometry.primitive.Bearing;
  * @module pending
  */
 public class JTSBearing implements Bearing {
-    
+
     private final double[] angles;
-    
+
     private final double[] direction;
-    
+
     public JTSBearing(final double[] angles, final double[] direction) {
         this.angles = angles;
         this.direction = direction;
     }
-    
+
     /**
      * Returns the azimuth and (optionnaly) the altitude.
      * In this variant of bearing usually used for 2D coordinate systems, the first angle (azimuth)
@@ -74,6 +73,6 @@ public class JTSBearing implements Bearing {
 
     @Override
     public Unit<Angle> getAngleUnit() {
-        return NonSI.DEGREE_ANGLE;
+        return Units.DEGREE;
     }
 }

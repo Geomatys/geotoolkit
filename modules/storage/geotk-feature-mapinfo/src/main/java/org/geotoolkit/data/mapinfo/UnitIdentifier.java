@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.data.mapinfo;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.measure.Units;
 
 /**
  * A class which binds mapinfo unit codes with Geotk unit constants.
@@ -32,10 +31,10 @@ import java.util.regex.Pattern;
  */
 public class UnitIdentifier {
 
-    private static final HashMap<Integer, Unit> UNIT_TABLE = new HashMap<Integer, Unit>();
+    private static final HashMap<Integer, Unit<?>> UNIT_TABLE = new HashMap<>();
 
-    public static Unit getUnitFromCode(String code) {
-        Unit result = null;
+    public static Unit<?> getUnitFromCode(String code) {
+        Unit<?> result = null;
         Matcher codeMatch = Pattern.compile("\\d+").matcher(code);
         if(codeMatch.find()) {
             final int intCode = Integer.decode(codeMatch.group());
@@ -43,7 +42,7 @@ public class UnitIdentifier {
         } else {
             Matcher strMatch = Pattern.compile("\\w+").matcher(code);
             if(strMatch.find()) {
-                result = Unit.valueOf(strMatch.group());
+                result = Units.valueOf(strMatch.group());
             }
         }
         return result;
@@ -53,7 +52,7 @@ public class UnitIdentifier {
      * @param code The integer which is mapinfo unit code.
      * @return Return the {@link Unit} object pointed by given mapInfo code, or null if we can't find equivalent.
      */
-    public static Unit getUnitFromCode(int code) {
+    public static Unit<?> getUnitFromCode(int code) {
         return UNIT_TABLE.get(code);
     }
 
@@ -62,8 +61,8 @@ public class UnitIdentifier {
      * @param source The {@link Unit} to get map
      * @return
      */
-    public static int getCodeFromUnit(Unit source) {
-        for(Map.Entry<Integer, Unit> pair : UNIT_TABLE.entrySet()) {
+    public static int getCodeFromUnit(Unit<?> source) {
+        for(Map.Entry<Integer, Unit<?>> pair : UNIT_TABLE.entrySet()) {
             if(pair.getValue().equals(source)) {
                 return pair.getKey();
             }
@@ -72,16 +71,16 @@ public class UnitIdentifier {
     }
 
     static {
-        UNIT_TABLE.put(0, NonSI.MILE);
-        UNIT_TABLE.put(1, SI.KILOMETRE);
-        UNIT_TABLE.put(2, NonSI.INCH);
-        UNIT_TABLE.put(3, NonSI.FOOT);
-        UNIT_TABLE.put(4, NonSI.YARD);
-        UNIT_TABLE.put(5, SI.MILLIMETRE);
-        UNIT_TABLE.put(6, SI.CENTIMETRE);
-        UNIT_TABLE.put(7, SI.METRE);
-        UNIT_TABLE.put(8, NonSI.FOOT_SURVEY_US);
-        UNIT_TABLE.put(9, NonSI.NAUTICAL_MILE);
+        UNIT_TABLE.put(0, Units.STATUTE_MILE);
+        UNIT_TABLE.put(1, Units.KILOMETRE);
+        UNIT_TABLE.put(2, Units.INCH);
+        UNIT_TABLE.put(3, Units.FOOT);
+//      UNIT_TABLE.put(4, Units.YARD);      // TODO: pending completion of JSR-275 replacement.
+        UNIT_TABLE.put(5, Units.MILLIMETRE);
+        UNIT_TABLE.put(6, Units.CENTIMETRE);
+        UNIT_TABLE.put(7, Units.METRE);
+        UNIT_TABLE.put(8, Units.US_SURVEY_FOOT);
+        UNIT_TABLE.put(9, Units.NAUTICAL_MILE);
         // 30
         // 31
         // 32

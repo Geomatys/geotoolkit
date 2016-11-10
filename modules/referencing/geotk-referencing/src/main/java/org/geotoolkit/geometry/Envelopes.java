@@ -69,7 +69,10 @@ public final class Envelopes extends Static {
      *
      * @see CRS#getEnvelope(CoordinateReferenceSystem)
      * @see org.apache.sis.geometry.GeneralEnvelope#reduceToDomain(boolean)
+     *
+     * @deprecated Moved to Apache SIS as {@link return org.apache.sis.referencing.CRS#getDomainOfValidity}.
      */
+    @Deprecated
     public static Envelope getDomainOfValidity(final CoordinateReferenceSystem crs) {
         return CRS.getEnvelope(crs);
     }

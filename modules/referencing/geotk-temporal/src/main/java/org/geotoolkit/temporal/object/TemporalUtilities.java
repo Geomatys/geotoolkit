@@ -29,9 +29,8 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
@@ -68,16 +67,16 @@ public final class TemporalUtilities {
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    public static final Unit<javax.measure.quantity.Duration> MONTH_UNIT = NonSI.DAY
-            .times(MONTH_MS / DAY_MS);
+    public static final Unit<javax.measure.quantity.Time> MONTH_UNIT = Units.DAY
+            .multiply(MONTH_MS / DAY_MS);
 
     /**
      * The units for years.
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    public static final Unit<javax.measure.quantity.Duration> YEAR_UNIT = NonSI.DAY
-            .times(YEAR_MS / DAY_MS);
+    public static final Unit<javax.measure.quantity.Time> YEAR_UNIT = Units.DAY
+            .multiply(YEAR_MS / DAY_MS);
 
     /**
      * Hack for french datas, must find another way to do so. handle all local ?
@@ -676,23 +675,23 @@ public final class TemporalUtilities {
         }
         temp = mills / WEEK_MS;
         if (temp > 0) {
-            return NonSI.WEEK;
+            return Units.WEEK;
         }
         temp = mills / DAY_MS;
         if (temp > 0) {
-            return NonSI.DAY;
+            return Units.DAY;
         }
         temp = mills / HOUR_MS;
         if (temp > 0) {
-            return NonSI.HOUR;
+            return Units.HOUR;
         }
         temp = mills / MINUTE_MS;
         if (temp > 0) {
-            return NonSI.MINUTE;
+            return Units.MINUTE;
         }
         temp = mills / SECOND_MS;
         if (temp > 0) {
-            return SI.SECOND;
+            return Units.SECOND;
         }
         return null;
     }

@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Comparator;
 import java.util.Locale;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.iterator.WritableRectIter;
 
 import org.opengis.referencing.operation.MathTransform1D;

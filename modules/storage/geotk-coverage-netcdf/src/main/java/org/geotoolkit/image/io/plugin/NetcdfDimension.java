@@ -23,9 +23,7 @@ import java.util.Objects;
 import java.util.Collections;
 import java.io.IOException;
 import javax.imageio.IIOException;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
+import javax.measure.Unit;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -346,7 +344,7 @@ final class NetcdfDimension {
         if (!name.equals(longName)) {
             addAttribute(CDM.LONG_NAME, longName);
         }
-        if (unit != null && !unit.equals(Unit.ONE)) {
+        if (unit != null && !unit.equals(Units.UNITY)) {
             addAttribute(CDM.UNITS, getUnitSymbol(unit, direction));
         }
         addAttribute(CF.POSITIVE, positive);
@@ -394,7 +392,7 @@ final class NetcdfDimension {
      * Returns the symbol for the given units for the axis direction.
      */
     private String getUnitSymbol(final Unit<?> unit, final AxisDirection direction) {
-        if (NonSI.DEGREE_ANGLE.equals(unit)) {
+        if (Units.DEGREE.equals(unit)) {
             if (AxisDirection.EAST .equals(direction)) return "degrees_east";
             if (AxisDirection.NORTH.equals(direction)) return "degrees_north";
             if (AxisDirection.WEST .equals(direction)) return "degrees_west";
@@ -403,13 +401,13 @@ final class NetcdfDimension {
         }
         if (Units.isTemporal(unit)) {
             final StringBuilder buffer = new StringBuilder();
-            if (SI.SECOND.equals(unit)) {
+            if (Units.SECOND.equals(unit)) {
                 buffer.append("seconds");
-            } else if (NonSI.MINUTE.equals(unit)) {
+            } else if (Units.MINUTE.equals(unit)) {
                 buffer.append("minutes");
-            } else if (NonSI.HOUR.equals(unit)) {
+            } else if (Units.HOUR.equals(unit)) {
                 buffer.append("hours");
-            } else if (NonSI.DAY.equals(unit)) {
+            } else if (Units.DAY.equals(unit)) {
                 buffer.append("days");
             } else {
                 buffer.append(unit);

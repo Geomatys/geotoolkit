@@ -40,6 +40,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;

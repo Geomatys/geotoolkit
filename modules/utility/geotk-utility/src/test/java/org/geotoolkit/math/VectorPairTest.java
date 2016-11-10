@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.math;
 
+import org.apache.sis.math.Vector;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -39,10 +40,11 @@ public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase 
         final double[]  y = {4, 4, 3, 3, 3, 4, 5, 6};
         final double[] ey = {4, 4, 3,    3,       6}; // Expected result
         final double[] ex = {1, 2, 3,    5,       8};
-        final VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
+        final VectorPair pair = new VectorPair(Vector.create(x, false),
+                                               Vector.create(y, false));
         pair.omitColinearPoints(1E-6, 1E-6);
-        assertEquals(Vector.create(ey), pair.getY());
-        assertEquals(Vector.create(ex), pair.getX());
+        assertEquals(Vector.create(ey, false), pair.getY());
+        assertEquals(Vector.create(ex, false), pair.getX());
     }
 
     /**
@@ -54,10 +56,11 @@ public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase 
         final double[]  y = {4, 5, 6, 6, 3, 4};
         final double[] ey = {4, 4, 5, 5, 6, 6, 6, 6, 3, 3, 4, 4};
         final double[] ex = {1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7};
-        final VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
+        final VectorPair pair = new VectorPair(Vector.create(x, false),
+                                               Vector.create(y, false));
         pair.makeStepwise(0);
-        assertEquals(Vector.create(ey), pair.getY());
-        assertEquals(Vector.create(ex), pair.getX());
+        assertEquals(Vector.create(ey, false), pair.getY());
+        assertEquals(Vector.create(ex, false), pair.getX());
     }
 
     /**
@@ -69,10 +72,11 @@ public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase 
         double[]  y = {4, 5, 6, 6, 3, 4};
         double[] ey = {4, 5, 5, 6, 6, 6, 6, 6, 3, 4, 4, 4};
         double[] ex = {1, 1, 2, 2, 3, 3, 4, 5, 5, 5, 6, 7};
-        VectorPair pair = new VectorPair(Vector.create(x), Vector.create(y));
+        VectorPair pair = new VectorPair(Vector.create(x, false),
+                                         Vector.create(y, false));
         pair.makeStepwise(+1);
-        assertEquals(Vector.create(ey), pair.getY());
-        assertEquals(Vector.create(ex), pair.getX());
+        assertEquals(Vector.create(ey, false), pair.getY());
+        assertEquals(Vector.create(ex, false), pair.getX());
         /*
          * Try again, now asking to also remove the lower point when the line
          * segments go down and up again at the same X value. The value 3 in
@@ -80,17 +84,18 @@ public final strictfp class VectorPairTest extends org.geotoolkit.test.TestBase 
          */
         ey = new double[] {4, 5, 5, 6, 6, 6, 6, 6, 4, 4, 4};
         ex = new double[] {1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7};
-        pair = new VectorPair(Vector.create(x), Vector.create(y));
+        pair = new VectorPair(Vector.create(x, false),
+                              Vector.create(y, false));
         pair.makeStepwise(+2);
-        assertEquals(Vector.create(ey), pair.getY());
-        assertEquals(Vector.create(ex), pair.getX());
+        assertEquals(Vector.create(ey, false), pair.getY());
+        assertEquals(Vector.create(ex, false), pair.getX());
         /*
          * Opportunist additional test of omitColinearPoints().
          */
         ey = new double[] {4, 5, 5, 6, 6, 4, 4};
         ex = new double[] {1, 1, 2, 2, 5, 5, 7};
         pair.omitColinearPoints(1E-6, 1E-6);
-        assertEquals(Vector.create(ey), pair.getY());
-        assertEquals(Vector.create(ex), pair.getX());
+        assertEquals(Vector.create(ey, false), pair.getY());
+        assertEquals(Vector.create(ex, false), pair.getX());
     }
 }

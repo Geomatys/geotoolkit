@@ -23,15 +23,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.Unit;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.measure.Units;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -102,7 +102,7 @@ public final class GeometryUtils {
      */
     public static double[] getBBox(Envelope envelope, final Unit unit) {
 
-        if (unit.equals(NonSI.DEGREE_ANGLE)) {
+        if (unit.equals(Units.DEGREE)) {
             try {
                 envelope = Envelopes.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
             } catch (TransformException ex) {
@@ -279,8 +279,8 @@ public final class GeometryUtils {
         if (envelope1 == null || envelope2 == null) {
             return false;
         }
-        final double[] bbox1 = getBBox(envelope1, NonSI.DEGREE_ANGLE);
-        final double[] bbox2 = getBBox(envelope2, NonSI.DEGREE_ANGLE);
+        final double[] bbox1 = getBBox(envelope1, Units.DEGREE);
+        final double[] bbox2 = getBBox(envelope2, Units.DEGREE);
         return
             bbox1[0] == bbox2[0] &&
             bbox1[1] == bbox2[1] &&

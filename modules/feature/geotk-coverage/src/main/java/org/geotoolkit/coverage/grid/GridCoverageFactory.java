@@ -35,7 +35,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageFunction;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.util.CaselessStringKey;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;

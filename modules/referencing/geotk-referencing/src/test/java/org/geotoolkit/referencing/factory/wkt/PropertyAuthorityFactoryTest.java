@@ -21,8 +21,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Arrays;
 import java.io.IOException;
-import javax.measure.unit.NonSI;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
@@ -30,6 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.wkt.WKTFormatTest;
@@ -102,10 +102,10 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
      *
      * @throws IOException Should never happen.
      * @throws FactoryException Should never happen.
-     * @throws ConversionException Should never happen.
+     * @throws IncommensurableException Should never happen.
      */
     @Test
-    public void testDefaultHintsWithAxis() throws IOException, FactoryException, ConversionException {
+    public void testDefaultHintsWithAxis() throws IOException, FactoryException, IncommensurableException {
         final URL r1 = PropertyEpsgFactory.class.getResource(FILENAME_XY);
         final URL r2 = PropertyEpsgFactory.class.getResource(FILENAME);
         assertNotNull(FILENAME_XY, r1);
@@ -132,7 +132,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
         assertEquals("Expected grade units", 1,
-                cs.getAxis(0).getUnit().getConverterToAny(NonSI.GRADE).convert(1), 1E-8);
+                cs.getAxis(0).getUnit().getConverterToAny(Units.GRAD).convert(1), 1E-8);
         /*
          * Tests again when we asked for FORCE_LONGITUDE_FIRST_AXIS_ORDER. Now (at the opposite
          * of previous testDefaultHint()) the factory should care about the hints because the
@@ -157,7 +157,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
 //      assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
 //      assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
         assertEquals("Expected grade units because units are declared outside AXIS elements.", 1,
-                cs.getAxis(0).getUnit().getConverterToAny(NonSI.GRADE).convert(1), 1E-8);
+                cs.getAxis(0).getUnit().getConverterToAny(Units.GRAD).convert(1), 1E-8);
         /*
          * Tests a CRS sample.
          */

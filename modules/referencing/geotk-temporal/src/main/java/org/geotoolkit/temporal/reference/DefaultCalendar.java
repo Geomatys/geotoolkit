@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -22,12 +22,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.measure.quantity.Duration;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.quantity.Time;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -43,8 +43,6 @@ import org.opengis.temporal.CalendarEra;
 import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.JulianDate;
-import org.opengis.referencing.cs.TimeCS;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -68,9 +66,9 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * The {@linkplain CalendarEra calendar eras} associated with the calendar being described.
      */
     private Collection<CalendarEra> referenceFrame;
-    
+
     /**
-     * The {@linkplain Clock time basis} that is use with this calendar to define 
+     * The {@linkplain Clock time basis} that is use with this calendar to define
      * temporal position within a calendar day.
      */
     private Clock timeBasis;
@@ -79,27 +77,27 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * Creates a new {@link Calendar} implementation initialize by given parameters.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalCRS#DefaultTemporalCRS(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)  super-class constructor}.
-     * 
+     *
      * @param properties The properties to be given to the coordinate reference system.
      * @param referenceFrame The {@linkplain CalendarEra calendar eras} associated with the calendar being described.
      * @param timeBasis The {@linkplain Clock time basis} that is use with this calendar to define temporal position within a calendar day.
-     * @see DefaultTemporalReferenceSystem#DefaultTemporalReferenceSystem(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS) 
+     * @see DefaultTemporalReferenceSystem#DefaultTemporalReferenceSystem(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)
      */
-    public DefaultCalendar(Map<String, ?> properties, 
+    public DefaultCalendar(Map<String, ?> properties,
                            Collection<CalendarEra> referenceFrame, Clock timeBasis ) {
         super(properties);
         ArgumentChecks.ensureNonNull("referenceFrame", referenceFrame);
         this.referenceFrame = referenceFrame;
         this.timeBasis      = timeBasis;
     }
-    
+
     /**
      * Empty constructor only use for XML binding.
      */
     private DefaultCalendar() {
         super();
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -108,7 +106,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @param object The Calendar to copy values from, or {@code null} if none.
      *
      * @see #castOrCopy(Calendar)
-     * @throws NullArgumentException if referenceFrame is {@code null}. 
+     * @throws NullArgumentException if referenceFrame is {@code null}.
      */
     private DefaultCalendar(final Calendar object) {
         super(object);
@@ -148,7 +146,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * Converts a {@linkplain CalendarDate date} in this calendar to a
      * {@linkplain JulianDate julian date}.
      * <blockquote><font size="-1">date may be {@code null}, time may be {@code null} but not both.</font></blockquote>
-     * 
+     *
      * @param date The {@linkplain CalendarDate date} which will be converted, may be {@code null}.
      * @param time The {@linkplain Clock time basis} which will be converted, may be {@code null}.
      * @return {@linkplain CalendarDate date} from this calendar to a {@linkplain JulianDate julian date} convertion.
@@ -164,14 +162,14 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         gc.set(GregorianCalendar.ERA, GregorianCalendar.BC);
         final int julianGre = 15 + 31 * (10 + 12 * 1582);
         Number coordinateValue = 0;
-        
+
         final Map<String, Object> properties = new HashMap<>();
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
-        final Unit<Duration> interval = NonSI.DAY;
+        final Unit<Time> interval = Units.DAY;
         properties.put(IdentifiedObject.NAME_KEY, name);
 //        properties.put(TemporalCoordinateSystem.INTERVAL_KEY, interval);
         final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, interval, gc.getTime());
-        
+
 //        TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(
 //                new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
 //                null, gc.getTime(), new SimpleInternationalString("day"));
@@ -246,14 +244,14 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         GregorianCalendar gc = new GregorianCalendar(-4713, 1, 1);
         gc.set(GregorianCalendar.ERA, GregorianCalendar.BC);
         final int julianGre = 15 + 31 * (10 + 12 * 1582);
-        
+
         final Map<String, Object> properties = new HashMap<>();
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
 //        final InternationalString interval = new SimpleInternationalString("day");
         properties.put(IdentifiedObject.NAME_KEY, name);
 //        properties.put(TemporalCoordinateSystem.INTERVAL_KEY, interval);
-        final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, NonSI.DAY, gc.getTime());
-        
+        final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, Units.DAY, gc.getTime());
+
 //        TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
 //                null, gc.getTime(), new SimpleInternationalString("day"));
         Number coordinateValue = 0;
@@ -316,7 +314,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
     /**
      * Returns convertion of {@linkplain JulianDate julian date} to a {@linkplain CalendarDate date}
      * in this calendar.
-     * 
+     *
      * @param julian The {@linkplain JulianDate julian date} which will be converted.
      * @return {@linkplain JulianDate julian date} to a {@linkplain CalendarDate date} convertion.
      */
@@ -324,7 +322,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
     public CalendarDate julTrans(final JulianDate jdt) {
         if (jdt == null)
             return null;
-        
+
         CalendarDate response = null;
 
         int JGREG = 15 + 31 * (10 + 12 * 1582);
@@ -364,9 +362,9 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         if (object instanceof Calendar) {
             final Calendar that = (Calendar) object;
 
-            return Objects.equals(this.getName(), that.getName()) 
+            return Objects.equals(this.getName(), that.getName())
                     && Objects.equals(this.getDomainOfValidity(), that.getDomainOfValidity())
-                    && Objects.equals(this.referenceFrame, that.getReferenceFrame()) 
+                    && Objects.equals(this.referenceFrame, that.getReferenceFrame())
                     &&Objects.equals(this.timeBasis, that.getTimeBasis());
         }
         return false;

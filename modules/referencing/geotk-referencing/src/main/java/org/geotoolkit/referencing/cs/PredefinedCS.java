@@ -19,10 +19,9 @@ package org.geotoolkit.referencing.cs;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.IncommensurableException;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.util.InternationalString;
@@ -208,7 +207,7 @@ public final class PredefinedCS extends Static {
             final Unit<?> axisUnit = cs.getAxis(i).getUnit();
             try {
                 converters[i] = axisUnit.getConverterToAny(unit);
-            } catch (ConversionException e) {
+            } catch (IncommensurableException e) {
                 throw new UnsupportedOperationException(Errors.format(
                         Errors.Keys.IncompatibleUnit_1, axisUnit), e);
             }
@@ -249,21 +248,21 @@ public final class PredefinedCS extends Static {
      * {@code usingUnit} methods in CS subclasses.
      *
      * @param  unit The unit for the new axes.
-     * @param  ignore {@link SI#METRE} for ignoring linear units, {@link SI#RADIAN} for ignoring
+     * @param  ignore {@link Units#METRE} for ignoring linear units, {@link Units#RADIAN} for ignoring
      *         angular units, or {@code null} for none.
      * @return New axes using the specified unit, or {@code null} if no change is needed.
-     * @throws ConversionException If the specified unit is incompatible with the expected one.
+     * @throws IncommensurableException If the specified unit is incompatible with the expected one.
      *
      * @see DefaultCartesianCS#usingUnit(Unit)
      * @see DefaultEllipsoidalCS#usingUnit(Unit)
      */
-    private static CoordinateSystemAxis[] axisUsingUnit(final CoordinateSystem cs, final Unit<?> unit, final Unit<?> ignore) throws ConversionException {
+    private static CoordinateSystemAxis[] axisUsingUnit(final CoordinateSystem cs, final Unit<?> unit, final Unit<?> ignore) throws IncommensurableException {
         final int dimension = cs.getDimension();
         CoordinateSystemAxis[] newAxis = null;
         for (int i=0; i<dimension; i++) {
             final CoordinateSystemAxis a = cs.getAxis(i);
             final Unit<?> current = a.getUnit();
-            if (!unit.equals(current) && (ignore == null || !ignore.equals(unit.toSI()))) {
+            if (!unit.equals(current) && (ignore == null || !ignore.equals(unit.getSystemUnit()))) {
                 final CoordinateSystemAxis converted = Axes.usingUnit(a, unit);
                 if (converted != a) {
                     if (newAxis == null) {
@@ -290,7 +289,7 @@ public final class PredefinedCS extends Static {
         final CoordinateSystemAxis[] axes;
         try {
             axes = axisUsingUnit(cs, unit, null);
-        } catch (ConversionException e) {
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         if (axes == null) {
@@ -311,8 +310,8 @@ public final class PredefinedCS extends Static {
     public static EllipsoidalCS usingUnit(final EllipsoidalCS cs, final Unit<?> unit) throws IllegalArgumentException {
         final CoordinateSystemAxis[] axes;
         try {
-            axes = PredefinedCS.axisUsingUnit(cs, unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
-        } catch (ConversionException e) {
+            axes = PredefinedCS.axisUsingUnit(cs, unit, Units.isLinear(unit) ? Units.RADIAN : Units.METRE);
+        } catch (IncommensurableException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         if (axes == null) {

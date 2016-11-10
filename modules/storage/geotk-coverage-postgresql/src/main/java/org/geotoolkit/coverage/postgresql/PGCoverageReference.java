@@ -35,7 +35,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
@@ -69,6 +69,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -490,7 +491,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                 final String unitStr = rs.getString("unit");
                 Unit unit = null;
                 if(unitStr != null && !unitStr.isEmpty()) {
-                    unit = Unit.valueOf(unitStr);
+                    unit = Units.valueOf(unitStr);
                 }
 
                 //read categories

@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.Interpolation;
 import javax.media.jai.OperationNode;
 import javax.media.jai.PlanarImage;

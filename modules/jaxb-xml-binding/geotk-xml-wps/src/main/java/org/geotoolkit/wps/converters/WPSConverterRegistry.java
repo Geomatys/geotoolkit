@@ -18,7 +18,7 @@ package org.geotoolkit.wps.converters;
 
 import java.util.*;
 import java.util.logging.Logger;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotoolkit.feature.util.converter.StringToDateConverter;
 import org.geotoolkit.ows.xml.BoundingBox;

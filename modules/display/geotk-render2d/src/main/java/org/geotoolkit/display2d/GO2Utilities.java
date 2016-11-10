@@ -51,12 +51,9 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.converter.LinearConverter;
-import javax.measure.converter.UnitConverter;
+import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -141,6 +138,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -393,7 +391,7 @@ public final class GO2Utilities {
             trs.setOriginalShape(shape);
             trs.scale(size, size);
             renderFill(trs, mark.getFill(), target);
-            renderStroke(trs, mark.getStroke(), SI.METRE, target);
+            renderStroke(trs, mark.getStroke(), Units.METRE, target);
         }
 
     }
@@ -466,7 +464,7 @@ public final class GO2Utilities {
             join = BasicStroke.JOIN_BEVEL;
         }
 
-        if(NonSI.PIXEL.equals(uom) && GO2Utilities.isStatic(expWidth)){
+        if(Units.POINT.equals(uom) && GO2Utilities.isStatic(expWidth)){
             width = expWidth.evaluate(null, Number.class).floatValue();
 
             if(stroke.getDashArray() != null && stroke.getDashArray().length >0){
@@ -832,12 +830,12 @@ public final class GO2Utilities {
             if (axisUnit.isCompatible(symbolUnit)){
                 final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
 
-                if(!(converter instanceof LinearConverter)){
+                if (!converter.isLinear()) {
                     throw new UnsupportedOperationException("Cannot convert nonlinear units yet");
                 }else{
                     converters.add(converter.convert(1) - converter.convert(0));
                 }
-            }else if(axisUnit == NonSI.DEGREE_ANGLE){
+            }else if(axisUnit == Units.DEGREE){
                 //calculate coefficient at center of the screen.
                 final Rectangle rect = context.getCanvasDisplayBounds();
                 final AffineTransform2D trs = context.getDisplayToObjective();

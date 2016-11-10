@@ -480,11 +480,11 @@ public final class CoverageUtilities extends Static {
          *
          * Note : final envelope can be the fusion of two neighbour Quad-Tree cells.
          */
-        final Envelope tmpDomain = org.geotoolkit.geometry.Envelopes.getDomainOfValidity(targetCRS);
+        final Envelope tmpDomain = CRS.getDomainOfValidity(targetCRS);
         final GeneralEnvelope quadTreeCell;
         if (tmpDomain == null) {
             final GeographicCRS crs84 = CommonCRS.defaultGeographic();
-            final Envelope tmpWorld = org.geotoolkit.referencing.CRS.getEnvelope(crs84);
+            final Envelope tmpWorld = CRS.getDomainOfValidity(crs84);
             quadTreeCell = new GeneralEnvelope(Envelopes.transform(tmpWorld, targetCRS));
         } else {
             quadTreeCell = new GeneralEnvelope(tmpDomain);

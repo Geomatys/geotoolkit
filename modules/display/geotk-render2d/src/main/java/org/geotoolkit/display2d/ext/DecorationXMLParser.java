@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.measure.unit.Unit;
 import javax.swing.SwingConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,6 +66,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -301,7 +301,7 @@ public final class DecorationXMLParser {
                     false,
                     new Font("Serial", Font.PLAIN, 12),
                     true,
-                    Unit.valueOf(unit));
+                    Units.valueOf(unit));
             parsed.put(ATT_NAME, TYPE_SCALE_GRAPHIC);
             parsed.put(TYPE_SCALE_GRAPHIC, template);
             parsed.put(PARAM_POSITION, parsePosition(params.get(PARAM_POSITION), SwingConstants.SOUTH_WEST));

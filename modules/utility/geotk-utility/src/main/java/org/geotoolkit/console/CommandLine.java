@@ -57,10 +57,7 @@ import org.geotoolkit.lang.Debug;
  *
  * @since 2.5
  * @module
- *
- * @deprecated In process of being removed in favor of Apache SIS command-line tools.
  */
-@Deprecated
 public abstract class CommandLine implements Runnable {
     /*
      * NOTE: There is no clear convention on exit code, except 0 == SUCCESS.

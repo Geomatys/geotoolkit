@@ -22,8 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -49,6 +48,7 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
+import org.apache.sis.measure.Units;
 
 /**
  * This class ables to display PointSymbolizer tool pane
@@ -113,7 +113,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
     @Override
     public void parse(final PointSymbolizer symbol) {
         oldSymbolizer = symbol;
-        
+
         if (symbol instanceof PointSymbolizer) {
 
             guiSize.parse(symbol.getGraphic().getSize());
@@ -152,11 +152,11 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
      * {@inheritDoc }
      */
     @Override
-    public PointSymbolizer create() {        
+    public PointSymbolizer create() {
         String name = "mySymbol";
         String geometry = null; //use the default geometry of the feature
         Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        Unit unit = NonSI.PIXEL;
+        Unit unit = Units.POINT;
 
         if(oldSymbolizer!=null){
             name = oldSymbolizer.getName();
@@ -164,7 +164,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
             desc = oldSymbolizer.getDescription();
             unit = oldSymbolizer.getUnitOfMeasure();
         }
-        
+
         //the visual element
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
@@ -173,7 +173,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
         final Expression opacity = getFilterFactory().literal(alpha / 100.d);
 
         final GraphicalSymbol graphicalSymbol = guiGraphicSymbol.create();
-        
+
         final GraphicalSymbol finalGraphicalSymbol;
         if (graphicalSymbol instanceof Mark) {
             final Stroke stroke = guiStroke.create();
@@ -193,7 +193,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

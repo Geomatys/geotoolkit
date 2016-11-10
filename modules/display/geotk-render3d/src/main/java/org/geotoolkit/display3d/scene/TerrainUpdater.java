@@ -30,7 +30,7 @@ import java.awt.image.Raster;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
@@ -59,7 +59,6 @@ import org.geotoolkit.display3d.scene.quadtree.QuadTreeUtils;
 import org.geotoolkit.math.XMath;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * @author Thomas Rouby (Geomatys)
@@ -164,7 +163,7 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
         }
     }
 
-    public void updateScene() throws DataStoreException, TransformException, ConversionException {
+    public void updateScene() throws DataStoreException, TransformException, IncommensurableException {
 
         //remove all tasks not done yet.
         queue.clear();
@@ -419,7 +418,7 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
                 while(updating.getAndSet(false)){
                     try {
                         updateScene();
-                    } catch (DataStoreException | TransformException | ConversionException ex) {
+                    } catch (DataStoreException | TransformException | IncommensurableException ex) {
                         Map3D.LOGGER.log(Level.INFO, ex.getMessage(),ex);
                     }
                 }

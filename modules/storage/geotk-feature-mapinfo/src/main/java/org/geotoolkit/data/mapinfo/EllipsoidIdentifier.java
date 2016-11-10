@@ -24,9 +24,9 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.util.FactoryException;
 
-import javax.measure.unit.SI;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -163,47 +163,47 @@ public class EllipsoidIdentifier {
 
         // Here we build ellipsoïds we did not found epsg equivalent for.
         CUSTOM_ELLIPSOIDS.put(35, DefaultEllipsoid.createFlattenedSphere(
-                name("Bessel 1841 (modified for NGO 1948)"), 6377492.0176, 299.15281, SI.METRE));
+                name("Bessel 1841 (modified for NGO 1948)"), 6377492.0176, 299.15281, Units.METRE));
         CUSTOM_ELLIPSOIDS.put(14, DefaultEllipsoid.createFlattenedSphere(
-                name("Bessel 1841 (modified for Schwarzeck)"), 6377483.865, 299.1528128, SI.METRE));
+                name("Bessel 1841 (modified for Schwarzeck)"), 6377483.865, 299.1528128, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(37, DefaultEllipsoid.createFlattenedSphere(
-                name("Clarke 1880 (modified for Jamaica)"), 6378249.136, 293.46631, SI.METRE));
+                name("Clarke 1880 (modified for Jamaica)"), 6378249.136, 293.46631, Units.METRE));
         CUSTOM_ELLIPSOIDS.put(16, DefaultEllipsoid.createFlattenedSphere(
-                name("Clarke 1880 (modified for Merchich)"), 6378249.2, 293.46598, SI.METRE));
+                name("Clarke 1880 (modified for Merchich)"), 6378249.2, 293.46598, Units.METRE));
         CUSTOM_ELLIPSOIDS.put(38, DefaultEllipsoid.createFlattenedSphere(
-                name("Clarke 1880 (modified for Palestine)"), 6378300.79, 293.46623, SI.METRE));
+                name("Clarke 1880 (modified for Palestine)"), 6378300.79, 293.46623, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(50, DefaultEllipsoid.createFlattenedSphere(
-                name("Everest (Pakistan)"), 6377309.613, 300.8017, SI.METRE));
+                name("Everest (Pakistan)"), 6377309.613, 300.8017, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(18, DefaultEllipsoid.createFlattenedSphere(
-                name("Fischer 1960"), 6378166.0, 298.3, SI.METRE));
+                name("Fischer 1960"), 6378166.0, 298.3, Units.METRE));
         CUSTOM_ELLIPSOIDS.put(19, DefaultEllipsoid.createFlattenedSphere(
-                name("Fischer 1960 (modified for South Asia)"), 6378155.0, 298.3, SI.METRE));
+                name("Fischer 1960 (modified for South Asia)"), 6378155.0, 298.3, Units.METRE));
         CUSTOM_ELLIPSOIDS.put(20, DefaultEllipsoid.createFlattenedSphere(
-                name("Fischer 1968"), 6378150.0, 298.3, SI.METRE));
+                name("Fischer 1968"), 6378150.0, 298.3, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(49, DefaultEllipsoid.createFlattenedSphere(
-                name("Irish (WOFO)"), 6377542.178, 299.325, SI.METRE));
+                name("Irish (WOFO)"), 6377542.178, 299.325, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put( 3, DefaultEllipsoid.createFlattenedSphere(
-                name("Krassovsky"), 6378245.0, 298.3, SI.METRE));
+                name("Krassovsky"), 6378245.0, 298.3, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(32, DefaultEllipsoid.createFlattenedSphere(
-                name("MERIT 83"), 6378137.0, 298.257, SI.METRE));
+                name("MERIT 83"), 6378137.0, 298.257, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(33, DefaultEllipsoid.createFlattenedSphere(
-                name("New International 1967"), 6378157.5, 298.25, SI.METRE));
+                name("New International 1967"), 6378157.5, 298.25, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(52, DefaultEllipsoid.createFlattenedSphere(
-                name("PZ90"), 6378136.0, 298.257839303, SI.METRE));
+                name("PZ90"), 6378136.0, 298.257839303, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(34, DefaultEllipsoid.createFlattenedSphere(
-                name("Walbeck"), 6376896.0, 302.78, SI.METRE));
+                name("Walbeck"), 6376896.0, 302.78, Units.METRE));
 
         CUSTOM_ELLIPSOIDS.put(26, DefaultEllipsoid.createFlattenedSphere(
-                name("WGS 60"), 6378165.0, 298.3, SI.METRE));
+                name("WGS 60"), 6378165.0, 298.3, Units.METRE));
     }
 
     private static Map<String,?> name(final String name) {

@@ -32,7 +32,7 @@
  *   // Creates the group of parameters named "MyOperation".
  *   ParameterDescriptorGroup myOperation = new DefaultParameterDescriptorGroup("MyOperation",
  *           DefaultParameterDescriptor.create("dimension", 2, 0, 3),
- *           DefaultParameterDescriptor.create("distance", Double.NaN, 0, 100, SI.KILOMETER));
+ *           DefaultParameterDescriptor.create("distance", Double.NaN, 0, 100, Units.KILOMETRE));
  * }
  *
  * Operation usages typically invoke the
@@ -42,7 +42,7 @@
  * {@preformat java
  *     ParameterValueGroup group = myOperation.createValue();
  *     group.parameter("dimension").setValue(3);
- *     group.parameter("distance").setValue(200.0, SI.METRE);
+ *     group.parameter("distance").setValue(200.0, Units.METRE);
  * }
  *
  * <p>This Geotk package provides the following implementations:</p>

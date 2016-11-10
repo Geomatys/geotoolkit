@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.vector.buffer;
 
-import javax.measure.unit.SI;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -48,7 +48,7 @@ public final class BufferDescriptor extends VectorDescriptor {
 
     /**Process name : buffer */
     public static final String NAME = "buffer";
-    
+
     /**
      * Mandatory - Buffer distance in meters
      */
@@ -56,9 +56,9 @@ public final class BufferDescriptor extends VectorDescriptor {
             .addName("distance_in")
             .setRemarks("Input buffer distance in meters.")
             .setRequired(true)
-            .create(1.0,SI.METRE);
+            .create(1.0,Units.METRE);
 
-  
+
     public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN = new ParameterBuilder()
             .addName("lenient_transform_in")
             .setRemarks("Input boolean to set accuracy CRS transformation")

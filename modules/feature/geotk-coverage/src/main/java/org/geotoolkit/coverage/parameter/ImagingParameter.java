@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.parameter;
 
 import java.net.URI;
 import java.util.Objects;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.ParameterList;
 
 import org.geotoolkit.parameter.AbstractParameter;

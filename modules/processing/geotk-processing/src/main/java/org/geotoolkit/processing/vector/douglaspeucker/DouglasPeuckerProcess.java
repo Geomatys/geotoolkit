@@ -22,8 +22,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 import java.util.Collections;
-import javax.measure.unit.SI;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -119,7 +119,7 @@ public class DouglasPeuckerProcess extends AbstractProcess {
                 Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, SI.METRE);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, Units.METRE);
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);
                 convertEnvelope = calculatedGeom.getEnvelopeInternal();

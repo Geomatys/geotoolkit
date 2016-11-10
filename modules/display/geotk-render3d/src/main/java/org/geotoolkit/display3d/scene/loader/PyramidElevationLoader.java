@@ -25,7 +25,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
@@ -66,7 +66,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidElevationLoader(final PyramidalCoverageReference ref) throws FactoryException, ConversionException, DataStoreException {
+    public PyramidElevationLoader(final PyramidalCoverageReference ref) throws FactoryException, IncommensurableException, DataStoreException {
         ArgumentChecks.ensureNonNull("pyramid reference", ref);
         this.coverageRef = ref;
 
@@ -104,17 +104,15 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         this.outputCrs = outputCrs;
         try {
             createTransformOutput();
-        } catch (FactoryException | ConversionException ex) {
+        } catch (FactoryException | IncommensurableException ex) {
             throw new PortrayalException(ex);
         }
     }
 
     /**
      * Internal only, use setOutputCRS to recalculate output transform
-     * @throws FactoryException
-     * @throws ConversionException
      */
-    private void createTransformOutput() throws FactoryException, ConversionException {
+    private void createTransformOutput() throws FactoryException, IncommensurableException {
         if (outputCrs != null){
             final CoordinateReferenceSystem crsImg = this.dataSource.getCoordinateReferenceSystem();
             transformToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();

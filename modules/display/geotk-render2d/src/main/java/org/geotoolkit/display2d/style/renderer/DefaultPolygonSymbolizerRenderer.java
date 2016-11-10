@@ -25,7 +25,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;

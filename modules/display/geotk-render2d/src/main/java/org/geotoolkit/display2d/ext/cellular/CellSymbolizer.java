@@ -26,14 +26,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.CoverageReference;
@@ -109,7 +109,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return NonSI.PIXEL;
+        return Units.POINT;
     }
 
     @Override

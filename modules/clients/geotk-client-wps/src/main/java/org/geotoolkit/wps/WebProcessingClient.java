@@ -22,7 +22,7 @@ import java.net.URLConnection;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -72,6 +72,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.measure.Units;
 
 /**
  * WPS server, used to aquiere capabilites and requests process.
@@ -526,7 +527,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                         final SupportedUOMsType inputUom = literalInput.getUOMs();
                         Unit unit = null;
                         if (inputUom != null) {
-                            unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
+                            unit = Units.valueOf(inputUom.getDefault().getUOM().getValue());
                         }
 
                         WPSObjectConverter converter = null;
@@ -624,7 +625,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                         final SupportedUOMsType inputUom = literalOutput.getUOMs();
                         Unit unit = null;
                         if (inputUom != null) {
-                            unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
+                            unit = Units.valueOf(inputUom.getDefault().getUOM().getValue());
                         }
                         outputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, unit, true));
 

@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.measure.unit.SI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -148,7 +148,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final Stroke stroke = SF.stroke(Color.BLACK,10);
         final Fill fill = SF.fill(Color.RED);
         final PolygonSymbolizer symbolizer = SF.polygonSymbolizer(
-                "", geomExp, DEFAULT_DESCRIPTION, SI.METRE, stroke, fill, DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);
+                "", geomExp, DEFAULT_DESCRIPTION, Units.METRE, stroke, fill, DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);
         final MutableStyle style = SF.style(symbolizer);
 
         final MapContext context = MapBuilder.createContext();

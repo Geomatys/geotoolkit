@@ -25,7 +25,7 @@ import java.util.logging.LogRecord;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -283,7 +283,7 @@ final class SpatialRefSysEntry {
                 try {
                     matrix = CoordinateSystems.swapAndScaleAxes(sourceCRS.getCoordinateSystem(),
                                                                 targetCRS.getCoordinateSystem());
-                } catch (ConversionException | IllegalArgumentException ignore) {
+                } catch (IncommensurableException | IllegalArgumentException ignore) {
                     throw e;
                 }
                 tr = database.getMathTransformFactory().createAffineTransform(matrix);

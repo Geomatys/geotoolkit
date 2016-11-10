@@ -42,8 +42,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.MeasureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -68,14 +68,14 @@ public class FXMesureLengthHandler extends AbstractNavigationHandler {
     private final Label uiLength = new Label();
     private final ChoiceBox<Unit> uiUnit = new ChoiceBox<>();
     private final HBox pane = new HBox(10,uiLength,uiUnit);
-    
-    
+
+
     public FXMesureLengthHandler() {
-        super();    
+        super();
         uiLength.setMaxHeight(Double.MAX_VALUE);
-        uiUnit.setItems(FXCollections.observableArrayList(SI.KILOMETRE,SI.METRE));
+        uiUnit.setItems(FXCollections.observableArrayList(Units.KILOMETRE,Units.METRE));
         uiUnit.getSelectionModel().selectFirst();
-        
+
         pane.setAlignment(Pos.CENTER);
         pane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY)));
         pane.setPadding(new Insets(10, 10, 10, 10));
@@ -83,7 +83,7 @@ public class FXMesureLengthHandler extends AbstractNavigationHandler {
         deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true));
         deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.NEVER,HPos.CENTER,true));
         deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true));
-                
+
         uiUnit.valueProperty().addListener((ObservableValue<? extends Unit> observable, Unit oldValue, Unit newValue) -> {
             updateGeometry();
         });
@@ -116,7 +116,7 @@ public class FXMesureLengthHandler extends AbstractNavigationHandler {
         super.uninstall(component);
         return true;
     }
-    
+
     private void updateGeometry(){
         final List<Geometry> geoms = new ArrayList<>();
         if(coords.size() == 1){
@@ -131,18 +131,18 @@ public class FXMesureLengthHandler extends AbstractNavigationHandler {
             geoms.add(geom);
         }
         layer.getGeometries().setAll(geoms);
-        
+
         if(geoms.isEmpty()){
             uiLength.setText("-");
         }else{
             uiLength.setText(NumberFormat.getNumberInstance().format(
-                    MeasureUtilities.calculateLenght(geoms.get(0), 
+                    MeasureUtilities.calculateLenght(geoms.get(0),
                     map.getCanvas().getObjectiveCRS2D(), uiUnit.getValue())));
         }
     }
-    
+
     private class MouseListen extends FXPanMouseListen {
-        
+
         public MouseListen() {
             super(FXMesureLengthHandler.this);
         }
@@ -169,5 +169,5 @@ public class FXMesureLengthHandler extends AbstractNavigationHandler {
             }
         }
     }
-    
+
 }

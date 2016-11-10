@@ -28,8 +28,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.text.ParseException;
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
+import org.apache.sis.measure.UnitFormat;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -115,7 +116,7 @@ final class SampleDimensionTable extends Table {
      */
     private UnitFormat getUnitFormat() {
         if (unitFormat == null) {
-            unitFormat = UnitFormat.getInstance(Locale.FRANCE);
+            unitFormat = new UnitFormat(Locale.FRANCE);
         }
         return unitFormat;
     }
@@ -151,7 +152,7 @@ final class SampleDimensionTable extends Table {
                     if (unitSymbol != null) {
                         unitSymbol = unitSymbol.trim();
                         if (unitSymbol.isEmpty()) {
-                            unit = Unit.ONE;
+                            unit = Units.UNITY;
                         } else {
                             try {
                                 unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);

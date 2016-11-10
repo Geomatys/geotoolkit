@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -146,6 +145,7 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.measure.Units;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -1217,7 +1217,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         final Description desc = SF.description(this.desc, this.desc);
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
-                name,DEFAULT_GEOM,desc,NonSI.PIXEL,LITERAL_ONE_FLOAT,
+                name, DEFAULT_GEOM, desc, Units.POINT, LITERAL_ONE_FLOAT,
                 selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         if(parentRule!=null){

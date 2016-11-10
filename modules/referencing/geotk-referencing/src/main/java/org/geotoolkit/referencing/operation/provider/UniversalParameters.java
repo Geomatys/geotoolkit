@@ -22,10 +22,9 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Collections;
 import java.util.Arrays;
-import javax.measure.unit.SI;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.citation.Citation;
@@ -109,7 +108,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(NETCDF,  "semi_major_axis"),
             new NamedIdentifier(GEOTIFF, "SemiMajor"),
             new NamedIdentifier(PROJ4,   "a")
-        }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+        }, Double.NaN, 0, Double.POSITIVE_INFINITY, Units.METRE, true);
 
     /**
      * All known names for the
@@ -129,7 +128,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(NETCDF,  "semi_minor_axis"),
             new NamedIdentifier(GEOTIFF, "SemiMinor"),
             new NamedIdentifier(PROJ4,   "b")
-        }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+        }, Double.NaN, 0, Double.POSITIVE_INFINITY, Units.METRE, true);
 
     /**
      * All known names for the Earth radius parameter.
@@ -138,7 +137,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     static final ParameterDescriptor<Double> EARTH_RADIUS = createDescriptor(new NamedIdentifier[] {
             new NamedIdentifier(NETCDF, MapProjectionDescriptor.EARTH_RADIUS)
-        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
+        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Units.METRE, false);
 
     /**
      * All known names for the inverse flattening parameter.
@@ -147,7 +146,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     static final ParameterDescriptor<Double> INVERSE_FLATTENING = createDescriptor(new NamedIdentifier[] {
             new NamedIdentifier(NETCDF, MapProjectionDescriptor.INVERSE_FLATTENING)
-        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Unit.ONE, false);
+        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the
@@ -186,7 +185,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "CenterLong"),
             new NamedIdentifier(GEOTIFF, "StraightVertPoleLong"),
             new NamedIdentifier(PROJ4,   "lon_0")
-        }, 0, -180, 180, NonSI.DEGREE_ANGLE, true);
+        }, 0, -180, 180, Units.DEGREE, true);
 
     /**
      * All known names for the
@@ -254,10 +253,10 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "ProjCenterLat"),
             new NamedIdentifier(GEOTIFF, "CenterLat"),
             new NamedIdentifier(PROJ4,   "lat_0")
-        }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
+        }, 0, -90, 90, Units.DEGREE, true);
 
         STANDARD_PARALLEL = new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, nc),
-            double[].class, null, null, null, null, NonSI.DEGREE_ANGLE, false);
+            double[].class, null, null, null, null, Units.DEGREE, false);
 
         STANDARD_PARALLEL_1 = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_1"),
@@ -268,7 +267,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(NETCDF,  "standard_parallel[1]"), nc, // Because this parameter is an array.
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
             new NamedIdentifier(PROJ4,   "lat_1")
-        }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
+        }, Double.NaN, -90, 90, Units.DEGREE, false);
     }
 
     /**
@@ -289,7 +288,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(NETCDF,  "standard_parallel[2]"),
             new NamedIdentifier(GEOTIFF, "StdParallel2"),
             new NamedIdentifier(PROJ4,   "lat_2")
-        }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
+        }, Double.NaN, -90, 90, Units.DEGREE, false);
 
     /**
      * All known names for the {@code latitudeOf1stPoint} parameter.
@@ -298,7 +297,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters LAT_OF_1ST_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Latitude_Of_1st_Point")
-        }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, true);
+        }, Double.NaN, -90, 90, Units.DEGREE, true);
 
     /**
      * All known names for the {@code longitudeOf1stPoint} parameter.
@@ -307,7 +306,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters LONG_OF_1ST_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Longitude_Of_1st_Point")
-        }, Double.NaN, -180, 180, NonSI.DEGREE_ANGLE, true);
+        }, Double.NaN, -180, 180, Units.DEGREE, true);
 
     /**
      * All known names for the {@code latitudeOf2ndPoint} parameter.
@@ -316,7 +315,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters LAT_OF_2ND_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Latitude_Of_2nd_Point")
-        }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, true);
+        }, Double.NaN, -90, 90, Units.DEGREE, true);
 
     /**
      * All known names for the {@code longitudeOf2ndPoint} parameter.
@@ -325,7 +324,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters LONG_OF_2ND_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Longitude_Of_2nd_Point")
-        }, Double.NaN, -180, 180, NonSI.DEGREE_ANGLE, true);
+        }, Double.NaN, -180, 180, Units.DEGREE, true);
 
     /**
      * All known names for the {@code azimuth} parameter.
@@ -344,7 +343,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(EPSG,     "Co-latitude of cone axis"), // Used in Krovak projection.
             new NamedIdentifier(ESRI,     "Azimuth"),
             new NamedIdentifier(GEOTIFF,  "AzimuthAngle")
-        }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, true);
+        }, Double.NaN, -360, 360, Units.DEGREE, true);
 
     /**
      * All known names for the {@code rectifiedGridAngle} parameter.
@@ -364,7 +363,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(Citations.EPSG,     "Angle from Rectified to Skew Grid"),
             new NamedIdentifier(Citations.ESRI,     "XY_Plane_Rotation"),
             new NamedIdentifier(Citations.GEOTIFF,  "RectifiedGridAngle")
-        }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, false);
+        }, Double.NaN, -360, 360, Units.DEGREE, false);
 
     /**
      * All known names for the
@@ -393,7 +392,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "ScaleAtNatOrigin"),
             new NamedIdentifier(GEOTIFF, "ScaleAtCenter"),
             new NamedIdentifier(PROJ4,   "k")
-        }, 1, 0, Double.POSITIVE_INFINITY, Unit.ONE, true);
+        }, 1, 0, Double.POSITIVE_INFINITY, Units.UNITY, true);
 
     /**
      * All known names for the {@code "X_Scale"} parameter.
@@ -408,7 +407,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters X_SCALE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(ESRI, "X_Scale")
-        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the {@code "Y_Scale"} parameter.
@@ -423,7 +422,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      */
     public static final UniversalParameters Y_SCALE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(ESRI, "Y_Scale")
-        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.UNITY, false);
 
     /**
      * All known names for the
@@ -449,7 +448,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "FalseEasting"),
             new NamedIdentifier(GEOTIFF, "FalseOriginEasting"),
             new NamedIdentifier(PROJ4,   "x_0")
-        }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
+        }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.METRE, true);
 
     /**
      * All known names for the
@@ -475,7 +474,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "FalseNorthing"),
             new NamedIdentifier(GEOTIFF, "FalseOriginNorthing"),
             new NamedIdentifier(PROJ4,   "y_0")
-        }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
+        }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.METRE, true);
 
     /**
      * The identifiers which can be declared to the descriptor. Only a subset of those values

@@ -34,8 +34,8 @@ import javax.imageio.ImageReader; // For javadoc
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
+import javax.measure.Quantity;
+import javax.measure.Unit;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1375,7 +1375,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @since 3.07
      */
     @SuppressWarnings("unchecked")
-    public <Q extends Quantity> Unit<Q> getAttributeAsUnit(final String attribute, final Class<Q> quantity) {
+    public <Q extends Quantity<Q>> Unit<Q> getAttributeAsUnit(final String attribute, final Class<Q> quantity) {
         String value = getAttribute(attribute);
         if (value != null) try {
             final Unit<?> unit = Units.valueOf(value);

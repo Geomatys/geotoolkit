@@ -27,7 +27,7 @@ import org.opengis.parameter.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;

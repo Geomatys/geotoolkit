@@ -21,7 +21,7 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 
 /**

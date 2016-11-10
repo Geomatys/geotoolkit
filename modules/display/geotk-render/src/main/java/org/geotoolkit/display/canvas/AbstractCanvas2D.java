@@ -38,8 +38,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.measure.quantity.Length;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -76,6 +75,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -1011,7 +1011,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 //                final double minT = env.getMinimum(i);
 //                final double maxT = env.getMaximum(i);
 //                //todo should use the axis unit
-//                setElevationRange(minT, maxT, SI.METRE);
+//                setElevationRange(minT, maxT, Units.METRE);
 //            }
 //        }
     }
@@ -1160,7 +1160,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         for (int i = 0, n = cs.getDimension(); i < n; i++) {
             final AxisDirection direction = cs.getAxis(i).getDirection();
             final Unit unit = cs.getAxis(i).getUnit();
-            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(SI.METRE))) {
+            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(Units.METRE))) {
                 return i;
             }
         }

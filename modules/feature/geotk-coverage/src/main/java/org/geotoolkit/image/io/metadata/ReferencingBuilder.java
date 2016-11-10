@@ -25,7 +25,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.*;
@@ -540,7 +540,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                         abbreviation = CharSequences.camelCaseToAcronym(abbreviation).toString();
                     }
                 }
-                final Unit<?> unit = axesAccessor.getAttributeAsUnit("unit", null);
+                final Unit unit = axesAccessor.getAttributeAsUnit("unit", null);
                 if (!isNonNull("getCoordinateSystem", "unit", unit)) {
                     return null;
                 }

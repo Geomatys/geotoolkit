@@ -36,8 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ChannelSelection;
@@ -59,6 +58,7 @@ import org.opengis.style.Stroke;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -100,7 +100,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
-
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**
@@ -328,7 +327,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = "coverage";
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final ChannelSelection channels = null;
         final OverlapBehavior overlap = null;
@@ -509,7 +508,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
         symbols.add(mark);
         final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(8), LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
-        final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
+        final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, Units.POINT, graphic);
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 

@@ -502,9 +502,9 @@ public final class JTSUtils {
         // call get/setLat and get/setLon instead if we have LatLonAlts
         if (topLeft instanceof LatLonAlt && botRight instanceof LatLonAlt) {
         ((LatLonAlt) topLeft).setLon(((LatLonAlt)
-        botCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE);
+        botCorner).getLon(Units.DEGREE), Units.DEGREE);
         ((LatLonAlt) botRight).setLon(((LatLonAlt)
-        topCorner).getLon(NonSI.DEGREE_ANGLE), NonSI.DEGREE_ANGLE);
+        topCorner).getLon(Units.DEGREE), Units.DEGREE);
         } else {*/
 
         topLeft.setOrdinate(1, botCorner.getOrdinate(1));

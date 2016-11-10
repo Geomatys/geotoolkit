@@ -20,7 +20,7 @@ package org.geotoolkit.internal.simple;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;

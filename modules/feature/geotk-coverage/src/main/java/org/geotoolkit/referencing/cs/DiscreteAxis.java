@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.Collection;
 import java.io.Serializable;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;

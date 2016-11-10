@@ -25,11 +25,11 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
+import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
@@ -84,8 +84,8 @@ public class MeasureUtilities {
                 lenght += calculator.getOrthodromicDistance();
             }
 
-            if(!SI.METRE.equals(unit)){
-                UnitConverter converter = SI.METRE.getConverterTo(unit);
+            if(!Units.METRE.equals(unit)){
+                UnitConverter converter = Units.METRE.getConverterTo(unit);
                 lenght = converter.convert(lenght);
             }
 
@@ -135,8 +135,8 @@ public class MeasureUtilities {
             Geometry calculatedGeom = JTS.transform(geom, trs);
             double area = calculatedGeom.getArea();
 
-            if(unit != SI.SQUARE_METRE){
-                UnitConverter converter = SI.SQUARE_METRE.getConverterTo(unit);
+            if(unit != Units.SQUARE_METRE){
+                UnitConverter converter = Units.SQUARE_METRE.getConverterTo(unit);
                 area = converter.convert(area);
             }
 

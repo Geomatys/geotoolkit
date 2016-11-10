@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.render2d.control.information;
 
 import java.util.List;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.JComboBox;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 

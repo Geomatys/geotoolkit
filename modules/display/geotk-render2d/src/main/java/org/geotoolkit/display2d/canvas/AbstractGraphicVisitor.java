@@ -23,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import javax.measure.converter.ConversionException;
-import javax.measure.unit.NonSI;
+import javax.measure.IncommensurableException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
@@ -53,6 +52,7 @@ import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.measure.Units;
 
 /**
  * A visitor which can be applied to the
@@ -140,8 +140,8 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                     double day;
                     try {
                         // Arbitrarily use a time range of 1 day, to be converted in units of the temporal CRS.
-                        day = NonSI.DAY.getConverterToAny(temporalCRS.getCoordinateSystem().getAxis(0).getUnit()).convert(1);
-                    } catch (ConversionException e) {
+                        day = Units.DAY.getConverterToAny(temporalCRS.getCoordinateSystem().getAxis(0).getUnit()).convert(1);
+                    } catch (IncommensurableException e) {
                         // Should never happen since TemporalCRS use time units. But if it happen
                         // anyway, use a time range of 1 of whatever units the temporal CRS use.
                         Logging.unexpectedException(null, AbstractGraphicVisitor.class, "getCoverageValues", e);

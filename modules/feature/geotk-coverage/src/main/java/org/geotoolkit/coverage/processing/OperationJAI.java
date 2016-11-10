@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import javax.media.jai.JAI;
 import javax.media.jai.ImageLayout;

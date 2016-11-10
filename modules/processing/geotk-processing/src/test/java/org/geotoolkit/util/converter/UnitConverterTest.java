@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.util.converter;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.measure.Units;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -43,12 +43,12 @@ public class UnitConverterTest extends org.geotoolkit.test.TestBase {
 
         String inputString = "mm";
         Unit convertedUnit= converter.apply(inputString);
-        Unit expectedUnit = SI.MILLIMETRE;
+        Unit expectedUnit = Units.MILLIMETRE;
         assertEquals(inputString, expectedUnit, convertedUnit);
 
         inputString = "kg";
         convertedUnit = converter.apply(inputString);
-        expectedUnit  = SI.KILOGRAM;
+        expectedUnit  = Units.KILOGRAM;
         assertEquals(inputString, expectedUnit, convertedUnit);
 
         inputString = "fail";

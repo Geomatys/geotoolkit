@@ -34,13 +34,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.util.NamesExt;
 
@@ -285,16 +284,16 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     }
 
     public Unit<Length> visitUOM(final String uom) {
-        if(uom == null) return NonSI.PIXEL;
+        if(uom == null) return Units.POINT;
 
         if(UOM_METRE.equalsIgnoreCase(uom)){
-            return SI.METRE;
+            return Units.METRE;
         }else if(UOM_FOOT.equalsIgnoreCase(uom)){
-            return NonSI.FOOT;
+            return Units.FOOT;
         }else if(UOM_PIXEL.equalsIgnoreCase(uom)){
-            return NonSI.PIXEL;
+            return Units.POINT;
         }else{
-            return NonSI.PIXEL;
+            return Units.POINT;
         }
 
     }

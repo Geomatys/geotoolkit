@@ -30,15 +30,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.measure.Units;
 
 /**
  *
@@ -102,28 +101,28 @@ public class FXSymbolizerInfo extends GridPane{
     }
 
     public void initialize() {
-        uiUnit.setItems(FXCollections.observableArrayList(NonSI.PIXEL,SI.METRE,NonSI.INCH,NonSI.MILE,NonSI.FOOT));
+        uiUnit.setItems(FXCollections.observableArrayList(Units.POINT,Units.METRE, Units.INCH, Units.STATUTE_MILE, Units.FOOT));
         uiUnit.getSelectionModel().select(0);
         uiUnit.setConverter(new StringConverter<Unit>() {
 
             @Override
             public String toString(Unit object) {
-                if(object == NonSI.PIXEL) return "pixel";
-                else if(object == SI.METRE) return "metre";
-                else if(object == NonSI.INCH) return "inch";
-                else if(object == NonSI.MILE) return "mile";
-                else if(object == NonSI.FOOT) return "foot";
+                if(object == Units.POINT) return "pixel";
+                else if(object == Units.METRE) return "metre";
+                else if(object == Units.INCH) return "inch";
+                else if(object == Units.STATUTE_MILE) return "mile";
+                else if(object == Units.FOOT) return "foot";
                 else return "pixel";
             }
 
             @Override
             public Unit fromString(String string) {
-                if("pixel".equals(string)) return NonSI.PIXEL;
-                else if("metre".equals(string)) return SI.METRE;
-                else if("inch".equals(string)) return NonSI.INCH;
-                else if("mile".equals(string)) return NonSI.MILE;
-                else if("foot".equals(string)) return NonSI.FOOT;
-                else return NonSI.PIXEL;
+                if("pixel".equals(string)) return Units.POINT;
+                else if("metre".equals(string)) return Units.METRE;
+                else if("inch".equals(string)) return Units.INCH;
+                else if("mile".equals(string)) return Units.STATUTE_MILE;
+                else if("foot".equals(string)) return Units.FOOT;
+                else return Units.POINT;
             }
         });
 
@@ -171,7 +170,7 @@ public class FXSymbolizerInfo extends GridPane{
             uiAbstract.setText("");
         }
         final Unit<Length> uom = styleElement.getUnitOfMeasure();
-        uiUnit.setValue(uom==null? NonSI.PIXEL : uom);
+        uiUnit.setValue(uom==null? Units.POINT : uom);
         uiGeom.valueProperty().set(styleElement.getGeometry());
 
         updating = false;

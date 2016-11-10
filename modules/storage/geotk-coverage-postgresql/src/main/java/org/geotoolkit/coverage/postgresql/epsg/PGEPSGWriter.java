@@ -22,12 +22,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import org.opengis.metadata.Identifier;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.sql.DataSource;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
@@ -61,6 +59,7 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
+import org.apache.sis.measure.Units;
 
 /**
  * EPSG Writer.
@@ -626,15 +625,15 @@ public class PGEPSGWriter implements EPSGWriter {
         try{
 
             final boolean selfDefined;
-            if(candidate.isCompatible(SI.METRE)){
+            if(candidate.isCompatible(Units.METRE)){
                 selfDefined = false;
                 target_uom_code = 9001;
                 unit_of_meas_type = "length";
-            }else if(candidate.isCompatible(SI.RADIAN)){
+            }else if(candidate.isCompatible(Units.RADIAN)){
                 selfDefined = false;
                 target_uom_code = 9102;
                 unit_of_meas_type = "angle";
-            }else if(candidate.isCompatible(SI.SECOND)){
+            }else if(candidate.isCompatible(Units.SECOND)){
                 selfDefined = true;
                 //refer to self, epsg does not contain any temporal unit we could refer to
                 unit_of_meas_type = "temp";

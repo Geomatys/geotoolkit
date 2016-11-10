@@ -111,7 +111,7 @@ public class GeometricUtilities {
     }
 
     /**
-     *  WGS 1984 ellipsoid with axis in {@linkplain SI#METRE metres}.
+     *  WGS 1984 ellipsoid with axis in {@linkplain Units#METRE metres}.
      */
     private static final DefaultEllipsoid DE = DefaultEllipsoid.castOrCopy(CommonCRS.WGS84.ellipsoid());
 

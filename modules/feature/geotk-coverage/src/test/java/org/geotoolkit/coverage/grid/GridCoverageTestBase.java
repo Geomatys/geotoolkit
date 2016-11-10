@@ -39,7 +39,7 @@ import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.apache.sis.referencing.CommonCRS;
 
-import static javax.measure.unit.SI.*;
+import static org.apache.sis.measure.Units.*;
 import static org.junit.Assert.*;
 
 

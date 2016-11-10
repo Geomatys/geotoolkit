@@ -79,10 +79,10 @@
     </dependency>
     <dependency>
       <groupId>javax.measure</groupId>
-      <artifactId>jsr-275</artifactId>
+      <artifactId>unit-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>java3d</groupId>
+      <groupId>javax.vecmath</groupId>
       <artifactId>vecmath</artifactId>
     </dependency>
     <dependency>

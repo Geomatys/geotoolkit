@@ -83,7 +83,7 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>java3d</groupId>
+      <groupId>javax.vecmath</groupId>
       <artifactId>vecmath</artifactId>
     </dependency>
     <dependency>

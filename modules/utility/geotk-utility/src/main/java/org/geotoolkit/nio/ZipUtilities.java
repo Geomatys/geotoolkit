@@ -1,8 +1,6 @@
 package org.geotoolkit.nio;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.nio.CopyFileVisitor;
-import org.geotoolkit.nio.IOUtilities;
 
 import java.io.*;
 import java.net.URI;

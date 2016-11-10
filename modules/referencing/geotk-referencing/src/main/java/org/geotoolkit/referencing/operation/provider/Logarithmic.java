@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import javax.measure.unit.Unit;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,6 +33,7 @@ import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
@@ -89,8 +89,8 @@ public class Logarithmic extends MathTransformProvider {
     public static final ParameterDescriptor<Double> OFFSET;
     static {
         final ParameterBuilder builder = new ParameterBuilder().setCodeSpace(Citations.GEOTOOLKIT, null).setRequired(true);
-        BASE = builder.addName("base").createBounded(0, Double.POSITIVE_INFINITY, 10, Unit.ONE);
-        OFFSET = builder.addName("offset").create(0, Unit.ONE);
+        BASE = builder.addName("base").createBounded(0, Double.POSITIVE_INFINITY, 10, Units.UNITY);
+        OFFSET = builder.addName("offset").create(0, Units.UNITY);
     }
 
     /**

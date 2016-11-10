@@ -22,8 +22,8 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.text.InternationalFormatter;
 
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import org.apache.sis.measure.UnitFormat;
 
 import org.apache.sis.measure.Units;
 
@@ -53,7 +53,7 @@ public final class UnitFormatter extends InternationalFormatter {
      * @param locale The locale for units parsing and formatting.
      */
     public UnitFormatter(final Locale locale) {
-        super(UnitFormat.getInstance(locale));
+        super(new UnitFormat(locale));
     }
 
     /**

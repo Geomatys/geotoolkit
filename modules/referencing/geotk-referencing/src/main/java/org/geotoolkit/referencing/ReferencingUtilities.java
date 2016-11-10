@@ -22,9 +22,9 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -372,7 +372,7 @@ public final class ReferencingUtilities {
                 final Unit unit = cs2.getAxis(0).getUnit();
 
                 //Elevation
-                if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(SI.METRE))) {
+                if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(Units.METRE))) {
                     assert crs2 instanceof VerticalCRS;
                     indexes[2] = d;
                 }

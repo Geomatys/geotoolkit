@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.quantity.Duration;
-import javax.measure.unit.Unit;
+import javax.measure.quantity.Time;
+import javax.measure.Unit;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 import org.geotoolkit.factory.Factory;
@@ -273,7 +273,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public TemporalCoordinateSystem createTemporalCoordinateSystem(final Identifier name,
-            final Extent domainOfValidity, final Date origin, final Unit<Duration> interval) {
+            final Extent domainOfValidity, final Date origin, final Unit<Time> interval) {
         final Map<String, Object> coordSystemProp = new HashMap<>();
         coordSystemProp.put(IdentifiedObject.NAME_KEY, name.getCode());
         coordSystemProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);

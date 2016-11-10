@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -20,10 +20,9 @@ package org.geotoolkit.temporal.reference;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Duration;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Time;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 
@@ -40,7 +40,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
 /**
  * A temporal coordinate system to simplify the computation of temporal distances
  * between points and the functional description of temporal operations.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  * @version 4.0
@@ -55,36 +55,36 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
 
     /**
      * Milli-second unity.
-     * 
-     * @see #transformCoord(org.opengis.temporal.TemporalCoordinate) 
-     * @see #transformDateTime(java.util.Date) 
+     *
+     * @see #transformCoord(org.opengis.temporal.TemporalCoordinate)
+     * @see #transformDateTime(java.util.Date)
      */
-    private static Unit<Duration> UNIT_MS = SI.SECOND.divide(1000);
-    
+    private static Unit<Time> UNIT_MS = Units.SECOND.divide(1000);
+
     /**
      * The origin of the scale, it must be specified in the Gregorian calendar with time of day in UTC.
      */
     private Date origin;
-    
+
     /**
      * The name of a single unit of measure used as the base interval for the scale.
-     * it shall be one of those units of measure for time specified by ISO 31-1, 
+     * it shall be one of those units of measure for time specified by ISO 31-1,
      * or a multiple of one of those units, as specified by ISO 1000.
      */
-    private Unit<Duration> interval;
-    
-    
+    private Unit<Time> interval;
+
+
     /**
      * Converter use to convert units from this {@link DefaultTemporalCoordinateSystem} to milli-second.
-     * 
-     * @see #transformCoord(org.opengis.temporal.TemporalCoordinate) 
+     *
+     * @see #transformCoord(org.opengis.temporal.TemporalCoordinate)
      */
     private UnitConverter unitToMS = null;
-    
+
     /**
      * Converter use to convert unit in milli-second into unit from this {@link DefaultTemporalCoordinateSystem}.
-     * 
-     * @see #transformDateTime(java.util.Date) 
+     *
+     * @see #transformDateTime(java.util.Date)
      */
     private UnitConverter msToUnit = null;
 
@@ -112,13 +112,13 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      *     <td>{@link #getDomainOfValidity()}</td>
      *   </tr>
      * </table>
-     * 
+     *
      * @param properties The properties to be given to the coordinate reference system.
      * @param interval unit of measure used as the base interval for the scale.
      * @param origin position of the origin of the scale on which the temporal coordinate system is based
      * expressed as a date in the Gregorian calendar and time of day in UTC.
      */
-    public DefaultTemporalCoordinateSystem(Map<String, ?> properties, Unit<Duration> interval, Date origin) {
+    public DefaultTemporalCoordinateSystem(Map<String, ?> properties, Unit<Time> interval, Date origin) {
         super(properties);
         this.origin        = origin;
         ArgumentChecks.ensureNonNull("interval", interval);
@@ -130,7 +130,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
 //     */
 //    DefaultTemporalCoordinateSystem() {
 //    }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -144,7 +144,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
         super(object);
         if (object != null) {
             this.origin = object.getOrigin();
-            final Unit<Duration> inter = object.getInterval();
+            final Unit<Time> inter = object.getInterval();
             ArgumentChecks.ensureNonNull("interval", inter);
             this.interval = inter;
         }
@@ -174,13 +174,13 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
         }
         return new DefaultTemporalCoordinateSystem(object);
     }
-    
+
     /**
      * Returns position of the origin of the scale on which the temporal coordinate system is based.
-     * <blockquote><font size="-1">The origin shall be specified in the Gregorian 
-     * calendar with time of day in UTC. The {@linkplain Date DateTime} may be truncated 
+     * <blockquote><font size="-1">The origin shall be specified in the Gregorian
+     * calendar with time of day in UTC. The {@linkplain Date DateTime} may be truncated
      * to the appropriate level of resolution}.</font></blockquote>
-     * 
+     *
      * @return position of the origin of the scale on which the temporal coordinate system is based.
      */
     @Override
@@ -191,39 +191,39 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
 
     /**
      * Returns the name of the single unit of measure used as the base interval for the scale.
-     * <blockquote><font size="-1">The time interval selected as appropriate for the application, 
-     * but it shall be one of those units of measure for time specified by ISO 31-1, 
+     * <blockquote><font size="-1">The time interval selected as appropriate for the application,
+     * but it shall be one of those units of measure for time specified by ISO 31-1,
      * or multiple of one of those units, as specified by ISO 1000.</font></blockquote>
-     * 
+     *
      * @return Standard unit of time used to measure duration on the axis of the coordinate system.
      */
     @Override
-    public Unit<Duration> getInterval() {
+    public Unit<Time> getInterval() {
         return interval;
     }
-    
+
     /**
-     * Only use for XML binding.  
-     * 
+     * Only use for XML binding.
+     *
      * @return An {@link Interval} object adapted for XML binding.
      */
     @XmlElement(name = "interval", required = true)
     private Interval getinterval() {
         return new Interval(interval);
     }
-    
+
     /**
      * Returns a transformation from a value of a {@linkplain TemporalCoordinate coordinate} within this
      * temporal coordinate system and returns the equivalent {@linkplain DateAndTime date
      * and time} in the Gregorian Calendar and UTC.
-     * 
+     *
      * @param c_value The {@linkplain TemporalCoordinate coordinate} which will be transformed.
      * @return Convertion of a {@linkplain TemporalCoordinate coordinate} in this coordinate system
-     *  to a date in the Gregorian calendar and a time in UTC. 
+     *  to a date in the Gregorian calendar and a time in UTC.
      */
     @Override
     public Date transformCoord(final TemporalCoordinate c_value) {
-        
+
         if (unitToMS == null) unitToMS = interval.getConverterTo(UNIT_MS);
         Date response;
         DefaultTemporalCoordinate value = (DefaultTemporalCoordinate) c_value;
@@ -267,9 +267,9 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      * Returns transformation of a {@linkplain DateAndTime date and time} in the Gregorian Calendar and UTC
      * to an equivalent {@linkplain TemporalCoordinate coordinate} within this temporal
      * coordinate system.
-     * 
+     *
      * @param dateTime  The {@linkplain DateAndTime date and time} which will be converted.
-     * @return Convertion of a date in the Gregorian calendar and a time in UTC to a coordinate 
+     * @return Convertion of a date in the Gregorian calendar and a time in UTC to a coordinate
      * in this temporal coordinate system.
      */
     @Override
@@ -295,7 +295,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
 //        } else if (SECOND_STR.equals(intervalStr)) {
 //            coordinateValue = Float.valueOf( val / SECOND_MS );
 //        }
-        
+
         return new DefaultTemporalCoordinate(this, null, coordinateValue);
     }
 
@@ -305,7 +305,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
     @Override
     public boolean equals(Object object, ComparisonMode mode) {
         if (object == this) return true;
-        final boolean sup = super.equals(object, mode); 
+        final boolean sup = super.equals(object, mode);
         if (!sup) return false;
 //        if (object instanceof DefaultTemporalCoordinateSystem && super.equals(object)) {
             if (object instanceof DefaultTemporalCoordinateSystem) {
@@ -343,19 +343,19 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
         }
         return s.toString();
     }
-    
+
     /**
      * Internal class only use to adapt ISO to XML in relation with "interval" XML element.
      */
     private static final class Interval {
-        
+
         @XmlValue
         private final static double VALUE = 1.0;
-        
-        @XmlAttribute
-        private final Unit<Duration> unit;
 
-        private Interval(Unit<Duration> unit) {
+        @XmlAttribute
+        private final Unit<Time> unit;
+
+        private Interval(Unit<Time> unit) {
             this.unit = unit;
         }
     }

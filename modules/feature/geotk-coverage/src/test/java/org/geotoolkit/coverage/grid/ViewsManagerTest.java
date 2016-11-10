@@ -22,7 +22,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import javax.measure.unit.SI;
+import org.apache.sis.measure.Units;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -83,7 +83,7 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         final GridCoverageBuilder.Variable variable = builder.variable(0);
         variable.setName("Elevation");
-        variable.setUnit(SI.METRE);
+        variable.setUnit(Units.METRE);
         variable.addNodataValue("No data", 0, null);
         variable.setSampleRange(1, 40000);
         builder.setExtent(360, 180);
@@ -117,7 +117,7 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         final GridCoverageBuilder.Variable variable = builder.variable(0);
         variable.setName("Temperature");
-        variable.setUnit(SI.CELSIUS);
+        variable.setUnit(Units.CELSIUS);
         variable.addNodataValue("No data", 32767, null);
         variable.setSampleRange(-20000, 23000);
         builder.setExtent(360, 180);

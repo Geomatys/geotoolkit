@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.Iterator;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.internal.util.X364;
 
 import org.geotoolkit.process.*;

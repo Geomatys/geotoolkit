@@ -31,10 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.render2d.CanvasHandler;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
@@ -54,17 +53,17 @@ public class AreaHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> UNITS = new ArrayList<Unit>();
+    public static final List<Unit> UNITS = new ArrayList<>();
 
-    static{
-        UNITS.add(Unit.valueOf("km2")); //SI.SQUARE_METRE.times(1000000));
-        UNITS.add(SI.SQUARE_METRE);
-        UNITS.add(NonSI.ARE);
+    static {
+        UNITS.add(Units.SQUARE_METRE.multiply(1000000));
+        UNITS.add(Units.SQUARE_METRE);
+//      UNITS.add(Units.ARE);               // TODO: pending completion of JSR-275 replacement.
     }
 
     private final MouseListen mouseInputListener;
 
-    private final List<Coordinate> coords = new ArrayList<Coordinate>();
+    private final List<Coordinate> coords = new ArrayList<>();
     private final AreaDecoration deco = new AreaDecoration();
     private final JMap2D map;
 

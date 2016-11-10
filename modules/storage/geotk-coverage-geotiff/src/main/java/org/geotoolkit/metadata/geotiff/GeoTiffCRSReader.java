@@ -42,9 +42,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -66,6 +64,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.Formulas;
 import org.apache.sis.internal.referencing.provider.AlbersEqualArea;
 import org.apache.sis.internal.referencing.provider.Equirectangular;
@@ -204,8 +203,8 @@ final class GeoTiffCRSReader {
         Unit linearUnit;
         try {
             linearUnit = createUnit(ProjLinearUnitsGeoKey,
-                    ProjLinearUnitSizeGeoKey, SI.METRE,
-                    SI.METRE, entries);
+                    ProjLinearUnitSizeGeoKey, Units.METRE,
+                    Units.METRE, entries);
         } catch (IOException e) {
             linearUnit = null;
         }
@@ -266,8 +265,8 @@ final class GeoTiffCRSReader {
         Unit angularUnit = null;
         try {
             angularUnit = createUnit(GeogAngularUnitsGeoKey,
-                    GeogAngularUnitSizeGeoKey, SI.RADIAN,
-                    NonSI.DEGREE_ANGLE, entries);
+                    GeogAngularUnitSizeGeoKey, Units.RADIAN,
+                    Units.DEGREE, entries);
         } catch (IOException e) {
             angularUnit = null;
         }
@@ -275,8 +274,8 @@ final class GeoTiffCRSReader {
         Unit linearUnit = null;
         try {
             linearUnit = createUnit(GeogLinearUnitsGeoKey,
-                    GeogLinearUnitSizeGeoKey, SI.METRE,
-                    SI.METRE, entries);
+                    GeogLinearUnitSizeGeoKey, Units.METRE,
+                    Units.METRE, entries);
         } catch (IOException e) {
             linearUnit = null;
         }
@@ -488,7 +487,7 @@ final class GeoTiffCRSReader {
         // ///
         if (projUserDefined) {
             CartesianCS cs = PredefinedCS.PROJECTED;
-            if(linearUnit != null && !linearUnit.equals(SI.METRE)){
+            if(linearUnit != null && !linearUnit.equals(Units.METRE)){
                 cs = PredefinedCS.usingUnit(cs, linearUnit);
             }
 
@@ -497,7 +496,7 @@ final class GeoTiffCRSReader {
                     gcs, projection, cs);
         }
         // standard projection
-        if (linearUnit != null && !linearUnit.equals(SI.METRE)) {
+        if (linearUnit != null && !linearUnit.equals(Units.METRE)) {
             return factories.getCRSFactory().createProjectedCRS(Collections.singletonMap(
                     "name", projectedCrsName), gcs, projection,
                     PredefinedCS.usingUnit(PredefinedCS.PROJECTED, linearUnit));
@@ -1014,8 +1013,8 @@ final class GeoTiffCRSReader {
         Unit angularUnit = null;
         try {
             angularUnit = createUnit(GeogAngularUnitsGeoKey,
-                    GeogAngularUnitSizeGeoKey, SI.RADIAN,
-                    NonSI.DEGREE_ANGLE, metadata);
+                    GeogAngularUnitSizeGeoKey, Units.RADIAN,
+                    Units.DEGREE, metadata);
         } catch (IOException e) {
             angularUnit = null;
         }
@@ -1023,8 +1022,8 @@ final class GeoTiffCRSReader {
         Unit linearUnit = null;
         try {
             linearUnit = createUnit(GeogLinearUnitsGeoKey,
-                    GeogLinearUnitSizeGeoKey, SI.METRE,
-                    SI.METRE, metadata);
+                    GeogLinearUnitSizeGeoKey, Units.METRE,
+                    Units.METRE, metadata);
         } catch (IOException e) {
             linearUnit = null;
         }
@@ -1101,7 +1100,7 @@ final class GeoTiffCRSReader {
             throw new NullPointerException(
                     "Error when trying to create a PCS using this linear UoM ");
         }
-        if (!linearUnit.isCompatible(SI.METRE)) {
+        if (!linearUnit.isCompatible(Units.METRE)) {
             throw new IllegalArgumentException(
                     "Error when trying to create a PCS using this linear UoM "
                     + linearUnit.toString());
@@ -1338,7 +1337,7 @@ final class GeoTiffCRSReader {
                 }
 
                 double sz = Double.parseDouble(unitSize);
-                return base.times(sz);
+                return base.multiply(sz);
             } catch (NumberFormatException nfe) {
                 throw new IOException(nfe);
             }

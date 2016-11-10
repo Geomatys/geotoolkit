@@ -25,8 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.sld.MutableLayer;
@@ -37,6 +36,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -157,7 +157,7 @@ public final class StyleBank {
             final String name = "mySymbol";
             final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
             final String geometry = null; //use the default geometry of the feature
-            final Unit unit = NonSI.PIXEL;
+            final Unit unit = Units.POINT;
             final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
 
             //the visual element

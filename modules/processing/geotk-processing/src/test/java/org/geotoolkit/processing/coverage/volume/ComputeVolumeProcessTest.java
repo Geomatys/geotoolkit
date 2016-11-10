@@ -26,7 +26,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import javax.measure.unit.SI;
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -40,8 +40,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.volume.ComputeVolumeBuilder;
-import org.geotoolkit.processing.coverage.volume.ComputeVolumeProcess;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.opengis.coverage.grid.GridCoverage;
@@ -470,7 +468,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
                 gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
 
                 Category cat = new Category("val", new Color[]{Color.WHITE,Color.BLACK}, -128, 128, 1, 0);
-                GridSampleDimension gsd = new GridSampleDimension("dim0", new Category[]{cat}, SI.METRE);
+                GridSampleDimension gsd = new GridSampleDimension("dim0", new Category[]{cat}, Units.METRE);
 
                 gcb.setSampleDimensions(gsd);
                 return gcb.getGridCoverage2D();

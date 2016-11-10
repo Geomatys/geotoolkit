@@ -21,7 +21,7 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.util.CodeList;
 import org.opengis.parameter.ParameterValue;

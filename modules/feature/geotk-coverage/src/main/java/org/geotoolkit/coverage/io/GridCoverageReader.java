@@ -30,10 +30,8 @@ import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.IncommensurableException;
 
 import org.w3c.dom.Node;
 
@@ -427,10 +425,10 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                             Unit<?> standardUnit = null;
                             double  scaleFactor = 1;
                             if (Units.isAngular(unit)) {
-                                standardUnit = NonSI.DEGREE_ANGLE;
+                                standardUnit = Units.DEGREE;
                                 scaleFactor  = (1852*60); // From definition of nautical miles.
                             } else if (Units.isLinear(unit)) {
-                                standardUnit = SI.METRE;
+                                standardUnit = Units.METRE;
                             }
                             if (standardUnit != null) try {
                                 measureValue = unit.getConverterToAny(standardUnit).convert(measureValue) * scaleFactor;
@@ -440,7 +438,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                                     resolutions = new LinkedHashSet<>();
                                 }
                                 resolutions.add(resolution);
-                            } catch (ConversionException e) {
+                            } catch (IncommensurableException e) {
                                 // In case of failure, do not create a Resolution object.
                                 Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
                             }

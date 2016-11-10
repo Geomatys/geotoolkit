@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Locale;
-import javax.measure.unit.SI;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
@@ -39,6 +38,7 @@ import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.measure.Units;
 
 import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -117,7 +117,7 @@ public final class PredefinedCRS {
      * A two-dimensional Cartesian coordinate reference system with
      * {@linkplain Axes#X x},
      * {@linkplain Axes#Y y}
-     * axes in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
+     * axes in {@linkplain Units#METRE metres}. By default, this CRS has no transformation
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
@@ -129,7 +129,7 @@ public final class PredefinedCRS {
      * {@linkplain Axes#X x},
      * {@linkplain Axes#Y y},
      * {@linkplain Axes#Z z}
-     * axes in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
+     * axes in {@linkplain Units#METRE metres}. By default, this CRS has no transformation
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */

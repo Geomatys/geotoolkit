@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;

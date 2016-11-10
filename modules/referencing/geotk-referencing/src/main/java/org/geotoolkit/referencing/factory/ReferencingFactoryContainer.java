@@ -19,10 +19,9 @@ package org.geotoolkit.referencing.factory;
 
 import java.util.*;
 import java.awt.RenderingHints;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
-import javax.measure.unit.SI;
+import javax.measure.Unit;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -48,6 +47,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -348,7 +348,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
                 case 2: {
                     CoordinateSystemAxis vertical = Axes.ELLIPSOIDAL_HEIGHT;
                     final Unit<Length> units = ((GeodeticDatum) crs.getDatum()).getEllipsoid().getAxisUnit();
-                    if (!SI.METRE.equals(units)) {
+                    if (!Units.METRE.equals(units)) {
                         vertical = getCSFactory().createCoordinateSystemAxis(
                                 IdentifiedObjects.getProperties(vertical),
                                 vertical.getAbbreviation(), vertical.getDirection(), units);
@@ -539,7 +539,7 @@ public class ReferencingFactoryContainer extends org.geotoolkit.factory.Factory 
             } else {
                 return CoordinateSystems.swapAndScaleAxes(sourceCS, targetCS);
             }
-        } catch (IllegalArgumentException | ConversionException e) {
+        } catch (IllegalArgumentException | IncommensurableException e) {
             failure = e;
         }
         throw new FactoryException(Errors.format(Errors.Keys.UnsupportedCrs_1, crs.getName()), failure);

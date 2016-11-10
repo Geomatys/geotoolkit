@@ -24,10 +24,10 @@ import org.geotoolkit.style.visitor.ListingPropertyVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
+import org.apache.sis.measure.Units;
 
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -98,7 +98,7 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return NonSI.PIXEL;
+        return Units.POINT;
     }
 
     @Override
@@ -110,7 +110,7 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
     public Expression getGeometry() {
         return null;
     }
-    
+
     @Override
     public String getExtensionName() {
         return "pie";

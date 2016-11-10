@@ -28,8 +28,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.AffineTransform;
 import javax.imageio.IIOParam;
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import org.apache.sis.measure.UnitFormat;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.FactoryException;
@@ -587,10 +587,10 @@ public class MetadataHelper implements Localized {
         final UnitFormat    uf;
         if (locale != null) {
             nf = NumberFormat.getInstance(locale);
-            uf = UnitFormat  .getInstance(locale);
+            uf = new UnitFormat(locale);
         } else {
             nf = NumberFormat.getInstance();
-            uf = UnitFormat  .getInstance();
+            uf = new UnitFormat(Locale.getDefault());
         }
         InternalUtilities.configure(nf, minSize, 9);
         if (sameSize && sameUnits) {

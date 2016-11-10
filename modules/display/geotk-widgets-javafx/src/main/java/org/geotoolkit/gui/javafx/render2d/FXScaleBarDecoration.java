@@ -34,8 +34,8 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
@@ -60,13 +60,13 @@ public class FXScaleBarDecoration extends BorderPane implements FXMapDecoration 
                             false, 4, NumberFormat.getNumberInstance(),
                             Color.DARK_GRAY, Color.GRAY, Color.WHITE,
                             10,true,false, new Font("Serial", Font.BOLD, 10),true,
-                            SI.KILOMETRE);
+                            Units.KILOMETRE);
     private ScaleBarTemplate templateSecond = new DefaultScaleBarTemplate(null,
                             new Dimension(220,40),10,
                             false, 4, NumberFormat.getNumberInstance(),
                             Color.DARK_GRAY, Color.GRAY, Color.WHITE,
                             10,true,false, new Font("Serial", Font.BOLD, 10),true,
-                            SI.METRE);
+                            Units.METRE);
 
     private final BufferedImage buffer = new BufferedImage(400, 40, BufferedImage.TYPE_INT_ARGB);
     private CoordinateReferenceSystem lastObjCRS = null;

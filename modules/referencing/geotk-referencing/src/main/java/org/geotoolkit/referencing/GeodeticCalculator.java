@@ -29,7 +29,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.GeneralPath;
 import java.text.Format;
-import javax.measure.unit.NonSI;
 import static java.lang.Math.*;
 
 import org.opengis.referencing.datum.Datum;
@@ -45,6 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.DirectPosition;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
@@ -354,7 +354,7 @@ public class GeodeticCalculator {
      * uses decimal degrees units.
      */
     private static boolean isStandard(final CoordinateSystemAxis axis, final AxisDirection direction) {
-        return direction.equals(axis.getDirection()) && NonSI.DEGREE_ANGLE.equals(axis.getUnit());
+        return direction.equals(axis.getDirection()) && Units.DEGREE.equals(axis.getUnit());
     }
 
     /**

@@ -55,8 +55,8 @@ import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXTitledPanel;
 
-import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
+import javax.measure.Unit;
+import javax.measure.IncommensurableException;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -701,7 +701,7 @@ public class LayerList extends WindowCreator {
                     ranges = layer.getSampleValueRanges();
                 } catch (CoverageStoreException e) {
                     Throwable cause = e.getCause();
-                    if (cause instanceof ConversionException) {
+                    if (cause instanceof IncommensurableException) {
                         rangeError = cause.getLocalizedMessage();
                         if (rangeError == null) {
                             rangeError = e.getLocalizedMessage();

@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.measure.unit.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.Icon;
@@ -63,6 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.EngineeringDatum;
+import org.apache.sis.measure.Units;
 
 
 /**
@@ -269,7 +269,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
     private CoordinateReferenceSystem buildCrs1DFromName(final String crsName) {
         final EngineeringDatum customDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", crsName));
-        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", crsName), "u", AxisDirection.valueOf(crsName), Unit.ONE);
+        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", crsName), "u", AxisDirection.valueOf(crsName), Units.UNITY);
         final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", crsName), csAxis);
         return new DefaultEngineeringCRS(Collections.singletonMap("name", crsName), customDatum, customCs);
     }

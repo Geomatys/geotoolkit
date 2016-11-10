@@ -27,7 +27,7 @@ import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -56,6 +56,7 @@ import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
+import org.apache.sis.measure.Units;
 
 /**
  * Convinient WMS methods.
@@ -246,7 +247,7 @@ public final class WMSUtilities {
                 CoordinateReferenceSystem dimCRS = null;
                 final String dimName = dim.getName();
                 final String dimUnitSymbol = dim.getUnitSymbol();
-                final Unit<?> unit = dimUnitSymbol != null ? Unit.valueOf(dimUnitSymbol) : Unit.ONE;
+                final Unit<?> unit = dimUnitSymbol != null ? Units.valueOf(dimUnitSymbol) : Units.UNITY;
 
                 //create CRS
                 if ("time".equals(dimName)) {

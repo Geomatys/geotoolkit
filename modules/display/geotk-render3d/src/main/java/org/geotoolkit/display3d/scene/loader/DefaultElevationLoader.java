@@ -26,7 +26,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.List;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -70,7 +70,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform coverageToOutput, outputToCoverage;
 
-    public DefaultElevationLoader(CoverageReference ref) throws FactoryException, ConversionException, DataStoreException {
+    public DefaultElevationLoader(CoverageReference ref) throws FactoryException, IncommensurableException, DataStoreException {
         this.coverageRef = ref;
 
         final GridCoverageReader reader = coverageRef.acquireReader();
@@ -112,17 +112,15 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         this.outputCrs = outputCrs;
         try {
             createTransformOutput();
-        } catch (FactoryException | ConversionException ex) {
+        } catch (FactoryException | IncommensurableException ex) {
             throw new PortrayalException(ex);
         }
     }
 
     /**
      * Internal only, use setOutputCRS to recalculate output transform
-     * @throws FactoryException
-     * @throws ConversionException
      */
-    private void createTransformOutput() throws FactoryException, ConversionException {
+    private void createTransformOutput() throws FactoryException, IncommensurableException {
         if (outputCrs != null){
             final CoordinateReferenceSystem crsImg = gridGeom.getCoordinateReferenceSystem();
             coverageToOutput = CRS.findOperation(crsImg, outputCrs, null).getMathTransform();

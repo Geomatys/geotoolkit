@@ -18,7 +18,7 @@ package org.geotoolkit.style;
 
 import java.util.Collections;
 import java.util.Map;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.ExtensionSymbolizer;

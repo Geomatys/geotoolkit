@@ -19,6 +19,10 @@ package org.geotoolkit.wps.converters.outputs.references;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.*;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
@@ -108,11 +112,20 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             gmlVersion = "3.1.1";
         }
 
-        final String randomFileName = UUID.randomUUID().toString() + getFileExtension(reference.getMimeType());
-        final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
+        final String randomPathName = UUID.randomUUID().toString() + getFileExtension(reference.getMimeType());
+        final Object pathCdt = params.get(TMP_DIR_PATH);
+        final Path geometryPath;
+        if (pathCdt instanceof String) {
+            geometryPath = Paths.get((String)params.get(TMP_DIR_PATH)).resolve(randomPathName);
+        } else if(pathCdt instanceof URI) {
+            geometryPath = Paths.get((URI)params.get(TMP_DIR_PATH)).resolve(randomPathName);
+        } else {
+            throw new UnconvertibleObjectException("Unexpected path type "+pathCdt);
+        }
+
         OutputStream geometryStream = null;
         try {
-            geometryStream = new FileOutputStream(geometryFile);
+            geometryStream = Files.newOutputStream(geometryPath);
             if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
                 WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType()) || 
@@ -120,12 +133,12 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
                 
                 final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
                 m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
-                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
+                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomPathName);
                 WPSMarshallerPool.getInstance().recycle(m);
             
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
                 GeoJSONStreamWriter.writeSingleGeometry(geometryStream, source, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
-                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
+                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomPathName);
             } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
             }

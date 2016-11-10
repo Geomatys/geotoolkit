@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import javax.measure.converter.ConversionException;
+import javax.measure.IncommensurableException;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -234,7 +234,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
             terrain.setElevationLoader(elevationLoader);
             terrain.setImageLoader(imageLoader);
 
-        } catch (PortrayalException | TransformException | FactoryException | DataStoreException | ConversionException ex) {
+        } catch (PortrayalException | TransformException | FactoryException | DataStoreException | IncommensurableException ex) {
             Map3D.LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
     }

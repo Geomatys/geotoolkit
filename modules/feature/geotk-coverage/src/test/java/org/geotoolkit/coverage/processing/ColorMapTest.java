@@ -18,8 +18,8 @@
 package org.geotoolkit.coverage.processing;
 
 import java.awt.Color;
-import javax.measure.unit.SI;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.measure.MeasurementRange;
@@ -63,7 +63,7 @@ public final strictfp class ColorMapTest extends org.geotoolkit.test.TestBase {
             new Category("Lands",       Color.GREEN, 1),
             new Category("Clouds",      Color.GRAY,  0),
             new Category("Temperature", new Color[] {Color.CYAN, Color.YELLOW}, 3, 256, 0.1, 0),
-        }, SI.CELSIUS);
+        }, Units.CELSIUS);
 
         map = new ColorMap();
         map.setColor ("Sea",    Color.BLUE);
@@ -137,7 +137,7 @@ public final strictfp class ColorMapTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGeophysicsRange() {
-        map.setGeophysicsRange("Temperature", MeasurementRange.create(5, true, 20, true, SI.CELSIUS));
+        map.setGeophysicsRange("Temperature", MeasurementRange.create(5, true, 20, true, Units.CELSIUS));
         assertSame(band, map.recolor(band, ARGB));
         assertEquals(Color.GRAY  .getRGB(), ARGB[  0]);
         assertEquals(Color.GREEN .getRGB(), ARGB[  1]);

@@ -36,8 +36,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
@@ -63,6 +62,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.measure.Units;
 
 
 /**
@@ -236,7 +236,7 @@ public class RenderingContext2D implements RenderingContext{
 
         this.coeffs.clear();
         //set the Pixel coeff = 1
-        this.coeffs.put(NonSI.PIXEL, 1f);
+        this.coeffs.put(Units.POINT, 1f);
 
 
         //calculate canvas shape/bounds values ---------------------------------

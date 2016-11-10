@@ -34,8 +34,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.util.Arrays;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
@@ -46,6 +45,7 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -93,7 +93,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Unit unit = Units.POINT;
         final Expression label = FF.literal("LABEL");
         final Font font = SF.font(
                 FF.literal("Arial"),

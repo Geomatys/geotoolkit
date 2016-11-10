@@ -20,8 +20,8 @@ package org.geotoolkit.gui.swing.coverage;
 import java.util.List;
 import java.util.Arrays;
 import java.text.ParseException;
-import javax.measure.unit.SI;
 
+import org.apache.sis.measure.Units;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.test.gui.SwingTestBase;
@@ -57,12 +57,12 @@ public final strictfp class SampleDimensionPanelTest extends SwingTestBase<Sampl
                 new Category("Clouds",      null, 3),
                 new Category("Temperature", null, 10, 100, 0.1, 5),
                 new Category("Foo",         null, 100, 120, -1, 3)
-            }, SI.CELSIUS);
+            }, Units.CELSIUS);
         final GridSampleDimension band2 = new GridSampleDimension("Sea Level Anomaly",
             new Category[] {
                 new Category("No data",     null, 0),
                 new Category("SLA",         null, 1, 255, 0.25, -32)
-            }, SI.CENTIMETRE);
+            }, Units.CENTIMETRE);
         final List<GridSampleDimension> bands = Arrays.asList(band1, band2);
 
         final SampleDimensionPanel panel = new SampleDimensionPanel();
