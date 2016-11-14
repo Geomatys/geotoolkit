@@ -1,5 +1,6 @@
 org.geotoolkit.image.io.plugin.RawImageReader$Spi
 org.geotoolkit.image.io.plugin.HGTReader$Spi
+org.geotoolkit.image.io.plugin.VI3GReader$Spi
 org.geotoolkit.image.io.plugin.AsciiGridReader$Spi
 org.geotoolkit.image.io.plugin.TextMatrixImageReader$Spi
 org.geotoolkit.image.io.plugin.TextRecordImageReader$Spi
