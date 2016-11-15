@@ -17,8 +17,8 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.feature.Feature;
 import static java.util.Collections.*;
+import org.opengis.feature.Feature;
 
 /**
  *

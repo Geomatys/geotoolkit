@@ -52,14 +52,14 @@ import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.cql.CQLLexer;
 import org.geotoolkit.cql.CQLParser;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -171,7 +171,7 @@ public class FXCQLEditor extends BorderPane {
         
         final ObservableList properties = FXCollections.observableArrayList();
         if(ft!=null){
-            for(PropertyDescriptor desc : ft.getDescriptors()){
+            for(PropertyType desc : ft.getProperties(true)){
                 properties.add(desc.getName().tip().toString());
             }
         }

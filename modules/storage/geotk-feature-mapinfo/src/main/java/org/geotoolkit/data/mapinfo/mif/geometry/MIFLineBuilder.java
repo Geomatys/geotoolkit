@@ -22,11 +22,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -35,6 +30,11 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  * Util class to build a feature from Line object of a MIF file.
@@ -46,12 +46,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("LINE");
 
-    private static final AttributeDescriptor PEN;
-    static {
-        final AttributeType penType =
-                new DefaultAttributeType(Pen.NAME, String.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 1, 1, true, null);
-    }
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -68,9 +63,9 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
         final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2);
         final LineString line = GEOMETRY_FACTORY.createLineString(seq);
 
-        toFill.getDefaultGeometryProperty().setValue(line);
+        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), line);
 
-        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -82,8 +77,8 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
                 final int width = Integer.decode(argsTab[0]);
                 final int pattern = Integer.decode(argsTab[1]);
                 final int color = Integer.decode(argsTab[2]);
-                Pen pen = new Pen(width, pattern, color);
-                toFill.getProperty(Pen.NAME).setValue(pen);
+                final Pen pen = new Pen(width, pattern, color);
+                toFill.setPropertyValue(Pen.NAME.toString(),pen);
             }
         }
     }
@@ -92,11 +87,11 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
      * {@inheritDoc}
      */
     @Override
-    public String toMIFSyntax(Feature geometry) throws DataStoreException {
-        super.toMIFSyntax(geometry);
+    public String toMIFSyntax(Feature feature) throws DataStoreException {
+        super.toMIFSyntax(feature);
         StringBuilder builder = new StringBuilder(NAME.tip().toString());
 
-        Object value = geometry.getDefaultGeometryProperty().getValue();
+        Object value = MIFUtils.getGeometryValue(feature);
 
         if(value instanceof LineSegment) {
             LineSegment line = (LineSegment) value;
@@ -112,11 +107,9 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
                     .append(' ').append(pt2.getX()).append(' ').append(pt2.getY()).append('\n');
         }
 
-        if(geometry.getProperty(Pen.NAME) != null) {
-            Object penValue = geometry.getProperty(Pen.NAME).getValue();
-            if(penValue != null && penValue instanceof Pen) {
-                builder.append(penValue).append('\n');
-            }
+        final Object pen = MIFUtils.getPropertySafe(feature, Pen.NAME.toString());
+        if (pen instanceof Pen) {
+            builder.append(pen).append('\n');
         }
 
         return builder.toString();
@@ -138,7 +131,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
+    protected List<AttributeType> getAttributes() {
         return Collections.singletonList(PEN);
     }
 }

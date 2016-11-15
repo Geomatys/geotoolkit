@@ -19,25 +19,26 @@ package org.geotoolkit.processing.vector.centroid;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.centroid.CentroidDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Process to extract geometry centroid from a FeatureCollection.
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class CentroidProcess extends AbstractProcess {
-
     /**
      * Default Constructor
      */
@@ -51,33 +52,31 @@ public class CentroidProcess extends AbstractProcess {
     @Override
     protected void execute() {
         final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
-
         final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
-        
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Create a new Feature with centroid
-     * @param oldFeature Feature
+     *
      * @param newType the new FeatureType for the Feature
-     * @return Feature
      */
     public static Feature changeFeature(final Feature oldFeature, final FeatureType newType) {
 
         //create result feature based on the new feature type and th input feature
-        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
+        final Feature resultFeature = newType.newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
+        for (final PropertyType property : oldFeature.getType().getProperties(true)) {
+            final String name = property.getName().toString();
+            final Object value = oldFeature.getPropertyValue(name);
 
-        for (Property property : oldFeature.getProperties()) {
             //if the propperty is a geometry
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry inputFeatureGeometry = (Geometry) property.getValue();
-                resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
-            } else {
-                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+            if (AttributeConvention.isGeometryAttribute(property)) {
+                resultFeature.setPropertyValue(name, ((Geometry) value).getCentroid());
+            } else if(property instanceof AttributeType && !(AttributeConvention.contains(property.getName()))){
+                resultFeature.setPropertyValue(name, value);
             }
         }
-
         return resultFeature;
     }
 }

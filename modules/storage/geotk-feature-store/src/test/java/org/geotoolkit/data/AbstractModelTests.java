@@ -18,13 +18,15 @@
 package org.geotoolkit.data;
 
 import java.util.List;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.FeatureType;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.apache.sis.referencing.CommonCRS;
@@ -58,7 +60,7 @@ public abstract class AbstractModelTests {
         final FeatureStore store = getDataStore();
         final List<Class> geometryBindings = getSupportedGeometryTypes();
         final List<Class> bindinds = getSupportedAttributTypes();
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
+        FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         final Session session = store.createSession(true);
 
 
@@ -66,14 +68,13 @@ public abstract class AbstractModelTests {
 
             //create the schema ------------------------------------------------
             final String name = "testname";
-            sftb.reset();
-            sftb.setName(name);
-            sftb.add("att_geometry", geomType, CommonCRS.WGS84.geographic());
-            sftb.setDefaultGeometry("att_geometry");
+            sftb = new FeatureTypeBuilder();
+            sftb.setName(name);            
+            sftb.addAttribute(geomType).setName("att_geometry").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
             for(int i=0; i<bindinds.size(); i++){
-                sftb.add("att"+i, bindinds.get(i));
-            }
-            final FeatureType sft = sftb.buildFeatureType();
+                sftb.addAttribute(bindinds.get(i)).setName("att"+i);
+            }            
+            final FeatureType sft = sftb.build();
 
             //add listeners
             StorageCountListener storeListen = new StorageCountListener();
@@ -81,11 +82,11 @@ public abstract class AbstractModelTests {
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
-            store.createFeatureType(sft.getName(), sft);
+            store.createFeatureType(sft);
 
             final FeatureType type = store.getFeatureType(name);
             assertNotNull(type);
-            assertEquals(sft, type);
+            assertTrue(FeatureTypeExt.equalsIgnoreConvention(sft, type));
 
             //check listeners
 //            assertEquals(1, storeListen.numManageEvent);
@@ -127,7 +128,7 @@ public abstract class AbstractModelTests {
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
-            store.deleteFeatureType(nsname);
+            store.deleteFeatureType(nsname.toString());
 
             //check listeners
 //            assertEquals(1, storeListen.numManageEvent);
@@ -151,7 +152,7 @@ public abstract class AbstractModelTests {
             session.removeStorageListener(sessionListen);
 
             try{
-                store.getFeatureType(nsname);
+                store.getFeatureType(nsname.toString());
                 throw new Exception("Should have raised an error.");
             }catch(DataStoreException ex){
                 //ok

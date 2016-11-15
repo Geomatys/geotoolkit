@@ -24,22 +24,25 @@ import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.
@@ -51,17 +54,9 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     public GenericName NAME = NamesExt.create("RECTANGLE");
     public static final GenericName ROUND_NAME = NamesExt.create("ROUNDING");
 
-    private static final AttributeDescriptor ROUNDING;
-    private static final AttributeDescriptor PEN;
-    private static final AttributeDescriptor BRUSH;
-
-    static {
-        ROUNDING = new DefaultAttributeDescriptor(STRING_TYPE, ROUND_NAME, 1, 1, true, null);
-
-        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
-
-        BRUSH = new DefaultAttributeDescriptor(STRING_TYPE, Brush.NAME, 1, 1, true, null);
-    }
+    private static final AttributeType ROUNDING = new DefaultAttributeType(Collections.singletonMap("name", ROUND_NAME), String.class, 1, 1, null);
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
+    private static final AttributeType BRUSH = new DefaultAttributeType(Collections.singletonMap("name", Brush.NAME), String.class, 1, 1, null);
 
     public FeatureType featureType;
 
@@ -87,17 +82,17 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(pts, 2);
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.getDefaultGeometryProperty().setValue(env);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), env);
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Rectangle is not properly defined : not enough points found.", ex);
         }
 
         if(scanner.hasNext(ProjectionUtils.DOUBLE_PATTERN)) {
-            toFill.getProperty(ROUND_NAME).setValue(Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
+            toFill.setPropertyValue(ROUND_NAME.toString(),Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
         }
 
-        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -110,11 +105,11 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                 final int pattern = Integer.decode(argsTab[1]);
                 final int color = Integer.decode(argsTab[2]);
                 Pen pen = new Pen(width, pattern, color);
-                toFill.getProperty(Pen.NAME).setValue(pen);
+                toFill.setPropertyValue(Pen.NAME.toString(),pen);
             }
         }
 
-        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getDescriptors().contains(BRUSH)) {
+        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getProperties(true).contains(BRUSH)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -130,7 +125,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                     final int background = Integer.decode(argsTab[2]);
                     brush.setBackgroundCC(background);
                 }
-                toFill.getProperty(Brush.NAME).setValue(brush);
+                toFill.setPropertyValue(Brush.NAME.toString(),brush);
             }
         }
     }
@@ -139,12 +134,12 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     @Override
     public String toMIFSyntax(Feature source) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Source feature", source);
-        if(source.getDefaultGeometryProperty() == null) {
+        if(!FeatureExt.hasAGeometry(source.getType())) {
             throw new DataStoreException("Input feature does not contain any geometry.");
         }
 
         StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
-        Object value = source.getDefaultGeometryProperty().getValue();
+        Object value = MIFUtils.getGeometryValue(source);
         if(value instanceof Envelope) {
             Envelope env = (Envelope) value;
             builder.append(env.getMinX()).append(' ')
@@ -168,23 +163,19 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         }
         builder.append('\n');
 
-        Property round = source.getProperty(ROUND_NAME);
+        final Object round = MIFUtils.getPropertySafe(source, ROUND_NAME.toString());
         if(round != null) {
-            builder.append(round.getValue()).append('\n');
+            builder.append(round).append('\n');
         }
 
-        if(source.getProperty(Pen.NAME) != null) {
-            Object penValue = source.getProperty(Pen.NAME).getValue();
-            if(penValue != null && penValue instanceof Pen) {
-                builder.append(penValue).append('\n');
-            }
+        final Object pen = MIFUtils.getPropertySafe(source, Pen.NAME.toString());
+        if (pen instanceof Pen) {
+            builder.append(pen).append('\n');
         }
 
-        if(source.getProperty(Brush.NAME) != null) {
-            Object brValue = source.getProperty(Brush.NAME).getValue();
-            if(brValue != null && brValue instanceof Brush) {
-                builder.append(brValue).append('\n');
-            }
+        final Object brush = MIFUtils.getPropertySafe(source, Brush.NAME.toString());
+        if (brush instanceof Brush) {
+            builder.append(brush).append('\n');
         }
 
         return builder.toString();
@@ -206,9 +197,9 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
+    protected List<AttributeType> getAttributes() {
 
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(3);
+        final List<AttributeType> descList = new ArrayList<AttributeType>(3);
         descList.add(ROUNDING);
         descList.add(PEN);
         descList.add(BRUSH);

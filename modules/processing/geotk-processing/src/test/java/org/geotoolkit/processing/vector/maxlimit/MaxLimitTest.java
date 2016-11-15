@@ -23,11 +23,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 
 import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -35,8 +36,6 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,6 +43,8 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * JUnit test of MaxLimit process
@@ -52,7 +53,6 @@ import static org.junit.Assert.*;
  */
 public class MaxLimitTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static FeatureType type;
 
@@ -83,12 +83,10 @@ public class MaxLimitTest extends AbstractProcessTest {
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("MaxTest");
-        ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
-
-        ftb.setDefaultGeometry("geom1");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Geometry.class).setName("geom1").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 
     private static FeatureCollection buildFeatureList() throws FactoryException {
@@ -98,7 +96,7 @@ public class MaxLimitTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
-        Feature myFeature;
+        Feature myFeature = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 7),
@@ -107,12 +105,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(4, 7)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-01 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01 U id-11");
+        myFeature.setPropertyValue("name", "feature1");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3, 5),
@@ -121,12 +119,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(4, 5),
                     new Coordinate(3, 5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-01");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature.setPropertyValue("name", "feature1");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(7, 5),
@@ -135,12 +133,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(7, 5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-12");
+        myFeature.setPropertyValue("name", "feature3");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 4),
@@ -149,13 +147,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 4),
                     new Coordinate(6, 4)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-11");
+        myFeature.setPropertyValue("name", "feature3");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
-
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 2),
@@ -164,12 +161,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(6, 2)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03 U id-13");
+        myFeature.setPropertyValue("name", "feature3");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(7, 7),
@@ -178,12 +175,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(7, 7)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature2");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-02 U id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02 U id-12");
+        myFeature.setPropertyValue("name", "feature2");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6, 5),
@@ -192,12 +189,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(7, 5),
                     new Coordinate(6, 5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature2");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-02 U id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02 U id-11");
+        myFeature.setPropertyValue("name", "feature2");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(2, 3),
@@ -206,13 +203,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(3, 3),
                     new Coordinate(2, 3)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature4");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-04");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature.setPropertyValue("name", "feature4");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
-
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(7, 7),
@@ -224,12 +220,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 7),
                     new Coordinate(7, 7)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature12");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-12");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature.setPropertyValue("name", "feature12");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8, 4),
@@ -238,12 +234,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(8, 2),
                     new Coordinate(8, 4)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature13");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-13");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature.setPropertyValue("name", "feature13");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 2),
@@ -252,12 +248,12 @@ public class MaxLimitTest extends AbstractProcessTest {
                     new Coordinate(5, 2),
                     new Coordinate(4, 2)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature14");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-14");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        myFeature.setPropertyValue("name", "feature14");
+        myFeature.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature);
 
+        myFeature = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 4),
@@ -277,10 +273,9 @@ public class MaxLimitTest extends AbstractProcessTest {
                 });
         Polygon poly1 = geometryFactory.createPolygon(ring, null);
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature11");
-        sfb.setPropertyValue("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
-        myFeature = sfb.buildFeature("id-11");
+        myFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature.setPropertyValue("name", "feature11");
+        myFeature.setPropertyValue("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
         featureList.add(myFeature);
 
         return featureList;

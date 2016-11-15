@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.referencing.operation.TransformException;
@@ -71,9 +72,6 @@ import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -86,12 +84,16 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.test.Assert;
 
 import org.apache.sis.geometry.Envelopes;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
 
 /**
  * Testing color model optimisations.
@@ -118,13 +120,13 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        sftb.add("att1", String.class);
-        sftb.add("att2", Double.class);
-        final FeatureType sft = sftb.buildSimpleFeatureType();
+        sftb.addAttribute(Point.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        sftb.addAttribute(String.class).setName("att1");
+        sftb.addAttribute(Double.class).setName("att2");
+        final FeatureType sft = sftb.build();
         FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
+        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriter(QueryBuilder.filtered(sft.getName().toString(),Filter.EXCLUDE));
 
         Feature sf = writer.next();
         sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));

@@ -22,11 +22,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Description of a table column.
@@ -184,7 +184,7 @@ public class ColumnMetaModel {
 
             } else if (CharSequence.class.isAssignableFrom(clazz)) {
                 //generate a random string
-                next = FeatureUtilities.createDefaultFeatureId();
+                next = FeatureExt.createDefaultFeatureId();
             }
 
             if (next == null) {

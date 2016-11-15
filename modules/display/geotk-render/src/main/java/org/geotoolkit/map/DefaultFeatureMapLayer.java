@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -34,7 +35,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -138,7 +139,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     @Override
     public Envelope getBounds() {
         final FeatureCollection featureCol = getCollection();
-        final CoordinateReferenceSystem sourceCrs = featureCol.getFeatureType().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem sourceCrs = FeatureExt.getCRS(featureCol.getFeatureType());
         Envelope env = null;
         try {
             env = featureCol.getEnvelope();

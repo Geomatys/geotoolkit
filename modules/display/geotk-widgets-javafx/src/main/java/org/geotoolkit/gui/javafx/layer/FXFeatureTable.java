@@ -45,16 +45,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 
@@ -94,7 +95,7 @@ public class FXFeatureTable extends FXPropertyPane{
                 final Iterator<Feature> ite = table.getSelectionModel().getSelectedItems().iterator();
                 final Set<Identifier> set = new HashSet<>();
                 while(ite.hasNext()){
-                    set.add(ite.next().getIdentifier());
+                    set.add(FeatureExt.getId(ite.next()));
                 }
                 final Id selection = GO2Utilities.FILTER_FACTORY.id(set);
                 if(layer!=null){
@@ -161,7 +162,7 @@ public class FXFeatureTable extends FXPropertyPane{
         
         table.getColumns().clear();
         final FeatureType featureType = features.getFeatureType();
-        for(PropertyDescriptor prop : featureType.getDescriptors()){
+        for(PropertyType prop : featureType.getProperties(true)){
             final TableColumn<Feature,String> column = new TableColumn<Feature,String>(generateFinalColumnName(prop));
             column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
                 @Override
@@ -189,10 +190,10 @@ public class FXFeatureTable extends FXPropertyPane{
         return true;
     }
     
-    private String generateFinalColumnName(final PropertyDescriptor prop) {
+    private String generateFinalColumnName(final PropertyType prop) {
         Map<String, Entry<String, String>> labelInfo;
         try {
-            labelInfo = (Map) prop.getUserData().get("labelInfo");
+            labelInfo = (Map) prop.getDesignation();
         } catch (Exception ex) {
             Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
             labelInfo = null;
@@ -275,7 +276,7 @@ public class FXFeatureTable extends FXPropertyPane{
         @Override
         public ListIterator<Feature> listIterator(int index) {
             
-            final QueryBuilder qb = new QueryBuilder(features.getFeatureType().getName());
+            final QueryBuilder qb = new QueryBuilder(features.getFeatureType().getName().toString());
             qb.setStartIndex(index);
             
             final FeatureCollection subcol;            

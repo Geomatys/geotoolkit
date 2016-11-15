@@ -18,7 +18,6 @@
 package org.geotoolkit.data.om.netcdf;
 
 import org.geotoolkit.data.om.OMFeatureTypes;
-import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,18 +25,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.internal.GenericNameIndex;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.util.NamesExt;
@@ -53,6 +51,8 @@ import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
@@ -65,7 +65,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public class NetcdfObservationStore extends AbstractFeatureStore implements DataFileStore,ObservationStore {
 
-    protected final Map<GenericName, FeatureType> types;
+    protected final GenericNameIndex<FeatureType> types;
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
@@ -106,14 +106,14 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      */
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
-        return types.keySet();
+        return types.getNames();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName);
     }
@@ -147,7 +147,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -155,7 +155,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -163,7 +163,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(final String typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -171,7 +171,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -179,7 +179,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -187,7 +187,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -195,7 +195,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 

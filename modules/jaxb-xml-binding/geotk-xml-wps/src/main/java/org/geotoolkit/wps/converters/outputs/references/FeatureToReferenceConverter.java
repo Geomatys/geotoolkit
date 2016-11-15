@@ -22,10 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
@@ -35,10 +34,10 @@ import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a {@link Feature feature} into a {@link Reference reference}.
@@ -111,7 +110,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
                 FileOutputStream fos = new FileOutputStream(dataFile);
                 try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
                     Feature next = writer.next();
-                    FeatureUtilities.copy(source, next, true);
+                    FeatureExt.copy(source, next, true);
                     writer.write();
                 }
 
@@ -136,7 +135,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
                 final OutputStream schemaStream = new FileOutputStream(schemaFile);
 
                 //write featureType xsd on file
-                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
                 xmlFTWriter.write(ft, schemaStream);
 
                 reference.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);

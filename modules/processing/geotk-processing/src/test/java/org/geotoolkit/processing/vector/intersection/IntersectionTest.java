@@ -24,24 +24,25 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * JUnit test of intersect process
@@ -50,7 +51,6 @@ import static org.junit.Assert.*;
  */
 public class IntersectionTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static FeatureType type;
 
@@ -80,33 +80,26 @@ public class IntersectionTest extends AbstractProcessTest {
 
         //Expected Features out
         final FeatureCollection featureListResult = buildResultList();
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
-        assertEquals(featureListOut.size(), featureListResult.size());
-        assertTrue(featureListOut.containsAll(featureListResult));
+        compare(featureListResult,featureListOut);
     }
 
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
-        ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.forCode("EPSG:3395"));
-
-        ftb.setDefaultGeometry("geom1");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Geometry.class).setName("geom1").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Geometry.class).setName("geom2").setCRS(CRS.forCode("EPSG:3395"));
+        return ftb.build();
     }
 
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
-        ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.forCode("EPSG:3395"));
-
-        ftb.setDefaultGeometry("geom1");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Geometry.class).setName("geom1").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 
     private static FeatureCollection buildFeatureList() throws FactoryException {
@@ -116,7 +109,7 @@ public class IntersectionTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 3.0),
@@ -125,14 +118,13 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        myFeature1 = sfb.buildFeature("id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue("name", "feature1");
+        myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature1.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         featureList.add(myFeature1);
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(5.0, 6.0),
@@ -148,14 +140,13 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature2");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", multPt);
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "feature2");
+        myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature2.setPropertyValue("geom2", multPt);
         featureList.add(myFeature2);
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(9.0, 4.0),
@@ -169,11 +160,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", line);
-        myFeature3 = sfb.buildFeature("id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue("name", "feature3");
+        myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature3.setPropertyValue("geom2", line);
         featureList.add(myFeature3);
 
         return featureList;
@@ -186,7 +176,7 @@ public class IntersectionTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(1.0, 4.0),
@@ -201,14 +191,13 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0), //intersection with a point
                     new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature11");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", multPt);
-        myFeature1 = sfb.buildFeature("id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue("name", "feature11");
+        myFeature1.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature1.setPropertyValue("geom2", multPt);
         featureList.add(myFeature1);
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4.0, 2.0),
@@ -222,14 +211,13 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature12");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", line);
-        myFeature2 = sfb.buildFeature("id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue("name", "feature12");
+        myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature2.setPropertyValue("geom2", line);
         featureList.add(myFeature2);
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 0.0),
@@ -238,11 +226,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature13");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.setPropertyValue("geom2", null);
-        myFeature3 = sfb.buildFeature("id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue("name", "feature13");
+        myFeature3.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        myFeature3.setPropertyValue("geom2", null);
         featureList.add(myFeature3);
 
         return featureList;
@@ -256,19 +243,18 @@ public class IntersectionTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LineString line = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(4.0, 4.0),
                     new Coordinate(4.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", line);
-        myFeature1 = sfb.buildFeature("id-01<->id-12");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-12");
+        myFeature1.setPropertyValue("name", "feature1");
+        myFeature1.setPropertyValue("geom1", line);
         featureList.add(myFeature1);
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 3.0),
@@ -277,21 +263,19 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature2 = sfb.buildFeature("id-01<->id-13");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-13");
+        myFeature2.setPropertyValue("name", "feature1");
+        myFeature2.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
 
-        Feature myFeature3;
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature1");
-        sfb.setPropertyValue("geom1", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
-        myFeature3 = sfb.buildFeature("id-01<->id-11");
+        Feature myFeature3 = type.newInstance();
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01<->id-11");
+        myFeature3.setPropertyValue("name", "feature1");
+        myFeature3.setPropertyValue("geom1", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         featureList.add(myFeature3);
 
 
-        Feature myFeature4;
+        Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(9.0, 4.0),
@@ -300,25 +284,23 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(9.0, 4.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature4 = sfb.buildFeature("id-03<->id-13");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03<->id-13");
+        myFeature4.setPropertyValue("name", "feature3");
+        myFeature4.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
 
-        Feature myFeature5;
+        Feature myFeature5 = type.newInstance();
         line = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(9.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature3");
-        sfb.setPropertyValue("geom1", line);
-        myFeature5 = sfb.buildFeature("id-03<->id-12");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03<->id-12");
+        myFeature5.setPropertyValue("name", "feature3");
+        myFeature5.setPropertyValue("geom1", line);
         featureList.add(myFeature5);
 
-        Feature myFeature6;
+        Feature myFeature6 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(5.0, 6.0),
@@ -327,11 +309,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(5.0, 6.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "feature2");
-        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature5 = sfb.buildFeature("id-02<->id-13");
-        featureList.add(myFeature5);
+        myFeature6.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02<->id-13");
+        myFeature6.setPropertyValue("name", "feature2");
+        myFeature6.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        featureList.add(myFeature6);
 
 
         return featureList;

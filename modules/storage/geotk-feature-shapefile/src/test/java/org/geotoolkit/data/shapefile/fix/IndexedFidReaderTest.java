@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
@@ -30,11 +31,11 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
-import org.geotoolkit.feature.Feature;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 
 public class IndexedFidReaderTest extends FIDTestCase {
     
@@ -92,7 +93,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
     @Test
     public void testFindAllFids() throws Exception {
         int expectedCount = 0;
-        final Set<String> expectedFids = new LinkedHashSet<String>();
+        final Set<String> expectedFids = new LinkedHashSet<>();
         
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(), null,
                 true, true, IndexType.NONE,null);
@@ -100,7 +101,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(next.getIdentifier().getID());
+            expectedFids.add(FeatureExt.getId(next).getID());
         }
         features.close();
 
@@ -116,14 +117,14 @@ public class IndexedFidReaderTest extends FIDTestCase {
     @Test
     public void testFindAllFidsReverseOrder() throws Exception {
         int expectedCount = 0;
-        final Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
+        final Set<String> expectedFids = new TreeSet<>(Collections.reverseOrder());
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(next.getIdentifier().getID());
+            expectedFids.add(FeatureExt.getId(next).getID());
         }
         features.close();
 

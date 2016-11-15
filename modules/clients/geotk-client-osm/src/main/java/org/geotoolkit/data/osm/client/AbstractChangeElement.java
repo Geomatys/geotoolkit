@@ -25,8 +25,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
+import org.opengis.feature.Feature;
 
 /**
  * Abstract implementation of {@link ChangeElementRequest}, which defines the
@@ -38,7 +38,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLWriter;
 public abstract class AbstractChangeElement extends AbstractRequest implements ChangeElementRequest{
 
     protected final Type type;
-    protected IdentifiedElement element = null;
+    protected Feature element = null;
 
     public AbstractChangeElement(final OpenStreetMapClient server, final String subPath, final Type type){
         super(server, subPath);
@@ -51,12 +51,12 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     }
     
     @Override
-    public IdentifiedElement getElement() {
+    public Feature getElement() {
         return element;
     }
 
     @Override
-    public void setElement(final IdentifiedElement element) {
+    public void setElement(final Feature element) {
         this.element = element;
     }
 

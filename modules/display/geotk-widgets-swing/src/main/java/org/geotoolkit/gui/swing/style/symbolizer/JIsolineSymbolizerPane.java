@@ -177,7 +177,7 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
             try {
                 final FeatureType ft = IsolineSymbolizer.buildIsolineType();
                 isolineMockLayer = MapBuilder.createFeatureLayer(
-                        FeatureStoreUtilities.collection("", (org.geotoolkit.feature.type.FeatureType) ft),
+                        FeatureStoreUtilities.collection("", ft),
                         getStyleFactory().style());
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(),ex);

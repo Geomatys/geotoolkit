@@ -40,7 +40,7 @@ public class FeatureStoreReadingDemo {
         //getting all available feature types -----------------------------------------------
         final Set<GenericName> typeNames = store.getNames();
         for(GenericName name : typeNames){
-            System.out.println(store.getFeatureType(name));
+            System.out.println(store.getFeatureType(name.toString()));
         }
 
 
@@ -55,7 +55,7 @@ public class FeatureStoreReadingDemo {
 
 
         //advanced querying -------------------------------------------------------------------
-        final QueryBuilder qb = new QueryBuilder(typeName);
+        final QueryBuilder qb = new QueryBuilder(typeName.toString());
         qb.setCRS(CRS.forCode("EPSG:3395"));
         qb.setProperties(new String[]{"the_geom","LONG_NAME","SQKM"});
         qb.setFilter(FF.equals(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));

@@ -25,8 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -38,16 +38,15 @@ import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.SchemaData;
 import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -58,36 +57,25 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/schemaData.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public SchemaDataTest() {
-    }
 
     @Test
     public void schemaDataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Feature placemark0 = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark0.getType());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark0 = (Feature) object;
-            assertTrue(placemark0.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-            assertEquals("Easy trail", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            final Object dataContainer0 = placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            assertTrue(dataContainer0 instanceof ExtendedData);
-            final ExtendedData extendedData0 = (ExtendedData) dataContainer0;
+            assertEquals("Easy trail", placemark0.getPropertyValue(KmlConstants.TAG_NAME));
+            final ExtendedData extendedData0 = (ExtendedData) ((List)placemark0.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
             assertEquals(1, extendedData0.getSchemaData().size());
             final SchemaData schemaData0 = extendedData0.getSchemaData().get(0);
             assertEquals("#TrailHeadTypeId", schemaData0.getSchemaURL().toString());
@@ -106,8 +94,7 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
             assertEquals("ElevationGain", simpelData02.getName());
             assertEquals("10", simpelData02.getContent());
 
-            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-            final Point point0 = (Point) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            final Point point0 = (Point) placemark0.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             final CoordinateSequence coordinates0 = point0.getCoordinateSequence();
             assertEquals(1, coordinates0.size());
 
@@ -116,16 +103,13 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
             assertEquals(37.002, coordinate0.y, DELTA);
         }
 
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark1 = (Feature) object;
-            assertTrue(placemark1.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            Feature placemark1 = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark1.getType());
 
-            assertEquals("Difficult trail", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            final Object dataContainer1 = placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            assertTrue(dataContainer1 instanceof ExtendedData);
-            ExtendedData extendedData1 = (ExtendedData) dataContainer1;
+            assertEquals("Difficult trail", placemark1.getPropertyValue(KmlConstants.TAG_NAME));
+            ExtendedData extendedData1 = (ExtendedData) ((List)placemark1.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
             assertEquals(1, extendedData1.getSchemaData().size());
             final SchemaData schemaData1 = extendedData1.getSchemaData().get(0);
             assertEquals("#TrailHeadTypeId", schemaData1.getSchemaURL().toString());
@@ -144,8 +128,7 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
             assertEquals("ElevationGain", simpelData12.getName());
             assertEquals("10000", simpelData12.getContent());
 
-            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-            final Point point1 = (Point) placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            final Point point1 = (Point) placemark1.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             final CoordinateSequence coordinates1 = point1.getCoordinateSequence();
             assertEquals(1, coordinates1.size());
 
@@ -175,10 +158,9 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
         extendedData0.setSchemaData(Arrays.asList(schemaData0));
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark0Properties = placemark0.getProperties();
-        placemark0Properties.add(FF.createAttribute(extendedData0, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        placemark0Properties.add(FF.createAttribute("Easy trail", KmlModelConstants.ATT_NAME, null));
-        placemark0Properties.add(FF.createAttribute(point0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData0);
+        placemark0.setPropertyValue(KmlConstants.TAG_NAME, "Easy trail");
+        placemark0.setPropertyValue(KmlConstants.TAG_GEOMETRY, point0);
 
         final Coordinate coordinate1 = kmlFactory.createCoordinate(-122, 37.002);
         final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate1));
@@ -196,15 +178,12 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
         extendedData1.setSchemaData(Arrays.asList(schemaData1));
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark1Properties = placemark1.getProperties();
-        placemark1Properties.add(FF.createAttribute(extendedData1, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        placemark1Properties.add(FF.createAttribute("Difficult trail", KmlModelConstants.ATT_NAME, null));
-        placemark1Properties.add(FF.createAttribute(point1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark1.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData1);
+        placemark1.setPropertyValue(KmlConstants.TAG_NAME, "Difficult trail");
+        placemark1.setPropertyValue(KmlConstants.TAG_GEOMETRY, point1);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -216,8 +195,6 @@ public class SchemaDataTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

@@ -715,8 +715,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>       <!-- The -source argument for the Java compiler.   -->
-          <target>1.7</target>       <!-- The -target argument for the Java compiler.   -->
+          <source>1.8</source>       <!-- The -source argument for the Java compiler.   -->
+          <target>1.8</target>       <!-- The -target argument for the Java compiler.   -->
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -948,7 +948,7 @@
           <encoding>${project.build.sourceEncoding}</encoding>
           <docencoding>${website.encoding}</docencoding>
           <charset>${website.encoding}</charset>
-          <source>1.7</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
+          <source>1.8</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
           <locale>en</locale>              <!-- Locale that javadoc uses when generating documentation.    -->
           <noqualifier>all</noqualifier>   <!-- Omit qualifying package name before class names in output. -->
           <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->

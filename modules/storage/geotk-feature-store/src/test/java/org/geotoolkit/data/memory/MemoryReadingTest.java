@@ -25,19 +25,23 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.apache.sis.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -46,37 +50,38 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 public class MemoryReadingTest extends AbstractReadingTests{
 
     private final MemoryFeatureStore store = new MemoryFeatureStore();
-    private final Set<GenericName> names = new HashSet<GenericName>();
-    private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    private final Set<GenericName> names = new HashSet<>();
+    private final List<ExpectedResult> expecteds = new ArrayList<>();
 
     public MemoryReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         final GeometryFactory gf = new GeometryFactory();
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //first schema----------------------------------------------------------
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("att1", String.class);
-        final FeatureType type1 = builder.buildSimpleFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att1");
+        final FeatureType type1 = builder.build();
 
         names.add(name);
         expecteds.add(new ExpectedResult(name,type1,0,null));
 
-        store.createFeatureType(name,type1);
+        store.createFeatureType(type1);
 
         //second schema --------------------------------------------------------
         name = NamesExt.create("http://test.com", "TestSchema2");
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name);
-        builder.add("string", String.class);
-        builder.add("double", Double.class);
-        builder.add("date", Date.class);
-        final FeatureType type2 = builder.buildSimpleFeatureType();
-        store.createFeatureType(name,type2);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("string");
+        builder.addAttribute(Double.class).setName("double");
+        builder.addAttribute(Date.class).setName("date");
+        final FeatureType type2 = builder.build();
+        store.createFeatureType(type2);
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             Feature f = writer.next();
             f.setPropertyValue("string", "hop3");
@@ -105,15 +110,16 @@ public class MemoryReadingTest extends AbstractReadingTests{
 
         //third schema ---------------------------------------------------------
         name = NamesExt.create("http://test.com", "TestSchema3");
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name);
-        builder.add("geometry", Point.class, CRS.forCode("EPSG:27582"));
-        builder.add("string", String.class);
-        final FeatureType type3 = builder.buildSimpleFeatureType();
-        store.createFeatureType(name,type3);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Point.class).setName("geometry").setCRS(CRS.forCode("EPSG:27582")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        builder.addAttribute(String.class).setName("string");
+        final FeatureType type3 = builder.build();
+        store.createFeatureType(type3);
 
         //create a few features
-        writer = store.getFeatureWriterAppend(name);
+        writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             Feature f = writer.next();
             f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 11)));

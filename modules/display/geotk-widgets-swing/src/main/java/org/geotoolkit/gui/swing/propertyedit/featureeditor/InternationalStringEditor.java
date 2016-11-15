@@ -21,7 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.InternationalString;
 
 /**
@@ -39,7 +40,7 @@ public class InternationalStringEditor extends PropertyValueEditor implements Do
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return InternationalString.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && InternationalString.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

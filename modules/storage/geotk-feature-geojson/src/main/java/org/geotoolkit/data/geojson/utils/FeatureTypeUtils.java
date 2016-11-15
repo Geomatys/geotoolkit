@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
@@ -12,10 +13,8 @@ import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -26,10 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 
 import java.io.*;
@@ -40,6 +36,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.nio.file.StandardOpenOption.*;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.DefaultAssociationRole;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.
@@ -57,7 +62,6 @@ import static java.nio.file.StandardOpenOption.*;
 public final class FeatureTypeUtils extends Static {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson.utils");
-    private static final FeatureTypeFactory FT_FACTORY = FeatureTypeFactory.INSTANCE;
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
@@ -104,7 +108,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputFile", output);
 
-        if (ft.getGeometryDescriptor() == null) {
+        if (FeatureExt.getDefaultGeometryAttribute(ft) == null) {
             throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
         }
 
@@ -121,7 +125,7 @@ public final class FeatureTypeUtils extends Static {
                 writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
             }
 
-            writeGeometryType(ft.getGeometryDescriptor(), writer);
+            writeGeometryType(FeatureExt.getDefaultGeometryAttribute(ft), writer);
             writeProperties(ft, writer);
 
             writer.writeEndObject();
@@ -166,7 +170,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputStream", output);
 
-        if (ft.getGeometryDescriptor() == null) {
+        if (FeatureExt.getDefaultGeometryAttribute(ft) == null) {
             throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
         }
 
@@ -179,35 +183,33 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
         }
 
-        writeGeometryType(ft.getGeometryDescriptor(), writer);
+        writeGeometryType(FeatureExt.getDefaultGeometryAttribute(ft), writer);
         writeProperties(ft, writer);
 
         writer.writeEndObject();
     }
 
-    private static void writeProperties(ComplexType ft, JsonGenerator writer) throws IOException {
+    private static void writeProperties(FeatureType ft, JsonGenerator writer) throws IOException {
         writer.writeObjectFieldStart(PROPERTIES);
 
-        Collection<PropertyDescriptor> descriptors = ft.getDescriptors();
+        Collection<? extends PropertyType> descriptors = ft.getProperties(true);
         List<String> required = new ArrayList<>();
 
-        for (PropertyDescriptor descriptor : descriptors) {
-            PropertyType type = descriptor.getType();
+        for (PropertyType type : descriptors) {
             boolean isRequired = false;
 
-            if (type instanceof ComplexType) {
-                isRequired = writeComplexType(descriptor, (ComplexType)type, writer);
-            } else if (type instanceof org.geotoolkit.feature.type.AttributeType) {
-                if (type instanceof GeometryType) {
+            if (type instanceof FeatureAssociationRole) {
+                isRequired = writeComplexType((FeatureAssociationRole) type, ((FeatureAssociationRole)type).getValueType(), writer);
+            } else if (type instanceof AttributeType) {
+                if(Geometry.class.isAssignableFrom( ((AttributeType) type).getValueClass())){
 //                    GeometryType geometryType = (GeometryType) type;
 //                    isRequired = writeGeometryType(descriptor, geometryType, writer);
                 } else {
-                    org.geotoolkit.feature.type.AttributeType att = (org.geotoolkit.feature.type.AttributeType) type;
-                    isRequired = writeAttributeType(descriptor, att, writer);
+                    isRequired = writeAttributeType(ft, (AttributeType)type, writer);
                 }
             }
             if (isRequired) {
-                required.add(descriptor.getName().tip().toString());
+                required.add(type.getName().tip().toString());
             }
         }
 
@@ -221,7 +223,7 @@ public final class FeatureTypeUtils extends Static {
         writer.writeEndObject();
     }
 
-    private static boolean writeComplexType(PropertyDescriptor descriptor, ComplexType complex, JsonGenerator writer)
+    private static boolean writeComplexType(FeatureAssociationRole descriptor, FeatureType complex, JsonGenerator writer)
             throws IOException {
 
         writer.writeObjectFieldStart(descriptor.getName().tip().toString());
@@ -230,16 +232,16 @@ public final class FeatureTypeUtils extends Static {
         if (complex.getDescription() != null) {
             writer.writeStringField(DESCRIPTION, complex.getDescription().toString());
         }
-        writeDescriptorAttributes(descriptor, complex, writer);
+        writer.writeNumberField(MIN_ITEMS, descriptor.getMinimumOccurs());
+        writer.writeNumberField(MAX_ITEMS, descriptor.getMaximumOccurs());
         writeProperties(complex, writer);
 
         writer.writeEndObject();
 
-        return complex.getMinimumOccurs() > 0;
+        return descriptor.getMinimumOccurs() > 0;
     }
 
-    private static boolean writeAttributeType(PropertyDescriptor descriptor, org.geotoolkit.feature.type.AttributeType att,
-                                              JsonGenerator writer)
+    private static boolean writeAttributeType(FeatureType featureType, AttributeType att, JsonGenerator writer)
             throws IOException {
 
         writer.writeObjectFieldStart(att.getName().tip().toString());
@@ -250,46 +252,19 @@ public final class FeatureTypeUtils extends Static {
         if (att.getDescription() != null) {
             writer.writeStringField(DESCRIPTION, att.getDescription().toString());
         }
-        writeDescriptorAttributes(descriptor, att, writer);
-        List<Filter> restrictions = att.getRestrictions();
-        if (restrictions != null && !restrictions.isEmpty()) {
-            final Filter merged = FF.and(restrictions);
-            writer.writeStringField(RESTRICTION, CQL.write(merged));
+        if (FeatureTypeExt.isPartOfPrimaryKey(featureType,att.getName().toString())) {
+            writer.writeBooleanField(PRIMARY_KEY, true);
         }
+        writer.writeNumberField(MIN_ITEMS, att.getMinimumOccurs());
+        writer.writeNumberField(MAX_ITEMS, att.getMaximumOccurs());
+//        List<Filter> restrictions = att.getRestrictions();
+//        if (restrictions != null && !restrictions.isEmpty()) {
+//            final Filter merged = FF.and(restrictions);
+//            writer.writeStringField(RESTRICTION, CQL.write(merged));
+//        }
         writer.writeEndObject();
 
         return att.getMinimumOccurs() > 0;
-    }
-
-    private static void writeDescriptorAttributes(PropertyDescriptor descriptor, AttributeType att, JsonGenerator writer)
-            throws IOException {
-        if (FeatureTypeUtilities.isPartOfPrimaryKey(descriptor)) {
-            writer.writeBooleanField(PRIMARY_KEY, true);
-        }
-
-        writer.writeBooleanField(NILLABLE, descriptor.isNillable());
-        writer.writeNumberField(MIN_ITEMS, descriptor.getMinOccurs());
-        writer.writeNumberField(MAX_ITEMS, descriptor.getMaxOccurs());
-        Map<Object, Object> userData = descriptor.getUserData();
-        if (!userData.isEmpty()) {
-            writeUserData(userData, writer);
-        }
-    }
-
-    private static void writeUserData(Map<Object, Object> userData, JsonGenerator writer) throws IOException {
-        writer.writeObjectFieldStart(USER_DATA);
-        for (Map.Entry<Object, Object> entry : userData.entrySet()) {
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (!(key instanceof Serializable) || !(value instanceof Serializable)) {
-                LOGGER.log(Level.WARNING, "User map entry not serializable "+entry);
-            } else {
-                writer.writeFieldName(key.toString());
-                GeoJSONUtils.writeValue(value, writer);
-            }
-        }
-        writer.writeEndObject();
     }
 
     private static String findType(Class binding) {
@@ -308,19 +283,18 @@ public final class FeatureTypeUtils extends Static {
         }
     }
 
-    private static boolean writeGeometryType(GeometryDescriptor descriptor, JsonGenerator writer)
+    private static boolean writeGeometryType(AttributeType geometryType, JsonGenerator writer)
             throws IOException {
-        GeometryType geometryType = descriptor.getType();
         writer.writeObjectFieldStart(GEOMETRY);
         writer.writeStringField(TYPE, OBJECT);
         if (geometryType.getDescription() != null) {
             writer.writeStringField(DESCRIPTION, geometryType.getDescription().toString());
         }
-        writer.writeStringField(JAVA_TYPE, geometryType.getBinding().getCanonicalName());
-        CoordinateReferenceSystem crs = geometryType.getCoordinateReferenceSystem();
+        writer.writeStringField(JAVA_TYPE, geometryType.getValueClass().getCanonicalName());
+        CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
         String crsCode = GeoJSONUtils.toURN(crs);
         writer.writeStringField(CRS, crsCode);
-        writer.writeStringField(GEOMETRY_ATT_NAME, descriptor.getLocalName());
+        writer.writeStringField(GEOMETRY_ATT_NAME, geometryType.getName().tip().toString());
         writer.writeEndObject();
         return true;
     }
@@ -349,21 +323,14 @@ public final class FeatureTypeUtils extends Static {
              JsonParser parser = GeoJSONParser.FACTORY.createParser(stream)) {
 
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-
-            parser.nextToken(); // {
-
-            String ftName = null;
-            InternationalString description = null;
-            List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
-            GeometryDescriptor geometryDescriptor = null;
+            parser.nextToken();
 
             while (parser.nextToken() != JsonToken.END_OBJECT) {
 
                 final String currName = parser.getCurrentName();
                 switch (currName) {
                     case TITLE:
-                        ftName = parser.nextTextValue();
+                        ftb.setName(parser.nextTextValue());
                         break;
                     case JAVA_TYPE:
                         String type = parser.nextTextValue();
@@ -372,32 +339,33 @@ public final class FeatureTypeUtils extends Static {
                         }
                         break;
                     case PROPERTIES:
-                        propertyDescriptors = readProperties(parser, ftb, adb);
+                        for(PropertyType pt : readProperties(parser)){
+                            if(pt instanceof AttributeType){
+                                ftb.addAttribute((AttributeType) pt);
+                            }else if(pt instanceof FeatureAssociationRole){
+                                ftb.addAssociation((FeatureAssociationRole) pt);
+                            }
+                        }
                         break;
                     case GEOMETRY:
-                        geometryDescriptor = readGeometry(parser, adb);
+                        AttributeType geomAtt = readGeometry(parser);
+                        ftb.addAttribute(geomAtt).addRole(AttributeRole.DEFAULT_GEOMETRY);
                         break;
                     case DESCRIPTION:
-                        description = new SimpleInternationalString(parser.nextTextValue());
+                        ftb.setDescription(parser.nextTextValue());
                         break;
                 }
             }
 
-            if (ftName != null && geometryDescriptor != null) {
-                propertyDescriptors.add(geometryDescriptor);
-                ftb.reset();
-                ftb.setName(ftName);
-                ftb.setDescription(description);
-                ftb.setProperties(propertyDescriptors);
-                ftb.setDefaultGeometry(geometryDescriptor.getName());
-            } else {
-                throw new DataStoreException("FeatureType name or default geometry not found in JSON schema");
+            try{
+                return ftb.build();
+            }catch(IllegalStateException ex){
+                throw new DataStoreException("FeatureType name or default geometry not found in JSON schema\n"+ex.getMessage(),ex);
             }
-            return ftb.buildFeatureType();
         }
     }
 
-    private static GeometryDescriptor readGeometry(JsonParser parser, AttributeDescriptorBuilder adb)
+    private static AttributeType readGeometry(JsonParser parser)
             throws IOException, DataStoreException {
 
         Class binding = null;
@@ -441,15 +409,19 @@ public final class FeatureTypeUtils extends Static {
             throw new DataStoreException("Geometry crs or binding not found.");
         }
 
-        GenericName name = geometryName != null ? NamesExt.create(geometryName) : NamesExt.create(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
-        PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
-        return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
+        final GenericName name = geometryName != null ? NamesExt.create(geometryName) : NamesExt.create("geometry");
+        final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
+        atb.setName(name);
+        atb.setCRS(crs);
+        atb.setValueClass(binding);
+        atb.setMinimumOccurs(1);
+        atb.setMaximumOccurs(1);
+        return atb.build();
     }
 
-    private static List<PropertyDescriptor> readProperties(JsonParser parser, FeatureTypeBuilder ftb,
-                                                           AttributeDescriptorBuilder adb)
+    private static List<PropertyType> readProperties(JsonParser parser)
             throws IOException, DataStoreException {
-        List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
+        List<PropertyType> propertyDescriptors = new ArrayList<>();
         parser.nextToken(); // {
 
         List<String> requiredList = null;
@@ -462,29 +434,28 @@ public final class FeatureTypeUtils extends Static {
                 if (REQUIRED.equals(currName)) {
                     requiredList = parseRequiredArray(parser);
                 } else {
-                    propertyDescriptors.add(parseProperty(parser, ftb, adb));
+                    propertyDescriptors.add(parseProperty(parser));
                 }
             }
         }
         return propertyDescriptors;
     }
 
-    private static PropertyDescriptor parseProperty(JsonParser parser, FeatureTypeBuilder ftb, AttributeDescriptorBuilder adb)
+    private static PropertyType parseProperty(JsonParser parser)
             throws IOException, DataStoreException {
 
         final String attributeName = parser.getCurrentName();
         Class binding = String.class;
-        boolean nillable = true;
         boolean primaryKey = false;
         int minOccurs = 0;
         int maxOccurs = 1;
         String description = null;
         String restrictionCQL = null;
         Map<Object, Object> userData = null;
-        List<PropertyDescriptor> descs = new ArrayList<>();
+        List<PropertyType> descs = new ArrayList<>();
 
-        parser.nextToken(); // {
-        while (parser.nextToken() != JsonToken.END_OBJECT) { // -> }
+        parser.nextToken();
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
 
             final String currName = parser.getCurrentName();
             switch (currName) {
@@ -497,9 +468,6 @@ public final class FeatureTypeUtils extends Static {
                             throw new DataStoreException("Attribute " + attributeName + " invalid : " + e.getMessage(), e);
                         }
                     }
-                    break;
-                case NILLABLE:
-                    nillable = parser.nextBooleanValue();
                     break;
                 case MIN_ITEMS:
                     minOccurs = parser.nextIntValue(0);
@@ -517,7 +485,7 @@ public final class FeatureTypeUtils extends Static {
                     userData = parseUserDataMap(parser);
                     break;
                 case PROPERTIES:
-                    descs = readProperties(parser, ftb, adb);
+                    descs = readProperties(parser);
                     break;
                 case DESCRIPTION:
                     description = parser.nextTextValue();
@@ -548,19 +516,29 @@ public final class FeatureTypeUtils extends Static {
                 }
             }
 
-            PropertyType prop = FT_FACTORY.createAttributeType(name, binding, false, false, restrictions, null, desc);
-            return adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, minOccurs, maxOccurs, nillable, userData);
+            final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
+            atb.setName(name);
+            atb.setDescription(desc);
+            atb.setValueClass(binding);
+            atb.setMinimumOccurs(minOccurs);
+            atb.setMaximumOccurs(maxOccurs);
+            return atb.build();
 
         } else {
             //build ComplexType
-            ftb.reset();
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(name);
-            for (PropertyDescriptor property : descs) {
-                ftb.add(property);
+            for (PropertyType pt : descs) {
+                if(pt instanceof AttributeType){
+                    ftb.addAttribute((AttributeType) pt);
+                }else if(pt instanceof FeatureAssociationRole){
+                    ftb.addAssociation((FeatureType) pt);
+                }
             }
             ftb.setDescription(desc);
-            final ComplexType complexType = ftb.buildType();
-            return adb.create(complexType, name, minOccurs, maxOccurs, nillable, userData);
+            final FeatureType complexType = ftb.build();
+
+            return new DefaultAssociationRole(Collections.singletonMap("name", name), complexType, minOccurs, maxOccurs);
         }
     }
 

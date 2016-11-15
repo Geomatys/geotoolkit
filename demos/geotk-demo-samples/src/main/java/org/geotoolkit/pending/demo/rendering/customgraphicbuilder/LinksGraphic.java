@@ -11,6 +11,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -27,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 
 import org.opengis.display.primitive.Graphic;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 
 
@@ -49,7 +50,7 @@ public class LinksGraphic extends GraphicJ2D{
         try {
             //we reproject our collection
             collection = collection.subCollection(QueryBuilder.reprojected(
-                    collection.getFeatureType().getName(), renderingContext.getObjectiveCRS2D()));
+                    collection.getFeatureType().getName().toString(), renderingContext.getObjectiveCRS2D()));
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -70,7 +71,7 @@ public class LinksGraphic extends GraphicJ2D{
                 final Feature feature = mainIte.next();
 
                 //draw a line from each point to all other
-                final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+                final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
                 final Point center = geom.getCentroid();
                 from.setLocation(center.getX(), center.getY());
                 objToDisp.transform(from, from);
@@ -91,7 +92,7 @@ public class LinksGraphic extends GraphicJ2D{
                         final Feature target = ite.next();
                         if(Math.random() > 0.1d) continue;
 
-                        final Geometry targetgeom = (Geometry) target.getDefaultGeometryProperty().getValue();
+                        final Geometry targetgeom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(target);
                         final Point targetcenter = targetgeom.getCentroid();
                         to.setLocation(targetcenter.getX(), targetcenter.getY());
                         objToDisp.transform(to, to);

@@ -21,7 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -40,12 +41,12 @@ public class EnumEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Enum.class.isAssignableFrom(candidate.getBinding());
+        return candidate instanceof AttributeType && Enum.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override
     public void setValue(PropertyType type, Object value) {
-        component.setModel(new EnumComboBoxModel(type.getBinding()));
+        component.setModel(new EnumComboBoxModel(((AttributeType)type).getValueClass()));
 
         if (value instanceof Enum) {
             component.setSelectedItem(value);

@@ -26,13 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.AbstractReadingTests.ExpectedResult;
-import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.gpx.model.GPXModelConstants;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.internal.gpx.GPXConstants;
+import org.geotoolkit.data.AbstractReadingTests;
+import org.geotoolkit.data.FeatureStore;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -43,11 +42,11 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXReading {//extends AbstractReadingTests{
+public class GPXReading extends AbstractReadingTests {
 
     private final GPXFeatureStore store;
-    private final Set<GenericName> names = new HashSet<GenericName>();
-    private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    private final Set<GenericName> names = new HashSet<>();
+    private final List<ExpectedResult> expecteds = new ArrayList<>();
 
     public GPXReading() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
 
@@ -64,8 +63,14 @@ public class GPXReading {//extends AbstractReadingTests{
 //        names.add(GPXModelConstants.TYPE_GPX_ENTITY.getName());
 //        expecteds.add(new ExpectedResult(GPXModelConstants.TYPE_GPX_ENTITY.getName(),GPXModelConstants.TYPE_GPX_ENTITY,0,env));
 
-        names.add(GPXModelConstants.TYPE_WAYPOINT.getName());
-        expecteds.add(new ExpectedResult(GPXModelConstants.TYPE_WAYPOINT.getName(),GPXModelConstants.TYPE_WAYPOINT,0,env));
+        names.add(GPXConstants.TYPE_GPX_ENTITY.getName());
+        names.add(GPXConstants.TYPE_WAYPOINT.getName());
+        names.add(GPXConstants.TYPE_TRACK.getName());
+        names.add(GPXConstants.TYPE_ROUTE.getName());
+        expecteds.add(new ExpectedResult(GPXConstants.TYPE_GPX_ENTITY.getName(),GPXConstants.TYPE_GPX_ENTITY,0,env));
+        expecteds.add(new ExpectedResult(GPXConstants.TYPE_WAYPOINT.getName(),GPXConstants.TYPE_WAYPOINT,0,env));
+        expecteds.add(new ExpectedResult(GPXConstants.TYPE_TRACK.getName(),GPXConstants.TYPE_TRACK,0,env));
+        expecteds.add(new ExpectedResult(GPXConstants.TYPE_ROUTE.getName(),GPXConstants.TYPE_ROUTE,0,env));
 
         //Complex type not supported
 //        names.add(GPXModelConstants.TYPE_ROUTE.getName());
@@ -107,19 +112,19 @@ public class GPXReading {//extends AbstractReadingTests{
 
     }
 
-//    @Override
-//    protected synchronized FeatureStore getDataStore() {
-//        return store;
-//    }
-//
-//    @Override
-//    protected Set<Name> getExpectedNames() {
-//        return names;
-//    }
-//
-//    @Override
-//    protected List<ExpectedResult> getReaderTests() {
-//        return expecteds;
-//    }
+    @Override
+    protected synchronized FeatureStore getDataStore() {
+        return store;
+    }
+
+    @Override
+    protected Set<GenericName> getExpectedNames() {
+        return names;
+    }
+
+    @Override
+    protected List<ExpectedResult> getReaderTests() {
+        return expecteds;
+    }
 
 }

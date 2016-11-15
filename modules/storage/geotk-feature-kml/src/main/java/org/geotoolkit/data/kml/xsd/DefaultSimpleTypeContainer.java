@@ -47,6 +47,4 @@ public class DefaultSimpleTypeContainer implements SimpleTypeContainer {
     public Object getValue() {
         return this.value;
     }
-
-    
 }

@@ -17,13 +17,10 @@
 package org.geotoolkit.data.mapinfo;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
@@ -36,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
@@ -48,10 +46,8 @@ import org.apache.sis.util.Utilities;
  */
 public final class DatumIdentifier {
 
-    private static final DatumAuthorityFactory DATUM_AUTHORITY_FACTORY = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
-
     /** A map containing mapinfo datum codes as key, and EPSG code as value. */
-    private static final Map<Integer, Integer> DATUM_TABLE = new HashMap<Integer, Integer>();
+    private static final Map<Integer, Integer> DATUM_TABLE = new HashMap<>();
 
     /**
      * For datums we don't have EPSG equivalent, we get a list of Bursa Wolf parameters for each one (to WGS 84 transformation).
@@ -67,10 +63,10 @@ public final class DatumIdentifier {
      *                   7 --> Scaling (in part per million)
      *                   8 --> Prime meridian longitude to greenwich
      */
-    private static final Map<Integer, Map.Entry<String, double[]> > HANDED_DATUM_TABLE = new HashMap<Integer, Map.Entry<String, double[]> >();
+    private static final Map<Integer, Map.Entry<String, double[]> > HANDED_DATUM_TABLE = new HashMap<>();
 
     private static AbstractMap.SimpleImmutableEntry<String, double[]> buildValue(String name, double... values) {
-        return new AbstractMap.SimpleImmutableEntry<String, double[]>(name, values);
+        return new AbstractMap.SimpleImmutableEntry<>(name, values);
     }
 
     /**
@@ -109,7 +105,7 @@ public final class DatumIdentifier {
     public static String getMIFDatum(GeodeticDatum source) throws FactoryException, DataStoreException {
         StringBuilder builder = new StringBuilder();
 
-        Integer epsgCode = IdentifiedObjects.lookupEpsgCode(source, false);
+        Integer epsgCode = IdentifiedObjects.lookupEPSG(source);
         if(epsgCode == null) {
             epsgCode = -1;
         }
@@ -196,7 +192,7 @@ public final class DatumIdentifier {
         GeodeticDatum datum = null;
         final Integer epsgDatum = DatumIdentifier.getEPSGDatumCode(datumCode);
         if(epsgDatum != null) {
-            datum = DATUM_AUTHORITY_FACTORY.createGeodeticDatum(epsgDatum.toString());
+            datum = ProjectionUtils.getDatumFactory().createGeodeticDatum(epsgDatum.toString());
         } else {
             if(HANDED_DATUM_TABLE.containsKey(datumCode)) {
                 Map.Entry<String, double[]> datumInfo = HANDED_DATUM_TABLE.get(datumCode);
@@ -254,7 +250,7 @@ public final class DatumIdentifier {
                     "Greenwich" + ((parameters[8] > 0) ? "+" + parameters[8] : parameters[8])), parameters[8], Units.DEGREE);
         }
 
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put(GeodeticDatum.NAME_KEY, (name != null)? name : ellipse.getName().getCode()+"_custom_datum");
         properties.put(DefaultGeodeticDatum.BURSA_WOLF_KEY, bwParams);
 

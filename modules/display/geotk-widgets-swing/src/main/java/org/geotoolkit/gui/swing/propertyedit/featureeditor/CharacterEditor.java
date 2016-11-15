@@ -23,8 +23,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.type.PropertyType;
 
 /**
  * Editor for one Character.
@@ -43,7 +44,7 @@ public class CharacterEditor extends PropertyValueEditor implements DocumentList
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Character.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && Character.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.geotoolkit.googlemaps;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -26,7 +27,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -107,7 +107,7 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
     @Override
     public StaticGoogleMapsClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureExt.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

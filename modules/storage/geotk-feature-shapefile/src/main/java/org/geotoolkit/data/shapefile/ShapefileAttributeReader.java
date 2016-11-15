@@ -18,6 +18,7 @@ package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
@@ -25,7 +26,8 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * An AttributeReader implementation for Shapefile. Pretty straightforward.
@@ -37,8 +39,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 public class ShapefileAttributeReader {
 
     private final AccessManager locker;
-
-    protected final PropertyDescriptor[] metaData;
+    protected final AttributeType[] metaData;
     protected final boolean[] narrowing;
     protected final int[] attributIndex;
     protected ShapefileReader shp;
@@ -66,7 +67,7 @@ public class ShapefileAttributeReader {
      *                      while return an approximate geometry
      */
     public ShapefileAttributeReader(final AccessManager locker,
-            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final AttributeType[] atts, final boolean read3D, final boolean memoryMapped,
             final double[] resample, final boolean readDBF, final Charset charset,
             final double[] estimateRes) throws IOException, DataStoreException {
         ArgumentChecks.ensureNonNull("locker", locker);
@@ -84,6 +85,14 @@ public class ShapefileAttributeReader {
             this.estimateY = 0;
         }
 
+
+        //ensure we don't have the identifier property
+        for (int i=0; i<atts.length; i++) {
+            if (AttributeConvention.contains(atts[i].getName())) {
+                throw new DataStoreException("Atribute reader contains an invalid property : "+atts[i].getName());
+            }
+        }
+
         //the attribut descriptor might define types that are mare restrictive
         //then what the readers can do.
         narrowing = new boolean[atts.length];
@@ -97,7 +106,7 @@ public class ShapefileAttributeReader {
                 for(int k=0;k<header.getNumFields();k++){
                     final String fieldName = header.getFieldName(k);
                     if(fieldName.equals(attName)){
-                        narrowing[i] = (atts[i].getType().getBinding() != header.getFieldClass(k));
+                        narrowing[i] = (((AttributeType)atts[i]).getValueClass() != header.getFieldClass(k));
                         attributIndex[i] = k;
                         continue attLoop;
                     }
@@ -205,7 +214,7 @@ public class ShapefileAttributeReader {
         }else if(row != null) {
             if(narrowing[param]){
                 //must procede to a retype
-                return ObjectConverters.convert(row.read(index), metaData[param].getType().getBinding());
+                return ObjectConverters.convert(row.read(index), metaData[param].getValueClass());
             }else{
                 return row.read(index);
             }
@@ -222,7 +231,7 @@ public class ShapefileAttributeReader {
         }
     }
 
-    public PropertyDescriptor[] getPropertyDescriptors() {
+    public AttributeType[] getPropertyDescriptors() {
         return metaData;
     }
 

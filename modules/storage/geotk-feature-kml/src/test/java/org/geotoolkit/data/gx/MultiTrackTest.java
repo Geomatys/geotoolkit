@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.gx;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -25,8 +24,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -47,15 +45,10 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -68,32 +61,9 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/multiTrack.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public MultiTrackTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void multiTrackReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -102,15 +72,11 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature folder = kmlObjects.getAbstractFeature();
-        assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
+        assertEquals(KmlModelConstants.TYPE_FOLDER, folder.getType());
 
-        assertTrue(folder.getProperty(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) instanceof Feature);
-        Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiTrack);
-
-        final MultiTrack multiTrack = (MultiTrack) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        Feature placemark = (Feature) ((List)folder.getPropertyValue(KmlConstants.TAG_FEATURES)).get(0);
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        final MultiTrack multiTrack = (MultiTrack) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
         assertEquals(EnumAltitudeMode.CLAMP_TO_SEA_FLOOR, multiTrack.getAltitudeMode());
         assertTrue(multiTrack.getInterpolate());
 
@@ -138,7 +104,6 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
         assertEquals(66.2342, angles0.getTilt(), DELTA);
         assertEquals(77, angles0.getRoll(), DELTA);
 
-
         final Track track1 = multiTrack.getTracks().get(1);
 
         assertEquals(1, track1.getWhens().size());
@@ -160,7 +125,6 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
         assertEquals(46.54676, angles1.getHeading(), DELTA);
         assertEquals(67.2342, angles1.getTilt(), DELTA);
         assertEquals(78, angles1.getRoll(), DELTA);
-
     }
 
     @Test
@@ -201,13 +165,11 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
         multiTrack.setTracks(Arrays.asList(track0, track1));
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute(multiTrack, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, multiTrack);
 
 
         final Feature folder = kmlFactory.createFolder();
-        Collection<Property> folderProperties = folder.getProperties();
-        folderProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
@@ -221,7 +183,6 @@ public class MultiTrackTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import java.awt.Color;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -156,11 +155,7 @@ import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.data.kml.xsd.DefaultSimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.feature.FeatureUtilities;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -171,7 +166,6 @@ public class DefaultKmlFactory implements KmlFactory{
 
     private static final KmlFactory KMLF = new DefaultKmlFactory();
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private DefaultKmlFactory(){}
 
@@ -187,7 +181,8 @@ public class DefaultKmlFactory implements KmlFactory{
     public Kml createKml(NetworkLinkControl networkLinkControl,
             Feature abstractFeature,
             List<SimpleTypeContainer> kmlSimpleExtensions,
-            List<Object> kmlObjectExtensions) {
+            List<Object> kmlObjectExtensions)
+    {
         return new DefaultKml(networkLinkControl, abstractFeature,
                 kmlSimpleExtensions, kmlObjectExtensions);
     }
@@ -197,7 +192,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Kml createKml(){
+    public Kml createKml() {
         return new DefaultKml();
     }
 
@@ -209,7 +204,8 @@ public class DefaultKmlFactory implements KmlFactory{
     public Alias createAlias(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             URI targetHref, URI sourceHref,
-            List<SimpleTypeContainer> aliasSimpleExtensions, List<Object> aliasObjectExtensions) {
+            List<SimpleTypeContainer> aliasSimpleExtensions, List<Object> aliasObjectExtensions)
+    {
         return new DefaultAlias(objectSimpleExtensions, idAttributes,
                 targetHref, sourceHref, aliasSimpleExtensions, aliasObjectExtensions);
     }
@@ -219,7 +215,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Alias createAlias(){
+    public Alias createAlias() {
         return new DefaultAlias();
     }
 
@@ -232,7 +228,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleTypeContainer> subStyleSimpleExtensions, List<Object> subStyleObjectExtensions,
             Color bgColor, Color textColor, Object text, DisplayMode displayMode,
-            List<SimpleTypeContainer> balloonStyleSimpleExtensions, List<Object> balloonStyleObjectExtensions) {
+            List<SimpleTypeContainer> balloonStyleSimpleExtensions, List<Object> balloonStyleObjectExtensions)
+    {
         return new DefaultBalloonStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 bgColor, textColor, text, displayMode,
@@ -244,7 +241,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public BalloonStyle createBalloonStyle(){
+    public BalloonStyle createBalloonStyle() {
         return new DefaultBalloonStyle();
     }
 
@@ -256,7 +253,8 @@ public class DefaultKmlFactory implements KmlFactory{
     public BasicLink createBasicLink(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleTypeContainer> basicLinkSimpleExtensions,
-            List<Object> basicLinkObjectExtensions) {
+            List<Object> basicLinkObjectExtensions)
+    {
         return new DefaultBasicLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions);
     }
@@ -277,7 +275,8 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Boundary createBoundary(LinearRing linearRing,
             List<SimpleTypeContainer> boundarySimpleExtensions,
-            List<Object> boundaryObjectExtensions) {
+            List<Object> boundaryObjectExtensions)
+    {
         return new DefaultBoundary(linearRing, boundarySimpleExtensions,
                 boundaryObjectExtensions);
     }
@@ -303,7 +302,8 @@ public class DefaultKmlFactory implements KmlFactory{
             double longitude, double latitude, double altitude,
             double heading, double tilt, double roll, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> cameraSimpleExtensions,
-            List<Object> cameraObjectExtensions) {
+            List<Object> cameraObjectExtensions)
+    {
         return new DefaultCamera(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
                 longitude, latitude, altitude, heading, tilt, roll, altitudeMode,
@@ -333,7 +333,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Change createChange(){
+    public Change createChange() {
         return new DefaultChange();
     }
 
@@ -351,8 +351,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Coordinate createCoordinate(
-            double geodeticLongiude, double geodeticLatitude, double altitude) {
+    public Coordinate createCoordinate(double geodeticLongiude, double geodeticLatitude, double altitude) {
         return new Coordinate(geodeticLongiude, geodeticLatitude, altitude);
     }
 
@@ -361,8 +360,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Coordinate createCoordinate(
-            double geodeticLongiude, double geodeticLatitude) {
+    public Coordinate createCoordinate(double geodeticLongiude, double geodeticLatitude) {
         return new Coordinate(geodeticLongiude, geodeticLatitude);
     }
 
@@ -400,7 +398,8 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Data createData(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, Object displayName, String value, List<Object> dataExtensions) {
+            String name, Object displayName, String value, List<Object> dataExtensions)
+    {
         return new DefaultData(objectSimpleExtensions, idAttributes,
                 name, displayName, value, dataExtensions);
     }
@@ -410,7 +409,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Data createData(){
+    public Data createData() {
         return new DefaultData();
     }
 
@@ -452,10 +451,9 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractContainerObjectExtensions,
             List<Schema> schemas, List<Feature> features,
             List<SimpleTypeContainer> documentSimpleExtensions,
-            List<Object> documentObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> documentObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_DOCUMENT.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -466,70 +464,39 @@ public class DefaultKmlFactory implements KmlFactory{
         if (abstractFeatureObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
-
         if (abstractContainerSimpleExtensions != null) {
             extensions.simples(Extensions.Names.CONTAINER).addAll(abstractContainerSimpleExtensions);
         }
         if (abstractContainerObjectExtensions != null) {
             extensions.complexes(Extensions.Names.CONTAINER).addAll(abstractContainerObjectExtensions);
         }
-
         if (documentSimpleExtensions != null) {
             extensions.simples(Extensions.Names.DOCUMENT).addAll(documentSimpleExtensions);
         }
         if (documentObjectExtensions != null) {
             extensions.complexes(Extensions.Names.DOCUMENT).addAll(documentObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME,null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector) {
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        for (Schema schema : schemas) {
-            properties.add(FF.createAttribute(schema,
-                    KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
-        }
-        for (Feature feature : features){
-            //wrap feature to set it's descriptor
-            properties.add(FeatureUtilities.wrapProperty(feature, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        }
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_DOCUMENT,"document");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_SCHEMA, schemas);
+        feature.setPropertyValue(KmlConstants.TAG_FEATURES, features);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -538,17 +505,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createDocument() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_DOCUMENT,"document");
+        final Feature feature = KmlModelConstants.TYPE_DOCUMENT.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -557,7 +516,8 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public ExtendedData createExtendedData(List<Data> datas,
-            List<SchemaData> schemaDatas, List<Object> anyOtherElements) {
+            List<SchemaData> schemaDatas, List<Object> anyOtherElements)
+    {
         return new DefaultExtendedData(datas, schemaDatas, anyOtherElements);
     }
 
@@ -566,7 +526,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public ExtendedData createExtendedData(){
+    public ExtendedData createExtendedData() {
         return new DefaultExtendedData();
     }
 
@@ -590,10 +550,9 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractContainerObjectExtensions,
             List<Feature> features,
             List<SimpleTypeContainer> folderSimpleExtensions,
-            List<Object> folderObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> folderObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_FOLDER.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -604,66 +563,38 @@ public class DefaultKmlFactory implements KmlFactory{
         if (abstractFeatureObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
-
         if (abstractContainerSimpleExtensions != null) {
             extensions.simples(Extensions.Names.CONTAINER).addAll(abstractContainerSimpleExtensions);
         }
         if (abstractContainerObjectExtensions != null) {
             extensions.complexes(Extensions.Names.CONTAINER).addAll(abstractContainerObjectExtensions);
         }
-
         if (folderSimpleExtensions != null) {
             extensions.simples(Extensions.Names.FOLDER).addAll(folderSimpleExtensions);
         }
         if (folderObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FOLDER).addAll(folderObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        for (Feature feature : features){
-            properties.add(FeatureUtilities.wrapProperty(feature,
-                    KmlModelConstants.ATT_FOLDER_FEATURES));
-        }
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_FOLDER, "Folder");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_FEATURES, features);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -672,17 +603,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createFolder() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_FOLDER, "Folder");
+        final Feature feature = KmlModelConstants.TYPE_FOLDER.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -706,10 +629,9 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractOverlayObjectExtensions,
             double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleTypeContainer> groundOverlaySimpleExtensions,
-            List<Object> groundOverlayObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> groundOverlayObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_GROUND_OVERLAY.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -720,74 +642,43 @@ public class DefaultKmlFactory implements KmlFactory{
         if (abstractFeatureObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
-
         if (abstractOveraySimpleExtensions != null) {
             extensions.simples(Extensions.Names.OVERLAY).addAll(abstractOveraySimpleExtensions);
         }
         if (abstractOverlayObjectExtensions != null) {
             extensions.complexes(Extensions.Names.OVERLAY).addAll(abstractOverlayObjectExtensions);
         }
-
         if (groundOverlaySimpleExtensions != null) {
             extensions.simples(Extensions.Names.GROUND_OVERLAY).addAll(groundOverlaySimpleExtensions);
         }
         if (groundOverlayObjectExtensions != null) {
             extensions.complexes(Extensions.Names.GROUND_OVERLAY).addAll(groundOverlayObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon,
-                KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(altitude,
-                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
-        properties.add(FF.createAttribute(altitudeMode,
-                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
-        properties.add(FF.createAttribute(latLonBox,
-                KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_GROUND_OVERLAY, "GroundOverlay");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_COLOR, color);
+        feature.setPropertyValue(KmlConstants.TAG_DRAW_ORDER, drawOrder);
+        feature.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        feature.setPropertyValue(KmlConstants.TAG_ALTITUDE, altitude);
+        feature.setPropertyValue(KmlConstants.TAG_ALTITUDE_MODE, altitudeMode);
+        feature.setPropertyValue(KmlConstants.TAG_LAT_LON_BOX, latLonBox);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -796,25 +687,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createGroundOverlay() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE,
-                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE_MODE,
-                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_GROUND_OVERLAY, "GroundOverlay");
+        final Feature feature = KmlModelConstants.TYPE_GROUND_OVERLAY.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -850,7 +725,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> colorStyleObjectExtensions,
             double scale, double heading, BasicLink icon, Vec2 hotSpot,
             List<SimpleTypeContainer> iconStyleSimpleExtensions,
-            List<Object> iconStyleObjectExtensions) {
+            List<Object> iconStyleObjectExtensions)
+    {
         return new DefaultIconStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode,
@@ -895,7 +771,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
             List<SimpleTypeContainer> imagePyramidSimpleExtensions,
-            List<Object> imagePyramidObjectExtensions) {
+            List<Object> imagePyramidObjectExtensions)
+    {
         return new DefaultImagePyramid(objectSimpleExtensions, idAttributes,
                 titleSize, maxWidth, maxHeight, gridOrigin,
                 imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
@@ -919,7 +796,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             List<ItemIconState> states, String href,
             List<SimpleTypeContainer> itemIconSimpleExtensions,
-            List<Object> itemIconObjectExtensions) {
+            List<Object> itemIconObjectExtensions)
+    {
         return new DefaultItemIcon(objectSimpleExtensions, idAttributes,
                 states, href, itemIconSimpleExtensions, itemIconObjectExtensions);
     }
@@ -947,7 +825,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> colorStyleObjectExtensions,
             double scale,
             List<SimpleTypeContainer> labelStyleSimpleExtensions,
-            List<Object> labelStyleObjectExtensions) {
+            List<Object> labelStyleObjectExtensions)
+    {
         return new DefaultLabelStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
@@ -974,7 +853,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
             List<Object> abstractLatLonBoxObjectExtensions,
             double rotation, List<SimpleTypeContainer> latLonBoxSimpleExtensions,
-            List<Object> latLonBoxObjectExtensions) {
+            List<Object> latLonBoxObjectExtensions)
+    {
         return new DefaultLatLonBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west,
                 abstractLatLonBoxSimpleExtensions,
@@ -1003,7 +883,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> latLonAltBoxSimpleExtensions,
-            List<Object> latLonAltBoxObjectExtensions) {
+            List<Object> latLonAltBoxObjectExtensions)
+    {
         return new DefaultLatLonAltBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west,
                 abstractLatLonBoxSimpleExtensions,
@@ -1035,7 +916,8 @@ public class DefaultKmlFactory implements KmlFactory{
             AltitudeMode altitudeMode,
             CoordinateSequence coordinates,
             List<SimpleTypeContainer> linearRingSimpleExtensions,
-            List<Object> linearRingObjectExtensions) {
+            List<Object> linearRingObjectExtensions)
+    {
         return new DefaultLinearRing(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate,
@@ -1048,7 +930,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public LinearRing createLinearRing(CoordinateSequence coordinates){
+    public LinearRing createLinearRing(CoordinateSequence coordinates) {
         return new DefaultLinearRing(coordinates, GF);
     }
 
@@ -1065,7 +947,8 @@ public class DefaultKmlFactory implements KmlFactory{
             AltitudeMode altitudeMode,
             CoordinateSequence coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
-            List<Object> lineStringObjectExtensions) {
+            List<Object> lineStringObjectExtensions)
+    {
         return new DefaultLineString(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions,
                 abstractGeometryObjectExtensions,
@@ -1098,7 +981,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> colorStyleObjectExtensions,
             double width,
             List<SimpleTypeContainer> lineStyleSimpleExtensions,
-            List<Object> lineStyleObjectExtensions) {
+            List<Object> lineStyleObjectExtensions)
+    {
         return new DefaultLineStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
@@ -1128,7 +1012,8 @@ public class DefaultKmlFactory implements KmlFactory{
             ViewRefreshMode viewRefreshMode, double viewRefreshTime,
             double viewBoundScale, String viewFormat, String httpQuery,
             List<SimpleTypeContainer> linkSimpleExtensions,
-            List<Object> linkObjectExtensions) {
+            List<Object> linkObjectExtensions)
+    {
         return new DefaultLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions,
                 refreshMode, refreshInterval, viewRefreshMode,
@@ -1156,7 +1041,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> subStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
             List<SimpleTypeContainer> listStyleSimpleExtensions,
-            List<Object> listStyleObjectExtensions) {
+            List<Object> listStyleObjectExtensions)
+    {
         return new DefaultListStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 listItem, bgColor, itemIcons, maxSnippetLines,
@@ -1181,7 +1067,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             double longitude, double latitude, double altitude,
             List<SimpleTypeContainer> locationSimpleExtensions,
-            List<Object> locationObjectExtensions) {
+            List<Object> locationObjectExtensions)
+    {
         return new DefaultLocation(objectSimpleExtensions, idAttributes,
                 longitude, latitude, altitude,
                 locationSimpleExtensions, locationObjectExtensions);
@@ -1206,7 +1093,8 @@ public class DefaultKmlFactory implements KmlFactory{
             double minLodPixels, double maxLodPixels,
             double minFadeExtent, double maxFadeExtent,
             List<SimpleTypeContainer> lodSimpleExtentions,
-            List<Object> lodObjectExtensions) {
+            List<Object> lodObjectExtensions)
+    {
         return new DefaultLod(objectSimpleExtensions, idAttributes,
                 minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent,
                 lodSimpleExtentions, lodObjectExtensions);
@@ -1233,7 +1121,8 @@ public class DefaultKmlFactory implements KmlFactory{
             double longitude, double latitude, double altitude,
             double heading, double tilt, double range, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> lookAtSimpleExtensions,
-            List<Object> lookAtObjectExtensions) {
+            List<Object> lookAtObjectExtensions)
+    {
         return new DefaultLookAt(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
                 longitude, latitude, altitude, heading, tilt, range, altitudeMode,
@@ -1281,7 +1170,8 @@ public class DefaultKmlFactory implements KmlFactory{
             AltitudeMode altitudeMode, Location location,
             Orientation orientation, Scale scale, Link link, ResourceMap resourceMap,
             List<SimpleTypeContainer> modelSimpleExtensions,
-            List<Object> modelObjectExtensions) {
+            List<Object> modelObjectExtensions)
+    {
         return new DefaultModel(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 altitudeMode, location, orientation, scale, link, resourceMap,
@@ -1308,7 +1198,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractGeometryObjectExtensions,
             List<AbstractGeometry> geometries,
             List<SimpleTypeContainer> multiGeometrySimpleExtensions,
-            List<Object> multiGeometryObjectExtensions) {
+            List<Object> multiGeometryObjectExtensions)
+    {
         return new DefaultMultiGeometry(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 geometries, multiGeometrySimpleExtensions, multiGeometryObjectExtensions);
@@ -1341,10 +1232,9 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractFeatureObjectExtensions,
             boolean refreshVisibility, boolean flyToView, Link link,
             List<SimpleTypeContainer> networkLinkSimpleExtensions,
-            List<Object> networkLinkObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> networkLinkObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_NETWORK_LINK.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -1362,53 +1252,28 @@ public class DefaultKmlFactory implements KmlFactory{
         if (networkLinkObjectExtensions != null) {
             extensions.complexes(Extensions.Names.NETWORK_LINK).addAll(networkLinkObjectExtensions);
         }
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(refreshVisibility,
-                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
-        properties.add(FF.createAttribute(flyToView,
-                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_NETWORK_LINK_LINK, null));
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_NETWORK_LINK, "NetworkLink");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, atomLink);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_REFRESH_VISIBILITY, refreshVisibility);
+        feature.setPropertyValue(KmlConstants.TAG_FLY_TO_VIEW, flyToView);
+        feature.setPropertyValue(KmlConstants.TAG_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -1417,21 +1282,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createNetworkLink() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_REFRESH_VISIBILITY,
-                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_FLY_TO_VIEW,
-                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_NETWORK_LINK, "NetworkLink");
+        final Feature feature = KmlModelConstants.TYPE_NETWORK_LINK.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -1444,7 +1297,8 @@ public class DefaultKmlFactory implements KmlFactory{
             Object linkDescription, Snippet linkSnippet, Calendar expires,
             Update update, AbstractView view,
             List<SimpleTypeContainer> networkLinkControlSimpleExtensions,
-            List<Object> networkLinkControlObjectExtensions) {
+            List<Object> networkLinkControlObjectExtensions)
+    {
         return new DefaultNetworkLinkControl(minRefreshPeriod, maxSessionLength,
                 cookie, message, linkName, linkDescription, linkSnippet,
                 expires, update, view,
@@ -1456,7 +1310,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public NetworkLinkControl createNetworkLinkControl(){
+    public NetworkLinkControl createNetworkLinkControl() {
         return new DefaultNetworkLinkControl();
     }
 
@@ -1468,7 +1322,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             double heading, double tilt, double roll,
             List<SimpleTypeContainer> orientationSimpleExtensions,
-            List<Object> orientationObjectExtensions) {
+            List<Object> orientationObjectExtensions)
+    {
         return new DefaultOrientation(objectSimpleExtensions, idAttributes,
                 heading, tilt, roll,
                 orientationSimpleExtensions, orientationObjectExtensions);
@@ -1479,7 +1334,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Orientation createOrientation(){
+    public Orientation createOrientation() {
         return new DefaultOrientation();
     }
 
@@ -1492,7 +1347,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             StyleState key, URI styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleTypeContainer> pairSimpleExtensions,
-            List<Object> pairObjectExtensions) {
+            List<Object> pairObjectExtensions)
+    {
         return new DefaultPair(objectSimpleExtensions, idAttributes,
                 key, styleUrl, styleSelector,
                 pairSimpleExtensions, pairObjectExtensions);
@@ -1503,7 +1359,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Pair createPair(){
+    public Pair createPair() {
         return new DefaultPair();
     }
 
@@ -1529,10 +1385,9 @@ public class DefaultKmlFactory implements KmlFactory{
             double rotation, ViewVolume viewVolume, ImagePyramid imagePyramid,
             Point point, Shape shape,
             List<SimpleTypeContainer> photoOverlaySimpleExtensions,
-            List<Object> photoOverlayObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> photoOverlayObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_PHOTO_OVERLAY.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -1557,64 +1412,33 @@ public class DefaultKmlFactory implements KmlFactory{
         if (photoOverlayObjectExtensions != null) {
             extensions.complexes(Extensions.Names.PHOTO_OVERLAY).addAll(photoOverlayObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon,
-                KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(rotation,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(viewVolume,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME, null));
-        properties.add(FF.createAttribute(imagePyramid,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID, null));
-        properties.add(FF.createAttribute(point,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_POINT, null));
-        properties.add(FF.createAttribute(shape,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE, null));
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_PHOTO_OVERLAY, "PhotoOverlay");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_COLOR, color);
+        feature.setPropertyValue(KmlConstants.TAG_DRAW_ORDER, drawOrder);
+        feature.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        feature.setPropertyValue(KmlConstants.TAG_ROTATION, rotation);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW_VOLUME, viewVolume);
+        feature.setPropertyValue(KmlConstants.TAG_IMAGE_PYRAMID, imagePyramid);
+        feature.setPropertyValue(KmlConstants.TAG_POINT, point);
+        feature.setPropertyValue(KmlConstants.TAG_SHAPE, shape);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -1623,23 +1447,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createPhotoOverlay() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION,
-                KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_PHOTO_OVERLAY, "PhotoOverlay");
+        final Feature feature = KmlModelConstants.TYPE_PHOTO_OVERLAY.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -1663,12 +1473,11 @@ public class DefaultKmlFactory implements KmlFactory{
             Region region, Object extendedData,
             List<SimpleTypeContainer> abstractFeatureSimpleExtensions,
             List<Object> abstractFeatureObjectExtensions,
-            AbstractGeometry abstractGeometry,
+            AbstractGeometry geometry,
             List<SimpleTypeContainer> placemarkSimpleExtensions,
-            List<Object> placemarkObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> placemarkObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_PLACEMARK.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -1686,49 +1495,26 @@ public class DefaultKmlFactory implements KmlFactory{
         if (placemarkObjectExtensions != null) {
             extensions.complexes(Extensions.Names.PLACEMARK).addAll(placemarkObjectExtensions);
         }
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(abstractGeometry,
-                KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_PLACEMARK, "Placemark");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_GEOMETRY, geometry);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -1737,16 +1523,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createPlacemark() {
-        List<Property> properties = new ArrayList<Property>();
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_PLACEMARK, "Placemark");
+        final Feature feature = KmlModelConstants.TYPE_PLACEMARK.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -1762,7 +1541,8 @@ public class DefaultKmlFactory implements KmlFactory{
             AltitudeMode altitudeMode,
             CoordinateSequence coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
-            List<Object> pointObjectExtensions) {
+            List<Object> pointObjectExtensions)
+    {
         return new DefaultPoint(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, altitudeMode, coordinates,
@@ -1790,7 +1570,8 @@ public class DefaultKmlFactory implements KmlFactory{
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
             Boundary outerBoundary, List<Boundary> innerBoundaries,
             List<SimpleTypeContainer> polygonSimpleExtensions,
-            List<Object> polygonObjectExtensions) {
+            List<Object> polygonObjectExtensions)
+    {
         return new DefaultPolygon(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions,
                 abstractGeometryObjectExtensions,
@@ -1823,7 +1604,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> colorStyleObjectExtensions,
             boolean fill, boolean outline,
             List<SimpleTypeContainer> polyStyleSimpleExtensions,
-            List<Object> polyStyleObjectExtensions) {
+            List<Object> polyStyleObjectExtensions)
+    {
         return new DefaultPolyStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
@@ -1848,7 +1630,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             LatLonAltBox latLonAltBox, Lod lod,
             List<SimpleTypeContainer> regionSimpleExtensions,
-            List<Object> regionObjectExtentions) {
+            List<Object> regionObjectExtentions)
+    {
         return new DefaultRegion(objectSimpleExtensions, idAttributes,
                 latLonAltBox, lod, regionSimpleExtensions, regionObjectExtentions);
     }
@@ -1871,7 +1654,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             List<Alias> aliases,
             List<SimpleTypeContainer> resourceMapSimpleExtensions,
-            List<Object> resourceMapObjectExtensions) {
+            List<Object> resourceMapObjectExtensions)
+    {
         return new DefaultResourceMap(objectSimpleExtensions, idAttributes,
                 aliases, resourceMapSimpleExtensions, resourceMapObjectExtensions);
     }
@@ -1894,7 +1678,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             double x, double y, double z,
             List<SimpleTypeContainer> scaleSimpleExtensions,
-            List<Object> scaleObjectExtensions) {
+            List<Object> scaleObjectExtensions)
+    {
         return new DefaultScale(objectSimpleExtensions, idAttributes, x, y, z,
                 scaleSimpleExtensions, scaleObjectExtensions);
     }
@@ -1904,7 +1689,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Scale createScale(){
+    public Scale createScale() {
         return new DefaultScale();
     }
 
@@ -1914,7 +1699,8 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Schema createSchema(List<SimpleField> simpleFields,
-            String name, String id, List<Object> schemaExtensions) {
+            String name, String id, List<Object> schemaExtensions)
+    {
         return new DefaultSchema(simpleFields, name, id, schemaExtensions);
     }
 
@@ -1923,7 +1709,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Schema createSchema(){
+    public Schema createSchema() {
         return new DefaultSchema();
     }
 
@@ -1934,7 +1720,8 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public SchemaData createSchemaData(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
-            URI schemaURL, List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
+            URI schemaURL, List<SimpleData> simpleDatas, List<Object> schemaDataExtensions)
+    {
         return new DefaultSchemaData(objectSimpleExtensions, idAttributes,
                 schemaURL, simpleDatas, schemaDataExtensions);
     }
@@ -1944,7 +1731,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public SchemaData createSchemaData(){
+    public SchemaData createSchemaData() {
         return new DefaultSchemaData();
     }
 
@@ -1969,10 +1756,9 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractOverlayObjectExtensions,
             Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
             List<SimpleTypeContainer> screenOverlaySimpleExtensions,
-            List<Object> screenOverlayObjectExtensions) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<Object> screenOverlayObjectExtensions)
+    {
+        final Feature feature = KmlModelConstants.TYPE_SCREEN_OVERLAY.newInstance();
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -1983,78 +1769,45 @@ public class DefaultKmlFactory implements KmlFactory{
         if (abstractFeatureObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
-
         if (abstractOveraySimpleExtensions != null) {
             extensions.simples(Extensions.Names.OVERLAY).addAll(abstractOveraySimpleExtensions);
         }
         if (abstractOverlayObjectExtensions != null) {
             extensions.complexes(Extensions.Names.OVERLAY).addAll(abstractOverlayObjectExtensions);
         }
-
         if (screenOverlaySimpleExtensions != null) {
             extensions.simples(Extensions.Names.SCREEN_OVERLAY).addAll(screenOverlaySimpleExtensions);
         }
         if (screenOverlayObjectExtensions != null) {
             extensions.complexes(Extensions.Names.SCREEN_OVERLAY).addAll(screenOverlayObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon,
-                KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(rotation,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(overlayXY,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY, null));
-        properties.add(FF.createAttribute(screenXY,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY, null));
-        properties.add(FF.createAttribute(rotationXY,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY, null));
-        properties.add(FF.createAttribute(size,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE, null));
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_SCREEN_OVERLAY, "ScreenOverlay");
+        feature.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        feature.setPropertyValue(KmlConstants.TAG_NAME, name);
+        feature.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        feature.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        feature.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        feature.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        feature.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        feature.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        feature.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        feature.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        feature.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        feature.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        feature.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        feature.setPropertyValue(KmlConstants.TAG_REGION, region);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        feature.setPropertyValue(KmlConstants.TAG_COLOR, color);
+        feature.setPropertyValue(KmlConstants.TAG_DRAW_ORDER, drawOrder);
+        feature.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        feature.setPropertyValue(KmlConstants.TAG_ROTATION, rotation);
+        feature.setPropertyValue(KmlConstants.TAG_OVERLAY_XY, overlayXY);
+        feature.setPropertyValue(KmlConstants.TAG_SCREEN_XY, screenXY);
+        feature.setPropertyValue(KmlConstants.TAG_ROTATION_XY, rotationXY);
+        feature.setPropertyValue(KmlConstants.TAG_SIZE, size);
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return feature;
     }
 
     /**
@@ -2063,23 +1816,9 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Feature createScreenOverlay() {
-        List<Property> properties = new ArrayList<Property>();
-
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
-                KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
-                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION,
-                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, KmlModelConstants.TYPE_SCREEN_OVERLAY, "ScreenOverlay");
+        final Feature feature = KmlModelConstants.TYPE_SCREEN_OVERLAY.newInstance();
+        feature.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return feature;
     }
 
     /**
@@ -2131,7 +1870,8 @@ public class DefaultKmlFactory implements KmlFactory{
             IconStyle iconStyle, LabelStyle labelStyle, LineStyle lineStyle,
             PolyStyle polyStyle, BalloonStyle balloonStyle, ListStyle listStyle,
             List<SimpleTypeContainer> styleSimpleExtensions,
-            List<Object> styleObjectExtensions) {
+            List<Object> styleObjectExtensions)
+    {
         return new DefaultStyle(objectSimpleExtensions, idAttributes,
                 abstractStyleSelectorSimpleExtensions, abstractStyleSelectorObjectExtensions,
                 iconStyle, labelStyle, lineStyle, polyStyle, balloonStyle, listStyle,
@@ -2157,7 +1897,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractStyleSelectorSimpleExtensions,
             List<Object> abstractStyleSelectorObjectExtensions,
             List<Pair> pairs, List<SimpleTypeContainer> styleMapSimpleExtensions,
-            List<Object> styleMapObjectExtensions) {
+            List<Object> styleMapObjectExtensions)
+    {
         return new DefaultStyleMap(objectSimpleExtensions, idAttributes,
                 abstractStyleSelectorSimpleExtensions, abstractStyleSelectorObjectExtensions,
                 pairs, styleMapSimpleExtensions, styleMapObjectExtensions);
@@ -2182,7 +1923,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractTimePrimitiveSimpleExtensions,
             List<Object> abstractTimePrimitiveObjectExtensions,
             Calendar begin, Calendar end, List<SimpleTypeContainer> timeSpanSimpleExtensions,
-            List<Object> timeSpanObjectExtensions) {
+            List<Object> timeSpanObjectExtensions)
+    {
         return new DefaultTimeSpan(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 begin, end, timeSpanSimpleExtensions, timeSpanObjectExtensions);
@@ -2207,7 +1949,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractTimePrimitiveSimpleExtensions,
             List<Object> abstractTimePrimitiveObjectExtensions,
             Calendar when, List<SimpleTypeContainer> timeStampSimpleExtensions,
-            List<Object> timeStampObjectExtensions) {
+            List<Object> timeStampObjectExtensions)
+    {
         return new DefaultTimeStamp(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 when, timeStampSimpleExtensions, timeStampObjectExtensions);
@@ -2228,7 +1971,8 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public Update createUpdate(URI targetHref, List<Object> updates,
-            List<Object> updateOpExtensions, List<Object> updateExtensions) {
+            List<Object> updateOpExtensions, List<Object> updateExtensions)
+    {
         return new DefaultUpdate(targetHref, updates,
                 updateOpExtensions, updateExtensions);
     }
@@ -2269,7 +2013,8 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             double leftFov, double rightFov, double bottomFov, double topFov, double near,
             List<SimpleTypeContainer> viewVolumeSimpleExtensions,
-            List<Object> viewVolumeObjectExtensions) {
+            List<Object> viewVolumeObjectExtensions)
+    {
         return new DefaultViewVolume(objectSimpleExtensions, idAttributes,
                 leftFov, rightFov, bottomFov, topFov, near,
                 viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
@@ -2299,7 +2044,8 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public SimpleTypeContainer createSimpleTypeContainer(
-            String namespaceUri, String tagName, Object value) {
+            String namespaceUri, String tagName, Object value)
+    {
         return new DefaultSimpleTypeContainer(namespaceUri, tagName, value);
     }
 }

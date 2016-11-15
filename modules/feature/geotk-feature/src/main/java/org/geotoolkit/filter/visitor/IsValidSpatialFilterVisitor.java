@@ -18,10 +18,10 @@
 package org.geotoolkit.filter.visitor;
 
 import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.FilterVisitor;
@@ -74,6 +74,7 @@ import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.util.GenericName;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  *
@@ -179,13 +180,16 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final BBOX bbox, final Object o) {
         if (bbox.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) bbox.getExpression1();
+            final PropertyName pt = (PropertyName) bbox.getExpression1();
             //for the bbox filter the propertyName can be empty
             if (pt.getPropertyName().equals("")) return true;
-            
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -193,10 +197,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Beyond beyond, final Object o) {
         if (beyond.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) beyond.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) beyond.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -204,10 +211,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Contains cntns, final Object o) {
         if (cntns.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) cntns.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) cntns.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -215,10 +225,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Crosses crs, final Object o) {
         if (crs.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) crs.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) crs.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -226,10 +239,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Disjoint dsjnt, final Object o) {
         if (dsjnt.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) dsjnt.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) dsjnt.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -237,10 +253,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final DWithin dw, final Object o) {
         if (dw.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) dw.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) dw.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -248,10 +267,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Equals equals, final Object o) {
         if (equals.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) equals.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) equals.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -259,10 +281,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Intersects i, final Object o) {
         if (i.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) i.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) i.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -270,10 +295,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Overlaps ovrlps, final Object o) {
         if (ovrlps.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) ovrlps.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) ovrlps.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -281,10 +309,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Touches tchs, final Object o) {
         if (tchs.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) tchs.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) tchs.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -292,10 +323,13 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     @Override
     public Object visit(final Within within, final Object o) {
         if (within.getExpression1() instanceof PropertyName) {
-            PropertyName pt = (PropertyName) within.getExpression1();
-            GenericName name = getNameFromString(pt.getPropertyName());
-            PropertyDescriptor desc = ft.getDescriptor(name);
-            return desc instanceof GeometryDescriptor;
+            final PropertyName pt = (PropertyName) within.getExpression1();
+            try{
+                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                return AttributeConvention.isGeometryAttribute(desc);
+            }catch(PropertyNotFoundException ex){
+                return false;
+            }
         }
         return true;
     }
@@ -339,7 +373,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Subtract sbtrct, final Object o) {
         return true;
     }
-    
+
     @Override
     public Object visit(After filter, Object extraData) {
         return true;

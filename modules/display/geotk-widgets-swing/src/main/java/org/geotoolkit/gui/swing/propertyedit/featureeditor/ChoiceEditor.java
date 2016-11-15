@@ -20,13 +20,17 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -83,25 +87,14 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
      * return list of possible values if restriction exist. null otherwise
      */
     private static List<Object> extractChoices(PropertyType candidate){
-        Class clazz = candidate.getBinding();
-        final List choices = new ArrayList<Object>();
-        final List<Filter> restrictions = candidate.getRestrictions();
-        for(Filter f : restrictions){
-            f.accept(new DefaultFilterVisitor() {
-                @Override
-                public Object visit(Function expression, Object data) {
-                    if(expression.getName().equalsIgnoreCase("in")){
-                        final List<Expression> values = expression.getParameters();
-                        for(int i=1,n=values.size();i<n;i++){
-                            //we expect values to be literals
-                            choices.add(values.get(i).evaluate(null));
-                        }
-                    }
-                    return data;
-                }
-
-            }, choices);
+        if(!(candidate instanceof AttributeType)){
+            return Collections.EMPTY_LIST;
         }
+        final AttributeType attType = (AttributeType) candidate;
+        Collection values = FeatureExt.getCharacteristicValue(candidate, AttributeConvention.VALID_VALUES_CHARACTERISTIC.toString(), null);
+        Class clazz = attType.getValueClass();
+        final List choices = new ArrayList<>();
+        if(values != null) choices.addAll(values);
         
         if(choices.isEmpty()){
             return null;

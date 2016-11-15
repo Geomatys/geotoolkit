@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.opengis.feature.Feature;
 
 
 /**
@@ -43,9 +43,9 @@ public class MultiLinePartCreationDelegate extends AbstractFeatureEditionDelegat
 
     private Feature feature = null;
     private MultiLineString geometry = null;
-    private final List<Geometry> subGeometries = new ArrayList<Geometry>();
+    private final List<Geometry> subGeometries = new ArrayList<>();
     //linestring in creation process
-    private final List<Coordinate> coords = new ArrayList<Coordinate>();
+    private final List<Coordinate> coords = new ArrayList<>();
 
     public MultiLinePartCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);

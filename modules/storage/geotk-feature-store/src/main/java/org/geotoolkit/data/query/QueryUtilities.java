@@ -199,7 +199,7 @@ public class QueryUtilities {
                 throw new IllegalArgumentException("Source must be absolute to verify if it's writable");
             }
 
-            return session.getFeatureStore().isWritable(select.getFeatureTypeName());
+            return session.getFeatureStore().isWritable(select.getFeatureTypeName().toString());
         }else if(source instanceof TextStatement){
             return false;
         }else{
@@ -429,7 +429,7 @@ public class QueryUtilities {
 
         int start = firstQuery.getStartIndex() + secondQuery.getStartIndex();
         //build the mixed query
-        final GenericName typeName = firstQuery.getTypeName() != null ?
+        final String typeName = firstQuery.getTypeName() != null ?
             firstQuery.getTypeName() :
             secondQuery.getTypeName();
 

@@ -22,7 +22,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -36,6 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
@@ -112,7 +112,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageS
     @Override
     public WebMapClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureExt.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

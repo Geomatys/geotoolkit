@@ -31,8 +31,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -93,7 +93,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
                 return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
             }else{
                 //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);
-                return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, 
+                return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName,
                         (FeatureCollection)super.getOriginalFeatureCollection());
             }
 
@@ -131,7 +131,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
         final Filter filter = ff.equals(ff.property(regroupAttribute), ff.literal(attributeValue));
-        return QueryBuilder.filtered(NamesExt.create("filter"), filter);
+        return QueryBuilder.filtered("filter", filter);
 
     }
 
@@ -157,7 +157,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
 
             nextFeature = null;
             attributeValues = getAttributeValues();
-            
+
             if(attributeValues.isEmpty()){
                 attributeIterator = null;
             }else{
@@ -210,7 +210,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         }
 
         /**
-         * Find the next feature 
+         * Find the next feature
          */
         private void findNext() {
 
@@ -224,7 +224,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
                 }
                 alreadyPass = true;
             }
-            
+
             if(attributeIterator != null){
                 while (nextFeature == null && attributeIterator.hasNext()) {
                     nextValue = attributeIterator.next();

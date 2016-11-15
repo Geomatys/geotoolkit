@@ -1,24 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.geotoolkit.data.memory;
 
 import java.util.Set;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.StorageCountListener;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
-import org.geotoolkit.feature.type.FeatureType;
-import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -35,10 +32,11 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("att", String.class);
-        type = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("att");
+        type = ftb.build();
 
-        store.createFeatureType(type.getName(), type);
+        store.createFeatureType(type);
 
     }
 
@@ -51,9 +49,9 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
         //test on the featurestore with feature writer ////////////////////////////
         store.addStorageListener(listener);
 
-        final FeatureWriter writer = store.getFeatureWriterAppend(type.getName());
+        final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(type.getName().toString(),Filter.EXCLUDE));
         final Feature feature = writer.next();
-        feature.getProperty("att").setValue("ii");
+        feature.setPropertyValue("att","ii");
         writer.write();
         writer.close();
 
@@ -75,7 +73,8 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
         FeatureCollection fc = session.getFeatureCollection(QueryBuilder.all(type.getName()));
         fc.addStorageListener(listener);
 
-        Feature newFeature = FeatureUtilities.defaultFeature(type, "myID");
+        Feature newFeature = type.newInstance();
+        newFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "myID");
         fc.add(newFeature);
 
 

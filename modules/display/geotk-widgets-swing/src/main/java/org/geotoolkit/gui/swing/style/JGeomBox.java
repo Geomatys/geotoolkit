@@ -23,13 +23,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JComboBox;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.PropertyType;
 
 /**
  * Geometrie box attribut
@@ -50,16 +50,16 @@ public class JGeomBox extends JComboBox {
 
         this.layer = layer;
 
-        if (layer instanceof FeatureMapLayer && layer != null) {
-            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getDescriptors();
-            final Iterator<PropertyDescriptor> ite = col.iterator();
+        if (layer instanceof FeatureMapLayer) {
+            final Collection<? extends PropertyType> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getProperties(true);
+            final Iterator<? extends PropertyType> ite = col.iterator();
 
-            final List<String> geoms = new ArrayList<String>();
+            final List<String> geoms = new ArrayList<>();
             geoms.add(ALL_GEOM);
 
             while (ite.hasNext()) {
-                final PropertyDescriptor desc = ite.next();
-                if (desc instanceof GeometryDescriptor) {
+                final PropertyType desc = ite.next();
+                if (AttributeConvention.isGeometryAttribute(desc)) {
                     geoms.add(desc.getName().toString());
                 }
             }
@@ -67,7 +67,7 @@ public class JGeomBox extends JComboBox {
             setModel(new ListComboBoxModel(geoms));
             setSelectedItem(ALL_GEOM);
         } else {
-            final List<String> geoms = new ArrayList<String>();
+            final List<String> geoms = new ArrayList<>();
             geoms.add(ALL_GEOM);
             setModel(new ListComboBoxModel(geoms));
         }

@@ -18,13 +18,14 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool to remove geometry parts in geometry collections.
@@ -49,13 +50,13 @@ public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
-        final GeometryDescriptor desc = ft.getGeometryDescriptor();
+        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
 
         if(desc == null){
             return false;
         }
 
-        return GeometryCollection.class.isAssignableFrom(desc.getType().getBinding());
+        return GeometryCollection.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

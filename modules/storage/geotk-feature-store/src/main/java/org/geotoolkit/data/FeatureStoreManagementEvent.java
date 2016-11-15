@@ -19,7 +19,7 @@ package org.geotoolkit.data;
 
 import org.geotoolkit.storage.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**

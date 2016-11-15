@@ -18,6 +18,7 @@ package org.geotoolkit.wcs;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.geotoolkit.test.URLComparator;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,6 +47,6 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
             return;
         }
         final String expectedURL = "http://test.com?VERSION=1.0.0&SERVICE=WCS&REQUEST=GetCapabilities";
-        assertEquals(expectedURL, url.toString());
+        new URLComparator(expectedURL, url).compare();
     }
 }

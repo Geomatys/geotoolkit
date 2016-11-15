@@ -1,7 +1,6 @@
 package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -14,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
@@ -34,7 +32,8 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.netbeans.swing.outline.DefaultOutlineModel;
 import org.netbeans.swing.outline.Outline;
 import org.netbeans.swing.outline.RowModel;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 
 /**
  *
@@ -66,8 +65,8 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
             candidate = null;
         }
         
-        if (candidate instanceof Property) {
-            final TreeModel model = new FeatureTreeModel((Property) candidate);
+        if (candidate instanceof Feature) {
+            final TreeModel model = new FeatureTreeModel((Feature) candidate);
             final Outline tree = new Outline(DefaultOutlineModel.createOutlineModel(model, new FeatureRowModel()));
             tree.setRenderDataProvider(new JFeatureOutLine.PropertyDataProvider());
             tree.setRootVisible(false);

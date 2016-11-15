@@ -19,7 +19,6 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import org.opengis.util.GenericName;
 
 /**
  * Text statements are queries express in a different form.
@@ -52,6 +51,6 @@ public interface TextStatement extends Source {
      * name to simplify reconizing them.
      * @return name of the query, can be null
      */
-    GenericName getName();
+    String getName();
 
 }

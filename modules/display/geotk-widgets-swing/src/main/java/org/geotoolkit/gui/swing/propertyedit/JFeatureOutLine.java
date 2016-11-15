@@ -31,8 +31,8 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
@@ -44,16 +44,13 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
 
 /**
  * Property editor, can edit Feature/Complex attribut or single properties.
@@ -72,7 +69,7 @@ public class JFeatureOutLine extends Outline{
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private final JFeatureOutLine.PropertyRowModel rowModel = new JFeatureOutLine.PropertyRowModel();
     private FeatureTreeModel treeModel = null;
-    private Property edited = null;
+    private Feature edited = null;
 
     public JFeatureOutLine(){
         setRenderDataProvider(new JFeatureOutLine.PropertyDataProvider());
@@ -87,7 +84,7 @@ public class JFeatureOutLine extends Outline{
     /**
      * Set the property to display in this component.
      */
-    public void setEdited(final Property property){
+    public void setEdited(final Feature property){
         this.edited = property;
         treeModel = new FeatureTreeModel(property);
 
@@ -108,9 +105,8 @@ public class JFeatureOutLine extends Outline{
 
     }
 
-    private void updateModel(final FeatureTreeModel treeModel,final Property prop){
+    private void updateModel(final FeatureTreeModel treeModel,final Feature prop){
         setModel(DefaultOutlineModel.createOutlineModel(treeModel, rowModel));
-        setRootVisible(!(prop instanceof ComplexAttribute));
         getColumnModel().getColumn(0).setHeaderValue(" ");
         getColumnModel().getColumn(0).setResizable(true);
         getColumnModel().getColumn(1).setResizable(true);
@@ -122,7 +118,7 @@ public class JFeatureOutLine extends Outline{
     /**
      * Get the property displayed in this component.
      */
-    public Property getEdited(){
+    public Feature getEdited(){
         return edited;
     }
 
@@ -132,7 +128,7 @@ public class JFeatureOutLine extends Outline{
      * automatic translation is done.
      */
     public void setEdited(final ParameterValueGroup parameter) {
-        setEdited(FeatureUtilities.toFeature(parameter));
+        setEdited(FeatureExt.toFeature(parameter));
     }
 
     /**
@@ -142,7 +138,7 @@ public class JFeatureOutLine extends Outline{
      * @return ParameterValueGroup
      */
     public ParameterValueGroup getEditedAsParameter(final ParameterDescriptorGroup desc) {
-        return FeatureUtilities.toParameter((ComplexAttribute) edited, desc);
+        return FeatureExt.toParameter(edited, desc);
     }
 
     /**
@@ -154,27 +150,8 @@ public class JFeatureOutLine extends Outline{
 
     @Override
     public TableCellEditor getCellEditor(final int row, final int column) {
-        if(column == 2){
-            return new JFeatureOutLine.ActionCellEditor();
-        }
-
-        final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
-        PropertyType type = null;
-        final Object obj = node.getUserObject();
-        if(obj instanceof Property){
-            type = ((Property)obj).getType();
-        }
-
-        if(column == 1){
-            final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,type);
-            if(edit != null){
-                return new TableCellEditorRenderer.Editor(edit);
-            }
-        }
-
-        //fallback on default java editor.
-        final Class c = type.getBinding();
-        return getDefaultEditor(c);
+        //TODO editor obsolete with new feature api
+        throw new RuntimeException("Editor do not support new feature API yet.");
     }
 
     @Override
@@ -187,36 +164,8 @@ public class JFeatureOutLine extends Outline{
 
     @Override
     public TableCellRenderer getCellRenderer(final int row, final int column) {
-        if(column == 2){
-            return new JFeatureOutLine.ActionCellRenderer();
-        }
-
-        final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
-        PropertyType type = null;
-        final Object obj = node.getUserObject();
-        if(obj instanceof Property){
-            type = ((Property)obj).getType();
-        }
-
-        if(column == 1 && type != null){
-            final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,type);
-            if(edit != null){
-                return new TableCellEditorRenderer.Renderer(edit);
-            }
-        }
-
-        //fallback on default java editor.
-        final Object value = getValueAt(row, column);
-        if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
-            return new JFeatureOutLine.GeometryCellRenderer();
-        }
-
-        if(column >= 1){
-            return new EmptyCellRenderer();
-        }else{
-            return super.getCellRenderer(row, column);
-        }
-
+        //TODO editor obsolete with new feature api
+        throw new RuntimeException("Editor do not support new feature API yet.");
     }
 
     private class PropertyRowModel implements RowModel{
@@ -238,29 +187,14 @@ public class JFeatureOutLine extends Outline{
 
         @Override
         public boolean isCellEditable(final Object o, final int i) {
-            if(i==1) return true;
-
-            //property value, check it's editable
-            final MutableTreeNode node = (MutableTreeNode) o;
-
-            if(node.getUserObject() instanceof Property){
-                final Property prop = (Property) node.getUserObject();
-                final Class type = prop.getType().getBinding();
-                return !(prop instanceof ComplexAttribute)
-                      && JAttributeEditor.getEditor(editors,prop.getType()) != null
-                      || getDefaultEditor(type) != getDefaultEditor(Object.class);
-            }else{
-                return false;
-            }
+        //TODO editor obsolete with new feature api
+        throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
         public void setValueFor(final Object o, final int i, final Object value) {
-            if(i==1)return; //action column
-
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Property prop = (Property) node.getUserObject();
-            prop.setValue(value);
+        //TODO editor obsolete with new feature api
+        throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
@@ -279,148 +213,26 @@ public class JFeatureOutLine extends Outline{
 
         @Override
         public String getDisplayName(final Object o) {
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Object candidate = node.getUserObject();
-
-
-
-            final GenericName name;
-            if(candidate instanceof Property){
-
-                Property prop = ((Property)candidate);
-                final PropertyDescriptor desc = prop.getDescriptor();
-
-                if(desc != null){
-                    final Object origin = desc.getType().getUserData().get("origin");
-                    if(origin instanceof GeneralParameterDescriptor){
-                        final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
-                        if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
-                            final GenericName gn = pd.getAlias().iterator().next();
-                            name = NamesExt.create(null, gn.toInternationalString().toString());
-                        }else{
-                            name = prop.getName();
-                        }
-                    }else{
-                        name = prop.getName();
-                    }
-                }else{
-                    name = prop.getName();
-                }
-
-
-            }else if(candidate instanceof PropertyDescriptor){
-
-                final PropertyDescriptor desc = ((PropertyDescriptor)candidate);
-
-                if(desc != null){
-                    final Object origin = desc.getType().getUserData().get("origin");
-                    if(origin instanceof GeneralParameterDescriptor){
-                        final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
-                        if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
-                            final GenericName gn = pd.getAlias().iterator().next();
-                            name = NamesExt.create(null, gn.toInternationalString().toString());
-                        }else{
-                            name = desc.getName();
-                        }
-                    }else{
-                        name = desc.getName();
-                    }
-                }else{
-                    name = desc.getName();
-                }
-
-            }else{
-                name = null;
-            }
-
-            String text;
-            if(name != null){
-                text = name.tip().toString();
-            }else{
-                text = "";
-            }
-
-            final StringBuilder sb = new StringBuilder();
-
-            if(candidate instanceof Property){
-                PropertyDescriptor desc = ((Property)candidate).getDescriptor();
-                if(desc != null &&desc.getMaxOccurs() > 1){
-                    //we have to find this property index
-                    final int index = node.getParent().getIndex(node);
-                    text = "["+index+"] "+text;
-                }
-            }
-
-            if(candidate instanceof ComplexAttribute){
-                sb.append("<b>");
-                sb.append(text);
-                sb.append("</b>");
-            }else if(candidate instanceof PropertyDescriptor){
-                final PropertyDescriptor desc = (PropertyDescriptor) candidate;
-
-                sb.append("<i>");
-                if(desc.getMaxOccurs() > 1){
-                    sb.append("[~] ");
-                }
-                sb.append(text);
-                sb.append("</i>");
-            }else{
-                sb.append(text);
-            }
-
-            return sb.toString();
+            //TODO editor obsolete with new feature api
+            throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
         public java.awt.Color getForeground(final Object o) {
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Object candidate = node.getUserObject();
-
-            if(candidate instanceof PropertyDescriptor){
-                final PropertyDescriptor desc = (PropertyDescriptor) candidate;
-                final int nb = node.getChildCount();
-
-                if(nb == 0){
-                    return Color.LIGHT_GRAY;
-                }
-
-            }
-
-            return null;
+            //TODO editor obsolete with new feature api
+            throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
         public javax.swing.Icon getIcon(final Object o) {
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Object prop = node.getUserObject();
-            if(prop instanceof ComplexAttribute){
-                return IconBundle.EMPTY_ICON;
-            }else{
-                return IconBundle.EMPTY_ICON;
-            }
+            //TODO editor obsolete with new feature api
+            throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
         public String getTooltipText(final Object o) {
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Object userObject = node.getUserObject();
-
-            if(userObject instanceof Property){
-                PropertyDescriptor pdesc = ((Property) node.getUserObject()).getDescriptor();
-                PropertyType ptype;
-                if(pdesc==null){
-                    ptype = ((Property) node.getUserObject()).getType();
-                }else{
-                    ptype = pdesc.getType();
-                }
-                final InternationalString i18n = ptype.getDescription();
-                String tooltip = String.valueOf(i18n);
-                tooltip += " ("+Classes.getShortName(ptype.getBinding()) +")";
-                return tooltip;
-            }else{
-                return null;
-            }
-
+            //TODO editor obsolete with new feature api
+            throw new RuntimeException("Editor do not support new feature API yet.");
         }
 
         @Override
@@ -472,63 +284,15 @@ public class JFeatureOutLine extends Outline{
     }
 
     public Component getActionComponent(final JFeatureOutLine outline, final Object value) {
-
-        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-
-        if(node == null){
-            return new JLabel();
-        }
-
-        final TreePath path = new TreePath(node.getPath());
-        final Object obj = node.getUserObject();
-
-        if(obj instanceof PropertyDescriptor){
-            final PropertyDescriptor desc = (PropertyDescriptor) obj;
-            final int nbProp = node.getChildCount();
-
-            if(desc.getMaxOccurs() > nbProp){
-                final int max = desc.getMaxOccurs();
-                final ImageIcon icon = (max>1) ? ICON_OCC_ADD : ICON_ADD;
-                final JButton butAdd = new JButton(icon);
-                butAdd.setBorderPainted(false);
-                butAdd.setContentAreaFilled(false);
-                butAdd.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        treeModel.createProperty(path);
-                    }
-                });
-                return butAdd;
-            }
-
-        }else if(obj instanceof Property){
-            final Property prop = (Property) obj;
-            final PropertyDescriptor desc = prop.getDescriptor();
-
-            if(desc != null && desc.getMinOccurs() == 0){
-                final int max = desc.getMaxOccurs();
-                final ImageIcon icon = (max>1) ? ICON_OCC_REMOVE : ICON_REMOVE;
-                final JButton butRemove = new JButton(icon);
-                butRemove.setBorderPainted(false);
-                butRemove.setContentAreaFilled(false);
-                butRemove.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        treeModel.removeProperty(path);
-                    }
-                });
-                return butRemove;
-            }
-        }
-
-        return new JLabel();
+        //TODO editor obsolete with new feature api
+        throw new RuntimeException("Editor do not support new feature API yet.");
     }
 
-    public static void show(Component parent, final Property candidate){
+    public static void show(Component parent, final Feature candidate){
         show(parent, candidate, false);
     }
 
-    public static void show(Component parent, final Property candidate, boolean modal){
+    public static void show(Component parent, final Feature candidate, boolean modal){
         final JFeatureOutLine outline = new JFeatureOutLine();
         outline.setEdited(candidate);
         JOptionDialog.show(parent, outline, JOptionPane.OK_OPTION);

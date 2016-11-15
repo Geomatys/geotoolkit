@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
@@ -215,14 +215,14 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     public static FeatureType buildBandType(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("coverage");
-        ftb.add(PROPERTY_MIN, double.class);
-        ftb.add(PROPERTY_MAX, double.class);
-        ftb.add(PROPERTY_MEAN, double.class);
-        ftb.add(PROPERTY_STD, double.class);
-        ftb.add(PROPERTY_HISTO, long[].class);
-        ftb.add(PROPERTY_HISTO_MIN, double.class);
-        ftb.add(PROPERTY_HISTO_MAX, double.class);
-        return ftb.buildFeatureType();
+        ftb.addAttribute(double.class).setName(PROPERTY_MIN);
+        ftb.addAttribute(double.class).setName(PROPERTY_MAX);
+        ftb.addAttribute(double.class).setName(PROPERTY_MEAN);
+        ftb.addAttribute(double.class).setName(PROPERTY_STD);
+        ftb.addAttribute(long[].class).setName(PROPERTY_HISTO);
+        ftb.addAttribute(double.class).setName(PROPERTY_HISTO_MIN);
+        ftb.addAttribute(double.class).setName(PROPERTY_HISTO_MAX);
+        return ftb.build();
     }
 
 }

@@ -21,14 +21,15 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -70,7 +71,7 @@ public class JSimplificationPanel extends javax.swing.JPanel {
      */
     public Geometry getGeometry(){
         if(current == null){
-            return (Geometry) original.getDefaultGeometryProperty().getValue();
+            return (Geometry) FeatureExt.getDefaultGeometryAttributeValue(original);
         }else{
             return current;
         }
@@ -90,11 +91,11 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
         try{
             final CoordinateReferenceSystem mapCRS = map.getCanvas().getObjectiveCRS2D();
-            final GeometryDescriptor desc = original.getDefaultGeometryProperty().getDescriptor();
-            final CoordinateReferenceSystem dataCRS = desc.getCoordinateReferenceSystem();
-            Geometry geom = (Geometry) original.getDefaultGeometryProperty().getValue();
+            final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(original.getType());
+            final CoordinateReferenceSystem dataCRS = FeatureExt.getCRS(desc);
+            Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(original);
             geom = (Geometry) geom.clone();
-            final Class clazz = desc.getType().getBinding();
+            final Class clazz = desc.getValueClass();
 
             if(mapCrs){
                 //reproject geometry in map crs for simplification

@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.geotoolkit.feature.type.PropertyType;
 public class CharsetEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
-    private static final List<Charset> CHARSETS = new ArrayList<Charset>(Charset.availableCharsets().values());
+    private static final List<Charset> CHARSETS = new ArrayList<>(Charset.availableCharsets().values());
 
     public CharsetEditor() {
         super(new BorderLayout());
@@ -47,7 +48,7 @@ public class CharsetEditor extends PropertyValueEditor implements ActionListener
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Charset.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && Charset.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

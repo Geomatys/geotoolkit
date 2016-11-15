@@ -31,9 +31,6 @@ import java.awt.image.BufferedImage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.apache.sis.referencing.CommonCRS;
@@ -50,7 +47,6 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -59,6 +55,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Sanity test for reports.
@@ -101,8 +99,8 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final FeatureType type = entry.getValue();
 
         FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
-        Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
-        feature.getProperty("map").setValue(new MapDef(
+        Feature feature = type.newInstance();
+        feature.setPropertyValue("map",new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
                 new SceneDef(context),
                 new ViewDef(context.getBounds()),
@@ -130,8 +128,8 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final FeatureType type = entry.getValue();
 
         FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
-        Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
-        feature.getProperty("map").setValue(new MapDef(
+        Feature feature = type.newInstance();
+        feature.setPropertyValue("map",new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
                 new SceneDef(context),
                 new ViewDef(context.getBounds()),

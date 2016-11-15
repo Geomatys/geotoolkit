@@ -20,14 +20,13 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.feature.type.FeatureType;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.opengis.feature.FeatureType;
 
 
 
@@ -77,7 +76,7 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
 
         try {
 
-            final XmlFeatureTypeWriter xmlWriter = new JAXBFeatureTypeWriter();
+            final JAXBFeatureTypeWriter xmlWriter = new JAXBFeatureTypeWriter();
             complex.getContent().add(xmlWriter.writeToElement(source));
 
         } catch (JAXBException ex) {

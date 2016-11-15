@@ -69,8 +69,8 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
@@ -229,7 +229,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                 }
 
                 FeatureCollection col = fml.getCollection();
-                final QueryBuilder qb = new QueryBuilder(col.getFeatureType().getName());
+                final QueryBuilder qb = new QueryBuilder(col.getFeatureType().getName().toString());
                 qb.setProperties(new String[]{
                     ((PropertyName)er[0]).getPropertyName(),
                     ((PropertyName)er[1]).getPropertyName() });

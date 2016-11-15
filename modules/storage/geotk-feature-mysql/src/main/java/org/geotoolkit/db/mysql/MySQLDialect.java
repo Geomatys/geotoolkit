@@ -42,6 +42,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
@@ -51,7 +53,6 @@ import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -64,13 +65,11 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.apache.sis.util.ObjectConverters;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -334,11 +333,11 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public FilterToSQL getFilterToSQL(ComplexType featureType) {
+    public FilterToSQL getFilterToSQL(FeatureType featureType) {
         try{
             PrimaryKey pk = null;
             if(featureType!=null){
-                pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName());
+                pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
             }
             return new MySQLFilterToSQL(this,
                 featureType, pk,
@@ -407,7 +406,7 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public String encodeFilter(Filter filter, ComplexType type) {
+    public String encodeFilter(Filter filter, FeatureType type) {
         final FilterToSQL fts = getFilterToSQL(type);
         final StringBuilder sb = (StringBuilder)filter.accept(fts, new StringBuilder());
         return sb.toString();
@@ -460,8 +459,8 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs, int i) throws SQLException {
-        final Class binding = descriptor.getType().getBinding();
+    public Object decodeAttributeValue(AttributeType descriptor, ResultSet rs, int i) throws SQLException {
+        final Class binding = descriptor.getValueClass();
         return rs.getObject(i);
     }
     
@@ -480,7 +479,7 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
     
     @Override
-    public void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints) {
+    public void encodeGeometryColumn(StringBuilder sql, AttributeType gatt, int srid, Hints hints) {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
     
@@ -490,17 +489,17 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
     
     @Override
-    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, String column) throws IOException, SQLException {
+    public Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 
     @Override
-    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
+    public Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 
     @Override
-    public void decodeGeometryColumnType(AttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex, boolean customQuery) throws SQLException {
+    public void decodeGeometryColumnType(SingleAttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex, boolean customquery) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 
@@ -510,12 +509,12 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, String column) throws IOException, SQLException {
+    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
+    public Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

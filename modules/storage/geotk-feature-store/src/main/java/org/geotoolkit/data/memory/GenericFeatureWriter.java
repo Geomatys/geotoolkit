@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
@@ -28,16 +29,16 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Basic support for a  FeatureWriter that redicts it's calls to
@@ -52,14 +53,14 @@ public class GenericFeatureWriter implements FeatureWriter {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     protected final FeatureStore store;
-    protected final GenericName typeName;
+    protected final String typeName;
     protected final FeatureReader reader;
     protected final FeatureType type;
     protected Feature currentFeature = null;
     protected Feature modified = null;
     private boolean remove = false;
 
-    private GenericFeatureWriter(final FeatureStore store, final GenericName typeName, final Filter filter) throws DataStoreException {
+    private GenericFeatureWriter(final FeatureStore store, final String typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
@@ -80,10 +81,10 @@ public class GenericFeatureWriter implements FeatureWriter {
         remove = false;
         if(hasNext()){
             currentFeature = reader.next();
-            modified = FeatureUtilities.copy(currentFeature);
+            modified = FeatureExt.copy(currentFeature);
         }else{
             currentFeature = null;
-            modified = FeatureUtilities.defaultFeature(type, "");
+            modified = type.newInstance();
         }
 
         return modified;
@@ -121,7 +122,7 @@ public class GenericFeatureWriter implements FeatureWriter {
     @Override
     public void write() throws FeatureStoreRuntimeException {
         if(currentFeature != null){
-            final Filter filter = FF.id(Collections.singleton(currentFeature.getIdentifier()));
+            final Filter filter = FF.id(Collections.singleton(FeatureExt.getId(currentFeature)));
             if(remove){
                 //it's a remove operation
                 try {
@@ -131,21 +132,24 @@ public class GenericFeatureWriter implements FeatureWriter {
                 }
             }else{
                 //it's a modify operation
-                final Map<PropertyDescriptor,Object> values = new HashMap<PropertyDescriptor, Object>();
+                final Map<String,Object> values = new HashMap<>();
 
-                for(PropertyDescriptor desc : type.getDescriptors()){
-                    final Object original = currentFeature.getProperty(desc.getName()).getValue();
-                    final Object mod = modified.getProperty(desc.getName()).getValue();
-                    //check if the values was modified
-                    if(!safeEqual(original, mod)){
-                        //value has changed
-                        values.put(desc, mod);
+                for(PropertyType desc : type.getProperties(true)){
+                    if(desc instanceof AttributeType){
+                        final String propName = desc.getName().toString();
+                        final Object original = currentFeature.getPropertyValue(propName);
+                        final Object mod = modified.getProperty(propName).getValue();
+                        //check if the values was modified
+                        if(!safeEqual(original, mod)){
+                            //value has changed
+                            values.put(propName, mod);
+                        }
                     }
                 }
 
                 if(!values.isEmpty()){
                     try {
-                        store.updateFeatures(typeName, filter, values);
+                        store.updateFeatures(typeName.toString(), filter, values);
                     } catch (DataStoreException ex) {
                         throw new FeatureStoreRuntimeException(ex);
                     }
@@ -156,9 +160,9 @@ public class GenericFeatureWriter implements FeatureWriter {
             if(modified != null){
                 //it's an add operation
                 try {
-                    final List<FeatureId> res = store.addFeatures(typeName, Collections.singleton(modified));
-                    if(modified instanceof AbstractFeature){
-                        ((AbstractFeature)modified).setIdentifier(res.get(0));
+                    final List<FeatureId> res = store.addFeatures(typeName.toString(), Collections.singleton(modified));
+                    if (!res.isEmpty()) {
+                        modified.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), res.get(0).getID());
                     }
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex);
@@ -190,11 +194,11 @@ public class GenericFeatureWriter implements FeatureWriter {
         return sb.toString();
     }
 
-    public static FeatureWriter wrap(final FeatureStore store, final GenericName typeName, final Filter filter) throws DataStoreException{
+    public static FeatureWriter wrap(final FeatureStore store, final String typeName, final Filter filter) throws DataStoreException{
         return new GenericFeatureWriter(store, typeName, filter);
     }
 
-    public static FeatureWriter wrapAppend(final FeatureStore store, final GenericName typeName) throws DataStoreException{
+    public static FeatureWriter wrapAppend(final FeatureStore store, final String typeName) throws DataStoreException{
         return wrap(store,typeName,Filter.EXCLUDE);
     }
 

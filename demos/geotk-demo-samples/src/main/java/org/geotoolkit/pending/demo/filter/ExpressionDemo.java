@@ -12,7 +12,7 @@ import org.geotoolkit.filter.function.math.MathFunctionFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;

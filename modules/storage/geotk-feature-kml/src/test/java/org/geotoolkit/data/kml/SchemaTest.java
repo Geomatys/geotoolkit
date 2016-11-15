@@ -32,15 +32,15 @@ import org.geotoolkit.data.kml.model.Schema;
 import org.geotoolkit.data.kml.model.SimpleField;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -50,50 +50,39 @@ import org.xml.sax.SAXException;
 public class SchemaTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/schema.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public SchemaTest() {
-    }
 
     @Test
     public void schemaReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_SCHEMA)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Schema schema = (Schema) i.next();
+        assertEquals("TrailHeadType", schema.getName());
+        assertEquals("TrailHeadTypeId", schema.getId());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()).iterator();
+        assertEquals(3, schema.getSimpleFields().size());
 
-        if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof Schema);
-            Schema schema = (Schema) object;
-            assertEquals("TrailHeadType", schema.getName());
-            assertEquals("TrailHeadTypeId", schema.getId());
+        SimpleField simpleField0 = schema.getSimpleFields().get(0);
+        assertEquals("string", simpleField0.getType());
+        assertEquals("TrailHeadName", simpleField0.getName());
+        assertEquals(new DefaultCdata("<b>Trail Head Name</b>"), simpleField0.getDisplayName());
+        SimpleField simpleField1 = schema.getSimpleFields().get(1);
+        assertEquals("double", simpleField1.getType());
+        assertEquals("TrailLength", simpleField1.getName());
+        assertEquals(new DefaultCdata("<i>The length in miles</i>"), simpleField1.getDisplayName());
+        SimpleField simpleField2 = schema.getSimpleFields().get(2);
+        assertEquals("int", simpleField2.getType());
+        assertEquals("ElevationGain", simpleField2.getName());
+        assertEquals(new DefaultCdata("<i>change in altitude</i>"), simpleField2.getDisplayName());
 
-            assertEquals(3, schema.getSimpleFields().size());
-
-            SimpleField simpleField0 = schema.getSimpleFields().get(0);
-            assertEquals("string", simpleField0.getType());
-            assertEquals("TrailHeadName", simpleField0.getName());
-            assertEquals(new DefaultCdata("<b>Trail Head Name</b>"), simpleField0.getDisplayName());
-            SimpleField simpleField1 = schema.getSimpleFields().get(1);
-            assertEquals("double", simpleField1.getType());
-            assertEquals("TrailLength", simpleField1.getName());
-            assertEquals(new DefaultCdata("<i>The length in miles</i>"), simpleField1.getDisplayName());
-            SimpleField simpleField2 = schema.getSimpleFields().get(2);
-            assertEquals("int", simpleField2.getType());
-            assertEquals("ElevationGain", simpleField2.getName());
-            assertEquals(new DefaultCdata("<i>change in altitude</i>"), simpleField2.getDisplayName());
-        }
-
-
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -120,7 +109,7 @@ public class SchemaTest extends org.geotoolkit.test.TestBase {
                 "TrailHeadType", "TrailHeadTypeId", null);
 
         final Feature document = kmlFactory.createDocument();
-        document.getProperties().add(FF.createAttribute(schema, KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
+        document.setPropertyValue(KmlConstants.TAG_SCHEMA, schema);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -132,8 +121,6 @@ public class SchemaTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

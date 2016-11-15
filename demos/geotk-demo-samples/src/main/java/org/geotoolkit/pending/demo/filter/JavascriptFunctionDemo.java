@@ -3,12 +3,11 @@
 package org.geotoolkit.pending.demo.filter;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -45,17 +44,17 @@ public class JavascriptFunctionDemo {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("marine-life");
-        ftb.add("family", String.class);
-        ftb.add("depth", Double.class);
-        ftb.add("age", Integer.class);
-        ftb.add("weight", Float.class);
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("family");
+        ftb.addAttribute(Double.class).setName("depth");
+        ftb.addAttribute(Integer.class).setName("age");
+        ftb.addAttribute(Float.class).setName("weight");
+        final FeatureType type = ftb.build();
 
-        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
-        feature1.getProperty("family").setValue("seashell");
-        feature1.getProperty("depth").setValue(46.58);
-        feature1.getProperty("age").setValue(31);
-        feature1.getProperty("weight").setValue(132.56);
+        final Feature feature1 = type.newInstance();
+        feature1.setPropertyValue("family","seashell");
+        feature1.setPropertyValue("depth",46.58);
+        feature1.setPropertyValue("age",31);
+        feature1.setPropertyValue("weight",132.56);
 
         return feature1;
     }

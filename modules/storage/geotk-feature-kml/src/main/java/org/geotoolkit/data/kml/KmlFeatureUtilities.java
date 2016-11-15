@@ -17,23 +17,16 @@ import org.geotoolkit.data.kml.model.DefaultMultiGeometry;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.model.SchemaData;
 import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.xml.KmlReader;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.geotoolkit.nio.ZipUtilities;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 
 import java.io.IOException;
@@ -44,24 +37,30 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Property;
+import org.opengis.feature.PropertyType;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 
 /**
- * Generate a {@link org.geotoolkit.feature.simple.SimpleFeature} {@link java.util.List} from kml/kmz folder or file
+ * Generate a {@link org.opengis.feature.Feature} {@link java.util.List} from kml/kmz folder or file
  * @author bgarcia
  * @since 11/04/13
  */
 public class KmlFeatureUtilities {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.kml");
-
 
     /**
      * create {@link SimpleFeature} from kml or kmz file on a folder
@@ -137,8 +136,8 @@ public class KmlFeatureUtilities {
     public static List<Feature> resolveFeaturesFromKml(final Kml kmlObject) {
         final List<Feature> results = new ArrayList<>();
         if (kmlObject != null) {
-            final org.geotoolkit.feature.Feature document = kmlObject.getAbstractFeature();
-            final Iterator propertiesFeat = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+            final Feature document = kmlObject.getAbstractFeature();
+            final Iterator<?> propertiesFeat = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
 
             //increment for each features
             int idgeom = 0;
@@ -146,11 +145,11 @@ public class KmlFeatureUtilities {
             //loop on document properties
             while (propertiesFeat.hasNext()) {
                 final Object object = propertiesFeat.next();
-                if (object instanceof org.geotoolkit.feature.Feature) {
-                    final org.geotoolkit.feature.Feature candidat = (org.geotoolkit.feature.Feature) object;
+                if (object instanceof Feature) {
+                    final Feature candidat = (Feature) object;
 
                     //find geometry on tree
-                    final List<Map.Entry<Object, Map<String, String>>> geometries = new ArrayList<Map.Entry<Object, Map<String, String>>>();
+                    final List<Map.Entry<Object, Map<String, String>>> geometries = new ArrayList<>();
                     fillGeometryListFromFeature(candidat, geometries);
 
                     //if geometry was found
@@ -203,7 +202,7 @@ public class KmlFeatureUtilities {
         //it's a geometry collection
         else if(geom instanceof DefaultMultiGeometry){
             final DefaultMultiGeometry kmlabstractGeometry = (DefaultMultiGeometry)geom;
-            final List<Geometry> multiGeometry = new ArrayList<Geometry>(0);
+            final List<Geometry> multiGeometry = new ArrayList<>(0);
 
             //loop on geometry to add id on a GeometryList
             for (AbstractGeometry abstractGeometry : kmlabstractGeometry.getGeometries()) {
@@ -240,16 +239,17 @@ public class KmlFeatureUtilities {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final String name = "Geometry";
         ftb.setName(name);
-        ftb.add("geometry", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
+        ftb.addAttribute(Geometry.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
         //loop on values to find data names
         for (String valName : values.keySet()) {
-            ftb.add(valName, String.class);
+            ftb.addAttribute(String.class).setName(valName);
         }
 
 
-        final FeatureType sft = ftb.buildFeatureType();
-        final Feature simpleFeature = FeatureUtilities.defaultFeature(sft, "feature" + idgeom);
+        final FeatureType sft = ftb.build();
+        final Feature simpleFeature = sft.newInstance();
+        simpleFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "feature" + idgeom);
 
         //add geometry
         simpleFeature.setPropertyValue("geometry", finalGeom);
@@ -259,34 +259,28 @@ public class KmlFeatureUtilities {
             simpleFeature.setPropertyValue(valName, values.get(valName));
         }
 
-        simpleFeature.validate();
         return simpleFeature;
     }
 
     /**
      * recursive method on feature to find geometries
-     * @param feature {@link org.geotoolkit.feature.Feature} traveled to find geometry
+     * @param feature {@link org.opengis.feature.Feature} traveled to find geometry
      * @param geometries {@link List} where we add {@link Geometry}
      */
-    public static void fillGeometryListFromFeature(final org.geotoolkit.feature.Feature feature, final List<Map.Entry<Object, Map<String, String>>> geometries) {
-
-        //If geometry is not null
-        if (feature.getProperty("geometry") != null) {
-
-            // get geometry
-            final Object geometry = feature.getProperty("geometry").getValue();
-
+    public static void fillGeometryListFromFeature(final Feature feature, final List<Map.Entry<Object, Map<String, String>>> geometries) {
+        final Object geometry = feature.getPropertyValue("geometry");
+        if (geometry != null) {
             // create map which have other data value
-            final Map<String, String> values = new HashMap<String, String>(0);
+            final Map<String, String> values = new HashMap<>(0);
 
             // get feature name
-            final String name = (String) feature.getProperty("name").getValue();
+            final String name = (String) feature.getPropertyValue("name");
             if(name!=null){
                 values.put("name", name);
             }
 
             //get extendedData
-            final DefaultExtendedData extendData = (DefaultExtendedData)feature.getProperty("ExtendedData").getValue();
+            final DefaultExtendedData extendData = (DefaultExtendedData) feature.getPropertyValue("ExtendedData");
             if(extendData!=null){
 
                 // loop on extendedSchemaData to find data
@@ -305,12 +299,12 @@ public class KmlFeatureUtilities {
             geometries.add(new AbstractMap.SimpleEntry<Object, Map<String, String>>(geometry, values));
 
         // it's a folder, go recursivly on childs
-        } else if (feature.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
-            final Iterator iterator = feature.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
+        } else {
+            final Iterator<?> iterator = ((Iterable<?>) feature.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
             while (iterator.hasNext()) {
                 final Object object = iterator.next();
-                if (object instanceof org.geotoolkit.feature.Feature) {
-                    final org.geotoolkit.feature.Feature candidat = (org.geotoolkit.feature.Feature) object;
+                if (object instanceof Feature) {
+                    final Feature candidat = (Feature) object;
 
                     //recursive call
                     fillGeometryListFromFeature(candidat, geometries);
@@ -329,7 +323,6 @@ public class KmlFeatureUtilities {
      */
     public static MultiLineString cutAtMeridian(LineString geom) throws TransformException {
         final GeometryFactory gf = geom.getFactory();
-
         final Geometry clip = gf.createPolygon(
                 gf.createLinearRing(
                         new Coordinate[]{
@@ -362,7 +355,7 @@ public class KmlFeatureUtilities {
         Geometry cutleft = leftMeridian.intersection(geom);
         Geometry clipped = clip.intersection(geom);
 
-        final List<LineString> strs = new ArrayList<LineString>();
+        final List<LineString> strs = new ArrayList<>();
 
         if (cutright instanceof LineString) {
             final AffineTransform2D trs = new AffineTransform2D(1, 0, 0, 1, -180, 0);
@@ -426,78 +419,61 @@ public class KmlFeatureUtilities {
      */
     public static Feature buildKMLFeature(Feature noKmlFeature, IdAttributes defaultIdStyle){
         //Transform geometry
-        final FeatureFactory FF = FeatureFactory.LENIENT;
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        final AbstractGeometry ag = buildKMLGeometry((Geometry) noKmlFeature.getDefaultGeometryProperty().getValue());
-        placemarkProperties.add(FF.createAttribute(ag, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        final String geoColumn = noKmlFeature.getDefaultGeometryProperty().getName().tip().toString();
+        final String geoColumn = AttributeConvention.GEOMETRY_PROPERTY.tip().toString();
+        final AbstractGeometry ag = buildKMLGeometry((Geometry) noKmlFeature.getPropertyValue(geoColumn));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, ag);
 
-        URI styleURI = null;
         try {
-            styleURI = new URI("#"+defaultIdStyle.getId());
+            placemark.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#" + defaultIdStyle.getId()));
         } catch (URISyntaxException e) {
             LOGGER.log(Level.WARNING, "unnable to define style URI", e);
         }
 
-        if(styleURI!=null){
-            placemarkProperties.add((FF.createAttribute(styleURI, KmlModelConstants.ATT_STYLE_URL, null)));
-        }
-
         //TODO : transform datas
-        final Collection<Property> properties = noKmlFeature.getProperties();
-        final List<Data> simpleDatas = new ArrayList<Data>(0);
-
-        if(properties.size()>0){
-            ExtendedData extendedData = kmlFactory.createExtendedData();
-
-            for (Property property : properties) {
-                String localPartName = property.getName().tip().toString();
-                if(localPartName.equalsIgnoreCase("NAME")){
-                    placemarkProperties.add(FF.createAttribute(property.getValue(), KmlModelConstants.ATT_NAME, null));
-                }else if(!(localPartName.equalsIgnoreCase(geoColumn) || localPartName.equalsIgnoreCase("fid"))){
-                    if(property.getValue()!=null){
-                        Data simpleData = kmlFactory.createData();
-                        simpleData.setName(localPartName);
-                        simpleData.setValue(property.getValue().toString());
-                        simpleDatas.add(simpleData);
-                    }
+        final List<Data> simpleDatas = new ArrayList<>(0);
+        for (final PropertyType type : noKmlFeature.getType().getProperties(true)) {
+            final Property property = noKmlFeature.getProperty(type.getName().toString());
+            String localPartName = property.getName().tip().toString();
+            final Object value = property.getValue();
+            if (localPartName.equalsIgnoreCase(KmlConstants.TAG_NAME)) {
+                placemark.setPropertyValue(KmlConstants.TAG_NAME, value);
+            } else if (!(localPartName.equalsIgnoreCase(geoColumn) || localPartName.equalsIgnoreCase("fid"))) {
+                if (value != null) {
+                    Data simpleData = kmlFactory.createData();
+                    simpleData.setName(localPartName);
+                    simpleData.setValue(value.toString());
+                    simpleDatas.add(simpleData);
                 }
             }
-            extendedData.setDatas(simpleDatas);
-            placemarkProperties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
         }
-
+        if (!simpleDatas.isEmpty()) {
+            ExtendedData extendedData = kmlFactory.createExtendedData();
+            extendedData.setDatas(simpleDatas);
+            placemark.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        }
         return placemark;
     }
 
-    /**
-     *
-     * @param geometry
-     * @return
-     */
     private static AbstractGeometry buildKMLGeometry(Geometry geometry) {
-        Class geometryClass = geometry.getClass();
+        Class<?> geometryClass = geometry.getClass();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
-
-        if(geometryClass.equals(LineString.class)){
-            LineString ls = (LineString)geometry;
+        if (geometryClass.equals(LineString.class)) {
+            LineString ls = (LineString) geometry;
             org.geotoolkit.data.kml.model.LineString lineString = kmlFactory.createLineString(ls.getCoordinateSequence());
             return lineString;
-
-        }else if(geometryClass.equals(Point.class)){
-            Point point = (Point)geometry;
+        } else if (geometryClass.equals(Point.class)) {
+            Point point = (Point) geometry;
             org.geotoolkit.data.kml.model.Point kmlPoint = kmlFactory.createPoint(point.getCoordinateSequence());
             return kmlPoint;
-
-        }else if(geometryClass.equals(Polygon.class)){
-            final Polygon poly = (Polygon)geometry;
+        } else if (geometryClass.equals(Polygon.class)) {
+            final Polygon poly = (Polygon) geometry;
 
             // interiorRing
-            final List<Boundary> innerBoundaries = new ArrayList<Boundary>(0);
+            final List<Boundary> innerBoundaries = new ArrayList<>(0);
             int innerRing = poly.getNumInteriorRing();
-            if(innerRing>0){
+            if (innerRing>0) {
                 for (int i = 0; i < innerRing; i++) {
                     final LineString inner = poly.getInteriorRingN(i);
                     final org.geotoolkit.data.kml.model.LinearRing innerLineRing = kmlFactory.createLinearRing(inner.getCoordinateSequence());
@@ -511,21 +487,18 @@ public class KmlFeatureUtilities {
             final Boundary boundary = kmlFactory.createBoundary(lr, null, null);
             final org.geotoolkit.data.kml.model.Polygon kmlPolygon = kmlFactory.createPolygon(boundary, innerBoundaries);
             return kmlPolygon;
-
-        }else if(GeometryCollection.class.isAssignableFrom(geometryClass)){
+        } else if (GeometryCollection.class.isAssignableFrom(geometryClass)) {
             final GeometryCollection geoCollec = (GeometryCollection)geometry;
             final MultiGeometry mg = kmlFactory.createMultiGeometry();
-            final List<AbstractGeometry> geometries = new ArrayList<AbstractGeometry>(0);
+            final List<AbstractGeometry> geometries = new ArrayList<>(0);
             for (int i = 0; i < geoCollec.getNumGeometries(); i++) {
                 Geometry currentGeometry = geoCollec.getGeometryN(i);
                 AbstractGeometry ag = buildKMLGeometry(currentGeometry);
                 geometries.add(ag);
             }
-
             mg.setGeometries(geometries);
             return mg;
         }
         return null;
-
     }
 }

@@ -18,14 +18,8 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -33,8 +27,15 @@ import org.opengis.referencing.operation.MathTransform;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Used for {@link org.geotoolkit.data.mapinfo.mif.MIFUtils.GeometryType}, to allow us pass a method for building geometry as
@@ -48,9 +49,8 @@ public abstract class MIFGeometryBuilder {
     protected final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif.geometry");
     protected final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel());
 
+    protected static final AttributeType STRING_TYPE = new DefaultAttributeType(Collections.singletonMap("name", "TEXT"), String.class, 1, 1, null);
 
-    protected static final AttributeType STRING_TYPE =
-            new DefaultAttributeType(NamesExt.create("TEXT"), String.class, false, false, null, null, null);
     /**
      * Parse an input file to build a JTS Geometry with its data.
      *
@@ -76,19 +76,18 @@ public abstract class MIFGeometryBuilder {
 
         // As parent's attributes are not shared, we must copy them to the new feature type.
         if(parent != null) {
-            builder.copy(parent);
-            builder.setSuperType(parent);
-            for(AttributeDescriptor desc : getAttributes()) {
-                if(parent.getDescriptor(desc.getName()) == null) {
-                    builder.add(desc);
+            builder.setSuperTypes(parent);
+            for(AttributeType desc : getAttributes()) {
+                if(!parent.getProperties(true).contains(desc)) {
+                    builder.addAttribute(desc);
                 }
             }
         }
 
         builder.setName(getName());
-        builder.add(getName(), getGeometryBinding(), crs);
+        builder.addAttribute(getGeometryBinding()).setName(getName()).setCRS(crs);
 
-        return builder.buildFeatureType();
+        return builder.build();
     }
 
     /**
@@ -97,16 +96,16 @@ public abstract class MIFGeometryBuilder {
      * For the moment, MIF style generation is not managed. However, base implementation in {@link MIFGeometryBuilder}
      * only process base verification on the input feature (valid geometry type).
      *
-     * @param geometry The feature to read for MIF geometry building.
+     * @param feature The feature to read for MIF geometry building.
      * @return A String which is the representation of the MIF geometry.
      * @throws DataStoreException If an error occur while reading feature.
      */
-    public String toMIFSyntax(Feature geometry) throws DataStoreException {
-        ArgumentChecks.ensureNonNull("Source geometry", geometry);
-        if(geometry.getDefaultGeometryProperty() == null) {
+    public String toMIFSyntax(Feature feature) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("Source geometry", feature);
+        if (!FeatureExt.hasAGeometry(feature.getType())) {
             throw new DataStoreException("Input feature does not contain any geometry.");
         } else {
-            final Object valueObj = geometry.getDefaultGeometryProperty().getValue();
+            final Object valueObj = MIFUtils.getGeometryValue(feature);
             boolean geomMatch = false;
             Class geomCls = null;
             if(valueObj !=null){
@@ -142,6 +141,6 @@ public abstract class MIFGeometryBuilder {
      */
     public abstract GenericName getName();
 
-    protected abstract List<AttributeDescriptor> getAttributes();
+    protected abstract List<AttributeType> getAttributes();
 
 }

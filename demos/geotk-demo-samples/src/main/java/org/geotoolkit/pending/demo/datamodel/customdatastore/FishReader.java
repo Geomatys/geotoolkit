@@ -5,18 +5,17 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.FeatureBuilder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 public class FishReader implements FeatureReader {
 
 
     private final GeometryFactory gf = new GeometryFactory();
-    private final FeatureBuilder sfb;
     private final FeatureType type;
     private final Scanner scanner;
 
@@ -25,7 +24,6 @@ public class FishReader implements FeatureReader {
 
     public FishReader(File file, FeatureType type) throws FileNotFoundException {
         this.type = type;
-        sfb = new FeatureBuilder(type);
         scanner = new Scanner(file);
     }
 
@@ -56,18 +54,17 @@ public class FishReader implements FeatureReader {
             return;
         }
         if (scanner.hasNextLine()) {
-            sfb.reset();
-
+            current = type.newInstance();
+            current.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), Integer.toString(inc++));
             final String line = scanner.nextLine();
             final String[] parts = line.split("/");
 
-            sfb.setPropertyValue("name", parts[0]);
-            sfb.setPropertyValue("length", Integer.valueOf(parts[1]));
+            current.setPropertyValue("name", parts[0]);
+            current.setPropertyValue("length", Integer.valueOf(parts[1]));
             final double x = Double.valueOf(parts[2]);
             final double y = Double.valueOf(parts[3]);
-            sfb.setPropertyValue("position", gf.createPoint(new Coordinate(x, y)));
+            current.setPropertyValue("position", gf.createPoint(new Coordinate(x, y)));
 
-            current = sfb.buildFeature(Integer.toString(inc++));
         }
     }
 

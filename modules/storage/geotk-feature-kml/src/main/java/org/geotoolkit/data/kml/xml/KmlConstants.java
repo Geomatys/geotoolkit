@@ -118,9 +118,12 @@ public final class KmlConstants {
     public static final String TAG_END = "end";
     public static final String TAG_EXPIRES = "expires";
     public static final String TAG_EXTENDED_DATA = "ExtendedData";
+    public static final String TAG_EXTENSIONS = "Extensions";
     public static final String TAG_EXTRUDE = "extrude";
+    public static final String TAG_FEATURES = "features";
     public static final String TAG_FILL = "fill";
     public static final String TAG_FLY_TO_VIEW = "flyToView";
+    public static final String TAG_GEOMETRY = "geometry";
     public static final String TAG_GRID_ORIGIN = "gridOrigin";
     public static final String TAG_HEADING = "heading";
     public static final String TAG_HOT_SPOT = "hotSpot";
@@ -191,17 +194,20 @@ public final class KmlConstants {
     public static final String TAG_SOURCE_HREF = "sourceHref";
     public static final String TAG_SOUTH = "south";
     public static final String TAG_STATE = "state";
+    public static final String TAG_STYLE_SELECTOR = "StyleSelector";
     public static final String TAG_STYLE_URL = "styleUrl";
     public static final String TAG_TARGET_HREF = "targetHref";
     public static final String TAG_TESSELLATE = "tessellate";
     public static final String TAG_TEXT = "text";
     public static final String TAG_TEXT_COLOR = "textColor";
+    public static final String TAG_TIME_PRIMITIVE = "TimePrimitive";
     public static final String TAG_TILT = "tilt";
     public static final String TAG_TITLE_SIZE = "tileSize";
     public static final String TAG_TOP_FOV = "topFov";
     public static final String TAG_UPDATE = "Update";
     public static final String TAG_URL = "Url";
     public static final String TAG_VALUE = "value";
+    public static final String TAG_VIEW = "View";
     public static final String TAG_VIEW_FORMAT = "viewFormat";
     public static final String TAG_VIEW_BOUND_SCALE = "viewBoundScale";
     public static final String TAG_VIEW_REFRESH_MODE = "viewRefreshMode";
@@ -235,6 +241,10 @@ public final class KmlConstants {
     public static final String ATT_Y = "y";
     public static final String ATT_XUNITS = "xunits";
     public static final String ATT_YUNITS = "yunits";
+
+    // ATTRIBUTES GX
+    public static final String ATT_PLAYLIST = "playList";
+
 
     /*
      * VALEURS PAR DEFAUT
@@ -307,5 +317,6 @@ public final class KmlConstants {
     public static final double DEF_Y = 1.0;
     public static final double DEF_Z = 1.0;
 
-    private KmlConstants(){}
+    private KmlConstants() {
+    }
 }

@@ -27,7 +27,7 @@ import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 
 /**
  * Class Description
@@ -79,7 +79,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     @Override
     public Expression getGeometry() {
-        return FactoryFinder.getFilterFactory(null).property(geometryName);
+        return MIFUtils.FF.property(geometryName);
     }
 
     @Override

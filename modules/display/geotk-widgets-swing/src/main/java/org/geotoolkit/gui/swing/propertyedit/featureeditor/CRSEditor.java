@@ -21,7 +21,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -42,7 +43,7 @@ public class CRSEditor extends PropertyValueEditor implements PropertyChangeList
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return CoordinateReferenceSystem.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && CoordinateReferenceSystem.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

@@ -24,9 +24,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
@@ -98,7 +97,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
      * @throws DataStoreException
      */
     @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
         throw new DataStoreException("Unmodifiable collection");
     }
 

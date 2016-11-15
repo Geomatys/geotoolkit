@@ -26,30 +26,32 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
 
+
 /**
  * JUnit test of Centroid process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class CentroidTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
-    private static GeometryFactory geometryFactory;
+    private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static FeatureType type;
 
     public CentroidTest() {
@@ -74,35 +76,27 @@ public class CentroidTest extends AbstractProcessTest {
         final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
         //Expected Features out
         final FeatureCollection featureListResult = buildResultList();
-
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
-        assertEquals(featureListOut.size(), featureListResult.size());
-        assertTrue(featureListOut.containsAll(featureListResult));
+        compare(featureListResult,featureListOut);
     }
 
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
-        ftb.add("name", String.class);
-        ftb.add("position", LinearRing.class, CRS.forCode("EPSG:3395"));
-        ftb.add("height", Integer.class);
-
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(LinearRing.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Integer.class).setName("height");
+        return ftb.build();
     }
 
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
-        ftb.add("name", String.class);
-        ftb.add("position", Point.class, CRS.forCode("EPSG:3395"));
-        ftb.add("height", Integer.class);
-
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Point.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Integer.class).setName("height");
+        return ftb.build();
     }
 
     private static FeatureCollection buildFeatureList() throws FactoryException {
@@ -112,25 +106,17 @@ public class CentroidTest extends AbstractProcessTest {
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         for (int i = 0; i < 5; i++) {
-
-            Feature myFeature;
-            geometryFactory = new GeometryFactory();
-
-
-
-            sfb = new FeatureBuilder(type);
-            sfb.setPropertyValue("name", "Building" + i);
-            sfb.setPropertyValue("height", 12);
-            sfb.setPropertyValue("position", geometryFactory.createLinearRing(
+            Feature myFeature = type.newInstance();
+            myFeature.setPropertyValue("@identifier", "id-0" + i);
+            myFeature.setPropertyValue("name", "Building" + i);
+            myFeature.setPropertyValue("height", 12);
+            myFeature.setPropertyValue("position", geometryFactory.createLinearRing(
                     new Coordinate[]{
                         new Coordinate(5.0, 18.0),
                         new Coordinate(10.0, 23.0),
                         new Coordinate(10.0, 26.0),
                         new Coordinate(5.0, 18.0)
                     }));
-
-            myFeature = sfb.buildFeature("id-0" + i);
-
             featureList.add(myFeature);
         }
 
@@ -145,9 +131,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         for (int i = 0; i < 5; i++) {
 
-            Feature myFeature;
-            geometryFactory = new GeometryFactory();
-
+            Feature myFeature = type.newInstance();
             LinearRing ring = geometryFactory.createLinearRing(
                     new Coordinate[]{
                         new Coordinate(5.0, 18.0),
@@ -155,14 +139,10 @@ public class CentroidTest extends AbstractProcessTest {
                         new Coordinate(10.0, 26.0),
                         new Coordinate(5.0, 18.0)
                     });
-
-
-            sfb = new FeatureBuilder(type);
-            sfb.setPropertyValue("name", "Building" + i);
-            sfb.setPropertyValue("height", 12);
-            sfb.setPropertyValue("position", ring.getCentroid());
-            myFeature = sfb.buildFeature("id-0" + i);
-
+            myFeature.setPropertyValue("@identifier", "id-0" + i);
+            myFeature.setPropertyValue("name", "Building" + i);
+            myFeature.setPropertyValue("height", 12);
+            myFeature.setPropertyValue("position", ring.getCentroid());
             featureList.add(myFeature);
         }
 

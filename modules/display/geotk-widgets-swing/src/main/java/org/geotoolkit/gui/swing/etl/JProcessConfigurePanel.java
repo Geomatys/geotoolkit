@@ -45,7 +45,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -60,7 +60,7 @@ import org.geotoolkit.processing.chain.model.Parameter;
 import org.geotoolkit.processing.chain.model.event.EventChain;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Property;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -190,7 +190,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                         } else {
                             value = ConstantUtilities.stringToValue(cst.getValue(), paramClass);
                             parameter.parameter(paramName).setValue(value);
-                            ((JAttributeEditor) editor).setProperty(FeatureUtilities.toProperty(parameter.parameter(paramName)));
+                            ((JAttributeEditor) editor).setProperty(FeatureExt.toProperty(parameter.parameter(paramName)));
                             parameterActivated.add(paramName);
                             canToggle = checkEditorFound(editor, paramName);
                             addRecursivelyFocusListener(editor, focusListner);
@@ -229,7 +229,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                         editor.add(BorderLayout.CENTER, notSupportedTf );
                         canToggle = false;
                     } else {
-                        ((JAttributeEditor) editor).setProperty(FeatureUtilities.toProperty(parameter.parameter(paramName)));
+                        ((JAttributeEditor) editor).setProperty(FeatureExt.toProperty(parameter.parameter(paramName)));
                         canToggle = checkEditorFound(editor, paramName);
                         addRecursivelyFocusListener(editor, focusListner);
                     }
@@ -578,7 +578,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
             if (component instanceof JAttributeEditor) {
                 final JAttributeEditor editor = (JAttributeEditor) component;
                 if (editor.getProperty() != null) {
-                    final String editorParameterName = editor.getProperty().getDescriptor().getName().tip().toString();
+                    final String editorParameterName = editor.getProperty().getName().tip().toString();
                     if (parameterActivated.contains(editorParameterName) && !notSupportedInput.contains(editorParameterName)) {
                         setRecursivelyEnable(editor, true);
                     } else {
@@ -854,7 +854,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         public void focusGained(FocusEvent e) {
             final JAttributeEditor editor = findAttributEditor((JComponent)e.getSource());
             if (editor != null) {
-                final String parameterName = editor.getProperty().getDescriptor().getName().tip().toString();
+                final String parameterName = editor.getProperty().getName().tip().toString();
 
                 // update help panel
                 final ParameterDescriptor paramDesc = (ParameterDescriptor)descriptor.getInputDescriptor().descriptor(parameterName);
@@ -880,7 +880,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         public void focusLost(FocusEvent e) {
             final JAttributeEditor editor = findAttributEditor((JComponent)e.getSource());
             if (editor != null) {
-                final String parameterName = editor.getProperty().getDescriptor().getName().tip().toString();
+                final String parameterName = editor.getProperty().getName().tip().toString();
 
                 // update help panel
                 final ParameterDescriptor paramDesc = (ParameterDescriptor)descriptor.getInputDescriptor().descriptor(parameterName);

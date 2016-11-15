@@ -22,27 +22,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
 
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 import org.opengis.filter.expression.PropertyName;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * Read the given mapfile and return a feature which type is MapFileTypes.MAP.
@@ -85,7 +86,7 @@ public class MapfileReader {
         }
     }
 
-    private static Property readElement(final FeatureType parentType, final LineNumberReader reader, String line) throws IOException{
+    private static Feature readElement(final Feature parent, final LineNumberReader reader, String line) throws IOException{
         if(line ==null){
             line = reader.readLine().trim();
         }
@@ -112,35 +113,29 @@ public class MapfileReader {
 
         final FeatureType ft = getType(typeName);
 
-        final Property result;
         if(value == null && ft != null){
             //it's a feature type
-
-            //check if we are in a parent, in this case use the descriptor
-            PropertyDescriptor desc = null;
-            if(parentType != null){
-                desc = getDescriptorIgnoreCase(parentType, typeName);
-            }
-
-            final ComplexAttribute f;
-            if(desc != null){
-                f = (ComplexAttribute) FeatureUtilities.defaultProperty(desc, UUID.randomUUID().toString());
-            }else{
-                f = FeatureUtilities.defaultFeature(ft, UUID.randomUUID().toString());
-            }
-
-            result = f;
+            final Feature f = ft.newInstance();
 
             //read until element END
             line = reader.readLine().trim();
             while(!line.equalsIgnoreCase("END")){
-                final Property prop = readElement(ft, reader,line);
+                final Feature prop = readElement(f, reader,line);
                 if(prop != null){
-                    f.getProperties().add(prop);
+                    final String name = prop.getType().getName().toString();
+                    final Object oldValues = f.getPropertyValue(name);
+                    if (oldValues instanceof Collection) {
+                        final List<Feature> values = new ArrayList<>((Collection)oldValues);
+                        values.add(prop);
+                        f.setPropertyValue(name, values);
+                    } else {
+                        f.setPropertyValue(name, prop);
+                    }
                 }
                 line = reader.readLine().trim();
             }
 
+            return f;
         }else{
             //read the full value if needed
             if(value == null){
@@ -153,16 +148,12 @@ public class MapfileReader {
             }
 
             //it's a single property from parent type
-            final PropertyDescriptor desc = getDescriptorIgnoreCase(parentType, typeName);
-            if(desc != null){
-                result = FeatureUtilities.defaultProperty(desc);
-                result.setValue(convertType(value, desc));
-            }else{
-                result = null;
+            final AttributeType desc = getDescriptorIgnoreCase(parent.getType(), typeName);
+            if(desc!=null){
+                parent.setPropertyValue(desc.getName().toString(), convertType(value, desc));
             }
+            return null;
         }
-
-        return result;
     }
 
     /**
@@ -171,7 +162,7 @@ public class MapfileReader {
      * - Color [r] [g] [b]
      * - Point [x] [y]
      */
-    private static Object convertType(String value, final PropertyDescriptor desc) throws IOException{
+    private static Object convertType(String value, final AttributeType desc) throws IOException{
         value = value.trim();
 
         if(value.endsWith("END")){
@@ -182,7 +173,7 @@ public class MapfileReader {
             value = value.substring(1, value.length()-1);
         }
 
-        final Class clazz = desc.getType().getBinding();
+        final Class clazz = desc.getValueClass();
 
         if(clazz == Boolean.class){
             return (value.equalsIgnoreCase("on") || value.equalsIgnoreCase("true"));
@@ -253,20 +244,14 @@ public class MapfileReader {
         return ObjectConverters.convert(value, clazz);
     }
 
-    private static PropertyDescriptor getDescriptorIgnoreCase(final ComplexType parent, final String name){
-
-        PropertyDescriptor desc = parent.getDescriptor(name);
-        if(desc == null){
-            //search ignoring case
-            for(PropertyDescriptor d : parent.getDescriptors()){
-                if(d.getName().tip().toString().equalsIgnoreCase(name)){
-                    desc = d;
-                    break;
-                }
-            }
+    private static AttributeType getDescriptorIgnoreCase(final FeatureType parent, final String name){
+        try {
+            final PropertyType pt = parent.getProperty(name);
+            if(pt instanceof AttributeType) return (AttributeType) pt;
+        } catch(PropertyNotFoundException ex) {
+            //do nothing
         }
-
-        return desc;
+        return null;
     }
 
 }

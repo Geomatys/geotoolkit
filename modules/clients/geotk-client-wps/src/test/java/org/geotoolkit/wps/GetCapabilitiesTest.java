@@ -26,6 +26,7 @@ import org.geotoolkit.wps.xml.v100.GetCapabilities;
 import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.test.URLComparator;
 
 
 /**
@@ -52,7 +53,7 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
         }
 
         final String expectedURL = "http://test.com?SERVICE=WPS&ACCEPTVERSIONS=1.0.0&REQUEST=GetCapabilities";
-        assertEquals(expectedURL, url.toString());
+        new URLComparator(expectedURL, url).compare();
     }
 
    @Test

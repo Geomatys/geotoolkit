@@ -122,7 +122,7 @@ class DefaultQuery implements Query {
     /**
      * A custom query statement in the given language.
      */
-    DefaultQuery(final String language, final String statement, final GenericName name) {
+    DefaultQuery(final String language, final String statement, final String name) {
         this.language = language;
         this.source = new DefaultTextStatement(statement,null,name);
         this.properties = null;
@@ -173,7 +173,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public GenericName getTypeName() {
+    public String getTypeName() {
         if(source instanceof Selector){
             return ((Selector)source).getFeatureTypeName();
         }else if(source instanceof TextStatement){

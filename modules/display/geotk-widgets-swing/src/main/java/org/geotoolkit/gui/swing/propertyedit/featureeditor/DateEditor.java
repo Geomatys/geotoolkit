@@ -21,7 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import org.jdesktop.swingx.JXDatePicker;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -41,7 +42,7 @@ public class DateEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Date.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && Date.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

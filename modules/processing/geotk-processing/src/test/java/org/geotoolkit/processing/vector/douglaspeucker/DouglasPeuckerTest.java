@@ -25,28 +25,26 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-
 import org.junit.Test;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
@@ -55,7 +53,6 @@ import static org.junit.Assert.*;
  */
 public class DouglasPeuckerTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static FeatureType type;
 
@@ -101,26 +98,18 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
             Feature featureOut = iteratorOut.next();
             Feature featureResult = iteratorResult.next();
 
-            for (Property propertyOut : featureOut.getProperties()) {
-                if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
+            Geometry geomOut = (Geometry) featureOut.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            Geometry geomResult = (Geometry) featureResult.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            
+            Coordinate[] coordOut = geomOut.getCoordinates();
+            Coordinate[] coordResult = geomResult.getCoordinates();
 
-                    final Geometry geomOut = (Geometry) propertyOut.getValue();
-                    for (Property propertyResult : featureResult.getProperties()) {
-                        if (propertyResult.getDescriptor() instanceof GeometryDescriptor) {
-                            final Geometry geomResult = (Geometry) propertyResult.getValue();
-
-                            Coordinate[] coordOut = geomOut.getCoordinates();
-                            Coordinate[] coordResult = geomResult.getCoordinates();
-
-                            assertEquals(coordOut.length, coordResult.length);
-                            for (int i = 0; i < coordOut.length; i++) {
-                                assertEquals(coordOut[i].x, coordResult[i].x, precision);
-                                assertEquals(coordOut[i].y, coordResult[i].y, precision);
-                            }
-                        }
-                    }
-                }
+            assertEquals(coordOut.length, coordResult.length);
+            for (int i = 0; i < coordOut.length; i++) {
+                assertEquals(coordOut[i].x, coordResult[i].x, precision);
+                assertEquals(coordOut[i].y, coordResult[i].y, precision);
             }
+            
         }
     }
 
@@ -211,26 +200,18 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
             Feature featureOut = iteratorOut.next();
-
-            for (Property propertyOut : featureOut.getProperties()) {
-                if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
-
-                    final Geometry geomOut = (Geometry) propertyOut.getValue();
-                    assertTrue(geomOut == null || geomOut.isEmpty());
-                }
-            }
+            Geometry geomOut = (Geometry) featureOut.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            assertTrue(geomOut == null || geomOut.isEmpty());
         }
     }
 
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
-        ftb.add("name", String.class);
-        ftb.add("position", Polygon.class, CRS.forCode("EPSG:3395"));
-
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Polygon.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 
     private static FeatureCollection buildFeatureCollectionInput1() throws FactoryException {
@@ -240,7 +221,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 0.0),
@@ -256,15 +237,14 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(40.0, 20.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature1");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature1 = sfb.buildFeature("id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue("name", "Feature1");
+        myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature1);
 
 
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
@@ -278,10 +258,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature2");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Feature2");
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         featureList.add(myFeature2);
 
         return featureList;
@@ -294,7 +273,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
@@ -308,10 +287,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature2");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Feature2");
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         featureList.add(myFeature2);
 
         return featureList;
@@ -324,7 +302,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 0.0),
@@ -335,15 +313,14 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(60.0, 20.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature1");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature1 = sfb.buildFeature("id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue("name", "Feature1");
+        myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature1);
 
 
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
@@ -354,10 +331,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(20.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature2");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Feature2");
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         featureList.add(myFeature2);
 
         return featureList;
@@ -371,12 +347,11 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
 
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Feature2");
-        sfb.setPropertyValue("position", null);
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Feature2");
+        myFeature2.setPropertyValue("position", null);
         featureList.add(myFeature2);
 
         return featureList;

@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -58,17 +57,14 @@ import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
+import org.opengis.feature.Feature;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
 
 /**
  *
@@ -78,49 +74,28 @@ import org.geotoolkit.feature.Property;
 public class DefaultGxFactory implements GxFactory {
 
     private static final GxFactory GXF = new DefaultGxFactory();
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private DefaultGxFactory(){}
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     public static GxFactory getInstance(){
         return GXF;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Angles createAngles() {
         return new DefaultAngles();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Angles createAngles(double... angles) {
         return new DefaultAngles(angles);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public AnimatedUpdate createAnimatedUpdate() {
         return new DefaultAnimatedUpdate();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public AnimatedUpdate createAnimatedUpdate(List<SimpleTypeContainer> objectSimpleExtensions,
         IdAttributes idAttributes, double duration, Update update) {
@@ -128,28 +103,16 @@ public class DefaultGxFactory implements GxFactory {
        idAttributes, duration, update);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Coordinate createCoordinate(String listCoordinates) {
         return GxUtilities.toCoordinate(listCoordinates);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public FlyTo createFlyTo() {
         return new DefaultFlyTo();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public FlyTo createFlyTo(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration,
@@ -158,85 +121,47 @@ public class DefaultGxFactory implements GxFactory {
                 duration, flyToMOde, view);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public LatLonQuad createLatLonQuad() {
         return new DefaultLatLonQuad();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, CoordinateSequence coordinates) {
         return new DefaultLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public MultiTrack createMultiTrack() {
         return new DefaultMultiTrack();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public MultiTrack createMultiTrack(AltitudeMode altitudeMode,
             boolean interpolate, List<Track> tracks) {
         return new DefaultMultiTrack(altitudeMode, interpolate, tracks);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public PlayList createPlayList() {
         return new DefaultPlayList();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public PlayList createPlayList(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, List<AbstractTourPrimitive> tourPrimitives) {
+            IdAttributes idAttributes, List<AbstractTourPrimitive> tourPrimitives)
+    {
         return new DefaultPlayList(objectSimpleExtensions, idAttributes, tourPrimitives);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Feature createTour() {
-        List<Property> properties = new ArrayList<Property>();
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(),
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, GxModelConstants.TYPE_TOUR, "Tour");
+        final Feature f = GxModelConstants.TYPE_TOUR.newInstance();
+        f.setPropertyValue(KmlConstants.TAG_EXTENSIONS, new Extensions());
+        return f;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Feature createTour(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -250,10 +175,8 @@ public class DefaultGxFactory implements GxFactory {
             Region region, Object extendedData,
             List<SimpleTypeContainer> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            List<PlayList> playLists) {
-
-        List<Property> properties = new ArrayList<Property>();
-
+            List<PlayList> playLists)
+    {
         Extensions extensions = new Extensions();
         if (objectSimpleExtensions != null) {
             extensions.simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
@@ -264,129 +187,75 @@ public class DefaultGxFactory implements GxFactory {
         if (abstractFeatureObjectExtensions != null) {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
-
-        properties.add(FF.createAttribute(idAttributes,
-                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name,
-                KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility,
-                KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open,
-                KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author,
-                KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link,
-                KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address,
-                KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails,
-                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber,
-                KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet,
-                KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description,
-                KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view,
-                KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive,
-                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl,
-                KmlModelConstants.ATT_STYLE_URL, null));
-        for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass,
-                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        }
-        properties.add(FF.createAttribute(region,
-                KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData,
-                KmlModelConstants.ATT_EXTENDED_DATA, null));
-        for (PlayList playList : playLists){
-            properties.add(FF.createAttribute(playList,
-                    GxModelConstants.ATT_TOUR_PLAY_LIST, null));
-        }
-        properties.add(FF.createAttribute(extensions,
-                KmlModelConstants.ATT_EXTENSIONS, null));
-
-        return FF.createFeature(
-                properties, GxModelConstants.TYPE_TOUR, "Tour");
+        final Feature f = GxModelConstants.TYPE_TOUR.newInstance();
+        f.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        f.setPropertyValue(KmlConstants.TAG_NAME, name);
+        f.setPropertyValue(KmlConstants.TAG_VISIBILITY, visibility);
+        f.setPropertyValue(KmlConstants.TAG_OPEN, open);
+        f.setPropertyValue(KmlConstants.TAG_ATOM_AUTHOR, author);
+        f.setPropertyValue(KmlConstants.TAG_ATOM_LINK, link);
+        f.setPropertyValue(KmlConstants.TAG_ADDRESS, address);
+        f.setPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS, addressDetails);
+        f.setPropertyValue(KmlConstants.TAG_PHONE_NUMBER, phoneNumber);
+        f.setPropertyValue(KmlConstants.TAG_SNIPPET, snippet);
+        f.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        f.setPropertyValue(KmlConstants.TAG_VIEW, view);
+        f.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timePrimitive);
+        f.setPropertyValue(KmlConstants.TAG_STYLE_URL, styleUrl);
+        f.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, styleSelector);
+        f.setPropertyValue(KmlConstants.TAG_REGION, region);
+        f.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
+        f.setPropertyValue(KmlConstants.ATT_PLAYLIST, playLists);
+        f.setPropertyValue(KmlConstants.TAG_EXTENSIONS, extensions);
+        return f;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public SoundCue createSoundCue() {
         return new DefaultSoundCue();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public SoundCue createSoundCue(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, String href) {
+            IdAttributes idAttributes, String href)
+    {
         return new DefaultSoundCue(objectSimpleExtensions, idAttributes, href);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public TourControl createTourControl() {
         return new DefaultTourControl();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public TourControl createTourControl(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, EnumPlayMode playMode) {
+            IdAttributes idAttributes, EnumPlayMode playMode)
+    {
         return new DefaultTourControl(objectSimpleExtensions, idAttributes, playMode);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Track createTrack() {
         return new DefaultTrack();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Track createTrack(AltitudeMode altitudeMode, List<Calendar> whens,
             CoordinateSequence coord, List<Angles> angleList, Model model,
-            ExtendedData extendedData) {
+            ExtendedData extendedData)
+    {
         return new DefaultTrack(altitudeMode, whens, coord, angleList, model, extendedData);
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Wait createWait() {
         return new DefaultWait();
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
     public Wait createWait(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, double duration) {
+            IdAttributes idAttributes, double duration)
+    {
         return new DefaultWait(objectSimpleExtensions, idAttributes, duration);
     }
-
 }

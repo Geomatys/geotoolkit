@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.measure.Unit;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ChannelSelection;
@@ -72,16 +74,13 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -101,6 +100,9 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
 
 /**
  * Testing portrayal service.
@@ -129,13 +131,14 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        sftb.add("att1", String.class);
-        sftb.add("att2", Double.class);
-        final FeatureType sft = sftb.buildSimpleFeatureType();
+        sftb.addAttribute(Point.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        sftb.addAttribute(String.class).setName("att1");
+        sftb.addAttribute(Double.class).setName("att2");
+        final FeatureType sft = sftb.build();
         FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
+        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriter(
+                QueryBuilder.filtered(sft.getName().toString(),Filter.EXCLUDE));
 
         Feature sf = writer.next();
         sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
@@ -304,8 +307,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     public void testCoveragePropertyRendering() throws Exception{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("coverage", GridCoverage2D.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType ft = ftb.buildFeatureType();
+        ftb.addAttribute(GridCoverage2D.class).setName("coverage");
+        final FeatureType ft = ftb.build();
 
         final BufferedImage img = new BufferedImage(90, 90, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
@@ -319,8 +322,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setGridToCRS(1, 0, 0, 1, 0.5, 0.5);
         gcb.setRenderedImage(img);
 
-        final Feature f = FeatureUtilities.defaultFeature(ft, "id0");
-        f.getProperty("coverage").setValue(gcb.getGridCoverage2D());
+        final Feature f = ft.newInstance();
+        f.setPropertyValue("coverage",gcb.getGridCoverage2D());
         final FeatureCollection collection = FeatureStoreUtilities.collection(f);
 
 
@@ -515,9 +518,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class,crs);
-        final FeatureType ft = ftb.buildFeatureType();
-        final Feature feature = FeatureUtilities.defaultFeature(ft, "0");
+        ftb.addAttribute(Point.class).setName("geom").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType ft = ftb.build();
+        final Feature feature = ft.newInstance();
         final Point pt = GF.createPoint(new Coordinate(12, 5));
         JTS.setCRS(pt, crs);
         feature.setPropertyValue("geom", pt);

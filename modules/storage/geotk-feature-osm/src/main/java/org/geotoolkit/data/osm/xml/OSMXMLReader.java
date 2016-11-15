@@ -17,6 +17,9 @@
 
 package org.geotoolkit.data.osm.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import java.util.List;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,15 +31,9 @@ import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.model.Bound;
 import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.GPXFileMetadata;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
-import org.geotoolkit.data.osm.model.Member;
 import org.geotoolkit.data.osm.model.MemberType;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
-import org.geotoolkit.data.osm.model.User;
-import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -44,7 +41,9 @@ import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.geometry.Envelope;
 
 import static javax.xml.stream.XMLStreamReader.*;
+import org.geotoolkit.data.osm.model.OSMModelConstants;
 import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
+import org.opengis.feature.Feature;
 
 /**
  * Stax reader class for OSM XML planet files.
@@ -54,21 +53,22 @@ import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
  */
 public class OSMXMLReader extends StaxStreamReader{
 
+    private final GeometryFactory GF = new GeometryFactory();
     private final ISODateParser dateParser = new ISODateParser();
     private Envelope envelope;
 
     /**
      * Caches.
      */
-    private final Map<String,String> tags = new LinkedHashMap<String, String>();
-    private final List<Member> members = new ArrayList<Member>();
-    private final List<Long> nodes = new ArrayList<Long>();
-    private final List<IdentifiedElement> transaction = new ArrayList<IdentifiedElement>();
+    private final List<Feature> tags = new ArrayList<>();
+    private final List<Feature> members = new ArrayList<>();
+    private final List<Long> nodes = new ArrayList<>();
+    private final List<Feature> transaction = new ArrayList<>();
     private long id = Long.MIN_VALUE;
     private int version = Integer.MIN_VALUE;
     private int changeset = Integer.MIN_VALUE;
     private String user = null;
-    private int uid = User.USER_ID_NONE;
+    private int uid = OSMModelConstants.USER_ID_NONE;
     private long timestamp = Long.MIN_VALUE;
 
     private Object current;
@@ -150,7 +150,7 @@ public class OSMXMLReader extends StaxStreamReader{
         version = Integer.MIN_VALUE;
         changeset = Integer.MIN_VALUE;
         user = null;
-        uid = User.USER_ID_NONE;
+        uid = OSMModelConstants.USER_ID_NONE;
         timestamp = Long.MIN_VALUE;
     }
 
@@ -257,7 +257,7 @@ public class OSMXMLReader extends StaxStreamReader{
         return true;
     }
 
-    private Node parseNode() throws XMLStreamException {
+    private Feature parseNode() throws XMLStreamException {
         resetCache();
 
         if(!parseIdentifiedAttributs()){
@@ -290,10 +290,21 @@ public class OSMXMLReader extends StaxStreamReader{
                 case END_ELEMENT:
                     if(TAG_NODE.equalsIgnoreCase(reader.getLocalName())){
                         //end of the node element
-                        return new Node(
-                                Double.parseDouble(lat),
-                                Double.parseDouble(lon),
-                                id, version, changeset, User.create(uid, user), timestamp, tags);
+                        final Feature node = OSMModelConstants.TYPE_NODE.newInstance();
+                        final Point pt = GF.createPoint(new Coordinate(Double.parseDouble(lon), Double.parseDouble(lat)));
+                        node.setPropertyValue("point", pt);
+                        if (user!=null || uid != OSMModelConstants.USER_ID_NONE) {
+                            final Feature u = OSMModelConstants.TYPE_USER.newInstance();
+                            u.setPropertyValue(ATT_UID, uid);
+                            u.setPropertyValue(ATT_USER, user);
+                            node.setPropertyValue("user", u);
+                        }
+                        node.setPropertyValue(ATT_ID, id);
+                        node.setPropertyValue(ATT_VERSION, version);
+                        node.setPropertyValue(ATT_CHANGESET, changeset);
+                        node.setPropertyValue(ATT_TIMESTAMP, timestamp);
+                        node.setPropertyValue("tags", tags);
+                        return node;
                     }
                     break;
             }
@@ -302,7 +313,7 @@ public class OSMXMLReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, node tag without end.");
     }
 
-    private Way parseWay() throws XMLStreamException {
+    private Feature parseWay() throws XMLStreamException {
         resetCache();
 
         if(!parseIdentifiedAttributs()){
@@ -325,8 +336,21 @@ public class OSMXMLReader extends StaxStreamReader{
                     break;
                 case END_ELEMENT:
                     if(TAG_WAY.equalsIgnoreCase(reader.getLocalName())){
-                        //end of the node element
-                        return new Way(nodes, id, version, changeset, User.create(uid, user), timestamp, tags);
+                        //end of the way element
+                        final Feature way = OSMModelConstants.TYPE_WAY.newInstance();
+                        if (user!=null || uid != OSMModelConstants.USER_ID_NONE) {
+                            final Feature u = OSMModelConstants.TYPE_USER.newInstance();
+                            u.setPropertyValue(ATT_UID, uid);
+                            u.setPropertyValue(ATT_USER, user);
+                            way.setPropertyValue("user", u);
+                        }
+                        way.setPropertyValue(ATT_ID, id);
+                        way.setPropertyValue(ATT_VERSION, version);
+                        way.setPropertyValue(ATT_CHANGESET, changeset);
+                        way.setPropertyValue(ATT_TIMESTAMP, timestamp);
+                        way.setPropertyValue("tags", tags);
+                        way.setPropertyValue(TAG_WAYND, nodes);
+                        return way;
                     }
                     break;
             }
@@ -335,7 +359,7 @@ public class OSMXMLReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, way tag without end.");
     }
 
-    private Relation parseRelation() throws XMLStreamException {
+    private Feature parseRelation() throws XMLStreamException {
         resetCache();
 
         if(!parseIdentifiedAttributs()){
@@ -359,7 +383,20 @@ public class OSMXMLReader extends StaxStreamReader{
                 case END_ELEMENT:
                     if(TAG_REL.equalsIgnoreCase(reader.getLocalName())){
                         //end of the relation element
-                        return new Relation(members, id, version, changeset, User.create(uid, user), timestamp, tags);
+                        final Feature relation = OSMModelConstants.TYPE_RELATION.newInstance();
+                        if (user!=null || uid != OSMModelConstants.USER_ID_NONE) {
+                            final Feature u = OSMModelConstants.TYPE_USER.newInstance();
+                            u.setPropertyValue(ATT_UID, uid);
+                            u.setPropertyValue(ATT_USER, user);
+                            relation.setPropertyValue("user", u);
+                        }
+                        relation.setPropertyValue(ATT_ID, id);
+                        relation.setPropertyValue(ATT_VERSION, version);
+                        relation.setPropertyValue(ATT_CHANGESET, changeset);
+                        relation.setPropertyValue(ATT_TIMESTAMP, timestamp);
+                        relation.setPropertyValue("tags", tags);
+                        relation.setPropertyValue("members", members);
+                        return relation;
                     }
                     break;
             }
@@ -406,9 +443,15 @@ public class OSMXMLReader extends StaxStreamReader{
                 case END_ELEMENT:
                     if(TAG_CHANGESET.equalsIgnoreCase(reader.getLocalName())){
                         //end of the changeset element
+                        Feature user = null;
+                        if(strUID!=null){
+                            user = OSMModelConstants.TYPE_USER.newInstance();
+                            user.setPropertyValue(ATT_UID, Integer.parseInt(strUID));
+                            user.setPropertyValue(ATT_USER, strUser);
+                        }
                         return new ChangeSet(
                                 (strID!=null) ? Integer.parseInt(strID) : null,
-                                (strUID!=null) ? User.create(Integer.parseInt(strUID),strUser) : User.NONE,
+                                user,
                                 (strTime!=null) ? toDateLong(strTime) : null,
                                 (strOpen!=null) ? Boolean.valueOf(strOpen) : null,
                                 env,
@@ -546,7 +589,7 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
 
-    private void parseTag(final Map<String,String> tags) throws XMLStreamException{
+    private void parseTag(final List<Feature> tags) throws XMLStreamException{
         final String key = reader.getAttributeValue(null, ATT_TAG_KEY);
         final String value = reader.getAttributeValue(null, ATT_TAG_VALUE);
 
@@ -556,8 +599,10 @@ public class OSMXMLReader extends StaxStreamReader{
 
         toTagEnd(TAG_TAG);
 
-        tags.put(key, value);
-        return;
+        final Feature tag = OSMModelConstants.TYPE_TAG.newInstance();
+        tag.setPropertyValue("k", key);
+        tag.setPropertyValue("v", value);
+        tags.add(tag);
     }
 
     private Long parseWayNode() throws XMLStreamException{
@@ -571,7 +616,7 @@ public class OSMXMLReader extends StaxStreamReader{
         return Long.parseLong(ref);
     }
 
-    private Member parseRelationMember() throws XMLStreamException{
+    private Feature parseRelationMember() throws XMLStreamException{
         final String ref = reader.getAttributeValue(null, ATT_RELMB_REF);
         final String role = reader.getAttributeValue(null, ATT_RELMB_ROLE);
         final String type = reader.getAttributeValue(null, ATT_RELMB_TYPE);
@@ -582,9 +627,11 @@ public class OSMXMLReader extends StaxStreamReader{
 
         toTagEnd(TAG_RELMB);
 
-        return new Member(
-                Long.parseLong(ref),
-                MemberType.valueOfIgnoreCase(type), role);
+        final Feature member = OSMModelConstants.TYPE_RELATION_MEMBER.newInstance();
+        member.setPropertyValue("ref", Long.parseLong(ref));
+        member.setPropertyValue("role", role);
+        member.setPropertyValue("type", MemberType.valueOfIgnoreCase(type));
+        return member;
     }
 
 }

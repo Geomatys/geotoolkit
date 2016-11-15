@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.InternationalString;
@@ -68,7 +68,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             public void valueChanged(ListSelectionEvent e) {
                 Object ob = guiProperties.getSelectedValue();
                 if(ob != null){
-                    final String name = ((PropertyDescriptor)ob).getName().tip().toString();
+                    final String name = ((PropertyType)ob).getName().tip().toString();
                     guiCQL.insertText(" "+name);
                     guiProperties.clearSelection();
                 }
@@ -194,7 +194,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         if (layer instanceof FeatureMapLayer) {
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
 
-            final Collection<PropertyDescriptor> col = fml.getCollection().getFeatureType().getDescriptors();
+            final Collection<? extends PropertyType> col = fml.getCollection().getFeatureType().getProperties(true);
             guiProperties.setModel(new ListComboBoxModel(new ArrayList(col)));
             guiPropertiesPane.setVisible(true);
             guiTextPropertySplit.setDividerLocation(120);
@@ -263,11 +263,11 @@ public class JCQLEditor extends javax.swing.JPanel{
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if(value instanceof PropertyDescriptor){
-                final PropertyDescriptor desc = (PropertyDescriptor) value;
+            if(value instanceof PropertyType){
+                final PropertyType desc = (PropertyType) value;
                 String text = desc.getName().tip().toString().toString();
 
-                final InternationalString is = desc.getType().getDescription();
+                final InternationalString is = desc.getDescription();
                 if(is!=null && !is.toString().isEmpty()){
                     text += "  ("+is.toString()+")";
                 }

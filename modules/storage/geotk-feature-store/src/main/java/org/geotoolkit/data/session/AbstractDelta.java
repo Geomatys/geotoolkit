@@ -38,9 +38,9 @@ abstract class AbstractDelta implements Delta{
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.session");
 
     protected final Session session;
-    protected final GenericName type;
+    protected final String type;
 
-    public AbstractDelta(final Session session,final GenericName type){
+    public AbstractDelta(final Session session,final String type){
         ensureNonNull("session", session);
         ensureNonNull("name", type);
         this.session = session;
@@ -48,7 +48,7 @@ abstract class AbstractDelta implements Delta{
     }
 
     @Override
-    public GenericName getType() {
+    public String getType() {
         return type;
     }
 

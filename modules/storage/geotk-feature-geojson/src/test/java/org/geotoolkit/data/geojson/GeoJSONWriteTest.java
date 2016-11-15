@@ -1,6 +1,5 @@
 package org.geotoolkit.data.geojson;
 
-import org.opengis.util.GenericName;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTReader;
@@ -9,30 +8,29 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.*;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -55,50 +53,49 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
     @Test
     public void writeSimpleFTTest() throws Exception {
 
-        Path pointFile = Files.createTempFile("point", ".json");
+        final Path pointFile = Files.createTempFile("point", ".json");
 
-        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(pointFile.toUri());
 
-        FeatureStore store = (FeatureStore) DataStores.open(param);
+        final FeatureStore store = (FeatureStore) DataStores.open(param);
         assertNotNull(store);
         assertEquals(0, store.getNames().size());
+        final String typeName = pointFile.getFileName().toString().replace(".json", "");
 
-        String typeName = pointFile.getFileName().toString().replace(".json", "");
 
-        FeatureType validFeatureType = buildGeometryFeatureType(typeName, Point.class);
-        FeatureType unvalidFeatureType = buildGeometryFeatureType("test", Point.class);
-
+        //test creating an unvalid feature type
+        final FeatureType unvalidFeatureType = buildGeometryFeatureType("test", Point.class);
         try {
-            store.createFeatureType(unvalidFeatureType.getName(), unvalidFeatureType);
+            store.createFeatureType(unvalidFeatureType);
             fail();
         } catch (DataStoreException ex) {
             //normal exception
         }
-
         assertEquals(0, store.getNames().size());
 
-        store.createFeatureType(validFeatureType.getName(), validFeatureType);
+
+        //test writing and reading a feature
+        final FeatureType validFeatureType = buildGeometryFeatureType(typeName, Point.class);
+        store.createFeatureType(validFeatureType);
         assertEquals(1, store.getNames().size());
         assertTrue(Files.exists(pointFile));
 
-        Point expectedPoint =GF.createPoint(new Coordinate(-105.01621, 39.57422));
-        try (FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName())) {
-            Feature feature = fw.next();
-            feature.getDefaultGeometryProperty().setValue(expectedPoint);
-            feature.getProperty("type").setValue("simple");
+        final Point expectedPoint = GF.createPoint(new Coordinate(-105.01621, 39.57422));
+        try (FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(validFeatureType.getName().toString(),Filter.EXCLUDE))) {
+            final Feature feature = fw.next();
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), expectedPoint);
+            feature.setPropertyValue("type","simple");
             fw.write();
         }
 
         assertTrue(Files.exists(pointFile));
 
-        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(validFeatureType.getName()));
+        final FeatureReader reader = store.getFeatureReader(QueryBuilder.all(validFeatureType.getName()));
         assertTrue(reader.hasNext());
-        Feature f = reader.next();
-        assertEquals("simple", f.getProperty("type").getValue());
-        GeometryAttribute geom = f.getDefaultGeometryProperty();
-        assertNotNull(geom);
-        assertEquals(expectedPoint, geom.getValue());
+        final Feature f = reader.next();
+        assertEquals("simple", f.getPropertyValue("type"));
+        assertEquals(expectedPoint, f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()));
         reader.close();
 
         Files.deleteIfExists(pointFile);
@@ -120,7 +117,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         FeatureType validFeatureType = buildGeometryFeatureType(typeName, Geometry.class);
         assertEquals(0, store.getNames().size());
 
-        store.createFeatureType(validFeatureType.getName(), validFeatureType);
+        store.createFeatureType(validFeatureType);
         assertEquals(1, store.getNames().size());
         assertTrue(Files.exists(geomsFile));
 
@@ -132,40 +129,40 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         MultiPolygon mpoly = (MultiPolygon)WKT_READER.read(PROPERTIES.getProperty("multipolygon"));
         GeometryCollection coll = (GeometryCollection)WKT_READER.read(PROPERTIES.getProperty("geometrycollection"));
 
-        try (FeatureWriter fw = store.getFeatureWriterAppend(validFeatureType.getName())) {
+        try (FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(validFeatureType.getName().toString(),Filter.EXCLUDE))) {
             Feature feature = fw.next();
-            feature.getProperty("type").setValue("Point");
-            feature.getDefaultGeometryProperty().setValue(pt);
+            feature.setPropertyValue("type","Point");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("MultiPoint");
-            feature.getDefaultGeometryProperty().setValue(mpt);
+            feature.setPropertyValue("type","MultiPoint");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mpt);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("LineString");
-            feature.getDefaultGeometryProperty().setValue(line);
+            feature.setPropertyValue("type","LineString");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), line);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("MultiLineString");
-            feature.getDefaultGeometryProperty().setValue(mline);
+            feature.setPropertyValue("type","MultiLineString");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mline);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("Polygon");
-            feature.getDefaultGeometryProperty().setValue(poly);
+            feature.setPropertyValue("type","Polygon");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), poly);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("MultiPolygon");
-            feature.getDefaultGeometryProperty().setValue(mpoly);
+            feature.setPropertyValue("type","MultiPolygon");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), mpoly);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("GeometryCollection");
-            feature.getDefaultGeometryProperty().setValue(coll);
+            feature.setPropertyValue("type","GeometryCollection");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), coll);
             fw.write();
         }
         assertTrue(Files.exists(geomsFile));
@@ -179,8 +176,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
             while (ite.hasNext()) {
                 Feature f = ite.next();
                 //System.out.println(f);
-                GeometryAttribute geometryAttribute = f.getDefaultGeometryProperty();
-                Geometry geom = (Geometry) geometryAttribute.getValue();
+                Geometry geom = (Geometry)f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
 
                 if (geom instanceof Point) {
                     assertTrue(pt.equalsExact(geom, 0.0000001));
@@ -219,72 +215,56 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         FeatureType complexFT = buildComplexFeatureType(typeName);
         assertEquals(0, store.getNames().size());
 
-        store.createFeatureType(complexFT.getName(), complexFT);
+        store.createFeatureType(complexFT);
         assertEquals(1, store.getNames().size());
         assertTrue(Files.exists(complexFile));
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
         Feature expected = null;
-        try (FeatureWriter fw = store.getFeatureWriterAppend(complexFT.getName())) {
+        try (FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(complexFT.getName().toString(),Filter.EXCLUDE))) {
             Feature feature = fw.next();
-            feature.getProperty("longProp").setValue(100l);
-            feature.getProperty("stringProp").setValue("Some String");
-            feature.getProperty("integerProp").setValue(15);
-            feature.getProperty("booleanProp").setValue(true);
+            feature.setPropertyValue("longProp",100l);
+            feature.setPropertyValue("stringProp","Some String");
+            feature.setPropertyValue("integerProp",15);
+            feature.setPropertyValue("booleanProp",true);
 
-            ComplexType level1Type = (ComplexType) feature.getProperty("level1").getType();
-            PropertyDescriptor level1Desc = feature.getProperty("level1").getDescriptor();
-            feature.getProperties().remove(feature.getProperty("level1"));
+            final FeatureType level1Type = ((FeatureAssociationRole)feature.getType().getProperty("level1")).getValueType();
 
-            ComplexAttribute level11 = (ComplexAttribute) FeatureUtilities.defaultProperty(level1Desc);
-            level11.getProperty("longProp2").setValue(66446l);
+            final Feature level11 = level1Type.newInstance();
+            level11.setPropertyValue("longProp2",66446l);
 
-            ComplexType level2Type = (ComplexType) level11.getProperty("level2").getType();
-            PropertyDescriptor level2desc = level11.getProperty("level2").getDescriptor();
-            level11.getProperties().remove(level11.getProperty("level2"));
+            final FeatureType level2Type = ((FeatureAssociationRole)level11.getType().getProperty("level2")).getValueType();
 
-            ComplexAttribute level211 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
-            level211.getProperty("level2prop").setValue("text");
-            level11.getProperties().add(level211);
+            final Feature level211 = level2Type.newInstance();
+            level211.setPropertyValue("level2prop","text");
+            final Feature level212 = level2Type.newInstance();
+            level212.setPropertyValue("level2prop","text2");
+            final Feature level213 = level2Type.newInstance();
+            level213.setPropertyValue("level2prop","text3");
 
-            ComplexAttribute level212 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
-            level212.getProperty("level2prop").setValue("text2");
-            level11.getProperties().add(level212);
-
-            ComplexAttribute level213 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
-            level213.getProperty("level2prop").setValue("text3");
-            level11.getProperties().add(level213);
-
-            feature.getProperties().add(level11);
+            level11.setPropertyValue("level2", Arrays.asList(level211,level212,level213));
 
 
-            ComplexAttribute level12 = (ComplexAttribute) FeatureUtilities.defaultProperty(level1Desc);
-            level12.getProperty("longProp2").setValue(4444444l);
+            Feature level12 = level1Type.newInstance();
+            level12.setPropertyValue("longProp2",4444444l);
 
-            ComplexType level22Type = (ComplexType) level12.getProperty("level2").getType();
-            PropertyDescriptor level22desc = level11.getProperty("level2").getDescriptor();
-            level12.getProperties().remove(level12.getProperty("level2"));
+            final Feature level221 = level2Type.newInstance();
+            level221.setPropertyValue("level2prop","fish");
+            final Feature level222 = level2Type.newInstance();
+            level222.setPropertyValue("level2prop","cat");
+            final Feature level223 = level2Type.newInstance();
+            level223.setPropertyValue("level2prop","dog");
 
-            ComplexAttribute level221 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
-            level221.getProperty("level2prop").setValue("fish");
-            level12.getProperties().add(level221);
+            level12.setPropertyValue("level2", Arrays.asList(level221,level222,level223));
 
-            ComplexAttribute level222 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
-            level222.getProperty("level2prop").setValue("cat");
-            level12.getProperties().add(level222);
+            feature.setPropertyValue("level1",Arrays.asList(level11,level12));
 
-            ComplexAttribute level223 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
-            level223.getProperty("level2prop").setValue("dog");
-            level12.getProperties().add(level223);
-
-            feature.getProperties().add(level12);
-
-            feature.getDefaultGeometryProperty().setValue(pt);
-            expected = FeatureUtilities.deepCopy(feature);
+            feature.setPropertyValue("geometry", pt);
+            expected = FeatureExt.copy(feature);
             fw.write();
         } catch (Exception ex) {
             ex.printStackTrace();
-            fail();
+            fail(ex.getMessage());
         }
         assertTrue(Files.exists(complexFile));
 
@@ -296,24 +276,7 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         try (FeatureIterator ite = fcoll.iterator()) {
             while (ite.hasNext()) {
                 Feature candidate = ite.next();
-
-                for (PropertyDescriptor propDesc : expected.getType().getDescriptors()) {
-                    GenericName propName = propDesc.getName();
-                    Collection<Property> expectedProperties = expected.getProperties(propName);
-                    Collection<Property> resultProperties = candidate.getProperties(propName);
-
-                    assertEquals(expectedProperties.size(), resultProperties.size());
-
-                    for (Property expProperty : expectedProperties) {
-                        boolean propFound = false;
-                        for (Property resProperty : resultProperties) {
-                            if (resProperty.equals(expProperty)) {
-                                propFound = true;
-                            }
-                        }
-                        assertTrue("Property " + propName.tip().toString() + " not found.", propFound);
-                    }
-                }
+                assertEquals(expected, candidate);
             }
         }
         Files.deleteIfExists(complexFile);
@@ -328,13 +291,13 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         try (FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
-            feature.getProperty("type").setValue("feat1");
-            feature.getDefaultGeometryProperty().setValue(pt);
+            feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("type").setValue("feat2");
-            feature.getDefaultGeometryProperty().setValue(pt);
+            feature.setPropertyValue("type","feat2");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             fw.write();
 
         }
@@ -362,9 +325,10 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         final String outputJSON;
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Feature feature = FeatureUtilities.defaultFeature(validFeatureType, "id-0");
-            feature.getProperty("type").setValue("feat1");
-            feature.getDefaultGeometryProperty().setValue(pt);
+            Feature feature = validFeatureType.newInstance();
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");
+            feature.setPropertyValue("type","feat1");
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             GeoJSONStreamWriter.writeSingleFeature(baos, feature, JsonEncoding.UTF8, 4, false);
 
             outputJSON = baos.toString("UTF-8");
@@ -417,13 +381,13 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
 
         try (FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4)) {
             Feature feature = fw.next();
-            feature.getProperty("array").setValue(array1);
-            feature.getDefaultGeometryProperty().setValue(pt);
+            feature.setPropertyValue("array",array1);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             fw.write();
 
             feature = fw.next();
-            feature.getProperty("array").setValue(array2);
-            feature.getDefaultGeometryProperty().setValue(pt);
+            feature.setPropertyValue("array",array2);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), pt);
             fw.write();
 
         }
@@ -445,49 +409,48 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
     private FeatureType buildGeometryFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("type", String.class);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, CommonCRS.WGS84.normalizedGeographic());
-        return ftb.buildSimpleFeatureType();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("type");
+        ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 
     private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("array", double[][].class);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, CommonCRS.WGS84.normalizedGeographic());
-        return ftb.buildSimpleFeatureType();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(double[][].class).setName("array");
+        ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 
     /**
      *  Build 2 level Feature complex
      */
     private FeatureType buildComplexFeatureType(String name) {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.setName("level2");
-        ftb.add("level2prop", String.class);
-        final ComplexType level2 = ftb.buildType();
+        ftb.addAttribute(String.class).setName("level2prop");
+        final FeatureType level2 = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("level1");
-        ftb.add("longProp2", Long.class);
-        AttributeDescriptor level2Desc = adb.create(level2, NamesExt.valueOf("level2"),1,5,false,null);
-        ftb.add(level2Desc);
-        final ComplexType level1 = ftb.buildType();
+        ftb.addAttribute(Long.class).setName("longProp2");
+        ftb.addAssociation(level2).setName("level2").setMinimumOccurs(1).setMaximumOccurs(5);
+        final FeatureType level1 = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("longProp", Long.class);
-        ftb.add("stringProp", String.class);
-        ftb.add("integerProp", Integer.class);
-        ftb.add("booleanProp", Boolean.class);
-
-        AttributeDescriptor level1Desc = adb.create(level1, NamesExt.valueOf("level1"),1,3,false,null);
-        ftb.add(level1Desc);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Point.class, CommonCRS.WGS84.normalizedGeographic());
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Long.class).setName("longProp");
+        ftb.addAttribute(String.class).setName("stringProp");
+        ftb.addAttribute(Integer.class).setName("integerProp");
+        ftb.addAttribute(Boolean.class).setName("booleanProp");
+        ftb.addAssociation(level1).setName("level1").setMinimumOccurs(1).setMaximumOccurs(3);
+        ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.setDescription(new SimpleInternationalString("Description"));
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 
 }

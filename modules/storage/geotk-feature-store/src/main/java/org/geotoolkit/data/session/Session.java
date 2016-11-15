@@ -26,8 +26,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
@@ -89,29 +88,34 @@ public interface Session {
     /**
      * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, java.util.Collection)
      * but makes modification in the session diff if this one is asynchrone.
+     * @param groupName
+     * @param newFeatures
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    void addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
-
-    /**
-     * Convinient method to update a single attribut.
-     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
-     */
-    void updateFeatures(GenericName groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
+    void addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      * but makes modification in the session diff if this one is asynchrone.
+     * @param groupName
+     * @param filter
+     * @param values
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    void updateFeatures(GenericName groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
+    void updateFeatures(String groupName, Filter filter, Map<String, ?> values) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#removeFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter)
      * but makes modification in the session diff if this one is asynchrone.
+     * @param groupName
+     * @param filter
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException;
+    void removeFeatures(String groupName, Filter filter) throws DataStoreException;
 
     /**
      * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false. 
+     * @return
      */
     boolean hasPendingChanges();
 
@@ -130,12 +134,18 @@ public interface Session {
     /**
      * Same behavior as @see FeatureStore#getCount(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
+     * @param query
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      */
     long getCount(Query query) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#getEnvelope(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
+     * @param query
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      */
     Envelope getEnvelope(Query query) throws DataStoreException;
 

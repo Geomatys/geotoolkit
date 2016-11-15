@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -40,17 +41,18 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.interval.RandomPalette;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -113,19 +115,25 @@ public class CategoryStyleBuilder extends Factory {
         if(layer != null){
             FeatureType schema = layer.getCollection().getFeatureType();
 
-            for(PropertyDescriptor desc : schema.getDescriptors()){
-                Class<?> type = desc.getType().getBinding();
+            for(PropertyType desc : schema.getProperties(true)){
+                if(desc instanceof AttributeType){
+                    Class<?> type = ((AttributeType)desc).getValueClass();
 
-                if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(ff.property(desc.getName().tip().toString()));
+                    if(!Geometry.class.isAssignableFrom(type)){
+                        properties.add(ff.property(desc.getName().tip().toString()));
+                    }
                 }
             }
 
             //find the geometry class for template
-            GeometryDescriptor geo = schema.getGeometryDescriptor();
-            Class<?> geoClass = (geo!=null)?geo.getType().getBinding():null;
+            Class<?> geoClass = null;
+            try{
+                PropertyType geo = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                geoClass = ((AttributeType)((Operation)geo).getResult()).getValueClass();
+            }catch(PropertyNotFoundException ex){
+            }
 
-            if(geo==null){
+            if(geoClass==null){
                 return;
             }
             

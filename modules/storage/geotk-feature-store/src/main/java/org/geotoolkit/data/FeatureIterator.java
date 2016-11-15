@@ -17,7 +17,7 @@
 package org.geotoolkit.data;
 
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  * Extent the Standard Iterator, limited to Feature class

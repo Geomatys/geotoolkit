@@ -18,8 +18,8 @@
 package org.geotoolkit.data.wfs;
 
 import java.util.Map;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface Update extends TransactionElement{
 
-    Map<PropertyDescriptor,Object> updates();
+    Map<PropertyType,Object> updates();
 
     String getHandle();
 

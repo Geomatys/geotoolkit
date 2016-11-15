@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.data.gx;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -43,15 +41,10 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -62,65 +55,37 @@ import static org.junit.Assert.*;
  */
 public class TourControlTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/tourControl.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public TourControlTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
-    public void tourControlReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
-        final KmlReader reader = new KmlReader();
-        final GxReader gxReader = new GxReader(reader);
-        reader.setInput(new File(pathToTestFile));
-        reader.addExtensionReader(gxReader);
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("gx:TourControl example", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_EXTENSIONS.getName()).size());
-
-        final Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
-        assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
-
-        assertEquals("example", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
-
-        i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
-
-        if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof PlayList);
-            final PlayList playList = (PlayList) object;
-            assertEquals(1, playList.getTourPrimitives().size());
-            assertTrue(playList.getTourPrimitives().get(0) instanceof TourControl);
-            final TourControl tourControl = (TourControl) playList.getTourPrimitives().get(0);
-            assertEquals(EnumPlayMode.PAUSE, tourControl.getPlayMode());
+    public void tourControlReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            final GxReader gxReader = new GxReader(reader);
+            reader.setInput(new File(pathToTestFile));
+            reader.addExtensionReader(gxReader);
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
         }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("gx:TourControl example", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
+
+        final Feature tour = (Feature) document.getProperty(KmlConstants.TAG_FEATURES).getValue();
+        assertEquals(GxModelConstants.TYPE_TOUR, tour.getType());
+        assertEquals("example", tour.getPropertyValue(KmlConstants.TAG_NAME));
+
+        Iterator<?> i = ((Iterable<?>) tour.getPropertyValue(KmlConstants.ATT_PLAYLIST)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+
+        final PlayList playList = (PlayList) i.next();
+        assertEquals(1, playList.getTourPrimitives().size());
+        final TourControl tourControl = (TourControl) playList.getTourPrimitives().get(0);
+        assertEquals(EnumPlayMode.PAUSE, tourControl.getPlayMode());
+
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -135,15 +100,13 @@ public class TourControlTest extends org.geotoolkit.test.TestBase {
         playList.setTourPrimitives(Arrays.asList((AbstractTourPrimitive) tourControl));
 
         final Feature tour = gxFactory.createTour();
-        Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute("example", KmlModelConstants.ATT_NAME, null));
-        tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        tour.setPropertyValue(KmlConstants.TAG_NAME, "example");
+        tour.setPropertyValue(KmlConstants.ATT_PLAYLIST, playList);
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("gx:TourControl example", KmlModelConstants.ATT_NAME, null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FeatureUtilities.wrapProperty(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_NAME, "gx:TourControl example");
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, tour);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
@@ -158,8 +121,6 @@ public class TourControlTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

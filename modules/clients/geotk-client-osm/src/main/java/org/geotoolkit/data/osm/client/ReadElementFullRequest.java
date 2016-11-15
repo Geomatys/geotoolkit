@@ -27,13 +27,13 @@ import org.geotoolkit.client.Request;
  */
 public interface ReadElementFullRequest extends Request{
 
-    Class<?> getElementType();
+    OSMType getElementType();
 
     /**
      * Set the type of element to read.
      * @param clazz : Way or Relation
      */
-    void setElementType(Class<?> clazz);
+    void setElementType(OSMType clazz);
 
     /**
      * @param id of the requested element

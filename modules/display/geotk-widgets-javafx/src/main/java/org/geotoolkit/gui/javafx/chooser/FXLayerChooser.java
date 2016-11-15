@@ -39,17 +39,15 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.internal.GeotkFX;
@@ -64,6 +62,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
 
 /**
@@ -138,7 +138,7 @@ public class FXLayerChooser extends BorderPane{
                     final FeatureStore store = (FeatureStore) source;
                     final DataStoreFactory factory = store.getFactory();
                     final Session session = store.createSession(true);
-                    final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
+                    final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
                     
                     final MutableStyle style;
                     
@@ -180,8 +180,9 @@ public class FXLayerChooser extends BorderPane{
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
-                final FeatureType ft = store.getFeatureType(name);
-                if(ft.getGeometryDescriptor() != null){
+                final FeatureType ft = store.getFeatureType(name.toString());
+                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
+                if(geomAtt != null){
                     firstCandidates.add(ft);
                 }else{
                     secondCandidates.add(ft);
@@ -230,10 +231,10 @@ public class FXLayerChooser extends BorderPane{
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final GeometryDescriptor desc = ft.getGeometryDescriptor();
+                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
                 if(desc != null){
                     BufferedImage icon;
-                    final Class binding = desc.getType().getBinding();
+                    final Class binding = desc.getValueClass();
                     if(Point.class.isAssignableFrom(binding)){
                         icon = GeotkFX.getBufferedImage("edit_single_point");
                     }else if(MultiPoint.class.isAssignableFrom(binding)){
@@ -252,7 +253,7 @@ public class FXLayerChooser extends BorderPane{
 
                      boolean editable = false;
                     try {
-                        if(store.isWritable(ft.getName())){
+                        if(store.isWritable(ft.getName().toString())){
                             editable = true;
                         }
                     } catch (DataStoreException ex) {}

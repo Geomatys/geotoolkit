@@ -17,15 +17,15 @@
 package org.geotoolkit.data;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.Test;
-import org.geotoolkit.feature.type.FeatureType;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -43,14 +43,14 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testWeakStorageListener() throws DataStoreException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test1");
-        ftb.add("att", Integer.class);
-        final FeatureType type1 = ftb.buildFeatureType();
-        ftb.reset();
+        ftb.addAttribute(Integer.class).setName("att");
+        final FeatureType type1 = ftb.build();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("test2");
-        ftb.add("att2", Integer.class);
-        final FeatureType type2 = ftb.buildFeatureType();
+        ftb.addAttribute(Integer.class).setName("att2");
+        final FeatureType type2 = ftb.build();
 
 
         final AtomicInteger count = new AtomicInteger(0);
@@ -71,12 +71,12 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
         final FeatureStoreListener.Weak ref = new FeatureStoreListener.Weak(listener);
         ref.registerSource(store);
 
-        store.createFeatureType(type1.getName(), type1);
+        store.createFeatureType(type1);
         assertEquals(1, count.get());
         listener = null;
         System.gc();
 
-        store.createFeatureType(type2.getName(), type2);
+        store.createFeatureType(type2);
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }

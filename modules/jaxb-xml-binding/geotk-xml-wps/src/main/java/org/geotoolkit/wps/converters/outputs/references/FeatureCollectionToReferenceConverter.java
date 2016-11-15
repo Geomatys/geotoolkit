@@ -20,14 +20,12 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.xml.Reference;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
 
@@ -39,6 +37,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.opengis.feature.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a FeatureCollection into a {@link Reference}.
@@ -110,9 +109,8 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             final String dataFileName = randomFileName + ".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
 
-            try {
-                FileOutputStream fos = new FileOutputStream(dataFile);
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS);
+            try (FileOutputStream fos = new FileOutputStream(dataFile);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
                 FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
@@ -131,7 +129,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
                 final OutputStream stream = new FileOutputStream(schemaFile);
                 //write featureType xsd on file
-                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
                 xmlFTWriter.write(ft, stream);
 
                 reference.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);

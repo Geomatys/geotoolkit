@@ -19,18 +19,15 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.net.URI;
-
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.xal.model.AddressDetails;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
-
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -39,413 +36,157 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public final class KmlModelConstants {
-//
-//    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public static final CoordinateReferenceSystem KML_CRS = CommonCRS.WGS84.normalizedGeographic();
     public static final String KML_NAMESPACE = "http://www.opengis.net/kml";
 
     public static final FeatureType TYPE_KML_ENTITY;
-    public static final AttributeDescriptor ATT_ID_ATTRIBUTES;
-    public static final AttributeDescriptor ATT_NAME;
-    public static final AttributeDescriptor ATT_VISIBILITY;
-    public static final AttributeDescriptor ATT_OPEN;
-    public static final AttributeDescriptor ATT_AUTHOR;
-    public static final AttributeDescriptor ATT_LINK;
-    public static final AttributeDescriptor ATT_ADDRESS;
-    public static final AttributeDescriptor ATT_ADDRESS_DETAILS;
-    public static final AttributeDescriptor ATT_PHONE_NUMBER;
-    public static final AttributeDescriptor ATT_SNIPPET;
-    public static final AttributeDescriptor ATT_DESCRIPTION;
-    public static final AttributeDescriptor ATT_VIEW;
-    public static final AttributeDescriptor ATT_TIME_PRIMITIVE;
-    public static final AttributeDescriptor ATT_STYLE_URL;
-    public static final AttributeDescriptor ATT_STYLE_SELECTOR;
-    public static final AttributeDescriptor ATT_REGION;
-    public static final AttributeDescriptor ATT_EXTENDED_DATA;
-    public static final AttributeDescriptor ATT_EXTENSIONS;
+    public static final AttributeType<IdAttributes> ATT_ID_ATTRIBUTES;
+    public static final AttributeType<String> ATT_NAME;
+    public static final AttributeType<Boolean> ATT_VISIBILITY;
+    public static final AttributeType<Boolean> ATT_OPEN;
+    public static final AttributeType<AtomPersonConstruct> ATT_AUTHOR;
+    public static final AttributeType<AtomLink> ATT_LINK;
+    public static final AttributeType<String> ATT_ADDRESS;
+    public static final AttributeType<AddressDetails> ATT_ADDRESS_DETAILS;
+    public static final AttributeType<String> ATT_PHONE_NUMBER;
+    public static final AttributeType<Object> ATT_SNIPPET;
+    public static final AttributeType<Object> ATT_DESCRIPTION;
+    public static final AttributeType<AbstractView> ATT_VIEW;
+    public static final AttributeType<AbstractTimePrimitive> ATT_TIME_PRIMITIVE;
+    public static final AttributeType<URI> ATT_STYLE_URL;
+    public static final AttributeType<AbstractStyleSelector> ATT_STYLE_SELECTOR;
+    public static final AttributeType<Region> ATT_REGION;
+    public static final AttributeType<Object> ATT_EXTENDED_DATA;
+    public static final AttributeType<Extensions> ATT_EXTENSIONS;
 
     public static final FeatureType TYPE_PLACEMARK;
-//    public static final GeometryDescriptor ATT_PLACEMARK_GEOMETRY;
-    public static final AttributeDescriptor ATT_PLACEMARK_GEOMETRY;
+    public static final AttributeType<AbstractGeometry> ATT_PLACEMARK_GEOMETRY;
 
     public static final FeatureType TYPE_NETWORK_LINK;
-    public static final AttributeDescriptor ATT_NETWORK_LINK_REFRESH_VISIBILITY;
-    public static final AttributeDescriptor ATT_NETWORK_LINK_FLY_TO_VIEW;
-    public static final AttributeDescriptor ATT_NETWORK_LINK_LINK;
+    public static final AttributeType<Boolean> ATT_NETWORK_LINK_REFRESH_VISIBILITY;
+    public static final AttributeType<Boolean> ATT_NETWORK_LINK_FLY_TO_VIEW;
+    public static final AttributeType<Link> ATT_NETWORK_LINK_LINK;
 
     public static final FeatureType TYPE_CONTAINER;
 
     public static final FeatureType TYPE_FOLDER;
-    public static final AttributeDescriptor ATT_FOLDER_FEATURES;
+    public static final FeatureAssociationRole ATT_FOLDER_FEATURES;
 
     public static final FeatureType TYPE_DOCUMENT;
-    public static final AttributeDescriptor ATT_DOCUMENT_FEATURES;
-    public static final AttributeDescriptor ATT_DOCUMENT_SCHEMAS;
+    public static final FeatureAssociationRole ATT_DOCUMENT_FEATURES;
+    public static final AttributeType<Schema> ATT_DOCUMENT_SCHEMAS;
 
     public static final FeatureType TYPE_OVERLAY;
-    public static final AttributeDescriptor ATT_OVERLAY_COLOR;
-    public static final AttributeDescriptor ATT_OVERLAY_DRAW_ORDER;
-    public static final AttributeDescriptor ATT_OVERLAY_ICON;
+    public static final AttributeType<Color> ATT_OVERLAY_COLOR;
+    public static final AttributeType<Integer> ATT_OVERLAY_DRAW_ORDER;
+    public static final AttributeType<Link> ATT_OVERLAY_ICON;
 
     public static final FeatureType TYPE_GROUND_OVERLAY;
-    public static final AttributeDescriptor ATT_GROUND_OVERLAY_ALTITUDE;
-    public static final AttributeDescriptor ATT_GROUND_OVERLAY_ALTITUDE_MODE;
-    public static final AttributeDescriptor ATT_GROUND_OVERLAY_LAT_LON_BOX;
+    public static final AttributeType<Double> ATT_GROUND_OVERLAY_ALTITUDE;
+    public static final AttributeType<EnumAltitudeMode> ATT_GROUND_OVERLAY_ALTITUDE_MODE;
+    public static final AttributeType<LatLonBox> ATT_GROUND_OVERLAY_LAT_LON_BOX;
 
     public static final FeatureType TYPE_SCREEN_OVERLAY;
-    public static final AttributeDescriptor ATT_SCREEN_OVERLAY_OVERLAYXY;
-    public static final AttributeDescriptor ATT_SCREEN_OVERLAY_SCREENXY;
-    public static final AttributeDescriptor ATT_SCREEN_OVERLAY_ROTATIONXY;
-    public static final AttributeDescriptor ATT_SCREEN_OVERLAY_SIZE;
-    public static final AttributeDescriptor ATT_SCREEN_OVERLAY_ROTATION;
+    public static final AttributeType<Vec2> ATT_SCREEN_OVERLAY_OVERLAYXY;
+    public static final AttributeType<Vec2> ATT_SCREEN_OVERLAY_SCREENXY;
+    public static final AttributeType<Vec2> ATT_SCREEN_OVERLAY_ROTATIONXY;
+    public static final AttributeType<Vec2> ATT_SCREEN_OVERLAY_SIZE;
+    public static final AttributeType<Double> ATT_SCREEN_OVERLAY_ROTATION;
 
     public static final FeatureType TYPE_PHOTO_OVERLAY;
-    public static final AttributeDescriptor ATT_PHOTO_OVERLAY_ROTATION;
-    public static final AttributeDescriptor ATT_PHOTO_OVERLAY_VIEW_VOLUME;
-    public static final AttributeDescriptor ATT_PHOTO_OVERLAY_IMAGE_PYRAMID;
-    public static final AttributeDescriptor ATT_PHOTO_OVERLAY_POINT;
-    public static final AttributeDescriptor ATT_PHOTO_OVERLAY_SHAPE;
+    public static final AttributeType<Double> ATT_PHOTO_OVERLAY_ROTATION;
+    public static final AttributeType<ViewVolume> ATT_PHOTO_OVERLAY_VIEW_VOLUME;
+    public static final AttributeType<ImagePyramid> ATT_PHOTO_OVERLAY_IMAGE_PYRAMID;
+    public static final AttributeType<Point> ATT_PHOTO_OVERLAY_POINT;
+    public static final AttributeType<Shape> ATT_PHOTO_OVERLAY_SHAPE;
 
 
     static {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-//        final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
+        FeatureTypeBuilder ftb;
 
         //-------------------- GENERIC KML ENTITY ------------------------------
-        ATT_ID_ATTRIBUTES = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.ATT_ID), IdAttributes.class,0,1,false,null);
-        ATT_NAME = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_NAME), String.class,0,1,false,null);
-        ATT_VISIBILITY = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_VISIBILITY), Boolean.class,0,1,false,null);
-        ATT_OPEN = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_OPEN), Boolean.class,0,1,false,null);
-        ATT_AUTHOR = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ATOM_AUTHOR), AtomPersonConstruct.class,0,1,false,null);
-        ATT_LINK = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ATOM_LINK), AtomLink.class,0,1,false,null);
-        ATT_ADDRESS = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ADDRESS), String.class,0,1,false,null);
-        ATT_ADDRESS_DETAILS = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_XAL_ADDRESS_DETAILS), AddressDetails.class,0,1,false,null);
-        ATT_PHONE_NUMBER = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_PHONE_NUMBER), String.class,0,1,false,null);
-        ATT_SNIPPET = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_SNIPPET), Object.class,0,1,false,null);
-        ATT_DESCRIPTION = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_DESCRIPTION), Object.class,0,1,false,null);
-        ATT_VIEW = adb.create(NamesExt.create(KML_NAMESPACE, "View"), AbstractView.class,0,1,false,null);
-        ATT_TIME_PRIMITIVE = adb.create(NamesExt.create(KML_NAMESPACE, "TimePrimitive"), AbstractTimePrimitive.class,0,1,false,null);
-        ATT_STYLE_URL = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_STYLE_URL), URI.class,0,1,false,null);
-        ATT_STYLE_SELECTOR = adb.create(NamesExt.create(KML_NAMESPACE, "StyleSelector"), AbstractStyleSelector.class,0,Integer.MAX_VALUE,false,null);
-        ATT_REGION = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_REGION), Region.class,0,1,false,null);
-        ATT_EXTENDED_DATA = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_EXTENDED_DATA), Object.class,0,Integer.MAX_VALUE,false,null);
-        ATT_EXTENSIONS = adb.create(NamesExt.create(KML_NAMESPACE, "Extensions"), Extensions.class,1,1,false,null);
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "KMLEntity");
-        ftb.setAbstract(true);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        TYPE_KML_ENTITY = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_ID_ATTRIBUTES   = ftb.addAttribute(IdAttributes.class).setName(KmlConstants.ATT_ID).build();
+        ATT_NAME            = ftb.addAttribute(String.class).setName(KmlConstants.TAG_NAME).build();
+        ATT_VISIBILITY      = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_VISIBILITY).setDefaultValue(KmlConstants.DEF_VISIBILITY).build();
+        ATT_OPEN            = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_OPEN).setDefaultValue(KmlConstants.DEF_OPEN).build();
+        ATT_AUTHOR          = ftb.addAttribute(AtomPersonConstruct.class).setName(KmlConstants.TAG_ATOM_AUTHOR).build();
+        ATT_LINK            = ftb.addAttribute(AtomLink.class).setName(KmlConstants.TAG_ATOM_LINK).build();
+        ATT_ADDRESS         = ftb.addAttribute(String.class).setName(KmlConstants.TAG_ADDRESS).build();
+        ATT_ADDRESS_DETAILS = ftb.addAttribute(AddressDetails.class).setName(KmlConstants.TAG_XAL_ADDRESS_DETAILS).build();
+        ATT_PHONE_NUMBER    = ftb.addAttribute(String.class).setName(KmlConstants.TAG_PHONE_NUMBER).build();
+        ATT_SNIPPET         = ftb.addAttribute(Object.class).setName(KmlConstants.TAG_SNIPPET).build();
+        ATT_DESCRIPTION     = ftb.addAttribute(Object.class).setName(KmlConstants.TAG_DESCRIPTION).build();
+        ATT_VIEW            = ftb.addAttribute(AbstractView.class).setName(KmlConstants.TAG_VIEW).build();
+        ATT_TIME_PRIMITIVE  = ftb.addAttribute(AbstractTimePrimitive.class).setName(KmlConstants.TAG_TIME_PRIMITIVE).build();
+        ATT_STYLE_URL       = ftb.addAttribute(URI.class).setName(KmlConstants.TAG_STYLE_URL).build();
+        ATT_STYLE_SELECTOR  = ftb.addAttribute(AbstractStyleSelector.class).setName(KmlConstants.TAG_STYLE_SELECTOR).setMaximumOccurs(Integer.MAX_VALUE).build();
+        ATT_REGION          = ftb.addAttribute(Region.class).setName(KmlConstants.TAG_REGION).build();
+        ATT_EXTENDED_DATA   = ftb.addAttribute(Object.class).setName(KmlConstants.TAG_EXTENDED_DATA).setMaximumOccurs(Integer.MAX_VALUE).build();
+        ATT_EXTENSIONS      = ftb.addAttribute(Extensions.class).setName(KmlConstants.TAG_EXTENSIONS).setMinimumOccurs(1).build();
+        TYPE_KML_ENTITY     = ftb.setName("KMLEntity").setAbstract(true).build();
 
         //-------------------- PLACEMARK ------------------------------
-//        ATT_PLACEMARK_GEOMETRY = (GeometryDescriptor) adb.create(
-//                new DefaultName(KML_NAMESPACE, "geometry"), Geometry.class,KML_CRS,0,1,false,null);
-        ATT_PLACEMARK_GEOMETRY = adb.create(NamesExt.create(KML_NAMESPACE, "geometry"), AbstractGeometry.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, KmlConstants.TAG_PLACEMARK);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_PLACEMARK_GEOMETRY);
-        ftb.setSuperType(TYPE_KML_ENTITY);
-        TYPE_PLACEMARK = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_PLACEMARK_GEOMETRY = ftb.addAttribute(AbstractGeometry.class).setName(KmlConstants.TAG_GEOMETRY).build();
+        TYPE_PLACEMARK         = ftb.setSuperTypes(TYPE_KML_ENTITY).setName(KmlConstants.TAG_PLACEMARK).build();
 
         //-------------------- NETWORK_LINK ------------------------------
-        ATT_NETWORK_LINK_REFRESH_VISIBILITY = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_REFRESH_VISIBILITY), Boolean.class,0,1,false,null);
-        ATT_NETWORK_LINK_FLY_TO_VIEW = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_FLY_TO_VIEW), Boolean.class,0,1,false,null);
-        ATT_NETWORK_LINK_LINK = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_LINK), Link.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, KmlConstants.TAG_DOCUMENT);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_NETWORK_LINK_REFRESH_VISIBILITY);
-        ftb.add(ATT_NETWORK_LINK_FLY_TO_VIEW);
-        ftb.add(ATT_NETWORK_LINK_LINK);
-        ftb.setSuperType(TYPE_KML_ENTITY);
-        TYPE_NETWORK_LINK = ftb.buildFeatureType();
-
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_NETWORK_LINK_REFRESH_VISIBILITY = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_REFRESH_VISIBILITY).setDefaultValue(KmlConstants.DEF_REFRESH_VISIBILITY).build();
+        ATT_NETWORK_LINK_FLY_TO_VIEW        = ftb.addAttribute(Boolean.class).setName(KmlConstants.TAG_FLY_TO_VIEW).setDefaultValue(KmlConstants.DEF_FLY_TO_VIEW).build();
+        ATT_NETWORK_LINK_LINK               = ftb.addAttribute(Link.class).setName(KmlConstants.TAG_LINK).build();
+        TYPE_NETWORK_LINK                   = ftb.setSuperTypes(TYPE_KML_ENTITY).setName(KmlConstants.TAG_DOCUMENT).build();
 
         //-------------------- GENERIC CONTAINER ------------------------------
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "Container");
-        ftb.setAbstract(true);
-        ftb.setSuperType(TYPE_KML_ENTITY);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        TYPE_CONTAINER = ftb.buildFeatureType();
-
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        TYPE_CONTAINER = ftb.setSuperTypes(TYPE_KML_ENTITY).setName("Container").setAbstract(true).build();
 
         //-------------------- FOLDER ------------------------------
-        ATT_FOLDER_FEATURES = adb.create(TYPE_KML_ENTITY, NamesExt.create(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, KmlConstants.TAG_FOLDER);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_FOLDER_FEATURES);
-        ftb.setSuperType(TYPE_CONTAINER);
-        TYPE_FOLDER = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
+        ATT_FOLDER_FEATURES = ftb.addAssociation(TYPE_KML_ENTITY).setName(KmlConstants.TAG_FEATURES).build();
+        TYPE_FOLDER         = ftb.setSuperTypes(TYPE_CONTAINER).setName(KmlConstants.TAG_FOLDER).build();
 
         //-------------------- DOCUMENT ------------------------------
-        ATT_DOCUMENT_FEATURES = adb.create(TYPE_KML_ENTITY, NamesExt.create(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
-        ATT_DOCUMENT_SCHEMAS = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_SCHEMA), Schema.class,0,Integer.MAX_VALUE,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, KmlConstants.TAG_DOCUMENT);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_DOCUMENT_FEATURES);
-        ftb.add(ATT_DOCUMENT_SCHEMAS);
-        ftb.setSuperType(TYPE_CONTAINER);
-        TYPE_DOCUMENT = ftb.buildFeatureType();
-
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
+        ATT_DOCUMENT_FEATURES = ftb.addAssociation(TYPE_KML_ENTITY).setName(KmlConstants.TAG_FEATURES).build();
+        ATT_DOCUMENT_SCHEMAS  = ftb.addAttribute(Schema.class).setName(KmlConstants.TAG_SCHEMA).build();
+        TYPE_DOCUMENT         = ftb.setSuperTypes(TYPE_CONTAINER).setName(KmlConstants.TAG_DOCUMENT).build();
 
         //-------------------- GENERIC OVERLAY ------------------------------
-        ATT_OVERLAY_COLOR = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_COLOR), Color.class,0,1,false,null);
-        ATT_OVERLAY_DRAW_ORDER = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Integer.class,0,1,false,null);
-        ATT_OVERLAY_ICON = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ICON), Link.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "Overlay");
-        ftb.setAbstract(true);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_OVERLAY_COLOR);
-        ftb.add(ATT_OVERLAY_DRAW_ORDER);
-        ftb.add(ATT_OVERLAY_ICON);
-        ftb.setSuperType(TYPE_KML_ENTITY);
-        TYPE_OVERLAY = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_OVERLAY_COLOR      = ftb.addAttribute(Color.class).setName(KmlConstants.TAG_COLOR).setDefaultValue(KmlConstants.DEF_COLOR).build();
+        ATT_OVERLAY_DRAW_ORDER = ftb.addAttribute(Integer.class).setName(KmlConstants.TAG_DRAW_ORDER).setDefaultValue(KmlConstants.DEF_DRAW_ORDER).build();
+        ATT_OVERLAY_ICON       = ftb.addAttribute(Link.class).setName(KmlConstants.TAG_ICON).build();
+        TYPE_OVERLAY           = ftb.setSuperTypes(TYPE_KML_ENTITY).setName("Overlay").setAbstract(true).build();
 
         //-------------------- GROUND OVERLAY ------------------------------
-        ATT_GROUND_OVERLAY_ALTITUDE = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE), Double.class,0,1,false,null);
-        ATT_GROUND_OVERLAY_ALTITUDE_MODE = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE_MODE), EnumAltitudeMode.class,0,1,false,null);
-        ATT_GROUND_OVERLAY_LAT_LON_BOX = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_LAT_LON_BOX), LatLonBox.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "Overlay");
-        ftb.setAbstract(true);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_OVERLAY_COLOR);
-        ftb.add(ATT_OVERLAY_DRAW_ORDER);
-        ftb.add(ATT_OVERLAY_ICON);
-        ftb.add(ATT_GROUND_OVERLAY_ALTITUDE);
-        ftb.add(ATT_GROUND_OVERLAY_ALTITUDE_MODE);
-        ftb.add(ATT_GROUND_OVERLAY_LAT_LON_BOX);
-        ftb.setSuperType(TYPE_OVERLAY);
-        TYPE_GROUND_OVERLAY = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_GROUND_OVERLAY_ALTITUDE      = ftb.addAttribute(Double.class).setName(KmlConstants.TAG_ALTITUDE).setDefaultValue(KmlConstants.DEF_ALTITUDE).build();
+        ATT_GROUND_OVERLAY_ALTITUDE_MODE = ftb.addAttribute(EnumAltitudeMode.class).setName(KmlConstants.TAG_ALTITUDE_MODE).setDefaultValue(KmlConstants.DEF_ALTITUDE_MODE).build();
+        ATT_GROUND_OVERLAY_LAT_LON_BOX   = ftb.addAttribute(LatLonBox.class).setName(KmlConstants.TAG_LAT_LON_BOX).build();
+        TYPE_GROUND_OVERLAY              = ftb.setSuperTypes(TYPE_OVERLAY).setName("GroundOverlay").build();
 
         //-------------------- SCREEN OVERLAY ------------------------------
-        ATT_SCREEN_OVERLAY_ROTATIONXY = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_OVERLAYXY = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_OVERLAY_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_SCREENXY = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_SCREEN_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_SIZE = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_SIZE), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_ROTATION = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "Overlay");
-        ftb.setAbstract(true);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_OVERLAY_COLOR);
-        ftb.add(ATT_OVERLAY_DRAW_ORDER);
-        ftb.add(ATT_OVERLAY_ICON);
-        ftb.add(ATT_SCREEN_OVERLAY_ROTATIONXY);
-        ftb.add(ATT_SCREEN_OVERLAY_OVERLAYXY);
-        ftb.add(ATT_SCREEN_OVERLAY_SCREENXY);
-        ftb.add(ATT_SCREEN_OVERLAY_SIZE);
-        ftb.add(ATT_SCREEN_OVERLAY_ROTATION);
-        ftb.setSuperType(TYPE_OVERLAY);
-        TYPE_SCREEN_OVERLAY = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_SCREEN_OVERLAY_ROTATIONXY = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_ROTATION_XY).build();
+        ATT_SCREEN_OVERLAY_OVERLAYXY  = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_OVERLAY_XY).build();
+        ATT_SCREEN_OVERLAY_SCREENXY   = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_SCREEN_XY).build();
+        ATT_SCREEN_OVERLAY_SIZE       = ftb.addAttribute(Vec2.class).setName(KmlConstants.TAG_SIZE).build();
+        ATT_SCREEN_OVERLAY_ROTATION   = ftb.addAttribute(Double.class).setName(KmlConstants.TAG_ROTATION).setDefaultValue(KmlConstants.DEF_ROTATION).build();
+        TYPE_SCREEN_OVERLAY           = ftb.setSuperTypes(TYPE_OVERLAY).setName("ScreenOverlay").build();
 
         //-------------------- PHOTO OVERLAY ------------------------------
-        ATT_PHOTO_OVERLAY_ROTATION = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_VIEW_VOLUME = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_VIEW_VOLUME), ViewVolume.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_IMAGE_PYRAMID), ImagePyramid.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_POINT = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_POINT), Point.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_SHAPE = adb.create(NamesExt.create(KML_NAMESPACE, KmlConstants.TAG_SHAPE), Shape.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(KML_NAMESPACE, "Overlay");
-        ftb.setAbstract(true);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_OVERLAY_COLOR);
-        ftb.add(ATT_OVERLAY_DRAW_ORDER);
-        ftb.add(ATT_OVERLAY_ICON);
-        ftb.add(ATT_PHOTO_OVERLAY_ROTATION);
-        ftb.add(ATT_PHOTO_OVERLAY_VIEW_VOLUME);
-        ftb.add(ATT_PHOTO_OVERLAY_IMAGE_PYRAMID);
-        ftb.add(ATT_PHOTO_OVERLAY_POINT);
-        ftb.add(ATT_PHOTO_OVERLAY_SHAPE);
-        ftb.setSuperType(TYPE_OVERLAY);
-        TYPE_PHOTO_OVERLAY = ftb.buildFeatureType();
-
+        ftb = new FeatureTypeBuilder().setDefaultScope(KML_NAMESPACE).setDefaultCardinality(0, 1);
+        ATT_PHOTO_OVERLAY_ROTATION = ftb.addAttribute(Double.class).setName(KmlConstants.TAG_ROTATION).setDefaultValue(KmlConstants.DEF_ROTATION).build();
+        ATT_PHOTO_OVERLAY_VIEW_VOLUME = ftb.addAttribute(ViewVolume.class).setName(KmlConstants.TAG_VIEW_VOLUME).build();
+        ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = ftb.addAttribute(ImagePyramid.class).setName(KmlConstants.TAG_IMAGE_PYRAMID).build();
+        ATT_PHOTO_OVERLAY_POINT = ftb.addAttribute(Point.class).setName(KmlConstants.TAG_POINT).build();
+        ATT_PHOTO_OVERLAY_SHAPE = ftb.addAttribute(Shape.class).setName(KmlConstants.TAG_SHAPE).build();
+        TYPE_PHOTO_OVERLAY = ftb.setSuperTypes(TYPE_OVERLAY).setName("PhotoOverlay").build();
     }
 
-    private KmlModelConstants(){}
-
+    private KmlModelConstants() {
+    }
 }

@@ -35,17 +35,15 @@ import java.util.*;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import net.sf.json.JSONObject;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.feature.type.DefaultGeometryType;
-import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
-import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
@@ -71,17 +69,8 @@ import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.wps.xml.Reference;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
-import org.geotoolkit.storage.DataStores;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
@@ -100,6 +89,10 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.ows.xml.DomainMetadata;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Property;
 import org.w3c.dom.Node;
 
 /**
@@ -139,7 +132,7 @@ public class WPSConvertersUtils {
         if (dataValue instanceof Feature) {
 
             final Feature featureIN = (Feature) dataValue;
-            DefaultFeatureType ft = (DefaultFeatureType) featureIN.getType();
+            FeatureType ft = featureIN.getType();
             fixFeatureType(featureIN, ft);
 
             return featureIN;
@@ -148,7 +141,7 @@ public class WPSConvertersUtils {
         if (dataValue instanceof FeatureCollection) {
             final FeatureCollection featureColl = (FeatureCollection) dataValue;
 
-            DefaultFeatureType ft = (DefaultFeatureType) featureColl.getFeatureType();
+            FeatureType ft = featureColl.getFeatureType();
             try (FeatureIterator featureIter = featureColl.iterator()) {
                 if (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();
@@ -168,31 +161,20 @@ public class WPSConvertersUtils {
      * @param type the featureType to fix
      * @throws UnconvertibleObjectException
      */
-    private static void fixFeatureType(final Feature featureIN, DefaultFeatureType type) throws FactoryException {
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.copy(type);
+    private static FeatureType fixFeatureType(final Feature featureIN, FeatureType type) throws FactoryException {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(type);
 
         //Fetch each geometry, get his CRS and
-        for (Property property : featureIN.getProperties()) {
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final String propertyName = property.getName().tip().toString();
-                final Geometry propertyGeom = (Geometry) property.getValue();
+        for (PropertyTypeBuilder pt : ftb.properties()) {
+            if (pt instanceof AttributeTypeBuilder && Geometry.class.isAssignableFrom( ((AttributeTypeBuilder)pt).getValueClass())) {
+                final String propertyName = pt.getName().toString();
+                final Geometry propertyGeom = (Geometry) featureIN.getPropertyValue(propertyName);
                 final CoordinateReferenceSystem extractCRS = JTS.findCoordinateReferenceSystem(propertyGeom);
-
-                final Iterator<PropertyDescriptor> ite = type.getDescriptors().iterator();
-
-                while (ite.hasNext()) {
-                    final DefaultPropertyDescriptor propertyDesc = (DefaultPropertyDescriptor) ite.next();
-
-                    if (propertyDesc.getName().tip().toString().equals(propertyName)) {
-                        final DefaultGeometryType geomType = (DefaultGeometryType) propertyDesc.getType();
-                        geomType.setCoordinateReferenceSystem(extractCRS);
-                        break;
-                    }
-                }
+                ((AttributeTypeBuilder)pt).setCRS(extractCRS);
             }
         }
+        
+        return ftb.build();
     }
 
     /**
@@ -664,38 +646,27 @@ public class WPSConvertersUtils {
      * @return A complex feature type which is the equivalent of the descriptor input.
      */
     public static FeatureType descriptorGroupToFeatureType(ParameterDescriptorGroup toConvert) {
-        final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.copy(ct);
+        final FeatureType ct = FeatureTypeExt.toFeatureType(toConvert);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(ct);
         if(NamesExt.getNamespace(ftb.getName()) == null) {
             ftb.setName("constellation-sdi/WS/wps", ftb.getName().tip().toString());
         }
-        List<PropertyDescriptor> properties = ftb.getProperties();
+
+        final List<PropertyTypeBuilder> properties = ftb.properties();
 
         for(int i = 0 ; i < properties.size(); i++) {
-            final PropertyDescriptor desc = properties.get(i);
-            final PropertyType type = desc.getType();
-            Class binded = type.getBinding();
-            if(RenderedImage.class.isAssignableFrom(binded) ||
-                    Coverage.class.isAssignableFrom(binded) ||
-                    File.class.isAssignableFrom(binded)) {
-                final DefaultPropertyType newType = new DefaultPropertyType(type.getName(),
-                        URL.class,
-                        false,
-                        type.getRestrictions(),
-                        type.getSuper(),
-                        type.getDescription());
-                final PropertyDescriptor newDesc = new DefaultPropertyDescriptor(newType,
-                        desc.getName(),
-                        desc.getMinOccurs(),
-                        desc.getMaxOccurs(),
-                        desc.isNillable());
-                properties.remove(i);
-                properties.add(i, newDesc);
-
+            final PropertyTypeBuilder desc = properties.get(i);
+            if(desc instanceof AttributeTypeBuilder){
+                final AttributeTypeBuilder atb = (AttributeTypeBuilder) desc;
+                Class binded = atb.getValueClass();
+                if(RenderedImage.class.isAssignableFrom(binded) ||
+                        Coverage.class.isAssignableFrom(binded) ||
+                        File.class.isAssignableFrom(binded)) {
+                    atb.setValueClass(URL.class);
+                }
             }
         }
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 
     /**
@@ -708,7 +679,7 @@ public class WPSConvertersUtils {
      * @param toConvert The feature to transform.
      * @param toFill The descriptor of the ParameterValueGroup which will be created.
      */
-    public static void featureToParameterGroup(String version, ComplexAttribute toConvert, ParameterValueGroup toFill) throws UnconvertibleObjectException {
+    public static void featureToParameterGroup(String version, Feature toConvert, ParameterValueGroup toFill) throws UnconvertibleObjectException {
         ArgumentChecks.ensureNonNull("feature", toConvert);
         ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
 
@@ -731,14 +702,12 @@ public class WPSConvertersUtils {
                     }
                 }
             } else if (gpd instanceof ParameterDescriptorGroup) {
-                final Collection<Property> propCollection = toConvert.getProperties(gpd.getName().getCode());
+                final Collection<Feature> propCollection = (Collection<Feature>) toConvert.getPropertyValue(gpd.getName().getCode());
                 int filledGroups = 0;
-                for (Property complex : propCollection) {
-                    if (complex instanceof ComplexAttribute) {
-                        ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
-                        featureToParameterGroup(version, (ComplexAttribute) complex, childGroup);
-                        filledGroups++;
-                    }
+                for (Feature complex : propCollection) {
+                    ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
+                    featureToParameterGroup(version, complex, childGroup);
+                    filledGroups++;
                 }
                 if(filledGroups < gpd.getMinimumOccurs()) {
                     throw new UnconvertibleObjectException("Not enough attributes have been found.");

@@ -17,35 +17,40 @@
 
 package org.geotoolkit.data.session;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
-import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.memory.WrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.internal.feature.AttributeConvention;
+
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+
 
 /**
  * Delta which modify a collection of features.
@@ -56,10 +61,10 @@ import org.opengis.util.FactoryException;
  */
 public class ModifyDelta extends AbstractDelta{
 
-    protected final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+    protected final Map<String,Object> values = new HashMap<>();
     protected Id filter;
 
-    public ModifyDelta(final Session session, final GenericName typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
+    public ModifyDelta(final Session session, final String typeName, final Id filter, final Map<String,?> values){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){
@@ -136,25 +141,26 @@ public class ModifyDelta extends AbstractDelta{
                     //wrap reprojection ----------------------------------------------------
                     if(crs != null){
                         //check we have a geometry modification
-                        boolean hasgeoModified = false;
-                        for(AttributeDescriptor desc : values.keySet()){
-                            if(desc instanceof GeometryDescriptor){
-                                hasgeoModified = true;
-                                break;
+                        final FeatureType original = session.getFeatureStore().getFeatureType(feature.getType().getName().toString());
+                        for(String desc : values.keySet()){
+                            if (AttributeConvention.isGeometryAttribute(feature.getType().getProperty(desc))) {
+                                final CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(original.getProperty(desc));
+                                if(!Utilities.equalsIgnoreMetadata(originalCRS,crs)){
+                                    MathTransform trs = CRS.findOperation(originalCRS, crs, null).getMathTransform();
+                                    Object geom = feature.getPropertyValue(desc);
+                                    if (geom instanceof Geometry) {
+                                        try {
+                                            geom = JTS.transform((Geometry) geom, trs);
+                                        } catch (MismatchedDimensionException | TransformException ex) {
+                                            throw new FeatureStoreRuntimeException(ex);
+                                        }
+                                        JTS.setCRS((Geometry) geom, crs);
+                                        feature.setPropertyValue(desc, geom);
+                                    }
+                                }
                             }
                         }
 
-                        if(hasgeoModified){
-                            final FeatureType original = session.getFeatureStore().getFeatureType(feature.getType().getName());
-                            final CoordinateReferenceSystem originalCRS = original.getCoordinateReferenceSystem();
-                            if(!Utilities.equalsIgnoreMetadata(originalCRS,crs)){
-                                final CoordinateSequenceMathTransformer trs =
-                                        new CoordinateSequenceMathTransformer(CRS.findOperation(originalCRS, crs, null).getMathTransform());
-                                GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
-                                transformer.setCoordinateReferenceSystem(crs);
-                                feature = GenericTransformFeatureIterator.apply(feature, transformer);
-                            }
-                        }
                     }
 
                 } catch (DataStoreException ex) {

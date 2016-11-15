@@ -18,12 +18,14 @@
 package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.internal.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -35,23 +37,29 @@ public class OMFeatureTypes {
     public static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
     //protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
 
+    public static final GenericName ATT_ID       = NamesExt.create(GML_311_NAMESPACE, "id");
     public static final GenericName ATT_DESC     = NamesExt.create(GML_311_NAMESPACE, "description");
     public static final GenericName ATT_NAME     = NamesExt.create(GML_311_NAMESPACE, "name");
     public static final GenericName ATT_SAMPLED  = NamesExt.create(OM_NAMESPACE, "sampledFeature");
     public static final GenericName ATT_POSITION = NamesExt.create(OM_NAMESPACE, "position");
 
-    public static Map<GenericName, FeatureType> getFeatureTypes(final String name) {
-        final Map<GenericName, FeatureType> types = new HashMap<>();
+    public static GenericNameIndex<FeatureType> getFeatureTypes(final String name) {
+        final GenericNameIndex<FeatureType> types = new GenericNameIndex<>();
         
         final GenericName OM_TN_SAMPLINGPOINT = NamesExt.create(OM_NAMESPACE, name);
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
         featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
-        featureTypeBuilder.add(ATT_DESC,String.class,0,1,true,null);
-        featureTypeBuilder.add(ATT_NAME,String.class,1,Integer.MAX_VALUE,false,null);
-        featureTypeBuilder.add(ATT_SAMPLED,String.class,0,Integer.MAX_VALUE,true,null);
-        featureTypeBuilder.add(ATT_POSITION,Geometry.class,1,1,false,null);
-        featureTypeBuilder.setDefaultGeometry(ATT_POSITION);
-        types.put(OM_TN_SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
+        featureTypeBuilder.addAttribute(String.class).setName(ATT_ID).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        featureTypeBuilder.addAttribute(String.class).setName(ATT_DESC);
+        featureTypeBuilder.addAttribute(String.class).setName(ATT_NAME).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
+        featureTypeBuilder.addAttribute(String.class).setName(ATT_SAMPLED).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+        featureTypeBuilder.addAttribute(Geometry.class).setName(ATT_POSITION).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        try {
+            types.add(OM_TN_SAMPLINGPOINT, featureTypeBuilder.build());
+        } catch (IllegalNameException ex) {
+            //won't happen
+            throw new FeatureStoreRuntimeException(ex);
+        }
         
         return types;
     }

@@ -32,6 +32,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -46,14 +48,11 @@ import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
@@ -176,7 +175,7 @@ public class ElementFeatureWriter {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
         final Attr idAttr = document.createAttributeNS(GML, "id");
-        idAttr.setValue(feature.getIdentifier().getID());
+        idAttr.setValue(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).toString());
         idAttr.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttr);
 
@@ -184,15 +183,20 @@ public class ElementFeatureWriter {
             document.appendChild(rootElement);
         }
         //write properties in the type order
-        for(final PropertyDescriptor desc : type.getDescriptors()){
-            final Collection<Property> props = feature.getProperties(desc.getName());
-            for (Property a : props) {
-                final Object valueA = a.getValue();
-                final PropertyType typeA = a.getType();
-                final GenericName nameA = a.getName();
+        for(final PropertyType desc : type.getProperties(true)){
+            if(AttributeConvention.contains(desc.getName())) continue;
+            if (desc.getName().tip().toString().startsWith("@")) {
+                //skip attributes
+               continue;
+            }
+            
+            final Collection values = Utils.propertyValueAsList(feature, desc.getName().toString());
+            for (Object valueA : values) {
+                final PropertyType typeA = desc;
+                final GenericName nameA = desc.getName();
                 final String nameProperty = nameA.tip().toString();
                 String namespaceProperty = NamesExt.getNamespace(nameA);
-                if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
+                if (valueA instanceof Collection && !(AttributeConvention.isGeometryAttribute(typeA))) {
                     for (Object value : (Collection)valueA) {
                         final Element element;
                         if (namespaceProperty != null) {
@@ -207,7 +211,7 @@ public class ElementFeatureWriter {
                         rootElement.appendChild(element);
                     }
 
-                } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
+                } else if (valueA != null && valueA.getClass().isArray() && !(AttributeConvention.isGeometryAttribute(typeA))) {
                     final int length = Array.getLength(valueA);
                     for (int i = 0; i < length; i++){
                         final Element element;
@@ -237,7 +241,7 @@ public class ElementFeatureWriter {
 
                     }
 
-                } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
+                } else if (valueA instanceof Map && !(AttributeConvention.isGeometryAttribute(typeA))) {
                     final Map<?,?> map = (Map)valueA;
                     for (Entry<?,?> entry : map.entrySet()) {
                         final Element element;
@@ -257,9 +261,9 @@ public class ElementFeatureWriter {
                         rootElement.appendChild(element);
                     }
 
-                } else if (!(typeA instanceof GeometryType)) {
+                } else if (!(AttributeConvention.isGeometryAttribute(typeA))) {
                     String value = Utils.getStringValue(valueA);
-                    if (value != null || (value == null && !a.isNillable())) {
+                    if (value != null || (value == null && !Utils.isNillable(typeA))) {
 
                         if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML.equals(namespaceProperty)) {
                             namespaceProperty = GML;
@@ -293,7 +297,7 @@ public class ElementFeatureWriter {
                         if (prefix != null) {
                             element.setPrefix(prefix.prefix);
                         }
-                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
+                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, FeatureExt.getCRS(type));
                         try {
                             final Marshaller marshaller;
                             marshaller = POOL.acquireMarshaller();

@@ -23,10 +23,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -34,7 +35,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,6 +45,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -84,7 +85,8 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        properties.put(AbstractFeatureStoreFactory.NAMESPACE.getName().getCode(), "no namespace");
+        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -96,9 +98,9 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
         store = (PostgresFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
-            VersionControl vc = store.getVersioning(n);
+            VersionControl vc = store.getVersioning(n.toString());
             vc.dropVersioning();
-            store.deleteFeatureType(n);
+            store.deleteFeatureType(n.toString());
         }
         assertTrue(store.getNames().isEmpty());
         store.close();
@@ -118,17 +120,17 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("nogeomtable");
-        ftb.add("field", String.class);
-        FeatureType ft = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("field");
+        FeatureType ft = ftb.build();
 
-        store.createFeatureType(ft.getName(), ft);
+        store.createFeatureType(ft);
 
         //test env reading all fields
         Envelope env = store.getEnvelope(QueryBuilder.all(ft.getName()));
         assertNull(env);
 
         //test env reading no fields
-        final QueryBuilder qb = new QueryBuilder(ft.getName());
+        final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
         qb.setProperties(new String[0]);
         qb.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         env = store.getEnvelope(qb.buildQuery());
@@ -154,7 +156,7 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         assertNull(env);
 
         //test env reading no fields
-        final QueryBuilder qb = new QueryBuilder(ft.getName());
+        final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
         qb.setProperties(new String[0]);
         qb.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         env = store.getEnvelope(qb.buildQuery());

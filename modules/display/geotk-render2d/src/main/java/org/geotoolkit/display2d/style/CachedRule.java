@@ -22,14 +22,14 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 
 /**
- * A cached rule is a container for cachedSymbolizer. thoses objects act
+ * A cached rule is a container for cachedSymbolizer. those objects act
  * as temporary cache while rendering.
  *
  * @author Johann Sorel (Geomatys)
@@ -40,7 +40,7 @@ public class CachedRule extends Cache<Rule>{
     private final CachedSymbolizer[] symbols;
     private final Filter preparedFilter;
 
-    public CachedRule(final Rule source,final ComplexType expected){
+    public CachedRule(final Rule source,final FeatureType expected){
         super(source);
 
         final List<? extends Symbolizer> ruleSymbols = source.symbolizers();

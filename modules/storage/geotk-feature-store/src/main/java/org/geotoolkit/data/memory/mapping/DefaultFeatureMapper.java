@@ -22,18 +22,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
+
 
 /**
  *
@@ -44,8 +46,8 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     private final FeatureType typeSource;
     private final FeatureType typeTarget;
-    private final Map<PropertyDescriptor, Object> defaults;
-    private final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping;
+    private final Map<PropertyType, Object> defaults;
+    private final Map<PropertyType, List<PropertyType>> mapping;
     private int id = 1;
 
     /**
@@ -61,18 +63,22 @@ public class DefaultFeatureMapper implements FeatureMapper {
         mapping = new HashMap<>();
         defaults = new HashMap<>();
 
-        for(PropertyDescriptor desc : typeSource.getDescriptors()){
-            final PropertyDescriptor targetDesc = typeTarget.getDescriptor(desc.getName());
-            if(targetDesc!=null){
-                mapping.put(desc, Collections.singletonList(targetDesc));
+        for(PropertyType desc : typeSource.getProperties(true)){
+            try{
+                final PropertyType targetDesc = typeTarget.getProperty(desc.getName().toString());
+                if(desc instanceof AttributeType && targetDesc instanceof AttributeType){
+                    mapping.put(desc, Collections.singletonList(targetDesc));
+                }
+            }catch(PropertyNotFoundException ex){
+                //do nothing
             }
         }
 
     }
 
     public DefaultFeatureMapper(final FeatureType typeSource, final FeatureType typeTarget,
-            final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping,
-            final Map<PropertyDescriptor, Object> defaults) {
+            final Map<PropertyType, List<PropertyType>> mapping,
+            final Map<PropertyType, Object> defaults) {
         this.typeSource = typeSource;
         this.typeTarget = typeTarget;
         this.mapping = mapping;
@@ -92,56 +98,60 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     @Override
     public Feature transform(final Feature feature) {
-        final Feature res = FeatureUtilities.defaultFeature(typeTarget, ""+id++);
+        final Feature res = typeTarget.newInstance();
 
         //set all default values
-        for (final PropertyDescriptor desc : typeTarget.getDescriptors()) {
+        for (final PropertyType desc : typeTarget.getProperties(true)) {
+            final AttributeType attType = (AttributeType) desc;
+
             Object val = defaults.get(desc);
             if (val == null) {
-                val = ((AttributeDescriptor) desc).getDefaultValue();
+                val = ((AttributeType) desc).getDefaultValue();
             }
             try {
-                res.getProperty(desc.getName()).setValue(ObjectConverters.convert(val, desc.getType().getBinding()));
+                res.setPropertyValue(desc.getName().toString(),
+                        ObjectConverters.convert(val, attType.getValueClass()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
 
-        for (final PropertyDescriptor sourceDesc : mapping.keySet()) {
-            final Object value = feature.getProperty(sourceDesc.getName()).getValue();
+        for (final PropertyType sourceDesc : mapping.keySet()) {
 
-            final List<PropertyDescriptor> links = mapping.get(sourceDesc);
+            final List<PropertyType> links = mapping.get(sourceDesc);
             if (links == null || links.isEmpty()) {
                 continue;
             }
 
-            for (final PropertyDescriptor targetDesc : links) {
-                Object converted = convert(value, sourceDesc, targetDesc);
+            final AttributeType srcType = (AttributeType) sourceDesc;
+            final Object value = feature.getPropertyValue(sourceDesc.getName().toString());
+
+            for (final PropertyType targetDesc : links) {
+                Object converted = convert(value, srcType, (AttributeType)targetDesc);
                 if (converted != null) {
-                    res.getProperty(targetDesc.getName()).setValue(converted);
+                    res.setPropertyValue(targetDesc.getName().toString(),converted);
                 }
             }
         }
 
-        res.getUserData().putAll(feature.getUserData());
         return res;
     }
 
 
-    private static Object convert(final Object value, final PropertyDescriptor source, final PropertyDescriptor target){
+    private static Object convert(final Object value, final AttributeType source, final AttributeType target){
 
         //special case for geometry attributs
-        if(source instanceof GeometryDescriptor){
-            final GeometryDescriptor sourceGeomDesc = (GeometryDescriptor) source;
+        if (AttributeConvention.isGeometryAttribute(source)) {
+            final AttributeType sourceGeomDesc = (AttributeType) source;
             Geometry candidateGeom = (Geometry) value;
 
-            if(target instanceof GeometryDescriptor){
+            if (AttributeConvention.isGeometryAttribute(target)) {
                 //must change geometry type and crs if needed
-                final GeometryDescriptor targetGeomDesc = (GeometryDescriptor) target;
+                final AttributeType targetGeomDesc = (AttributeType) target;
 
-                final CoordinateReferenceSystem sourceCRS = sourceGeomDesc.getCoordinateReferenceSystem();
-                final CoordinateReferenceSystem targetCRS = targetGeomDesc.getCoordinateReferenceSystem();
+                final CoordinateReferenceSystem sourceCRS = FeatureExt.getCRS(sourceGeomDesc);
+                final CoordinateReferenceSystem targetCRS = FeatureExt.getCRS(targetGeomDesc);
                 if(!Utilities.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
                     try {
@@ -152,21 +162,21 @@ public class DefaultFeatureMapper implements FeatureMapper {
                     }
                 }
 
-                candidateGeom = JTSMapping.convertType(candidateGeom, (Class<Geometry>) targetGeomDesc.getType().getBinding());
+                candidateGeom = JTSMapping.convertType(candidateGeom, (Class<Geometry>) targetGeomDesc.getValueClass());
                 return candidateGeom;
 
             }else{
                 //types doesnt match
                 return null;
             }
-        }else if(target instanceof GeometryDescriptor){
+        }else if(AttributeConvention.isGeometryAttribute(target)){
             //source attribut doesnt match
             return null;
         }
 
         //normal attributs type, string, numbers, dates ...
         try{
-            return ObjectConverters.convert(value, Numbers.primitiveToWrapper(target.getType().getBinding()));
+            return ObjectConverters.convert(value, Numbers.primitiveToWrapper(target.getValueClass()));
         }catch(Exception ex){
             ex.printStackTrace();
             //could not convert between types

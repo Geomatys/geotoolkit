@@ -23,8 +23,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.FeatureAssociation;
+import org.opengis.feature.Property;
 
 /**
  *
@@ -53,8 +56,8 @@ public final class TableCellEditorRenderer {
 
             if(value instanceof Property){
                 final Property prop = (Property) value;
-                sub.setValue(prop.getType(), prop.getValue());
-                prop.setValue(sub.getValue());
+                sub.setValue(FeatureExt.getType(prop), prop.getValue());
+                ((Attribute)prop).setValue(sub.getValue());
             }
 
             EmptyCellRenderer.mimicStyle(model, sub);
@@ -84,7 +87,7 @@ public final class TableCellEditorRenderer {
 
             if(value instanceof Property){
                 final Property prop = (Property) value;
-                sub.setValue(prop.getType(), prop.getValue());
+                sub.setValue(FeatureExt.getType(prop), prop.getValue());
             }
 
             return sub;

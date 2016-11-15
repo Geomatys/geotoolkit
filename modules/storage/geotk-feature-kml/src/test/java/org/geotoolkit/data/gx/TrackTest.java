@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.gx;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -25,8 +24,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -45,16 +43,11 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -67,32 +60,9 @@ public class TrackTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/track.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public TrackTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void trackReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -101,15 +71,12 @@ public class TrackTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature folder = kmlObjects.getAbstractFeature();
-        assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
+        assertEquals(KmlModelConstants.TYPE_FOLDER, folder.getType());
 
-        assertTrue(folder.getProperty(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) instanceof Feature);
-        Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        Feature placemark = (Feature) ((List)folder.getPropertyValue(KmlConstants.TAG_FEATURES)).get(0);
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
 
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Track);
-
-        final Track track = (Track) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final Track track = (Track) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
 
         assertEquals(2, track.getWhens().size());
         assertEquals(2, track.getCoord().size());
@@ -145,7 +112,6 @@ public class TrackTest extends org.geotoolkit.test.TestBase {
         assertEquals(46.54676, angles1.getHeading(), DELTA);
         assertEquals(67.2342, angles1.getTilt(), DELTA);
         assertEquals(78, angles1.getRoll(), DELTA);
-
     }
 
     @Test
@@ -175,13 +141,10 @@ public class TrackTest extends org.geotoolkit.test.TestBase {
         track.setAngles(Arrays.asList(angles0, angles1));
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute(track, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, track);
 
         final Feature folder = kmlFactory.createFolder();
-        Collection<Property> folderProperties = folder.getProperties();
-        folderProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
@@ -195,7 +158,6 @@ public class TrackTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

@@ -30,37 +30,38 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+
 
 /**
  *
  * @author Johann Sorel (geomatys)
- * @module pending
  */
 public class KrigingProcess extends AbstractProcess {
 
@@ -71,8 +72,7 @@ public class KrigingProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException{
         final CoordinateReferenceSystem crs = value(IN_CRS, inputParameters);
-//        final double step                   = value(IN_STEP, inputParameters);
-        double step                   = value(IN_STEP, inputParameters);
+        double step                         = value(IN_STEP, inputParameters);
         final DirectPosition[] coords       = value(IN_POINTS, inputParameters);
         final Dimension maxDim              = value(IN_DIMENSION, inputParameters);
 
@@ -90,7 +90,7 @@ public class KrigingProcess extends AbstractProcess {
         final double[] y = new double[s];
         final double[] z = new double[s];
 
-        for(int i=0;i<s;i++) {
+        for (int i=0;i<s;i++) {
             final double cx = coords[i].getOrdinate(0);
             final double cy = coords[i].getOrdinate(1);
             final double cz = coords[i].getOrdinate(2);
@@ -205,10 +205,9 @@ public class KrigingProcess extends AbstractProcess {
         final GeometryFactory GF = new GeometryFactory();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("isoline");
-        ftb.add("geometry", LineString.class, crs);
-        ftb.add("value", Double.class);
-        ftb.setDefaultGeometry("geometry");
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(LineString.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Double.class).setName("value");
+        final FeatureType type = ftb.build();
 
         final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
@@ -224,16 +223,17 @@ public class KrigingProcess extends AbstractProcess {
             final LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
             final double value = p.z;
 
-            final Feature f = FeatureUtilities.defaultFeature(type, String.valueOf(inc++));
-            f.getProperty("geometry").setValue(geometry);
-            f.getProperty("value").setValue(value);
+            final Feature f = type.newInstance();
+            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), String.valueOf(inc++));
+            f.setPropertyValue("geometry", geometry);
+            f.setPropertyValue("value", value);
             col.add(f);
         }
 
         ///////////////  debug///////////////////////
         FeatureIterator featIter = col.iterator();
 
-        final List<Shape> shapes = new ArrayList<Shape>();
+        final List<Shape> shapes = new ArrayList<>();
 
 
         while (featIter.hasNext()) {
@@ -305,5 +305,4 @@ public class KrigingProcess extends AbstractProcess {
         gcb.setRenderedImage(matrix);
         return gcb.getGridCoverage2D();
     }
-
 }

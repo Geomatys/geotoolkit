@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,7 @@
 package org.geotoolkit.filter;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -28,25 +26,20 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Attribute;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 
 
@@ -64,8 +57,6 @@ public class FilterTestConstants {
     public static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final GeometryFactory GF = new GeometryFactory();
-
-    public static final FeatureFactory FEAF = new ValidatingFeatureFactory();
 
     public static final Geometry RIGHT_GEOMETRY;
     public static final Geometry WRONG_GEOMETRY;
@@ -102,8 +93,8 @@ public class FilterTestConstants {
         DATE = calendar.getTime();
 
         // Builds the test candidate
-        final Map<String,Object> candidate = new HashMap<String, Object>();
-        candidate.put("@id", "testFeatureType.1");
+        final Map<String,Object> candidate = new HashMap<>();
+        candidate.put(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "testFeatureType.1");
         candidate.put("testGeometry", RIGHT_GEOMETRY);
         candidate.put("testBoolean", Boolean.TRUE);
         candidate.put("testCharacter", 't');
@@ -125,99 +116,93 @@ public class FilterTestConstants {
         // assign the candidate
         CANDIDATE_1 = candidate;
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testFeatureType");
-        ftb.add("testGeometry", Polygon.class, crs);
-        ftb.add("testBoolean", Boolean.class);
-        ftb.add("testCharacter", Character.class);
-        ftb.add("testByte", Byte.class);
-        ftb.add("testShort", Short.class);
-        ftb.add("testInteger", Integer.class);
-        ftb.add("testLong", Long.class);
-        ftb.add("testFloat", Float.class);
-        ftb.add("testDouble", Double.class);
-        ftb.add("testString", String.class);
-        ftb.add("testString2", String.class);
-        ftb.add("date", java.sql.Date.class);
-        ftb.add("time", java.sql.Time.class);
-        ftb.add("datetime1", java.util.Date.class);
-        ftb.add("datetime2", java.sql.Timestamp.class);
-        ftb.add("testNull", String.class);
-        ftb.add("attribut.Géométrie", String.class);
-        final FeatureType ft = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(Polygon.class).setName("testGeometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Boolean.class).setName("testBoolean");
+        ftb.addAttribute(Character.class).setName("testCharacter");
+        ftb.addAttribute(Byte.class).setName("testByte");
+        ftb.addAttribute(Short.class).setName("testShort");
+        ftb.addAttribute(Integer.class).setName("testInteger");
+        ftb.addAttribute(Long.class).setName("testLong");
+        ftb.addAttribute(Float.class).setName("testFloat");
+        ftb.addAttribute(Double.class).setName("testDouble");
+        ftb.addAttribute(String.class).setName("testString");
+        ftb.addAttribute(String.class).setName("testString2");
+        ftb.addAttribute(java.sql.Date.class).setName("date");
+        ftb.addAttribute(java.sql.Time.class).setName("time");
+        ftb.addAttribute(java.util.Date.class).setName("datetime1");
+        ftb.addAttribute(java.sql.Timestamp.class).setName("datetime2");
+        ftb.addAttribute(String.class).setName("testNull");
+        ftb.addAttribute(String.class).setName("attribut.Géométrie");
+        final FeatureType ft = ftb.build();
 
         // Builds the test feature
-        final Collection<Property> properties = new ArrayList<Property>();
-        properties.add(FEAF.createAttribute(RIGHT_GEOMETRY, (AttributeDescriptor) ft.getDescriptor("testGeometry"), null));
-        properties.add(FEAF.createAttribute(Boolean.TRUE, (AttributeDescriptor) ft.getDescriptor("testBoolean"), null));
-        properties.add(FEAF.createAttribute('t', (AttributeDescriptor) ft.getDescriptor("testCharacter"), null));
-        properties.add(FEAF.createAttribute((byte)101, (AttributeDescriptor) ft.getDescriptor("testByte"), null));
-        properties.add(FEAF.createAttribute((short)101, (AttributeDescriptor) ft.getDescriptor("testShort"), null));
-        properties.add(FEAF.createAttribute(101, (AttributeDescriptor) ft.getDescriptor("testInteger"), null));
-        properties.add(FEAF.createAttribute(101l, (AttributeDescriptor) ft.getDescriptor("testLong"), null));
-        properties.add(FEAF.createAttribute(101f, (AttributeDescriptor) ft.getDescriptor("testFloat"), null));
-        properties.add(FEAF.createAttribute(101d, (AttributeDescriptor) ft.getDescriptor("testDouble"), null));
-        properties.add(FEAF.createAttribute("test string data", (AttributeDescriptor) ft.getDescriptor("testString"), null));
-        properties.add(FEAF.createAttribute("cow $10", (AttributeDescriptor) ft.getDescriptor("testString2"), null));
-        properties.add(FEAF.createAttribute(new java.sql.Date(DATE.getTime()), (AttributeDescriptor) ft.getDescriptor("date"), null));
-        properties.add(FEAF.createAttribute(new java.sql.Time(DATE.getTime()), (AttributeDescriptor) ft.getDescriptor("time"), null));
-        properties.add(FEAF.createAttribute(DATE, (AttributeDescriptor) ft.getDescriptor("datetime1"), null));
-        Timestamp stamp = new java.sql.Timestamp(DATE.getTime());
-        properties.add(FEAF.createAttribute(stamp, (AttributeDescriptor) ft.getDescriptor("datetime2"), null));
-        properties.add(FEAF.createAttribute(null, (AttributeDescriptor) ft.getDescriptor("testNull"), null));
-        properties.add(FEAF.createAttribute("POINT(45,32)", (AttributeDescriptor) ft.getDescriptor("attribut.Géométrie"), null));
-
         FEATURE_TYPE_1 = ft;
-        FEATURE_1 = FEAF.createFeature(properties, ft, "testFeatureType.1");
+        FEATURE_1 = ft.newInstance();
+        FEATURE_1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "testFeatureType.1");
+        FEATURE_1.setPropertyValue("testGeometry", RIGHT_GEOMETRY);
+        FEATURE_1.setPropertyValue("testBoolean", Boolean.TRUE);
+        FEATURE_1.setPropertyValue("testCharacter", 't');
+        FEATURE_1.setPropertyValue("testByte",(byte)101);
+        FEATURE_1.setPropertyValue("testShort",(short)101);
+        FEATURE_1.setPropertyValue("testInteger",101);
+        FEATURE_1.setPropertyValue("testLong",101l);
+        FEATURE_1.setPropertyValue("testFloat",101f);
+        FEATURE_1.setPropertyValue("testDouble",101d);
+        FEATURE_1.setPropertyValue("testString","test string data");
+        FEATURE_1.setPropertyValue("testString2","cow $10");
+        FEATURE_1.setPropertyValue("date",new java.sql.Date(DATE.getTime()));
+        FEATURE_1.setPropertyValue("time",new java.sql.Time(DATE.getTime()));
+        FEATURE_1.setPropertyValue("datetime1",DATE);
+        Timestamp stamp = new java.sql.Timestamp(DATE.getTime());
+        FEATURE_1.setPropertyValue("datetime2",stamp);
+        FEATURE_1.setPropertyValue("testNull",null);
+        FEATURE_1.setPropertyValue("attribut.Géométrie","POINT(45,32)");
+
 
 
         ///////////// COMPLEX TYPE //////////////////////////
 
-        ftb.reset();
-        ftb.setName("{http://test.com}cpxatt");
-        ftb.add("{http://test.com}attString", String.class,0,12,true,null);
-        ftb.add("{http://test2.com}attString", String.class,0,12,true,null);
-        ftb.add("{http://test.com}attDouble", Double.class,0,12,true,null);
-        ftb.add("{http://test.com}attDate", Date.class,0,12,true,null);
-        ComplexType ct = ftb.buildType();
+        ftb = new FeatureTypeBuilder();
+        ftb.setName("http://test.com","cpxatt");
+        ftb.addAttribute(String.class).setName("http://test.com","attString").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(String.class).setName("http://test2.com","attString").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(Double.class).setName("http://test.com","attDouble").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(Date.class).setName("http://test.com","attDate").setMinimumOccurs(0).setMaximumOccurs(12);
+        final FeatureType ct = ftb.build();
 
-        ftb.reset();
-        ftb.setName("{http://test.com}test");
-        ftb.add("{http://test.com}attString", String.class,0,12,true,null);
-        ftb.add("{http://test2.com}attString", String.class,0,12,true,null);
-        ftb.add("{http://test.com}attDouble", Double.class,0,12,true,null);
-        ftb.add("{http://test.com}attDate", Date.class,0,12,true,null);
-        ftb.add(ct,NamesExt.valueOf("{http://test.com}attCpx"),null,0,10,true,null);
+        ftb = new FeatureTypeBuilder();
+        ftb.setName("http://test.com","test");
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("http://test.com","attString").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(String.class).setName("http://test2.com","attString").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(Double.class).setName("http://test.com","attDouble").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAttribute(Date.class).setName("http://test.com","attDate").setMinimumOccurs(0).setMaximumOccurs(12);
+        ftb.addAssociation(ct).setName("http://test.com","attCpx").setMinimumOccurs(0).setMaximumOccurs(10);
 
-        CX_FEATURE_TYPE = ftb.buildFeatureType();
+        CX_FEATURE_TYPE = ftb.build();
 
-        final AttributeDescriptor pd = (AttributeDescriptor) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attCpx");
-        ct = (ComplexType) pd.getType();
 
-        final Collection<Property> props = new ArrayList<Property>();
-        props.add(FEAF.createAttribute("toto19",       (AttributeDescriptor) ct.getDescriptor("{http://test.com}attString"), null));
-        props.add(FEAF.createAttribute("marcel1",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
-        props.add(FEAF.createAttribute("marcel5",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
-        props.add(FEAF.createAttribute(45d,           (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDouble"), null));
-        props.add(FEAF.createAttribute(new Date(),    (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDate"), null));
-        final Attribute ce1 = FEAF.createComplexAttribute(props, pd, null);
+        final Feature ce1 = ct.newInstance();
+        ce1.setPropertyValue("http://test.com:attString","toto19");
+        ce1.setPropertyValue("http://test2.com:attString",Arrays.asList("marcel1","marcel5"));
+        ce1.setPropertyValue("http://test.com:attDouble",45d);
+        ce1.setPropertyValue("http://test.com:attDate",new Date());
 
-        props.clear();
-        props.add(FEAF.createAttribute("toto41",       (AttributeDescriptor) ct.getDescriptor("{http://test.com}attString"), null));
-        props.add(FEAF.createAttribute("marcel2",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
-        props.add(FEAF.createAttribute("marcel3",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
-        props.add(FEAF.createAttribute("marcel5",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
-        props.add(FEAF.createAttribute(45d,           (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDouble"), null));
-        props.add(FEAF.createAttribute(new Date(),    (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDate"), null));
-        final Attribute ce2 = FEAF.createComplexAttribute(props, pd, null);
+        final Feature ce2 = ct.newInstance();
+        ce2.setPropertyValue("http://test.com:attString","toto41");
+        ce2.setPropertyValue("http://test2.com:attString",Arrays.asList("marcel2","marcel3","marcel5"));
+        ce2.setPropertyValue("http://test.com:attDouble",45d);
+        ce2.setPropertyValue("http://test.com:attDate",new Date());
 
-        props.clear();
-        props.add(FEAF.createAttribute("toto1", (AttributeDescriptor) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), null));
-        props.add(FEAF.createAttribute("toto2", (AttributeDescriptor) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), null));
-        props.add(FEAF.createAttribute("toto3", (AttributeDescriptor) CX_FEATURE_TYPE.getDescriptor("{http://test2.com}attString"), null));
-        props.add(ce1);
-        props.add(ce2);
-        CX_FEATURE = FEAF.createFeature(props, CX_FEATURE_TYPE, "id");
+
+        CX_FEATURE = CX_FEATURE_TYPE.newInstance();
+        CX_FEATURE.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id");
+        CX_FEATURE.setPropertyValue("http://test.com:attString",Arrays.asList("toto1","toto2"));
+        CX_FEATURE.setPropertyValue("http://test2.com:attString","toto3");
+        CX_FEATURE.setPropertyValue("http://test.com:attCpx",Arrays.asList(ce1,ce2));
     }
 
 

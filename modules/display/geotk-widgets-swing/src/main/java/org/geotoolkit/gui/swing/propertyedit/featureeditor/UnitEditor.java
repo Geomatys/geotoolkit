@@ -29,8 +29,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.type.PropertyType;
 import org.apache.sis.measure.Units;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -86,7 +87,7 @@ public class UnitEditor extends PropertyValueEditor implements ActionListener {
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Unit.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && Unit.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

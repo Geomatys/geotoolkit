@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.visitor;
 
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -30,9 +30,9 @@ import org.opengis.filter.expression.PropertyName;
 public class PrepareFilterVisitor extends SimplifyingFilterVisitor{
     
     private final Class clazz;
-    private final ComplexType expectedType;
+    private final FeatureType expectedType;
 
-    public PrepareFilterVisitor(final Class clazz,final ComplexType expectedType){
+    public PrepareFilterVisitor(final Class clazz,final FeatureType expectedType){
         this.clazz = clazz;
         this.expectedType = expectedType;
     }

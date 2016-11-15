@@ -31,7 +31,6 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
@@ -39,6 +38,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -208,8 +208,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
         final Number value;
         if(object instanceof Feature){
-            final Feature f = (Feature)object;
-            value = lookup.evaluate(f,Number.class);
+            value = lookup.evaluate(object,Number.class);
         }else if(object instanceof Number){
             value = (Number)object;
         }else{

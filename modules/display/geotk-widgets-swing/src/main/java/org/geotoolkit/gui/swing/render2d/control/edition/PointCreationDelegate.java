@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
 import java.awt.event.MouseEvent;
 
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;

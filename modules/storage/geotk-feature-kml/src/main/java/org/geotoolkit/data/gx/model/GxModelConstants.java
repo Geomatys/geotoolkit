@@ -17,17 +17,13 @@
 
 package org.geotoolkit.data.gx.model;
 
+import org.opengis.feature.AttributeType;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.gx.xml.GxConstants;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.FeatureTypeFactory;
-
+import org.opengis.feature.FeatureType;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
+
 
 /**
  *
@@ -35,49 +31,19 @@ import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
  * @module pending
  */
 public class GxModelConstants {
-
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
     public static final String GX_NAMESPACE = "http://www.google.com/kml/ext/2.2";
 
     public static final FeatureType TYPE_TOUR;
-    public static final AttributeDescriptor ATT_TOUR_PLAY_LIST;
+    public static final AttributeType<PlayList> ATT_TOUR_PLAY_LIST;
 
     static {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder().setDefaultScope(GX_NAMESPACE).setDefaultCardinality(0, Integer.MAX_VALUE);
 
         //-------------------- TOUR ------------------------------
-        ATT_TOUR_PLAY_LIST = adb.create(NamesExt.create(GX_NAMESPACE, "playList"), PlayList.class,0,1,false,null);
-
-        ftb.reset();
-        ftb.setName(GX_NAMESPACE, GxConstants.TAG_TOUR);
-        ftb.add(ATT_ID_ATTRIBUTES);
-        ftb.add(ATT_NAME);
-        ftb.add(ATT_VISIBILITY);
-        ftb.add(ATT_OPEN);
-        ftb.add(ATT_AUTHOR);
-        ftb.add(ATT_LINK);
-        ftb.add(ATT_ADDRESS);
-        ftb.add(ATT_ADDRESS_DETAILS);
-        ftb.add(ATT_PHONE_NUMBER);
-        ftb.add(ATT_SNIPPET);
-        ftb.add(ATT_DESCRIPTION);
-        ftb.add(ATT_VIEW);
-        ftb.add(ATT_TIME_PRIMITIVE);
-        ftb.add(ATT_STYLE_URL);
-        ftb.add(ATT_STYLE_SELECTOR);
-        ftb.add(ATT_REGION);
-        ftb.add(ATT_EXTENDED_DATA);
-        ftb.add(ATT_EXTENSIONS);
-        ftb.add(ATT_PLACEMARK_GEOMETRY);
-        ftb.add(ATT_TOUR_PLAY_LIST);
-        ftb.setSuperType(TYPE_KML_ENTITY);
-        TYPE_TOUR = ftb.buildFeatureType();
-
+        ATT_TOUR_PLAY_LIST = ftb.addAttribute(PlayList.class).setName(KmlConstants.ATT_PLAYLIST).build();
+        TYPE_TOUR = ftb.setSuperTypes(TYPE_KML_ENTITY).setName(GxConstants.TAG_TOUR).build();
     }
 
-    private GxModelConstants(){}
-
+    private GxModelConstants() {
+    }
 }

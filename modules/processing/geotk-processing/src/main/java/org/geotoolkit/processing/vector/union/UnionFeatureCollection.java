@@ -20,41 +20,45 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.opengis.feature.AttributeType;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
+
 
 /**
  * FeatureCollection for Union process
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class UnionFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final FeatureCollection unionFC;
-    private final String inputGeomName; /* Geometry attribute name form inputFC used to compute intersections */
 
-    private final String unionGeomName; /* Geometry attribute name form unionFC used to compute intersections */
+    /** Geometry attribute name form inputFC used to compute intersections */
+    private final String inputGeomName;
 
+    /** Geometry attribute name form unionFC used to compute intersections */
+    private final String unionGeomName;
 
     /**
      * Connect to the original FeatureConnection
-     * @param originalFC FeatureCollection
-     * @param intersList FeatureCollection
      */
     public UnionFeatureCollection(final FeatureCollection inputFC, final FeatureCollection unionFC,
-            final String inputGeomName, final String unionGeomName) {
-
+            final String inputGeomName, final String unionGeomName)
+    {
         super(inputFC);
         this.unionFC = unionFC;
 
@@ -66,16 +70,17 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          */
         CoordinateReferenceSystem geometryCRS;
         if (inputGeomName == null) {
-            this.inputGeomName = inputFC.getFeatureType().getGeometryDescriptor().getName().tip().toString();
-            geometryCRS = inputFC.getFeatureType().getGeometryDescriptor().getCoordinateReferenceSystem();
+            final PropertyType property = inputFC.getFeatureType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            this.inputGeomName = property.getName().tip().toString();
+            geometryCRS = FeatureExt.getCRS(property);
         } else {
             this.inputGeomName = inputGeomName;
-            final GeometryDescriptor buffDesc = (GeometryDescriptor) inputFC.getFeatureType().getDescriptor(inputGeomName);
-            geometryCRS = buffDesc.getCoordinateReferenceSystem();
+            final AttributeType<?> buffDesc = (AttributeType<?>) inputFC.getFeatureType().getProperty(inputGeomName);
+            geometryCRS = FeatureExt.getCRS(buffDesc);
         }
 
         if (unionGeomName == null) {
-            this.unionGeomName = unionFC.getFeatureType().getGeometryDescriptor().getName().tip().toString();
+            this.unionGeomName = AttributeConvention.GEOMETRY_PROPERTY.toString();
         } else {
             this.unionGeomName = unionGeomName;
         }
@@ -83,12 +88,10 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         // Create the new FeatureType which concatenate two FeatureCollection FeatureType but with only one geometry
         // (inputGeomName)
         this.newFeatureType = UnionProcess.mergeType(inputFC.getFeatureType(), unionFC.getFeatureType(), this.inputGeomName, geometryCRS);
-
     }
 
     /**
      * Return the new FeatureType
-     * @return FeatureType
      */
     @Override
     public FeatureType getFeatureType() {
@@ -110,10 +113,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
             } else {
                 return UnionProcess.unionFeatureToFC(original, newFeatureType, getOriginalFeatureCollection(), unionGeomName, inputGeomName, firstPass, featureList);
             }
-
-        } catch (TransformException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        } catch (FactoryException ex) {
+        } catch (TransformException | FactoryException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }
@@ -154,7 +154,6 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
 
         /**
          * Connect to the original FeatureIterator
-         * @param originalFI FeatureIterator
          */
         public IntersectionFeatureIterator(final FeatureIterator originalFI, final FeatureIterator unionFI) {
             this.originalFI = originalFI;
@@ -163,13 +162,11 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
             nextFC = null;
             ite = null;
             firstPass = true;
-
-            featureList = new HashSet<String>();
+            featureList = new HashSet<>();
         }
 
         /**
          * Return the Feature modify by the process
-         * @return Feature
          */
         @Override
         public Feature next() {
@@ -210,15 +207,13 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         }
 
         /**
-         * Find the next feature 
+         * Find the next feature
          */
         private void findNext() {
             if (nextFeature != null) {
                 return;
             }
-
             while (nextFeature == null) {
-
                 if (nextFC != null) {
                     if (ite.hasNext()) {
                         nextFeature = ite.next();

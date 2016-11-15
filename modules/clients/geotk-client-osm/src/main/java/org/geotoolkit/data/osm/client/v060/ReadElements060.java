@@ -18,10 +18,8 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractReadElements;
+import org.geotoolkit.data.osm.client.OSMType;
 import org.geotoolkit.data.osm.client.OpenStreetMapClient;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -39,11 +37,11 @@ public class ReadElements060 extends AbstractReadElements{
     protected String getSubPath() {
 
         final String strType;
-        if(Node.class.equals(type)){
+        if(OSMType.NODE.equals(type)){
             strType = "nodes";
-        }else if(Way.class.equals(type)){
+        }else if(OSMType.WAY.equals(type)){
             strType = "ways";
-        }else if(Relation.class.equals(type)){
+        }else if(OSMType.RELATION.equals(type)){
             strType = "relations";
         }else{
             throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
@@ -61,11 +59,11 @@ public class ReadElements060 extends AbstractReadElements{
         requestParameters.clear();
 
         final String strType;
-        if(Node.class.equals(type)){
+        if(OSMType.NODE.equals(type)){
             strType = "nodes";
-        }else if(Way.class.equals(type)){
+        }else if(OSMType.WAY.equals(type)){
             strType = "ways";
-        }else if(Relation.class.equals(type)){
+        }else if(OSMType.RELATION.equals(type)){
             strType = "relations";
         }else{
             throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);

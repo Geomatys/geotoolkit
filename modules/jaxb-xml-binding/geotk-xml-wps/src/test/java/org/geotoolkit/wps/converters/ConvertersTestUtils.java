@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -48,9 +49,6 @@ import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
@@ -62,6 +60,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.util.FactoryException;
 
 /**
@@ -194,14 +194,12 @@ public final class ConvertersTestUtils {
         Object testResource = null;
         if ("/inputs/geometry.json".equals(resourcePath)) {
             final Feature feature = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-            final GeometryAttribute geometryAttribute = feature.getDefaultGeometryProperty();
+            final Object geometryValue = FeatureExt.getDefaultGeometryAttributeValue(feature);
 
-            assertNotNull(geometryAttribute);
-
-            if (!(geometryAttribute.getValue() instanceof Geometry))
+            if (!(geometryValue instanceof Geometry))
                 fail();
 
-            testResource = geometryAttribute.getValue();
+            testResource = geometryValue;
         }
         else if ("/inputs/geometrycollection.json".equals(resourcePath))
             testResource = ConvertersTestUtils.getGeometryArrayFromTestFolder(resourcePath);
@@ -436,22 +434,13 @@ public final class ConvertersTestUtils {
             // feature collection
             while (iterator.hasNext()) {
                 final Feature feature = iterator.next();
-                final GeometryAttribute geometryAttribute = feature.getDefaultGeometryProperty();
+                final Object geometryValue = FeatureExt.getDefaultGeometryAttributeValue(feature);
 
-                assertNotNull(geometryAttribute);
-                assertTrue(geometryAttribute.getValue() instanceof Geometry);
+                assertTrue(geometryValue instanceof Geometry);
 
-                final Geometry currentGeometry = (Geometry) geometryAttribute.getValue();
-                final Collection<Property> nameProperties = feature.getProperties("name");
+                final Geometry currentGeometry = (Geometry) geometryValue;
+                final String propertyValue = ((String)feature.getPropertyValue("name"));
 
-                assertEquals(nameProperties.size(), 1);
-
-                final Iterator<Property> propertyIterator = nameProperties.iterator();
-                final Property property = propertyIterator.next();
-
-                assertTrue(property.getValue() instanceof String);
-
-                final String propertyValue = (String) property.getValue();
                 final Coordinate pointCoordinates = currentGeometry.getCoordinate();
                 final Coordinate[] polygonCoordinates = currentGeometry.getCoordinates();
 
@@ -504,14 +493,10 @@ public final class ConvertersTestUtils {
      * @param feature the feature to test
      */
     public static void assertFeatureIsValid(final Feature feature) {
-        assertEquals(1, feature.getProperties("name").size());
-        Iterator<Property> iterator = feature.getProperties("name").iterator();
-        Property property = iterator.next();
-        assertTrue(property.getValue() instanceof String);
-        assertEquals(property.getValue(), "Plaza Road Park");
+        final String propertyValue = ((String)feature.getPropertyValue("name"));
+        assertEquals(propertyValue, "Plaza Road Park");
 
-        GeometryAttribute geometryAttribute = feature.getDefaultGeometryProperty();
-        Object value = geometryAttribute.getValue();
+        Object value = FeatureExt.getDefaultGeometryAttributeValue(feature);
 
         assertTrue(value instanceof Polygon);
         Polygon polygon = (Polygon) value;

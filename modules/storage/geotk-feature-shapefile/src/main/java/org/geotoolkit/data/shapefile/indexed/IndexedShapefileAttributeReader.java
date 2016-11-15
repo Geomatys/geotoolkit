@@ -26,8 +26,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.index.CloseableCollection;
 import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
 
 /**
  * An AttributeReader implementation for shape. Pretty straightforward. <BR/>The
@@ -58,7 +57,7 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
      * @param goodRecs Collection of good indexes that match the query.
      */
     public IndexedShapefileAttributeReader(final AccessManager locker,            
-            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final AttributeType[] atts, final boolean read3D, final boolean memoryMapped,
             final double[] resample, final boolean readDBF, final Charset charset,
             final double[] estimateRes, final CloseableCollection<ShpData> col, final T goodRecs) 
             throws IOException, DataStoreException {

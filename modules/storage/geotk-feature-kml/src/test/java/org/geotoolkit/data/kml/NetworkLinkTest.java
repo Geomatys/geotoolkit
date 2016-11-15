@@ -25,16 +25,14 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -46,10 +44,6 @@ import static org.junit.Assert.*;
 public class NetworkLinkTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/networkLink.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public NetworkLinkTest() {
-    }
 
     @Test
     public void networkLinkReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
@@ -60,21 +54,15 @@ public class NetworkLinkTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertFalse((Boolean) document.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
+        assertEquals(Boolean.FALSE, document.getPropertyValue(KmlConstants.TAG_VISIBILITY));
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature networkLink = (Feature) object;
-            assertEquals("NE US Radar", networkLink.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertTrue((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
-            assertTrue((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
-        }
-
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Feature networkLink = (Feature) i.next();
+        assertEquals("NE US Radar", networkLink.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, networkLink.getPropertyValue(KmlConstants.TAG_REFRESH_VISIBILITY));
+        assertEquals(Boolean.TRUE, networkLink.getPropertyValue(KmlConstants.TAG_FLY_TO_VIEW));
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -82,13 +70,13 @@ public class NetworkLinkTest extends org.geotoolkit.test.TestBase {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature networkLink = kmlFactory.createNetworkLink();
-        networkLink.getProperties().add(FF.createAttribute("NE US Radar", KmlModelConstants.ATT_NAME, null));
-        networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).setValue(Boolean.TRUE);
-        networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).setValue(Boolean.TRUE);
+        networkLink.setPropertyValue(KmlConstants.TAG_NAME, "NE US Radar");
+        networkLink.setPropertyValue(KmlConstants.TAG_REFRESH_VISIBILITY, Boolean.TRUE);
+        networkLink.setPropertyValue(KmlConstants.TAG_FLY_TO_VIEW, Boolean.TRUE);
 
         final Feature document = kmlFactory.createDocument();
-        document.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
-        document.getProperties().add(FeatureUtilities.wrapProperty(networkLink, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_VISIBILITY, Boolean.FALSE);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, networkLink);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -100,7 +88,6 @@ public class NetworkLinkTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

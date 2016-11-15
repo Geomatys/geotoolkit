@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,10 +21,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -32,13 +30,17 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.Features;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.Namespaces;
+import org.geotoolkit.feature.xml.GMLConvention;
+import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
+import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.FormChoice;
@@ -48,15 +50,12 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.util.NamesExt;
-
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.OperationDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
-import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -65,7 +64,7 @@ import org.w3c.dom.Node;
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFeatureTypeWriter {
+public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
@@ -77,46 +76,46 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     private static final QName ABSTRACT_FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeature");
     private static final QName ABSTRACT_FEATURE_TYPE_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType");
 
-    private int lastUnknowPrefix = 0;
-
-    private final Map<String, String> unknowNamespaces = new HashMap<>();
-
     private final String gmlVersion;
 
-    public JAXBFeatureTypeWriter(){
-        gmlVersion = "3.1.1";
+    public JAXBFeatureTypeWriter() {
+        this("3.1.1");
     }
 
-    public JAXBFeatureTypeWriter(final String gmlVersion){
+    public JAXBFeatureTypeWriter(String gmlVersion) {
         this.gmlVersion = gmlVersion;
     }
 
     /**
-     * {@inheritDoc }
+     * Return an XML representation of the specified featureType.
+     *
+     * @param feature The featureType to marshall.
+     * @return An XML string representing the featureType.
      */
-    @Override
-    public String write(final FeatureType feature) throws JAXBException {
+    public String write(FeatureType feature) throws JAXBException {
         final StringWriter sw = new StringWriter();
         write(feature,sw);
         return sw.toString();
     }
 
     /**
-     * {@inheritDoc }
+     * Write an XML representation of the specified featureType into the Writer.
+     *
+     * @param feature The featureType to marshall.
      */
-    @Override
-    public void write(final FeatureType feature, final Writer writer) throws JAXBException {
+    public void write(FeatureType feature, Writer writer) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
         final Marshaller marshaller = POOL.acquireMarshaller();
         marshaller.marshal(schema, writer);
         POOL.recycle(marshaller);
     }
 
-    /**
-     * {@inheritDoc }
+     /**
+     * Write an XML representation of the specified featureType into the Stream.
+     *
+     * @param feature The featureType to marshall.
      */
-    @Override
-    public void write(final FeatureType feature, final OutputStream stream) throws JAXBException {
+    public void write(FeatureType feature, OutputStream stream) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
         final Marshaller marshaller = POOL.acquireMarshaller();
         marshaller.marshal(schema, stream);
@@ -124,10 +123,13 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     /**
-     * {@inheritDoc }
+     * Write an XML representation of the specified featureType into an Element.
+     * @param feature
+     * @return the xml element.
+     * @throws JAXBException
+     * @throws ParserConfigurationException
      */
-    @Override
-    public Node writeToElement(final FeatureType feature) throws JAXBException, ParserConfigurationException {
+    public Node writeToElement(FeatureType feature) throws JAXBException, ParserConfigurationException {
 
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // then we have to create document-loader:
@@ -147,10 +149,12 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     /**
-     * {@inheritDoc }
+     * Create an xsd schema from a list of feature type.
+     *
+     * @param featureTypes
+     * @return
      */
-    @Override
-    public Schema getSchemaFromFeatureType(final List<FeatureType> featureTypes) {
+    public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
         final Schema schema = new Schema(FormChoice.QUALIFIED, null);
         if (featureTypes != null && featureTypes.size() > 0) {
             // we get the first namespace
@@ -175,10 +179,12 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     /**
-     * {@inheritDoc }
+     * Create a xsd schema from a feature type.
+     *
+     * @param featureType
+     * @return
      */
-    @Override
-    public Schema getSchemaFromFeatureType(final FeatureType featureType) {
+    public Schema getSchemaFromFeatureType(FeatureType featureType) {
         if (featureType != null) {
             final String typeNamespace = NamesExt.getNamespace(featureType.getName());
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
@@ -192,30 +198,27 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         }
         return null;
     }
-    
-    @Override
-    public Schema getExternalSchemaFromFeatureType(final String namespace, final List<FeatureType> featureTypes) {
-        if (featureTypes != null && featureTypes.size() > 0) {
-            final Schema schema = new Schema(FormChoice.QUALIFIED, namespace);
-            if ("3.2.1".equals(gmlVersion)) {
-                schema.addImport(GML_IMPORT_321);
-            } else {
-                schema.addImport(GML_IMPORT_311);
-            }
-            final Set<String> alreadyWritten = new HashSet<>();
-            for (FeatureType ftype : featureTypes) {
-                fillSchemaWithFeatureType(ftype, schema, false, alreadyWritten);
-            }
-            return schema;
-        }
-        return null;
+
+    public Schema getExternalSchemaFromFeatureType(String namespace, List<FeatureType> featureTypes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement, Set<String> alreadyWritten) {
+
+        if (Utils.GML_FEATURE_TYPES.contains(featureType.getName())) {
+           //this type is part of the standard GML types
+           return;
+        }
+
+        //write parent types
+        for (FeatureType parent : featureType.getSuperTypes()) {
+            fillSchemaWithFeatureType(parent, schema, false, alreadyWritten);
+        }
+
         final String typeNamespace    = NamesExt.getNamespace(featureType.getName());
         final String elementName      = featureType.getName().tip().toString();
         final String typeName         = elementName + "Type";
-        
+
         if (addTopElement) {
             final TopLevelElement topElement;
             if ("3.2.1".equals(gmlVersion)) {
@@ -229,9 +232,14 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
         final ExplicitGroup sequence  = new ExplicitGroup();
         final List<Attribute> attributes = new ArrayList<>();
-        for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
+        for (final PropertyType pdesc : featureType.getProperties(false)) {
+            if (AttributeConvention.contains(pdesc.getName())) {
+                //skip convention properties
+                continue;
+            }
             writeProperty(pdesc, sequence, schema, attributes, alreadyWritten);
         }
+        
         if (addTopElement && ar) {
             final ComplexContent content      = getComplexContent(sequence);
             final TopLevelComplexType tlcType = new TopLevelComplexType(typeName, content);
@@ -240,17 +248,18 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         }
     }
 
-    private void writeComplexType(final ComplexType ctype, final Schema schema, Set<String> alreadyWritten) {
+    private void writeComplexType(final FeatureType ctype, final Schema schema, Set<String> alreadyWritten) {
         final GenericName ptypeName = ctype.getName();
-        
+
         // PropertyType
-        
         final String nameWithSuffix = Utils.getNameWithTypeSuffix(ptypeName.tip().toString());
 
         boolean write = schema.getTargetNamespace().equals(NamesExt.getNamespace(ptypeName));
-        
+
         //search if this type has already been written
-        if(alreadyWritten.contains(nameWithSuffix)) return;
+        if (alreadyWritten.contains(nameWithSuffix)) {
+            return;
+        }
         alreadyWritten.add(nameWithSuffix);
 
 
@@ -261,51 +270,86 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             schema.addComplexType(tlcType);
         }
         final List<Attribute> attributes = new ArrayList<>();
-        for (final PropertyDescriptor pdesc : ctype.getDescriptors()) {
+        for (final PropertyType pdesc : ctype.getProperties(true)) {
             writeProperty(pdesc, sequence, schema, attributes, alreadyWritten);
         }
         tlcType.getAttributeOrAttributeGroup().addAll(attributes);
-
     }
 
-    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema, final List<Attribute> attributes, final Set<String> alreadyWritten) {
-        if(pdesc instanceof OperationDescriptor){
+    private void writeProperty(final PropertyType pType, final ExplicitGroup sequence, final Schema schema, final List<Attribute> attributes, final Set<String> alreadyWritten) {
+        if(pType instanceof Operation){
             //operation types are not written in the xsd.
             return;
         }
 
-        final PropertyType pType = pdesc.getType();
-        final String name        = pdesc.getName().tip().toString();
-        final QName type         = Utils.getQNameFromType(pType, gmlVersion);
-        final int minOccurs      = pdesc.getMinOccurs();
-        final int maxOccurs      = pdesc.getMaxOccurs();
-        final boolean nillable   = pdesc.isNillable();
-        final String maxOcc;
-        if (maxOccurs == Integer.MAX_VALUE) {
-            maxOcc = "unbounded";
-        } else {
-            maxOcc = Integer.toString(maxOccurs);
-        }
-        if (name.startsWith("@")) {
-            Attribute att = new Attribute();
-            att.setName(name.substring(1));
-            att.setType(type);
-            if (minOccurs == 0) {
-                att.setUse("optional");
+        if(pType instanceof AttributeType){
+            final AttributeType attType = (AttributeType) pType;
+            final String name        = attType.getName().tip().toString();
+            final QName type         = Utils.getQNameFromType(attType, gmlVersion);
+            final int minOccurs      = attType.getMinimumOccurs();
+            final int maxOccurs      = attType.getMaximumOccurs();
+            final boolean nillable   = FeatureExt.getCharacteristicValue(attType, GMLConvention.NILLABLE_PROPERTY.toString(), minOccurs==0);
+            final String maxOcc;
+            if (maxOccurs == Integer.MAX_VALUE) {
+                maxOcc = "unbounded";
             } else {
-                att.setUse("required");
+                maxOcc = Integer.toString(maxOccurs);
             }
-            attributes.add(att);
-        } else {
-            sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
-        }
+            if (name.startsWith("@")) {
+                Attribute att = new Attribute();
+                att.setName(name.substring(1));
+                att.setType(type);
+                if (minOccurs == 0) {
+                    att.setUse("optional");
+                } else {
+                    att.setUse("required");
+                }
+                attributes.add(att);
+            } else {
+                sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+            }
 
-        // for a complexType we have to add 2 complexType (PropertyType and type)
-        if (pType instanceof ComplexType) {
-            writeComplexType((ComplexType)pType, schema, alreadyWritten);
+        } else if (pType instanceof FeatureAssociationRole) {
+            // for a complexType we have to add 2 complexType (PropertyType and type)
+            final FeatureAssociationRole role = (FeatureAssociationRole) pType;
+            final FeatureType valueType = role.getValueType();
+            final String name        = role.getName().tip().toString();
+            final QName type         = Utils.getQNameFromType(role, gmlVersion);
+            final String typeName    = Utils.getNameWithoutTypeSuffix(valueType.getName().tip().toString());
+            final String propertyName = Utils.getNameWithPropertyTypeSuffix(typeName);
+            final QName proptype;
+            if ("3.2.1".equals(gmlVersion)) {
+                proptype = new QName(GMLConvention.GML_321_NAMESPACE, propertyName);
+            } else {
+                proptype = new QName(GMLConvention.GML_311_NAMESPACE, propertyName);
+            }
+
+            //property type
+            //<xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
+            final ExplicitGroup exp = new ExplicitGroup();
+            final TopLevelComplexType tlcType = new TopLevelComplexType(propertyName, exp);
+            final LocalElement le = new LocalElement(typeName, type, 1, "1",Boolean.FALSE);
+            le.setType(Utils.getQNameFromType(valueType, gmlVersion));
+            exp.addElement(le);
+            schema.addComplexType(tlcType);
+
+            //attribute type
+            final int minOccurs      = role.getMinimumOccurs();
+            final int maxOccurs      = role.getMaximumOccurs();
+            final boolean nillable   = FeatureExt.getCharacteristicValue(role, GMLConvention.NILLABLE_PROPERTY.toString(), minOccurs==0);
+            final String maxOcc;
+            if (maxOccurs == Integer.MAX_VALUE) {
+                maxOcc = "unbounded";
+            } else {
+                maxOcc = Integer.toString(maxOccurs);
+            }
+            sequence.addElement(new LocalElement(name, proptype, minOccurs, maxOcc, nillable));
+
+            //real type
+            writeComplexType(role.getValueType(), schema, alreadyWritten);
         }
     }
-
+    
     private ComplexContent getComplexContent(final ExplicitGroup sequence) {
         final ExtensionType extension;
         if ("3.2.1".equals(gmlVersion)) {
@@ -314,40 +358,6 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             extension = new ExtensionType(ABSTRACT_FEATURE_TYPE_311, sequence);
         }
         return new ComplexContent(extension);
-    }
-
-     /**
-     * Returns the prefix for the given namespace.
-     *
-     * @param namespace The namespace for which we want the prefix.
-     */
-    private JAXBFeatureTypeWriter.Prefix getPrefix(final String namespace) {
-        String prefix = Namespaces.getPreferredPrefix(namespace, null);
-        boolean unknow = false;
-        if (prefix == null) {
-            prefix = unknowNamespaces.get(namespace);
-            if (prefix == null) {
-                prefix = "ns" + lastUnknowPrefix;
-                lastUnknowPrefix++;
-                unknow = true;
-                unknowNamespaces.put(namespace, prefix);
-            }
-        }
-        return new JAXBFeatureTypeWriter.Prefix(unknow, prefix);
-    }
-
-
-    /**
-     * Inner class for handling prefix and if it is already known.
-     */
-    private final class Prefix {
-        public boolean unknow;
-        public String prefix;
-
-        public Prefix(final boolean unknow, final String prefix) {
-            this.prefix = prefix;
-            this.unknow = unknow;
-        }
     }
 
 }

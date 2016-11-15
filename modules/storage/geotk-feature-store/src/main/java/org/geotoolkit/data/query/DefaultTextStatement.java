@@ -19,7 +19,6 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import org.opengis.util.GenericName;
 
 /**
  *
@@ -28,11 +27,11 @@ import org.opengis.util.GenericName;
  */
 public class DefaultTextStatement implements TextStatement {
 
-    private final GenericName name;
+    private final String name;
     private final String statement;
     private final Session session;
 
-    public DefaultTextStatement(final String statement, final Session session, final GenericName name) {
+    public DefaultTextStatement(final String statement, final Session session, final String name) {
         this.statement = statement;
         this.session = session;
         this.name = name;
@@ -49,7 +48,7 @@ public class DefaultTextStatement implements TextStatement {
     }
 
     @Override
-    public GenericName getName() {
+    public String getName() {
         return name;
     }
     

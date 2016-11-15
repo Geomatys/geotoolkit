@@ -19,25 +19,29 @@ package org.geotoolkit.data.mapinfo.mif;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 /**
  * Utility methods and constants for mif/mid parsing.
@@ -52,6 +56,8 @@ public final class MIFUtils {
     private static final int MAX_CHAR_LENGTH = 255;
 
     private static final DecimalFormat NUM_FORMAT = new DecimalFormat();
+
+    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
     static {
         NUM_FORMAT.setGroupingUsed(false);
@@ -154,7 +160,7 @@ public final class MIFUtils {
      */
     public static String buildMIFGeometry(Feature toConvert) throws DataStoreException {
         String mifGeom = null;
-        if (toConvert.getDefaultGeometryProperty() != null) {
+        if (FeatureExt.hasAGeometry(toConvert.getType())) {
             final GeometryType geomBuilder = identifyFeature(toConvert.getType());
             if (geomBuilder != null) {
                 mifGeom = geomBuilder.toMIFSyntax(toConvert);
@@ -174,10 +180,10 @@ public final class MIFUtils {
         /* We'll check for the exact featureType first, and if there's no matching, we'll refine our search by checking
          * the geometry classes.
          */
-        final CoordinateReferenceSystem crsParam = toIdentify.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crsParam = FeatureExt.getCRS(toIdentify);
         FeatureType superParam = null;
-        if( toIdentify.getSuper() instanceof FeatureType) {
-            superParam = (FeatureType) toIdentify.getSuper();
+        if(!toIdentify.getSuperTypes().isEmpty()) {
+            superParam = (FeatureType) toIdentify.getSuperTypes().iterator().next();
         }
         for(GeometryType gType : GeometryType.values()) {
             if(gType.getBinding(crsParam, superParam).equals(toIdentify)) {
@@ -187,8 +193,9 @@ public final class MIFUtils {
         }
 
         // for some types, we don't need to get the same featureType, only a matching geometry class will be sufficient.
-        if(type == null && toIdentify.getGeometryDescriptor() != null) {
-            final Class sourceClass = toIdentify.getGeometryDescriptor().getType().getBinding();
+        final IdentifiedType geomType;
+        if(type == null && (geomType = findGeometryProperty(toIdentify)) != null) {
+            final Class sourceClass = toGeometryAttribute(geomType).getValueClass();
             if(Polygon.class.isAssignableFrom(sourceClass) || MultiPolygon.class.isAssignableFrom(sourceClass)) {
                 type = GeometryType.REGION;
             } else if(LineString.class.isAssignableFrom(sourceClass) || MultiLineString.class.isAssignableFrom(sourceClass)) {
@@ -207,6 +214,54 @@ public final class MIFUtils {
         }
 
         return type;
+    }
+
+        /**
+     * @param input A feature type to find a geometry attribute into.
+     * @return the first geometry attribute found in given feature type.
+     */
+    public static IdentifiedType findGeometryProperty(final FeatureType input) {
+        if (input == null || !FeatureExt.hasAGeometry(input))
+            return null;
+        org.opengis.feature.AttributeType<?> geomType = FeatureExt.getDefaultGeometryAttribute(input);
+        if (geomType != null) {
+            return geomType;
+        }
+        org.opengis.feature.AttributeType found;
+        for (final PropertyType pt : input.getProperties(true)) {
+            found = toGeometryAttribute(pt);
+            if (found != null)
+                return pt;
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if given property type is a geometry one. If it is, we're sending
+     * back the exact attribute type of the geometry.
+     * @param input The property type to analyse.
+     * @return The backed geometry type, or null if the given type does not refers
+     */
+    public static org.opengis.feature.AttributeType toGeometryAttribute(IdentifiedType input) {
+        while (input instanceof Operation) {
+            input = ((Operation) input).getResult();
+        }
+
+        if (input instanceof org.opengis.feature.AttributeType && Geometries.isKnownType(((org.opengis.feature.AttributeType) input).getValueClass())) {
+            return (org.opengis.feature.AttributeType) input;
+        }
+
+        return null;
+    }
+
+    public static Object getGeometryValue(final Feature input) {
+        IdentifiedType found = findGeometryProperty(input.getType());
+        if (found != null) {
+            return input.getPropertyValue(found.getName().tip().toString());
+        }
+
+        return null;
     }
 
     /**
@@ -325,14 +380,15 @@ public final class MIFUtils {
             builder.append('\n');
         }
 
-        for(PropertyDescriptor desc : toWorkWith.getDescriptors()) {
+        for(PropertyType desc : toWorkWith.getProperties(true)) {
             // geometries are not specified in MIF columns.
-            if (desc instanceof GeometryDescriptor) {
+            if (AttributeConvention.isGeometryAttribute(desc)) {
                 continue;
             }
-            final String mifType = getColumnMIFType(desc.getType().getBinding());
+            final Class valueClass = ((org.opengis.feature.AttributeType)desc).getValueClass();
+            final String mifType = getColumnMIFType(valueClass);
             if( mifType == null) {
-                throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
+                throw new DataStoreException("Type "+valueClass+" has no equivalent in MIF format.");
             }
             builder.append('\t').append(desc.getName().tip().toString()).append(' ').append(mifType.toLowerCase()).append('\n');
         }
@@ -405,14 +461,13 @@ public final class MIFUtils {
 
     /**
      * Return a String which is the ready-to-write (for MID file) representation of the given property.
-     * @param prop The property to extract value from.
+     * @param value The property value
      * @return A string which is the value of the given property. Never Null, but can be empty.
      */
-    public static String getStringValue(Property prop) {
-        if(prop == null || prop.getValue() == null) {
+    public static String getStringValue(Object value) {
+        if(value == null) {
             return "";
         }
-        final Object value = prop.getValue();
         if(value instanceof Number) {
             return NUM_FORMAT.format(value);
         } else if(value instanceof Date) {
@@ -423,4 +478,18 @@ public final class MIFUtils {
         return value.toString();
     }
 
+    /**
+     *
+     * @param container
+     * @param propertyName Name of the
+     * @return The value associated to the queried property name, or null if the
+     * property is not defined.
+     */
+    public static Object getPropertySafe(final Feature container, final String propertyName) {
+        try {
+            return container.getPropertyValue(propertyName);
+        } catch (PropertyNotFoundException e) {
+            return null;
+        }
+    }
 }

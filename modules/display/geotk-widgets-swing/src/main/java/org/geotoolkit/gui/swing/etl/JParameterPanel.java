@@ -22,7 +22,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.processing.chain.ChainProcessDescriptor;
@@ -73,7 +73,7 @@ public class JParameterPanel extends javax.swing.JPanel {
         guiType.setRenderer(new JClassCellRenderer());
 
         final ParameterDescriptor paramDesc = ChainProcessDescriptor.convertParameterDtoToParameterDescriptor(parameter, false);
-        defValueEditor.setProperty(FeatureUtilities.toProperty(paramDesc.createValue()));
+        defValueEditor.setProperty(FeatureExt.toProperty(paramDesc.createValue()));
         defValueEditor.setPreferredSize(guiPanelDefaultValue.getPreferredSize());
         guiPanelDefaultValue.add(defValueEditor, BorderLayout.WEST);
 
@@ -314,7 +314,7 @@ private void guiCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         parameter.setType(new ClassFull((Class)guiType.getSelectedItem()));
         parameter.setDefaultValue(null);
         final ParameterDescriptor paramDesc = ChainProcessDescriptor.convertParameterDtoToParameterDescriptor(parameter, false);
-        defValueEditor.setProperty(FeatureUtilities.toProperty(paramDesc.createValue()));
+        defValueEditor.setProperty(FeatureExt.toProperty(paramDesc.createValue()));
         guiPanelDefaultValue.repaint();
     }//GEN-LAST:event_guiTypeActionPerformed
 

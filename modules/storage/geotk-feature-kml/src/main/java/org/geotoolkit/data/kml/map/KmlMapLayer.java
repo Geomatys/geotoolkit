@@ -27,16 +27,15 @@ import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LatLonBox;
 import org.geotoolkit.data.kml.model.MultiGeometry;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 
 /**
  *
@@ -45,11 +44,9 @@ import org.opengis.geometry.Envelope;
  */
 public class KmlMapLayer extends AbstractMapLayer {
 
-    final Kml kml;    
+    final Kml kml;
 
-    public KmlMapLayer(MutableStyle style, Kml kml) 
-            throws IOException {
-        
+    public KmlMapLayer(MutableStyle style, Kml kml) throws IOException {
         super(style);
         this.kml = kml;
         graphicBuilders().add(KMLGraphicBuilder.INSTANCE);
@@ -62,84 +59,61 @@ public class KmlMapLayer extends AbstractMapLayer {
      */
 
     /**
-     * <p>Retrieves Kmldocument bounds.</p>
-     *
-     * @{@inheritDoc }
-     *
-     * @return
+     * Retrieves Kmldocument bounds.
      */
     @Override
     public Envelope getBounds() {
-
         final JTSEnvelope2D envelope = new JTSEnvelope2D(CommonCRS.WGS84.normalizedGeographic());
-        return this.getFeatureEnvelope(this.kml.getAbstractFeature(), envelope);
+        return getFeatureEnvelope(kml.getAbstractFeature(), envelope);
     }
 
     /**
-     * <p>This method extends envelope with feature contents.</p>
-     *
-     * @param feature
-     * @return
+     * This method extends envelope with feature contents.
      */
     private JTSEnvelope2D getFeatureEnvelope(Feature feature, JTSEnvelope2D envelope) {
 
         final FeatureType featureType = feature.getType();
 
         if (featureType.equals(KmlModelConstants.TYPE_PLACEMARK)) {
-            if (feature.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
-                envelope = this.getAbstractGeometryEnvelope(
-                        (AbstractGeometry) feature.getProperty(
-                        KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue(), envelope);
-            }
-        }
-        else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_CONTAINER)) {
-            Collection<Property> properties = null;
+            envelope = getAbstractGeometryEnvelope((AbstractGeometry) feature.getPropertyValue(KmlConstants.TAG_GEOMETRY), envelope);
+        } else if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(featureType)) {
+            Collection<?> properties = null;
             if (featureType.equals(KmlModelConstants.TYPE_DOCUMENT)) {
-                properties = feature.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
+                properties = (Collection<?>) feature.getPropertyValue(KmlConstants.TAG_FEATURES);
             } else if (featureType.equals(KmlModelConstants.TYPE_FOLDER)) {
-                properties = feature.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName());
+                properties = (Collection<?>) feature.getPropertyValue(KmlConstants.TAG_FEATURES);
             }
             if (properties != null) {
-                Iterator i = properties.iterator();
+                Iterator<?> i = properties.iterator();
                 while (i.hasNext()) {
-                    envelope = this.getFeatureEnvelope((Feature) ((Property) i.next()).getValue(), envelope);
+                    envelope = getFeatureEnvelope((Feature) i.next(), envelope);
                 }
             }
-        }
-        else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)) {
+        } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(featureType)) {
             if (featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
-                if (feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
-                    final LatLonBox latLonBox = (LatLonBox) feature.getProperty(
-                            KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-                    envelope.expandToInclude(
-                            new JTSEnvelope2D(
-                            latLonBox.getWest(), latLonBox.getEast(),
-                            latLonBox.getSouth(), latLonBox.getNorth(),
-                            CommonCRS.WGS84.normalizedGeographic()));
-                }
+                final LatLonBox latLonBox = (LatLonBox) feature.getPropertyValue(KmlConstants.TAG_LAT_LON_BOX);
+                envelope.expandToInclude(
+                        new JTSEnvelope2D(
+                        latLonBox.getWest(), latLonBox.getEast(),
+                        latLonBox.getSouth(), latLonBox.getNorth(),
+                        CommonCRS.WGS84.normalizedGeographic()));
             }
         }
         return envelope;
     }
 
     /**
-     * <p>This method extends envelope with Geometry content.</p>
-     *
-     * @param geometry
-     * @return
+     * This method extends envelope with Geometry content.
      */
-    private JTSEnvelope2D getAbstractGeometryEnvelope(
-            AbstractGeometry geometry, JTSEnvelope2D envelope) {
-
+    private JTSEnvelope2D getAbstractGeometryEnvelope(AbstractGeometry geometry, JTSEnvelope2D envelope) {
         if (geometry instanceof Geometry) {
             envelope.expandToInclude(new JTSEnvelope2D(((Geometry) geometry).getEnvelopeInternal(),
                     CommonCRS.WGS84.normalizedGeographic()));
         } else if (geometry instanceof MultiGeometry) {
             for (AbstractGeometry geom : ((MultiGeometry) geometry).getGeometries()) {
-                envelope = this.getAbstractGeometryEnvelope(geom, envelope);
+                envelope = getAbstractGeometryEnvelope(geom, envelope);
             }
         }
         return envelope;
     }
-   
 }

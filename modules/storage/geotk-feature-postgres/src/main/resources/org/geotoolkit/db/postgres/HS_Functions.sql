@@ -1534,8 +1534,8 @@ begin
 				prim_condition = prim_condition||' AND ';
 				HS_prim_condition = HS_prim_condition||' AND ';
 			end if;
-			prim_condition = prim_condition||sch_tbl_nam||'."'||prim_key[i]||'" = '||rec.tab[i];
-			HS_prim_condition = HS_prim_condition||HS_sch_tbl_nam||'."'||prim_key[i]||'" = '||rec.tab[i];
+			prim_condition = prim_condition||sch_tbl_nam||'."'||prim_key[i]||'" = '''||rec.tab[i]||'''';
+			HS_prim_condition = HS_prim_condition||HS_sch_tbl_nam||'."'||prim_key[i]||'" = '''||rec.tab[i]||'''';
 			i = i + 1;
 		   end loop;
 		   

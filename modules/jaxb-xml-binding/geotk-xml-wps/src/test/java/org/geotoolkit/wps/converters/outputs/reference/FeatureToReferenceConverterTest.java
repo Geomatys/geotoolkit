@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -28,6 +27,7 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.Reference;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
 
 /**

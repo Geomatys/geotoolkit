@@ -26,8 +26,8 @@ import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -163,7 +163,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         }
 
         /**
-         * Find the next feature 
+         * Find the next feature
          */
         private void findNext() {
             if (nextFeature != null) {

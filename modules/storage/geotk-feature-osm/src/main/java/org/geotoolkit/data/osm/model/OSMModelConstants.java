@@ -18,17 +18,20 @@
 package org.geotoolkit.data.osm.model;
 
 import com.vividsolutions.jts.geom.Point;
+import java.util.Collections;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.DefaultAssociationRole;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.feature.FeatureFactory;
+import org.geotoolkit.data.osm.xml.OSMXMLConstants;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
 
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -39,146 +42,125 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class OSMModelConstants {
 
-    static final FeatureFactory FF = FeatureFactory.LENIENT;
-
     public static final CoordinateReferenceSystem OSM_CRS = CommonCRS.WGS84.normalizedGeographic();
+
 
     public static final String OSM_NAMESPACE = "http://openstreetmap.org";
 
-    public static final AttributeDescriptor ATT_ID;
-    public static final AttributeDescriptor ATT_VERSION;
-    public static final AttributeDescriptor ATT_CHANGESET;
-    public static final AttributeDescriptor ATT_USER;
-    public static final AttributeDescriptor ATT_TIMESTAMP;
-    public static final AttributeDescriptor ATT_TAG;
-    public static final AttributeDescriptor ATT_RELATION_MEMBER;
-    public static final GeometryDescriptor  ATT_NODE_POINT;
-    public static final AttributeDescriptor ATT_WAY_NODES;
-    public static final AttributeDescriptor ATT_K;
-    public static final AttributeDescriptor ATT_V;
-    public static final AttributeDescriptor ATT_USER_ID;
-    public static final AttributeDescriptor ATT_USER_NAME;
-    public static final AttributeDescriptor ATT_MEMBER_ROLE;
-    public static final AttributeDescriptor ATT_MEMBER_TYPE;
-    public static final AttributeDescriptor ATT_MEMBER_REF;
+    public static final AttributeType ATT_ID;
+    public static final AttributeType ATT_VERSION;
+    public static final AttributeType ATT_CHANGESET;
+    public static final FeatureAssociationRole ATT_USER;
+    public static final AttributeType ATT_TIMESTAMP;
+    public static final FeatureAssociationRole ATT_TAG;
+    public static final FeatureAssociationRole ATT_RELATION_MEMBER;
+    public static final AttributeType ATT_NODE_POINT;
+    public static final AttributeType ATT_WAY_NODES;
+    public static final AttributeType ATT_K;
+    public static final AttributeType ATT_V;
+    public static final AttributeType ATT_USER_ID;
+    public static final AttributeType ATT_USER_NAME;
+    public static final AttributeType ATT_MEMBER_ROLE;
+    public static final AttributeType ATT_MEMBER_TYPE;
+    public static final AttributeType ATT_MEMBER_REF;
 
-    public static final ComplexType TYPE_USER;
-    public static final ComplexType TYPE_TAG;
-    public static final ComplexType TYPE_RELATION_MEMBER;
+    public static final FeatureType TYPE_USER;
+    public static final FeatureType TYPE_TAG;
+    public static final FeatureType TYPE_RELATION_MEMBER;
     public static final FeatureType TYPE_IDENTIFIED;
     public static final FeatureType TYPE_NODE;
     public static final FeatureType TYPE_WAY;
     public static final FeatureType TYPE_RELATION;
 
-    static final AttributeDescriptor DESC_IDENTIFIED;
-    static final AttributeDescriptor DESC_NODE;
-    static final AttributeDescriptor DESC_WAY;
-    static final AttributeDescriptor DESC_RELATION;
+    /**
+     * No user id.
+     */
+    public static final int USER_ID_NONE = -1;
+    public static final Feature USER_NONE;
 
     static {
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ATT_ID = adb.create(NamesExt.create(OSM_NAMESPACE, "id"), Long.class,1,1,false,null);
-        ATT_VERSION = adb.create(NamesExt.create(OSM_NAMESPACE, "version"), Integer.class,1,1,false,null);
-        ATT_CHANGESET = adb.create(NamesExt.create(OSM_NAMESPACE, "changeset"), Integer.class,1,1,false,null);
-        ATT_TIMESTAMP = adb.create(NamesExt.create(OSM_NAMESPACE, "timestamp"), Integer.class,1,1,false,null);
+        FeatureTypeBuilder ftb;
+        ATT_ID = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, "id"), Long.class);
+        ATT_VERSION = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_VERSION), Integer.class);
+        ATT_CHANGESET = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_CHANGESET), Integer.class);
+        ATT_TIMESTAMP = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_TIMESTAMP), Long.class);
 
         //------------------- USER TYPE ----------------------------------------
-        ATT_USER_ID = adb.create(NamesExt.create(OSM_NAMESPACE, "id"), Integer.class, 1,1,false,null);
-        ATT_USER_NAME = adb.create(NamesExt.create(OSM_NAMESPACE, "name"), String.class, 1,1,true,null);
+        ATT_USER_ID = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_UID), Integer.class);
+        ATT_USER_NAME = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_USER), String.class);
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(OSM_NAMESPACE, "User");
-        ftb.add(ATT_USER_ID);
-        ftb.add(ATT_USER_NAME);
-        TYPE_USER = ftb.buildType();
-        ATT_USER = adb.create(TYPE_USER, NamesExt.create(OSM_NAMESPACE, "user"),null,1,1,false,null);
+        ftb.addAttribute(ATT_USER_ID);
+        ftb.addAttribute(ATT_USER_NAME);
+        TYPE_USER = ftb.build();
 
         //------------------- TAG TYPE -----------------------------------------
-        ATT_K = adb.create(NamesExt.create(OSM_NAMESPACE, "k"), String.class, 1,1,true,null);
-        ATT_V = adb.create(NamesExt.create(OSM_NAMESPACE, "v"), String.class, 1,1,true,null);
+        ATT_K = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, "k"), String.class);
+        ATT_V = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, "v"), String.class);
 
-        ftb.reset();
-        ftb.setName(OSM_NAMESPACE, "Tag");
-        ftb.add(ATT_K);
-        ftb.add(ATT_V);
-        TYPE_TAG = ftb.buildType();
-        ATT_TAG = adb.create(TYPE_TAG, NamesExt.create(OSM_NAMESPACE, "tags"),null,0,Integer.MAX_VALUE,true,null);
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(OSM_NAMESPACE, OSMXMLConstants.TAG_TAG);
+        ftb.addAttribute(ATT_K);
+        ftb.addAttribute(ATT_V);
+        TYPE_TAG = ftb.build();
+        ATT_TAG = new DefaultAssociationRole(Collections.singletonMap("name", NamesExt.create(OSM_NAMESPACE, "tags")), TYPE_TAG, 0, Integer.MAX_VALUE);
 
         //------------------- IDENTIFIED TYPE ----------------------------------
-        ftb.reset();
+        ATT_USER = new DefaultAssociationRole(Collections.singletonMap("name", NamesExt.create(OSM_NAMESPACE, "user")), TYPE_USER, 1, 1);
+        ftb = new FeatureTypeBuilder();
         ftb.setName(OSM_NAMESPACE, "Identified");
-        ftb.add(ATT_ID);
-        ftb.add(ATT_VERSION);
-        ftb.add(ATT_CHANGESET);
-        ftb.add(ATT_USER);
-        ftb.add(ATT_TIMESTAMP);
-        ftb.add(ATT_TAG);
-        TYPE_IDENTIFIED = ftb.buildFeatureType();
+        ftb.setAbstract(true);
+        ftb.addAttribute(ATT_ID).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ftb.addAttribute(ATT_VERSION);
+        ftb.addAttribute(ATT_CHANGESET);
+        ftb.addAssociation(ATT_USER);
+        ftb.addAttribute(ATT_TIMESTAMP);
+        ftb.addAssociation(ATT_TAG);
+        TYPE_IDENTIFIED = ftb.build();
 
         //------------------- NODE TYPE ----------------------------------------
-        ATT_NODE_POINT = (GeometryDescriptor) adb.create(NamesExt.create(OSM_NAMESPACE, "point"), Point.class, OSM_CRS,1,1,false,null);
-        ftb.reset();
-        ftb.setSuperType(TYPE_IDENTIFIED);
+        ATT_NODE_POINT = new SingleAttributeTypeBuilder().setName(OSM_NAMESPACE,"point").setValueClass(Point.class).setCRS(OSM_CRS).build();
+        ftb = new FeatureTypeBuilder();
+        ftb.setSuperTypes(TYPE_IDENTIFIED);
         ftb.setName(OSM_NAMESPACE, "Node");
-        ftb.add(ATT_ID);
-        ftb.add(ATT_VERSION);
-        ftb.add(ATT_CHANGESET);
-        ftb.add(ATT_USER);
-        ftb.add(ATT_TIMESTAMP);
-        ftb.add(ATT_TAG);
-        ftb.add(ATT_NODE_POINT);
-        ftb.setDefaultGeometry(ATT_NODE_POINT.getName());
-        TYPE_NODE = ftb.buildFeatureType();
+        ftb.addAttribute(ATT_NODE_POINT).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        TYPE_NODE = ftb.build();
 
 
         //------------------- WAY TYPE -----------------------------------------
-        ATT_WAY_NODES = adb.create(NamesExt.create(OSM_NAMESPACE, "nodes"),Long.class,0,Integer.MAX_VALUE,true,null);
+        ATT_WAY_NODES = new SingleAttributeTypeBuilder().setName(OSM_NAMESPACE, OSMXMLConstants.TAG_WAYND)
+                .setValueClass(Long.class).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).build();
 
-        ftb.reset();
-        ftb.setSuperType(TYPE_IDENTIFIED);
-        ftb.setName(OSM_NAMESPACE, "Way");
-        ftb.add(ATT_ID);
-        ftb.add(ATT_VERSION);
-        ftb.add(ATT_CHANGESET);
-        ftb.add(ATT_USER);
-        ftb.add(ATT_TIMESTAMP);
-        ftb.add(ATT_TAG);
-        ftb.add(ATT_WAY_NODES);
-        TYPE_WAY = ftb.buildFeatureType();
+        ftb = new FeatureTypeBuilder();
+        ftb.setSuperTypes(TYPE_IDENTIFIED);
+        ftb.setName(OSM_NAMESPACE, OSMXMLConstants.TAG_WAY);
+        ftb.addAttribute(ATT_WAY_NODES);
+        TYPE_WAY = ftb.build();
 
         //------------------- RELATION MEMBER TYPE -----------------------------
-        ATT_MEMBER_ROLE = adb.create(NamesExt.create(OSM_NAMESPACE, "role"),String.class,1,1,true,null);
-        ATT_MEMBER_TYPE = adb.create(NamesExt.create(OSM_NAMESPACE, "type"),MemberType.class,1,1,true,null);
-        ATT_MEMBER_REF = adb.create(NamesExt.create(OSM_NAMESPACE, "ref"),Long.class,1,1,false,null);
+        ATT_MEMBER_ROLE = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_RELMB_ROLE),String.class);
+        ATT_MEMBER_TYPE = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_RELMB_TYPE),MemberType.class);
+        ATT_MEMBER_REF = SingleAttributeTypeBuilder.create(NamesExt.create(OSM_NAMESPACE, OSMXMLConstants.ATT_RELMB_REF),Long.class);
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(OSM_NAMESPACE, "Member");
-        ftb.add(ATT_MEMBER_ROLE);
-        ftb.add(ATT_MEMBER_TYPE);
-        ftb.add(ATT_MEMBER_REF);
-        TYPE_RELATION_MEMBER = ftb.buildType();
+        ftb.addAttribute(ATT_MEMBER_ROLE);
+        ftb.addAttribute(ATT_MEMBER_TYPE);
+        ftb.addAttribute(ATT_MEMBER_REF);
+        TYPE_RELATION_MEMBER = ftb.build();
 
         //------------------- RELATION TYPE ------------------------------------
-        ATT_RELATION_MEMBER = adb.create(TYPE_RELATION_MEMBER, NamesExt.create(OSM_NAMESPACE, "members"),0,Integer.MAX_VALUE,true,null);
+        ATT_RELATION_MEMBER = new DefaultAssociationRole(
+                Collections.singletonMap("name", NamesExt.create(OSM_NAMESPACE, "members")), TYPE_RELATION_MEMBER, 0, Integer.MAX_VALUE);
 
-        ftb.reset();
-        ftb.setSuperType(TYPE_IDENTIFIED);
+        ftb = new FeatureTypeBuilder();
+        ftb.setSuperTypes(TYPE_IDENTIFIED);
         ftb.setName(OSM_NAMESPACE, "Relation");
-        ftb.add(ATT_ID);
-        ftb.add(ATT_VERSION);
-        ftb.add(ATT_CHANGESET);
-        ftb.add(ATT_USER);
-        ftb.add(ATT_TIMESTAMP);
-        ftb.add(ATT_TAG);
-        ftb.add(ATT_RELATION_MEMBER);
-        TYPE_RELATION = ftb.buildFeatureType();
+        ftb.addAssociation(ATT_RELATION_MEMBER);
+        TYPE_RELATION = ftb.build();
 
-        DESC_IDENTIFIED = adb.create( TYPE_IDENTIFIED, TYPE_IDENTIFIED.getName(), 1, 1, true, null);
-        DESC_NODE = adb.create( TYPE_NODE, TYPE_NODE.getName(), 1, 1, true, null);
-        DESC_WAY = adb.create( TYPE_WAY, TYPE_WAY.getName(), 1, 1, true, null);
-        DESC_RELATION = adb.create( TYPE_RELATION, TYPE_RELATION.getName(), 1, 1, true, null);
+        USER_NONE = TYPE_USER.newInstance();
     }
 
     private OSMModelConstants(){}

@@ -44,9 +44,6 @@ public class NetworkLinkControlTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/networkLinkControl.kml";
 
-    public NetworkLinkControlTest() {
-    }
-
     @Test
     public void networkLinkControlReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
@@ -85,8 +82,6 @@ public class NetworkLinkControlTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

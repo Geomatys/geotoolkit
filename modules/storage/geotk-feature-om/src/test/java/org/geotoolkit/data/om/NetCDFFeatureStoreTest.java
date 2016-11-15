@@ -29,12 +29,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.nio.IOUtilities;
@@ -65,11 +66,11 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
             featureTypeBuilder.setName(name);
-            featureTypeBuilder.add(NamesExt.create(nsGML, "description"),String.class,0,1,true,null);
-            featureTypeBuilder.add(NamesExt.create(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
-            featureTypeBuilder.add(NamesExt.create(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
-            featureTypeBuilder.add(NamesExt.create(nsOM, "position"),Geometry.class,1,1,false,null);
-            featureTypeBuilder.setDefaultGeometry(NamesExt.create(nsOM, "position"));
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "id")).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description"));
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "name")).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature")).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+            featureTypeBuilder.addAttribute(Geometry.class).setName(NamesExt.create(nsOM, "position")).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             int size = 4;
             GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:27582"));
@@ -77,7 +78,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
             env.setRange(1, -19.802, 128.6);
 
             final AbstractReadingTests.ExpectedResult res = new AbstractReadingTests.ExpectedResult(name,
-                    featureTypeBuilder.buildFeatureType(), size, env);
+                    featureTypeBuilder.build(), size, env);
             expecteds.add(res);
 
         }catch(Exception ex){

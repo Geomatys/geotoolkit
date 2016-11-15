@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.ext.isoline.graphic;
 import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  *

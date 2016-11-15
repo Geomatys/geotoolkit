@@ -17,14 +17,15 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import javax.swing.ImageIcon;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool displaying a dialog to edit the geometry extracting geometry from the clipboard.
@@ -51,9 +52,7 @@ public class GeometryFromClipboardTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
-
-        final GeometryDescriptor desc = ft.getGeometryDescriptor();
-
+        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
         return desc != null;
     }
 

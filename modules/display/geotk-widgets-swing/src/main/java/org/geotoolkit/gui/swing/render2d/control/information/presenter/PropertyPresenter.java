@@ -25,7 +25,8 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 
 /**
  * JComponent for Features and Properties.
@@ -55,9 +56,9 @@ public class PropertyPresenter extends AbstractInformationPresenter{
             candidate = null;
         }
 
-        if (candidate != null && candidate instanceof Property) {
+        if (candidate != null && candidate instanceof Feature) {
             final JFeatureOutLine outline = new JFeatureOutLine();
-            outline.setEdited((Property) candidate);
+            outline.setEdited((Feature) candidate);
             // As outline looks to have difficulties computing its better size, we give it an hint by setting row height.
             outline.setRowHeight(36);
             final JScrollPane pane = new JScrollPane(outline);

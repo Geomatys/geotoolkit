@@ -19,7 +19,6 @@ package org.geotoolkit.data.query;
 
 import java.util.Date;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.version.Version;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -77,7 +76,7 @@ public interface Query {
      * @return the name of the feature type to be returned with this query.
      * @throws IllegalStateException if the query is not simple.
      */
-    GenericName getTypeName() throws IllegalStateException;
+    String getTypeName() throws IllegalStateException;
 
     /**
      * A query is consider simple when it has a single source which is a selector.

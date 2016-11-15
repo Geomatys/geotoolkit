@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputListener;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
@@ -66,8 +67,9 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -255,10 +257,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
+                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getFeatureType());
+                            final String geoStr = geomAtt.getName().tip().toString();
                             final Expression geomField = FF.property(geoStr);
 
-                            CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
+                            CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(fl.getCollection().getFeatureType());
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findOperation(map2D.getCanvas().getDisplayCRS(), dataCrs, null).getMathTransform());
@@ -276,7 +279,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 FeatureIterator fi = fc.iterator();
                                 while(fi.hasNext()){
                                     Feature fea = fi.next();
-                                    ids.add(fea.getIdentifier());
+                                    ids.add(FeatureExt.getId(fea));
                                 }
                                 fi.close();
                             } catch (Exception ex) {

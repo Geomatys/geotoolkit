@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.gui.swing.shapefile;
 
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -39,11 +43,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.referencing.CommonCRS;
@@ -51,7 +56,7 @@ import org.geotoolkit.gui.swing.util.SwingUtilities;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledSeparator;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -64,7 +69,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class ShapeCreationTool extends JPanel {
 
     private final ShapeAttModel model = new ShapeAttModel();
-    private String geotype = "Point";
+    private Class geotype = Point.class;
     private CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
     private File file = new File("default.shp");
 
@@ -94,39 +99,38 @@ public class ShapeCreationTool extends JPanel {
             final ShapefileFeatureStore myData = (ShapefileFeatureStore) factory.create(map);
 
             // Tell this shapefile what type of data it will store
-            final StringBuilder buffer = new StringBuilder();
-            buffer.append("geom:");
-            buffer.append(geotype);
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(name);
+            ftb.addAttribute(geotype).setName("geom").addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             final Field[] datas = model.getDatas();
 
             for (Field data : datas) {
-                buffer.append(',').append(data.getName());
 
                 switch (data.getType()) {
                     case INTEGER:
-                        buffer.append(':').append(Integer.class.getName());
+                        ftb.addAttribute(Integer.class);
                         break;
                     case LONG:
-                        buffer.append(':').append(Long.class.getName());
+                        ftb.addAttribute(Long.class);
                         break;
                     case DOUBLE:
-                        buffer.append(':').append(Double.class.getName());
+                        ftb.addAttribute(Double.class);
                         break;
                     case STRING:
-                        buffer.append(':').append(String.class.getName());
+                        ftb.addAttribute(String.class);
                         break;
                     case DATE:
-                        buffer.append(':').append(Date.class.getName());
+                        ftb.addAttribute(Date.class);
                         break;
                     default : break;
                 }
             }
 
-            final FeatureType featureType = FeatureTypeUtilities.createType(name, buffer.toString());
+            final FeatureType featureType = ftb.build();
 
             // Create the Shapefile (empty at this point)
-            myData.createFeatureType(featureType.getName(),featureType);
+            myData.createFeatureType(featureType);
 
             // Tell the featurestore what type of Coordinate Reference System (CRS) to use
             //myData.forceSchemaCRS(crs);
@@ -410,19 +414,19 @@ public class ShapeCreationTool extends JPanel {
     }//GEN-LAST:event_downAction
 
     private void geomPointAction(final ActionEvent evt) {//GEN-FIRST:event_geomPointAction
-        geotype = "Point";
+        geotype = Point.class;
     }//GEN-LAST:event_geomPointAction
 
     private void geomMultiPointAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultiPointAction
-        geotype = "MultiPoint";
+        geotype = MultiPoint.class;
     }//GEN-LAST:event_geomMultiPointAction
 
     private void geomMultilineAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultilineAction
-        geotype = "MultiLineString";
+        geotype = MultiLineString.class;
     }//GEN-LAST:event_geomMultilineAction
 
     private void geomMultiPolygonAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultiPolygonAction
-        geotype = "MultiPolygon";
+        geotype = MultiPolygon.class;
     }//GEN-LAST:event_geomMultiPolygonAction
 
     private void crsAction(final ActionEvent evt) {//GEN-FIRST:event_crsAction

@@ -20,31 +20,31 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
 
 /**
  * Process to compute difference between two FeatureCollection
  * It is usually called "Spatial NOT", because it distracts the geometries from a FeatureCollection.
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class DifferenceProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -57,50 +57,41 @@ public class DifferenceProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList           = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection inputFeatureClippingList   = value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
-
+        final FeatureCollection inputFeatureList         = value(VectorDescriptor.FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureClippingList = value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
         final FeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
-
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Compute difference between a feature and FeatureCollection's geometries
-     * @param oldFeature Feature
+     *
      * @param newType the new FeatureType for the Feature
      * @param featureClippingList FeatureCollection used to compute the difference
-     * @return Feature
-     * @throws MismatchedDimensionException
-     * @throws TransformException
-     * @throws FactoryException
      */
     public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection featureClippingList)
-            throws MismatchedDimensionException, TransformException, FactoryException {
-
-        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
-
-        for (Property property : oldFeature.getProperties()) {
+            throws MismatchedDimensionException, TransformException, FactoryException
+    {
+        final Feature resultFeature = newType.newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
+        for (final PropertyType property : oldFeature.getType().getProperties(true)) {
+            final String name = property.getName().toString();
+            final Object value = oldFeature.getPropertyValue(name);
 
             //for each Geometry in the oldFeature
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-
-                final GeometryDescriptor inputGeomDesc = (GeometryDescriptor) property.getDescriptor();
-                final CoordinateReferenceSystem inputGeomCRS = inputGeomDesc.getCoordinateReferenceSystem();
+            if (AttributeConvention.isGeometryAttribute(property)) {
+                final CoordinateReferenceSystem inputGeomCRS = FeatureExt.getCRS(property);
 
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
-                Geometry resultGeometry = (Geometry) property.getValue();
-                final FeatureIterator clipIterator = featureClippingList.iterator();
-                try {
+                Geometry resultGeometry = (Geometry) value;
+                try (final FeatureIterator clipIterator = featureClippingList.iterator()) {
                     while (clipIterator.hasNext()) {
                         final Feature clipFeature = clipIterator.next();
-                        for (Property clipFeatureProperty : clipFeature.getProperties()) {
-                            if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
-
-                                Geometry diffGeom = (Geometry) clipFeatureProperty.getValue();
-                                final GeometryDescriptor diffGeomDesc = (GeometryDescriptor) clipFeatureProperty.getDescriptor();
-                                final CoordinateReferenceSystem diffGeomCRS = diffGeomDesc.getCoordinateReferenceSystem();
+                        for (PropertyType clipFeatureProperty : clipFeature.getType().getProperties(true)) {
+                            if (AttributeConvention.isGeometryAttribute(clipFeatureProperty)) {
+                                Geometry diffGeom = (Geometry) clipFeature.getPropertyValue(clipFeatureProperty.getName().toString());
+                                final CoordinateReferenceSystem diffGeomCRS = FeatureExt.getCRS(clipFeatureProperty);
 
                                 //re-project clipping geometry into input Feature geometry CRS
                                 diffGeom = VectorProcessUtils.repojectGeometry(inputGeomCRS, diffGeomCRS, diffGeom);
@@ -120,15 +111,11 @@ public class DifferenceProcess extends AbstractProcess {
                             }
                         }
                     }
-                } finally {
-                    clipIterator.close();
                 }
-
-                resultFeature.getProperty(property.getName()).setValue(resultGeometry);
-
-            } else {
+                resultFeature.setPropertyValue(name, resultGeometry);
+            } else if(property instanceof AttributeType && !(AttributeConvention.contains(property.getName()))){
                 //others properties (no geometry)
-                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+                resultFeature.setPropertyValue(name, value);
             }
         }
         return resultFeature;

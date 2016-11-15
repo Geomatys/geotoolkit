@@ -27,10 +27,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
 
 /**
  * Geometry moving tool.

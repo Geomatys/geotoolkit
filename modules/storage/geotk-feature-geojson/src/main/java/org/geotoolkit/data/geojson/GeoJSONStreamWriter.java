@@ -5,12 +5,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -56,7 +57,7 @@ public class GeoJSONStreamWriter implements FeatureWriter {
         try {
             writer = new GeoJSONWriter(outputStream, encoding, doubleAccuracy, prettyPrint);
             //start write feature collection.
-            writer.writeStartFeatureCollection(featureType.getCoordinateReferenceSystem(), null);
+            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -105,7 +106,8 @@ public class GeoJSONStreamWriter implements FeatureWriter {
 
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
-        edited = FeatureUtilities.defaultFeature(featureType, "id-" + currentFeatureIdx++);
+        edited = featureType.newInstance();
+        edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-" + currentFeatureIdx++);
         return edited;
     }
 

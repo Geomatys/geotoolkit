@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -40,7 +40,6 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
-import org.openide.util.NbBundle;
 
 /**
  *
@@ -122,7 +121,7 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
             guiEditor.getEditors().clear();
             guiEditor.getEditors().addAll(availableEditors);
         }
-        guiEditor.setProperty(FeatureUtilities.toProperty(paramValue));
+        guiEditor.setProperty(FeatureExt.toProperty(paramValue));
         guiEditor.addPropertyChangeListener(this);
         guiEditor.addFocusListener(this);
         guiEditor.setOpaque(false);

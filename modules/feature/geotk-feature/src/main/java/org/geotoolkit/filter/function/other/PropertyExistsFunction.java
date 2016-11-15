@@ -20,10 +20,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -66,9 +65,12 @@ public class PropertyExistsFunction extends AbstractFunction {
      */
     public Object evaluate(final Feature feature) {
         String propName = getPropertyName();
-        PropertyDescriptor attributeType = feature.getType().getDescriptor(propName);
-
-        return attributeType != null;
+        try{
+            feature.getType().getProperty(propName);
+            return true;
+        }catch(PropertyNotFoundException ex){
+            return false;
+        }
     }
 
     /**

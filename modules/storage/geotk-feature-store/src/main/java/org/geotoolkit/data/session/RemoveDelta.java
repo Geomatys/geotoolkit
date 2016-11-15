@@ -26,7 +26,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
@@ -42,7 +41,7 @@ public class RemoveDelta extends AbstractDelta{
 
     protected Id removedIds;
 
-    public RemoveDelta(final Session session, final GenericName typeName, final Id filter){
+    public RemoveDelta(final Session session, final String typeName, final Id filter){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("filter", filter);

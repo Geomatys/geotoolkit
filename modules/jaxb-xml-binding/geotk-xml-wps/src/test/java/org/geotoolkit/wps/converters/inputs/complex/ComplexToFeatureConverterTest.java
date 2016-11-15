@@ -17,12 +17,12 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.io.IOException;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 
 /**
  *

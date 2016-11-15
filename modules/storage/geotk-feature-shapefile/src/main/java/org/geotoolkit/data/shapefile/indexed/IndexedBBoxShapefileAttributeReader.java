@@ -27,16 +27,16 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
-import org.geotoolkit.index.quadtree.LazyTyleSearchIterator.Buffered;
 import org.apache.sis.storage.DataStoreException;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Attribut reader that will check the geometry bbox and resolution.
@@ -79,7 +79,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
      *                      while return an approximate geometry
      */
     public IndexedBBoxShapefileAttributeReader(final AccessManager locker,            
-            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final AttributeType[] atts, final boolean read3D, final boolean memoryMapped,
             final double[] resample, final boolean readDBF, final Charset charset,
             final double[] estimateRes, final CloseableCollection<ShpData> goodRec,
             final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, 
@@ -102,7 +102,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
         this.boundingGeometry = toGeometry(bbox);
 
         for (int i=0; i<atts.length; i++) {
-            if (atts[i] instanceof GeometryDescriptor) {
+            if (AttributeConvention.isGeometryAttribute(atts[i])) {
                 geomAttIndex = i;
                 break;
             }

@@ -18,9 +18,10 @@ package org.geotoolkit.observation;
 
 import java.io.Serializable;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractDataStoreFactory;
 import org.geotoolkit.storage.DataStore;
@@ -75,7 +76,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -93,7 +94,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -126,7 +127,7 @@ public abstract class AbstractObservationStoreFactory extends AbstractDataStoreF
 
 
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
         }

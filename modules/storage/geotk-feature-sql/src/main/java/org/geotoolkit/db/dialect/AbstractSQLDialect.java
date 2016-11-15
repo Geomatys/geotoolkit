@@ -18,12 +18,11 @@ package org.geotoolkit.db.dialect;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
@@ -42,7 +41,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
      * Everything will be added in the post filter.
      */
     @Override
-    public Filter[] splitFilter(Filter filter, ComplexType type) {
+    public Filter[] splitFilter(Filter filter, FeatureType type) {
         final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(
                 (DefaultFilterCapabilities)getFilterCapabilities(), type);
         filter.accept(splitter, null);
@@ -83,7 +82,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     }
     
     @Override
-    public void encodePostColumnCreateTable(StringBuilder sql, AttributeDescriptor att) {
+    public void encodePostColumnCreateTable(StringBuilder sql, AttributeType att) {
     }
     
     @Override
@@ -96,13 +95,13 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     }
     
     @Override
-    public void decodeColumnType(final AttributeTypeBuilder atb, final Connection cx,
+    public void decodeColumnType(final SingleAttributeTypeBuilder atb, final Connection cx,
             final String typeName, final int datatype, final String schemaName,
             final String tableName, final String columnName) throws SQLException {
 
         final Class binding = getJavaType(datatype, typeName);
         atb.setName(columnName);
-        atb.setBinding(binding);
+        atb.setValueClass(binding);
     }
 
     

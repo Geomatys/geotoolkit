@@ -21,17 +21,15 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -39,9 +37,13 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.buffer.BufferDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Process buffer, create a buffer around Feature's geometry and
@@ -53,10 +55,8 @@ import static org.geotoolkit.parameter.Parameters.*;
  * </ul>
  *
  * @author Quentin Boileau
- * @module pending
  */
 public class BufferProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -69,54 +69,43 @@ public class BufferProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final double inputDistance                          = value(DISTANCE_IN, inputParameters).doubleValue();
-        Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters);
-
-        if (inputLenient == null) inputLenient = Boolean.TRUE;
-
+        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
+        final double inputDistance               = value(DISTANCE_IN, inputParameters).doubleValue();
+        Boolean inputLenient                     = value(LENIENT_TRANSFORM_IN, inputParameters);
+        if (inputLenient == null) {
+            inputLenient = Boolean.TRUE;
+        }
         final FeatureCollection resultFeatureList =
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
-
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Apply buffer algorithm to the Feature geometry and store the resulting geometry
      * into a new Feature.
-     * @param oldFeature
-     * @param newType
-     * @param distance
-     * @param lenient
-     * @return a Feature
-     * @throws FactoryException
-     * @throws MismatchedDimensionException
-     * @throws TransformException
      */
     static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance, final Boolean lenient)
-            throws FactoryException, MismatchedDimensionException, TransformException {
-
-        final CoordinateReferenceSystem originalCRS;
-
-        if (oldFeature.getType().getCoordinateReferenceSystem() != null) {
-            originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
-        } else {
-            final Geometry geom = (Geometry) oldFeature.getDefaultGeometryProperty().getValue();
+            throws FactoryException, MismatchedDimensionException, TransformException
+    {
+        CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(oldFeature.getType());
+        if (originalCRS == null) {
+            final Geometry geom = (Geometry) oldFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
             originalCRS = JTS.findCoordinateReferenceSystem(geom);
         }
-
         final GeographicCRS longLatCRS = CommonCRS.WGS84.normalizedGeographic();
         final MathTransform mtToLongLatCRS = CRS.findOperation(originalCRS, longLatCRS, null).getMathTransform();
+        final Feature resultFeature = newType.newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
+        for (final PropertyType property : oldFeature.getType().getProperties(true)) {
+            if(!(property instanceof AttributeType)) continue;
+            
+            final String name = property.getName().toString();
+            final Object value = oldFeature.getPropertyValue(name);
 
-        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
-        for (Property property : oldFeature.getProperties()) {
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-
-                //Geometry IN
-                final Geometry originalGeometry = (Geometry) property.getValue();
+            if (AttributeConvention.isGeometryAttribute(property)) {
 
                 //convert geometry into WGS84
-                final Geometry convertedGeometry = JTS.transform(originalGeometry, mtToLongLatCRS);
+                final Geometry convertedGeometry = JTS.transform((Geometry) value, mtToLongLatCRS);
                 final Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
@@ -132,10 +121,9 @@ public class BufferProcess extends AbstractProcess {
                 bufferedGeometry = JTS.transform(bufferedGeometry, projection.inverse());
                 bufferedGeometry = JTS.transform(bufferedGeometry, mtToLongLatCRS.inverse());
                 JTS.setCRS(bufferedGeometry, originalCRS);
-                resultFeature.getProperty(property.getName()).setValue(bufferedGeometry);
-
+                resultFeature.setPropertyValue(name, bufferedGeometry);
             } else {
-                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+                resultFeature.setPropertyValue(name, value);
             }
         }
         return resultFeature;

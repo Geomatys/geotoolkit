@@ -23,23 +23,22 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.FeatureExt;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.xml.WPSXmlFactory;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -96,7 +95,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS);
                 Feature next = writer.next();
-                FeatureUtilities.copy(source, next, true);
+                FeatureExt.copy(source, next, true);
                 writer.write();
                 writer.close();
 
@@ -122,7 +121,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
                 final OutputStream stream = new FileOutputStream(schemaFile);
                 //write featureType xsd on file
-                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
                 xmlFTWriter.write(ft, stream);
 
                 complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);

@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.factory.FactoryFinder;
@@ -39,9 +41,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -69,7 +70,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
-            final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+            final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
 
             final JSplitPane split = new JSplitPane();
@@ -87,8 +88,8 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             map.setPreferredSize(new Dimension(350, 350));
             map.getContainer().setContext(context);
             try {
-                map.getCanvas().setObjectiveCRS(feature.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem());
-                map.getCanvas().setVisibleArea(feature.getBounds());
+                map.getCanvas().setObjectiveCRS(FeatureExt.getCRS(feature.getType()));
+                map.getCanvas().setVisibleArea((Envelope)feature.getPropertyValue(AttributeConvention.ENVELOPE_PROPERTY.toString()));
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -115,11 +116,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
                     final Object res = JOptionDialog.show(null,split,new String[]{delete,cancel,save});
                     if(save == res){
                         final Feature geofeature = layer.getCollection().iterator().next();
-                        for(Property p : geofeature.getProperties()){
-                            if(p instanceof GeometryAttribute){
-                                feature.getProperty(p.getName()).setValue(p.getValue());
-                            }
-                        }
+                        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geofeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString()));
 
                         try {
                             originalLayer.getCollection().update(feature);
@@ -128,7 +125,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
                         }
                     }else if(delete == res){
                         try {
-                            originalLayer.getCollection().remove(FactoryFinder.getFilterFactory(null).id(Collections.singleton(feature.getIdentifier())));
+                            originalLayer.getCollection().remove(FactoryFinder.getFilterFactory(null).id(Collections.singleton(FeatureExt.getId(feature))));
                         } catch (DataStoreException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }

@@ -17,7 +17,6 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import javax.swing.*;
@@ -34,6 +33,8 @@ import java.util.logging.Level;
 
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.getPreviousPath;
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.setPreviousPath;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Throw PropertyChange event when TextField text change.
@@ -63,7 +64,7 @@ public class URIEditor extends PropertyValueEditor implements ActionListener, Do
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return URI.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && URI.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

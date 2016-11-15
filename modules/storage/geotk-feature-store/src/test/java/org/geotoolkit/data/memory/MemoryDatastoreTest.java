@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
@@ -39,21 +42,20 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.apache.sis.referencing.CRS;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 
 /**
@@ -82,7 +84,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testSchemas() throws Exception {
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryFeatureStore store = new MemoryFeatureStore();
         Set<GenericName> names;
 
@@ -91,12 +93,11 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test creation of one schema ------------------------------------------
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("att1", String.class);
-        final FeatureType type1 = builder.buildSimpleFeatureType();
+        builder.addAttribute(String.class).setName("att1");
+        final FeatureType type1 = builder.build();
 
-        store.createFeatureType(name,type1);
+        store.createFeatureType(type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -105,24 +106,24 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(NamesExt.getNamespace(n), "http://test.com");
 
-        FeatureType t = store.getFeatureType(n);
+        FeatureType t = store.getFeatureType(n.toString());
         assertEquals(t, type1);
 
         try{
-            store.getFeatureType(NamesExt.create("http://not", "exist"));
+            store.getFeatureType(NamesExt.create("http://not", "exist").toString());
             throw new Exception("Asking for a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
         }
 
         //test update schema ---------------------------------------------------
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName("http://test.com", "TestSchema1");
-        builder.add("att1", String.class);
-        builder.add("att2", Double.class);
-        FeatureType type2 = builder.buildSimpleFeatureType();
+        builder.addAttribute(String.class).setName("att1");
+        builder.addAttribute(Double.class).setName("att2");
+        FeatureType type2 = builder.build();
 
-        store.updateFeatureType(name, type2);
+        store.updateFeatureType(type2);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -131,29 +132,22 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(NamesExt.getNamespace(n), "http://test.com");
 
-        t = store.getFeatureType(n);
+        t = store.getFeatureType(n.toString());
         assertEquals(t, type2);
 
-
-        try{
-            store.updateFeatureType(NamesExt.create("http://not", "exist"),type2);
-            throw new Exception("Updating a schema that doesnt exist should have raised an error");
-        }catch(Exception ex){
-            //ok
-        }
 
         //test delete schema ---------------------------------------------------
 
         names = store.getNames();
         assertEquals(1,names.size());
 
-        store.deleteFeatureType(name);
+        store.deleteFeatureType(name.toString());
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         try{
-            store.deleteFeatureType(NamesExt.create("http://not", "exist"));
+            store.deleteFeatureType(NamesExt.create("http://not", "exist").toString());
             throw new Exception("Deleting a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -168,11 +162,11 @@ public class MemoryDatastoreTest extends TestCase{
 
         //create the schema
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("att1", String.class);
-        final FeatureType type = builder.buildFeatureType();
-        store.createFeatureType(name,type);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att1");
+        final FeatureType type = builder.build();
+        store.createFeatureType(type);
 
 
         //test reader with no features in datastore
@@ -200,7 +194,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             for(int i=0;i<10;i++){
                 Feature f = writer.next();
@@ -212,7 +206,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //check that we really have 10 features now
-        reader = store.getFeatureReader(QueryBuilder.sorted(name,new SortBy[]{new DefaultSortBy(FF.property("att1"), SortOrder.ASCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(),new SortBy[]{new DefaultSortBy(FF.property("att1"), SortOrder.ASCENDING)}));
         count = 0;
         try{
             while(reader.hasNext()){
@@ -227,7 +221,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(store.getCount(QueryBuilder.all(name)), 10);
 
         //check updating features
-        writer = store.getFeatureWriter(name, org.opengis.filter.Filter.INCLUDE);
+        writer = store.getFeatureWriter(QueryBuilder.all(name.toString()));
         count = 0;
         try{
             while(writer.hasNext()){
@@ -256,7 +250,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(store.getCount(QueryBuilder.all(name)), 10);
 
         //check deleting features
-        writer = store.getFeatureWriter(name, org.opengis.filter.Filter.INCLUDE);
+        writer = store.getFeatureWriter(QueryBuilder.all(name));
         try{
             while(writer.hasNext()){
                 Feature f = writer.next();
@@ -287,17 +281,17 @@ public class MemoryDatastoreTest extends TestCase{
 
         //create the schema
         final GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("string", String.class);
-        builder.add("double", Double.class);
-        builder.add("date", Date.class);
-        final FeatureType type = builder.buildFeatureType();
-        store.createFeatureType(name,type);
-        final QueryBuilder qb = new QueryBuilder(name);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("string");
+        builder.addAttribute(Double.class).setName("double");
+        builder.addAttribute(Date.class).setName("date");
+        final FeatureType type = builder.build();
+        store.createFeatureType(type);
+        final QueryBuilder qb = new QueryBuilder(name.toString());
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             Feature f = writer.next();
             f.setPropertyValue("string", "hop3");
@@ -339,7 +333,7 @@ public class MemoryDatastoreTest extends TestCase{
         //ASCENDING ORDER ------------------------------------------------------
 
         //test sort by on string
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -356,7 +350,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //test sort by on double
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -373,7 +367,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //test sort by on date
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("date", SortOrder.ASCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("date", SortOrder.ASCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -392,7 +386,7 @@ public class MemoryDatastoreTest extends TestCase{
         //DESCENDING ORDER ------------------------------------------------------
 
         //test sort by on string
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.DESCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("string", SortOrder.DESCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -409,7 +403,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //test sort by on double
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("double", SortOrder.DESCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("double", SortOrder.DESCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -426,7 +420,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //test sort by on date
-        reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("date", SortOrder.DESCENDING)}));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("date", SortOrder.DESCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -448,7 +442,7 @@ public class MemoryDatastoreTest extends TestCase{
         //TEST FILTER ----------------------------------------------------------
         //test on date
         Filter filter = FF.equals(FF.property("date"), FF.literal(new Date(10000L)));
-        Query query = QueryBuilder.filtered(name,filter);
+        Query query = QueryBuilder.filtered(name.toString(),filter);
         assertEquals(store.getCount(query),1);
 
         reader = store.getFeatureReader(query);
@@ -464,7 +458,7 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test on double
         filter = FF.equals(FF.property("double"), FF.literal(2d));
-        query = QueryBuilder.filtered(name,filter);
+        query = QueryBuilder.filtered(name.toString(),filter);
         assertEquals(store.getCount(query),1);
 
         reader = store.getFeatureReader(query);
@@ -480,7 +474,7 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test on string
         filter = FF.equals(FF.property("string"), FF.literal("hop1"));
-        query = QueryBuilder.filtered(name,filter);
+        query = QueryBuilder.filtered(name.toString(),filter);
         assertEquals(store.getCount(query),1);
 
         reader = store.getFeatureReader(query);
@@ -503,14 +497,13 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(store.getCount(query),3);
 
         reader = store.getFeatureReader(query);
-        assertEquals(reader.getFeatureType().getDescriptors().size(),2);
-        assertNotNull(reader.getFeatureType().getDescriptor("string"));
-        assertNotNull(reader.getFeatureType().getDescriptor("date"));
+        assertEquals(reader.getFeatureType().getProperties(true).size(),2);
+        assertNotNull(reader.getFeatureType().getProperty("string"));
+        assertNotNull(reader.getFeatureType().getProperty("date"));
 
         try{
             while(reader.hasNext()){
                 Feature f = reader.next();
-                assertEquals(f.getProperties().size(), 2);
                 assertTrue( f.getPropertyValue("string") instanceof String );
                 assertTrue( f.getPropertyValue("date") instanceof Date );
             }
@@ -528,7 +521,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(2,store.getCount(query));
 
         reader = store.getFeatureReader(query);
-        assertEquals(reader.getFeatureType().getDescriptors().size(),3);
+        assertEquals(reader.getFeatureType().getProperties(true).size(),4);
 
         try{
             Feature sf;
@@ -576,16 +569,16 @@ public class MemoryDatastoreTest extends TestCase{
 
         //create the schema
         final GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("geometry", Point.class, CRS.forCode("EPSG:27582"));
-        builder.add("string", String.class);
-        final FeatureType type = builder.buildFeatureType();
-        store.createFeatureType(name,type);
-        final QueryBuilder qb = new QueryBuilder(name);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Point.class).setName("geometry").setCRS(CRS.forCode("EPSG:27582")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        builder.addAttribute(String.class).setName("string");
+        final FeatureType type = builder.build();
+        store.createFeatureType(type);
+        final QueryBuilder qb = new QueryBuilder(name.toString());
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             Feature f = writer.next();
             f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 10)));
@@ -667,12 +660,12 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test creation of one schema ------------------------------------------
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("att1", String.class);
-        final FeatureType type1 = builder.buildFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att1");
+        final FeatureType type1 = builder.build();
 
-        store.createFeatureType(name,type1);
+        store.createFeatureType(type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -684,20 +677,22 @@ public class MemoryDatastoreTest extends TestCase{
 
         //try to insert features -----------------------------------------------
         Collection<Feature> features = new ArrayList<>();
-        Feature sfb = FeatureUtilities.defaultFeature(type1, "myId1");
+        Feature sfb = type1.newInstance();
+        sfb.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"myId1");
         sfb.setPropertyValue("att1", "hophop1");
         features.add(sfb);
-        sfb = FeatureUtilities.defaultFeature(type1, "myId2");
+        sfb = type1.newInstance();
+        sfb.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"myId2");
         sfb.setPropertyValue("att1", "hophop2");
         features.add(sfb);
 
-        store.addFeatures(name, features);
+        store.addFeatures(name.toString(), features);
 
         FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
         Feature f = reader.next();
-        assertEquals("myId1", f.getIdentifier().getID());
+        assertEquals("myId1", FeatureExt.getId(f).getID());
         f = reader.next();
-        assertEquals("myId2", f.getIdentifier().getID());
+        assertEquals("myId2", FeatureExt.getId(f).getID());
 
         assertFalse(reader.hasNext());
 
@@ -714,14 +709,14 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test creation of one schema ------------------------------------------
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("ListAtt", List.class);
-        builder.add("MapAtt", Map.class);
-        builder.add("SetAtt", Set.class);
-        final FeatureType type1 = builder.buildSimpleFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(List.class).setName("ListAtt");
+        builder.addAttribute(Map.class).setName("MapAtt");
+        builder.addAttribute(Set.class).setName("SetAtt");
+        final FeatureType type1 = builder.build();
 
-        store.createFeatureType(name,type1);
+        store.createFeatureType(type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -732,58 +727,62 @@ public class MemoryDatastoreTest extends TestCase{
 
         //try to insert features -----------------------------------------------
         Collection<Feature> features = new ArrayList<>();
-        final Feature f1 = FeatureUtilities.defaultFeature(type1, "myId1");
+        final Feature f1 = type1.newInstance();
+        f1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "myId1");
         f1.setPropertyValue("ListAtt", Collections.singletonList("aListValue"));
         f1.setPropertyValue("MapAtt", Collections.singletonMap("aMapKey", "aMapValue"));
         f1.setPropertyValue("SetAtt", Collections.singleton("aSetValue"));
         features.add(f1);
 
-        final Feature f2 = FeatureUtilities.defaultFeature(type1, "myId2");
+        final Feature f2 = type1.newInstance();
+        f2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "myId2");
         f2.setPropertyValue("ListAtt", Collections.singletonList("aListValue2"));
         f2.setPropertyValue("MapAtt", Collections.singletonMap("aMapKey2", "aMapValue2"));
         f2.setPropertyValue("SetAtt", Collections.singleton("aSetValue2"));
         features.add(f2);
 
-        store.addFeatures(name, features);
+        store.addFeatures(name.toString(), features);
 
         FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
-        Feature f = reader.next();
-        assertEquals("myId1", f.getIdentifier().getID());
 
-        assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
-        List lst = (List) f.getProperty("ListAtt").getValue();
-        assertEquals("aListValue",lst.get(0));
+        int nb = 0;
+        while(reader.hasNext()){
+            nb++;
+            final Feature f = reader.next();
+            final String fid = FeatureExt.getId(f).getID();
+            if("myId1".equals(fid)){
+                assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
+                List lst = (List) f.getProperty("ListAtt").getValue();
+                assertEquals("aListValue",lst.get(0));
 
-        assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
-        Map map = (Map) f.getProperty("MapAtt").getValue();
-        assertEquals("aMapKey",map.keySet().iterator().next());
-        assertEquals("aMapValue",map.values().iterator().next());
+                assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
+                Map map = (Map) f.getProperty("MapAtt").getValue();
+                assertEquals("aMapKey",map.keySet().iterator().next());
+                assertEquals("aMapValue",map.values().iterator().next());
 
-        assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
-        Set set = (Set) f.getProperty("SetAtt").getValue();
-        assertEquals("aSetValue",set.iterator().next());
+                assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
+                Set set = (Set) f.getProperty("SetAtt").getValue();
+                assertEquals("aSetValue",set.iterator().next());
+            }else if("myId2".equals(fid)){
+                assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
+                List lst = (List) f.getProperty("ListAtt").getValue();
+                assertEquals("aListValue2",lst.get(0));
 
+                assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
+                Map map = (Map) f.getProperty("MapAtt").getValue();
+                assertEquals("aMapKey2",map.keySet().iterator().next());
+                assertEquals("aMapValue2",map.values().iterator().next());
 
-        f = reader.next();
-        assertEquals("myId2", f.getIdentifier().getID());
+                assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
+                Set set = (Set) f.getProperty("SetAtt").getValue();
+                assertEquals("aSetValue2",set.iterator().next());
+            }else{
+                fail("Unexpected feature with id : "+fid);
+            }
 
-        assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
-        lst = (List) f.getProperty("ListAtt").getValue();
-        assertEquals("aListValue2",lst.get(0));
+        }
 
-        assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
-        map = (Map) f.getProperty("MapAtt").getValue();
-        assertEquals("aMapKey2",map.keySet().iterator().next());
-        assertEquals("aMapValue2",map.values().iterator().next());
-
-        assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
-        set = (Set) f.getProperty("SetAtt").getValue();
-        assertEquals("aSetValue2",set.iterator().next());
-
-
-
-        assertFalse(reader.hasNext());
-
+        assertEquals(2, nb);
 
     }
 
@@ -798,16 +797,15 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test creation of one schema ------------------------------------------
         GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("ListAtt", List.class);
-        builder.add("MapAtt", Map.class);
-        builder.add("SetAtt", Set.class);
-        final FeatureType type1 = builder.buildFeatureType();
+        builder.addAttribute(List.class).setName("ListAtt");
+        builder.addAttribute(Map.class).setName("MapAtt");
+        builder.addAttribute(Set.class).setName("SetAtt");
+        final FeatureType type1 = builder.build();
 
-        store.createFeatureType(name,type1);
+        store.createFeatureType(type1);
 
-        store.isWritable(name);
+        store.isWritable(name.toString());
 
         final Session session = store.createSession(true);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(name));

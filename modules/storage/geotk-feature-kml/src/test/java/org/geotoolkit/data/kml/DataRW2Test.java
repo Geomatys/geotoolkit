@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,18 +35,15 @@ import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
+
 import static java.util.Collections.*;
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -57,32 +52,10 @@ import static java.util.Collections.*;
  */
 public class DataRW2Test extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/dataRW2.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public DataRW2Test() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void metadataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final DataReader dataReader = new DataReader();
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -91,45 +64,33 @@ public class DataRW2Test extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        assertEquals("Document.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        assertEquals("Document.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        final Feature placemark0 = (Feature) i.next();
+        ExtendedData extendedData = (ExtendedData) ((List)placemark0.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
+        assertEquals(EMPTY_LIST, extendedData.getDatas());
+        assertEquals(EMPTY_LIST, extendedData.getSchemaData());
+        assertEquals(1, extendedData.getAnyOtherElements().size());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+        List<?> racine1 =  (List<?>) extendedData.getAnyOtherElements().get(0);
+        assertEquals(2, racine1.size());
+        assertEquals("Je suis un element.", racine1.get(0));
+        assertEquals("J'en suis un autre.", racine1.get(1));
 
-        if(i.hasNext()){
-            Object object = i.next();
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        final Feature placemark1 = (Feature) i.next();
+        Metadata metadata = (Metadata) ((List)placemark1.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
+        assertEquals(1, metadata.getContent().size());
 
-            final Feature placemark0 = (Feature) object;
-            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof ExtendedData);
-            ExtendedData extendedData = (ExtendedData) placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            assertEquals(EMPTY_LIST, extendedData.getDatas());
-            assertEquals(EMPTY_LIST, extendedData.getSchemaData());
-            assertEquals(1, extendedData.getAnyOtherElements().size());
-
-            List<String> racine1 =  (List<String>) extendedData.getAnyOtherElements().get(0);
-            assertEquals(2, racine1.size());
-            assertEquals("Je suis un element.",racine1.get(0));
-            assertEquals("J'en suis un autre.",racine1.get(1));
-
-        }
-
-        if(i.hasNext()){
-            Object object = i.next();
-
-            final Feature placemark1 = (Feature) object;
-            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof Metadata);
-            Metadata metadata = (Metadata) placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            assertEquals(1, metadata.getContent().size());
-
-            List<String> racine2 =  (List<String>) metadata.getContent().get(0);
-            assertEquals(2, racine2.size());
-            assertEquals("Et moi aussi.",racine2.get(0));
-            assertEquals("Sans commentaire.",racine2.get(1));
-        }
+        List<?> racine2 =  (List<?>) metadata.getContent().get(0);
+        assertEquals(2, racine2.size());
+        assertEquals("Et moi aussi.",     racine2.get(0));
+        assertEquals("Sans commentaire.", racine2.get(1));
     }
 
     @Test
@@ -138,26 +99,24 @@ public class DataRW2Test extends org.geotoolkit.test.TestBase {
 
         final Feature placemark0 = kmlFactory.createPlacemark();
         final ExtendedData extendedData = kmlFactory.createExtendedData();
-        final List<String> racine0 = new ArrayList<String>();
+        final List<String> racine0 = new ArrayList<>();
         racine0.add("Je suis un element.");
         racine0.add("J'en suis un autre.");
         extendedData.setAnyOtherElements(Arrays.asList((Object) racine0));
-        placemark0.getProperties().add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
 
         final Feature placemark1 = kmlFactory.createPlacemark();
         final Metadata metadata = kmlFactory.createMetadata();
-        final List<String> racine1 = new ArrayList<String>();
+        final List<String> racine1 = new ArrayList<>();
         racine1.add("Et moi aussi.");
         racine1.add("Sans commentaire.");
         metadata.setContent(Arrays.asList((Object) racine1));
-        placemark1.getProperties().add(FF.createAttribute(metadata, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        placemark1.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, metadata);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_NAME, "Document.kml");
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri("http://www.sandres.com", "sam");
@@ -172,8 +131,6 @@ public class DataRW2Test extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

@@ -18,7 +18,6 @@ package org.geotoolkit.data.mapinfo;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
@@ -49,12 +48,15 @@ import java.util.regex.Pattern;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
+import org.opengis.referencing.datum.DatumAuthorityFactory;
 
 /**
  * The object in charge of CRS conversion.
@@ -69,9 +71,9 @@ public class ProjectionUtils {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo");
 
-    private static final CRSFactory CRS_FACTORY = FactoryFinder.getCRSFactory(null);
-    private static final CSFactory CS_FACTORY = FactoryFinder.getCSFactory(null);
-    private static final CoordinateOperationFactory PROJ_FACTORY = FactoryFinder.getCoordinateOperationFactory(null);
+    private static final CRSFactory CRS_FACTORY = DefaultFactories.forBuildin(CRSFactory.class);
+    private static final CSFactory CS_FACTORY = DefaultFactories.forBuildin(CSFactory.class);
+    private static final CoordinateOperationFactory PROJ_FACTORY = DefaultFactories.forBuildin(CoordinateOperationFactory.class);
 
     private static final String BOUNDS_NAME = "Bounds";
     private static final String AFFINE_UNITS = "Affine Units";
@@ -139,7 +141,7 @@ public class ProjectionUtils {
         String boundsStr = null;
         String affineUnitsStr = null;
 
-        Map<String, Object> crsIdentifiers = new HashMap<String, Object>();
+        Map<String, Object> crsIdentifiers = new HashMap<>();
 
         int projCode = -1;
         String[] paramList;
@@ -327,7 +329,7 @@ public class ProjectionUtils {
                 }
             }
 
-            Map<String, Object> properties = new HashMap<String, Object>();
+            Map<String, Object> properties = new HashMap<>();
             properties.put("name", "MapInfoProjection");
             properties.put("authority", Citations.MAP_INFO);
 
@@ -388,14 +390,13 @@ public class ProjectionUtils {
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
             Conversion proj = pCRS.getConversionFromBase();
-            String projCode = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(
-                    Citations.MAP_INFO, proj.getMethod(), false);
+            String projCode = IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(proj.getMethod(), Citations.MAP_INFO));
             if(projCode == null) {
                 // If we get a lambert conformal 1SP, we must convert it into 2P to use it.
-                if(org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(proj.getMethod(), true).equals(9801)) {
+                if(IdentifiedObjects.lookupEPSG(proj.getMethod()).equals(9801)) {
                     projCode = "3";
                     OperationMethod method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
-                    Map<String, Object> properties = new HashMap<String, Object>();
+                    Map<String, Object> properties = new HashMap<>();
                     properties.put("name", "Lambert Conformal Conic (2SP)");
                     properties.put("authority", Citations.MAP_INFO);
                     ParameterDescriptorGroup desc = method.getParameters();
@@ -412,7 +413,7 @@ public class ProjectionUtils {
 
                 } else {
                     OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
-                    projCode = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
+                    projCode = IdentifiedObjects.toString(IdentifiedObjects.getIdentifier(method, Citations.MAP_INFO));
                 }
                 if (projCode == null) {
                     throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
@@ -436,4 +437,16 @@ public class ProjectionUtils {
         return builder.toString();
     }
 
+    /**
+     * Try to acquire an authority factory for EPSG datums / ellipsoids.
+     * @return A datum authority factory provided by Apache SIS. Never null.
+     * @throws FactoryException If we cannot acquire the wanted factory (none found).
+     */
+    public static DatumAuthorityFactory getDatumFactory() throws FactoryException {
+        final CRSAuthorityFactory datumFactory = CRS.getAuthorityFactory("EPSG");
+        if (datumFactory instanceof DatumAuthorityFactory)
+            return (DatumAuthorityFactory) datumFactory;
+        else
+            throw new FactoryException("No datum factory available.");
+    }
 }

@@ -26,28 +26,33 @@ import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
-import org.geotoolkit.feature.*;
-import org.geotoolkit.feature.type.*;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -55,23 +60,23 @@ import java.util.logging.Logger;
 public class GeoJSONReader implements FeatureReader {
 
     private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
-    private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();
+    private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<>();
 
     private GeoJSONObject jsonObj = null;
     private Boolean toRead = true;
 
-    protected ReadWriteLock rwlock;
-    protected FeatureType featureType;
-    protected Path jsonFile;
+    protected final ReadWriteLock rwlock;
+    protected final FeatureType featureType;
+    protected final Path jsonFile;
     protected Feature current = null;
     protected int currentFeatureIdx = 0;
 
-    @Deprecated
-    public GeoJSONReader(File jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
-        this(jsonFile.toPath(), featureType, rwLock);
-    }
-
     public GeoJSONReader(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
+        try{
+            featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        }catch(PropertyNotFoundException ex){
+            throw new RuntimeException("Missing identifier field in feature type");
+        }
         this.jsonFile = jsonFile;
         this.featureType = featureType;
         this.rwlock = rwLock;
@@ -151,16 +156,18 @@ public class GeoJSONReader implements FeatureReader {
      * @return
      */
     protected Feature toFeature(GeoJSONFeature jsonFeature, String featureId) throws FeatureStoreRuntimeException {
-        Map<String, Object> properties = jsonFeature.getProperties();
 
-        //Build and add geometry to properties
-        CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
-        Geometry geom = GeometryUtils.toJTS(jsonFeature.getGeometry(), crs);
-        properties.put(featureType.getGeometryDescriptor().getLocalName(), geom);
+        //Build geometry
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(featureType);
+        final Geometry geom = GeometryUtils.toJTS(jsonFeature.getGeometry(), crs);
 
         //empty feature
-        final Feature feature = FeatureUtilities.defaultFeature(featureType, featureId);
+        final Feature feature = featureType.newInstance();
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureId);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+        
         //recursively fill other properties
+        final Map<String, Object> properties = jsonFeature.getProperties();
         fillFeature(feature, properties);
 
         return feature;
@@ -168,69 +175,50 @@ public class GeoJSONReader implements FeatureReader {
 
     /**
      * Recursively fill a ComplexAttribute with properties map
-     * @param attribute
+     * @param feature
      * @param properties
      */
-    private void fillFeature(ComplexAttribute attribute, Map<String, Object> properties) throws FeatureStoreRuntimeException {
+    private void fillFeature(Feature feature, Map<String, Object> properties) throws FeatureStoreRuntimeException {
+        final FeatureType featureType = feature.getType();
 
-        ComplexType complexType = attribute.getType();
+        for(final PropertyType type : featureType.getProperties(true)) {
 
-        //clear attribute properties
-        boolean isSimple = complexType instanceof FeatureType ? FeatureTypeUtilities.isSimple((FeatureType)complexType) : false;
-        if(!isSimple)attribute.getProperties().clear();
+            final String attName = type.getName().toString();
+            final Object value = properties.get(attName);
+            if(value==null) continue;
 
-        PropertyType type;
-        String attName;
-        Object value;
-        for(final PropertyDescriptor desc : complexType.getDescriptors()) {
+            if (type instanceof FeatureAssociationRole ) {
+                final FeatureAssociationRole asso = (FeatureAssociationRole) type;
+                final FeatureType assoType = asso.getValueType();
+                final Class valueClass = value.getClass();
 
-            type = desc.getType();
-            attName = type.getName().toString();
-            value = properties.get(attName);
+                if (valueClass.isArray()) {
+                    Class base = value.getClass().getComponentType();
 
-            if (type instanceof ComplexType ) {
-                    if (value != null) {
-                        Class valueClass = value.getClass();
-
-                        if (valueClass.isArray()) {
-                            Class base = value.getClass().getComponentType();
-
-                            if (!Map.class.isAssignableFrom(base)) {
-                                LOGGER.log(Level.WARNING, "Invalid complex property value " + value);
-                            }
-
-                            final int size = Array.getLength(value);
-                            if (size > 0) {
-
-                                //list of objects
-                                for (int i = 0; i < size; i++) {
-                                    final ComplexAttribute subComplexAttribute = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
-                                    fillFeature(subComplexAttribute, (Map) Array.get(value, i));
-                                    attribute.getProperties().add(subComplexAttribute);
-                                }
-                            }
-                        } else if (value instanceof Map) {
-                            final ComplexAttribute subComplexAttribute = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
-                            fillFeature(subComplexAttribute, (Map) value);
-                            attribute.getProperties().add(subComplexAttribute);
-                        }
+                    if (!Map.class.isAssignableFrom(base)) {
+                        LOGGER.log(Level.WARNING, "Invalid complex property value " + value);
                     }
-                    continue;
+
+                    final int size = Array.getLength(value);
+                    if (size > 0) {
+                        //list of objects
+                        final List<Feature> subs = new ArrayList<>();
+                        for (int i = 0; i < size; i++) {
+                            final Feature subComplexAttribute = assoType.newInstance();
+                            fillFeature(subComplexAttribute, (Map) Array.get(value, i));
+                            subs.add(subComplexAttribute);
+                        }
+                        feature.setPropertyValue(attName,subs);
+                    }
+                } else if (value instanceof Map) {
+                    final Feature subComplexAttribute = assoType.newInstance();
+                    fillFeature(subComplexAttribute, (Map) value);
+                    feature.setPropertyValue(attName, subComplexAttribute);
+                }
 
             } else if(type instanceof AttributeType) {
-
-                Property property;
-                if (isSimple) {
-                    property = attribute.getProperty(desc.getName().tip().toString());
-                } else {
-                    property = FeatureUtilities.defaultProperty(desc);
-                }
-
+                final Attribute property = (Attribute) feature.getProperty( type.getName().toString());
                 fillProperty(property, value);
-
-                if (!isSimple) {
-                    attribute.getProperties().add(property);
-                }
             }
         }
     }
@@ -240,13 +228,13 @@ public class GeoJSONReader implements FeatureReader {
      * @param prop
      * @param value
      */
-    private void fillProperty(Property prop, Object value) throws FeatureStoreRuntimeException {
+    private void fillProperty(Attribute prop, Object value) throws FeatureStoreRuntimeException {
 
         Object convertValue = null;
         try {
             if (value != null) {
-                PropertyType propertyType = prop.getType();
-                Class binding = propertyType.getBinding();
+                final AttributeType<?> propertyType = prop.getType();
+                final Class binding = propertyType.getValueClass();
 
                 if (value.getClass().isArray() && binding.isArray()) {
 
@@ -322,13 +310,11 @@ public class GeoJSONReader implements FeatureReader {
      * @return
      */
     protected Feature toFeature(GeoJSONGeometry jsonGeometry, String featureId) {
-
-        final Feature feature = FeatureUtilities.defaultFeature(featureType, featureId);
-
-        CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
-        Geometry geom = GeometryUtils.toJTS(jsonGeometry, crs);
-        feature.getDefaultGeometryProperty().setValue(geom);
-
+        final Feature feature = featureType.newInstance();
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureId);
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(featureType);
+        final Geometry geom = GeometryUtils.toJTS(jsonGeometry, crs);
+        feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
         return feature;
     }
 

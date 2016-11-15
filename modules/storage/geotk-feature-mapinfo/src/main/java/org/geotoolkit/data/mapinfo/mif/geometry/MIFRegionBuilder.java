@@ -23,16 +23,19 @@ import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  * Class Description
@@ -44,14 +47,8 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("REGION");
 
-    private static final AttributeDescriptor BRUSH;
-    private static final AttributeDescriptor PEN;
-
-    static {
-        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
-
-        BRUSH = new DefaultAttributeDescriptor(STRING_TYPE, Brush.NAME, 1, 1, true, null);
-    }
+    private static final AttributeType BRUSH  = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Brush.NAME), String.class, 1, 1, null);
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -82,10 +79,10 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
             polygons[polygonCount] = GEOMETRY_FACTORY.createPolygon(ring, null);
         }
 
-        toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiPolygon(polygons));
+        toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPolygon(polygons));
 
 
-        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -98,11 +95,11 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
                 final int pattern = Integer.decode(argsTab[1]);
                 final int color = Integer.decode(argsTab[2]);
                 Pen pen = new Pen(width, pattern, color);
-                toFill.getProperty(Pen.NAME).setValue(pen);
+                toFill.setPropertyValue(Pen.NAME.toString(),pen);
             }
         }
 
-        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getDescriptors().contains(BRUSH)) {
+        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getProperties(true).contains(BRUSH)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -118,7 +115,7 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
                     final int background = Integer.decode(argsTab[2]);
                     brush.setBackgroundCC(background);
                 }
-                toFill.getProperty(Brush.NAME).setValue(brush);
+                toFill.setPropertyValue(Brush.NAME.toString(),brush);
             }
         }
     }
@@ -132,7 +129,7 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
         StringBuilder builder = new StringBuilder(NAME.tip().toString());
 
         MultiPolygon multiPolygon = null;
-        Object value = geometry.getDefaultGeometryProperty().getValue();
+        Object value = MIFUtils.getGeometryValue(geometry);
         if(value instanceof Polygon) {
             multiPolygon = GEOMETRY_FACTORY.createMultiPolygon(new Polygon[]{(Polygon)value});
         } else {
@@ -149,18 +146,14 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
         }
 
         // Write styles.
-        if(geometry.getProperty(Pen.NAME) != null) {
-            Object penValue = geometry.getProperty(Pen.NAME).getValue();
-            if(penValue != null && penValue instanceof Pen) {
-                builder.append(penValue).append('\n');
-            }
+        final Object pen = MIFUtils.getPropertySafe(geometry, Pen.NAME.toString());
+        if (pen instanceof Pen) {
+            builder.append(pen).append('\n');
         }
 
-        if(geometry.getProperty(Brush.NAME) != null) {
-                Object brValue = geometry.getProperty(Brush.NAME).getValue();
-            if(brValue != null && brValue instanceof Brush) {
-                builder.append(brValue).append('\n');
-            }
+        final Object brush = MIFUtils.getPropertySafe(geometry, Brush.NAME.toString());
+        if (brush instanceof Brush) {
+            builder.append(brush).append('\n');
         }
 
         return builder.toString();
@@ -182,8 +175,8 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
+    protected List<AttributeType> getAttributes() {
+        final List<AttributeType> descList = new ArrayList<>(2);
         descList.add(PEN);
         descList.add(BRUSH);
 

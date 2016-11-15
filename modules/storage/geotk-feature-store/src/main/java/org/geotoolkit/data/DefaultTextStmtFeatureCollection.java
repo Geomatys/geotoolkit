@@ -27,9 +27,8 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
@@ -175,7 +174,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
         throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 

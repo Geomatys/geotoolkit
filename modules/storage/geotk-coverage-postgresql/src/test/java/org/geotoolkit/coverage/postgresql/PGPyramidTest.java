@@ -40,7 +40,6 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
@@ -50,6 +49,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.measure.Units;
@@ -72,7 +72,7 @@ public class PGPyramidTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     public PGPyramidTest(){

@@ -17,17 +17,13 @@
 
 package org.geotoolkit.data.session;
 
-import java.util.Collections;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.AbstractStorage;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.util.GenericName;
-import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 
 /**
@@ -53,17 +49,6 @@ public abstract class AbstractSession extends AbstractStorage implements Session
     @Override
     public FeatureStore getFeatureStore() {
         return store;
-    }
-
-    /**
-     * {@inheritDoc }
-     *
-     * This implementation fallback on
-     * @see  #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
-     */
-    @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
-        updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
     ////////////////////////////////////////////////////////////////////////////

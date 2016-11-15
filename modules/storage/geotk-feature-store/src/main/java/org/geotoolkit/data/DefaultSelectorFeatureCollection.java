@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -32,17 +35,14 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Feature collection that takes it's source from a single selector.
@@ -88,12 +88,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     public FeatureType getFeatureType() throws FeatureStoreRuntimeException{
         try {
             FeatureType ft = getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
-
-            final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
-            if(hide != null && hide){
-                ft = FeatureTypeUtilities.excludePrimaryKeyFields(ft);
-            }
+            ft = FeatureTypeExt.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
 
             return ft;
         } catch (DataStoreException ex) {
@@ -175,7 +170,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public boolean isWritable(){
         try {
-            return getSession().getFeatureStore().isWritable(query.getTypeName());
+            return getSession().getFeatureStore().isWritable(query.getTypeName().toString());
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
             return false;
@@ -187,7 +182,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
         if(isWritable()){
             if(o instanceof Feature){
-                Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(((Feature)o).getIdentifier()));
+                Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(FeatureExt.getId((Feature)o)));
                 try {
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
@@ -217,7 +212,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
                 while(ite.hasNext()){
                     final Object o = ite.next();
                     if(o instanceof Feature){
-                        ids.add(((Feature)o).getIdentifier());
+                        ids.add(FeatureExt.getId((Feature)o));
                     }
                 }
             }finally{
@@ -260,7 +255,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
         if(filter == Filter.INCLUDE){
             getSession().updateFeatures(query.getTypeName(),query.getFilter(),values);
         }else{

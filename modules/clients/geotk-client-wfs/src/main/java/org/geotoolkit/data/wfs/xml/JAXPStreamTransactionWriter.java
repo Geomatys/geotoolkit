@@ -53,11 +53,9 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -315,7 +313,7 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write properties------------------------------------------------------
-        for(final Entry<PropertyDescriptor,Object> entry : element.updates().entrySet()){
+        for(final Entry<PropertyType,Object> entry : element.updates().entrySet()){
             writer.writeStartElement(WFS_PREFIX, TAG_PROPERTY, WFS_NAMESPACE);
 
             //write namespace
@@ -338,14 +336,13 @@ public class JAXPStreamTransactionWriter {
             writer.writeEndElement();
 
             //write value
-            final PropertyType propertyType = entry.getKey().getType();
+            final PropertyType propertyType = entry.getKey();
             Object value = entry.getValue();
 
             if(value != null){
                 //todo must handle geometry differently
 
                 if(value instanceof Geometry){
-                    final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
                     value = new GeometryPropertyType((AbstractGeometryType)JTStoGeometry.toGML("3.1.1", (Geometry)value));
                     final Marshaller marshaller = GMLPOOL.acquireMarshaller();
                     marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);

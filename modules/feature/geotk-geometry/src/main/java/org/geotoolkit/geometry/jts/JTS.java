@@ -62,6 +62,9 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
 import org.apache.sis.util.Utilities;
@@ -672,6 +675,41 @@ public final class JTS {
         }
 
         return new JTSEnvelope2D(geom.getEnvelopeInternal(), crs);
+    }
+
+    /**
+     * Create an empty geometry of given type.
+     * 
+     * @param <T>
+     * @param geomClass
+     * @param crs
+     * @param factory
+     * @return 
+     */
+    public static <T extends Geometry> T emptyGeometry(Class<T> geomClass, CoordinateReferenceSystem crs, GeometryFactory factory) {
+        ArgumentChecks.ensureNonNull("geometry class", geomClass);
+        if(factory==null) factory = new GeometryFactory();
+
+        final T geometry;
+        if(Point.class.equals(geomClass)){
+            geometry = (T) factory.createPoint((Coordinate)null);
+        }else if(LineString.class.equals(geomClass)){
+            geometry = (T) factory.createLineString((CoordinateSequence)null);
+        }else if(Polygon.class.equals(geomClass)){
+            geometry = (T) factory.createPolygon((CoordinateSequence)null);
+        }else if(MultiPoint.class.equals(geomClass)){
+            geometry = (T) factory.createMultiPoint((CoordinateSequence)null);
+        }else if(MultiLineString.class.equals(geomClass)){
+            geometry = (T) factory.createMultiLineString(null);
+        }else if(MultiPolygon.class.equals(geomClass)){
+            geometry = (T) factory.createMultiPolygon(null);
+        }else if(GeometryCollection.class.equals(geomClass)){
+            geometry = (T) factory.buildGeometry(null);
+        }else{
+            throw new IllegalArgumentException("Unknown geometry class "+geomClass.getName());
+        }
+        if (crs!=null) JTS.setCRS(geometry, crs);
+        return geometry;
     }
 
     /**

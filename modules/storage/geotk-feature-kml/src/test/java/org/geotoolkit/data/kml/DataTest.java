@@ -21,7 +21,7 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -35,11 +35,11 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -48,28 +48,20 @@ import org.xml.sax.SAXException;
  */
 public class DataTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/data.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public DataTest() {
-    }
 
     @Test
     public void dataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        assertEquals("Club house", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("Club house", placemark.getPropertyValue(KmlConstants.TAG_NAME));
 
-        final Object dataContainer = placemark.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-        assertTrue(dataContainer instanceof ExtendedData);
-        final ExtendedData extendedData = (ExtendedData) dataContainer;
+        final ExtendedData extendedData = (ExtendedData) ((List)placemark.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
         assertEquals(3, extendedData.getDatas().size());
 
         final Data data0 = extendedData.getDatas().get(0);
@@ -82,7 +74,6 @@ public class DataTest extends org.geotoolkit.test.TestBase {
         assertEquals("234", data1.getValue());
         assertEquals("holePar", data2.getName());
         assertEquals("4", data2.getValue());
-
     }
 
     @Test
@@ -107,9 +98,8 @@ public class DataTest extends org.geotoolkit.test.TestBase {
 
         extendedData.setDatas(Arrays.asList(data0, data1, data2));
 
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("Club house", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Club house");
+        placemark.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
@@ -121,8 +111,6 @@ public class DataTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

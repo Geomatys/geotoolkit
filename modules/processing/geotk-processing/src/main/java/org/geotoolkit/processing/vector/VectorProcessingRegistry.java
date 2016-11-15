@@ -32,7 +32,6 @@ import org.geotoolkit.processing.vector.convexhull.ConvexHullDescriptor;
 import org.geotoolkit.processing.vector.difference.DifferenceDescriptor;
 import org.geotoolkit.processing.vector.differencegeometry.DifferenceGeometryDescriptor;
 import org.geotoolkit.processing.vector.douglaspeucker.DouglasPeuckerDescriptor;
-import org.geotoolkit.processing.vector.extendfeature.ExtendFeatureDescriptor;
 import org.geotoolkit.processing.vector.filter.FilterDescriptor;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.processing.vector.intersection.IntersectionDescriptor;
@@ -79,8 +78,8 @@ public class VectorProcessingRegistry extends AbstractProcessingRegistry {
                 NearestDescriptor.INSTANCE,             SpatialJoinDescriptor.INSTANCE,     DifferenceDescriptor.INSTANCE,
                 DifferenceGeometryDescriptor.INSTANCE,  IntersectionDescriptor.INSTANCE,    ConvexHullDescriptor.INSTANCE,
                 RegroupDescriptor.INSTANCE,             AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
-                MergeDescriptor.INSTANCE,               UnionDescriptor.INSTANCE,           ExtendFeatureDescriptor.INSTANCE,
-                FilterDescriptor.INSTANCE,              MaxLimitDescriptor.INSTANCE,        RetypeDescriptor.INSTANCE,
+                MergeDescriptor.INSTANCE,               UnionDescriptor.INSTANCE,           RetypeDescriptor.INSTANCE,
+                FilterDescriptor.INSTANCE,              MaxLimitDescriptor.INSTANCE,        
                 SortByDescriptor.INSTANCE,              StartOffsetDescriptor.INSTANCE);
     }
 

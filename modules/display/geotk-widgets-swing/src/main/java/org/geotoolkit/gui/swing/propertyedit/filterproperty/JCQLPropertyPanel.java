@@ -58,7 +58,7 @@ public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
     public void apply() {
         if(layer !=null){
             try {
-                layer.setQuery(QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), getFilter()));
+                layer.setQuery(QueryBuilder.filtered(layer.getCollection().getFeatureType().getName().toString(), getFilter()));
             } catch (CQLException ex) {
                 Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.filterproperty").log(Level.WARNING, ex.getMessage(), ex);
             }

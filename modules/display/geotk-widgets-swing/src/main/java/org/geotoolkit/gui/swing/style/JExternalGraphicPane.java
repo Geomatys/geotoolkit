@@ -31,17 +31,17 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.openide.util.Exceptions;
@@ -55,8 +55,8 @@ import org.openide.util.Exceptions;
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
-    private static final PropertyType URLTYPE = new DefaultPropertyType(NamesExt.valueOf(""), 
-            URL.class, false, null, null, new SimpleInternationalString(""));
+    private static final AttributeType URLTYPE = new SingleAttributeTypeBuilder().setName(NamesExt.valueOf(""))
+            .setValueClass(URL.class).build();
     private static final FileFilter IMAGES_FILTER = new FileNameExtensionFilter("Images", "jpg", "gif", "png", "ico", "bmp", "svg");
     
     private MapLayer layer = null;

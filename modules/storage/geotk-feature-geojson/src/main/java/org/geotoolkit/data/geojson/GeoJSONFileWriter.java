@@ -20,9 +20,6 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.*;
-import org.geotoolkit.feature.type.FeatureType;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.locks.ReadWriteLock;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -65,7 +66,7 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             writer = new GeoJSONWriter(tmpFile, jsonEncoding, doubleAccuracy, false);
 
             //start write feature collection.
-            writer.writeStartFeatureCollection(featureType.getCoordinateReferenceSystem(), null);
+            writer.writeStartFeatureCollection(FeatureExt.getCRS(featureType), null);
             writer.flush();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -85,7 +86,8 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
         }catch(FeatureStoreRuntimeException ex){
             //we reach append mode
             //create empty feature
-            edited = FeatureUtilities.defaultFeature(featureType, "id-"+currentFeatureIdx++);
+            edited = featureType.newInstance();
+            edited.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-"+currentFeatureIdx++);
         }
         return edited;
     }

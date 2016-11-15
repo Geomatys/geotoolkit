@@ -17,18 +17,20 @@
 
 package org.geotoolkit.data;
 
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.FeatureType;
 
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -45,44 +47,47 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
     public DataUtilitiesTest() throws DataStoreException{
         store = new MemoryFeatureStore();
 
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name1 = NamesExt.create("http://test.com", "type1");
         name2 = NamesExt.create("http://test.com", "type2");
         name3 = NamesExt.create("http://test.com", "type3");
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name1);
-        builder.add("att_string", String.class);
-        FeatureType sft1 = builder.buildFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att_string");
+        FeatureType sft1 = builder.build();
 
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name2);
-        builder.add("att_string", String.class);
-        FeatureType sft2 = builder.buildFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att_string");
+        FeatureType sft2 = builder.build();
 
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name3);
-        builder.add("att_string", String.class);
-        FeatureType sft3 = builder.buildFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att_string");
+        FeatureType sft3 = builder.build();
 
-        store.createFeatureType(sft1.getName(), sft1);
-        store.createFeatureType(sft2.getName(), sft2);
-        store.createFeatureType(sft3.getName(), sft3);
+        store.createFeatureType(sft1);
+        store.createFeatureType(sft2);
+        store.createFeatureType(sft3);
 
-        FeatureWriter writer = store.getFeatureWriterAppend(name1);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name1.toString(),Filter.EXCLUDE));
         for(int i=0; i<10; i++){
             writer.next();
             writer.write();
         }
         writer.close();
 
-        writer = store.getFeatureWriterAppend(name2);
+        writer = store.getFeatureWriter(QueryBuilder.filtered(name2.toString(),Filter.EXCLUDE));
         for(int i=0; i<10; i++){
             writer.next();
             writer.write();
         }
         writer.close();
 
-        writer = store.getFeatureWriterAppend(name3);
+        writer = store.getFeatureWriter(QueryBuilder.filtered(name3.toString(),Filter.EXCLUDE));
         for(int i=0; i<10; i++){
             writer.next();
             writer.write();
@@ -98,8 +103,8 @@ public class DataUtilitiesTest extends org.geotoolkit.test.TestBase {
     public void testCollectionId() throws Exception{
         FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("temp");
-        sftb.add("att1", String.class);
-        FeatureType ft = sftb.buildSimpleFeatureType();
+        sftb.addAttribute(String.class).setName("att1");
+        FeatureType ft = sftb.build();
 
         FeatureCollection col = FeatureStoreUtilities.collection("myId", ft);
 

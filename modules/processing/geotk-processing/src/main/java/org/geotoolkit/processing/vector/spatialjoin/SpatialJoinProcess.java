@@ -19,15 +19,12 @@ package org.geotoolkit.processing.vector.spatialjoin;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import java.util.logging.Level;
+
+import org.opengis.feature.AttributeType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -35,28 +32,28 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.processing.vector.nearest.NearestDescriptor;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
+
 import static org.geotoolkit.parameter.Parameters.*;
+
 
 /**
  * Process return the target FeatureCollection with source FeatureCollection attributes.
  * The link between target and source depend of method used (Intersect or Nearest).
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class SpatialJoinProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -102,11 +99,15 @@ public class SpatialJoinProcess extends AbstractProcess {
     static Feature join(final Feature target, final FeatureType newType,
             final FeatureCollection sourceFC, final boolean method) {
 
-        Feature resultFeature = FeatureUtilities.defaultFeature(newType, target.getIdentifier().getID());
+        Feature resultFeature = newType.newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(target));
 
         //copy target Feature
-        for (final Property targetProperty : target.getProperties()) {
-            resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
+        for (final PropertyType targetProperty : target.getType().getProperties(true)) {
+            if(targetProperty instanceof AttributeType && !AttributeConvention.contains(targetProperty.getName())){
+                final String name = targetProperty.getName().toString();
+                resultFeature.setPropertyValue(name, target.getPropertyValue(name));
+            }
         }
 
         ProcessDescriptor desc;
@@ -115,25 +116,24 @@ public class SpatialJoinProcess extends AbstractProcess {
         ArrayList<Feature> featureOutArray;
 
         //for each target feature geometry
-        for (final Property property : target.getProperties()) {
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry targetGeometry = (Geometry) property.getValue();
-                final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
-                final CoordinateReferenceSystem geomCRS = geomDesc.getCoordinateReferenceSystem();
+        for (final PropertyType property : target.getType().getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(property)) {
+                final Geometry targetGeometry = (Geometry) target.getPropertyValue(property.getName().toString());
+                final CoordinateReferenceSystem geomCRS = FeatureExt.getCRS(property);
 
-                JTS.setCRS(targetGeometry, geomCRS);//add CRS to the used data geometry
+                JTS.setCRS(targetGeometry, geomCRS);        //add CRS to the used data geometry
                 //use intersect method
                 if (method) {
                     desc = IntersectDescriptor.INSTANCE;
                     in = desc.getInputDescriptor().createValue();
-                    in.parameter(IntersectDescriptor.FEATURE_IN.getName().getCode()).setValue(sourceFC);
+                    in.parameter(IntersectDescriptor.FEATURE_IN .getName().getCode()).setValue(sourceFC);
                     in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
                     proc = desc.createProcess(in);
 
-                } else {//use nearest method
+                } else {    //use nearest method
                     desc = NearestDescriptor.INSTANCE;
                     in = desc.getInputDescriptor().createValue();
-                    in.parameter(NearestDescriptor.FEATURE_IN.getName().getCode()).setValue(sourceFC);
+                    in.parameter(NearestDescriptor.FEATURE_IN .getName().getCode()).setValue(sourceFC);
                     in.parameter(NearestDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
                     proc = desc.createProcess(in);
                 }
@@ -147,14 +147,13 @@ public class SpatialJoinProcess extends AbstractProcess {
                     return null;
                 }
 
-                featureOutArray = new ArrayList<Feature>(featureOut);
+                featureOutArray = new ArrayList<>(featureOut);
 
-                if (method) {//intersect method
+                if (method) {   //intersect method
 
                     if (featureOutArray.isEmpty()) { //no intersection
                         return resultFeature;
                     } else {
-
                         if (featureOutArray.size() > 1) { //more than one intersection
                             final Feature biggestFeature = biggestIntersection(featureOut, targetGeometry);
                             resultFeature = copyAttributes(target, biggestFeature, newType);
@@ -162,8 +161,7 @@ public class SpatialJoinProcess extends AbstractProcess {
                             resultFeature = copyAttributes(target, featureOutArray.get(0), newType);
                         }
                     }
-
-                } else {//nearest method
+                } else {    //nearest method
                     if (featureOutArray.isEmpty()) {
                         return resultFeature;
                     } else {
@@ -172,7 +170,6 @@ public class SpatialJoinProcess extends AbstractProcess {
                 }
             }
         }
-
         return resultFeature;
     }
 
@@ -185,23 +182,28 @@ public class SpatialJoinProcess extends AbstractProcess {
      * @return the resulting Feature
      */
     static Feature copyAttributes(final Feature target, final Feature source, final FeatureType concatType) {
-
-        final Feature resultFeature = FeatureUtilities.defaultFeature(concatType, target.getIdentifier().getID()+"_"+
-                source.getIdentifier().getID());
+        final Feature resultFeature = concatType.newInstance();
+        resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
+                FeatureExt.getId(target).getID() + "_" + FeatureExt.getId(source).getID());
 
         //copy target Feature
-        for (final Property targetProperty : target.getProperties()) {
-            resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
-        }
-
-        //copy source Feature except geometry descriptor
-        for (final Property sourceProperty : source.getProperties()) {
-            if (!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                resultFeature.getProperty(sourceProperty.getName().tip().toString() + "_"
-                        + source.getType().getName().tip().toString()).setValue(sourceProperty.getValue());
+        for (final PropertyType targetProperty : target.getType().getProperties(true)) {
+            if(targetProperty instanceof AttributeType && !AttributeConvention.contains(targetProperty.getName())){
+                final String name = targetProperty.getName().toString();
+                resultFeature.setPropertyValue(name, target.getPropertyValue(name));
             }
         }
 
+        //copy source Feature except geometry descriptor
+        for (final PropertyType sourceProperty : source.getType().getProperties(true)) {
+            if(sourceProperty instanceof AttributeType && !AttributeConvention.contains(sourceProperty.getName())){
+                if (!AttributeConvention.isGeometryAttribute(sourceProperty)) {
+                    final String name = sourceProperty.getName().tip().toString();
+                    resultFeature.setPropertyValue(name + "_" + source.getType().getName().tip().toString(),
+                            source.getPropertyValue(name));
+                }
+            }
+        }
         return resultFeature;
     }
 
@@ -214,24 +216,18 @@ public class SpatialJoinProcess extends AbstractProcess {
      */
     static Feature biggestIntersection(final FeatureCollection outFC, final Geometry intersectGeometry) {
         double area = 0.0;
-
-        final ArrayList<Feature> listID = new ArrayList<Feature>();
-
-        final FeatureIterator iter = outFC.iterator(null);
-        try{
+        final ArrayList<Feature> listID = new ArrayList<>();
+        try (final FeatureIterator iter = outFC.iterator(null)) {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
-                for (final Property property : feature.getProperties()) {
-                    if (property.getDescriptor() instanceof GeometryDescriptor) {
-
-                        final Geometry geom = (Geometry) property.getValue();
-
+                for (final PropertyType property : feature.getType().getProperties(true)) {
+                    if (AttributeConvention.isGeometryAttribute(property)) {
+                        final Geometry geom = (Geometry) feature.getPropertyValue(property.getName().toString());
                         final double computeArea = intersectGeometry.intersection(geom).getArea();
                         if (computeArea > area) {
                             listID.clear();
                             area = computeArea;
                             listID.add(feature);
-
                         } else {
                             if (computeArea == area) {
                                 listID.add(feature);
@@ -240,52 +236,36 @@ public class SpatialJoinProcess extends AbstractProcess {
                     }
                 }
             }
-        }finally{
-            iter.close();
         }
         return listID.get(0);
     }
 
     /**
      * Create a new FeatureType with the target FeatureType and adding
-     * source attributes except the GeometryDescriptor
+     * source attributes except the geometry descriptor.
+     *
      * @param targetType target FeatureType
      * @param sourceType source FeatureType
      * @return the new FeatureType
      */
     static FeatureType concatType(final FeatureType targetType, final FeatureType sourceType) {
-
         boolean isSameName = false;
-        AttributeType property;
-        AttributeDescriptorBuilder descBuilder;
-        AttributeTypeBuilder typeBuilder;
-
 
         //copy targetType into a FeatureTypeBuilder and change Name to targetName+sourceName
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.copy(targetType);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(targetType);
         ftb.setName(targetType.getName().tip().toString() + "_" + sourceType.getName().tip().toString());
 
         //each source descriptor
-        final Iterator<PropertyDescriptor> iteSource = sourceType.getDescriptors().iterator();
-        while (iteSource.hasNext()) {
-
-            final PropertyDescriptor sourceDesc = iteSource.next();
-
+        for (final PropertyType sourceDesc : sourceType.getProperties(true)) {
+            if(AttributeConvention.contains(sourceDesc.getName()) || !(sourceDesc instanceof AttributeType)) continue;
+            
             //add all descriptors but geometry
-            if (!(sourceDesc instanceof GeometryDescriptor)) {
-
-                property = (AttributeType) sourceDesc.getType();
-
-                descBuilder = new AttributeDescriptorBuilder();
-                typeBuilder = new AttributeTypeBuilder();
-                descBuilder.copy((AttributeDescriptor) sourceDesc);
-                typeBuilder.copy(property);
+            if (!AttributeConvention.isGeometryAttribute(sourceDesc)) {
+                SingleAttributeTypeBuilder typeBuilder = new SingleAttributeTypeBuilder();
+                typeBuilder.copy((AttributeType<?>) sourceDesc);
 
                 //test if exist in targetType
-                final Iterator<PropertyDescriptor> iteTarget = sourceType.getDescriptors().iterator();
-                while (iteTarget.hasNext()) {
-                    final PropertyDescriptor targetDesc = iteTarget.next();
+                for (final PropertyType targetDesc : sourceType.getProperties(true)) {
                     if (targetDesc.getName() == sourceDesc.getName()) {
                         isSameName = true;
                     }
@@ -293,13 +273,11 @@ public class SpatialJoinProcess extends AbstractProcess {
                 if (isSameName) {
                     final String newName = sourceDesc.getName().tip().toString() + "_" + sourceType.getName().tip().toString();
                     typeBuilder.setName(newName);
-                    descBuilder.setName(newName);
                 }
-                descBuilder.setNillable(true);
-                descBuilder.setType(typeBuilder.buildType());
-                ftb.add(descBuilder.buildDescriptor());
+                typeBuilder.setMinimumOccurs(0);
+                ftb.addProperty(typeBuilder.build());
             }
         }
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 }

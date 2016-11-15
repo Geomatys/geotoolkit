@@ -18,7 +18,6 @@ package org.geotoolkit.gui.javafx.contexttree.menu;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.data.FeatureCollection;
@@ -42,7 +42,6 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -52,6 +51,8 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Geometry;
 
 /**
@@ -131,7 +132,8 @@ public class ExportItem extends TreeMenuItem {
 
                             //detect if we need one or multiple types.
                             final FeatureCollection[] cols;
-                            if(ArraysExt.contains(supportedGeometryTypes,baseType.getGeometryDescriptor().getType().getBinding()) ){
+                            final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(baseType);
+                            if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
                                 cols = new FeatureCollection[]{baseCol};
                             }else{
                                 //split the feature collection in sub geometry types
@@ -150,13 +152,13 @@ public class ExportItem extends TreeMenuItem {
                                 final FeatureStore store = factory.createDataStore(file.toURI());
 
                                 //create output type
-                                store.createFeatureType(inType.getName(), inType);
+                                store.createFeatureType(inType);
                                 final FeatureType outType = store.getFeatureType(inTypeName);
                                 final GenericName outName = outType.getName();
 
                                 //write datas
                                 final Session session = store.createSession(false);
-                                session.addFeatures(outName, col);
+                                session.addFeatures(outName.toString(), col);
 
                                 //close store
                                 store.close();

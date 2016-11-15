@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -42,9 +43,6 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -59,6 +57,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -89,16 +89,16 @@ public class DefaultSession extends AbstractSession {
         return new DefaultSessionDiff();
     }
 
-    protected AddDelta createAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features){
+    protected AddDelta createAddDelta(Session session, String typeName, Collection<? extends Feature> features){
         return new AddDelta(this, typeName, features);
     }
 
-    protected ModifyDelta createModifyDelta(Session session, GenericName typeName,
-            Id filter , final Map<? extends AttributeDescriptor,? extends Object> values){
+    protected ModifyDelta createModifyDelta(Session session, String typeName,
+            Id filter , final Map<String,?> values){
         return new ModifyDelta(this, typeName, filter, values);
     }
 
-    protected RemoveDelta createRemoveDelta(Session session, GenericName typeName, Id filter){
+    protected RemoveDelta createRemoveDelta(Session session, String typeName, Id filter){
         return new RemoveDelta(session, typeName, filter);
     }
 
@@ -141,7 +141,7 @@ public class DefaultSession extends AbstractSession {
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
-        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
+        final List<Query> modifieds = new ArrayList<>(deltas.size());
         Query modified = original;
         for(int i=0,n=deltas.size(); i<n; i++){
             final Delta delta = deltas.get(i);
@@ -168,7 +168,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void addFeatures(final GenericName groupName, final Collection newFeatures) throws DataStoreException {
+    public void addFeatures(final String groupName, final Collection newFeatures) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
@@ -177,7 +177,7 @@ public class DefaultSession extends AbstractSession {
             diff.add(createAddDelta(this, groupName, newFeatures));
             fireSessionChanged();
         }else{
-            store.addFeatures(groupName, newFeatures);
+            store.addFeatures(groupName.toString(), newFeatures);
         }
     }
 
@@ -185,7 +185,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final GenericName groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final String groupName, Filter filter, final Map<String,?> values) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
@@ -211,7 +211,7 @@ public class DefaultSession extends AbstractSession {
                 final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
                 try{
                     while(ite.hasNext()){
-                        identifiers.add(ite.next().getIdentifier());
+                        identifiers.add(FeatureExt.getId(ite.next()));
                     }
                 }finally{
                     ite.close();
@@ -236,7 +236,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
@@ -253,7 +253,7 @@ public class DefaultSession extends AbstractSession {
                 final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
                 try{
                     while(ite.hasNext()){
-                        identifiers.add(ite.next().getIdentifier());
+                        identifiers.add(FeatureExt.getId(ite.next()));
                     }
                 }finally{
                     ite.close();
@@ -341,7 +341,7 @@ public class DefaultSession extends AbstractSession {
 
     private Query forceCRS(final Query query, boolean replace) throws DataStoreException{
         final FeatureType ft = store.getFeatureType(query.getTypeName());
-        final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(ft);
 
         if(crs == null){
             return query;

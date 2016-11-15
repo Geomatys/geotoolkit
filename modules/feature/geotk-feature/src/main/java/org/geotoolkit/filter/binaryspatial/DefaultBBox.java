@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
@@ -36,9 +37,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.StringUtilities;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -51,6 +49,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Immutable "BBOX" filter.
@@ -117,11 +118,12 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             final Feature att = (Feature) base;
             final String propertyName = left.getPropertyName();
             if (propertyName.isEmpty()) {
-                crs = att.getType().getCoordinateReferenceSystem();
+                crs = FeatureExt.getCRS(att.getType());
             } else {
-                final PropertyDescriptor desc = att.getType().getDescriptor(propertyName);
-                if(desc instanceof GeometryDescriptor){
-                    crs = ((GeometryDescriptor)desc).getCoordinateReferenceSystem();
+                for(PropertyType pt : att.getType().getProperties(true)){
+                    if(AttributeConvention.isGeometryAttribute(pt)){
+                       crs = FeatureExt.getCRS(pt);
+                    }
                 }
             }
         }

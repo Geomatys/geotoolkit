@@ -19,9 +19,12 @@ package org.geotoolkit.db;
 import java.awt.RenderingHints;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.DataBaseModel;
+import org.geotoolkit.db.reverse.RelationMetaModel;
+import org.opengis.feature.AttributeType;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -42,19 +45,19 @@ public abstract class JDBCFeatureStore extends AbstractFeatureStore{
      * Property information, The native SRID associated to a certain descriptor.
      * Value is an Integer.
      */
-    public static final String JDBC_PROPERTY_SRID = "nativeSRID";
+    public static final AttributeType JDBC_PROPERTY_SRID = new SingleAttributeTypeBuilder().setName("nativeSRID").setValueClass(Integer.class).build();
     
     /**
      * Property information, if the field is unique in the database.
      * Value is a Boolean.
      */
-    public static final String JDBC_PROPERTY_UNIQUE = "unique";
+    public static final AttributeType JDBC_PROPERTY_UNIQUE = new SingleAttributeTypeBuilder().setName("unique").setValueClass(Boolean.class).build();
     
     /**
      * Property information, if the field is a relation.
      * Value is a RelationMetaModel.
      */
-    public static final String JDBC_PROPERTY_RELATION = "relation";
+    public static final AttributeType JDBC_PROPERTY_RELATION = new SingleAttributeTypeBuilder().setName("relation").setValueClass(RelationMetaModel.class).build();
 
     public JDBCFeatureStore(ParameterValueGroup params) {
         super(params);

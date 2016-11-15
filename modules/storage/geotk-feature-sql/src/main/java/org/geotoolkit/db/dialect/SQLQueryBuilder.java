@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -31,23 +34,19 @@ import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.db.DBRelationOperation;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.filter.function.string.StringFunctionFactory;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -88,7 +87,7 @@ public class SQLQueryBuilder {
     public String selectSQL(final FeatureType featureType, final Query query) throws SQLException,DataStoreException {
         final StringBuilder sql = new StringBuilder("SELECT ");
 
-        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
 
         // column names
         encodeSelectColumnNames(sql, featureType, query.getHints());
@@ -114,10 +113,10 @@ public class SQLQueryBuilder {
     }
 
     protected void encodeSelectColumnNames(StringBuilder sql, FeatureType featureType, Hints hints){
-        for (PropertyDescriptor att : featureType.getDescriptors()) {
-            final RelationMetaModel relation = (RelationMetaModel)att.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
+        for (PropertyType att : featureType.getProperties(true)) {
 
-            if (relation != null) {
+            if (att instanceof DBRelationOperation) {
+                final RelationMetaModel relation = ((DBRelationOperation) att).getRelation();
                 final String str = att.getName().tip().toString();
                 if(relation.isImported()){
                     dialect.encodeColumnName(sql, str);
@@ -126,9 +125,11 @@ public class SQLQueryBuilder {
                     continue;
                 }
 
-            }else if (att instanceof GeometryDescriptor) {
+            } else if (att instanceof Operation || att instanceof FeatureAssociationRole || AttributeConvention.contains(att.getName())) {
+                continue;
+            } else if (AttributeConvention.isGeometryAttribute(att)) {
                 //encode as geometry
-                encodeGeometryColumn((GeometryDescriptor) att, sql, hints);
+                encodeGeometryColumn((AttributeType) att, sql, hints);
                 //alias it to be the name of the original geometry
                 dialect.encodeColumnAlias(sql, att.getName().tip().toString());
             } else {
@@ -142,11 +143,17 @@ public class SQLQueryBuilder {
 
     /**
      * Generates a 'INSERT INFO' sql statement.
-     * @throws IOException
+     * 
+     * @param featureType
+     * @param feature
+     * @param keyValues
+     * @param cx
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    public String insertSQL(final ComplexType featureType, final ComplexAttribute feature,
+    public String insertSQL(final FeatureType featureType, final Feature feature,
                                final Object[] keyValues, final Connection cx) throws DataStoreException{
-        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
         final List<ColumnMetaModel> keyColumns = key.getColumns();
 
         final StringBuilder sqlType = new StringBuilder();
@@ -159,9 +166,12 @@ public class SQLQueryBuilder {
 
         //add all fields
         fields :
-        for(PropertyDescriptor desc : featureType.getDescriptors()){
+        for(PropertyType desc : featureType.getProperties(true)){
+            if (AttributeConvention.contains(desc.getName())) {
+                continue;
+            }
             final String attName = desc.getName().tip().toString();
-            final Class binding = desc.getType().getBinding();
+            final Class binding = ((AttributeType)desc).getValueClass();
             final Object value = feature.getProperty(attName).getValue();
 
             //remove the primary key attribut that wil be auto-generated and null
@@ -194,9 +204,6 @@ public class SQLQueryBuilder {
                 }
 
                 if(!found){
-                    if (!desc.isNillable()) {
-                        //TODO: throw an exception
-                    }
                     sqlValues.append("null");
                 }
             } else {
@@ -223,9 +230,9 @@ public class SQLQueryBuilder {
         return sqlType.toString() + sqlValues.toString();
     }
 
-    public String insertSQL(final ComplexType featureType, final Collection<? extends ComplexAttribute> features,
+    public String insertSQL(final FeatureType featureType, final Collection<? extends Feature> features,
                                final Object[] keyValues, final Connection cx) throws DataStoreException{
-        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
         final List<ColumnMetaModel> keyColumns = key.getColumns();
 
         final StringBuilder sqlType = new StringBuilder();
@@ -235,7 +242,7 @@ public class SQLQueryBuilder {
 
         //add all fields
         fields :
-        for(PropertyDescriptor desc : featureType.getDescriptors()){
+        for(PropertyType desc : featureType.getProperties(true)){
             final String attName = desc.getName().tip().toString();
 
             //remove the primary key attribut that wil be auto-generated and null
@@ -261,13 +268,13 @@ public class SQLQueryBuilder {
         sqlValues.append(" VALUES ");
 
         //add all fields
-        for(ComplexAttribute feature : features){
+        for(Feature feature : features){
 
             sqlValues.append(" (");
             fields :
-            for(PropertyDescriptor desc : featureType.getDescriptors()){
+            for(PropertyType desc : featureType.getProperties(true)){
                 final String attName = desc.getName().tip().toString();
-                final Class binding = desc.getType().getBinding();
+                final Class binding = ((AttributeType)desc).getValueClass();
                 final Object value = feature.getProperty(attName).getValue();
 
                 //remove the primary key attribut that wil be auto-generated and null
@@ -293,9 +300,6 @@ public class SQLQueryBuilder {
                     }
 
                     if(!found){
-                        if (!desc.isNillable()) {
-                            //TODO: throw an exception
-                        }
                         sqlValues.append("null");
                     }
                 } else {
@@ -324,7 +328,7 @@ public class SQLQueryBuilder {
     /**
      * Generates an 'UPDATE' sql statement.
      */
-    public String updateSQL(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
+    public String updateSQL(final FeatureType featureType, final Map<String,? extends Object> changes,
             Filter filter) throws DataStoreException, SQLException{
         final StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ");
@@ -332,20 +336,22 @@ public class SQLQueryBuilder {
 
         sql.append(" SET ");
 
-        for(final Map.Entry<AttributeDescriptor,Object> change : changes.entrySet()){
-            final AttributeDescriptor attribut = change.getKey();
+        for(final Map.Entry<String,? extends Object> change : changes.entrySet()){
+            final String attributeName = change.getKey();
+            final AttributeType attribute = (AttributeType) featureType.getProperty(attributeName);
             final Object value = change.getValue();
 
-            dialect.encodeColumnName(sql,attribut.getLocalName());
+            dialect.encodeColumnName(sql,attributeName);
             sql.append('=');
 
-            final Class binding = attribut.getType().getBinding();
-            if (Geometry.class.isAssignableFrom(binding)) {
+            final Class valueClass = attribute.getValueClass();
+            
+            if (Geometry.class.isAssignableFrom(valueClass)) {
                     final Geometry g = (Geometry) value;
-                    final int srid = getGeometrySRID(g, attribut);
+                    final int srid = getGeometrySRID(g, attribute);
                     dialect.encodeGeometryValue(sql, g, srid);
             } else {
-                dialect.encodeValue(sql, value, binding);
+                dialect.encodeValue(sql, value, valueClass);
             }
 
             sql.append(',');
@@ -385,23 +391,41 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'CREATE TABLE' sql statement.
      */
-    public String createTableSQL(final ComplexType featureType, final Connection cx) throws SQLException {
+    public String createTableSQL(final FeatureType featureType, final Connection cx) throws SQLException {
         //figure out the names and types of the columns
         final String tableName = featureType.getName().tip().toString();
-        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(featureType.getDescriptors());
+        final List<? extends PropertyType> descs = new ArrayList<>(featureType.getProperties(true));
+
+        //remove convention fields, we do not save them
+        for (int i=descs.size()-1;i>=0;i--) {
+            if (AttributeConvention.contains(descs.get(i).getName())) {
+                descs.remove(i);
+            }
+        }
+
         final int size = descs.size();
         final String[] columnNames = new String[size];
         final Class[] classes = new Class[size];
         final boolean[] nillable = new boolean[size];
-        final List<String> pkeyColumn = new ArrayList<String>();
+        final List<String> pkeyColumn = new ArrayList<>();
 
         for (int i=0; i<size; i++) {
-            final PropertyDescriptor desc = descs.get(i);
+            PropertyType desc = descs.get(i);
             columnNames[i] = desc.getName().tip().toString();
-            classes[i] = desc.getType().getBinding();
-            nillable[i] = desc.getMinOccurs() <= 0 || desc.isNillable();
 
-            if(FeatureTypeUtilities.isPartOfPrimaryKey(desc)){
+            while (desc instanceof Operation) {
+                desc = (PropertyType) ((Operation)desc).getResult();
+            }
+            if (desc instanceof AttributeType) {
+                final AttributeType attType = (AttributeType) desc;
+                classes[i] = attType.getValueClass();
+                nillable[i] = attType.getMinimumOccurs()<= 0;
+
+            } else {
+                throw new SQLException("Property type not supported : "+desc);
+            }
+
+            if(FeatureTypeExt.isPartOfPrimaryKey(featureType,desc.getName().toString())){
                 pkeyColumn.add(desc.getName().tip().toString());
             }
         }
@@ -430,14 +454,14 @@ public class SQLQueryBuilder {
 
         //normal attributes
         for (int i = 0; i < columnNames.length; i++) {
-            final PropertyDescriptor att = featureType.getDescriptor(columnNames[i]);
+            final AttributeType att = (AttributeType) featureType.getProperty(columnNames[i]);
 
             //the column name
             dialect.encodeColumnName(sql,columnNames[i]);
             sql.append(' ');
 
             if(pkeyColumn.contains(columnNames[i])){
-                dialect.encodePrimaryKey(sql,att.getType().getBinding(), sqlTypeNames[i]);
+                dialect.encodePrimaryKey(sql,att.getValueClass(), sqlTypeNames[i]);
 
             }else if (sqlTypeNames[i].toUpperCase().startsWith("VARCHAR")) {
                 Integer length = findVarcharColumnLength(att);
@@ -456,7 +480,7 @@ public class SQLQueryBuilder {
             }
 
             //delegate to dialect to encode column postamble
-            dialect.encodePostColumnCreateTable(sql, (AttributeDescriptor)att);
+            dialect.encodePostColumnCreateTable(sql, att);
 
             //sql.append(sqlTypeNames[i]);
             if (i < (sqlTypeNames.length - 1)) {
@@ -475,10 +499,10 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'ALTER TABLE . ADD COLUMN ' sql statement.
      */
-    public String alterTableAddColumnSQL(final ComplexType featureType, final PropertyDescriptor desc, final Connection cx) throws SQLException{
+    public String alterTableAddColumnSQL(final FeatureType featureType, final AttributeType desc, final Connection cx) throws SQLException{
         final String tableName = featureType.getName().tip().toString();
-        final boolean nillable = desc.getMinOccurs() <= 0 || desc.isNillable();
-        final Class clazz = desc.getType().getBinding();
+        final boolean nillable = desc.getMinimumOccurs()<= 0;
+        final Class clazz = desc.getValueClass();
         final String sqlTypeName = getSQLTypeNames(new Class[]{clazz}, cx)[0];
 
         final StringBuilder sql = new StringBuilder();
@@ -493,7 +517,7 @@ public class SQLQueryBuilder {
             //sql type name
             //JD: some sql dialects require strings / varchars to have an
             // associated size with them
-            Integer length = findVarcharColumnLength((AttributeDescriptor)desc);
+            Integer length = findVarcharColumnLength(desc);
             if (length == null || length < 0) {
                 length = 255;
             }
@@ -513,7 +537,7 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'ALTER TABLE - ADD FOREIGN KEY (-) REFERENCES -(-)' sql query.
      */
-    public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty,
+    public String alterTableAddForeignKey(final FeatureType sourceType, final String sourceProperty,
             final GenericName targetType, final String targetProperty, boolean cascade) throws SQLException{
         final String sourceName = sourceType.getName().tip().toString();
         final String targetName = targetType.tip().toString();
@@ -538,7 +562,7 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'CREATE UNIQUE INDEX - ON -(-) sql query.
      */
-    public String alterTableAddIndex(final ComplexType type, final String property){
+    public String alterTableAddIndex(final FeatureType type, final String property){
         final String sourceName = type.getName().tip().toString();
 
         final StringBuilder sql = new StringBuilder();
@@ -555,7 +579,7 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
      */
-    public String alterTableDropColumnSQL(final ComplexType featureType, final PropertyDescriptor desc, final Connection cx){
+    public String alterTableDropColumnSQL(final FeatureType featureType, final PropertyType desc, final Connection cx){
         final String tableName = featureType.getName().tip().toString();
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
@@ -568,7 +592,7 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'DROP TABLE' sql statement.
      */
-    public String dropSQL(final ComplexType featureType){
+    public String dropSQL(final FeatureType featureType){
         final StringBuilder sql = new StringBuilder();
         sql.append("DROP TABLE ");
         dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().tip().toString());
@@ -580,23 +604,8 @@ public class SQLQueryBuilder {
     // OTHER UTILS /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private static Integer findVarcharColumnLength(final PropertyDescriptor att) {
-        for (final Filter r : att.getType().getRestrictions()) {
-            if (r instanceof PropertyIsLessThanOrEqualTo) {
-                final PropertyIsLessThanOrEqualTo c = (PropertyIsLessThanOrEqualTo) r;
-                if (c.getExpression1() instanceof Function &&
-                        ((Function) c.getExpression1()).getName().toLowerCase().endsWith(StringFunctionFactory.LENGTH)) {
-                    if (c.getExpression2() instanceof Literal) {
-                        final Integer length = c.getExpression2().evaluate(null, Integer.class);
-                        if (length != null) {
-                            return length;
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
+    private static Integer findVarcharColumnLength(final PropertyType att) {
+        return FeatureExt.getCharacteristicValue(att, AttributeConvention.MAXIMAL_LENGTH_CHARACTERISTIC.toString(), null);
     }
 
     private String[] getSQLTypeNames(final Class[] classes, final Connection cx) throws SQLException {
@@ -621,7 +630,7 @@ public class SQLQueryBuilder {
      * @param sql
      * @throws IOException
      */
-    public void encodeSortBy(final ComplexType featureType, final SortBy[] sort, final PrimaryKey key,
+    public void encodeSortBy(final FeatureType featureType, final SortBy[] sort, final PrimaryKey key,
             final StringBuilder sql) throws DataStoreException {
         if ((sort != null) && (sort.length > 0)) {
             sql.append(" ORDER BY ");
@@ -663,7 +672,7 @@ public class SQLQueryBuilder {
      * @param sql
      * @param hints , may be null
      */
-    public void encodeGeometryColumn(final GeometryDescriptor gatt, final StringBuilder sql,
+    public void encodeGeometryColumn(final AttributeType gatt, final StringBuilder sql,
                                         final Hints hints){
         final int srid = getDescriptorSRID(gatt);
         dialect.encodeGeometryColumn(sql, gatt, srid, hints);
@@ -673,7 +682,7 @@ public class SQLQueryBuilder {
      * Looks up the geometry srs by trying a number of heuristics. Returns -1 if all attempts
      * at guessing the srid failed.
      */
-    public static int getGeometrySRID(final Geometry g, final PropertyDescriptor descriptor) {
+    public static int getGeometrySRID(final Geometry g, final PropertyType descriptor) {
         int srid = getDescriptorSRID(descriptor);
 
         if (g == null) {
@@ -710,13 +719,9 @@ public class SQLQueryBuilder {
      * returns -1 if not found
      * @param descriptor
      */
-    public static int getDescriptorSRID(final PropertyDescriptor descriptor) {
+    public static int getDescriptorSRID(final PropertyType descriptor) {
         // check if we have stored the native srid in the descriptor (we should)
-        if (descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID) != null) {
-            return (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
-        }else{
-            return -1;
-        }
+        return FeatureExt.getCharacteristicValue(descriptor, JDBCFeatureStore.JDBC_PROPERTY_SRID.getName().toString(), -1);
     }
 
     /**
@@ -726,8 +731,8 @@ public class SQLQueryBuilder {
      * it does not evaulate against the feature type.
      * </p>
      */
-    public static String getPropertyName(final ComplexType featureType, final PropertyName propertyName) {
-        final PropertyDescriptor att = (PropertyDescriptor) propertyName.evaluate(featureType);
+    public static String getPropertyName(final FeatureType featureType, final PropertyName propertyName) {
+        final PropertyType att = (PropertyType) propertyName.evaluate(featureType);
 
         if (att != null) {
             return att.getName().tip().toString();

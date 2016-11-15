@@ -17,7 +17,6 @@
 package org.geotoolkit.data.mapinfo;
 
 import org.apache.sis.internal.util.Constants;
-import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.FactoryException;
 
@@ -44,7 +43,7 @@ public class ProjectionParameters {
     ));
 
     /** A map whose key is the MapInfo projection code, and value is a list of the possible parameters for it (their indice in the previous list). */
-    private static final Map<Integer, int[]> PROJECTION_PARAMETERS = new HashMap<Integer, int[]>();
+    private static final Map<Integer, int[]> PROJECTION_PARAMETERS = new HashMap<>();
     static {
         PROJECTION_PARAMETERS.put(1, new int[0]);              //Longitude / Latitude
         PROJECTION_PARAMETERS.put(9,  new int[]{0,1,2,3,6,7}); //Albers

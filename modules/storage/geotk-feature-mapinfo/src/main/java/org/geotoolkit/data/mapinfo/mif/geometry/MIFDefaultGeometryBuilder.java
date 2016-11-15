@@ -4,12 +4,6 @@ import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -17,8 +11,11 @@ import org.opengis.referencing.operation.MathTransform;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Class to build feature from abstract geometry type.
@@ -38,19 +35,20 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
     @Override
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
-        AttributeDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
-
-        return new DefaultFeatureType(NAME, Collections.singletonList((PropertyDescriptor)desc), null, false, null, parent, null);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(NAME);
+        ftb.setSuperTypes(parent);
+        ftb.addAssociation(MIFCollectionBuilder.EMPTY_TYPE).setName(NAME).setMinimumOccurs(1).setMaximumOccurs(3);
+        return ftb.build();
     }
 
     @Override
-    public String toMIFSyntax(Feature geometry) throws DataStoreException {
+    public String toMIFSyntax(Feature feature) throws DataStoreException {
 
-        if(geometry.getProperty(GEOM_NAME) != null) {
-            return jtsToMIFGeometry(geometry);
-        } else if(geometry.getDefaultGeometryProperty().getValue() instanceof Geometry) {
-            return jtsToMIFGeometry(geometry);
+        if(MIFUtils.getPropertySafe(feature, GEOM_NAME.toString()) != null) {
+            return jtsToMIFGeometry(feature);
+        } else if(MIFUtils.getGeometryValue(feature) instanceof Geometry) {
+            return jtsToMIFGeometry(feature);
         } else {
             throw new DataStoreException("Incompatible geometry type.");
         }
@@ -59,7 +57,7 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
     private String jtsToMIFGeometry(Feature feature) throws DataStoreException {
 
-        final Object source = feature.getDefaultGeometryProperty().getValue();
+        final Object source = MIFUtils.getGeometryValue(feature);
 
         for(MIFUtils.GeometryType gType : MIFUtils.GeometryType.values()) {
             final Class[] bindings = gType.binding.getPossibleBindings();
@@ -93,9 +91,8 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
-        AttributeDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
-        return Collections.singletonList(desc);
+    protected List<AttributeType> getAttributes() {
+        final AttributeType attType = new DefaultAttributeType(Collections.singletonMap("name", NAME), Feature.class, 1, 3, null);
+        return Collections.singletonList(attType);
     }
 }

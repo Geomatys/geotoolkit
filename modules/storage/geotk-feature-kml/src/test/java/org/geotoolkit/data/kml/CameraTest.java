@@ -22,7 +22,6 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -33,17 +32,13 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -54,40 +49,18 @@ public class CameraTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/camera.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public CameraTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void cameraReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY));
-        assertTrue(feature.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof Camera);
+        assertEquals(KmlModelConstants.TYPE_PHOTO_OVERLAY, feature.getType());
 
-        final Camera camera = (Camera) feature.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
+        final Camera camera = (Camera) feature.getPropertyValue(KmlConstants.TAG_VIEW);
         assertEquals(4, camera.getLongitude(), DELTA);
         assertEquals(43, camera.getLatitude(), DELTA);
         assertEquals(625, camera.getAltitude(), DELTA);
@@ -95,7 +68,6 @@ public class CameraTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, camera.getTilt(), DELTA);
         assertEquals(2, camera.getRoll(), DELTA);
         assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
-
     }
 
     @Test
@@ -119,8 +91,7 @@ public class CameraTest extends org.geotoolkit.test.TestBase {
         camera.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
         final Feature photoOverlay = kmlFactory.createPhotoOverlay();
 
-        Collection<Property> documentProperties = photoOverlay.getProperties();
-        documentProperties.add(FF.createAttribute(camera, KmlModelConstants.ATT_VIEW, null));
+        photoOverlay.setPropertyValue(KmlConstants.TAG_VIEW, camera);
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
         File temp = File.createTempFile("testCamera", ".kml");
@@ -131,8 +102,6 @@ public class CameraTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

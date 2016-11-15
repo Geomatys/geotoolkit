@@ -48,7 +48,7 @@ public abstract class AbstractFeatureClient extends AbstractFeatureStore {
     protected final ParameterValueGroup parameters;
     protected final URL serverURL;
 
-    private final Map<String,Object> userProperties = new HashMap<String,Object>();
+    private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
 
 

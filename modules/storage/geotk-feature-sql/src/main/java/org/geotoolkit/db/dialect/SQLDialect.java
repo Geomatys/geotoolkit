@@ -22,17 +22,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -50,7 +48,7 @@ public interface SQLDialect {
     
     FilterCapabilities getFilterCapabilities();
     
-    FilterToSQL getFilterToSQL(ComplexType featureType);
+    FilterToSQL getFilterToSQL(FeatureType featureType);
     
     /**
      * Escape sequence for table names.
@@ -77,7 +75,7 @@ public interface SQLDialect {
      * @param filter not null
      * @return array of two filters.
      */
-    Filter[] splitFilter(Filter filter, ComplexType type);
+    Filter[] splitFilter(Filter filter, FeatureType type);
     
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO CREATE SQL QUERIES ///////////////////////////////////////////
@@ -88,7 +86,7 @@ public interface SQLDialect {
      * @param filter
      * @return SQL String
      */
-    String encodeFilter(Filter filter, ComplexType type);
+    String encodeFilter(Filter filter, FeatureType type);
 
     void encodeColumnName(StringBuilder sql, String name);
 
@@ -105,7 +103,7 @@ public interface SQLDialect {
      */
     void encodeSchemaAndTableName(StringBuilder sql, String databaseSchema, String tableName);
     
-    void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints);
+    void encodeGeometryColumn(StringBuilder sql, AttributeType gatt, int srid, Hints hints);
 
     void encodeColumnAlias(StringBuilder sql, String name);
     
@@ -119,7 +117,7 @@ public interface SQLDialect {
     
     void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType);
 
-    void encodePostColumnCreateTable(StringBuilder sql, AttributeDescriptor att);
+    void encodePostColumnCreateTable(StringBuilder sql, AttributeType att);
 
     void encodePostCreateTable(StringBuilder sql, String tableName);
 
@@ -137,11 +135,11 @@ public interface SQLDialect {
     // METHODS TO READ FROM RESULTSET //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
-    void decodeColumnType(final AttributeTypeBuilder atb, final Connection cx,
+    void decodeColumnType(final SingleAttributeTypeBuilder atb, final Connection cx,
             final String typeName, final int datatype, final String schemaName,
             final String tableName, final String columnName) throws SQLException;
 
-    void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, 
+    void decodeGeometryColumnType(final SingleAttributeTypeBuilder atb, final Connection cx, 
             final ResultSet rs, final int columnIndex, boolean customquery) throws SQLException;
     
     Integer getGeometrySRID(final String schemaName, final String tableName,
@@ -149,19 +147,19 @@ public interface SQLDialect {
 
     CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException;
     
-    Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs, 
+    Object decodeAttributeValue(AttributeType descriptor, ResultSet rs,
             int i) throws SQLException;
     
-    Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
+    Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs,
         String column) throws IOException, SQLException;
     
-    Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs,
+    Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
         String column) throws IOException, SQLException;
 
-    Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
+    Geometry decodeGeometryValue(AttributeType descriptor, ResultSet rs,
         int column) throws IOException, SQLException;
     
-    Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs,
+    Coverage decodeCoverageValue(AttributeType descriptor, ResultSet rs,
         int column) throws IOException, SQLException;
 
     

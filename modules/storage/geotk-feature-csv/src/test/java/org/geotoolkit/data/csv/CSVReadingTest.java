@@ -27,21 +27,24 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.apache.sis.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -66,17 +69,17 @@ public class CSVReadingTest extends AbstractReadingTests{
         final String namespace = "http://test.com";
 
         GenericName name = NamesExt.create("http://test.com", "TestSchema3");
-        builder.reset();
         builder.setName(name);
-        builder.add(NamesExt.create(namespace, "geometry"), Geometry.class, CRS.forCode("EPSG:27582"));
-        builder.add(NamesExt.create(namespace, "stringProp"), String.class);
-        builder.add(NamesExt.create(namespace, "intProp"), Integer.class);
-        builder.add(NamesExt.create(namespace, "doubleProp"), Double.class);
-        final FeatureType type3 = builder.buildFeatureType();
-        store.createFeatureType(name,type3);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Geometry.class).setName(namespace, "geometry").setCRS(CRS.forCode("EPSG:27582"));
+        builder.addAttribute(String.class).setName(namespace, "stringProp");
+        builder.addAttribute(Integer.class).setName(namespace, "intProp");
+        builder.addAttribute(Double.class).setName(namespace, "doubleProp");
+        final FeatureType type3 = builder.build();
+        store.createFeatureType(type3);
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE));
         try{
             Feature f = writer.next();
             f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 11)));

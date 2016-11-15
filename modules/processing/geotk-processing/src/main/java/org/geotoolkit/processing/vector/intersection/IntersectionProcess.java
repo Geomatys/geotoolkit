@@ -21,8 +21,8 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -53,7 +53,7 @@ public class IntersectionProcess extends AbstractProcess {
     protected void execute() {
         final FeatureCollection inputFeatureList               = value(FEATURE_IN, inputParameters);
         final FeatureCollection inputFeatureIntersectionList   = value(FEATURE_INTER, inputParameters);
-        final String inputGeometryName                                  = value(GEOMETRY_NAME, inputParameters);
+        final String inputGeometryName                         = value(GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 

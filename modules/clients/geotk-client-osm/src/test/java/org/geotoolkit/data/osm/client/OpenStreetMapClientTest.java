@@ -23,9 +23,6 @@ import java.net.URL;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.osm.model.Api;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 
 import org.junit.After;
@@ -36,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -96,7 +94,7 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadNodeElement() throws XMLStreamException, IOException{
         final ReadElementRequest request = server.createReadElement();
-        request.setElementType(Node.class);
+        request.setElementType(OSMType.NODE);
         request.setId(310);
         request.setVersion(-1);
 
@@ -105,33 +103,32 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
         assertTrue(reader.hasNext());
         Object candidate = reader.next();
         assertNotNull(candidate);
-        assertTrue(candidate instanceof Node);
+        assertTrue(candidate instanceof Feature);
         assertFalse(reader.hasNext());
-        Node n = (Node) candidate;
-        assertEquals(310, n.getId());
+        Feature n = (Feature) candidate;
+        assertEquals(310l, n.getPropertyValue("id"));
 
         request.setVersion(1);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Node v1 = (Node) reader.next();
-        assertEquals(310, n.getId());
+        Feature v1 = (Feature) reader.next();
+        assertEquals(310l, n.getPropertyValue("id"));
 
         request.setVersion(3);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Node v3 = (Node) reader.next();
-        assertEquals(310, n.getId());
+        Feature v3 = (Feature) reader.next();
+        assertEquals(310l, n.getPropertyValue("id"));
 
         assertNotSame(v1, v3);
-        assertNotSame(v1.getLatitude(), v3.getLatitude());
-        assertNotSame(v1.getLongitude(), v3.getLongitude());
+        assertNotSame(v1.getPropertyValue("point"), v3.getPropertyValue("point"));
     }
 
     @Test
     public void testReadWayElement() throws XMLStreamException, IOException{
         final ReadElementRequest request = server.createReadElement();
-        request.setElementType(Way.class);
-        request.setId(310);
+        request.setElementType(OSMType.WAY);
+        request.setId(310l);
         request.setVersion(-1);
 
         OSMXMLReader reader = new OSMXMLReader();
@@ -139,22 +136,22 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
         assertTrue(reader.hasNext());
         Object candidate = reader.next();
         assertNotNull(candidate);
-        assertTrue(candidate instanceof Way);
+        assertTrue(candidate instanceof Feature);
         assertFalse(reader.hasNext());
-        Way n = (Way) candidate;
-        assertEquals(310, n.getId());
+        Feature n = (Feature) candidate;
+        assertEquals(310l, n.getPropertyValue("id"));
 
         request.setVersion(1);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Way v1 = (Way) reader.next();
-        assertEquals(310, n.getId());
+        Feature v1 = (Feature) reader.next();
+        assertEquals(310l, n.getPropertyValue("id"));
 
         request.setVersion(3);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Way v3 = (Way) reader.next();
-        assertEquals(310, n.getId());
+        Feature v3 = (Feature) reader.next();
+        assertEquals(310l, n.getPropertyValue("id"));
 
         assertNotSame(v1, v3);
         assertNotSame(v1.toString(), v3.toString());
@@ -163,8 +160,8 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadRelationElement() throws XMLStreamException, IOException{
         final ReadElementRequest request = server.createReadElement();
-        request.setElementType(Relation.class);
-        request.setId(410);
+        request.setElementType(OSMType.RELATION);
+        request.setId(410l);
         request.setVersion(-1);
 
         OSMXMLReader reader = new OSMXMLReader();
@@ -172,22 +169,22 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
         assertTrue(reader.hasNext());
         Object candidate = reader.next();
         assertNotNull(candidate);
-        assertTrue(candidate instanceof Relation);
+        assertTrue(candidate instanceof Feature);
         assertFalse(reader.hasNext());
-        Relation n = (Relation) candidate;
-        assertEquals(410, n.getId());
+        Feature n = (Feature) candidate;
+        assertEquals(410l, n.getPropertyValue("id"));
 
         request.setVersion(1);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Relation v1 = (Relation) reader.next();
-        assertEquals(410, n.getId());
+        Feature v1 = (Feature) reader.next();
+        assertEquals(410l, n.getPropertyValue("id"));
 
         request.setVersion(3);
         reader = new OSMXMLReader();
         reader.setInput(request.getURL().openStream());
-        Relation v3 = (Relation) reader.next();
-        assertEquals(410, n.getId());
+        Feature v3 = (Feature) reader.next();
+        assertEquals(410l, n.getPropertyValue("id"));
 
         assertNotSame(v1, v3);
         assertNotSame(v1.toString(), v3.toString());
@@ -196,7 +193,7 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadElementHistory() throws XMLStreamException, IOException{
         final ReadElementHistoryRequest request = server.createHistoryElement();
-        request.setElementType(Node.class);
+        request.setElementType(OSMType.NODE);
         request.setId(310);
 
         OSMXMLReader reader = new OSMXMLReader();
@@ -206,9 +203,9 @@ public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
         while(reader.hasNext()){
             Object candidate = reader.next();
             assertNotNull(candidate);
-            assertTrue(candidate instanceof Node);
-            Node n = (Node) candidate;
-            assertEquals(310, n.getId());
+            assertTrue(candidate instanceof Feature);
+            Feature n = (Feature) candidate;
+            assertEquals(310l, n.getPropertyValue("id"));
             nbVersion++;
         }
 

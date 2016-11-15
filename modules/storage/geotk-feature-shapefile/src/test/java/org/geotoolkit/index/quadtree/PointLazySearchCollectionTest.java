@@ -18,8 +18,8 @@ package org.geotoolkit.index.quadtree;
 
 import org.junit.Test;
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
@@ -51,7 +51,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
         tree = (QuadTree) v[0];
         dr = (DataReader) v[1];
-        crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
+        crs = FeatureExt.getCRS(ds.getFeatureType(ds.getNames().iterator().next().toString()));
     }
 
     @After

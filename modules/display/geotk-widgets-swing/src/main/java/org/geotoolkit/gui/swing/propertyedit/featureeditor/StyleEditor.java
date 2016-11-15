@@ -38,7 +38,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultMutableStyle;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 import org.opengis.style.Style;
 
 /**
@@ -72,8 +73,8 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
     }
 
     @Override
-    public boolean canHandle(PropertyType type) {
-        return Style.class.isAssignableFrom(type.getBinding());
+    public boolean canHandle(PropertyType candidate) {
+        return candidate instanceof AttributeType && Style.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

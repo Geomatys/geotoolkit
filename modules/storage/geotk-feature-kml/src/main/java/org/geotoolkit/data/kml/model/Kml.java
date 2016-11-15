@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.Map;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface maps a kml element</p>

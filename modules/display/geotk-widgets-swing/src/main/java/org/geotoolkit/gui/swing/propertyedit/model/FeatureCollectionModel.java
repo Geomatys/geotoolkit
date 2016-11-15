@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.jdesktop.swingx.JXTable;
 
@@ -33,18 +35,16 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.version.Versioned;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
@@ -56,7 +56,7 @@ import org.opengis.filter.FilterFactory;
  */
 public class FeatureCollectionModel extends DefaultTableModel {
 
-    private final ArrayList<PropertyDescriptor> columns = new ArrayList<>();
+    private final ArrayList<AttributeType> columns = new ArrayList<>();
     private final ArrayList<Feature> features = new ArrayList<>();
     private final boolean selectIds;
     private FeatureCollection featureCollection = null;
@@ -90,15 +90,15 @@ public class FeatureCollectionModel extends DefaultTableModel {
         }
         final FeatureType ft = featureCollection.getFeatureType();
 
-        for(PropertyDescriptor desc : ft.getDescriptors()){
-            columns.add(desc);
+        for(PropertyType desc : ft.getProperties(true)){
+            columns.add((AttributeType) desc);
         }
 
         FeatureIterator fi = null;
         try {
             fi = featureCollection.iterator();
             while (fi.hasNext()) {
-                features.add(FeatureUtilities.deepCopy(fi.next()));
+                features.add(FeatureExt.deepCopy(fi.next()));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -121,14 +121,14 @@ public class FeatureCollectionModel extends DefaultTableModel {
             for(GenericName str : propNames){
                 props.add(str);
             }
-            for(PropertyDescriptor desc : ft.getDescriptors()){
-                if((desc instanceof GeometryDescriptor)){
+            for(PropertyType desc : ft.getProperties(true)){
+                if((AttributeConvention.isGeometryAttribute(desc))){
                     props.remove(desc.getName());
                 }
             }
         }else{
-            for(PropertyDescriptor desc : ft.getDescriptors()){
-                if(!(desc instanceof GeometryDescriptor)){
+            for(PropertyType desc : ft.getProperties(true)){
+                if(!(AttributeConvention.isGeometryAttribute(desc))){
                     props.add(desc.getName());
                 }
             }
@@ -153,7 +153,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
     public Class getColumnClass(final int column) {
         if(column == 0) return Versioned.class;
         if(column == 1) return String.class;
-        return columns.get(column-2).getType().getBinding();
+        return columns.get(column-2).getValueClass();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         return columns.get(column-2).getName().tip().toString();
     }
     
-    public PropertyDescriptor getColumnDesc(final int column) {
+    public PropertyType getColumnDesc(final int column) {
         if(column == 0) return null;
         if(column == 1) return null;
         return columns.get(column-2);
@@ -190,9 +190,9 @@ public class FeatureCollectionModel extends DefaultTableModel {
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
         final Feature f = features.get(rowIndex);
-        if(columnIndex == 0) return f.getUserData().get(FeatureUtilities.ATT_VERSIONING);
-        if(columnIndex == 1) return f.getIdentifier().getID();
-        return f.getProperty(columns.get(columnIndex-2).getName()).getValue();
+        if(columnIndex == 0) return null;
+        if(columnIndex == 1) return FeatureExt.getId(f);
+        return f.getPropertyValue(columns.get(columnIndex-2).getName().toString());
     }
 
     @Override
@@ -202,13 +202,13 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
         if (featureCollection.isWritable()) {
             final FilterFactory ff = FactoryFinder.getFilterFactory(null);
-            final Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
-            final AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-2);
+            final Filter filter = ff.id(Collections.singleton(FeatureExt.getId(features.get(rowIndex))));
+            final GenericName NAME = columns.get(columnIndex-2).getName();
 
             aValue = ObjectConverters.convert(aValue, getColumnClass(columnIndex));
             
             try {
-                featureCollection.update(filter, NAME, aValue);
+                featureCollection.update(filter, Collections.singletonMap(NAME.toString(), aValue));
             } catch (DataStoreException ex) {
                 ex.printStackTrace();
             }

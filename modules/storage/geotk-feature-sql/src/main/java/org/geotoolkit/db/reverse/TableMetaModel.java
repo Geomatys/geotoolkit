@@ -19,8 +19,8 @@ package org.geotoolkit.db.reverse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.feature.type.ComplexType;
 
 /**
  * Description of a database table.
@@ -34,26 +34,26 @@ public class TableMetaModel {
         TABLE,
         SIMPLE_FEATURE_TYPE,
         COMPLEX_FEATURE_TYPE,
-        COMPLEX_ATTRIBUTE_TYPE,
         ALLCOMPLEX
     }
     
     String name;
     String type;
     
-    ComplexType tableType;
-    ComplexType simpleFeatureType;
-    ComplexType complexFeatureType;
-    ComplexType complexAttType;
-    ComplexType allType;
+    FeatureTypeBuilder tableType;
+    FeatureTypeBuilder simpleFeatureType;
+    FeatureTypeBuilder complexFeatureType;
+    FeatureTypeBuilder allType;
     
     PrimaryKey key;
-    //those are 0:1 relations
-    final Collection<RelationMetaModel> importedKeys = new ArrayList<RelationMetaModel>();
+    /**
+     * those are 0:1 relations
+     */
+    final Collection<RelationMetaModel> importedKeys = new ArrayList<>();
     //those are 0:N relations
-    final Collection<RelationMetaModel> exportedKeys = new ArrayList<RelationMetaModel>();
+    final Collection<RelationMetaModel> exportedKeys = new ArrayList<>();
     //inherited tables
-    final Collection<String> parents = new ArrayList<String>();
+    final Collection<String> parents = new ArrayList<>();
     
     public TableMetaModel(final String name, String type) {
         this.name = name;
@@ -80,7 +80,7 @@ public class TableMetaModel {
      * Detect if given type is a subtype. Conditions are :
      * - having a relation toward another type
      * - relation must be cascading
-     * @param ft
+     * 
      * @return true is type is a subtype
      */
     public boolean isSubType(){
@@ -104,7 +104,7 @@ public class TableMetaModel {
         return sb.toString();
     }
     
-    public ComplexType getType(View view){
+    public FeatureTypeBuilder getType(View view){
         
         if(view==View.TABLE){
             return tableType;
@@ -112,8 +112,6 @@ public class TableMetaModel {
             return simpleFeatureType;
         }else if(view==View.COMPLEX_FEATURE_TYPE){
             return complexFeatureType;
-        }else if(view==View.COMPLEX_ATTRIBUTE_TYPE){
-            return complexAttType;
         }else if(view==View.ALLCOMPLEX){
             return allType;
         }else{

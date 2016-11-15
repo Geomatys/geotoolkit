@@ -76,7 +76,7 @@ public class NMEASerialPortReaderDemo {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAFeatureStore.TYPE_NAME, tmp.getIds()));
+                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAFeatureStore.TYPE_NAME.toString(), tmp.getIds()));
                     final FeatureIterator it = col.iterator();
                     while (it.hasNext()) {
                         LOGGER.log(Level.INFO, it.next().toString());

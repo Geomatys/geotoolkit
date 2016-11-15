@@ -21,7 +21,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -36,9 +35,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -48,13 +46,16 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.parameter.Parameters.*;
 
+
 /**
  * Process return the nearest Feature(s) form a FeatureCollection to a geometry
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class NearestProcess extends AbstractProcess {
 
@@ -74,81 +75,56 @@ public class NearestProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-            final Geometry interGeom                            = value(NearestDescriptor.GEOMETRY_IN, inputParameters);
-
+            final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
+            final Geometry interGeom                  = value(NearestDescriptor.GEOMETRY_IN, inputParameters);
             final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
             getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
-
-        } catch (FactoryException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
-        } catch (DataStoreException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
-        } catch (TransformException ex) {
+        } catch (FactoryException | DataStoreException | TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 
     /**
      * Create a query to filter nearest feature to the geometry
-     * @param original
-     * @param geom
+     *
      * @return nearest query filter
      */
     private Query nearestQuery(final FeatureCollection original, final Geometry geom)
-            throws FactoryException, MismatchedDimensionException, TransformException {
-
+            throws FactoryException, MismatchedDimensionException, TransformException
+    {
         CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
-
         if (geomCrs == null) {
-            geomCrs = original.getFeatureType().getCoordinateReferenceSystem();
+            geomCrs = FeatureExt.getCRS(original.getFeatureType());
         }
-
         double dist = Double.POSITIVE_INFINITY;
-        final Collection<Identifier> listID = new ArrayList<Identifier>();
-
-        final FeatureIterator iter = original.iterator(null);
-        try {
+        final Collection<Identifier> listID = new ArrayList<>();
+        try (final FeatureIterator iter = original.iterator(null)) {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
-                for (final Property property : feature.getProperties()) {
-                    if (property.getDescriptor() instanceof GeometryDescriptor) {
-
-                        Geometry featureGeom = (Geometry) property.getValue();
-                        final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
-                        final CoordinateReferenceSystem featureGeomCRS = geomDesc.getCoordinateReferenceSystem();
+                for (final PropertyType property : feature.getType().getProperties(true)) {
+                    if (AttributeConvention.isGeometryAttribute(property)) {
+                        Geometry featureGeom = (Geometry) feature.getPropertyValue(property.getName().toString());
+                        final CoordinateReferenceSystem featureGeomCRS = FeatureExt.getCRS(property);
 
                         //re-project feature geometry into input geometry CRS
                         featureGeom = VectorProcessUtils.repojectGeometry(geomCrs, featureGeomCRS, featureGeom);
-
-                        final double computedDist = geom.distance((Geometry) property.getValue());
-
+                        final double computedDist = geom.distance(featureGeom);
                         if (computedDist < dist) {
                             listID.clear();
                             dist = computedDist;
-                            listID.add(feature.getIdentifier());
-
+                            listID.add(FeatureExt.getId(feature));
                         } else {
                             if (computedDist == dist) {
-                                listID.add(feature.getIdentifier());
+                                listID.add(FeatureExt.getId(feature));
                             }
                         }
                     }
                 }
             }
-        } finally {
-            iter.close();
         }
-
-        final Set<Identifier> setID = new HashSet<Identifier>();
-        for (Identifier id : listID) {
-            setID.add(id);
-        }
-
-        final Filter filter = FF.id(setID);
-        return QueryBuilder.filtered(NamesExt.create("nearest"), filter);
-
+        final Filter filter = FF.id(new HashSet<>(listID));
+        return QueryBuilder.filtered("nearest", filter);
     }
 }

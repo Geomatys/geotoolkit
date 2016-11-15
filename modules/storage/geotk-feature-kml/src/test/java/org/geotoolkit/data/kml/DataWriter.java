@@ -34,29 +34,15 @@ import org.apache.sis.util.logging.Logging;
  * @author Samuel Andrés
  * @module pending
  */
-public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
+public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
     private static final String URI_DATA = "http://www.sandres.com";
 
-    public DataWriter(){
-        super();
-    }
-
-    /**
-     *
-     * @param output
-     * @throws XMLStreamException
-     * @throws IOException
-     */
     @Override
-    public void setOutput(Object output) throws XMLStreamException, IOException{
+    public void setOutput(Object output) throws XMLStreamException, IOException {
         super.setOutput(output);
     }
 
-    /**
-     *
-     * @param racine
-     */
     public void write(List<String> racine) {
         try {
             writer.writeStartDocument("UTF-8", "1.0");
@@ -64,19 +50,12 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
             this.writeRacine(racine);
             writer.writeEndDocument();
             writer.flush();
-
         } catch (KmlException | XMLStreamException ex) {
             Logging.getLogger("org.geotoolkit.data.kml.xml").log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     *
-     * @param racine
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeRacine(List<String> racine) throws XMLStreamException, KmlException{
+    private void writeRacine(List<String> racine) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_DATA,"racine");
         for(String element : racine){
             this.writeElement(element);
@@ -92,34 +71,29 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
 
     @Override
     public boolean canHandleComplex(String kmlVersionUri, Names ext, Object contentObject) {
-        if(contentObject instanceof List){
-            return true;
-        }
-        return false;
+        return contentObject instanceof List;
     }
 
     @Override
     public boolean canHandleSimple(String kmlVersionUri, Names ext, String elementTag) {
-        if("element".equals(elementTag)){
-            return true;
-        }
-        return false;
+        return "element".equals(elementTag);
     }
 
     @Override
     public void writeComplexExtensionElement(String kmlVersionUri, Extensions.Names ext, Object contentElement)
-            throws XMLStreamException, KmlException {
-        if(contentElement instanceof List){
-            this.writeRacine((List<String>) contentElement);
+            throws XMLStreamException, KmlException
+    {
+        if (contentElement instanceof List<?>) {
+            writeRacine((List<String>) contentElement);
         }
     }
 
     @Override
     public void writeSimpleExtensionElement(String kmlVersionUri, Extensions.Names ext, SimpleTypeContainer contentElement)
-            throws XMLStreamException, KmlException {
-        if("element".equals(contentElement.getTagName())){
-            this.writeElement(URI_DATA);
+            throws XMLStreamException, KmlException
+    {
+        if ("element".equals(contentElement.getTagName())) {
+            writeElement(URI_DATA);
         }
     }
-
 }

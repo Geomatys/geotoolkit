@@ -58,8 +58,8 @@ import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.filter.DefaultPropertyName;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -335,7 +335,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         try {
             String id = result.getID();
             result = result.subCollection(QueryBuilder.sorted(
-                    result.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
+                    result.getFeatureType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
             ((AbstractFeatureCollection)result).setId(id);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
@@ -346,6 +346,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         assertEquals(collectionSimple.size(), result.size());
         assertEquals(collectionSimple.getID(), result.getID());
+        assertEquals(collectionSimple.getFeatureType(), result.getFeatureType());
 
         assertEquals(resultIte.next(), expectedIte.next());
         assertEquals(resultIte.next(), expectedIte.next());

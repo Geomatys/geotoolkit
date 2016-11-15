@@ -32,21 +32,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import org.apache.sis.feature.AbstractOperation;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -55,13 +54,9 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
 import org.apache.sis.referencing.CRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -70,12 +65,19 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.ArgumentChecks;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Set of function and methods useful for vector process
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public final class VectorProcessUtils extends Static {
 
@@ -84,105 +86,61 @@ public final class VectorProcessUtils extends Static {
 
     /**
      * Change the geometry descriptor to Geometry type needed.
-     * @param oldFeatureType FeatureType
-     * @param class the new type of geometry
-     * @return newFeatureType FeatureType
+     *
+     * @param clazz the new type of geometry
      */
     public static FeatureType changeGeometryFeatureType(final FeatureType oldFeatureType, final Class clazz) {
-
-        AttributeDescriptorBuilder descBuilder;
-        AttributeTypeBuilder typeBuilder;
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.copy(oldFeatureType);
-
-        final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
-
-        while (ite.hasNext()) {
-
-            final PropertyDescriptor desc = ite.next();
-            if (desc instanceof GeometryDescriptor) {
-
-                final GeometryType type = (GeometryType) desc.getType();
-
-                descBuilder = new AttributeDescriptorBuilder();
-                typeBuilder = new AttributeTypeBuilder();
-                descBuilder.copy((AttributeDescriptor) desc);
-                typeBuilder.copy(type);
-                typeBuilder.setBinding(clazz);
-                descBuilder.setType(typeBuilder.buildGeometryType());
-                final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
-                ite.set(newDesc);
+        ArgumentChecks.ensureNonNull("geometry class", clazz);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(oldFeatureType);
+        for(PropertyTypeBuilder pt : ftb.properties()){
+            if(pt instanceof AttributeTypeBuilder && Geometry.class.isAssignableFrom( ((AttributeTypeBuilder)pt).getValueClass())){
+                ((AttributeTypeBuilder)pt).setValueClass(clazz);
             }
         }
-
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 
     /**
      * Create a copy of a FeatureType in keeping only one geometry.
      * if keepingGeometry is null, the keeped one will be the default Geometry
-     * @param oldFeatureType
-     * @param keepedGeometry
+     *
      * @return the new FeatureType
      */
     public static FeatureType oneGeometryFeatureType(final FeatureType oldFeatureType, String keepedGeometry) {
-
-        AttributeDescriptorBuilder descBuilder;
-        AttributeTypeBuilder typeBuilder;
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.copy(oldFeatureType);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(oldFeatureType);
 
         //if keepedGeometry is null we use the default Geometry
         if (keepedGeometry == null) {
-            keepedGeometry = oldFeatureType.getGeometryDescriptor().getName().tip().toString();
+            keepedGeometry = AttributeConvention.GEOMETRY_PROPERTY.toString();
         }
 
-        final Collection<String> listToRemove = new ArrayList<String>();
-
-        final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
-        while (ite.hasNext()) {
-
-            final PropertyDescriptor desc = ite.next();
-            if (desc instanceof GeometryDescriptor) {
-
-                final GeometryType type = (GeometryType) desc.getType();
-
-                if (desc.getName().tip().toString().equals(keepedGeometry)) {
-                    descBuilder = new AttributeDescriptorBuilder();
-                    typeBuilder = new AttributeTypeBuilder();
-                    descBuilder.copy((AttributeDescriptor) desc);
-                    typeBuilder.copy(type);
-                    typeBuilder.setBinding(Geometry.class);
-                    descBuilder.setType(typeBuilder.buildGeometryType());
-                    final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
-                    ite.set(newDesc);
-                } else {
-                    listToRemove.add(desc.getName().tip().toString());
-                }
+        PropertyType property = oldFeatureType.getProperty(keepedGeometry);
+        if(property instanceof AbstractOperation){
+            final Set<String> deps = ((AbstractOperation)property).getDependencies();
+            if(deps.size()==1){
+                keepedGeometry = deps.iterator().next();
             }
         }
 
-        ftb.setDefaultGeometry(keepedGeometry);
-        for (String delPropertyDesc : listToRemove) {
-            ftb.remove(delPropertyDesc);
+        final List<PropertyTypeBuilder> listIterator = new ArrayList<>(ftb.properties());
+        for (PropertyTypeBuilder pt : listIterator){
+            if(pt instanceof AttributeTypeBuilder && Geometry.class.isAssignableFrom( ((AttributeTypeBuilder)pt).getValueClass())){
+                if(!pt.getName().tip().toString().equals(keepedGeometry)){
+                    ftb.properties().remove(pt);
+                }
+            }
         }
-
-        return ftb.buildFeatureType();
+        
+        return ftb.build();
     }
 
     /**
      * Create a custom projection (Conic or Mercator) for the geometry using the
      * geometry envelope.
+     *
      * @param geomEnvelope Geometry bounding envelope
      * @param longLatCRS WGS84 projection
      * @param unit unit wanted for the geometry
-     * @return MathTransform
-     * @throws NoSuchIdentifierException
-     * @throws FactoryException
      */
     public static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
             final Unit<Length> unit) throws FactoryException {
@@ -216,7 +174,6 @@ public final class VectorProcessUtils extends Static {
         final MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
         ParameterValueGroup p;
         if (conicProjection) {
-
             p = f.getDefaultParameters("Albers_Conic_Equal_Area");
             p.parameter("semi_major").setValue(semiMajorAxis);
             p.parameter("semi_minor").setValue(semiMinorAxis);
@@ -224,48 +181,44 @@ public final class VectorProcessUtils extends Static {
             p.parameter("standard_parallel_1").setValue(northParallal);
             p.parameter("standard_parallel_2").setValue(southParallal);
         } else {
-
             p = f.getDefaultParameters("Mercator_2SP");
             p.parameter("semi_major").setValue(semiMajorAxis);
             p.parameter("semi_minor").setValue(semiMinorAxis);
             p.parameter("central_meridian").setValue(centerMeridian);
             p.parameter("standard_parallel_1").setValue(centerParallal);
         }
-
         return f.createParameterizedTransform(p);
     }
 
     /**
      * Get recursively all primaries Geometries contained in the input Geometry.
-     * @param inputGeom
+     *
      * @return a collection of primary geometries
      */
     public static Collection<Geometry> getGeometries(final Geometry inputGeom) {
-
         final Collection<Geometry> listGeom = new ArrayList<Geometry>();
 
         //if geometry is a primary type
         if (inputGeom instanceof Polygon || inputGeom instanceof Point
-                || inputGeom instanceof LinearRing || inputGeom instanceof LineString) {
+                || inputGeom instanceof LinearRing || inputGeom instanceof LineString)
+        {
             listGeom.add(inputGeom);
         }
 
         //if it's a complex type (Multi... or GeometryCollection)
         if (inputGeom instanceof MultiPolygon || inputGeom instanceof MultiPoint
-                || inputGeom instanceof MultiLineString || inputGeom instanceof GeometryCollection) {
-
+                || inputGeom instanceof MultiLineString || inputGeom instanceof GeometryCollection)
+        {
             for (int i = 0; i < inputGeom.getNumGeometries(); i++) {
                 listGeom.addAll(getGeometries(inputGeom.getGeometryN(i)));
             }
         }
-
         return listGeom;
     }
 
     /**
      * Compute geometryIntersection between the feature geometry and the clipping geometry
-     * @param featureGeometry Geometry
-     * @param clippingGeometry Geometry
+     *
      * @return the intersection Geometry
      * If featureGeometry didn't intersect clippingGeometry the function return null;
      */
@@ -273,7 +226,6 @@ public final class VectorProcessUtils extends Static {
         if (featureGeometry == null || clippingGeometry == null) {
             return null;
         }
-
         if (featureGeometry.intersects(clippingGeometry)) {
             return featureGeometry.intersection(clippingGeometry);
         } else {
@@ -283,8 +235,7 @@ public final class VectorProcessUtils extends Static {
 
     /**
      * Compute difference between the feature's geometry and the geometry
-     * @param featureGeometry Geometry
-     * @param diffGeometry Geometry
+     *
      * @return the computed geometry. Return the featureGeometry if there is no intersections
      * between geometries. And return null if the featureGeometry is contained into
      * the diffGeometry
@@ -293,7 +244,6 @@ public final class VectorProcessUtils extends Static {
         if (featureGeometry == null || diffGeometry == null) {
             return null;
         }
-
         if (featureGeometry.intersects(diffGeometry)) {
             if (diffGeometry.contains(featureGeometry)) {
                 return null;
@@ -308,20 +258,16 @@ public final class VectorProcessUtils extends Static {
     /**
      * Re-project a geometry from geometryCRS to wandedCRS. If geometryCRS and wantedCRS are equals,
      * the input geometry will be returned.
-     * @param wantedCRS
-     * @param geometryCRS
-     * @param inputGeom
+     *
      * @return the re-projected Geometry
-     * @throws TransformException
-     * @throws FactoryException
      */
     public static Geometry repojectGeometry (final CoordinateReferenceSystem wantedCRS, final CoordinateReferenceSystem geometryCRS,
-            final Geometry inputGeom) throws TransformException, FactoryException{
-
+            final Geometry inputGeom) throws TransformException, FactoryException
+    {
         if (!(wantedCRS.equals(geometryCRS))) {
             final MathTransform transform = CRS.findOperation(geometryCRS, wantedCRS, null).getMathTransform();
             return JTS.transform(inputGeom, transform);
-        }else{
+        } else {
             return inputGeom;
         }
     }
@@ -355,45 +301,40 @@ public final class VectorProcessUtils extends Static {
      * To determinate which Geometry used from Feature, we use the sourceGeomName and
      * targetGeomName parameters. If input Geometry CRS is different than target one,
      * a conversion into input CRS is done.
-     * @param sourceFeature
-     * @param targetFeature
-     * @param sourceGeomName - geometry attribute name to use in sourceFeature
-     * @param targetGeomName - geometry attribute name to use in targetFeature
+     *
+     * @param sourceGeomName geometry attribute name to use in sourceFeature
+     * @param targetGeomName geometry attribute name to use in targetFeature
      * @return the intersection Geometry.
-     * @throws FactoryException
-     * @throws TransformException
      */
     public static Geometry intersectionFeatureToFeature(final Feature sourceFeature, final Feature targetFeature,
-            final String sourceGeomName, final String targetGeomName) throws FactoryException, TransformException {
-
+            final String sourceGeomName, final String targetGeomName) throws FactoryException, TransformException
+    {
         Geometry sourceGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem sourceCRS = null;
 
         // found used input geometry with CRS
-        for (Property inputProperty : sourceFeature.getProperties()) {
-            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().tip().toString().equals(sourceGeomName)) {
-                    sourceGeometry = (Geometry) inputProperty.getValue();
-                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
-                    sourceCRS = geomDesc.getCoordinateReferenceSystem();
+        for (PropertyType inputProperty : sourceFeature.getType().getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(inputProperty)) {
+                final String name = inputProperty.getName().tip().toString();
+                if (name.equals(sourceGeomName)) {
+                    sourceGeometry = (Geometry) sourceFeature.getPropertyValue(name);
+                    sourceCRS = FeatureExt.getCRS(inputProperty);
                 }
             }
         }
-
         Geometry targetGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem targetCRS = null;
 
         // found used target geometry with CRS
-        for (Property inputProperty : targetFeature.getProperties()) {
-            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().tip().toString().equals(targetGeomName)) {
-                    targetGeometry = (Geometry) inputProperty.getValue();
-                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
-                    targetCRS = geomDesc.getCoordinateReferenceSystem();
+        for (PropertyType inputProperty : targetFeature.getType().getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(inputProperty)) {
+                final String name = inputProperty.getName().tip().toString();
+                if (name.equals(targetGeomName)) {
+                    targetGeometry = (Geometry) targetFeature.getPropertyValue(name);
+                    targetCRS = FeatureExt.getCRS(inputProperty);
                 }
             }
         }
-
         targetGeometry = repojectGeometry(sourceCRS, targetCRS, targetGeometry);
         return sourceGeometry.intersection(targetGeometry);
     }
@@ -403,13 +344,10 @@ public final class VectorProcessUtils extends Static {
      * where each Feature contained  the intersection geometry as default geometry and other none geometry
      * attributes form input Feature.
      * If a Feature from featureList have many geometries, we concatenate them before compute intersection.
-     * @param inputFeature
-     * @param featureList
+     *
      * @param geometryName the geometry name in inputFeature to compute the intersection
      * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "inputFeatureID-intersection"
      * The Feature returned ID will look like "inputFeatureID<->intersectionFeatureID"
-     * @throws FactoryException
-     * @throws TransformException
      */
     public static FeatureCollection intersectionFeatureToColl(final Feature inputFeature,
             final FeatureCollection featureList, String geometryName)
@@ -417,7 +355,7 @@ public final class VectorProcessUtils extends Static {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
-            geometryName = inputFeature.getDefaultGeometryProperty().getName().tip().toString();
+            geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
         }
 
         //create the new FeatureType with only one geometry property
@@ -425,18 +363,18 @@ public final class VectorProcessUtils extends Static {
 
         //name of the new collection "<inputFeatureID>-intersection"
         final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
+                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getID() + "-intersection", newType);
 
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
 
         // found used input geometry with CRS
-        for (Property inputProperty : inputFeature.getProperties()) {
-            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().tip().toString().equals(geometryName)) {
-                    inputGeometry = (Geometry) inputProperty.getValue();
-                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
-                    inputCRS = geomDesc.getCoordinateReferenceSystem();
+        for (PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(inputProperty)) {
+                final String name = inputProperty.getName().tip().toString();
+                if (name.equals(geometryName)) {
+                    inputGeometry = (Geometry) inputFeature.getPropertyValue(name);
+                    inputCRS = FeatureExt.getCRS(inputProperty);
                 }
             }
         }
@@ -458,35 +396,29 @@ public final class VectorProcessUtils extends Static {
         } else {
 
             //loop in resulting FeatureCollection
-            final FeatureIterator ite = featuresOut.iterator();
-            try {
+            try (final FeatureIterator ite = featuresOut.iterator()) {
                 while (ite.hasNext()) {
 
                     //get the next Feature which intersect the inputFeature
                     final Feature outFeature = ite.next();
-
                     final Map<Geometry, CoordinateReferenceSystem> mapGeomCRS = new HashMap<Geometry, CoordinateReferenceSystem>();
 
                     //generate a map with all feature geometry and geometry CRS
-                    for (Property outProperty : outFeature.getProperties()) {
-                        if (outProperty.getDescriptor() instanceof GeometryDescriptor) {
-
-                            final Geometry outGeom = (Geometry) outProperty.getValue();
-                            final GeometryDescriptor geomDescOut = (GeometryDescriptor) outProperty.getDescriptor();
-                            final CoordinateReferenceSystem outputCRS = geomDescOut.getCoordinateReferenceSystem();
+                    for (PropertyType outProperty : outFeature.getType().getProperties(true)) {
+                        if (AttributeConvention.isGeometryAttribute(outProperty)) {
+                            final Geometry outGeom = (Geometry) outFeature.getPropertyValue(outProperty.getName().toString());
+                            final CoordinateReferenceSystem outputCRS = FeatureExt.getCRS(outProperty);
                             mapGeomCRS.put(outGeom, outputCRS);
                         }
                     }
 
                     //get the first geometry CRS in the map. It'll be used to homogenize the Feature geometries CRS
                     final CoordinateReferenceSystem outputBaseCRS = mapGeomCRS.entrySet().iterator().next().getValue();
-
                     Geometry interGeom = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
                     Geometry interGeomBuffer = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
 
                     //for each Feature Geometry
                     for (Map.Entry<Geometry, CoordinateReferenceSystem> entry : mapGeomCRS.entrySet()) {
-
                         Geometry geom = entry.getKey();
                         final CoordinateReferenceSystem geomCRS = entry.getValue();
 
@@ -512,27 +444,25 @@ public final class VectorProcessUtils extends Static {
                     }
 
                     //create the result Feature
-                    final Feature resultFeature = FeatureUtilities.defaultFeature(newType,
-                            inputFeature.getIdentifier().getID() + "<->" + outFeature.getIdentifier().getID());
+                    final Feature resultFeature = newType.newInstance();
+                    resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
+                            FeatureExt.getId(inputFeature).getID() + "<->" + FeatureExt.getId(outFeature).getID());
 
-                    for (Property property : inputFeature.getProperties()) {
-                        if (property.getDescriptor() instanceof GeometryDescriptor) {
-                            if (property.getName().tip().toString().equals(geometryName)) {
+                    for (PropertyType property : inputFeature.getType().getProperties(true)) {
+                        final String name = property.getName().tip().toString();
+                        if (AttributeConvention.isGeometryAttribute(property)) {
+                            if (name.equals(geometryName)) {
                                 //set the intersection as the feature Geometry
-                                resultFeature.getProperty(property.getName()).setValue(interGeom);
+                                resultFeature.setPropertyValue(name, interGeom);
                             }
-                        } else {
-
-                            resultFeature.getProperty(property.getName()).setValue(property.getValue());
+                        } else if(property instanceof AttributeType && !(AttributeConvention.contains(property.getName()))){
+                            resultFeature.setPropertyValue(name, inputFeature.getPropertyValue(name));
                         }
                     }
                     resultFeatureList.add(resultFeature);
                 }
-            } finally {
-                ite.close();
             }
         }
-
         return resultFeatureList;
     }
 }

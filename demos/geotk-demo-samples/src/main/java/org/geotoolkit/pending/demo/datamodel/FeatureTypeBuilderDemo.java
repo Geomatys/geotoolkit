@@ -4,14 +4,12 @@ package org.geotoolkit.pending.demo.datamodel;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Date;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.apache.sis.feature.builder.AttributeRole;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -27,42 +25,38 @@ public class FeatureTypeBuilderDemo {
     public static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Fish");
-        ftb.add("name", String.class);
-        ftb.add("length", Integer.class);
-        ftb.add("lastPosition", LineString.class, CRS.forCode("EPSG:3395"));
-        ftb.add("lastPositionDate", Date.class);
-        ftb.add("direction", Float.class);
-        ftb.setDefaultGeometry("lastPosition");
-        final FeatureType sft = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Integer.class).setName("length");
+        ftb.addAttribute(LineString.class).setName("lastPosition").setCRS( CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Date.class).setName("lastPositionDate");
+        ftb.addAttribute(Float.class).setName("direction");
+        final FeatureType sft = ftb.build();
         return sft;
     }
 
     public static FeatureType createComplexType() throws NoSuchAuthorityCodeException, FactoryException{
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         //track point type
         ftb.setName("FishTrackPoint");
-        ftb.add("location", Point.class, CRS.forCode("EPSG:3395"));
-        ftb.add("time", Date.class);
-        final ComplexType trackPointType = ftb.buildType();
+        ftb.addAttribute(Point.class).setName("location").setCRS(CRS.forCode("EPSG:3395"));
+        ftb.addAttribute(Date.class).setName("time");
+        final FeatureType trackPointType = ftb.build();
 
         //fish type
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("Fish");
-        ftb.add("name", String.class);
-        ftb.add("code", String.class);
-        final ComplexType fishType = ftb.buildType();
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(String.class).setName("code");
+        final FeatureType fishType = ftb.build();
 
         //fish track type
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("FishTrack");
-        ftb.add("trackNumber", Long.class);
-        AttributeDescriptor fishDesc = adb.create(fishType, NamesExt.valueOf("fish"),1,1,false,null);
-        AttributeDescriptor trackpointsDesc = adb.create(trackPointType, NamesExt.valueOf("trackpoints"),0,Integer.MAX_VALUE,false,null);
-        ftb.add(fishDesc);
-        ftb.add(trackpointsDesc);
-        final FeatureType ft = ftb.buildFeatureType();
+        ftb.addAttribute(Long.class).setName("trackNumber");
+        ftb.addAssociation(fishType).setName("fish");
+        ftb.addAssociation(trackPointType).setName("trackpoints").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+        final FeatureType ft = ftb.build();
         return ft;
     }
 

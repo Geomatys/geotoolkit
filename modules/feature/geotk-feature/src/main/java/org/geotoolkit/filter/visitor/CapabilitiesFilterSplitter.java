@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.FeatureType;
 
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -156,7 +156,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * The given filterCapabilities that we're splitting on.
      */
     private final DefaultFilterCapabilities fcs;
-    private final ComplexType parent;
+    private final FeatureType parent;
     private final FilterFactory ff;
     private Filter original = null;
 
@@ -168,7 +168,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *            process.
      * @param parent The FeatureType that this filter involves. Why is this needed?
      */
-    public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final ComplexType parent) {
+    public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final FeatureType parent) {
         this.ff = FactoryFinder.getFilterFactory(null);
         this.fcs = fcs;
         this.parent = parent;

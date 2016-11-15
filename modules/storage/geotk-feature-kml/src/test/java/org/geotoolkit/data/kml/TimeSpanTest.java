@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -36,9 +35,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -50,26 +48,20 @@ import static org.junit.Assert.*;
 public class TimeSpanTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/timeSpan.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public TimeSpanTest() {
-    }
 
     @Test
     public void timeSpanReadTest() throws IOException, XMLStreamException, ParseException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
 
-        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals("Colorado", placemark.getPropertyValue(KmlConstants.TAG_NAME));
 
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue() instanceof TimeSpan);
-        TimeSpan timeSpan = (TimeSpan) placemark.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
+        TimeSpan timeSpan = (TimeSpan) placemark.getPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE);
         String begin = "1876-08-02T22:31:54.543+01:00";
 
         ISODateParser du = new ISODateParser();
@@ -96,9 +88,8 @@ public class TimeSpanTest extends org.geotoolkit.test.TestBase {
         timeSpan.setBegin(begin);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(timeSpan, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Colorado");
+        placemark.setPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE, timeSpan);
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
         final File temp = File.createTempFile("timeSpanTest", ".kml");
@@ -109,8 +100,6 @@ public class TimeSpanTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

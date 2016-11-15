@@ -17,24 +17,21 @@
 
 package org.geotoolkit.data.osm.xml;
 
+import com.vividsolutions.jts.geom.Point;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.osm.model.ChangeSet;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
-import org.geotoolkit.data.osm.model.Member;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Tag;
+import org.geotoolkit.data.osm.model.MemberType;
+import org.geotoolkit.data.osm.model.OSMModelConstants;
 import org.geotoolkit.data.osm.model.Transaction;
-import org.geotoolkit.data.osm.model.User;
-import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.geometry.Envelope;
 
 import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
+import org.opengis.feature.Feature;
 
 
 /**
@@ -78,10 +75,10 @@ public class OSMXMLWriter extends StaxStreamWriter{
             writer.writeAttribute(ATT_ID, id.toString());
         }
 
-        final User user = cs.getUser();
-        if(user != User.NONE){
-            writer.writeAttribute(ATT_UID, Integer.toString(user.getId()));
-            writer.writeAttribute(ATT_USER, user.getUserName());
+        final Feature user = cs.getUser();
+        if(user != null && user != OSMModelConstants.USER_NONE){
+            writer.writeAttribute(ATT_UID, Integer.toString((int)user.getPropertyValue(ATT_UID)));
+            writer.writeAttribute(ATT_USER, (String)user.getPropertyValue(ATT_USER));
         }
 
         final Long createdAt = cs.getTimestamp();
@@ -121,65 +118,66 @@ public class OSMXMLWriter extends StaxStreamWriter{
             writer.writeAttribute(ATT_GENERATOR, generator);
         }
 
-        for(final IdentifiedElement ele : transaction.getElements()){
+        for(final Feature ele : transaction.getElements()){
             writeElement(ele);
         }
 
         writer.writeEndElement();
     }
 
-    public void writeElement(final IdentifiedElement element) throws XMLStreamException{
-        if(element instanceof Node){
-            writeNode((Node) element);
-        }else if(element instanceof Way){
-            writeWay((Way) element);
-        }else if(element instanceof Relation){
-            writeRelation((Relation) element);
+    public void writeElement(final Feature element) throws XMLStreamException{
+        if(element.getType() == OSMModelConstants.TYPE_NODE){
+            writeNode(element);
+        }else if(element.getType() == OSMModelConstants.TYPE_WAY){
+            writeWay(element);
+        }else if(element.getType() == OSMModelConstants.TYPE_RELATION){
+            writeRelation(element);
         }
     }
 
-    private void writeCommunAttributs(final IdentifiedElement element) throws XMLStreamException{
-        final int changeset = element.getChangeset();
+    private void writeCommunAttributs(final Feature element) throws XMLStreamException{
+        final int changeset = (Integer)element.getPropertyValue(ATT_CHANGESET);
         if(changeset > 0){
             writer.writeAttribute(ATT_CHANGESET, Integer.toString(changeset));
         }
 
-        writer.writeAttribute(ATT_ID, Long.toString(element.getId()));
-        writer.writeAttribute(ATT_TIMESTAMP, sdf.format(new Date(element.getTimestamp())));
+        writer.writeAttribute(ATT_ID, Long.toString((Long)element.getPropertyValue(ATT_ID)));
+        writer.writeAttribute(ATT_TIMESTAMP, sdf.format(new Date((Long)element.getPropertyValue(ATT_TIMESTAMP))));
 
-        final User user = element.getUser();
-        if(user != null && user != User.NONE){
-            writer.writeAttribute(ATT_UID, Integer.toString(user.getId()));
-            final String name = user.getUserName();
+        final Feature user = (Feature) element.getPropertyValue("user");
+        if(user != null){
+            writer.writeAttribute(ATT_UID, Integer.toString((Integer)user.getPropertyValue("id")));
+            final String name = (String)user.getPropertyValue(ATT_USER);
             if(name != null){
                 writer.writeAttribute(ATT_USER,name);
             }
         }
 
-        final int version = element.getVersion();
+        final int version = (Integer)element.getPropertyValue(ATT_VERSION);
         if(version > 0){
             writer.writeAttribute(ATT_VERSION, Integer.toString(version));
         }
     }
 
-    public void writeNode(final Node element) throws XMLStreamException{
+    public void writeNode(final Feature element) throws XMLStreamException{
         writer.writeStartElement(TAG_NODE);
-        writer.writeAttribute(ATT_NODE_LAT, Double.toString(element.getLatitude()));
-        writer.writeAttribute(ATT_NODE_LON, Double.toString(element.getLongitude()));
+        final Point pt = (Point) element.getPropertyValue("point");
+        writer.writeAttribute(ATT_NODE_LAT, Double.toString(pt.getY()));
+        writer.writeAttribute(ATT_NODE_LON, Double.toString(pt.getX()));
         writeCommunAttributs(element);
-        writeTags(element.getTags());
+        writeTags((Collection) element.getPropertyValue("tags"));
         writer.writeEndElement();
     }
 
-    public void writeWay(final Way element) throws XMLStreamException{
+    public void writeWay(final Feature element) throws XMLStreamException{
         writer.writeStartElement(TAG_WAY);
         writeCommunAttributs(element);
-        writeWayNodes(element.getNodesIds());
-        writeTags(element.getTags());
+        writeWayNodes((Collection)element.getPropertyValue(TAG_WAYND));
+        writeTags((Collection) element.getPropertyValue("tags"));
         writer.writeEndElement();
     }
 
-    private void writeWayNodes(final List<Long> nodes) throws XMLStreamException{
+    private void writeWayNodes(final Collection<Long> nodes) throws XMLStreamException{
         for(Long ref : nodes){
             writer.writeStartElement(TAG_WAYND);
             writer.writeAttribute(ATT_WAYND_REF, Long.toString(ref));
@@ -187,32 +185,32 @@ public class OSMXMLWriter extends StaxStreamWriter{
         }
     }
 
-    public void writeRelation(final Relation element) throws XMLStreamException{
+    public void writeRelation(final Feature element) throws XMLStreamException{
         writer.writeStartElement(TAG_REL);
         writeCommunAttributs(element);
-        writeRelationMembers(element.getMembers());
-        writeTags(element.getTags());
+        writeRelationMembers((Collection) element.getPropertyValue("members"));
+        writeTags((Collection) element.getPropertyValue("tags"));
         writer.writeEndElement();
     }
 
-    private void writeRelationMembers(final List<Member> members) throws XMLStreamException{
-        for(Member m : members){
+    private void writeRelationMembers(final Collection<Feature> members) throws XMLStreamException{
+        for(Feature m : members){
             writer.writeStartElement(TAG_RELMB);
-            writer.writeAttribute(ATT_RELMB_REF, Long.toString(m.getReference()));
-            writer.writeAttribute(ATT_RELMB_ROLE, m.getRole());
-            writer.writeAttribute(ATT_RELMB_TYPE, m.getMemberType().getAttributValue());
+            writer.writeAttribute(ATT_RELMB_REF, Long.toString((Long)m.getPropertyValue(ATT_RELMB_REF)));
+            writer.writeAttribute(ATT_RELMB_ROLE, (String) m.getPropertyValue(ATT_RELMB_ROLE));
+            writer.writeAttribute(ATT_RELMB_TYPE, ((MemberType)m.getPropertyValue(ATT_RELMB_TYPE)).getAttributValue());
             writer.writeEndElement();
         }
     }
 
 
-    public void writeTags(final List<Tag> tags) throws XMLStreamException{
+    public void writeTags(final Collection<Feature> tags) throws XMLStreamException{
         if(tags == null || tags.isEmpty()) return;
 
-        for(final Tag tag : tags){
+        for(final Feature tag : tags){
             writer.writeStartElement(TAG_TAG);
-            writer.writeAttribute(ATT_TAG_KEY, tag.getK());
-            writer.writeAttribute(ATT_TAG_VALUE, tag.getV());
+            writer.writeAttribute(ATT_TAG_KEY, (String) tag.getPropertyValue(ATT_TAG_KEY));
+            writer.writeAttribute(ATT_TAG_VALUE, (String) tag.getPropertyValue(ATT_TAG_VALUE));
             writer.writeEndElement();
         }
     }

@@ -26,7 +26,7 @@ public class GPXDemo {
         System.out.println("=================== Feature types ====================");
         final Set<GenericName> names = store.getNames();
         for(GenericName name : names){
-            System.out.println(store.getFeatureType(name));
+            System.out.println(store.getFeatureType(name.toString()));
         }
 
 

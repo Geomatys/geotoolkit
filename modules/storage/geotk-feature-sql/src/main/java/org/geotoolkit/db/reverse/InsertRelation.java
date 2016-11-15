@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.db.reverse;
 
-import org.geotoolkit.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+
 
 /**
  * When inserting a complex feature in base. it must be divided in smaller elements.
@@ -26,8 +27,8 @@ import org.geotoolkit.feature.ComplexAttribute;
  */
 public final class InsertRelation {
     
-    public ComplexAttribute parent;
-    public ComplexAttribute child;
+    public Feature parent;
+    public Feature child;
     public RelationMetaModel relation;
     
 }

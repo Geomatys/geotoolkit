@@ -41,7 +41,6 @@ import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.style.StyleConstants;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
@@ -49,6 +48,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -276,15 +276,14 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         final Double value;
         if(object instanceof Feature){
 
-            final Feature f = (Feature)object;
-            candidate = f;
-            value = lookup.evaluate(f,Double.class);
+            candidate = (Feature)object;
+            value = lookup.evaluate(candidate,Double.class);
             final Expression exp = new DefaultLiteral<>(value);
 
             final boolean b = this.belongTo == ThreshholdsBelongTo.SUCCEEDING;
 
             final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
-            return closest.evaluate(f,c);
+            return closest.evaluate(candidate,c);
 
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);

@@ -22,20 +22,22 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.geom.Point2D;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.utility.parameter.ParametersExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,7 +46,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import org.geotoolkit.utility.parameter.ParametersExt;
+
 
 /**
  * Process CoverageToFeature create a collection of Feature based on a coverage layer.
@@ -60,8 +62,6 @@ import org.geotoolkit.utility.parameter.ParametersExt;
  * @module pending
  */
 public class CoverageToFeaturesProcess extends AbstractProcess {
-
-
     /**
      * Default constructor
      */
@@ -115,7 +115,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
     /**
      * Create the new FeatureType from the coverage and the reader.
-     * 
+     *
      * @param coverage
      * @param reader
      * @return the FeatureType of Features
@@ -127,9 +127,10 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
         final FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("FeatureCoverage");
-        typeBuilder.add("position", Point.class, reader.getGridGeometry(0).getCoordinateReferenceSystem());
-        typeBuilder.add("cellgeom", Polygon.class, reader.getGridGeometry(0).getCoordinateReferenceSystem());
-        typeBuilder.add("orientation", String.class);
+        typeBuilder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        typeBuilder.addAttribute(Point.class).setName("position").setCRS(reader.getGridGeometry(0).getCoordinateReferenceSystem()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        typeBuilder.addAttribute(Polygon.class).setName("cellgeom").setCRS(reader.getGridGeometry(0).getCoordinateReferenceSystem());
+        typeBuilder.addAttribute(String.class).setName("orientation");
 
         int type = 1;
         if (coverage.getSampleDimension(0).getSampleDimensionType() == SampleDimensionType.REAL_32BITS) {
@@ -140,28 +141,14 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
             type = 3; //Int
         }
         for (int i = 0; i < nbBand; i++) {
-            switch (type) {
-                case 1:
-                    typeBuilder.add("band-" + i, Float.class);
-                    break;
-                case 2:
-                    typeBuilder.add("band-" + i, Double.class);
-                    break;
-                case 3:
-                    typeBuilder.add("band-" + i, Integer.class);
-                    break;
-                default:
-                    typeBuilder.add("band-" + i, Float.class);
-                    break;
-            }
+            typeBuilder.addAttribute(Double.class).setName("band-" + i);
         }
-        typeBuilder.setDefaultGeometry("position");
-        return typeBuilder.buildFeatureType();
+        return typeBuilder.build();
     }
 
     /**
      * Create a Feature with a cell coordinate (x,y).
-     * 
+     *
      * @param type the FeatureType
      * @param x
      * @param y
@@ -229,12 +216,13 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
                     };
         }
         //create the Feature
-        Feature myfeature = FeatureUtilities.defaultFeature(type, "id-" + x + "-" + y);
-        myfeature.getProperty("cellgeom").setValue(geomFac.createPolygon(geomFac.createLinearRing(coord), null));
-        myfeature.getProperty("position").setValue(geomFac.createPoint(new Coordinate(pt2[0], pt2[1])));
-        myfeature.getProperty("orientation").setValue(posPix.name());
+        Feature myfeature = type.newInstance();
+        myfeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-" + x + "-" + y);
+        myfeature.setPropertyValue("cellgeom", geomFac.createPolygon(geomFac.createLinearRing(coord), null));
+        myfeature.setPropertyValue("position", geomFac.createPoint(new Coordinate(pt2[0], pt2[1])));
+        myfeature.setPropertyValue("orientation", posPix.name());
         for (int att = 0; att < nbBand; att++) {
-            myfeature.getProperty("band-" + att).setValue(infoBand[att]);
+            myfeature.setPropertyValue("band-" + att, infoBand[att]);
         }
         return myfeature;
     }

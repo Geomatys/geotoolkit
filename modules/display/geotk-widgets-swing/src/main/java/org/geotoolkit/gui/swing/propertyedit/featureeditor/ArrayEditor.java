@@ -23,25 +23,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Array Type editor.
@@ -51,10 +49,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
-    private final List<PropertyValueEditor> editors = new ArrayList<PropertyValueEditor>();
+    private final List<PropertyValueEditor> editors = new ArrayList<>();
     private final JButton guiButton = new JButton("...");
     private final JLabel guiLabel = new JLabel();
-    private PropertyType type = null;
+    private AttributeType type = null;
     private Object value = null;
 
     public ArrayEditor() {
@@ -84,14 +82,17 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
     }
 
     @Override
-    public boolean canHandle(PropertyType type) {
-        Class clazz = type.getBinding();
+    public boolean canHandle(PropertyType candidate) {
+        if(!(candidate instanceof AttributeType)){
+            return false;
+        }
+        final Class clazz = ((AttributeType)candidate).getValueClass();
         if(!clazz.isArray()) return false;
 
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
         atb.setName("");
-        atb.setBinding(clazz.getComponentType());
-        final PropertyType subType = atb.buildType();
+        atb.setValueClass(clazz.getComponentType());
+        final PropertyType subType = atb.build();
 
         for(PropertyValueEditor editor : editors){
             if(editor.canHandle(subType)){
@@ -104,7 +105,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public void setValue(PropertyType type, Object value) {
-        this.type = type;
+        this.type = (AttributeType) type;
         this.value = value;
         updateText();
     }
@@ -113,7 +114,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
     public Object getValue() {
         //create empty array to avoid return null.
         if (value == null) {
-            final Class subClass = this.type.getBinding().getComponentType();
+            final Class subClass = this.type.getValueClass().getComponentType();
             value = Array.newInstance(subClass, 0);
         }
         
@@ -125,43 +126,21 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
         final JFeatureOutLine outline = new JFeatureOutLine();
 
-        final Class subClass = this.type.getBinding().getComponentType();
+        final Class subClass = this.type.getValueClass().getComponentType();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("array");
-        final AttributeDescriptor elementDesc = ftb.add("element", subClass, 0, Integer.MAX_VALUE,false,null);
-        final ComplexType subType = ftb.buildType();
-        final ComplexAttribute ca = FeatureUtilities.defaultProperty(subType);
+        ftb.addAttribute(subClass).setName("element").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+        final FeatureType subType = ftb.build();
+        final Feature ca = subType.newInstance();
 
-
-        final int size = (value != null) ? Array.getLength(value) : 0;
-        for(int i=0; i<size;i++){
-            final Attribute att = (Attribute) FeatureUtilities.defaultProperty(elementDesc);
-            att.setValue(Array.get(value, i));
-            ca.getProperties().add(att);
-        }
+        ca.setPropertyValue("element", Arrays.asList(value));
 
         outline.setEdited(ca);
 
         final int res = JOptionDialog.show((Component)e.getSource(), new JScrollPane(outline), JOptionPane.OK_OPTION);
         
         if(JOptionPane.OK_OPTION == res){
-            final Collection<Property> properties = ca.getProperties();
-            final int newSize = properties.size();
-            value = Array.newInstance(subClass, newSize);
-            int i=0;
-            for(Property prop : properties){
-                final Object val = prop.getValue();
-                if(subClass.isPrimitive()){
-                    //we can only set if the value is not null
-                    if(val != null){
-                        Array.set(value,i,val);
-                    }
-
-                }else{
-                    Array.set(value,i,val);
-                }
-                i++;
-            }
+            value = ca.getPropertyValue("element");
         }
 
         updateText();

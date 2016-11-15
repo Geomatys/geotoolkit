@@ -25,7 +25,7 @@ public class FishDataStoreDemo {
         FeatureStore store = (FeatureStore) DataStores.open(params);
 
         for(GenericName name : store.getNames()){
-            System.out.println(store.getFeatureType(name));
+            System.out.println(store.getFeatureType(name.toString()));
 
             System.out.println("\n---------------------------\n");
 

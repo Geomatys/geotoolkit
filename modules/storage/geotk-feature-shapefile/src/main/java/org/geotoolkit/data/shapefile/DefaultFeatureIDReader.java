@@ -18,9 +18,8 @@ package org.geotoolkit.data.shapefile;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.geotoolkit.feature.type.FeatureType;
-
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.feature.FeatureType;
 
 /**
  * Simple implementation of a feature id generator which

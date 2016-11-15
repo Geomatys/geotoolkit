@@ -22,8 +22,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -41,7 +41,7 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
-     * @param clippingList 
+     * @param clippingList
      */
     public DifferenceFeatureCollection(final FeatureCollection originalFC, final FeatureCollection clippingList) {
         super(originalFC);
@@ -65,7 +65,7 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
     protected Feature modify(final Feature original) {
         try {
             return DifferenceProcess.clipFeature(original, newFeatureType, clippingList);
-            
+
         } catch (MismatchedDimensionException ex) {
             throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {

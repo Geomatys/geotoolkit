@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  * An interface for feature / feature collection XML parsing.

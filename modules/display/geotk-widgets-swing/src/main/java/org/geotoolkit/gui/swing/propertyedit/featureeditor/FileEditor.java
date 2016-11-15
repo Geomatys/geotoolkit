@@ -28,7 +28,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Throw PropertyChange event when TextField text change.
@@ -53,7 +54,7 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return File.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && File.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

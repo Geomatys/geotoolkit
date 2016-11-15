@@ -24,8 +24,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -46,7 +46,8 @@ public class NumberEditor extends PropertyValueEditor implements ChangeListener 
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        final Class binding = candidate.getBinding();
+        if(!(candidate instanceof AttributeType)) return false;
+        final Class binding = ((AttributeType)candidate).getValueClass();
         return Number.class.isAssignableFrom(binding)
                 || byte.class.equals(binding)
                 || short.class.equals(binding)
@@ -62,7 +63,7 @@ public class NumberEditor extends PropertyValueEditor implements ChangeListener 
         //change model based on property
         if (propertyType != null && propertyType instanceof AttributeType) {
             final AttributeType type = (AttributeType) propertyType;
-            expected = type.getBinding();
+            expected = type.getValueClass();
             if(expected.isPrimitive()){
                 if(expected == byte.class){
                     expected = Byte.class;

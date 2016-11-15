@@ -36,7 +36,7 @@ public class OSMXMLConstants {
     public static final String TAG_OSM_CHANGE = "osmChange";
 
     /**
-     * Identified objects attributs.
+     * Identified objects attributes.
      */
     public static final String ATT_ID = "id";
     public static final String ATT_VERSION = "version";

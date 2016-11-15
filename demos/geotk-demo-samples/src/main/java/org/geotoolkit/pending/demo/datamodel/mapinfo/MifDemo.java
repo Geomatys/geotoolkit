@@ -10,7 +10,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -79,11 +79,11 @@ public class MifDemo {
             // file. All those types inherit from base type, so we get all attributes associated with the geometry.
             Set<GenericName> names = store1.getNames();
             for(GenericName typeName : names) {
-                final FeatureType fType = store1.getFeatureType(typeName);
+                final FeatureType fType = store1.getFeatureType(typeName.toString());
                 // Get all features of given type.
-                FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(typeName));
+                FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
                 // If the type we got don't get super type, it's the store base type. Just print info.
-                if(fType.getSuper() == null) {
+                if(fType.getSuperTypes().isEmpty()) {
                     FeatureIterator it = collection.iterator();
                     while(it.hasNext()) {
                         System.out.println(it.next());
@@ -94,8 +94,8 @@ public class MifDemo {
                     // First we must specify we must add a featureType to the store. If no base Type have already been
                     // specified, the given feature type parent will be used. Else, we check that given type is compliant
                     // with stored base type.
-                    writingStore.createFeatureType(typeName, fType);
-                    writingStore.addFeatures(typeName, collection);
+                    writingStore.createFeatureType(fType);
+                    writingStore.addFeatures(typeName.toString(), collection);
                 }
             }
 

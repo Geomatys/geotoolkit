@@ -17,11 +17,10 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.osm.client.AbstractChangeElement;
 import org.geotoolkit.data.osm.client.OpenStreetMapClient;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Way;
+import org.geotoolkit.data.osm.model.OSMModelConstants;
 
 /**
  *
@@ -37,11 +36,11 @@ public class ChangeElement060 extends AbstractChangeElement{
     @Override
     protected String getSubPath() {
         final StringBuilder sb = new StringBuilder("/api/0.6/");
-        if(element instanceof Node){
+        if(element.equals(OSMModelConstants.TYPE_NODE)){
             sb.append("node");
-        }else if(element instanceof Way){
+        }else if(element.equals(OSMModelConstants.TYPE_WAY)){
             sb.append("way");
-        }else if(element instanceof Relation){
+        }else if(element.equals(OSMModelConstants.TYPE_RELATION)){
             sb.append("relation");
         }else{
             throw new IllegalArgumentException("Unexpected type (allowed types are Node/Way/Relation) : " + element);
@@ -49,8 +48,8 @@ public class ChangeElement060 extends AbstractChangeElement{
 
         switch(type){
             case CREATE : sb.append("/create");break;
-            case UPDATE : sb.append('/').append(element.getId());break;
-            case DELETE : sb.append('/').append(element.getId());break;
+            case UPDATE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));break;
+            case DELETE : sb.append('/').append(element.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));break;
         }
 
         return sb.toString();

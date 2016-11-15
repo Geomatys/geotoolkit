@@ -32,10 +32,9 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -53,8 +52,8 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     private final FeatureMapper mapper;
 
     public GenericMappingFeatureCollection(final FeatureCollection original, final FeatureType newType,
-            final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
-            final Map<PropertyDescriptor,Object> defaults){
+            final Map<PropertyType,List<PropertyType>> mapping,
+            final Map<PropertyType,Object> defaults){
         this(original,
                 new DefaultFeatureMapper(
                         original.getFeatureType(),
@@ -145,12 +144,7 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
     }
 
     @Override
-    public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
-        throw new DataStoreException("Not writable");
-    }
-
-    @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
 

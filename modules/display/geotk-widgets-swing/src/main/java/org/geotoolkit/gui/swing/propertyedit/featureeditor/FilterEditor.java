@@ -26,10 +26,11 @@ import javax.swing.JLabel;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Filter/Expression type editor.
@@ -41,7 +42,7 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
 
     private final JButton guiButton = new JButton("...");
     private final JLabel guiLabel = new JLabel();
-    private PropertyType type = null;
+    private AttributeType type = null;
     private Object value = null;
 
     public FilterEditor() {
@@ -64,14 +65,15 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
     }
 
     @Override
-    public boolean canHandle(PropertyType type) {
-        return Expression.class.isAssignableFrom(type.getBinding())
-            || Filter.class.isAssignableFrom(type.getBinding());
+    public boolean canHandle(PropertyType candidate) {
+        Class valueClass = ((AttributeType)candidate).getValueClass();
+        return Expression.class.isAssignableFrom(valueClass)
+            || Filter.class.isAssignableFrom(valueClass);
     }
 
     @Override
     public void setValue(PropertyType type, Object value) {
-        this.type = type;
+        this.type = (AttributeType) type;
         this.value = value;
         updateText();
     }
@@ -84,7 +86,7 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(Expression.class.isAssignableFrom(type.getBinding())){
+        if(Expression.class.isAssignableFrom(type.getValueClass())){
             try {
                 value = JCQLEditor.showDialog(this, null, (Expression)value);
             } catch (CQLException ex) {

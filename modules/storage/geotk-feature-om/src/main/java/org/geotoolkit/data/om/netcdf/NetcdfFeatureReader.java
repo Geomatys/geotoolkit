@@ -3,23 +3,16 @@ package org.geotoolkit.data.om.netcdf;
 
 import org.geotoolkit.data.om.OMFeatureTypes;
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
@@ -27,6 +20,8 @@ import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,10 +33,9 @@ import org.opengis.util.FactoryException;
 class NetcdfFeatureReader implements FeatureReader {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
-    protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private boolean firstCRS = true;
-    protected final FeatureType type;
+    protected FeatureType type;
     protected List<Feature> features = new ArrayList<>();
     protected int cpt = 0;
 
@@ -76,7 +70,9 @@ class NetcdfFeatureReader implements FeatureReader {
     protected final Feature getFeatureFromFOI(final AnyFeature foi) {
         if (foi instanceof SamplingFeature) {
             final SamplingFeature feature = (SamplingFeature) foi;
-            final Collection<Property> props = new ArrayList<>();
+            final Feature f = type.newInstance();
+            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
+
             final org.opengis.geometry.Geometry isoGeom = feature.getGeometry();
             try {
                 final Geometry geom;
@@ -86,29 +82,23 @@ class NetcdfFeatureReader implements FeatureReader {
                     geom = null;
                 }
                 if (firstCRS && isoGeom != null) {
-                    CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
-                    if (type instanceof DefaultFeatureType) {
-                        ((DefaultFeatureType) type).setCoordinateReferenceSystem(crs);
-                    }
-                    if (type.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
-                        ((DefaultGeometryDescriptor) type.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
-                    }
+                    //configure crs in the feature type
+                    final CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
+                    type = FeatureTypeExt.transform(type, crs);
                     firstCRS = false;
                 }
-                props.add(FF.createAttribute(feature.getDescription(), (AttributeDescriptor) type.getDescriptor(OMFeatureTypes.ATT_DESC), null));
-                props.add(FF.createAttribute(feature.getName(), (AttributeDescriptor) type.getDescriptor(OMFeatureTypes.ATT_NAME), null));
-                props.add(FF.createAttribute(geom, (AttributeDescriptor) type.getDescriptor(OMFeatureTypes.ATT_POSITION), null));
-                boolean empty = true;
+                f.setPropertyValue(OMFeatureTypes.ATT_DESC.toString(), feature.getDescription());
+                f.setPropertyValue(OMFeatureTypes.ATT_NAME.toString(), feature.getName());
+                f.setPropertyValue(OMFeatureTypes.ATT_POSITION.toString(),geom);
+
+                final List<String> sampleds = new ArrayList<>();
                 for (FeatureProperty featProp : feature.getSampledFeatures()) {
                     if (featProp.getHref() != null) {
-                        props.add(FF.createAttribute(featProp.getHref(), (AttributeDescriptor) type.getDescriptor(OMFeatureTypes.ATT_SAMPLED), null));
-                        empty = false;
+                        sampleds.add(featProp.getHref());
                     }
                 }
-                if (empty) {
-                    props.add(FF.createAttribute(null, (AttributeDescriptor) type.getDescriptor(OMFeatureTypes.ATT_SAMPLED), null));
-                }
-                return FF.createFeature(props, type, feature.getId());
+                f.setPropertyValue(OMFeatureTypes.ATT_SAMPLED.toString(),sampleds);
+                return f;
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
             }

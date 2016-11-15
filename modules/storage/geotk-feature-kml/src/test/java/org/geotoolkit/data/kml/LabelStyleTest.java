@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -26,12 +25,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.ColorMode;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
@@ -46,9 +43,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -61,57 +57,40 @@ public class LabelStyleTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/labelStyle.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public LabelStyleTest() {
-    }
 
     @Test
     public void labelStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Style style = (Style) i.next();
+        assertEquals("randomLabelColor", style.getIdAttributes().getId());
+        LabelStyle labelStyle = style.getLabelStyle();
+        assertEquals(new Color(204, 0, 0, 255), labelStyle.getColor());
+        assertEquals(ColorMode.RANDOM, labelStyle.getColorMode());
+        assertEquals(1.5, labelStyle.getScale(), DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-
-        if (i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof Style);
-            Style style = (Style) object;
-            assertEquals("randomLabelColor", style.getIdAttributes().getId());
-            LabelStyle labelStyle = style.getLabelStyle();
-            assertEquals(new Color(204, 0, 0, 255), labelStyle.getColor());
-            assertEquals(ColorMode.RANDOM, labelStyle.getColorMode());
-            assertEquals(1.5, labelStyle.getScale(), DELTA);
-        }
-
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark = (Feature) object;
-            assertEquals("LabelStyle.kml", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(new URI("#randomLabelColor"), placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-            Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            CoordinateSequence coordinates = point.getCoordinateSequence();
-            assertEquals(1, coordinates.size());
-            Coordinate coordinate = coordinates.getCoordinate(0);
-            assertEquals(-122.367375, coordinate.x, DELTA);
-            assertEquals(37.829192, coordinate.y, DELTA);
-            assertEquals(0, coordinate.z, DELTA);
-
-        }
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Feature placemark = (Feature) i.next();
+        assertEquals("LabelStyle.kml", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(new URI("#randomLabelColor"), placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+        Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+        CoordinateSequence coordinates = point.getCoordinateSequence();
+        assertEquals(1, coordinates.size());
+        Coordinate coordinate = coordinates.getCoordinate(0);
+        assertEquals(-122.367375, coordinate.x, DELTA);
+        assertEquals(  37.829192, coordinate.y, DELTA);
+        assertEquals(   0,        coordinate.z, DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -123,25 +102,22 @@ public class LabelStyleTest extends org.geotoolkit.test.TestBase {
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("LabelStyle.kml", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(new URI("#randomLabelColor"), KmlModelConstants.ATT_STYLE_URL, null));
-        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "LabelStyle.kml");
+        placemark.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#randomLabelColor"));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
 
         final Style style = kmlFactory.createStyle();
-            LabelStyle labelStyle = kmlFactory.createLabelStyle();
-            BasicLink icon = kmlFactory.createBasicLink();
-            labelStyle.setScale(1.5);
-            labelStyle.setColor(new Color(204, 0, 0, 255));
-            labelStyle.setColorMode(ColorMode.RANDOM);
+        LabelStyle labelStyle = kmlFactory.createLabelStyle();
+        labelStyle.setScale(1.5);
+        labelStyle.setColor(new Color(204, 0, 0, 255));
+        labelStyle.setColorMode(ColorMode.RANDOM);
         style.setLabelStyle(labelStyle);
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("randomLabelColor", null);
         style.setIdAttributes(idAttributes);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, style);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -153,9 +129,6 @@ public class LabelStyleTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

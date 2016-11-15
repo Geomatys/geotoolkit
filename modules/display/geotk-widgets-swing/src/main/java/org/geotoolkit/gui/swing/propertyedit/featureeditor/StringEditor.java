@@ -21,7 +21,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -42,7 +43,7 @@ public class StringEditor extends PropertyValueEditor implements DocumentListene
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return String.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && String.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

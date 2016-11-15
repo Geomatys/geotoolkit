@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -39,14 +38,12 @@ import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -59,64 +56,47 @@ public class LineStyleTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/lineStyle.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public LineStyleTest() {
-    }
 
     @Test
     public void lineStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertEquals("LineStyle.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        assertEquals("LineStyle.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Style style = (Style) i.next();
+        assertEquals("linestyleExample", style.getIdAttributes().getId());
+        LineStyle lineStyle = style.getLineStyle();
+        assertEquals(new Color(255, 0, 0, 127), lineStyle.getColor());
+        assertEquals(4, lineStyle.getWidth(), DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
 
-        Iterator<Property> i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = i.next().getValue();
-            assertTrue(object instanceof Style);
-            Style style = (Style) object;
-            assertEquals("linestyleExample", style.getIdAttributes().getId());
-            LineStyle lineStyle = style.getLineStyle();
-            assertEquals(new Color(255, 0, 0, 127), lineStyle.getColor());
-            assertEquals(4, lineStyle.getWidth(), DELTA);
-        }
-
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark = (Feature) object;
-            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-            assertEquals("LineStyle Example", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(new URI("#linestyleExample"), placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof LineString);
-            LineString lineString = (LineString) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            assertTrue(lineString.getExtrude());
-            assertTrue(lineString.getTessellate());
-            CoordinateSequence coordinates = lineString.getCoordinateSequence();
-            assertEquals(2, coordinates.size());
-            Coordinate coordinate0 = coordinates.getCoordinate(0);
-            assertEquals(-122.364383, coordinate0.x, DELTA);
-            assertEquals(37.824664, coordinate0.y, DELTA);
-            assertEquals(0, coordinate0.z, DELTA);
-            Coordinate coordinate1 = coordinates.getCoordinate(1);
-            assertEquals(-122.364152, coordinate1.x, DELTA);
-            assertEquals(37.824322, coordinate1.y, DELTA);
-            assertEquals(0, coordinate1.z, DELTA);
-        }
-
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Feature placemark = (Feature) i.next();
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("LineStyle Example", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(new URI("#linestyleExample"), placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+        LineString lineString = (LineString) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+        assertTrue(lineString.getExtrude());
+        assertTrue(lineString.getTessellate());
+        CoordinateSequence coordinates = lineString.getCoordinateSequence();
+        assertEquals(2, coordinates.size());
+        Coordinate coordinate0 = coordinates.getCoordinate(0);
+        assertEquals(-122.364383, coordinate0.x, DELTA);
+        assertEquals(37.824664, coordinate0.y, DELTA);
+        assertEquals(0, coordinate0.z, DELTA);
+        Coordinate coordinate1 = coordinates.getCoordinate(1);
+        assertEquals(-122.364152, coordinate1.x, DELTA);
+        assertEquals(37.824322, coordinate1.y, DELTA);
+        assertEquals(0, coordinate1.z, DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -131,10 +111,9 @@ public class LineStyleTest extends org.geotoolkit.test.TestBase {
         lineString.setExtrude(true);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("LineStyle Example", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(new URI("#linestyleExample"), KmlModelConstants.ATT_STYLE_URL, null));
-        placemarkProperties.add(FF.createAttribute(lineString, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "LineStyle Example");
+        placemark.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#linestyleExample"));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, lineString);
 
         final Style style = kmlFactory.createStyle();
         final LineStyle lineStyle = kmlFactory.createLineStyle();
@@ -145,11 +124,10 @@ public class LineStyleTest extends org.geotoolkit.test.TestBase {
         style.setIdAttributes(idAttributes);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR,null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FF.createAttribute("LineStyle.kml", KmlModelConstants.ATT_NAME,null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, style);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
+        document.setPropertyValue(KmlConstants.TAG_NAME, "LineStyle.kml");
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -161,8 +139,6 @@ public class LineStyleTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

@@ -19,16 +19,12 @@ package org.geotoolkit.data.mapinfo.mif;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,7 +36,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.storage.IllegalNameException;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * A featureStore for MapInfo exchange format MIF-MID.
@@ -115,9 +117,9 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
         try {
-            manager.addSchema(typeName, featureType);
+            manager.addSchema(featureType.getName(), featureType);
         } catch (URISyntaxException e) {
             throw new DataStoreException("We're unable to add a schema because we can't access source files.", e);
         }
@@ -127,7 +129,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update MIF schema.");
     }
 
@@ -135,7 +137,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(String typeName) throws DataStoreException {
         manager.deleteSchema(typeName);
         removeFeatures(typeName, null);
     }
@@ -144,7 +146,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(String typeName) throws DataStoreException {
         return manager.getType(typeName);
     }
 
@@ -160,28 +162,30 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        final FeatureWriter writer = getFeatureWriter(groupName, null, null);
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+        final List<FeatureId> addedFeatures;
+        try(final FeatureWriter writer = getFeatureWriter(QueryBuilder.all(groupName))) {
 
-        // We remove the features as we get them. We don't need to write them as the default writing behaviour is append mode.
-        while (writer.hasNext()) {
-            writer.next();
-            writer.remove();
-        }
-
-        List<FeatureId> addedFeatures = null;
-        if(manager.getWrittenCRS() != null) {
-            final FeatureCollection toWrite;
-            if(newFeatures instanceof FeatureCollection) {
-                toWrite = GenericReprojectFeatureIterator.wrap( (FeatureCollection) newFeatures, manager.getWrittenCRS());
-            } else {
-                toWrite = GenericReprojectFeatureIterator.wrap(
-                        FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
-                        manager.getWrittenCRS());
+            // We remove the features as we get them. We don't need to write them as the default writing behaviour is append mode.
+            while (writer.hasNext()) {
+                writer.next();
+                writer.remove();
             }
-            addedFeatures = FeatureStoreUtilities.write(writer, toWrite);
-        } else {
-            addedFeatures = FeatureStoreUtilities.write(writer, newFeatures);
+
+            if(manager.getWrittenCRS() != null) {
+                final FeatureCollection toWrite;
+                final FeatureType type = ((FeatureCollection)newFeatures).getFeatureType();
+                if(newFeatures instanceof FeatureCollection) {
+                    toWrite = GenericDecoratedFeatureIterator.wrap( (FeatureCollection) newFeatures, new ReprojectFeatureType(type, manager.getWrittenCRS()));
+                } else {
+                    toWrite = GenericDecoratedFeatureIterator.wrap(
+                            FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
+                            new ReprojectFeatureType(type, manager.getWrittenCRS()));
+                }
+                addedFeatures = FeatureStoreUtilities.write(writer, toWrite);
+            } else {
+                addedFeatures = FeatureStoreUtilities.write(writer, newFeatures);
+            }
         }
         return addedFeatures;
     }
@@ -191,7 +195,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * multiple feature types.
      */
     @Override
-    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
         //handleUpdateWithFeatureWriter(groupName, filter, values);
         throw new UnsupportedOperationException("Update operation is not supported now");
     }
@@ -201,7 +205,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * multiple feature types.
      */
     @Override
-    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         //handleRemoveWithFeatureWriter(groupName, filter);
         throw new UnsupportedOperationException("Remove operation is not supported now");
     }
@@ -219,9 +223,9 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
-        typeCheck(typeName);
-        final MIFFeatureReader reader = new MIFFeatureReader(manager, typeName);
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        typeCheck(query.getTypeName());
+        final MIFFeatureReader reader = new MIFFeatureReader(manager, query.getTypeName());
         final MIFFeatureWriter writer = new MIFFeatureWriter(manager, reader);
         return  writer;
     }
@@ -230,7 +234,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void refreshMetaModel() {
+    public void refreshMetaModel() throws IllegalNameException {
         manager.refreshMetaModel();
     }
 
@@ -243,17 +247,16 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         manager.setDelimiter(newDelimiter);
     }
 
-        public static boolean isCompatibleCRS(CoordinateReferenceSystem source) {
-            boolean isCompatible = false;
-            try {
-                final String mifCRS = ProjectionUtils.crsToMIFSyntax(source);
-                if(mifCRS != null && ! mifCRS.isEmpty()) {
-                    isCompatible = true;
-                }
-            } catch(Exception e) {
-                // Nothing to do here, if we get an exception, we just get an incompatible CRS.
+    public static boolean isCompatibleCRS(CoordinateReferenceSystem source) {
+        boolean isCompatible = false;
+        try {
+            final String mifCRS = ProjectionUtils.crsToMIFSyntax(source);
+            if (mifCRS != null && !mifCRS.isEmpty()) {
+                isCompatible = true;
             }
-            return isCompatible;
+        } catch (Exception e) {
+            // Nothing to do here, if we get an exception, we just get an incompatible CRS.
         }
-
+        return isCompatible;
+    }
 }

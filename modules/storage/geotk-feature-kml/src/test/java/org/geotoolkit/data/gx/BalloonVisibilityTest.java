@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -43,15 +41,10 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -64,33 +57,9 @@ public class BalloonVisibilityTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/balloonVisibility.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public BalloonVisibilityTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
-    public void balloonVisibilityReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
+    public void balloonVisibilityReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -99,22 +68,22 @@ public class BalloonVisibilityTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        assertEquals("Eiffel Tower", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        final String description = "\n        Located in Paris, France.\n"+
-"\n        This description balloon opens\n"+
-"        when the Placemark is loaded.\n"+"    ";
-        assertEquals(description, placemark.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-        assertEquals(1, ((Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).simples(Extensions.Names.FEATURE).size());
-        assertTrue(((Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).simples(Extensions.Names.FEATURE).get(0) instanceof SimpleTypeContainer);
-        final SimpleTypeContainer balloonVisibility = ((Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).simples(Extensions.Names.FEATURE).get(0);
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("Eiffel Tower", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals("\n" +
+                     "        Located in Paris, France.\n"+
+                     "\n" +
+                     "        This description balloon opens\n"+
+                     "        when the Placemark is loaded.\n" +
+                     "    ", placemark.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+        assertEquals(1, ((Extensions) placemark.getProperty(KmlConstants.TAG_EXTENSIONS).getValue()).simples(Extensions.Names.FEATURE).size());
+        final SimpleTypeContainer balloonVisibility = ((Extensions) placemark.getProperty(KmlConstants.TAG_EXTENSIONS).getValue()).simples(Extensions.Names.FEATURE).get(0);
 
         assertEquals(GxConstants.URI_GX, balloonVisibility.getNamespaceUri());
         assertEquals(GxConstants.TAG_BALLOON_VISIBILITY, balloonVisibility.getTagName());
-        assertFalse((Boolean) balloonVisibility.getValue());
+        assertEquals(Boolean.FALSE, balloonVisibility.getValue());
 
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-        final Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
 
         assertEquals(1, point.getCoordinateSequence().size());
         final Coordinate coordinate = point.getCoordinateSequence().getCoordinate(0);
@@ -126,7 +95,6 @@ public class BalloonVisibilityTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void balloonVisibilityWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(
@@ -135,14 +103,13 @@ public class BalloonVisibilityTest extends org.geotoolkit.test.TestBase {
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("Eiffel Tower", KmlModelConstants.ATT_NAME, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Eiffel Tower");
         final String description = "\n        Located in Paris, France.\n"+
-"\n        This description balloon opens\n"+
-"        when the Placemark is loaded.\n"+"    ";
-        placemarkProperties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        ((Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).
+                                   "\n        This description balloon opens\n" +
+                                     "        when the Placemark is loaded.\n" + "    ";
+        placemark.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
+        ((Extensions) placemark.getProperty(KmlConstants.TAG_EXTENSIONS).getValue()).
                 simples(Extensions.Names.FEATURE).add(kmlFactory.createSimpleTypeContainer(GxConstants.URI_GX, GxConstants.TAG_BALLOON_VISIBILITY, false));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
@@ -158,8 +125,6 @@ public class BalloonVisibilityTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

@@ -22,16 +22,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.sort.SortBy;
 
 /**
@@ -69,7 +69,7 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
         ordered = new ArrayList<>();
 
         while(iterator.hasNext()){
-            ordered.add(FeatureUtilities.copy( iterator.next()));
+            ordered.add(FeatureExt.copy(iterator.next()));
         }
 
         Collections.sort(ordered,comparator);

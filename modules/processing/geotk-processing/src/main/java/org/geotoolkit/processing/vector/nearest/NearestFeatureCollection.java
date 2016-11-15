@@ -19,8 +19,8 @@ package org.geotoolkit.processing.vector.nearest;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * FeatureCollection for Nearest process
@@ -34,7 +34,7 @@ public class NearestFeatureCollection extends WrapFeatureCollection {
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
-     * @param clippingList 
+     * @param clippingList
      */
     public NearestFeatureCollection(final FeatureCollection originalFC) {
         super(originalFC);

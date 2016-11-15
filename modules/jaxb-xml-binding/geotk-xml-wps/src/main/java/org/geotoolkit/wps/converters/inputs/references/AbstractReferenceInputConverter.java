@@ -30,7 +30,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.apache.sis.util.ArgumentChecks;
@@ -40,7 +39,7 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.Reference;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  * TODO v200 in/out difeeence
@@ -80,7 +79,7 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
 
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
-            final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
+            final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
             final String schema = source.getSchema();
 
             if (schema != null) {

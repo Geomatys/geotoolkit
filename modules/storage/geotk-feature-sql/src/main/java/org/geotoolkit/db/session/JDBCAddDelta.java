@@ -21,14 +21,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.session.AddDelta;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.Feature;
-import org.opengis.util.GenericName;
+import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -38,7 +38,7 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class JDBCAddDelta extends AddDelta{
 
-    public JDBCAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features) {
+    public JDBCAddDelta(Session session, String typeName, Collection<? extends Feature> features) {
         super(session, typeName, features);
     }
 
@@ -50,15 +50,15 @@ public class JDBCAddDelta extends AddDelta{
         final List<FeatureId> createdIds = jdbcstore.addFeatures(type, features, cnx, null);
 
         //iterator and list should have the same size
-        final Map<String,String> updates = new HashMap<String, String>();
+        final Map<String,String> updates = new HashMap<>();
         final FeatureIterator ite = features.iterator();
         int i=0;
         try{
             if(createdIds != null && !createdIds.isEmpty()){
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final String id = f.getIdentifier().getID();
-                        updates.put(id, createdIds.get(i).getID());
+                    final String id = (String) f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+                    updates.put(id, createdIds.get(i).getID());
                     i++;
                 }
             }

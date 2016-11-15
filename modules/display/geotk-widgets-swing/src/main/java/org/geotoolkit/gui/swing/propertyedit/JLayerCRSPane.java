@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -73,7 +74,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
 
     private void init() {
         if (layer instanceof FeatureMapLayer) {
-            crs = ((FeatureMapLayer)layer).getCollection().getFeatureType().getCoordinateReferenceSystem();
+            crs = FeatureExt.getCRS( ((FeatureMapLayer)layer).getCollection().getFeatureType());
         }else if(layer instanceof CoverageMapLayer){
             final CoverageReference ref = ((CoverageMapLayer)layer).getCoverageReference();
             try{

@@ -550,14 +550,10 @@ public class ObjectiveAnalysis {
                             break;
                         }
                     }
-
                 }
             }
         }
-
-
         return cellMap;
-
     }
 
     private boolean merge(final Coordinate[] toMerge,final List<Coordinate> coords){
@@ -567,19 +563,19 @@ public class ObjectiveAnalysis {
         Coordinate startCoord = coords.get(0);
         Coordinate endCoord = coords.get(coords.size()-1);
 
-        if(equalCoordinates(startCoord, coord0)){
+        if (equalCoordinates(startCoord, coord0)){
             //add at the begining
             coords.add(0,coord1);
-        }else if(equalCoordinates(startCoord, coord1)){
+        } else if (equalCoordinates(startCoord, coord1)){
             //add at the begining
             coords.add(0,coord0);
-        }else if(equalCoordinates(endCoord, coord0)){
+        } else if (equalCoordinates(endCoord, coord0)){
             //add at the end
             coords.add(coord1);
-        }else if(equalCoordinates(endCoord, coord1)){
+        } else if (equalCoordinates(endCoord, coord1)){
             //add at the end
             coords.add(coord0);
-        }else{
+        } else {
             return false;
         }
 

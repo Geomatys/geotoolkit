@@ -46,18 +46,18 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOdtReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.service.OutputDef;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 /**
  * Utility class to generate html or pdf reports using JasperReport library.
@@ -227,20 +227,20 @@ public final class JasperReportService extends Static {
             //search for special fields
             for(JRFieldRenderer renderer : renderers){
                 if(renderer.canHandle(field)){
-                    final PropertyDescriptor desc = renderer.createDescriptor(field);
-                    ftb.add(desc);
+                    final AttributeType desc = renderer.createDescriptor(field);
+                    ftb.addAttribute(desc);
                     continue fields;
                 }
             }
 
             //handle it as a casual field
-            ftb.add(field.getName(),
-                    field.getValueClass(),
-                    1,1,true,
-                    toParameterMap(field.getPropertiesMap()));
+            ftb.addAttribute(field.getValueClass())
+                    .setName(field.getName());
+                    //TODO
+                    //toParameterMap(field.getPropertiesMap()));
         }
 
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 
     /**

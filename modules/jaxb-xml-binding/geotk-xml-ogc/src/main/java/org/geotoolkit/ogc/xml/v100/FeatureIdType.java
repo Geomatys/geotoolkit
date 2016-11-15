@@ -20,7 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.feature.Attribute;
+import org.apache.sis.feature.FeatureExt;
+import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
@@ -87,8 +88,8 @@ public class FeatureIdType implements FeatureId {
 
     @Override
     public boolean matches(final Object feature) {
-        if (feature instanceof Attribute) {
-            final Identifier identifier = ((Attribute)feature).getIdentifier();
+        if (feature instanceof Feature) {
+            final Identifier identifier = FeatureExt.getId((Feature)feature);
             return identifier != null && fid.equals(identifier.getID());
         }
         return false;

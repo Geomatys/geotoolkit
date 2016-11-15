@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -36,12 +35,12 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import static java.util.Collections.*;
+import java.util.List;
 
 /**
  *
@@ -51,48 +50,32 @@ import static java.util.Collections.*;
 public class MetadataTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/metadata.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public MetadataTest() {
-    }
 
     @Test
     public void metadataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        assertEquals("Document.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        assertEquals("Document.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        final Feature placemark0 = (Feature) i.next();
+        ExtendedData extendedData = (ExtendedData) ((List)placemark0.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0);
+        assertEquals(EMPTY_LIST, extendedData.getDatas());
+        assertEquals(EMPTY_LIST, extendedData.getSchemaData());
+        assertEquals(EMPTY_LIST, extendedData.getAnyOtherElements());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if(i.hasNext()){
-            Object object = i.next();
-
-            final Feature placemark0 = (Feature) object;
-            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof ExtendedData);
-            ExtendedData extendedData = (ExtendedData) placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            assertEquals(EMPTY_LIST, extendedData.getDatas());
-            assertEquals(EMPTY_LIST, extendedData.getSchemaData());
-            assertEquals(EMPTY_LIST, extendedData.getAnyOtherElements());
-
-        }
-
-        if(i.hasNext()){
-            Object object = i.next();
-            final Feature placemark1 = (Feature) object;
-            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof Metadata);
-            assertEquals(EMPTY_LIST, ((Metadata) placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue()).getContent());
-
-        }
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        final Feature placemark1 = (Feature) i.next();
+        assertEquals(EMPTY_LIST, ((Metadata) ((List)placemark1.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA)).get(0)).getContent());
+        assertFalse("Expected exactly 2 elements.", i.hasNext());
     }
 
     @Test
@@ -101,18 +84,16 @@ public class MetadataTest extends org.geotoolkit.test.TestBase {
 
         final Feature placemark0 = kmlFactory.createPlacemark();
         final ExtendedData extendedData = kmlFactory.createExtendedData();
-        placemark0.getProperties().add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, extendedData);
 
         final Feature placemark1 = kmlFactory.createPlacemark();
         final Metadata metadata = kmlFactory.createMetadata();
-        placemark1.getProperties().add(FF.createAttribute(metadata, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        placemark1.setPropertyValue(KmlConstants.TAG_EXTENDED_DATA, metadata);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_NAME, "Document.kml");
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -124,8 +105,6 @@ public class MetadataTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

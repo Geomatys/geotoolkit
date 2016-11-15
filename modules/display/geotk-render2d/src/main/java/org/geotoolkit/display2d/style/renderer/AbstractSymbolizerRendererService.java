@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -26,10 +27,9 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -85,8 +85,14 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
 
     protected Object mimicObject(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
-            final FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
-            return FeatureUtilities.defaultFeature(ft, "id-0");
+            FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+            if(ft.isAbstract()) {
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                ftb.setSuperTypes(ft);
+                ftb.setName(ft.getName());
+                ft = ftb.build();
+            }
+            return ft.newInstance();
         }else{
             return null;
         }

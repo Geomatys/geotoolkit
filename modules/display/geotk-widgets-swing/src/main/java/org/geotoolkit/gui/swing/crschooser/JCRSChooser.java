@@ -33,6 +33,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
@@ -44,8 +45,6 @@ import org.geotoolkit.display2d.ext.grid.GridPainter;
 import org.geotoolkit.display2d.ext.grid.GridTemplate;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.JNavigationBar;
 import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
@@ -66,8 +65,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -79,6 +76,8 @@ import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * CRSChooser component
@@ -283,8 +282,8 @@ public class JCRSChooser extends javax.swing.JDialog {
             if(env != null){
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                 ftb.setName("validity");
-                ftb.add("geom", Polygon.class,env.getCoordinateReferenceSystem());
-                final FeatureType type = ftb.buildFeatureType();
+                ftb.addAttribute(Polygon.class).setName("geom").setCRS(env.getCoordinateReferenceSystem());
+                final FeatureType type = ftb.build();
                 final GeometryFactory GF = new GeometryFactory();
                 final FilterFactory FF = FactoryFinder.getFilterFactory(null);
                 final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
@@ -297,8 +296,8 @@ public class JCRSChooser extends javax.swing.JDialog {
                                     new Coordinate(env.getMaximum(0), env.getMinimum(1)),
                                     new Coordinate(env.getMinimum(0), env.getMinimum(1))});
                 final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);
-                final Feature feature = FeatureUtilities.defaultFeature(type, "0");
-                feature.getProperty("geom").setValue(polygon);
+                final Feature feature = type.newInstance();
+                feature.setPropertyValue("geom",polygon);
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
 
                 //general informations

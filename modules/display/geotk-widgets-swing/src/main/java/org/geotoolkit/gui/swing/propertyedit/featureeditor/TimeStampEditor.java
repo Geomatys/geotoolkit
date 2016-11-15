@@ -28,7 +28,8 @@ import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXDatePicker;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -61,7 +62,7 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Timestamp.class.equals(candidate.getBinding());
+        return candidate instanceof AttributeType && Timestamp.class.equals(((AttributeType)candidate).getValueClass());
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
@@ -39,10 +40,9 @@ import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PATH;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wps.xml.Reference;
+import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -124,12 +124,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
 
                 try (FeatureIterator featureCollectionIterator = featureCollection.iterator()) {
                     Feature feature = featureCollectionIterator.next();
-                    GeometryAttribute defaultGeom = feature.getDefaultGeometryProperty();
-
-                    if (defaultGeom == null)
-                        throw new UnconvertibleObjectException("No geometry found");
-
-                    Object value = defaultGeom.getValue();
+                    Object value = FeatureExt.getDefaultGeometryAttributeValue(feature);
 
                     if (!(value instanceof Geometry))
                         throw new UnconvertibleObjectException("The found value may not be of Geometry type or may be null");

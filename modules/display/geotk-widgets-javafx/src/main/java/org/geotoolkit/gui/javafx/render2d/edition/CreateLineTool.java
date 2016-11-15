@@ -30,13 +30,14 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -59,11 +60,11 @@ public class CreateLineTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final GeometryDescriptor desc = fml.getCollection().getFeatureType().getGeometryDescriptor();
+                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getFeatureType());
                 if(desc == null) return false;
 
-                return LineString.class.isAssignableFrom(desc.getType().getBinding())
-                    || Geometry.class.equals(desc.getType().getBinding());
+                return LineString.class.isAssignableFrom(desc.getValueClass())
+                    || Geometry.class.equals(desc.getValueClass());
             }
             return false;
         }

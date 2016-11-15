@@ -20,12 +20,11 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.xml.Reference;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -66,7 +65,7 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val()) || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val()) ||
                 mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
              try {
-                final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
+                final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
                 final List<FeatureType> ft = xsdReader.read(stream);
 
                 if(ft.size() != 1){

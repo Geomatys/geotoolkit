@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
@@ -40,10 +41,7 @@ import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
@@ -52,15 +50,12 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.DataStore;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
@@ -69,6 +64,10 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.ArgumentChecks;
+import org.opengis.util.ScopedName;
+
 
 /**
  * Uncomplete implementation of a feature store that handle most methods
@@ -136,18 +135,12 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return null;
     }
 
-    @Override
-    public VersionControl getVersioning(String typeName) throws VersioningException{
-        final GenericName n = NamesExt.valueOf(typeName);
-        return getVersioning(n);
-    }
-
     /**
      * Overwrite to enable versioning.
      * @param version
      */
     @Override
-    public VersionControl getVersioning(GenericName typeName) throws VersioningException{
+    public VersionControl getVersioning(String typeName) throws VersioningException{
         throw new VersioningException("Versioning not supported");
     }
 
@@ -167,35 +160,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         return new DefaultSession(this, async,version);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getTypeNames() throws DataStoreException {
-        final Set<GenericName> names = getNames();
-        final Iterator<GenericName> ite = names.iterator();
-        final String[] locals = new String[names.size()];
-        int i=0;
-        while(ite.hasNext()){
-            locals[i] = ite.next().tip().toString();
-            i++;
-        }
-        return locals;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        for(final GenericName n : getNames()){
-            if(n.tip().toString().equals(typeName)){
-                return getFeatureType(n);
-            }
-        }
-        throw new DataStoreException("Schema : " + typeName + "doesn't exist in this feature store.");
-    }
-
     @Override
     public FeatureType getFeatureType(final Query query) throws DataStoreException, MismatchedFeatureException {
 
@@ -204,12 +168,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if(Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector){
             final Selector selector = (Selector) source;
             FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
-
-            final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
-            if(hide != null && hide){
-                ft = FeatureTypeUtilities.excludePrimaryKeyFields(ft);
-            }
+            ft = FeatureTypeExt.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
 
             return ft;
         }
@@ -226,8 +185,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @throws DataStoreException
      */
     @Override
-    public List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException {
-        return Collections.singletonList((ComplexType)getFeatureType(typeName));
+    public List<FeatureType> getFeatureTypeHierarchy(String typeName) throws DataStoreException {
+        return Collections.singletonList((FeatureType)getFeatureType(typeName));
     }
 
     /**
@@ -237,13 +196,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * succeed.
      */
     @Override
-    public boolean isWritable(final GenericName typeName) throws DataStoreException {
+    public boolean isWritable(final String typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
         getFeatureType(typeName);
 
         FeatureWriter writer = null;
         try{
-            writer = getFeatureWriter(typeName, Filter.EXCLUDE);
+            writer = getFeatureWriter(QueryBuilder.filtered(typeName, Filter.EXCLUDE));
             return true;
         }catch(Exception ex){
             //catch anything, log it
@@ -281,14 +240,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
-        // TODO query = addSeparateFeatureHint(query);
 
         if(query.retrieveAllProperties()){
             //we simplify it, get only geometry attributes + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
-            final List<GenericName> names = new ArrayList<GenericName>();
-            for(PropertyDescriptor desc : ft.getDescriptors()){
-                if(desc instanceof GeometryDescriptor){
+            final List<GenericName> names = new ArrayList<>();
+            for(PropertyType desc : ft.getProperties(true)){
+                if(AttributeConvention.isGeometryAttribute(desc)){
                     names.add(desc.getName());
                 } else if (query.getSortBy() != null) {
                     for (SortBy sortBy : query.getSortBy()) {
@@ -329,50 +287,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public final List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public final List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         return addFeatures(groupName,newFeatures,new Hints());
-    }
-
-    /**
-     * {@inheritDoc }
-     *
-     * This implementation fallback on
-     * @see  #updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
-     */
-    @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final PropertyDescriptor desc, final Object value) throws DataStoreException {
-        updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
-    }
-
-    @Override
-    public final FeatureWriter getFeatureWriter(GenericName typeName, Filter filter) throws DataStoreException {
-        return getFeatureWriter(typeName, filter, null);
-    }
-
-    /**
-     * {@inheritDoc }
-     *
-     * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
-     */
-    @Override
-    public final FeatureWriter getFeatureWriterAppend(final GenericName typeName) throws DataStoreException {
-        return getFeatureWriterAppend(typeName,null);
-    }
-
-    /**
-     * {@inheritDoc }
-     *
-     * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
-     */
-    @Override
-    public FeatureWriter getFeatureWriterAppend(final GenericName typeName,final Hints hints) throws DataStoreException {
-        final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE, hints);
-
-        while (writer.hasNext()) {
-            writer.next(); // skip to the end to switch in append mode
-        }
-
-        return writer;
     }
 
     /**
@@ -455,15 +371,41 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Convinient method to check that the given type name exist.
+     * Convenient method to check that the given type name exist.
      * Will raise a datastore exception if the name do not exist in this FeatureStore.
+     * 
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
-    protected void typeCheck(final GenericName candidate) throws DataStoreException{
+    protected void typeCheck(final String candidate) throws DataStoreException{
+        ArgumentChecks.ensureNonNull("type name", candidate);
+        int count = 0;
 
         final Collection<GenericName> names = getNames();
-        if(!names.contains(candidate)){
+        for (GenericName name : names) {
+            if (candidate.equals(name.toString())) {
+                count++;
+                if (count>1) break;
+            }
+            while (name instanceof ScopedName) {
+                name = ((ScopedName)name).tail();
+                if (candidate.equals(name.toString())) {
+                    count++;
+                    if (count>1) break;
+                }
+            }
+        }
+
+        if (count>1) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Multiple match for name ");
+            sb.append(candidate);
+            sb.append(", available names are : ");
+            for(final GenericName n : names){
+                sb.append(n).append(", ");
+            }
+            throw new DataStoreException(sb.toString());
+        } else if (count==0) {
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(candidate);
             sb.append(" do not exist in this feature store, available names are : ");
@@ -511,13 +453,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
         //wrap filter ----------------------------------------------------------
         if(filter != null && filter != Filter.INCLUDE){
-            if(filter == Filter.EXCLUDE){
-                //filter that exclude everything, use optimzed writer
-                writer.close(); //close the previous writer
-                writer = GenericEmptyFeatureIterator.createWriter(writer.getFeatureType());
-            }else{
-                writer = GenericFilterFeatureIterator.wrap(writer, filter);
-            }
+            writer = GenericFilterFeatureIterator.wrap(writer, filter);
         }
 
         return writer;
@@ -532,10 +468,14 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final GenericName groupName, final Collection<? extends Feature> newFeatures,
+    protected List<FeatureId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
-        try{
-            return FeatureStoreUtilities.write(getFeatureWriterAppend(groupName,hints), newFeatures);
+        
+        try(FeatureWriter featureWriter = getFeatureWriter(QueryBuilder.filtered(groupName, Filter.EXCLUDE))) {
+            while (featureWriter.hasNext()) {
+                featureWriter.next();
+            }
+            return FeatureStoreUtilities.write(featureWriter, newFeatures);
         }catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
         }
@@ -550,23 +490,19 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param values
      * @throws DataStoreException
      */
-    protected void handleUpdateWithFeatureWriter(final GenericName groupName, final Filter filter,
-            final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    protected void handleUpdateWithFeatureWriter(final String groupName, final Filter filter,
+            final Map<String, ?> values) throws DataStoreException {
 
-        final FeatureWriter writer = getFeatureWriter(groupName,filter);
-
-        try{
+        try(FeatureWriter writer = getFeatureWriter(QueryBuilder.filtered(groupName, filter))) {
             while(writer.hasNext()){
                 final Feature f = writer.next();
-                for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
-                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
+                for(final Entry<String,?> entry : values.entrySet()){
+                    f.setPropertyValue(entry.getKey(), entry.getValue());
                 }
                 writer.write();
             }
         } catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
-        } finally{
-            writer.close();
         }
     }
 
@@ -578,38 +514,35 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param filter
      * @throws DataStoreException
      */
-    protected void handleRemoveWithFeatureWriter(final GenericName groupName, final Filter filter) throws DataStoreException {
-        final FeatureWriter writer = getFeatureWriter(groupName,filter);
-
-        try{
+    protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter) throws DataStoreException {
+        try(FeatureWriter writer = getFeatureWriter(QueryBuilder.filtered(groupName, filter))) {
             while(writer.hasNext()){
                 writer.next();
                 writer.remove();
             }
         } catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
-        } finally{
-            writer.close();
         }
     }
 
     /**
-     * Convinient method to handle modification operation by using the
+     * Convenient method to handle modification operation by using the
      * add, remove, update methods.
      *
-     * @param groupName
-     * @param filter
+     * @param query
+     * @return 
      * @throws DataStoreException
      */
-    protected FeatureWriter handleWriter(final GenericName groupName, final Filter filter, final Hints hints) throws DataStoreException {
-        return GenericFeatureWriter.wrap(this, groupName, filter);
+    protected FeatureWriter handleWriter(Query query) throws DataStoreException {
+        final Filter filter = query.getFilter();
+        final String groupName = query.getTypeName();
+        if (Filter.EXCLUDE.equals(filter) ) {
+            return GenericFeatureWriter.wrapAppend(this, groupName);
+        } else {
+            return GenericFeatureWriter.wrap(this, groupName, filter);
+        }
     }
-
-    protected FeatureWriter handleWriterAppend(final GenericName groupName, final Hints hints) throws DataStoreException {
-        return GenericFeatureWriter.wrapAppend(this, groupName);
-    }
-
-
+    
     public static GenericName ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
             return NamesExt.create(GML_311_NAMESPACE, GML_NAME);
@@ -618,30 +551,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         }else{
             return NamesExt.create(namespace, local);
         }
-    }
-
-    public static FeatureType ensureGMLNS(final FeatureType type){
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        ftb.setName(type.getName());
-
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            adb.reset();
-            adb.copy((AttributeDescriptor) desc);
-            if(desc.getName().tip().toString().equals(GML_NAME)){
-                adb.setName(GML_311_NAMESPACE, GML_NAME);
-                ftb.add(adb.buildDescriptor());
-            }else if(desc.getName().tip().toString().equals(GML_DESCRIPTION)){
-                adb.setName(GML_311_NAMESPACE, GML_DESCRIPTION);
-                ftb.add(adb.buildDescriptor());
-            }else{
-                ftb.add(desc);
-            }
-        }
-
-        ftb.setDefaultGeometry(type.getGeometryDescriptor().getName());
-
-        return ftb.buildFeatureType();
     }
 
     @Override

@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
@@ -56,8 +57,8 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.GeotkClipboard;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
 
@@ -188,7 +189,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                     final FeatureMapLayer fml = (FeatureMapLayer) layer;
                     final Filter selection = fml.getSelectionFilter();
                     if(selection != null && selection != Filter.EXCLUDE){
-                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered(NamesExt.create("select"), selection));
+                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered("select", selection));
                         FeatureIterator ite = null;
                         try {
                             final FeatureCollection col = fml.getCollection().subCollection(sub);
@@ -197,9 +198,9 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                                 ite = col.iterator();
                                 while(ite.hasNext()){
                                     final Feature f = ite.next();
-                                    final GeometryAttribute gt = f.getDefaultGeometryProperty();
-                                    if(gt != null && gt.getValue() instanceof Geometry){
-                                        sb.append(gt.getValue().toString());
+                                    final Object gt = FeatureExt.getDefaultGeometryAttributeValue(f);
+                                    if(gt instanceof Geometry){
+                                        sb.append(gt.toString());
                                         sb.append("\n");
                                     }
                                 }

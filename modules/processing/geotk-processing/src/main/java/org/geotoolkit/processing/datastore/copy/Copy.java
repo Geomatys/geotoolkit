@@ -24,12 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 
@@ -48,6 +49,7 @@ import org.geotoolkit.version.VersioningException;
 
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
+
 
 /**
  * Copy feature from one datastore to another.
@@ -98,7 +100,7 @@ public class Copy extends AbstractProcess {
 
         final String queryName;
         if (queryParam != null) {
-            queryName = queryParam.getTypeName().tip().toString();
+            queryName = queryParam.getTypeName();
             reBuildQuery = true;
         } else if (typenameParam != null) {
             queryName = typenameParam;
@@ -160,7 +162,7 @@ public class Copy extends AbstractProcess {
                 //find last version
                 for (GenericName n : names) {
                     if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
-                        final List<Version> versions = targetSS.getFeatureStore().getVersioning(n).list();
+                        final List<Version> versions = targetSS.getFeatureStore().getVersioning(n.toString()).list();
                         if (!versions.isEmpty()) {
                             if (lastVersionDate == null || versions.get(versions.size()-1).getDate().getTime() > lastVersionDate.getTime()) {
                                 lastVersionDate = versions.get(versions.size()-1).getDate();
@@ -184,7 +186,7 @@ public class Copy extends AbstractProcess {
     private void insert(GenericName name, final Session sourceSS, final Session targetSS, Query query,
                         final boolean erase, final boolean newVersion) throws DataStoreException{
 
-        FeatureType type = sourceSS.getFeatureStore().getFeatureType(name);
+        FeatureType type = sourceSS.getFeatureStore().getFeatureType(name.toString());
 
         //Change * to featureType default geometry name
         if (query != null && query.getFilter() != null) {
@@ -201,11 +203,11 @@ public class Copy extends AbstractProcess {
         if(targetSS.getFeatureStore().getNames().contains(name)) {
             //ERASE
             if(erase) {
-                targetSS.getFeatureStore().deleteFeatureType(name);
-                targetSS.getFeatureStore().createFeatureType(name, type);
+                targetSS.getFeatureStore().deleteFeatureType(name.toString());
+                targetSS.getFeatureStore().createFeatureType(type);
             }
         }else{
-            targetSS.getFeatureStore().createFeatureType(name, type);
+            targetSS.getFeatureStore().createFeatureType(type);
         }
 
         //get the created name, namespace might change
@@ -213,7 +215,7 @@ public class Copy extends AbstractProcess {
 
         if (targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
             try {
-                targetSS.getFeatureStore().getVersioning(name).startVersioning();
+                targetSS.getFeatureStore().getVersioning(name.toString()).startVersioning();
             } catch (VersioningException ex) {
                 throw new DataStoreException(ex.getLocalizedMessage(), ex);
             }
@@ -221,7 +223,7 @@ public class Copy extends AbstractProcess {
 
         //NEW VERSION (remove old features)
         if (newVersion) {
-            targetSS.removeFeatures(name, QueryBuilder.all(name).getFilter());
+            targetSS.removeFeatures(name.toString(), Filter.INCLUDE);
         }
 
         //Logging
@@ -237,7 +239,7 @@ public class Copy extends AbstractProcess {
         logMsg.append("]");
         LOGGER.log(Level.INFO, logMsg.toString());
         //APPEND
-        targetSS.addFeatures(name, collection);
+        targetSS.addFeatures(name.toString(), collection);
     }
 
     /**
@@ -248,7 +250,7 @@ public class Copy extends AbstractProcess {
         @Override
         public Object visit(PropertyName expression, Object extraData) {
             if ("*".equals(expression.getPropertyName()) && extraData instanceof FeatureType) {
-                return new DefaultPropertyName(((FeatureType)extraData).getGeometryDescriptor().getType().getName().tip().toString());
+                return new DefaultPropertyName(((FeatureType) extraData).getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().tip().toString());
             }
             return super.visit(expression, extraData);
         }

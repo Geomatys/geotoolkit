@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -39,19 +37,14 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LookAt;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -64,33 +57,9 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/altitudeMode.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public AltitudeModeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
-    public void altitudeModeReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
+    public void altitudeModeReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -99,10 +68,9 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        assertEquals("gx:altitudeMode Example", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof LookAt);
-        final LookAt lookAt = (LookAt) placemark.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("gx:altitudeMode Example", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        final LookAt lookAt = (LookAt) placemark.getPropertyValue(KmlConstants.TAG_VIEW);
 
         assertEquals(146.806, lookAt.getLongitude(), DELTA);
         assertEquals(12.219, lookAt.getLatitude(), DELTA);
@@ -111,8 +79,7 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
         assertEquals(6300, lookAt.getRange(), DELTA);
         assertEquals(EnumAltitudeMode.RELATIVE_TO_SEA_FLOOR, lookAt.getAltitudeMode());
 
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof LineString);
-        final LineString lineString = (LineString) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final LineString lineString = (LineString) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
         assertTrue(lineString.getExtrude());
         assertEquals(EnumAltitudeMode.RELATIVE_TO_SEA_FLOOR, lineString.getAltitudeMode());
 
@@ -147,7 +114,6 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void altitudeModeWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate("146.825,12.233,400.0");
@@ -172,10 +138,9 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
         lookAt.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_SEA_FLOOR);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("gx:altitudeMode Example", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
-        placemarkProperties.add(FF.createAttribute(lineString, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "gx:altitudeMode Example");
+        placemark.setPropertyValue(KmlConstants.TAG_VIEW, lookAt);
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, lineString);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
@@ -190,8 +155,6 @@ public class AltitudeModeTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }
