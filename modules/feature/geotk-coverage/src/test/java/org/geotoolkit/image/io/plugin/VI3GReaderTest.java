@@ -28,76 +28,89 @@ import org.junit.Test;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.FileVisitResult;
+import java.nio.ShortBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Iterator;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 
 /**
- * Unit tests for HGT reader. We'll make an simple image which each pixel value is its position in a 1D buffer.
+ * Unit tests for VI3G reader. We'll make an simple image which each pixel value is its position in a 1D buffer.
  *
  * Ex : if we are on pixel (x, y), its value is : y * image.width() + x;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class HGTReaderTest extends org.geotoolkit.test.TestBase {
+public class VI3GReaderTest extends org.geotoolkit.test.TestBase {
 
-    private static Path TEMP_DIR;
+    private static final short MAX_VALUE = 10000;
+    private static final int SIZE = VI3GReader.WIDTH * VI3GReader.HEIGHT;
+
     private static Path TEMP_IMG;
 
-    private static final int IMG_WIDTH = 11;
     private static final Rectangle SOURCE_REGION = new Rectangle(5, 3, 6, 4);
 
     @BeforeClass
     public static void init() throws IOException {
-        TEMP_DIR = Files.createTempDirectory("hgtTests");
+        TEMP_IMG = Files.createTempFile("test", ".vi3g");
 
-        final int size = IMG_WIDTH * IMG_WIDTH;
-        final ByteBuffer buffer = ByteBuffer.allocate(size*(Short.SIZE/Byte.SIZE));
-        for (int i = 0 ; i < size; i++) {
-            buffer.putShort((short)i);
+        final ByteBuffer bb = ByteBuffer.allocate(8192);
+        final ShortBuffer sb = bb.asShortBuffer();
+        int idx = 0;
+        try (final OutputStream stream = Files.newOutputStream(TEMP_IMG);
+                final DataOutputStream writer = new DataOutputStream(stream)) {
+            while (idx < SIZE) {
+                sb.rewind();
+                final int limit = Math.min(sb.limit(), SIZE - idx);
+                while (limit > sb.position()) {
+                    sb.put((short) (idx++ % 10000));
+                }
+
+                writer.write(bb.array(), 0, limit * 2);
+            }
         }
-
-        TEMP_IMG = Files.createFile(TEMP_DIR.resolve("N00E000.hgt"));
-        Files.write(TEMP_IMG, buffer.array());
     }
 
     @AfterClass
     public static void destroy() throws IOException {
-        Files.walkFileTree(TEMP_DIR, new SimpleFileVisitor<Path>(){
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return super.postVisitDirectory(dir, exc);
-            }
+        Files.delete(TEMP_IMG);
+    }
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return super.visitFile(file, attrs);
-            }
-        });
+    @Test
+    public void serviceLoadingTest() {
+        ImageIO.scanForPlugins();
+        final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("vi3g");
+        while (readers.hasNext()) {
+            if (readers.next() instanceof VI3GReader)
+                return;
+        }
+
+        Assert.fail("VI3G reader cannot be found by ImageIO !");
     }
 
     /**
-     * Test the capacity of the reader to decode full HGT image in full resolution.
+     * Test the capacity of the reader to decode all VI3G image in full resolution.
      * @throws java.io.IOException If temporary image file has been corrupted.
      */
     @Test
     public void readFullyTest() throws IOException {
 
-        final HGTReader reader = new HGTReader(new HGTReader.Spi());
+        final VI3GReader reader = new VI3GReader(new VI3GReader.Spi());
         reader.setInput(TEMP_IMG);
         final BufferedImage read = reader.read(0);
 
         final PixelIterator pxIt = PixelIteratorFactory.createDefaultIterator(read);
         int expected = 0;
         while (pxIt.next()) {
-            Assert.assertEquals("A pixel value is invalid !", expected++, pxIt.getSample());
+            Assert.assertEquals("A pixel value is invalid !", expected++ % 10000, pxIt.getSample());
         }
+
+        Assert.assertEquals("Image has not been fully read !", SIZE, expected);
     }
 
     /**
@@ -107,7 +120,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
     @DependsOnMethod("readFullyTest")
     @Test
     public void readRegion() throws IOException {
-        final HGTReader reader = new HGTReader(new HGTReader.Spi());
+        final VI3GReader reader = new VI3GReader(new VI3GReader.Spi());
         final SpatialImageReadParam readParam = reader.getDefaultReadParam();
         readParam.setSourceRegion(SOURCE_REGION);
 
@@ -117,15 +130,16 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals("Read image height is invalid !", SOURCE_REGION.height, read.getHeight());
         final PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
 
-        int expected = SOURCE_REGION.y * IMG_WIDTH;
+        final int widthPad = VI3GReader.WIDTH - SOURCE_REGION.width - SOURCE_REGION.x;
+        int expected = SOURCE_REGION.y * VI3GReader.WIDTH - widthPad;
         // When we change line, we must add an offset to expected value.
         int previousY = -1;
         while (pxIt.next()) {
             if (previousY < pxIt.getY()) {
-                expected += SOURCE_REGION.x;
+                expected += SOURCE_REGION.x + widthPad;
                 previousY = pxIt.getY();
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected++, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected++ % MAX_VALUE, pxIt.getSample());
         }
     }
 
@@ -136,7 +150,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
     @DependsOnMethod("readFullyTest")
     @Test
     public void readSubsampled() throws IOException {
-        final HGTReader reader = new HGTReader(new HGTReader.Spi());
+        final VI3GReader reader = new VI3GReader(new VI3GReader.Spi());
         final SpatialImageReadParam readParam = reader.getDefaultReadParam();
         reader.setInput(TEMP_IMG);
 
@@ -145,8 +159,8 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final int ySubsampling = 3;
         readParam.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
         BufferedImage read = reader.read(0, readParam);
-        Assert.assertEquals("Read image width is invalid !", 3, read.getWidth());
-        Assert.assertEquals("Read image height is invalid !", 4, read.getHeight());
+        Assert.assertEquals("Read image width is invalid !", VI3GReader.WIDTH / 5, read.getWidth());
+        Assert.assertEquals("Read image height is invalid !", VI3GReader.HEIGHT / 3, read.getHeight());
 
         PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
         int expected = -1;
@@ -156,11 +170,11 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
             if (previousY < pxIt.getY()) {
                 // We reset expected value to the one we should get at the beginning of current line.
                 previousY = pxIt.getY();
-                expected = (previousY * ySubsampling) * IMG_WIDTH;
+                expected = (previousY * ySubsampling) * VI3GReader.WIDTH;
             } else {
                 expected += xSubsampling;
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected % MAX_VALUE, pxIt.getSample());
         }
 
         // Subsampling with an offset
@@ -168,8 +182,8 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         final int yOffset = 1;
         readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
         read = reader.read(0, readParam);
-        Assert.assertEquals("Read image width is invalid !", 2, read.getWidth());
-        Assert.assertEquals("Read image height is invalid !", 4, read.getHeight());
+        Assert.assertEquals("Read image width is invalid !", Math.round((VI3GReader.WIDTH - xOffset) / 5.0), read.getWidth());
+        Assert.assertEquals("Read image height is invalid !", Math.round((VI3GReader.HEIGHT - yOffset) / 3.0), read.getHeight());
         pxIt = PixelIteratorFactory.createRowMajorIterator(read);
         expected = -1;
         previousY = -1;
@@ -177,11 +191,11 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
             if (previousY < pxIt.getY()) {
                 // We reset expected value to the one we should get at the beginning of current line.
                 previousY = pxIt.getY();
-                expected = (yOffset + (previousY * ySubsampling)) * IMG_WIDTH + xOffset;
+                expected = (yOffset + (previousY * ySubsampling)) * VI3GReader.WIDTH + xOffset;
             } else {
                 expected += xSubsampling;
             }
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected, pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expected % MAX_VALUE, pxIt.getSample());
         }
     }
 
@@ -192,7 +206,7 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
     @DependsOnMethod({"readRegion", "readSubsampled"})
     @Test
     public void readSubSampledRegion() throws IOException {
-        final HGTReader reader = new HGTReader(new HGTReader.Spi());
+        final VI3GReader reader = new VI3GReader(new VI3GReader.Spi());
         final SpatialImageReadParam readParam = reader.getDefaultReadParam();
         reader.setInput(TEMP_IMG);
 
@@ -208,21 +222,20 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals("Read image width is invalid !", 3, read.getWidth());
         Assert.assertEquals("Read image height is invalid !", 2, read.getHeight());
 
-        final int firstPxValue = (SOURCE_REGION.y + yOffset) * IMG_WIDTH + SOURCE_REGION.x + xOffset;
+        final int firstPxValue = (SOURCE_REGION.y + yOffset) * VI3GReader.WIDTH + SOURCE_REGION.x + xOffset;
         final int[] expectedValues = new int[]{
                 firstPxValue,
                 firstPxValue + xSubsampling,
                 firstPxValue + xSubsampling*2,
-                firstPxValue + (ySubsampling * IMG_WIDTH),
-                firstPxValue + (ySubsampling * IMG_WIDTH) + xSubsampling,
-                firstPxValue + (ySubsampling * IMG_WIDTH) + xSubsampling*2
-
+                firstPxValue + (ySubsampling * VI3GReader.WIDTH),
+                firstPxValue + (ySubsampling * VI3GReader.WIDTH) + xSubsampling,
+                firstPxValue + (ySubsampling * VI3GReader.WIDTH) + xSubsampling*2
         };
 
         final PixelIterator pxIt = PixelIteratorFactory.createRowMajorIterator(read);
         int expectedIndex = 0;
         while (pxIt.next()) {
-            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expectedValues[expectedIndex++], pxIt.getSample());
+            Assert.assertEquals("Pixel value at ("+pxIt.getX()+", "+pxIt.getY()+") is invalid !", expectedValues[expectedIndex++] % 10000, pxIt.getSample());
         }
 
     }
