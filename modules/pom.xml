@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotoolkit</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
   </parent>
 
 
@@ -85,7 +85,7 @@
       <plugin>
         <groupId>org.apache.sis.core</groupId>
         <artifactId>sis-build-helper</artifactId>
-        <version>${sis.build.helper}</version>
+        <version>${sis.version}</version>
         <executions>
           <execution>
             <goals>
