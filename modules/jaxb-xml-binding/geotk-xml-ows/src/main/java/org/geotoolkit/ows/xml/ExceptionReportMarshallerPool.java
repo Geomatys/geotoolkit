@@ -33,6 +33,7 @@ public final class ExceptionReportMarshallerPool {
             instance = new MarshallerPool(JAXBContext.newInstance(
                     org.geotoolkit.ows.xml.v100.ExceptionReport.class,
                     org.geotoolkit.ows.xml.v110.ExceptionReport.class,
+                    org.geotoolkit.ows.xml.v200.ExceptionReport.class,
                     org.geotoolkit.ogc.xml.exception.ObjectFactory.class), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
