@@ -59,7 +59,7 @@ import org.geotoolkit.wcs.xml.RangeSubset;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSubsetType", propOrder = {

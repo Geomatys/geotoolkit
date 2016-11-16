@@ -26,7 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @author Alexis Manin (Geomatys)
- * @module pending
+ * @module
  */
 public class ClearSelectionAction extends AbstractAction {
 

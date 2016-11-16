@@ -22,7 +22,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public abstract class DefaultAbstractSubStyle extends DefaultAbstractObject implements AbstractSubStyle {
 

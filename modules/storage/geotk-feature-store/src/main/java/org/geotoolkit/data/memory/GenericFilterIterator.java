@@ -26,7 +26,7 @@ import org.opengis.filter.Filter;
  * Basic support for a Iterator that filter objects based on the given filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericFilterIterator<F> implements Iterator<F> {
 

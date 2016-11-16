@@ -23,7 +23,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a get data request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetChangeSet extends AbstractRequest implements GetChangeSetRequest{
 

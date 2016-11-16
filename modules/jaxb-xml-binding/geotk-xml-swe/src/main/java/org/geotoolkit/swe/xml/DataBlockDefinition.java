@@ -26,7 +26,7 @@ import static org.opengis.annotation.Obligation.*;
  * 
  * @version $Id:
  * @author legal
- * @module pending
+ * @module
  */
 @UML(identifier="DataBlockDefinition", specification=UNSPECIFIED)
 public interface DataBlockDefinition {

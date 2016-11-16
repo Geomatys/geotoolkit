@@ -25,7 +25,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
  * http://bbgen.net/blog/2011/06/java-svg-to-bufferedimage
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BufferedImageTranscoder extends ImageTranscoder {
 

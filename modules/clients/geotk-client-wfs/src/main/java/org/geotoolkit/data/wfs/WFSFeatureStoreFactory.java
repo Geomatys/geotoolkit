@@ -41,7 +41,7 @@ import org.opengis.parameter.*;
  * FeatureStore factory for WFS client.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ClientFactory{
 

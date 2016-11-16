@@ -31,7 +31,7 @@ import org.opengis.style.Halo;
  * Halo panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JHaloPane extends StyleElementEditor<Halo> {
 

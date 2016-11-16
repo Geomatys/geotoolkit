@@ -72,7 +72,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  *
  * @author Johann Sorel  (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlRootElement(name="CoverageReference")
 public class XMLCoverageReference extends AbstractPyramidalCoverageReference {

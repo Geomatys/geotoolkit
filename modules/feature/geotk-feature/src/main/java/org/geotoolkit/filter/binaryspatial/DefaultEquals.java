@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "equals" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expression> implements Equals {
 

@@ -28,7 +28,7 @@ import org.apache.sis.util.Classes;
  * Default PyramidSet.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPyramidSet extends AbstractPyramidSet{
     

@@ -31,7 +31,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class IntersectsProcess extends AbstractProcess {
 

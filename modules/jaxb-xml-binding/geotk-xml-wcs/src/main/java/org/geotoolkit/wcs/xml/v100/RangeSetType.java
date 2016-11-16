@@ -50,7 +50,7 @@ import java.util.List;
  * </pre>
  * 
  * @author Guilhem Legal 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSetType")

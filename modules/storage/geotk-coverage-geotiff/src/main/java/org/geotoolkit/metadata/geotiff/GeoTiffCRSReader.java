@@ -119,7 +119,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
  * @author Simone Giannecchini
  * @author Daniele Romagnoli
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class GeoTiffCRSReader {
 

@@ -38,7 +38,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
  *
  * @author Rob Hranac, Vision for New York
  * @version $Id$
- * @module pending
+ * @module
  */
 public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
 

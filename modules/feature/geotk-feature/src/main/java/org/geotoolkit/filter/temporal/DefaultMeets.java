@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.Meets;
  * Immutable temporal "meets" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultMeets extends AbstractTemporalFilter implements Meets{
 

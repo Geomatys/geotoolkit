@@ -20,7 +20,7 @@ package org.geotoolkit.util;
  * Interface for Cancelable objects.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Cancellable {
     

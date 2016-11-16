@@ -73,7 +73,7 @@ import org.geotoolkit.wfs.xml.FeatureType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeType", propOrder = {

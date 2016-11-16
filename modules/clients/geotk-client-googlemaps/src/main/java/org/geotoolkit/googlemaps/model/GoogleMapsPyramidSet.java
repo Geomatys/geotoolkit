@@ -41,7 +41,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GoogleMapsPyramidSet extends CachedPyramidSet{
 

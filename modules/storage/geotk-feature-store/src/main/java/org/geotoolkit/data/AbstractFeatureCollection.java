@@ -68,7 +68,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
         implements FeatureCollection, FeatureStoreListener{

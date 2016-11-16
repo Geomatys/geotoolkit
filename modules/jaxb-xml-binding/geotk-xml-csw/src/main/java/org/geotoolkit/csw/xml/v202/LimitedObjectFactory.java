@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
  *
  * TODO see if its possible to make an inheritance between this and regular object factory.
  *
- * @module pending
+ * @module
  * @author Guilhem Legal (Geomatys)
  */
 @XmlRegistry

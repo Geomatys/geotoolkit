@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
  * This transformer support {@linkplain MathTransform math transform} with up to 3 source
  * or target dimensions. This transformer is not thread-safe.
  *
- * @module pending
+ * @module
  * @since 2.1
  * @version $Id$
  * @author Andrea Aime

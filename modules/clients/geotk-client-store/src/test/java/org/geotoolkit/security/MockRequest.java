@@ -21,7 +21,7 @@ import org.geotoolkit.client.AbstractRequest;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MockRequest extends AbstractRequest{
 

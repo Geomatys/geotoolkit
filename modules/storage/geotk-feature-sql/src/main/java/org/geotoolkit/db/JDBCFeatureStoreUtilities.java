@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  * For internal use of JDBC modules.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class JDBCFeatureStoreUtilities {
     

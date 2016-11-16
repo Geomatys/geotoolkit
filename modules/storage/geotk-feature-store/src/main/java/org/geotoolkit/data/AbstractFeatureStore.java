@@ -75,7 +75,7 @@ import org.opengis.util.ScopedName;
  * handle query parameters and events.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractFeatureStore extends DataStore implements FeatureStore {
 

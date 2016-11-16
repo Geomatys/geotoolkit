@@ -23,7 +23,7 @@ import org.geotoolkit.ows.xml.RequestBase;
  *  Super abstract type for all the different versions of DescribeCoverage request.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface DescribeCoverage extends RequestBase {
     

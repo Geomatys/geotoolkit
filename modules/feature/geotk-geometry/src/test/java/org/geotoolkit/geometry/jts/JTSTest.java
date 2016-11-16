@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 /**
  * Test JTS utility class
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class JTSTest extends org.geotoolkit.test.TestBase {
 

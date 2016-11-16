@@ -31,7 +31,7 @@ import org.opengis.filter.sort.SortOrder;
  * Implementation of ObjectConverter to convert a String into a SortBy array.
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
 

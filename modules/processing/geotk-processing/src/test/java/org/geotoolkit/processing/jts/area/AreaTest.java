@@ -34,7 +34,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * JUnit test of Area process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AreaTest extends AbstractProcessTest {
 

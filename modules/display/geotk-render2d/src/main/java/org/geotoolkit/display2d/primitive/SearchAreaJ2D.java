@@ -25,7 +25,7 @@ import org.geotoolkit.display.SearchArea;
  * convenient methods to obtain JTS and Java2D equivalent of the ISO search area.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface SearchAreaJ2D extends SearchArea {
 

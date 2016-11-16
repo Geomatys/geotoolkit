@@ -49,7 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Use it knowing you make clear cache operation in a synchronize way.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 

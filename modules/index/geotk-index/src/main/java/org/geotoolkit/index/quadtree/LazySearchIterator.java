@@ -32,7 +32,7 @@ import org.geotoolkit.index.Data;
  * 
  * @author Jesse
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LazySearchIterator implements SearchIterator<AbstractNode> {
 

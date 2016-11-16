@@ -24,7 +24,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 /**
  * Converter from Date to Timestamp
  *
- * @module pending
+ * @module
  */
 public class DateToTimeStampConverter extends SimpleConverter<Date, Timestamp>{
     @Override

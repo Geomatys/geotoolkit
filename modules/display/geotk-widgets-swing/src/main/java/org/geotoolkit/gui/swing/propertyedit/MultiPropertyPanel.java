@@ -50,7 +50,7 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class MultiPropertyPanel extends JPanel implements PropertyPane, PropertyChangeListener {
 

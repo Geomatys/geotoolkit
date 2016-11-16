@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  * </pre>
  * 
  * @atuhor Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponsiblePartySubsetType", propOrder = {

@@ -34,7 +34,7 @@ import org.opengis.util.NoSuchIdentifierException;
  *
  * @author Quentin Boileau
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class IntersectionSurfaceTest extends AbstractProcessTest {
 

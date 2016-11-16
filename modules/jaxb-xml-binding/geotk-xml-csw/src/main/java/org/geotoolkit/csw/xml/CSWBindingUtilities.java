@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
  * Utility class to unmarshall CSW capabilities object
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class CSWBindingUtilities {
 

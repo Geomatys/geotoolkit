@@ -20,7 +20,7 @@ package org.geotoolkit.index.quadtree;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @module pending
+ * @module
  */
 public interface IndexStore {
     /**

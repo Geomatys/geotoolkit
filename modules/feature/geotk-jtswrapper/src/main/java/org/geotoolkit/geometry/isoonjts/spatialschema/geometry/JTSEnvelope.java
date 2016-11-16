@@ -30,7 +30,7 @@ import org.apache.sis.measure.Units;
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
- * @module pending
+ * @module
  */
 @XmlType(name="EnvelopeType", namespace="http://www.opengis.net/gml")
 public class JTSEnvelope implements Envelope {

@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.AbstractCategoryProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CategoryPropertyType", propOrder = {

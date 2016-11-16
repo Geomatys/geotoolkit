@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * GPX featurestore factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 

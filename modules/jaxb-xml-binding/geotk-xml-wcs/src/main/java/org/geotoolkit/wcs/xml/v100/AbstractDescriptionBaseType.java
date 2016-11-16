@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * @author Guihem Legal
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDescriptionBaseType", propOrder = {

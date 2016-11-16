@@ -22,7 +22,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 /**
  * JUnit test of ExtendFeature process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class FilterTest extends AbstractProcessTest {
 

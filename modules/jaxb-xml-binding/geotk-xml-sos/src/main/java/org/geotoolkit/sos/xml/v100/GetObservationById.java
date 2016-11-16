@@ -53,7 +53,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservationById", propOrder = {

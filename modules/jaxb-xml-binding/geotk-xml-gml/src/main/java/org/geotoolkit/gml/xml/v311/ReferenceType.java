@@ -49,7 +49,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Reference")

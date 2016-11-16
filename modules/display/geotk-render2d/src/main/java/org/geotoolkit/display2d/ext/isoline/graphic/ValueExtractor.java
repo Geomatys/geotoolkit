@@ -25,7 +25,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ValueExtractor {
 

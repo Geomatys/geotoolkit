@@ -46,7 +46,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * a GetMap request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest {
 

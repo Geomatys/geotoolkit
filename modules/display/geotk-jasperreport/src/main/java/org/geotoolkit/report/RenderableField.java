@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.JRRenderable;
  * Field
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RenderableField implements JRRenderable {
 

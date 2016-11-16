@@ -26,7 +26,7 @@ import java.net.URLConnection;
  * managers.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultClientSecurity implements ClientSecurity {
 

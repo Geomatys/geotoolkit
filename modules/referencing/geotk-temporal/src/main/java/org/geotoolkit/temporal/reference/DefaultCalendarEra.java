@@ -44,7 +44,7 @@ import org.opengis.util.InternationalString;
  * Characteristic of each calendar era.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * 
  * @version 4.0
  * @since   4.0

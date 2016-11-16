@@ -35,7 +35,7 @@ import org.geotoolkit.font.IconBuilder;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class SessionCommitAction extends AbstractAction implements FeatureStoreListener {
 

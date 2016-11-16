@@ -42,7 +42,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Regroup process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class RegroupFeatureCollection extends WrapFeatureCollection {
 
@@ -138,7 +138,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     /**
      * Implementation of FeatureIterator
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     private class RegroupFeatureIterator implements FeatureIterator {
 

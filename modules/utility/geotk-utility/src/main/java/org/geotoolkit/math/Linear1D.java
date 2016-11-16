@@ -26,7 +26,7 @@ package org.geotoolkit.math;
  *
  * @see Polynomial1D
  * @see Spline1D
- * @module pending
+ * @module
  */
 public class Linear1D extends Search1D {
 

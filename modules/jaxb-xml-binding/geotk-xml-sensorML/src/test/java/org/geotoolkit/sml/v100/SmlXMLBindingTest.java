@@ -123,7 +123,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 

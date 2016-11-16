@@ -19,7 +19,7 @@ package org.geotoolkit.xal.model;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultSubPremiseNumber 
         extends DefaultGenericTypedGrPostal

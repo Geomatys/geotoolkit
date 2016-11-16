@@ -53,7 +53,7 @@ import java.util.Collections;
  *
  * @author Johann sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class CoverageProcessingRegistry extends AbstractProcessingRegistry {
 

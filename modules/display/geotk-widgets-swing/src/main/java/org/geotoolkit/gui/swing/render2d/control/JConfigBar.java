@@ -23,7 +23,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * JMap2DControlBar is a JPanel to handle Navigation decoration and debugging panel
  *
  * @author johann sorel
- * @module pending
+ * @module
  */
 public class JConfigBar extends AbstractMapControlBar {
 

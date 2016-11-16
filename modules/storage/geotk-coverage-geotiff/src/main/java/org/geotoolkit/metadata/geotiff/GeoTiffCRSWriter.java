@@ -68,7 +68,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * note : with java 9 class will become only accessible by its module (no public signature on class header).
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class GeoTiffCRSWriter {
 

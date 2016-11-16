@@ -49,7 +49,7 @@ import org.geotoolkit.swe.xml.v100.ObservableProperty;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

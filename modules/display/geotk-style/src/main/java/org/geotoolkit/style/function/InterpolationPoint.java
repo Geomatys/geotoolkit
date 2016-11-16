@@ -34,7 +34,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/symbol">Symbology Encoding Implementation Specification 1.1.0</A>
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 @XmlElement("InterpolationPoint")
 public interface InterpolationPoint {

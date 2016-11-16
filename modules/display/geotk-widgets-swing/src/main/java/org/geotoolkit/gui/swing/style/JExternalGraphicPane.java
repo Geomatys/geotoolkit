@@ -51,7 +51,7 @@ import org.openide.util.Exceptions;
  *
  * @author Johann Sorel
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 

@@ -38,7 +38,7 @@ import org.opengis.parameter.*;
  * NcWMS Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class NcWMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 

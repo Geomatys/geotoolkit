@@ -47,7 +47,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of intersect process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class IntersectTest extends AbstractProcessTest {
 

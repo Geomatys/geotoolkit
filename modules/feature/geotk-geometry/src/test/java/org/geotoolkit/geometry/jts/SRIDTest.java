@@ -37,7 +37,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SRIDTest extends TestCase{
 

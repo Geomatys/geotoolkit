@@ -32,7 +32,7 @@ import org.opengis.display.primitive.Graphic;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class PositionedGraphic2D extends GraphicJ2D{
 

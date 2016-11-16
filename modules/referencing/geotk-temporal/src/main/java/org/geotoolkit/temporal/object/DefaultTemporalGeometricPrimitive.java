@@ -32,7 +32,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * a temporal instant and a temporal period.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
 //@XmlSeeAlso({DefaultInstant.class, DefaultPeriod.class})

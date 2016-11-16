@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * OSM XML featurestore factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 

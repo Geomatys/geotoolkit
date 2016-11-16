@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlValue;
  * Stores provider reference.
  *
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

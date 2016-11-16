@@ -43,7 +43,7 @@ import org.geotoolkit.util.StringUtilities;
  * are displayed in the text area.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DebugAction extends AbstractMapAction {
 

@@ -48,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * declared DataStoreFactories.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JFeatureStoreChooser extends javax.swing.JPanel {
 

@@ -25,7 +25,7 @@ import org.opengis.feature.catalog.Constraint;
  * JAXB adapter in order to map implementing class with the Types Constraint. See
  * package documentation for more infoFeatureTypermation about JAXB and Constraint.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

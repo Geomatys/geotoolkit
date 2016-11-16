@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

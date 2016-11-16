@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get element and related elements in a single query.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadElementFullRequest extends Request{
 

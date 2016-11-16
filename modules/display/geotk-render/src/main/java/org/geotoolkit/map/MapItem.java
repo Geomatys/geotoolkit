@@ -27,7 +27,7 @@ import org.opengis.style.Description;
  * map items.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MapItem {
 

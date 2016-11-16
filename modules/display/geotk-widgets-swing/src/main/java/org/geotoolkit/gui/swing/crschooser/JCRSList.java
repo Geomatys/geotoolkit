@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
  * CRS list
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JCRSList extends JComponent{
 

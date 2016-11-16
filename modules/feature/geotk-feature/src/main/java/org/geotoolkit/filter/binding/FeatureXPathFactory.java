@@ -38,7 +38,7 @@ import org.jaxen.saxpath.Axis;
  * match this name.<br/>
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class FeatureXPathFactory extends DefaultXPathFactory{
 

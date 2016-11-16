@@ -50,7 +50,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
 

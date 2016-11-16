@@ -45,7 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @author Chris Holmes
  * @version $Id$
- * @module pending
+ * @module
  */
 public interface Query {
 

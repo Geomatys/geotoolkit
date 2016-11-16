@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get an osm element.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadElementRequest extends Request{
 

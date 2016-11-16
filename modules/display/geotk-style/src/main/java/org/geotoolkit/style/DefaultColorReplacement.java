@@ -26,7 +26,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable implementation of Types ColorReplacement.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultColorReplacement implements ColorReplacement{
 

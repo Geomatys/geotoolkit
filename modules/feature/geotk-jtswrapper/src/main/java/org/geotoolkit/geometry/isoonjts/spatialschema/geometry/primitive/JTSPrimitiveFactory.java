@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.SurfacePatch;
 /**
  * Factory that knows how to create instances of the 19107 primitives as
  * implemented in LiteGO1.
- * @module pending
+ * @module
  */
 public class JTSPrimitiveFactory implements PrimitiveFactory {
     

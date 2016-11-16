@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  * Listener for FeatureTypeStyle.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureTypeStyleListener extends PropertyChangeListener{
 

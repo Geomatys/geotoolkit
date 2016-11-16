@@ -30,7 +30,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @param <E> Expression or subclass
  * @param <F> Expression or subclass
- * @module pending
+ * @module
  */
 public abstract class AbstractBinaryExpression<E extends Expression,F extends Expression> 
                                     extends AbstractExpression implements BinaryExpression{

@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class WfsXMLBindingTest extends org.geotoolkit.test.TestBase {
     private MarshallerPool pool;

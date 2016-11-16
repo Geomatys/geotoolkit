@@ -32,7 +32,7 @@ import org.opengis.style.AnchorPoint;
  *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
 

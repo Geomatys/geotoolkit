@@ -25,7 +25,7 @@ import org.geotoolkit.csw.xml.Update;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface TransactionRequest extends Request {
     Delete getDelete();

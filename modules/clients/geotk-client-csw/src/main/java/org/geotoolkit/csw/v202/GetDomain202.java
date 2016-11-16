@@ -24,7 +24,7 @@ import org.geotoolkit.security.ClientSecurity;
  * Implementation for the GetCapabilities request version 2.0.2.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GetDomain202 extends AbstractGetDomain {
     /**

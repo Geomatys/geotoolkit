@@ -32,7 +32,7 @@ import org.opengis.filter.Filter;
  * This modify the features that match the given filter and changes the attributs values.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericModifyFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 

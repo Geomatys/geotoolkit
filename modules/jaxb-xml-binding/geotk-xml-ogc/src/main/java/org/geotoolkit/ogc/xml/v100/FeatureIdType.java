@@ -42,7 +42,7 @@ import org.opengis.filter.identity.Identifier;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")

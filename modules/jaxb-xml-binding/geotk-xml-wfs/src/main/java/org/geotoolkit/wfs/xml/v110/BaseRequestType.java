@@ -49,7 +49,7 @@ import org.geotoolkit.wfs.xml.BaseRequest;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseRequestType")

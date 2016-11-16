@@ -26,7 +26,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetTimeseries request.
  *
  * @author Fabien BERNARD (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo implements NcGetTimeseriesRequest {
 

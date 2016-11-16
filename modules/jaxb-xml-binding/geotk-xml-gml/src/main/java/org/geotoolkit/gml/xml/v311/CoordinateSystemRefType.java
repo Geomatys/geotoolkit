@@ -48,7 +48,7 @@ import org.geotoolkit.gml.xml.CoordinateSystemRef;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoordinateSystemRefType", propOrder = {

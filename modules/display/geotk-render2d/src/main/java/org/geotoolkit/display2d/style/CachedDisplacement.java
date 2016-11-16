@@ -27,7 +27,7 @@ import org.opengis.style.Displacement;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class CachedDisplacement{
 

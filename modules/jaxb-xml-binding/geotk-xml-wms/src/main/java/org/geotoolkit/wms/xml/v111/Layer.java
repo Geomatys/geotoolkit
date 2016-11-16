@@ -36,7 +36,7 @@ import org.opengis.geometry.Envelope;
 /**
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Layer", propOrder = {

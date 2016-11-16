@@ -76,7 +76,7 @@ import org.opengis.util.GenericName;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
 

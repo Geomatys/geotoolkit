@@ -29,7 +29,7 @@ import org.opengis.metadata.identification.Identification;
 /**
  *
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ReferencingProcessingRegistry extends AbstractProcessingRegistry{
 

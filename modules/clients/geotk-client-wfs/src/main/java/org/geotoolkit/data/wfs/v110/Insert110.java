@@ -22,7 +22,7 @@ import org.geotoolkit.data.wfs.AbstractInsert;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Insert110 extends AbstractInsert{
 

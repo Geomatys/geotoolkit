@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Sinus process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class SinTest extends AbstractProcessTest {
 

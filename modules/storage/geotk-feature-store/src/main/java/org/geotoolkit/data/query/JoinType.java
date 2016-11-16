@@ -24,7 +24,7 @@ package org.geotoolkit.data.query;
  * from JSR-283 (Java Content Repository 2).
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public enum JoinType {
     /**

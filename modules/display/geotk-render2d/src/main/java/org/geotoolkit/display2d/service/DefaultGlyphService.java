@@ -42,7 +42,7 @@ import org.apache.sis.measure.Units;
  * Factory to create small glyph used in map or application legends.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DefaultGlyphService {
 

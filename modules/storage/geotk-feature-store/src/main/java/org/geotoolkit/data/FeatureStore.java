@@ -50,7 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * of datas.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureStore {
 

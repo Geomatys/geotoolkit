@@ -85,7 +85,7 @@ import org.apache.sis.measure.Units;
  * Transform old SLD v1.0.0 symbology in GT classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SE100toGTTransformer extends OGC100toGTTransformer {
 

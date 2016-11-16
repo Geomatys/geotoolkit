@@ -45,7 +45,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Guilhem Legal (Geomatys).
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

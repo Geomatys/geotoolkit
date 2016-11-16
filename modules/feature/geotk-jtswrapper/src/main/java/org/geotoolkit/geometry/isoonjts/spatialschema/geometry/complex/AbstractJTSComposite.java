@@ -26,7 +26,7 @@ import org.opengis.geometry.primitive.Primitive;
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
- * @module pending
+ * @module
  */
 public abstract class AbstractJTSComposite extends JTSComplex implements Composite {
 

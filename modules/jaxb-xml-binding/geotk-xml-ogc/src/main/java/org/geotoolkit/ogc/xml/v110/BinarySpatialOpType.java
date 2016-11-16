@@ -69,7 +69,7 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {

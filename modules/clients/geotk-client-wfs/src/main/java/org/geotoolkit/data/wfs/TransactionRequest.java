@@ -25,7 +25,7 @@ import org.geotoolkit.client.Request;
  * The request shall be correctly configured before calling the getResponse method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface TransactionRequest extends Request {
 

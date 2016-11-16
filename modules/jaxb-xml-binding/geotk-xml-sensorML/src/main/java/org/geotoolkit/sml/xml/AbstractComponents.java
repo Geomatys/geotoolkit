@@ -19,7 +19,7 @@ package org.geotoolkit.sml.xml;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractComponents {
 

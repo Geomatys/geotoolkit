@@ -49,7 +49,7 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertObservation", propOrder = {

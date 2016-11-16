@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * 
  * @author Jesse
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LazySearchCollection<T extends Data> extends AbstractCollection<T> implements
         CloseableCollection<T> {

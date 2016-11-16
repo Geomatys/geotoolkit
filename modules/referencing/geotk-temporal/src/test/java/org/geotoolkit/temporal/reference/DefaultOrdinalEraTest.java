@@ -32,7 +32,7 @@ import org.opengis.temporal.OrdinalEra;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOrdinalEraTest extends org.geotoolkit.test.TestBase {
 

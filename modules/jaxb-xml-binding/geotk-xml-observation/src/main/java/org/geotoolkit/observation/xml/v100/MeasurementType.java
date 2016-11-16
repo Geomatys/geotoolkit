@@ -37,7 +37,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @version $Id: MeasurementType.java 1559 2009-04-23 14:42:42Z glegal $
  * @author Antoine Hnawia
  * @author Martin Desruisseaux
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Measurement")

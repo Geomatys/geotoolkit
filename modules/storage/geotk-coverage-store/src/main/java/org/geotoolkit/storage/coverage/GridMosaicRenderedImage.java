@@ -37,7 +37,7 @@ import org.geotoolkit.math.XMath;
  * @author Thomas Rouby (Geomatys)
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GridMosaicRenderedImage implements RenderedImage {
 

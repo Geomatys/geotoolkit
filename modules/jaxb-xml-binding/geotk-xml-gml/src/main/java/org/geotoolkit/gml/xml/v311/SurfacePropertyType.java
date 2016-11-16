@@ -48,7 +48,7 @@ import org.geotoolkit.gml.xml.SurfaceProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurfacePropertyType", propOrder = {

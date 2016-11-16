@@ -61,7 +61,7 @@ import org.geotoolkit.swe.xml.UomProperty;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UomPropertyType", propOrder = {

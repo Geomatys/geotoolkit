@@ -21,7 +21,7 @@ package org.geotoolkit.index;
  * Holds values (with associated DataDefinition)
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Data {
     /**

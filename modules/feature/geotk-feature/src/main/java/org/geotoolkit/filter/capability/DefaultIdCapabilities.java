@@ -23,7 +23,7 @@ import org.opengis.filter.capability.IdCapabilities;
  * Immutable id capabilities.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultIdCapabilities implements IdCapabilities{
 

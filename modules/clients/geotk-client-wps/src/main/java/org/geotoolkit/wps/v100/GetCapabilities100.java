@@ -22,7 +22,7 @@ import org.geotoolkit.wps.AbstractGetCapabilities;
 /**
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class GetCapabilities100 extends AbstractGetCapabilities{
     

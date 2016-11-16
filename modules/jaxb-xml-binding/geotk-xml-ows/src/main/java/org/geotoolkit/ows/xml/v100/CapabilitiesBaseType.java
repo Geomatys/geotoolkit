@@ -57,7 +57,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesBaseType", propOrder = {

@@ -38,7 +38,7 @@ import org.geotoolkit.renderer.style.WKMMarkFactory;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JOpacitySlider extends JComponent implements MouseInputListener{
 

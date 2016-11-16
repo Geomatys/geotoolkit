@@ -22,7 +22,7 @@ import java.awt.Color;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface RandomPalette extends Palette{
 

@@ -21,7 +21,7 @@ import org.geotoolkit.security.ClientSecurity;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements GetFeatureInfoRequest {
 

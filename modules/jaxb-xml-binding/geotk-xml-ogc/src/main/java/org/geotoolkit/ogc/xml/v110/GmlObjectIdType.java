@@ -43,7 +43,7 @@ import org.opengis.filter.identity.GmlObjectId;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GmlObjectIdType")

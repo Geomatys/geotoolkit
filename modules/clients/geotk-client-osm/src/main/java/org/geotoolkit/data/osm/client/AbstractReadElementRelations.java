@@ -23,7 +23,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a get element relations request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractReadElementRelations extends AbstractRequest implements ReadElementRelationsRequest{
 

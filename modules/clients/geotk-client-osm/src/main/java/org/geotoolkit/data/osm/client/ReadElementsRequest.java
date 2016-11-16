@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
  * Request to get several osm elements.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadElementsRequest extends Request{
 

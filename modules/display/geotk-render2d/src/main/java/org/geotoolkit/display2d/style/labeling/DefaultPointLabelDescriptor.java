@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default immutable implementation of Point label descriptor.
  * 
  * @author johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
 

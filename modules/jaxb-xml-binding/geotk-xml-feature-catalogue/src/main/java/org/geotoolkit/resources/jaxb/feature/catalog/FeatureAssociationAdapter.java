@@ -27,7 +27,7 @@ import org.opengis.feature.catalog.FeatureAssociation;
  * JAXB adapter in order to map implementing class with the Types FeatureAssociation. See
  * package documentation for more information about JAXB and FeatureAssociation.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

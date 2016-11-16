@@ -42,7 +42,7 @@ import org.geotoolkit.swe.xml.AbstractCurve;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CurveType", propOrder = {

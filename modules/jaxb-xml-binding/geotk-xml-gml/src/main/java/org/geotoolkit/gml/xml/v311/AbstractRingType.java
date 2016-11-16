@@ -40,7 +40,7 @@ import org.geotoolkit.gml.xml.AbstractRing;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRingType")

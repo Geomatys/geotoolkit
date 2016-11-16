@@ -39,7 +39,7 @@ import org.opengis.filter.sort.SortOrder;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class CswXmlFactory {
 

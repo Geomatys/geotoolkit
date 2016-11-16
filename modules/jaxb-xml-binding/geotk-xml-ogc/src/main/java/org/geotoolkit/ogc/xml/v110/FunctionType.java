@@ -51,7 +51,7 @@ import org.opengis.filter.expression.Function;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionType", propOrder = {

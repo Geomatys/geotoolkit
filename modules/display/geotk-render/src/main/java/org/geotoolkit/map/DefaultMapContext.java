@@ -45,7 +45,7 @@ import org.apache.sis.util.Utilities;
  * the 'layers' method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class DefaultMapContext extends DefaultMapItem implements MapContext, LayerListener {
 

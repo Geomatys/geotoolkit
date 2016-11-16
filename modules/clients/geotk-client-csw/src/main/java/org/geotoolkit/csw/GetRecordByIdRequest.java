@@ -23,7 +23,7 @@ import org.geotoolkit.csw.xml.ElementSetType;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetRecordByIdRequest extends Request {
     ElementSetType getElementSetName();

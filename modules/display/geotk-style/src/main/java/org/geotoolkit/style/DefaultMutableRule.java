@@ -42,7 +42,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Mutable implementation of Types Rule.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultMutableRule implements MutableRule{
 

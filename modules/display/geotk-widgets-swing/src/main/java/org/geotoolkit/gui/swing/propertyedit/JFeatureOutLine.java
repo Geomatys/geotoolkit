@@ -57,7 +57,7 @@ import org.opengis.feature.Feature;
  * Additionaly Parameter can be edited since their model is close.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JFeatureOutLine extends Outline{
 

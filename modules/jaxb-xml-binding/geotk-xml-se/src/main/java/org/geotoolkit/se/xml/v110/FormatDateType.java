@@ -42,7 +42,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FormatDateType", propOrder = {

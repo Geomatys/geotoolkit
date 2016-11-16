@@ -24,7 +24,7 @@ import java.awt.RenderingHints;
  *
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
- * @module pending
+ * @module
  */
 public final class HintKey extends RenderingHints.Key {
     /**

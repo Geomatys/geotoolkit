@@ -19,7 +19,7 @@ package org.geotoolkit.data.kml.model;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  * @deprecated
  */
 @Deprecated

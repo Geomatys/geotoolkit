@@ -29,7 +29,7 @@ import org.opengis.filter.expression.Literal;
  * Factory registering the default Symbology Encoding functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StyleFunctionFactory extends AbstractFunctionFactory{
 

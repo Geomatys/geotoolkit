@@ -35,7 +35,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DataReader extends StaxStreamReader implements KmlExtensionReader {
 

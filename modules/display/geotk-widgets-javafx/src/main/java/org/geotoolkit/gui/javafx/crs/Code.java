@@ -30,7 +30,7 @@ import org.opengis.util.FactoryException;
  *
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
- * @module pending
+ * @module
  */
 final class Code {
 

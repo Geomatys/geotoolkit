@@ -43,7 +43,7 @@ import org.opengis.filter.sort.SortBy;
  * otherwise it may cause an Out Of Memory Exception.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericSortByFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 

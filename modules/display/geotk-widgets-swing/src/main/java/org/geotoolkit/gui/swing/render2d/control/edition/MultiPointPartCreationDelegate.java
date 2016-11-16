@@ -37,7 +37,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Edition tool to create multi point parts.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class MultiPointPartCreationDelegate extends AbstractFeatureEditionDelegate {
 

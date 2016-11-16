@@ -34,7 +34,7 @@ import org.opengis.metadata.content.CoverageDescription;
  * something like RenderableCoverage...
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CoverageReference extends DataNode {
 

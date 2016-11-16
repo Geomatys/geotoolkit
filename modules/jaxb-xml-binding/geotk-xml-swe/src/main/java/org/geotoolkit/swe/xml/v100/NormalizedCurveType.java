@@ -47,7 +47,7 @@ import org.geotoolkit.swe.xml.AbstractNormalizedCurve;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NormalizedCurveType", propOrder = {

@@ -74,7 +74,7 @@ import org.opengis.feature.PropertyType;
 /**
  * Junit test for CoverageToFeature process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CoverageToFeatureTest extends AbstractProcessTest {
 

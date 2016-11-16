@@ -25,7 +25,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyPane{
 

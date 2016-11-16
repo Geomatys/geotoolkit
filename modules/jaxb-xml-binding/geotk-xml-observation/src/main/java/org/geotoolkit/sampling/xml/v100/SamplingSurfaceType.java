@@ -51,7 +51,7 @@ import org.opengis.geometry.Geometry;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SamplingSurfaceType", propOrder = {

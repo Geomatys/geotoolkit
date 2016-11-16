@@ -39,7 +39,7 @@ import org.opengis.filter.expression.Subtract;
  *
  * @author jody
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class DefaultExpressionVisitor implements ExpressionVisitor {
 

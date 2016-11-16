@@ -27,7 +27,7 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
  * Represents a layer, with its provider, its name and its style.
  *
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

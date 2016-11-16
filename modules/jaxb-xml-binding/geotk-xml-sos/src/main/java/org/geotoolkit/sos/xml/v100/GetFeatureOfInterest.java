@@ -74,7 +74,7 @@ import org.opengis.filter.Filter;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureOfInterest", propOrder = {

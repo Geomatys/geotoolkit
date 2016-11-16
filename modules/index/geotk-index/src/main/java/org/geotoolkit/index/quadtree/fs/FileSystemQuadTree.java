@@ -33,7 +33,7 @@ import org.geotoolkit.index.quadtree.StoreException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileSystemQuadTree extends QuadTree {
 

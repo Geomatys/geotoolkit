@@ -31,7 +31,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BinaryLogicTest extends org.geotoolkit.test.TestBase {
 

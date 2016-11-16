@@ -21,7 +21,7 @@ import java.net.URI;
 /**
  *
  * @author guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractVector extends AbstractDataRecord {
 

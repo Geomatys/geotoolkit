@@ -41,7 +41,7 @@ import org.geotoolkit.sml.xml.AbstractSchematron;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

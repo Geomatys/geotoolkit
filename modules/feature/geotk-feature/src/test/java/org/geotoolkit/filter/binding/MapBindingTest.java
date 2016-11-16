@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * Test map accessor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapBindingTest extends org.geotoolkit.test.TestBase {
 

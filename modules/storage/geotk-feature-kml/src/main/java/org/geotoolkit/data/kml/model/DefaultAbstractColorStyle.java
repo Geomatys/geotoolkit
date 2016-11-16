@@ -23,7 +23,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public abstract class DefaultAbstractColorStyle extends DefaultAbstractSubStyle implements AbstractColorStyle {
 

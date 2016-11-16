@@ -49,7 +49,7 @@ import org.opengis.feature.Feature;
  * Stax reader class for OSM XML planet files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMXMLReader extends StaxStreamReader{
 

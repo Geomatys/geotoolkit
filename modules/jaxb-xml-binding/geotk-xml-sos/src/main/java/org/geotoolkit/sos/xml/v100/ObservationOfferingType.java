@@ -44,7 +44,7 @@ import org.apache.sis.util.ComparisonMode;
 /**
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationOfferingType", propOrder = {

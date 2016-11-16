@@ -22,7 +22,7 @@ import org.geotoolkit.ows.xml.RequestBase;
  * An interface containing the common methods to the different version of the operation GetRecords.
  *
  *  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractCswRequest extends RequestBase {
 

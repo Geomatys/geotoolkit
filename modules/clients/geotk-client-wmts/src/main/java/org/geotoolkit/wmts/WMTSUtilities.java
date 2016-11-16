@@ -44,7 +44,7 @@ import org.opengis.util.FactoryException;
  * Utility methods for WMTS strange scale calculation
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class WMTSUtilities {
 

@@ -24,7 +24,7 @@ import org.apache.sis.measure.NumberRange;
  * This class organise information which can be extracted from it.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class LandSatNomenclature {
 

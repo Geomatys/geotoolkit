@@ -20,7 +20,7 @@ package org.geotoolkit.wmts;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetFeatureInfoRequest extends GetTileRequest {
 

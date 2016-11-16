@@ -43,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
  * Special canvas used to render maps in JasperReport templates.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 

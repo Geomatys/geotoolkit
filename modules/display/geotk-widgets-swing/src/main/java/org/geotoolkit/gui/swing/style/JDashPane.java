@@ -33,7 +33,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JDashPane extends javax.swing.JPanel {
     

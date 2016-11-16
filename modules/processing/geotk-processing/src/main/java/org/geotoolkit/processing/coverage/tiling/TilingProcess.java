@@ -46,7 +46,7 @@ import org.geotoolkit.utility.parameter.ParametersExt;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class TilingProcess extends AbstractProcess {
 

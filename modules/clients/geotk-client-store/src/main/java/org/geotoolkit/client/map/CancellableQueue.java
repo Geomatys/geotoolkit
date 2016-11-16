@@ -26,7 +26,7 @@ import org.geotoolkit.util.Cancellable;
  * Cancellable queue.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CancellableQueue<T> extends ArrayBlockingQueue<T> implements Cancellable{
 

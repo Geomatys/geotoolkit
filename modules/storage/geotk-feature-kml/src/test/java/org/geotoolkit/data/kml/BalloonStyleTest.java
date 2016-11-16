@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class BalloonStyleTest extends org.geotoolkit.test.TestBase {
 

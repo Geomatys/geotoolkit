@@ -69,7 +69,7 @@ import org.geotoolkit.metadata.Citations;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

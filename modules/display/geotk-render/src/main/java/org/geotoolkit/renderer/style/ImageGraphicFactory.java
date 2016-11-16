@@ -37,7 +37,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  * @author Andrea Aime - TOPP
  * @author Johann Sorel (Geomatys)
  *
- * @module pending
+ * @module
  */
 public class ImageGraphicFactory implements ExternalGraphicFactory {
 

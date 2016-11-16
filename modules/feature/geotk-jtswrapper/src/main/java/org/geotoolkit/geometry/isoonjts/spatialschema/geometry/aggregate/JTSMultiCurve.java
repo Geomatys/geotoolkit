@@ -18,7 +18,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlType(name="MultiCurveType", namespace="http://www.opengis.net/gml")
 public class JTSMultiCurve extends AbstractJTSAggregate<OrientableCurve> implements MultiCurve {

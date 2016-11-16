@@ -28,7 +28,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable "not" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultNot implements Not,Serializable{
 

@@ -44,7 +44,7 @@ import org.geotoolkit.sml.xml.ComponentsProperty;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "componentsPropertyType", propOrder = {

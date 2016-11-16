@@ -28,7 +28,7 @@ import org.apache.sis.xml.MarshallerPool;
  * Abstract base for all CSW request
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCSWRequest extends AbstractRequest{
 

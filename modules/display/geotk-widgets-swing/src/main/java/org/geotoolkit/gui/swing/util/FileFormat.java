@@ -27,7 +27,7 @@ import org.opengis.util.InternationalString;
  * File filter enumeration.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public enum FileFormat {
 

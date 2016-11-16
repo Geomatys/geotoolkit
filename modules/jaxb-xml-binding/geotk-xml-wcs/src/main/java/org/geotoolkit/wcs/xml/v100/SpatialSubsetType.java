@@ -45,7 +45,7 @@ import org.geotoolkit.gml.xml.v311.GridType;
  * </pre>
  * 
  * @author Guilhem Legal 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialSubsetType")

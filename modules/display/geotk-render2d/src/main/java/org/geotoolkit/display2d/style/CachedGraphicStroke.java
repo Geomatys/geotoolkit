@@ -22,7 +22,7 @@ import org.opengis.style.GraphicStroke;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedGraphicStroke extends CachedGraphic<GraphicStroke>{
 

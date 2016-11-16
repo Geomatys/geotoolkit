@@ -31,7 +31,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Difference process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class DifferenceFeatureCollection extends WrapFeatureCollection {
 

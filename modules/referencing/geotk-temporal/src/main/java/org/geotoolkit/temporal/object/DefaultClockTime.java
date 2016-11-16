@@ -31,7 +31,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * of an event that recurs every day.
  * 
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultClockTime extends DefaultTemporalPosition implements ClockTime {
 

@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.Coordinate;
  * </pre>
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

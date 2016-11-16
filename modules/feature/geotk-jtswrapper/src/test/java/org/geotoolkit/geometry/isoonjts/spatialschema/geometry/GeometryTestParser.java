@@ -46,7 +46,7 @@ import org.geotoolkit.geometry.isoonjts.GeometryParser;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
- * @module pending
+ * @module
  */
 public class GeometryTestParser {
 

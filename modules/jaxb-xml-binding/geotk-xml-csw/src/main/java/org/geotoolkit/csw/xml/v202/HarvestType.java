@@ -66,7 +66,7 @@ import org.geotoolkit.csw.xml.Harvest;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HarvestType", propOrder = {

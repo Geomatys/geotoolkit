@@ -27,7 +27,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Edition Decoration
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class EditionDecoration extends JComponent implements MapDecoration{
 

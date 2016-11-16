@@ -26,7 +26,7 @@ import org.opengis.feature.FeatureType;
  * FeatureType can be retrieved with method getFeatureType.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureReader extends FeatureIterator{
 

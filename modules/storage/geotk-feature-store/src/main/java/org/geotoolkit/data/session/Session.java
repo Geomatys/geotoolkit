@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
  * but we choose to use the name Session given by JSR-170 and JSR-283 (Java Content Repository).
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Session {
 

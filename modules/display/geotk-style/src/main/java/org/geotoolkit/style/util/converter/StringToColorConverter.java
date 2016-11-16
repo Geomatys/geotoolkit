@@ -26,7 +26,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 /**
  * Implementation of ObjectConverter to convert a String into a Color.
  *
- * @module pending
+ * @module
  */
 public class StringToColorConverter extends SimpleConverter<String, Color> {
 

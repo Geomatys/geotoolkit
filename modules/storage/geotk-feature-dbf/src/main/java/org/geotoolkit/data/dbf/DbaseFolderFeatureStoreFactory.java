@@ -41,7 +41,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  * FeatureStore for a folder of DBF files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 

@@ -29,7 +29,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  * Listener for MapLayer. This listener is for PropertyChanges or style change.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface LayerListener extends ItemListener {
     

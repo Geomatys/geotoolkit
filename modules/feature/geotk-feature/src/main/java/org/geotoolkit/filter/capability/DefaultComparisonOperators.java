@@ -27,7 +27,7 @@ import org.opengis.filter.capability.Operator;
  * Immutable comparison operators.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultComparisonOperators implements ComparisonOperators {
 

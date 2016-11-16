@@ -40,7 +40,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Clip geometries using the given rectangle.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryClipTransformer extends AbstractGeometryTransformer{
 

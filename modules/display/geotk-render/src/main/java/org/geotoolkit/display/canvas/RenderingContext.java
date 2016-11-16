@@ -53,7 +53,7 @@ import org.opengis.util.FactoryException;
  * &nbsp; {@code deviceCRS}
  * </p>
  * 
- * @module pending
+ * @module
  * @since 2.3
  * @version $Id$
  * @author Martin Desruisseaux (IRD)

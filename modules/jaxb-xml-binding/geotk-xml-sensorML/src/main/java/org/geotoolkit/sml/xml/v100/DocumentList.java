@@ -65,7 +65,7 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

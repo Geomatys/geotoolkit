@@ -19,7 +19,7 @@ package org.geotoolkit.wfs.xml;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public enum WFSVersion {
     v110("1.1.0"),

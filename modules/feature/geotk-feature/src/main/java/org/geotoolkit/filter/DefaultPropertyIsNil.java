@@ -27,7 +27,7 @@ import org.opengis.filter.expression.Expression;
  * This implementation is similar to isNull.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPropertyIsNil implements PropertyIsNil,Serializable {
 

@@ -23,7 +23,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultLod extends DefaultAbstractObject implements Lod {
 

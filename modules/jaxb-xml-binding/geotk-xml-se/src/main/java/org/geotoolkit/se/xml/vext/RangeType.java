@@ -56,7 +56,7 @@ import org.geotoolkit.se.xml.v110.SymbolizerType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeType", propOrder = {

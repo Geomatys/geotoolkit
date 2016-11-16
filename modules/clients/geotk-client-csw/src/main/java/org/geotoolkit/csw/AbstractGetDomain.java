@@ -34,7 +34,7 @@ import org.geotoolkit.security.ClientSecurity;
  * parameters for a GetDomain request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetDomain extends AbstractCSWRequest implements GetDomainRequest {
 

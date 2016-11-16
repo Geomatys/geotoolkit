@@ -24,7 +24,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for to download a GPS detail request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDownloadGPSTraceDetails extends AbstractRequest implements DownloadGPSTraceDetail{
 

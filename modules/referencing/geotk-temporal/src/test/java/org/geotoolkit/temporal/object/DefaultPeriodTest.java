@@ -35,7 +35,7 @@ import org.opengis.temporal.Period;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPeriodTest extends org.geotoolkit.test.TestBase {
 

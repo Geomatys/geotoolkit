@@ -33,7 +33,7 @@ import org.geotoolkit.sos.xml.v100.DescribeFeatureType;
  * parameters for a DescribeFeatureType request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeFeatureType extends AbstractSOSRequest implements DescribeFeatureTypeRequest {
 

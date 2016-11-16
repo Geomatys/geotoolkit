@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default immutable range axis, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultRangeAxis implements RangeAxis {
 

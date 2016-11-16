@@ -50,7 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * declared ServerFactories.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JServerChooser extends javax.swing.JPanel {
 

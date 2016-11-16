@@ -22,7 +22,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
- * @module pending
+ * @module
  */
 public abstract class AbstractJTSGenericCurve extends AbstractJTSGeometry implements GenericCurve {
     public AbstractJTSGenericCurve() {

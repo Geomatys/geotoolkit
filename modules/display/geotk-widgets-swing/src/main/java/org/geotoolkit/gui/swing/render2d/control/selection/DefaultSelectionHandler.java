@@ -82,7 +82,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Selection handler
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class DefaultSelectionHandler implements CanvasHandler {
 

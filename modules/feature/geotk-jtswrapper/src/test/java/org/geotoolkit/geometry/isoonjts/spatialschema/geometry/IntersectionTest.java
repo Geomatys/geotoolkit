@@ -26,7 +26,7 @@ import org.opengis.geometry.primitive.Surface;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
- * @module pending
+ * @module
  */
 public class IntersectionTest extends AbstractGeometryTest {
 

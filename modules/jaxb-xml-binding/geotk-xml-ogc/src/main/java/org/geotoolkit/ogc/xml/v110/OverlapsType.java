@@ -23,7 +23,7 @@ import org.opengis.filter.spatial.Overlaps;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlRootElement(name = "Overlaps")
 public class OverlapsType extends BinarySpatialOpType implements Overlaps {

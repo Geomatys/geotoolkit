@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetCoverageRequest extends Request {
     String getCoverage();

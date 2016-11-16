@@ -41,7 +41,7 @@ import org.geotoolkit.gml.xml.AbstractCurve;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCurveType")

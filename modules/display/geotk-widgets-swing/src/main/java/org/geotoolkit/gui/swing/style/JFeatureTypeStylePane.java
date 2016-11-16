@@ -38,7 +38,7 @@ import org.opengis.style.SemanticType;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureTypeStyle>{
     

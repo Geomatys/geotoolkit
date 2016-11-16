@@ -32,7 +32,7 @@ import org.opengis.feature.PropertyType;
 /**
  * Abstract JUnit test for vector process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 

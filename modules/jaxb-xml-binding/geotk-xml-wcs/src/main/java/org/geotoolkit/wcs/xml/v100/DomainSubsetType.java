@@ -53,7 +53,7 @@ import org.geotoolkit.wcs.xml.DomainSubset;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainSubsetType", propOrder = {

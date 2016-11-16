@@ -22,7 +22,7 @@ import org.geotoolkit.data.wfs.AbstractDelete;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Delete110 extends AbstractDelete{
 

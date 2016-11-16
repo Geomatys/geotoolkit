@@ -24,7 +24,7 @@ import java.sql.SQLException;
  * present in there.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public final class SchemaExistsException extends SQLException {
 

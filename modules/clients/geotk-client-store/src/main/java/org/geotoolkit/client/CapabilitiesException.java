@@ -23,7 +23,7 @@ import org.geotoolkit.util.Exceptions;
  * be parsed.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CapabilitiesException extends Exception{
     

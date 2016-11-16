@@ -60,7 +60,7 @@ import org.opengis.feature.FeatureType;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class VisitorTest extends org.geotoolkit.test.TestBase {
 

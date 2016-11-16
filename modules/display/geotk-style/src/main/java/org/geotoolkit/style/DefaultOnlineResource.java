@@ -28,7 +28,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  * Immutable implementation of Types Online Resource.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOnlineResource implements OnlineResource{
 

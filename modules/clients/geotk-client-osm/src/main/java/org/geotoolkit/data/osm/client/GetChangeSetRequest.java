@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get a changeset informations.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetChangeSetRequest extends Request{
 

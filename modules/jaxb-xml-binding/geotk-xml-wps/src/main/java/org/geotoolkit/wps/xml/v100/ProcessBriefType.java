@@ -51,7 +51,7 @@ import org.geotoolkit.wps.xml.ProcessSummary;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessBriefType", propOrder = {

@@ -40,7 +40,7 @@ import org.opengis.style.TextSymbolizer;
  * Style visitor that returns a set of all colors used by this style.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ListingColorVisitor extends DefaultStyleVisitor{
 

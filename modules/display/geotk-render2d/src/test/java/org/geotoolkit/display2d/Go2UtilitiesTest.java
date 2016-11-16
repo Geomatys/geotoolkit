@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
 

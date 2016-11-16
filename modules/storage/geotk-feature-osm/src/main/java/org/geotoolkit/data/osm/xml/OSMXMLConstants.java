@@ -21,7 +21,7 @@ package org.geotoolkit.data.osm.xml;
  * Open Street Map xml tags and attributs.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMXMLConstants {
 

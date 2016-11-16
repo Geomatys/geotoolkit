@@ -34,7 +34,7 @@ import org.opengis.geometry.Envelope;
  * OSM Changeset object.
  *
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ChangeSet {
 

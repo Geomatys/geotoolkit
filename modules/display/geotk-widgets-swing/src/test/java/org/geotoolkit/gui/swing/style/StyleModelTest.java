@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class StyleModelTest extends org.geotoolkit.test.TestBase {
 

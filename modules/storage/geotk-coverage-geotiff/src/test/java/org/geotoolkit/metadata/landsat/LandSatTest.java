@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * Test reading and accessing landsat nodes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LandSatTest extends org.geotoolkit.test.TestBase {
 

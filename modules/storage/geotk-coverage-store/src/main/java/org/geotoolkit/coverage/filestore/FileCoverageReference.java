@@ -40,7 +40,7 @@ import org.opengis.util.GenericName;
  * Reference to a coverage stored in a single file.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileCoverageReference extends RecyclingCoverageReference{
 

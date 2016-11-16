@@ -33,7 +33,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
  * Utility classes to compare label candidates.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LabelingUtilities {
 

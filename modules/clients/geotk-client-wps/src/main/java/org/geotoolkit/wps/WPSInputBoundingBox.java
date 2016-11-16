@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Bounding box Input for WPS
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class WPSInputBoundingBox extends AbstractWPSInput{
     

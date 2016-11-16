@@ -30,7 +30,7 @@ import java.util.List;
  * Polygon creation handler
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class PolygonCreationDelegate extends AbstractFeatureEditionDelegate {
 

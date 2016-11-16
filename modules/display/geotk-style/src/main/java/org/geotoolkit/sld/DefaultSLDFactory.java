@@ -41,7 +41,7 @@ import org.opengis.util.GenericName;
  * Default immplementation of SLD Factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
 

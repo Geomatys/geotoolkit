@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  * {@linkplain MathTransform transformation} to a
  * {@linkplain CoordinateSequence coordinate sequence}.
  *
- * @module pending
+ * @module
  * @since 2.1
  * @version $Id$
  * @author Andrea Aime

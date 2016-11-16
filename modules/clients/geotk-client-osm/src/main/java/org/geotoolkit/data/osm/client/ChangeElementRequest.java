@@ -24,7 +24,7 @@ import org.opengis.feature.Feature;
  * Request to create a new element.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ChangeElementRequest extends Request{
 

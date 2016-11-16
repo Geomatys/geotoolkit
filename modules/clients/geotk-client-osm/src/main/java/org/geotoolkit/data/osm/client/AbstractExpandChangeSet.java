@@ -38,7 +38,7 @@ import org.opengis.geometry.Envelope;
  * parameters for an expand change set request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractExpandChangeSet extends AbstractRequest implements ExpandChangeSetRequest{
 

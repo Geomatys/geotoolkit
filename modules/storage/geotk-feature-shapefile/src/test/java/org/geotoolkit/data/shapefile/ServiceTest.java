@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @version $Id$
  * @author ian
- * @module pending
+ * @module
  */
 public class ServiceTest extends AbstractTestCaseSupport {
 

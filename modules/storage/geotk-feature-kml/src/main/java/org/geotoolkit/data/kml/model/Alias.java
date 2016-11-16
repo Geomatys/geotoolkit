@@ -43,7 +43,7 @@ import java.net.URI;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface Alias extends AbstractObject {
 

@@ -42,7 +42,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @author SYS Technologies
  * @author dillard
  * @version $Revision $
- * @module pending
+ * @module
  */
 @XmlType(name="PolyHedralSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {

@@ -34,7 +34,7 @@ import static org.geotoolkit.index.quadtree.AbstractNode.*;
  * on the geometry will be needed.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
 

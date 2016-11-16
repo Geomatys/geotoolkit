@@ -54,7 +54,7 @@ import org.opengis.filter.Filter;
  * Test that symbolizer renderer are properly called and only once.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 

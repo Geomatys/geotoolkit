@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.AnyInteracts;
  * Immutable temporal "anyInteracts" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultAnyInteracts extends AbstractTemporalFilter implements AnyInteracts{
 

@@ -28,7 +28,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * Used to clean PropertyEqualsTo on identifiers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FIDFixVisitor extends DuplicatingFilterVisitor{
 

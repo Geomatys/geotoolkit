@@ -66,7 +66,7 @@ import org.opengis.util.GenericName;
  * Random styles are generated for feature layers.
  *
  * @author Johann Sorel (Geoamtys)
- * @module pending
+ * @module
  */
 public class JLayerChooser extends javax.swing.JPanel {
 

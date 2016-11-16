@@ -27,7 +27,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * a specific number and order of expressions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FunctionFactory {
 

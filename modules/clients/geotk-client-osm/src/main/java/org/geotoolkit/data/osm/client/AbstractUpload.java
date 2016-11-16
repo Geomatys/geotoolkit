@@ -35,7 +35,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLWriter;
  * parameters for a upload request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractUpload extends AbstractRequest implements UploadRequest{
 

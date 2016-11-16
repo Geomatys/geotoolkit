@@ -23,7 +23,7 @@ import org.opengis.sld.UserLayer;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableUserLayer extends MutableLayer, UserLayer{
 

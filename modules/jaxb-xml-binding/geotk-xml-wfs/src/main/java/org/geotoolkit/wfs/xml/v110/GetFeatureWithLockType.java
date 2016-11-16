@@ -57,7 +57,7 @@ import org.geotoolkit.wfs.xml.ResultTypeType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureWithLockType", propOrder = {

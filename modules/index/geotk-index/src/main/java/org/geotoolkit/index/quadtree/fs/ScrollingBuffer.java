@@ -29,7 +29,7 @@ import java.nio.channels.FileChannel;
  * buffer reading file contents with a minimum of 8kb per access
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ScrollingBuffer {
 

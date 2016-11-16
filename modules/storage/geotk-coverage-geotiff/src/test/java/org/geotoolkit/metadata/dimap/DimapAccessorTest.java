@@ -68,7 +68,7 @@ import static org.junit.Assert.*;
  * Test extracting informations from dimap document in properly done.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DimapAccessorTest extends org.geotoolkit.test.TestBase {
 

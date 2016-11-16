@@ -32,7 +32,7 @@ import org.opengis.geometry.Envelope;
  * - Span
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GridMosaic {
     

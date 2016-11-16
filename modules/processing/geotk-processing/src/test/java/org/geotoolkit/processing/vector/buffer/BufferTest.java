@@ -57,7 +57,8 @@ import org.opengis.feature.PropertyType;
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class BufferTest extends AbstractProcessTest {
 

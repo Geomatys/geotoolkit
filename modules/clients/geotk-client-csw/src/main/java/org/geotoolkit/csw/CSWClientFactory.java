@@ -40,7 +40,7 @@ import org.opengis.parameter.*;
  * CSW Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class CSWClientFactory extends AbstractClientFactory{
 

@@ -29,7 +29,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * Re-project a FeatureCollection into a target CoordinateReferenceSystem
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class ReprojectProcess extends AbstractProcess {
 

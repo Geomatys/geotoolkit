@@ -80,7 +80,7 @@ import org.apache.sis.geometry.Envelopes;
  * Graphic for pyramidal coverage layers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
 

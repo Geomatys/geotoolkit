@@ -27,7 +27,7 @@ import org.geotoolkit.util.StringUtilities;
  * Abstract describe coverage request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeCoverage extends AbstractRequest implements DescribeCoverageRequest {
 

@@ -39,7 +39,7 @@ import org.geotoolkit.csw.xml.AbstractRecord;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRecordType")

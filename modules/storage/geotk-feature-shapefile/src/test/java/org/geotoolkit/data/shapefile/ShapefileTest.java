@@ -50,7 +50,7 @@ import org.opengis.feature.FeatureType;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
- * @module pending
+ * @module
  */
 public class ShapefileTest extends AbstractTestCaseSupport {
 

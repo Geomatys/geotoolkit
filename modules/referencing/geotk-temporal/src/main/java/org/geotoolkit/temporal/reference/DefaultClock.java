@@ -40,7 +40,7 @@ import org.opengis.temporal.CalendarEra;
  * of a temporal position within a specific day. 
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * 
  * @version 4.0
  * @since   4.0

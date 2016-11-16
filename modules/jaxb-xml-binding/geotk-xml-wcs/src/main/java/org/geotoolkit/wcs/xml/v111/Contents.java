@@ -51,7 +51,7 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -51,7 +51,7 @@ import org.geotoolkit.swe.xml.v100.QuantityType;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

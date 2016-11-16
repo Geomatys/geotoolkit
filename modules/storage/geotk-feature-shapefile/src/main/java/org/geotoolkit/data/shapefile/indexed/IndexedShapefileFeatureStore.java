@@ -85,7 +85,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Tommaso Nolli
  * @author jesse eichar
  *
- * @module pending
+ * @module
  */
 public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 

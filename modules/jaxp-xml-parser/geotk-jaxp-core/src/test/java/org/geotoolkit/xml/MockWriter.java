@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MockWriter extends StaxStreamWriter{
 

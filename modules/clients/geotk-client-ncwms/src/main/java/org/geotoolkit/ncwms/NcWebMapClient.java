@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Generates ncWMS requests objects.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcWebMapClient extends WebMapClient{
 

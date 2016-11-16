@@ -56,7 +56,7 @@ import static java.lang.Double.isNaN;
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Rémi Marechal (Geomatys)
- * @module pending
+ * @module
  *
  * @since 3.20 (derived from 1.1)
  */

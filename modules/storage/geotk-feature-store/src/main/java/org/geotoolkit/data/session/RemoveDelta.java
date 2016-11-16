@@ -34,7 +34,7 @@ import org.opengis.geometry.Envelope;
  * Delta which remove a collection of features.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  * @todo make this concurrent
  */
 public class RemoveDelta extends AbstractDelta{

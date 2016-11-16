@@ -38,7 +38,7 @@ import org.apache.sis.util.logging.Logging;
  * the geometry envelope.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LooseBBox extends DefaultBBox{
 

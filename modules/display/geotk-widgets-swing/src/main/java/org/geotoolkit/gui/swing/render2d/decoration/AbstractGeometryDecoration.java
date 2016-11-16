@@ -48,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * Abstract Decoration to easely render objective CRS geometries.
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public abstract class AbstractGeometryDecoration extends JPanel implements MapDecoration{
 

@@ -26,7 +26,7 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultFlyTo extends DefaultAbstractObject implements FlyTo {
 

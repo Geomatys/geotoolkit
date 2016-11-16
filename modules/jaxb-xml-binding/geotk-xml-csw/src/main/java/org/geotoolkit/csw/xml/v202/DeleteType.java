@@ -52,7 +52,7 @@ import org.geotoolkit.csw.xml.Delete;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteType", propOrder = {

@@ -29,7 +29,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * Apply a mask to a FeatureCollection FeatureType.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class RetypeProcess extends AbstractProcess {
 

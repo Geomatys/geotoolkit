@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 /**
  * Junit test for StringToUnitConverter
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class UnitConverterTest extends org.geotoolkit.test.TestBase {
 

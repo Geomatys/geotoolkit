@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 /**
  * Junit test for StringToCRSConverter
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CRSConverterTest extends org.geotoolkit.test.TestBase {
 

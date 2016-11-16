@@ -31,7 +31,7 @@ import org.opengis.geometry.Envelope;
  * Java2D graphic object displaying a north arrow.
  *
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 

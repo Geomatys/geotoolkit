@@ -142,7 +142,7 @@ import org.opengis.feature.PropertyType;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class GO2Utilities {
 

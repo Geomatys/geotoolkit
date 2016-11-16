@@ -23,7 +23,7 @@ import org.opengis.filter.identity.Identifier;
  * Simple Identifier for osm features.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class SimpleId implements Identifier{
 

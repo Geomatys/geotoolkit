@@ -43,7 +43,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultClockTest extends org.geotoolkit.test.TestBase {
 

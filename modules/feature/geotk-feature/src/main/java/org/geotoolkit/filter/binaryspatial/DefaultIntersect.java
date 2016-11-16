@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "intersect" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,Expression> implements Intersects {
 

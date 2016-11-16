@@ -27,7 +27,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default immutable implementation of SLD library. thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultSLDLibrary implements SLDLibrary{
 

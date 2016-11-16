@@ -31,7 +31,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Clip process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class ClipFeatureCollection extends WrapFeatureCollection {
 

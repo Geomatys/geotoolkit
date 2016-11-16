@@ -35,7 +35,7 @@ import org.opengis.style.Description;
  * Abstract implementation of a MapItem.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractMapItem implements MapItem {
 

@@ -54,7 +54,7 @@ import org.opengis.feature.Feature;
  * Renderer for Pattern symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPatternSymbolizer>{
 

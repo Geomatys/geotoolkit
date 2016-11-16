@@ -46,7 +46,7 @@ import static org.apache.sis.test.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SamplingXMLBindingTest extends org.geotoolkit.test.TestBase {
 

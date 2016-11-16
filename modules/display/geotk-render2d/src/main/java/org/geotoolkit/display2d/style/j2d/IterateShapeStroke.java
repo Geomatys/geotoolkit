@@ -29,7 +29,7 @@ import java.awt.geom.Rectangle2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IterateShapeStroke implements Stroke {
 

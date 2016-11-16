@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * to configure the ImageIO writer, like compression or progressive.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OutputDef {
 

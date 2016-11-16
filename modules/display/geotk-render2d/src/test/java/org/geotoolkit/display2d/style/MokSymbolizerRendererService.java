@@ -28,7 +28,7 @@ import org.geotoolkit.map.MapLayer;
  * Test that symbolizer renderer are properly called and only once.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MokSymbolizerRendererService extends AbstractSymbolizerRendererService<MokSymbolizer, CachedMokSymbolizer>{
 

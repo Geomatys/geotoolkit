@@ -29,7 +29,7 @@ import org.opengis.filter.expression.Literal;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class OtherFunctionFactory extends AbstractFunctionFactory{
 

@@ -27,7 +27,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMapLayer> implements FeatureStoreListener {
 

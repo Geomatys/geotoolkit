@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
  * parameters for a GetLegendGraphic request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetLegend extends AbstractRequest implements GetLegendRequest{
     /**

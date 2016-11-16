@@ -26,7 +26,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  * Immutable "add" expression.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultAdd extends AbstractBinaryExpression<Expression,Expression> implements Add{
 

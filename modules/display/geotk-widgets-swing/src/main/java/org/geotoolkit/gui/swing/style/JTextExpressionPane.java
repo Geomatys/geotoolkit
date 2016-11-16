@@ -35,7 +35,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JTextExpressionPane extends StyleElementEditor<Expression>{
 

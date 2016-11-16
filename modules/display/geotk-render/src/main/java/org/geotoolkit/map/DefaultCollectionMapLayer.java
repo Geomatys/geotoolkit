@@ -30,7 +30,7 @@ import org.opengis.geometry.Envelope;
  * Default implementation of a collection MapLayer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMapLayer {
 

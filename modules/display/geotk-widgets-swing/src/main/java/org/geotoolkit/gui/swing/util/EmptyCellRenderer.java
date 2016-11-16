@@ -27,7 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * Can be used to fill space in table to avoid displaying the default toString text.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class EmptyCellRenderer extends DefaultTableCellRenderer{
 

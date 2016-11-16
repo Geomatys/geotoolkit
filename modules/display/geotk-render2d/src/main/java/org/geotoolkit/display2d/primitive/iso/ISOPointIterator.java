@@ -24,7 +24,7 @@ import org.opengis.geometry.primitive.Point;
  * Simple and efficient path iterator for ISO Point.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ISOPointIterator extends ISOGeometryIterator<Point> {
         

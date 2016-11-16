@@ -30,7 +30,7 @@ import org.apache.sis.xml.MarshallerPool;
  * For testing purpose.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MockWebMapClient extends NcWebMapClient{
 

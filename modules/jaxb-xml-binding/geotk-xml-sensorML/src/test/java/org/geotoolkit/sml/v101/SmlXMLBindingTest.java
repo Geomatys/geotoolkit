@@ -87,7 +87,7 @@ import org.w3c.dom.Node;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 

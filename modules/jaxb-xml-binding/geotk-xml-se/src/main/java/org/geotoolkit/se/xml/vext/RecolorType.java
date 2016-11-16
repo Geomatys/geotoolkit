@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.se.xml.v110.FunctionType;
 
 /**
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RecolorType", propOrder = {

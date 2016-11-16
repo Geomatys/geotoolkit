@@ -27,7 +27,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * @author johann sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class PanAction extends AbstractMapAction {
 

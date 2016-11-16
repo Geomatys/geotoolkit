@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default implementation of the MapLayer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements FeatureMapLayer {
 

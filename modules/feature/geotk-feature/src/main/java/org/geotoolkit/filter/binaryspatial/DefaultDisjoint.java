@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "disjoint" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Expression> implements Disjoint {
 

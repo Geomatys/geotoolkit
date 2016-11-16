@@ -33,7 +33,7 @@ import org.apache.sis.util.ComparisonMode;
  * 
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleDataRecord")

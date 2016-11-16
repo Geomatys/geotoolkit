@@ -23,7 +23,7 @@ import org.geotoolkit.internal.sql.table.Entry;
 /**
  *
  * @author legal
- * @module pending
+ * @module
  */
 public class OfferingProcedureType implements Entry{
 

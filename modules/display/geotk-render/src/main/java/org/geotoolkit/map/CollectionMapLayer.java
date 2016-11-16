@@ -29,7 +29,7 @@ import org.opengis.filter.Id;
  * the userMap or the SRID must be handle by the SRIDGenerator.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CollectionMapLayer extends MapLayer{
 

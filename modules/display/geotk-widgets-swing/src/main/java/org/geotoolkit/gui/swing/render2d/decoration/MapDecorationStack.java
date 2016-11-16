@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MapDecorationStack extends AbstractMapDecoration implements MapDecoration{
 

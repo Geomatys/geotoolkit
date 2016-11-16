@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.BegunBy;
  * Immutable temporal "begunBy" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultBegunBy extends AbstractTemporalFilter implements BegunBy{
 

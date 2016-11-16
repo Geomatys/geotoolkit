@@ -82,7 +82,7 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DCPTypeType", propOrder = {

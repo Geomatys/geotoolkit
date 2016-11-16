@@ -51,7 +51,7 @@ import org.apache.sis.util.collection.WeakHashSet;
  * - is not concurrent
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PDFFixGraphics2D extends Graphics2D {
 

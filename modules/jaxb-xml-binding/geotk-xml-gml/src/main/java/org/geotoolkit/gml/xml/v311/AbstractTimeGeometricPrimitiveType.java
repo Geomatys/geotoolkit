@@ -49,7 +49,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeGeometricPrimitiveType")

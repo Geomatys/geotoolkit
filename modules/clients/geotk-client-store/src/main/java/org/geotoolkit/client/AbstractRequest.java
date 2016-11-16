@@ -43,7 +43,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractRequest implements Request {
     /**

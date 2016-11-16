@@ -40,7 +40,7 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatiallyExtensiveSamplingFeatureType")

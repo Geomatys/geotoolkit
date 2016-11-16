@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 /**
  *
  * @author eclesia
- * @module pending
+ * @module
  */
 public abstract class AbstractTreePopupItem extends JMenuItem implements TreePopupItem{
 

@@ -29,7 +29,7 @@ import org.opengis.util.FactoryException;
  * Implementation of ObjectConverter to convert a String into a CoordinateReferenceSystem.
  * The String will be a CRS code like :"EPSG:3395" or "EPSG:4326"
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToCRSConverter extends SimpleConverter<String, CoordinateReferenceSystem> {
 

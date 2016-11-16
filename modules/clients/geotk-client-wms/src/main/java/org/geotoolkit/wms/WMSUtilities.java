@@ -62,7 +62,7 @@ import org.apache.sis.measure.Units;
  * Convinient WMS methods.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class WMSUtilities {
 

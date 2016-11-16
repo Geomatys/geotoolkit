@@ -21,7 +21,7 @@ import java.util.List;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractProcess extends AbstractSML {
 

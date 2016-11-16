@@ -29,7 +29,7 @@ import org.geotoolkit.filter.binding.Bindings;
  * Immutable property name expression.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPropertyName extends AbstractExpression implements PropertyName{
 

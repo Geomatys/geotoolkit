@@ -44,7 +44,7 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OnlineResourceType")

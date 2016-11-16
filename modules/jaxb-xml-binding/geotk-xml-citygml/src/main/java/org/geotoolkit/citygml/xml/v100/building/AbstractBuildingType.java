@@ -90,7 +90,7 @@ import org.geotoolkit.citygml.xml.v100.AbstractSiteType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractBuildingType", propOrder = {

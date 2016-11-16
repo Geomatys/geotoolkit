@@ -19,7 +19,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys).
- * @module pending
+ * @module
  */
 public interface DataArray extends AbstractDataArray {
 

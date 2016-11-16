@@ -40,7 +40,7 @@ import org.geotoolkit.test.TestData;
  * need this directory, then use the {@link org.geotoolkit.test.TestData}
  * class provided in the {@code org.geotoolkit.resources} directory.
  *
- * @module pending
+ * @module
  * @since 2.2
  * @version $Id$
  * @author Martin Desruisseaux

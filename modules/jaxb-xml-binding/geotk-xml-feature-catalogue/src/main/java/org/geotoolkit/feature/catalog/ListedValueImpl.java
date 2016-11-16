@@ -50,7 +50,7 @@ import org.opengis.feature.catalog.ListedValue;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_ListedValue_Type", propOrder = {

@@ -38,7 +38,7 @@ import org.opengis.observation.Measure;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MeasureType")

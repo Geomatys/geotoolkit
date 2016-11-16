@@ -21,7 +21,7 @@ package org.geotoolkit.swe.xml;
  * Textual encoding of data.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface TextBlock extends AbstractEncoding {
     

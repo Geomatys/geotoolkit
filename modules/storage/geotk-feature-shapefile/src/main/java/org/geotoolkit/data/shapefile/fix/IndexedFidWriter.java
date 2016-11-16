@@ -37,7 +37,7 @@ import org.geotoolkit.data.dbf.Closeable;
  * The Writer writes out the fid and record number of features to the fid index file.
  * 
  * @author Jesse
- * @module pending
+ * @module
  */
 public class IndexedFidWriter implements Closeable {
     public static final int HEADER_SIZE = 13;

@@ -19,7 +19,7 @@ package org.geotoolkit.ncwms;
 /**
  * Interface for GetTimeseries requests.
  * @author Fabien BERNARD (Geomatys)
- * @module pending
+ * @module
  */
 public interface NcGetTimeseriesRequest extends NcGetFeatureInfoRequest {
 

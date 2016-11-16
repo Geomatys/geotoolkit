@@ -33,7 +33,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class SessionRollbackAction extends AbstractAction implements FeatureStoreListener {
 

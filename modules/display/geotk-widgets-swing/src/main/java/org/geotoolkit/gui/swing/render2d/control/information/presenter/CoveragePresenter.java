@@ -36,7 +36,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CoveragePresenter extends AbstractInformationPresenter{
 

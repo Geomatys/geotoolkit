@@ -31,7 +31,7 @@ import org.opengis.util.GenericName;
  * Map representation of a WMTS layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSMapLayer extends DefaultCoverageMapLayer {
 

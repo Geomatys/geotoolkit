@@ -26,7 +26,7 @@ import net.sf.jasperreports.engine.JRRenderable;
  * A JRRenderable which paint nothing.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class EmptyRenderable implements JRRenderable{
 

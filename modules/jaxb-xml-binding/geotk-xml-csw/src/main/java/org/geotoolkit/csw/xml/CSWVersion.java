@@ -21,7 +21,7 @@ package org.geotoolkit.csw.xml;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public enum CSWVersion {
     v200("2.0.0"),

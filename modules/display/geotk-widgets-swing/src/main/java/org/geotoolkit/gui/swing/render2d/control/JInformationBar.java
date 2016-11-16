@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.render2d.control.information.MeasureLenghtAction
  * Information bar
  *
  * @author johann sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JInformationBar extends AbstractMapControlBar{
 

@@ -23,7 +23,7 @@ import static org.geotoolkit.processing.math.atan2.Atan2Descriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class Atan2Process extends AbstractProcess{
 

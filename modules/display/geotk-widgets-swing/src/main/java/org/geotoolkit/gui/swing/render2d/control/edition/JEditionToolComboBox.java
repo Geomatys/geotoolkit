@@ -29,7 +29,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JEditionToolComboBox extends JList {
 

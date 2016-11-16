@@ -46,7 +46,8 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of clip with a geometry process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class ClipGeometryTest extends AbstractProcessTest {
 

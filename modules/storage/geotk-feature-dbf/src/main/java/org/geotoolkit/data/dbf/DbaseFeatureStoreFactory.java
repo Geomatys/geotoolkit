@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Todo : handle feature writer.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 

@@ -22,7 +22,7 @@ import java.util.logging.Level;
  * Monitor stopping rendering on first error. but does not fail.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StopOnErrorMonitor extends FailOnErrorMonitor {
 

@@ -51,7 +51,7 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -28,7 +28,7 @@ import static org.opengis.annotation.Specification.*;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 //@UML(identifier="FC_RoleType", specification=ISO_19110)
 public class RoleType extends CodeList<RoleType> {

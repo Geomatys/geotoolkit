@@ -110,7 +110,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Samuel Andrés
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 

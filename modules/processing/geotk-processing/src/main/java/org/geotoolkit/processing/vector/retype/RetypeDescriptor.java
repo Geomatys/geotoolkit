@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class RetypeDescriptor extends VectorDescriptor {
 

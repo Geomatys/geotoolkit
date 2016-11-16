@@ -25,7 +25,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
 
 /**
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

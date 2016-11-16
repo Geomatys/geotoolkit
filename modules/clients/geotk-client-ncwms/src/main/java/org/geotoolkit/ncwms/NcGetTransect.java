@@ -26,7 +26,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetTransect request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetTransect extends AbstractRequest implements NcGetTransectRequest {
 

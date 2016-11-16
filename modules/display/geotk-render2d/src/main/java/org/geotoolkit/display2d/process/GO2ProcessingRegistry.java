@@ -31,7 +31,7 @@ import org.opengis.metadata.identification.Identification;
  *
  * @author Johann sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GO2ProcessingRegistry extends AbstractProcessingRegistry {
 

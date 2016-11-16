@@ -48,7 +48,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @author Johann Sorel (Geomatys)
  * @version 2.9
- * @module pending
+ * @module
  */
 public class ISOGeometryJ2D implements Shape, Cloneable {
 

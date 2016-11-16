@@ -34,7 +34,7 @@ import org.opengis.observation.ObservationCollection;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationCollection")

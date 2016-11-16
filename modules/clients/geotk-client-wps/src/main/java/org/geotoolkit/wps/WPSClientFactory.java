@@ -36,7 +36,7 @@ import org.opengis.parameter.*;
  * WPS Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class WPSClientFactory extends AbstractClientFactory{
 

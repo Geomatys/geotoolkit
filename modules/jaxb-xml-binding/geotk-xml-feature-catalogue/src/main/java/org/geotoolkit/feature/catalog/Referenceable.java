@@ -20,7 +20,7 @@ package org.geotoolkit.feature.catalog;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 public interface Referenceable {
     

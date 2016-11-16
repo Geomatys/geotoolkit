@@ -25,7 +25,7 @@ import org.opengis.geometry.Envelope;
  * Request to get changesets.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetChangeSetsRequest extends Request{
 

@@ -40,7 +40,7 @@ import org.geotoolkit.map.MapContext;
  * Jasper Report renderer used to render legend graphic.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LegendRenderer implements JRRenderable{
 

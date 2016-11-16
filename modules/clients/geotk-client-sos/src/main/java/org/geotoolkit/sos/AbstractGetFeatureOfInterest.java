@@ -35,7 +35,7 @@ import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
  * parameters for a GetFeatureOfInterest request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest implements GetFeatureOfInterestRequest {
 

@@ -34,7 +34,7 @@ import javax.management.remote.JMXServiceURL;
  * This class only avoid the boil plate code of creating the connection.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultJMXClient {
 

@@ -46,7 +46,7 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PhenomenonPropertyType", propOrder = {

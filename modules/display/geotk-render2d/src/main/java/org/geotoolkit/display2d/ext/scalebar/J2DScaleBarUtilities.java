@@ -54,7 +54,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Martin Desruisseaux
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DScaleBarUtilities {
 

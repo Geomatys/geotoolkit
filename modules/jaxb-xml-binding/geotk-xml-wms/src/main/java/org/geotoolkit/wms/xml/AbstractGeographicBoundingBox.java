@@ -21,7 +21,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractGeographicBoundingBox extends GeographicBoundingBox {
 

@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * Coordinates are ordered in an array like [x1,y1, ... xN, yN, z1, ... zN]
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
 

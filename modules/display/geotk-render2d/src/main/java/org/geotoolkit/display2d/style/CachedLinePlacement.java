@@ -24,7 +24,7 @@ import org.opengis.style.LinePlacement;
  * Cached line placement.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
 

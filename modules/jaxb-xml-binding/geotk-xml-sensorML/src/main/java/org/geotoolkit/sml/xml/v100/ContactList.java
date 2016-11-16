@@ -62,7 +62,7 @@ import org.geotoolkit.sml.xml.AbstractContactListMember;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -23,7 +23,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface Vector extends AbstractVector {
 

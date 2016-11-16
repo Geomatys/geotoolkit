@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
  * GoogleMaps coverage reference.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GoogleCoverageReference extends AbstractPyramidalCoverageReference {
 

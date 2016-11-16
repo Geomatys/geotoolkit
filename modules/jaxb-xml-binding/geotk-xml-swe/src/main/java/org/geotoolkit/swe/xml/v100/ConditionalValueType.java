@@ -68,7 +68,7 @@ import org.geotoolkit.swe.xml.Vector;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConditionalValueType", propOrder = {

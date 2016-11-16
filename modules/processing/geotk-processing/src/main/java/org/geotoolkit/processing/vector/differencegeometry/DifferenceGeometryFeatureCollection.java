@@ -28,7 +28,7 @@ import org.opengis.feature.FeatureType;
 /**
  * FeatureCollection for DifferenceGeometry process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
 

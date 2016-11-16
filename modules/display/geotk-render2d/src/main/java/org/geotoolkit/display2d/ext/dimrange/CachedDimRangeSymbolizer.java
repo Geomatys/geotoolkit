@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolizer>{
 

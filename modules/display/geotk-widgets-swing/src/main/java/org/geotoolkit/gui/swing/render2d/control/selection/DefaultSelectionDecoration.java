@@ -35,7 +35,7 @@ import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
  * Selection decoration
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class DefaultSelectionDecoration extends JComponent implements MapDecoration{
 

@@ -21,7 +21,7 @@ package org.geotoolkit.processing.coverage.kriging;
  *
  * @version 3.20
  * @author Martin Desruisseaux
- * @module pending
+ * @module
  *
  * @since 3.20
  */

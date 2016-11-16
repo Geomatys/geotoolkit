@@ -93,7 +93,7 @@ import org.opengis.feature.FeatureType;
  * WFS Datastore, This implementation is read only.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WFSFeatureStore extends AbstractFeatureStore{
 

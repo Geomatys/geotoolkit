@@ -34,7 +34,7 @@ import org.opengis.filter.expression.Expression;
  * Test calculated expression attribut.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ExpressionOperationTest {
 

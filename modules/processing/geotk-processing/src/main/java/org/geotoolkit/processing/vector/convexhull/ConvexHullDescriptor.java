@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *     <li>GEOMETRY_OUT "geometry_out" convex hull Geometry</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
 

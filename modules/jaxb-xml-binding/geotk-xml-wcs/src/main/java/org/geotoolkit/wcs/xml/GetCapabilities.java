@@ -21,7 +21,7 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetCapabilities extends AbstractGetCapabilities {
 

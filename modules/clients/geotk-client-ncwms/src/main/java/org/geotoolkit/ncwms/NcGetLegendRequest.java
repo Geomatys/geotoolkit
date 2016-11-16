@@ -23,7 +23,7 @@ import org.geotoolkit.wms.GetLegendRequest;
  * Interface for GetLegendGraphic requests
  * 
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public interface NcGetLegendRequest extends NcWMSCommonRequest, GetLegendRequest  {
     

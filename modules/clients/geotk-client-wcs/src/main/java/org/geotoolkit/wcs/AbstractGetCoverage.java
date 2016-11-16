@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
  * Abstract get coverage request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCoverage extends AbstractRequest implements GetCoverageRequest {
     /**

@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSMosaic implements GridMosaic{
     

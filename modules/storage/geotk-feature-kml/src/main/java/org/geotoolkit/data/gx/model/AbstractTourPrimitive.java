@@ -32,7 +32,7 @@ import org.geotoolkit.data.kml.model.AbstractObject;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface AbstractTourPrimitive extends AbstractObject {
 

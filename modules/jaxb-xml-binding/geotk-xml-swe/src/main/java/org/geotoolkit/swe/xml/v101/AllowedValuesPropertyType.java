@@ -45,7 +45,7 @@ import org.geotoolkit.swe.xml.AbstractAllowedValuesProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedValuesPropertyType", propOrder = {

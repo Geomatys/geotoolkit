@@ -41,7 +41,7 @@ import org.geotoolkit.storage.DataStores;
  * WCS server, used to aquiere capabilites and requests objects.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class WebCoverageClient extends AbstractClient {
 

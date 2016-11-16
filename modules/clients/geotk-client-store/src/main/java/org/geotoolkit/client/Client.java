@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Client {
 

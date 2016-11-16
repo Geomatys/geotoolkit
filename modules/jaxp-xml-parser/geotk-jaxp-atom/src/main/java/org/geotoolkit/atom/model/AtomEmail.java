@@ -28,7 +28,7 @@ package org.geotoolkit.atom.model;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface AtomEmail {
 

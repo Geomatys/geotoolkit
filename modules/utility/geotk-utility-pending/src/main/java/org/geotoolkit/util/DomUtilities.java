@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  * Utils method for dom parsing.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DomUtilities extends Static {
 

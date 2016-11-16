@@ -46,7 +46,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WGS84BoundingBoxType")

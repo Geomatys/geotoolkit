@@ -47,7 +47,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of ConvexHull process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class ConvexHullTest extends AbstractProcessTest {
 

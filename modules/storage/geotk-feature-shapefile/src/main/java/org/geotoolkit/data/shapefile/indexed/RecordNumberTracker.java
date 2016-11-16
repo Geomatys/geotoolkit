@@ -23,7 +23,7 @@ import java.io.IOException;
  * retrieved by the IndexedFidReader
  * 
  * @author Jesse
- * @module pending
+ * @module
  * @since 1.1.0
  */
 public interface RecordNumberTracker {

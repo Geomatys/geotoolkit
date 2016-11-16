@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "valueEnumBaseType", propOrder = {

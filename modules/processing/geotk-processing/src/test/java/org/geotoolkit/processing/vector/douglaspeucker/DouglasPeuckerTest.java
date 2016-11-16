@@ -49,7 +49,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class DouglasPeuckerTest extends AbstractProcessTest {
 

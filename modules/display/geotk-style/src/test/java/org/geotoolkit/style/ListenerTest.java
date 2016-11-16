@@ -40,7 +40,7 @@ import org.opengis.util.GenericName;
  * Test different style object events.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ListenerTest extends org.geotoolkit.test.TestBase {
 

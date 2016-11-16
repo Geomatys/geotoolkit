@@ -41,7 +41,7 @@ import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiplexedStreamFormatType")

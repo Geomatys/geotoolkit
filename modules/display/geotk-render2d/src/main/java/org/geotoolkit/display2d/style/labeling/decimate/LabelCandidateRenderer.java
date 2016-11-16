@@ -24,7 +24,7 @@ import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface LabelCandidateRenderer<T extends LabelDescriptor> {
 

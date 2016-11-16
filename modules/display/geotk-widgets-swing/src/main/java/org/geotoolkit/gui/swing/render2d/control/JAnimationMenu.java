@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public abstract class JAnimationMenu extends JMenu{
 

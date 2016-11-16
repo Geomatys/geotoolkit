@@ -95,7 +95,7 @@ import static org.geotoolkit.xal.xml.XalConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class XalReader extends StaxStreamReader{
 

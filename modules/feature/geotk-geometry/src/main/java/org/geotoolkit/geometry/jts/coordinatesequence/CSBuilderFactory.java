@@ -25,7 +25,7 @@ package org.geotoolkit.geometry.jts.coordinatesequence;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
- * @module pending
+ * @module
  */
 public class CSBuilderFactory {
 	private static Class defaultBuilderClass;

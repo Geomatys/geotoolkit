@@ -22,7 +22,7 @@ import org.geotoolkit.processing.coverage.AbstractProcessTest;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class CopyCoverageStoreProcessTest extends AbstractProcessTest {
 

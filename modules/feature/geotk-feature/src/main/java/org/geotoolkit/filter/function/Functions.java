@@ -34,7 +34,7 @@ import org.opengis.filter.expression.Literal;
  * Utility class to create functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Functions {
 

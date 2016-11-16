@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * The request shall be correctly configured before calling the getURL method.
  * 
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public interface GetCapabilitiesRequest extends Request {
     

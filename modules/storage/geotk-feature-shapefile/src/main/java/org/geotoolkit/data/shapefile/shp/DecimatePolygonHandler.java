@@ -32,7 +32,7 @@ import org.apache.sis.storage.DataStoreException;
  * Decimation while reading
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DecimatePolygonHandler extends PolygonHandler {
 

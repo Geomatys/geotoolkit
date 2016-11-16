@@ -20,7 +20,7 @@ package org.geotoolkit.wms.xml;
  *
  * @author Olivier Terral (Geomatys)
  *
- * @module pending
+ * @module
  */
 public interface AbstractLegendURL extends AbstractURL {
     

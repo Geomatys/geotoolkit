@@ -48,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * declared CoverageStoreFactories.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JCoverageStoreChooser extends javax.swing.JPanel {
 

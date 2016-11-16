@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class SolidColorPainter implements BackgroundPainter{
 

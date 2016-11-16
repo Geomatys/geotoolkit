@@ -29,7 +29,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  *
  * @deprecated Deprecated together with the {@code BoundingBox} interface.
  */

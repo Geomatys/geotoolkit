@@ -47,7 +47,7 @@ import org.apache.sis.util.Utilities;
  * {@linkplain org.opengis.geometry.coordinate.Envelope envelope} interface
  * for interoperability with Types.
  *
- * @module pending
+ * @module
  * @since 2.2
  * @version $Id$
  * @author Jody Garnett

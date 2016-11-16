@@ -25,7 +25,7 @@ import org.opengis.filter.capability.ScalarCapabilities;
  * Immutable scalar capabilities.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultScalarCapabilities implements ScalarCapabilities {
 

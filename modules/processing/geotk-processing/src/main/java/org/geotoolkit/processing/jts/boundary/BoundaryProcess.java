@@ -34,7 +34,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Compute boundary geometry of given geometry.
  * The returned boundary keep the CRS of the given geometry.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class BoundaryProcess extends AbstractProcess {
 

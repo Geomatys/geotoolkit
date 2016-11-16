@@ -20,7 +20,7 @@ package org.geotoolkit.wcs.xml;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public enum WCSVersion {
     v100("1.0.0"),

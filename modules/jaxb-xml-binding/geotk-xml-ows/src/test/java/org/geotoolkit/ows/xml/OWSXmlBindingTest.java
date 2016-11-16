@@ -44,7 +44,7 @@ import static org.apache.sis.test.Assert.*;
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
 

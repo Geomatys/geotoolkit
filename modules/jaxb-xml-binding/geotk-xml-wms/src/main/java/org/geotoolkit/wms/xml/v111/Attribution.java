@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

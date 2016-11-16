@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Coverage store relying on an xml file.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 

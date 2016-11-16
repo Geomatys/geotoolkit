@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PointCandidate extends Candidate<PointLabelDescriptor> {
 

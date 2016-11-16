@@ -26,7 +26,7 @@ import org.junit.Test;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
- * @module pending
+ * @module
  */
 public class PrjFileTest extends AbstractTestCaseSupport {
 

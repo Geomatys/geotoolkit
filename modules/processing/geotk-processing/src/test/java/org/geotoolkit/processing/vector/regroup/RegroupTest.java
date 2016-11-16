@@ -50,7 +50,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of Regroup process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class RegroupTest extends AbstractProcessTest {
 

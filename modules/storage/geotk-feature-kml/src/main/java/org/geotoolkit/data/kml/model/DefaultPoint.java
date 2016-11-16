@@ -25,7 +25,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements Point {
 

@@ -37,7 +37,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Compute a buffer around a geometry.
  * The buffer geometry keep the input geometry CRS.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class BufferProcess extends AbstractProcess {
 

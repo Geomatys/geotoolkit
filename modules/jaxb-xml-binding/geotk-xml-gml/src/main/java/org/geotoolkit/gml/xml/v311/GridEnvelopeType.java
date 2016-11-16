@@ -47,7 +47,7 @@ import org.opengis.coverage.grid.GridEnvelope;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridEnvelopeType", propOrder = {

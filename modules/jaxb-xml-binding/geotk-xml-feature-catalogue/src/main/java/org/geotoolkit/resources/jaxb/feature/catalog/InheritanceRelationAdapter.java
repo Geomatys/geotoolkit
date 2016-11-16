@@ -27,7 +27,7 @@ import org.opengis.feature.catalog.InheritanceRelation;
  * JAXB adapter in order to map implementing class with the Types inheritanceRelation. See
  * package documentation for more information about JAXB and inheritanceRelation.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

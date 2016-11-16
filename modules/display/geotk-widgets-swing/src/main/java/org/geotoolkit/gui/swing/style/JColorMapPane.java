@@ -150,7 +150,7 @@ import org.opengis.feature.AttributeType;
  * Style editor which handle Raster colormap edition.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JColorMapPane extends StyleElementEditor<ColorMap> implements PropertyPane, LayerListener{
 

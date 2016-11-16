@@ -51,7 +51,7 @@ import static org.geotoolkit.csw.xml.CswXmlFactory.*;
  * @author Cédric Briançon (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)
  * @author Giuseppe La Scaleia (IMAA)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetRecords extends AbstractCSWRequest implements GetRecordsRequest {
 

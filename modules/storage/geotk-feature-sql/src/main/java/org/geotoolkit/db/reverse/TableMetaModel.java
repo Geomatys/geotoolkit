@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
  * Description of a database table.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TableMetaModel {
 

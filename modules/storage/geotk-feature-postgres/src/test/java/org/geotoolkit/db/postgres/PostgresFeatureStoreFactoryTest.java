@@ -26,7 +26,7 @@ import org.junit.Test;
  * Factory tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PostgresFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
 

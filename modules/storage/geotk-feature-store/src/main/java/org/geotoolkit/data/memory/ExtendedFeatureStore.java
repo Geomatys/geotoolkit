@@ -53,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * like any other types.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ExtendedFeatureStore extends AbstractFeatureStore{
 

@@ -30,7 +30,7 @@ import static java.util.Calendar.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TemporalUtilitiesTest extends org.geotoolkit.test.TestBase implements Test {
 

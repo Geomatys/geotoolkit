@@ -36,7 +36,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable implementation of Types text symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSymbolizer{
 

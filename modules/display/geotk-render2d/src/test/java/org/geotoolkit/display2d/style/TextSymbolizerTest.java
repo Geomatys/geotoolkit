@@ -65,7 +65,7 @@ import org.opengis.feature.FeatureType;
  * Test that text symbolizer are properly rendered.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 

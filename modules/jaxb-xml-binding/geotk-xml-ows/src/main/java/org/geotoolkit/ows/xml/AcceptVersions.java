@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AcceptVersions {
 

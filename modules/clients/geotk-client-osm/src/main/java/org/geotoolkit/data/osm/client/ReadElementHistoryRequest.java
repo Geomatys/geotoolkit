@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get element history.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadElementHistoryRequest extends Request{
 

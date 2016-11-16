@@ -25,7 +25,7 @@ import org.apache.sis.util.collection.BackingStoreException;
  * be useable in standard collection classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FeatureStoreRuntimeException extends BackingStoreException{
 

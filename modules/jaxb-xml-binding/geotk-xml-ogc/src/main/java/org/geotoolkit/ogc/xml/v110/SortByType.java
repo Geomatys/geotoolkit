@@ -45,7 +45,7 @@ import org.geotoolkit.ogc.xml.SortBy;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SortByType", propOrder = {

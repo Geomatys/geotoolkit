@@ -25,7 +25,7 @@ import org.opengis.feature.Feature;
  * Request to update a changeset.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface UpdateChangeSetRequest extends Request{
 

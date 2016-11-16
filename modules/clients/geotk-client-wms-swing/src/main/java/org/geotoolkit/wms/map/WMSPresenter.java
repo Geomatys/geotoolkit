@@ -75,7 +75,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSPresenter extends AbstractInformationPresenter{
 

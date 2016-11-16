@@ -40,7 +40,7 @@ import org.opengis.style.SelectedChannelType;
  * Channel selection panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> implements PropertyChangeListener {
 

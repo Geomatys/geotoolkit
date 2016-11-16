@@ -69,7 +69,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Chris Holmes, TOPP
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 

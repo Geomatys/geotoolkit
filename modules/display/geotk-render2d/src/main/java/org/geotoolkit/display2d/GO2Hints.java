@@ -28,7 +28,7 @@ import org.geotoolkit.map.ElevationModel;
  * Set of hints used by the Go2 Renderer
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class GO2Hints extends Static {
 

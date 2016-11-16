@@ -22,7 +22,7 @@ import org.geotoolkit.gml.xml.AbstractFeature;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractSML extends AbstractFeature {
 

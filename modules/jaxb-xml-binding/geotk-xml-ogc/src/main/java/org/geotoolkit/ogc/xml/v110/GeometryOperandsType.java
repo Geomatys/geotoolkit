@@ -46,7 +46,7 @@ import org.opengis.filter.capability.GeometryOperand;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryOperandsType", propOrder = {

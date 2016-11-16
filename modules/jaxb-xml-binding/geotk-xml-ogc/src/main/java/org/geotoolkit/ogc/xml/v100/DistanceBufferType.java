@@ -45,7 +45,7 @@ import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceBufferType", propOrder = {

@@ -23,7 +23,7 @@ import java.awt.Rectangle;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface NavigatorRenderer {
 

@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
  * Canvas based on a VolatileImage.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DCanvasVolatile extends J2DCanvas{
 

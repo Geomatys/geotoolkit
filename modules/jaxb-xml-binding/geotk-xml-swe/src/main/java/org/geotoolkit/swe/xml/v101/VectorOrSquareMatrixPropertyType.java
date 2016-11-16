@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.AbstractVectorOrSquareMatrixProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VectorOrSquareMatrixPropertyType", propOrder = {

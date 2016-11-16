@@ -100,7 +100,7 @@ import org.apache.sis.util.logging.Logging;
  * Simple Frame that can be used to quickly display a map or for debug purpose.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JMap2DFrame extends javax.swing.JFrame {
 

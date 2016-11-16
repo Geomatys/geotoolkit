@@ -29,7 +29,7 @@ import org.geotoolkit.util.Utilities;
  * An identification of a CRS object. 
  * The first use of the IdentifierType for an object, if any, is normally the primary identification code,
  * and any others are aliases.
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IdentifierType", propOrder = {

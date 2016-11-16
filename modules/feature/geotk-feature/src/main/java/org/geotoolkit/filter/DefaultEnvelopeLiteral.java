@@ -31,7 +31,7 @@ import org.opengis.geometry.Envelope;
  * Special care for envelopes wich are changed in JTS polygons.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultEnvelopeLiteral extends DefaultLiteral<Geometry> {
 

@@ -23,7 +23,7 @@ import static org.geotoolkit.processing.math.round.RoundDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class RoundProcess extends AbstractProcess {
 

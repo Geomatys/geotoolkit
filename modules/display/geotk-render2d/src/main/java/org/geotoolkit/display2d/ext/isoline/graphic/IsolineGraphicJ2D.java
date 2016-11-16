@@ -62,7 +62,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Sorel Johann (Geomatys)
- * @module pending
+ * @module
  */
 public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 

@@ -25,7 +25,7 @@ import java.net.URLConnection;
  * Wrap several ClientSecurity objects.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ClientSecurityStack implements ClientSecurity{
 

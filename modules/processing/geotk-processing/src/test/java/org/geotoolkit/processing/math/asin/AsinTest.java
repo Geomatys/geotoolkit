@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Arc sinus process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AsinTest extends AbstractProcessTest {
 

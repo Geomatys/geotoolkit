@@ -39,7 +39,7 @@ import org.xml.sax.InputSource;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
  public class WMTSBindingUtilities {
 

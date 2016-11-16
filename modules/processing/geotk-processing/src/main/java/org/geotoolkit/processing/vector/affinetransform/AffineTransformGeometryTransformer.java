@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * Implementation of GeometryTransformer which apply an AffineTransformation to a Geometry
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AffineTransformGeometryTransformer extends AbstractGeometryTransformer{
 

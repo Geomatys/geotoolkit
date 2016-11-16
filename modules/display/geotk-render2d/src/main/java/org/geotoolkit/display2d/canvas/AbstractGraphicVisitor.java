@@ -62,7 +62,7 @@ import org.apache.sis.measure.Units;
  * {@link org.opengis.coverage.grid.GridCoverage}.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 

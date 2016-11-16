@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author jamesm
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ShapefileHeader {
 

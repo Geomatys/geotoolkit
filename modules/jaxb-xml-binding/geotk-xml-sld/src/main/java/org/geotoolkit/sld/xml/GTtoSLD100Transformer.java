@@ -38,7 +38,7 @@ import org.opengis.style.Style;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVisitor {
 

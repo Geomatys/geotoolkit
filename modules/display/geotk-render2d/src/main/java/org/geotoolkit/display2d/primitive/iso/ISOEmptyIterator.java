@@ -23,7 +23,7 @@ import org.opengis.geometry.Geometry;
  * An iterator for empty geometries
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ISOEmptyIterator extends ISOGeometryIterator<Geometry> {
 

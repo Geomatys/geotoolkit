@@ -26,7 +26,7 @@ import java.util.Collection;
 
 /**
  * Symbol handler for an external symbolizers.
- * @module pending
+ * @module
  */
 public interface ExternalGraphicFactory {
 

@@ -43,7 +43,7 @@ import org.opengis.display.primitive.Graphic;
  * Information handler.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class InformationHandler extends AbstractNavigationHandler {
 

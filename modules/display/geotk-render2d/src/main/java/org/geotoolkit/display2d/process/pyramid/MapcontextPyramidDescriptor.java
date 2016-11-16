@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Description of a mapcontext pyramid process.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor{
 

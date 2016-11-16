@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ScaleDecimatorTest extends org.geotoolkit.test.TestBase {
 

@@ -23,7 +23,7 @@ import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetChangeSets060 extends AbstractGetChangeSets{
 

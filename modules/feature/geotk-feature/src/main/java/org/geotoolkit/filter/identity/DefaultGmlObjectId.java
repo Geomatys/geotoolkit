@@ -28,7 +28,7 @@ import org.opengis.feature.Feature;
  * Immutable gml object id.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultGmlObjectId implements GmlObjectId,Serializable {
 

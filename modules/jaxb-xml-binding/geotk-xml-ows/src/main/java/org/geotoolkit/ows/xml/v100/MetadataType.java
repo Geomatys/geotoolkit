@@ -52,7 +52,7 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetadataType", propOrder = {

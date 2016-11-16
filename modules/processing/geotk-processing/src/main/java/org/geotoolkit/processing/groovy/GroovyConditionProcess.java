@@ -32,7 +32,7 @@ import org.geotoolkit.process.ProcessException;
  * This process allows you to run a condition written in groovy and retrieve the result.
  *
  * @author Christophe Mourette (Geomatys)
- * @module pending
+ * @module
  */
 public class GroovyConditionProcess extends AbstractProcess {
 

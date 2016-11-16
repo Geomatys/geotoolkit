@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.TContains;
  * Immutable temporal "tcontains" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTContains extends AbstractTemporalFilter implements TContains{
 

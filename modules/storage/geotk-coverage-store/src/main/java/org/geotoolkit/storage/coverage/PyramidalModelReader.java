@@ -81,7 +81,7 @@ import org.apache.sis.util.Utilities;
  * GridCoverage reader on top of a Pyramidal object.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PyramidalModelReader extends GridCoverageReader{
 

@@ -51,7 +51,7 @@ import org.apache.sis.util.Version;
  * 
  * @author Guilhem Legal
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"coverage"})

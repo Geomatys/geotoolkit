@@ -32,7 +32,7 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Geomatys)
  * @param <E> Expression or subclass
  * @param <F> Expression or subclass
- * @module pending
+ * @module
  */
 public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression> 
                                                 implements BinaryComparisonOperator,Serializable{

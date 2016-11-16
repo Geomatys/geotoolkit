@@ -29,7 +29,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types contrast enhancement.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultContrastEnhancement implements ContrastEnhancement{
 

@@ -26,7 +26,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class GradiantColorPainter implements BackgroundPainter{
 

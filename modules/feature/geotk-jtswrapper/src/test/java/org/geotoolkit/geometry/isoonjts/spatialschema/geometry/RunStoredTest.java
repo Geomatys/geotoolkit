@@ -31,7 +31,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
- * @module pending
+ * @module
  */
 public class RunStoredTest extends TestCase {
     private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");

@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "contains" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultContains extends AbstractBinarySpatialOperator<Expression,Expression> implements Contains {
 

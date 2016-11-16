@@ -23,7 +23,7 @@ import org.geotoolkit.util.Exceptions;
 /**
  * Thrown when an error relating to the shapefile occurs.
  * 
- * @module pending
+ * @module
  */
 public class DbaseFileException extends DataStoreException {
 

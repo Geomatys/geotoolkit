@@ -42,7 +42,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  * FeatureStore for a folder of CSV files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 

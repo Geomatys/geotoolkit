@@ -26,7 +26,7 @@ import org.opengis.filter.PropertyIsEqualTo;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsEqualTo")

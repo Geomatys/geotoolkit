@@ -30,7 +30,7 @@ import org.jdesktop.swingx.JXTitledSeparator;
  * popup control separator, use for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public abstract class TitledSeparatorItem extends JXTitledSeparator implements TreePopupItem{
        

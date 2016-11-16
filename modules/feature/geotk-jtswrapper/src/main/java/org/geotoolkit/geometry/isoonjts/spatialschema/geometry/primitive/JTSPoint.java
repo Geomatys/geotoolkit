@@ -53,7 +53,7 @@ import org.opengis.geometry.complex.Composite;
  * @author crossley
  * @author cdillard
  * @version $Revision $
- * @module pending
+ * @module
  */
 @XmlType(name="PointType", namespace="http://www.opengis.net/gml")
 public class JTSPoint extends AbstractJTSGeometry implements Point {

@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractInformationPresenter implements InformationPresenter{
 

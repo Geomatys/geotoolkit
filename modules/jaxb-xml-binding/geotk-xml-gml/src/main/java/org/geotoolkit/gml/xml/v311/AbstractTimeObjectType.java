@@ -43,7 +43,7 @@ import org.geotoolkit.gml.xml.AbstractGML;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeObjectType")

@@ -28,7 +28,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default imumutable coverage constraint, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultCoverageConstraint implements CoverageConstraint{
 

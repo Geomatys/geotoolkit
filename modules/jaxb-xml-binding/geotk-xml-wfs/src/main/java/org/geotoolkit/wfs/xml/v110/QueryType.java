@@ -64,7 +64,7 @@ import org.geotoolkit.wfs.xml.Query;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType", propOrder = {

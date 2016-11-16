@@ -20,7 +20,7 @@ package org.geotoolkit.wms.xml;
  * Abstract main class for capabilities service part.
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractService {
     

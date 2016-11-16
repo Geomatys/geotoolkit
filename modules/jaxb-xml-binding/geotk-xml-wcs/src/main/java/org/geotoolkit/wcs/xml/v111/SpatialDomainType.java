@@ -55,7 +55,7 @@ import org.geotoolkit.wcs.xml.SpatialDomain;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialDomainType", propOrder = {

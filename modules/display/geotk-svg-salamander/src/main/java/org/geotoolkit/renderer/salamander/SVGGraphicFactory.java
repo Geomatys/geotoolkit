@@ -35,7 +35,7 @@ import org.geotoolkit.renderer.style.ExternalGraphicFactory;
  * Factory capable to read SVG files using Salamander library.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SVGGraphicFactory implements ExternalGraphicFactory {
 

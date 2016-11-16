@@ -68,7 +68,7 @@ import static org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescript
  * Missing tiles in the mosaic will be generated.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MapcontextPyramidProcess extends AbstractProcess {
 

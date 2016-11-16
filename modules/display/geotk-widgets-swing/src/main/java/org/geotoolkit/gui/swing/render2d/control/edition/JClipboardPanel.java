@@ -57,7 +57,7 @@ import org.apache.sis.util.Utilities;
  * Allow to copy geometry from clipboards
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JClipboardPanel extends javax.swing.JPanel {
 

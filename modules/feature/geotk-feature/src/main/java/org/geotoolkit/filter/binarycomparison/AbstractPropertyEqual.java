@@ -30,7 +30,7 @@ import org.apache.sis.util.logging.Logging;
  * duplicaton the same test in both classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOperator<Expression,Expression> {
 

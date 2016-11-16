@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * pyramid.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface PyramidalCoverageReference extends CoverageReference{
     

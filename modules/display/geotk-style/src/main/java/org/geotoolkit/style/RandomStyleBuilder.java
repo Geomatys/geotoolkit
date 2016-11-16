@@ -58,7 +58,7 @@ import org.apache.sis.measure.Units;
  * This class will provide you simple et good looking styles for your maps.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class RandomStyleBuilder extends Factory {
 

@@ -55,7 +55,7 @@ import org.w3c.dom.Node;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RecordPropertyType", propOrder = {

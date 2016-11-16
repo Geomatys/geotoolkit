@@ -33,7 +33,7 @@ import org.apache.sis.measure.Units;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JUOMPane extends StyleElementEditor<Unit>{
 

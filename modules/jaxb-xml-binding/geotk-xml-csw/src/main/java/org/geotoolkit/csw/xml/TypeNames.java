@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 /**
  *
  * @author Guilhem legal (Geomatys)
- * @module pending
+ * @module
  */
 public class TypeNames {
 

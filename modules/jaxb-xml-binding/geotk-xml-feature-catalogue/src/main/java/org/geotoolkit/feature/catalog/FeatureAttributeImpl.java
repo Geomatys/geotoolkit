@@ -60,7 +60,7 @@ import org.opengis.util.TypeName;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

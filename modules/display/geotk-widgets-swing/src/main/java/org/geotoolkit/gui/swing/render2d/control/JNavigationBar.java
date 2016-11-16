@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.RefreshAction;
  * ZoomIn/Out, pan, selection, refresh ...
  *
  * @author johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JNavigationBar extends AbstractMapControlBar{
 

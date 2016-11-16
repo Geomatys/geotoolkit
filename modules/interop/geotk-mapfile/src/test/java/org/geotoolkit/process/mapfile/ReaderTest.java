@@ -34,7 +34,7 @@ import org.opengis.feature.Feature;
  * Test mapfile reader
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ReaderTest extends org.geotoolkit.test.TestBase {
 

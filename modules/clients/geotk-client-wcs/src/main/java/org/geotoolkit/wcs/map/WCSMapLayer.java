@@ -34,7 +34,7 @@ import org.opengis.geometry.Envelope;
  * Map representation of a WCS layer.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class WCSMapLayer extends AbstractMapLayer {
 

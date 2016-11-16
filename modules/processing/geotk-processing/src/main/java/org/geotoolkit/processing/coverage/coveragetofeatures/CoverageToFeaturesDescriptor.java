@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection simplified</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class CoverageToFeaturesDescriptor extends AbstractProcessDescriptor{
 

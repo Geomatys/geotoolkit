@@ -29,7 +29,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  * Listener for MapContext. This listener is for PropertyChanges or layer list change.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ContextListener extends ItemListener {
         

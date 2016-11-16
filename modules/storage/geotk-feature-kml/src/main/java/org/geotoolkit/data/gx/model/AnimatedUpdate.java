@@ -38,7 +38,7 @@ import org.geotoolkit.data.kml.model.Update;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface AnimatedUpdate extends AbstractTourPrimitive {
 

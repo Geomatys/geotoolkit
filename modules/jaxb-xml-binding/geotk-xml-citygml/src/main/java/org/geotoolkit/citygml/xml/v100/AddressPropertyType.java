@@ -45,7 +45,7 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressPropertyType")

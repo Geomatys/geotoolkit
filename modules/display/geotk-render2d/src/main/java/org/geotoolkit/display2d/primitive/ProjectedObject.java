@@ -26,7 +26,7 @@ import org.opengis.filter.expression.Expression;
  * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ProjectedObject<T> extends Graphic {
 

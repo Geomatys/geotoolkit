@@ -29,7 +29,7 @@ import static org.geotoolkit.index.quadtree.fs.FileSystemIndexStore.*;
  * 
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileSystemNode extends AbstractNode {
 

@@ -45,7 +45,7 @@ import org.jaxen.util.SingletonList;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class JaxenFeatureXPath implements XPath {
 

@@ -32,7 +32,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types Mark.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultMark implements Mark{
 

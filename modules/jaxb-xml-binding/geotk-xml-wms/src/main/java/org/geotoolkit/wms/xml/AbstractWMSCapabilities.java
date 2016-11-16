@@ -23,7 +23,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
  * Abstract main class which describe a capabilities document  for all version of WMS.
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
 

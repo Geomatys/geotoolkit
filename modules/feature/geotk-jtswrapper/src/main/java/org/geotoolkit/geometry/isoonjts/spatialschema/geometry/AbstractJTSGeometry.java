@@ -41,7 +41,7 @@ import org.opengis.geometry.primitive.Ring;
  * Base class for our JTS-based implementation of the various ISO 19107 geometry classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class AbstractJTSGeometry implements Geometry, Serializable, Cloneable, JTSGeometry {

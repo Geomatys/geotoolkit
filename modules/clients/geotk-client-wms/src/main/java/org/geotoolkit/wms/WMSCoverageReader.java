@@ -54,7 +54,7 @@ import org.apache.sis.util.Utilities;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSCoverageReader extends GridCoverageReader{
 

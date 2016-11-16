@@ -50,7 +50,7 @@ import org.opengis.filter.spatial.BBOX;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {

@@ -34,7 +34,7 @@ import org.opengis.util.GenericName;
 /**
  * FeatureCollection for Merge process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class MergeFeatureCollection extends WrapFeatureCollection {
 
@@ -97,7 +97,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     /**
      * Implementation of FeatureIterator which iterate from many FeatureCollection
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     private class MergeFeatureIterator implements FeatureIterator {
 

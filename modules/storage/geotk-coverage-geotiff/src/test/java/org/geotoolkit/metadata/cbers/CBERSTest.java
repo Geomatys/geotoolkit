@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Test read of CBERS xml nodes.
  *
  * @author Alexis Manin (Geomatys)
- * @module pending
+ * @module
  */
 public class CBERSTest extends org.geotoolkit.test.TestBase {
 

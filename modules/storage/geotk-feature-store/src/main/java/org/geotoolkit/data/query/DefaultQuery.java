@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default query implementation.
  *
  * @author Chris Holmes
- * @module pending
+ * @module
  */
 class DefaultQuery implements Query {
 

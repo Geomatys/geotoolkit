@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSCMapLayer extends WMSMapLayer{
     

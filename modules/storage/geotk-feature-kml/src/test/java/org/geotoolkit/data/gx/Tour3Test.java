@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class Tour3Test extends org.geotoolkit.test.TestBase {
 

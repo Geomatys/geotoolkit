@@ -25,7 +25,7 @@ import org.geotoolkit.data.osm.model.OSMModelConstants;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ChangeElement060 extends AbstractChangeElement{
 

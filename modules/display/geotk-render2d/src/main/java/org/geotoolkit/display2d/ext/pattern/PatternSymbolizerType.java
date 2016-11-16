@@ -55,7 +55,7 @@ import org.geotoolkit.se.xml.vext.RangeType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PatternSymbolizerType", propOrder = {

@@ -33,7 +33,7 @@ import org.geotoolkit.sos.xml.v100.GetCapabilities;
  * parameters for a GetCapabilities request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractSOSRequest implements GetCapabilitiesRequest{
 

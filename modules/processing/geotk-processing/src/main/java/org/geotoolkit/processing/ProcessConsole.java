@@ -60,7 +60,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * Runnable class which dynamically run processes available in the registry.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ProcessConsole {
 

@@ -86,7 +86,7 @@ import org.opengis.feature.PropertyType;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 

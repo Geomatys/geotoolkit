@@ -51,7 +51,7 @@ import org.geotoolkit.csw.xml.TransactionSummary;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionSummaryType", propOrder = {

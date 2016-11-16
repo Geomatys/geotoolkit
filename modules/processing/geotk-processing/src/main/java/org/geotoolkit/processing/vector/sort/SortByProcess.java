@@ -29,7 +29,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Sort a FeatureCollection.
  * @see org.geotoolkit.data.memory.GenericSortByFeatureIterator
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class SortByProcess extends AbstractProcess {
 

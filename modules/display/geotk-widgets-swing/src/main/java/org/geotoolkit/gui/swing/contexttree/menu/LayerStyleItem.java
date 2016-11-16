@@ -39,7 +39,7 @@ import org.opengis.style.Rule;
  * Default popup control for editing a given style of the layer.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class LayerStyleItem extends AbstractTreePopupItem {
 

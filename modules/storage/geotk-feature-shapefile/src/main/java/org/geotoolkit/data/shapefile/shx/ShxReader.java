@@ -40,7 +40,7 @@ import org.geotoolkit.data.dbf.Closeable;
  * 
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ShxReader implements Closeable{
 

@@ -36,7 +36,7 @@ import org.geotoolkit.map.MapItem;
  * rendering when distant layers exist in the mapcontext.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MultiThreadedRendering{
 

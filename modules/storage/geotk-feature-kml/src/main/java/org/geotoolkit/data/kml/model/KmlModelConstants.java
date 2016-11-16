@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public final class KmlModelConstants {
 

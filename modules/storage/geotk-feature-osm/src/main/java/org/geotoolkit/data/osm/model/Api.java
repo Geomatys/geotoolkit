@@ -21,7 +21,7 @@ package org.geotoolkit.data.osm.model;
  * Response object in the OSM server capabilities.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Api {
 

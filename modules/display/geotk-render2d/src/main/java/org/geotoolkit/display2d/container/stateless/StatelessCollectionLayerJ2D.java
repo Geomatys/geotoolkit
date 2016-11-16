@@ -69,7 +69,7 @@ import org.opengis.feature.FeatureType;
  * This is a Stateless graphic object.
  *
  * @author johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends StatelessMapLayerJ2D<T>{
 

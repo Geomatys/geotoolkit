@@ -37,7 +37,7 @@ import org.opengis.style.Fill;
  * Fill panel
  * 
  * @author  Johann Sorel
- * @module pending
+ * @module
  */
 public class JFillPane extends StyleElementEditor<Fill>{
 

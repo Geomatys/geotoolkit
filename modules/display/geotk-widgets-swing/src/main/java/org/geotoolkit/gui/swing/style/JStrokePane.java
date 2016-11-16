@@ -43,7 +43,7 @@ import org.opengis.style.Stroke;
  * Stroke panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JStrokePane extends StyleElementEditor<Stroke> {
 

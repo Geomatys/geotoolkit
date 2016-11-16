@@ -28,7 +28,7 @@ import org.apache.sis.util.logging.Logging;
  * Client Security object relying on an IGN token.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TokenClientSecurity extends DefaultClientSecurity{
 

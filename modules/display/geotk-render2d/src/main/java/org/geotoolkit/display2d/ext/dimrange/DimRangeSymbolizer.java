@@ -29,7 +29,7 @@ import org.opengis.style.StyleVisitor;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DimRangeSymbolizer extends AbstractSymbolizer implements ExtensionSymbolizer{
 

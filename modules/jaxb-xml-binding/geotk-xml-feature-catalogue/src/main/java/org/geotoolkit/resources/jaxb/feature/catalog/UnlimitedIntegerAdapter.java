@@ -25,7 +25,7 @@ import org.geotoolkit.util.UnlimitedInteger;
  * JAXB adapter in order to map implementing class with the Types String. See
  * package documentation for more information about JAXB and String.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

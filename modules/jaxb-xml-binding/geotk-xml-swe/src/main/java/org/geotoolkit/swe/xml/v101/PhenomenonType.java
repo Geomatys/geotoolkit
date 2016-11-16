@@ -35,7 +35,7 @@ import org.geotoolkit.swe.xml.Phenomenon;
  * @version $Id: PhenomenonType.java 1286 2009-01-22 15:28:09Z glegal $
  * @author Antoine Hnawia
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Phenomenon")

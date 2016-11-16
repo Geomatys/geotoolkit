@@ -26,7 +26,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a get elements request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractReadElements extends AbstractRequest implements ReadElementsRequest{
 

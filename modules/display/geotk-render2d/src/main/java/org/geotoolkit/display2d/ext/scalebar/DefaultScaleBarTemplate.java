@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
  * Default scalebar template, immutable.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultScaleBarTemplate implements ScaleBarTemplate{
 

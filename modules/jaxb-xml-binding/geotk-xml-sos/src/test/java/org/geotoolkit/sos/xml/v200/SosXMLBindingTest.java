@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SosXMLBindingTest extends org.geotoolkit.test.TestBase {
 

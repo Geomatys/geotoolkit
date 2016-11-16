@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class JNavigatorBand extends JComponent {
 

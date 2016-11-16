@@ -23,7 +23,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultResourceMap extends DefaultAbstractObject implements ResourceMap {
 

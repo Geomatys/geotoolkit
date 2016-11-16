@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class PhotoOverlayTest extends org.geotoolkit.test.TestBase {
 

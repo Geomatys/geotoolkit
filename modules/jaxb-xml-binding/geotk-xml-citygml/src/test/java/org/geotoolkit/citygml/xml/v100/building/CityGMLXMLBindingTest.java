@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class CityGMLXMLBindingTest extends org.geotoolkit.test.TestBase {
 

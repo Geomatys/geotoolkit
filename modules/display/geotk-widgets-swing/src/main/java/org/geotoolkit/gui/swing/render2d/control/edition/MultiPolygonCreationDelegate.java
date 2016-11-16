@@ -31,7 +31,7 @@ import java.util.List;
  * multipolygon creation handler
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate {
 

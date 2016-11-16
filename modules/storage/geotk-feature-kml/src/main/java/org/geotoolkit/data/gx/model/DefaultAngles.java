@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultAngles implements Angles {
 

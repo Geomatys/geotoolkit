@@ -40,7 +40,7 @@ import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometricAggregateType")

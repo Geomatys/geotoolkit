@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
  * WMTS Coverage Reference.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSCoverageReference extends AbstractPyramidalCoverageReference {
 

@@ -28,7 +28,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable "sort by".
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSortBy implements SortBy,Serializable{
 

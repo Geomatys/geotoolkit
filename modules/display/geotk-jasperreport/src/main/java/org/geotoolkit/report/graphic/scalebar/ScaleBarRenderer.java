@@ -45,7 +45,7 @@ import org.apache.sis.measure.Units;
  * Jasper Report renderer used to render scale bar graphic.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ScaleBarRenderer implements JRRenderable{
 

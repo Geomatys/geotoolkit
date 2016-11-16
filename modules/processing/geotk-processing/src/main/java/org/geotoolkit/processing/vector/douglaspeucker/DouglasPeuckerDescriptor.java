@@ -46,7 +46,7 @@ import org.opengis.referencing.IdentifiedObject;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection simplified</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class DouglasPeuckerDescriptor extends VectorDescriptor {
 

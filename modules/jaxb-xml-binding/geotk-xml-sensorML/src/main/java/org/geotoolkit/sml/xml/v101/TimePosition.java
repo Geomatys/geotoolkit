@@ -59,7 +59,7 @@ import org.geotoolkit.swe.xml.v101.TimeType;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

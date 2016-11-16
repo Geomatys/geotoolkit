@@ -23,7 +23,7 @@ import org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType;
  * JAXB adapter in order to map implementing class with the Geotoolkit interface. See
  * package documentation for more information about JAXB and interface.
  *
- * @module pending
+ * @module
  * @author Guilhem Legal
  */
 public class StoredQueryDescriptionAdapter extends XmlAdapter<StoredQueryDescriptionAdapter, StoredQueryDescription> {

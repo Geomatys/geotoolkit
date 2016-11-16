@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * Junit test for StringToMapConverter
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapConverterTest extends org.geotoolkit.test.TestBase {
 

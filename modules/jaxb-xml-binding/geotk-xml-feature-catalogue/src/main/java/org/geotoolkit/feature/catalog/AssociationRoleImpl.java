@@ -60,7 +60,7 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_AssociationRole_Type", propOrder = {

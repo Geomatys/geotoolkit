@@ -40,7 +40,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  * ComboBox displaying the feature layers available in the map.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JLayerComboBox extends JList implements ContextListener{
 

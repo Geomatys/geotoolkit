@@ -30,7 +30,7 @@ import org.opengis.feature.Feature;
 /**
  * Encapsulate FeatureIterator
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class WrapFeatureIterator implements FeatureIterator {
 

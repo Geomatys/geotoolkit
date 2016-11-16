@@ -25,7 +25,7 @@ import org.opengis.feature.FeatureType;
  * Reader that returns FeatureIds in a quick fashion.
  * 
  * @author Tommaso Nolli
- * @module pending
+ * @module
  */
 public class ShapeFIDReader implements FeatureIDReader {
     protected static final String CLOSE_MESG = "Close has already been called on this FIDReader";

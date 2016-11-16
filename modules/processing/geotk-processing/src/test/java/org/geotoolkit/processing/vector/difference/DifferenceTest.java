@@ -46,7 +46,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of clip with a FeatureCollection process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class DifferenceTest extends AbstractProcessTest {
 

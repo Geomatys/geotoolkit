@@ -80,7 +80,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  *
  * @author Guilhem Legal
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -52,7 +52,7 @@ import org.geotoolkit.display.canvas.AbstractCanvas2D;
 /**
  *
  * @author johann sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JClassicNavigationDecoration extends JComponent implements MapDecoration {
 

@@ -49,7 +49,7 @@ import org.opengis.util.FactoryException;
  * Set of converters from JTS Geometry to GML Geometry.
  *
  * @author Quentin Boileau (Geomatys).
- * @module pending
+ * @module
  */
 public final class JTStoGeometry {
 

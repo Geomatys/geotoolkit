@@ -25,7 +25,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DefaultCachedRule {
 

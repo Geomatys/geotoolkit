@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * this ability is needed since JTS geometry only handle a integer id for crs.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class SRIDGenerator {
 

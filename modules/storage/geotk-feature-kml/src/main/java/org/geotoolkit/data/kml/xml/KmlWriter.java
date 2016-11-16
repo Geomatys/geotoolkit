@@ -122,7 +122,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  * This class provides a method to read KML files, version 2.2.
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class KmlWriter extends StaxStreamWriter {
 

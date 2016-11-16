@@ -28,7 +28,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetTile request.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetTile extends AbstractRequest implements GetTileRequest {
     /**

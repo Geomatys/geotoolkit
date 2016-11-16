@@ -53,7 +53,7 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleLiteral", propOrder = {

@@ -54,7 +54,7 @@ import org.geotoolkit.ows.xml.v100.KeywordsType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GMLObjectTypeType", propOrder = {

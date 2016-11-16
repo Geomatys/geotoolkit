@@ -25,7 +25,7 @@ import java.util.logging.Level;
  *
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractNode {
 

@@ -35,7 +35,7 @@ import org.apache.sis.storage.DataStoreException;
  * @author Ian Schneider
  * @author aaime
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MultiLineHandler extends AbstractShapeHandler {
 

@@ -34,7 +34,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default mutable named Style, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultMutableNamedStyle implements MutableNamedStyle{
 

@@ -34,7 +34,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "beyond" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expression> implements Beyond {
 

@@ -55,7 +55,7 @@ import org.apache.sis.util.Utilities;
  * Pyramid store read and write tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.test.TestBase {
 

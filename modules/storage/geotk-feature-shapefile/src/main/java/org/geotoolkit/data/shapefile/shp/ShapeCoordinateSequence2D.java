@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Coordinates are ordered in an array like [x1,y1, ... xN, yN]
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class ShapeCoordinateSequence2D implements CoordinateSequence {
 

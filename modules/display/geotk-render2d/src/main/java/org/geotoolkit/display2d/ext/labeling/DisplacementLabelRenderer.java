@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.style.labeling.decimate.PointLabelCandidateRende
  * overlaping labels and try do displace them to achieve good results.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DisplacementLabelRenderer extends DefaultLabelRenderer{
 

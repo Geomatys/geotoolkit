@@ -36,7 +36,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
 

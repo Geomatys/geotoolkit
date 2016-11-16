@@ -33,7 +33,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types Line symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSymbolizer{
 

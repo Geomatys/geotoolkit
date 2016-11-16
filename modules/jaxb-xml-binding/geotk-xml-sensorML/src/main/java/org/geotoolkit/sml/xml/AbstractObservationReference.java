@@ -20,7 +20,7 @@ package org.geotoolkit.sml.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractObservationReference {
 

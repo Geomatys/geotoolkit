@@ -55,7 +55,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel  (Geomatys)
  * @author Rémi Marechal (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public final class CoverageUtilities {
 

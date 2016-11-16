@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * Create a Collection of features used by the CoverageToFeature process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CoverageToFeatureCollection extends RasterFeatureCollection {
 

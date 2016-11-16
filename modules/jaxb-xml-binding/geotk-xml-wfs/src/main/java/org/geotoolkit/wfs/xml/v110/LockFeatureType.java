@@ -56,7 +56,7 @@ import org.geotoolkit.wfs.xml.LockFeature;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LockFeatureType", propOrder = {

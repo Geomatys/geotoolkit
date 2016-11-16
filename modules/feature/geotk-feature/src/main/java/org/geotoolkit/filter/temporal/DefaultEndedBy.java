@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.EndedBy;
  * Immutable temporal "endedBy" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultEndedBy extends AbstractTemporalFilter implements EndedBy{
 

@@ -31,7 +31,7 @@ import org.opengis.filter.Filter;
 /**
  * Encapsulate FeatureCollection 
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
 
@@ -132,7 +132,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
     /**
      * Implementation of WarpFeatureIterator
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     private class VectorFeatureIterator extends  WrapFeatureIterator {
 

@@ -33,7 +33,7 @@ import javax.swing.table.TableCellRenderer;
  * Cell Editor for Color objects.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ColorCellRenderer extends JComponent implements TableCellRenderer {
     

@@ -31,7 +31,7 @@ import org.opengis.util.InternationalString;
  * Abstract Server factory.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public abstract class AbstractClientFactory extends AbstractDataStoreFactory implements ClientFactory {
 

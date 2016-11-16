@@ -28,7 +28,7 @@ import org.opengis.sld.SLDVisitor;
  * Default immutable inline feature, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultInlineFeature implements InlineFeature{
 

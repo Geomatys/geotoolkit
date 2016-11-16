@@ -33,7 +33,7 @@ import org.apache.sis.util.ComparisonMode;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlSeeAlso({AbstractDataRecordType.class,AbstractDataArrayType.class, TimeType.class, BooleanType.class,
              QuantityRange.class, QuantityType.class, Text.class, Count.class, Category.class, TimeRange.class,

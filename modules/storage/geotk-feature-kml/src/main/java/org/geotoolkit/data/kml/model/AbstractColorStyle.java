@@ -42,7 +42,7 @@ import java.awt.Color;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface AbstractColorStyle extends AbstractSubStyle {
 

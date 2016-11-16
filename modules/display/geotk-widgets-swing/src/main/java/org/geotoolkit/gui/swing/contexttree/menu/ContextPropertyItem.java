@@ -37,7 +37,7 @@ import org.geotoolkit.map.MapContext;
  * Default popup control for property page of MapContext, use for JContextTreePopup
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class ContextPropertyItem extends AbstractTreePopupItem{
 

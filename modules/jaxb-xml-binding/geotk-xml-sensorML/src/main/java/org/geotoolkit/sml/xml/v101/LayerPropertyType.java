@@ -55,7 +55,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerPropertyType", propOrder = {

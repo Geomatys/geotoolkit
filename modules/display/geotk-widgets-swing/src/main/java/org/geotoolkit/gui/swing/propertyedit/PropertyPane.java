@@ -26,7 +26,7 @@ import javax.swing.ImageIcon;
  * property panel interface
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public interface PropertyPane {
 

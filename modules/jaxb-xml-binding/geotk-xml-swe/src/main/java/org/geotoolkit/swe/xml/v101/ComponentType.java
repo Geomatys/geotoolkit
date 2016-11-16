@@ -24,7 +24,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class ComponentType implements Entry{
     

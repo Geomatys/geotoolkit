@@ -64,7 +64,7 @@ import org.opengis.style.TextSymbolizer;
  * Default values used for styles.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  * @Static
  */
 public final class StyleConstants {

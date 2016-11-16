@@ -61,7 +61,7 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RoomType", propOrder = {

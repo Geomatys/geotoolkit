@@ -26,7 +26,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable arithmetic operators.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultArithmeticOperators implements ArithmeticOperators {
 

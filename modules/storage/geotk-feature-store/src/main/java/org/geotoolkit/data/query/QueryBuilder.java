@@ -33,7 +33,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * Query builder, convenient utility class to build queries.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class QueryBuilder {
 

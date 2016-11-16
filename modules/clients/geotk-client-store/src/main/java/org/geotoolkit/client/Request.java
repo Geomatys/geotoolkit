@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface Request {
 

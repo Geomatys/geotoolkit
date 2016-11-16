@@ -38,7 +38,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types raster symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultRasterSymbolizer extends AbstractSymbolizer implements RasterSymbolizer{
 

@@ -39,7 +39,7 @@ import org.opengis.parameter.*;
  * Google Static Map Server factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StaticGoogleClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 

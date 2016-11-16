@@ -41,7 +41,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
  * 
  * @author Guilhem Legal
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

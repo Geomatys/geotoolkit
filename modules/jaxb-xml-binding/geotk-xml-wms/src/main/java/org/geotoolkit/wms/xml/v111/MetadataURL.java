@@ -35,7 +35,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -31,7 +31,7 @@ import java.util.List;
  * multi-line creation handler
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class MultiLineCreationDelegate extends AbstractFeatureEditionDelegate {
 

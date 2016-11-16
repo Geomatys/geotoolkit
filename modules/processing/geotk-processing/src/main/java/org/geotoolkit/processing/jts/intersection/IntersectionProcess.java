@@ -33,7 +33,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
  * The returned point keep the common geometry CRS.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class IntersectionProcess extends AbstractProcess {
 

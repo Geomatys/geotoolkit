@@ -21,7 +21,7 @@ package org.geotoolkit.data.osm.model;
  * The different relation members types from the OSM model.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public enum MemberType {
 	BOUND('B',"bound"),

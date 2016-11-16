@@ -24,7 +24,7 @@ import org.geotoolkit.wms.AbstractGetLegend;
  * Implementation for the GetLegendGraphic request version 1.3.0.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetLegend130 extends AbstractGetLegend {
     /**

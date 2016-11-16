@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSMapLayerTest extends org.geotoolkit.test.TestBase {
 

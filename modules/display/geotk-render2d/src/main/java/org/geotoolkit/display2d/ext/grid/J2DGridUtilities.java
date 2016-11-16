@@ -55,7 +55,7 @@ import org.apache.sis.geometry.Envelopes;
  * Utility class to render grid on J2DCanvas.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DGridUtilities {
 

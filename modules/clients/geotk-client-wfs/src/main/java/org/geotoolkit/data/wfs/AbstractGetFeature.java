@@ -53,7 +53,7 @@ import org.opengis.filter.Filter;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.wfs");

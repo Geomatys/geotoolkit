@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * WMS-C Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class WMSCClientFactory extends AbstractClientFactory implements CoverageStoreFactory {
 

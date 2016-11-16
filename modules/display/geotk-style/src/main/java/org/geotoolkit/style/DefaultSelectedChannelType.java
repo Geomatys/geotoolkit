@@ -27,7 +27,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable implementation of Types SelectedChannelType.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSelectedChannelType implements SelectedChannelType{
 

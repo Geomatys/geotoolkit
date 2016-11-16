@@ -26,7 +26,7 @@ import org.geotoolkit.image.io.XImageIO;
  * Default implementation of a TileReference
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTileReference implements TileReference{
 

@@ -59,7 +59,7 @@ import org.opengis.util.GenericName;
  * Attribut == Property
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class JaxenFeatureNavigator implements Navigator{
 

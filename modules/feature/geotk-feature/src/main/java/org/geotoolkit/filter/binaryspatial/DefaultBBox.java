@@ -57,7 +57,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * Immutable "BBOX" filter.
  *
  * @author Johann Sorel (Geomatys).
- * @module pending
+ * @module
  */
 public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<BoundingBox>> implements BBOX {
 

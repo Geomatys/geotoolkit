@@ -50,7 +50,7 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RecolorFunction extends AbstractExpression implements Function {
 

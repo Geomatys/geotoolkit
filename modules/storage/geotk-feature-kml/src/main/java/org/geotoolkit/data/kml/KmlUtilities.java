@@ -31,7 +31,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  * This class provides utilities for reading and writting KML files.
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class KmlUtilities {
     /**

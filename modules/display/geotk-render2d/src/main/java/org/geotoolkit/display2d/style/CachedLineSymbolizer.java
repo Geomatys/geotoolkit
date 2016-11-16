@@ -25,7 +25,7 @@ import org.opengis.style.LineSymbolizer;
  * Cached line symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
 

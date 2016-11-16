@@ -36,7 +36,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @version 2.9
- * @module pending
+ * @module
  */
 public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shape, Cloneable {
 

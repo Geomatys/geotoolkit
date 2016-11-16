@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Buffer process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class BufferFeatureCollection extends WrapFeatureCollection {
 

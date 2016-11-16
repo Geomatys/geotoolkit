@@ -46,7 +46,7 @@ import org.opengis.temporal.TemporalPrimitive;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimePrimitiveType", propOrder = {

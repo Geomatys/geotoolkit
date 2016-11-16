@@ -26,7 +26,7 @@ import org.opengis.style.Rule;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
 

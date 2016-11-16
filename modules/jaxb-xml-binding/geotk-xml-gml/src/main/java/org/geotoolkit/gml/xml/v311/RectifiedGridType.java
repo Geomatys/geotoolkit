@@ -46,7 +46,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RectifiedGridType", propOrder = {

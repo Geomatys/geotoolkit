@@ -49,7 +49,7 @@ import org.opengis.filter.capability.TemporalOperator;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorType", propOrder = {

@@ -59,7 +59,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  *      <li>band-(0-n) : each bands contained in the cell</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CoverageToFeaturesProcess extends AbstractProcess {
     /**

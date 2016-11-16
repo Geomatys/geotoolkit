@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.OverlappedBy;
  * Immutable temporal "overlappedBy" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOverlappedBy extends AbstractTemporalFilter implements OverlappedBy{
 

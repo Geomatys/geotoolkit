@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  * Implementation for the GetFeatureInfo request version 1.1.1.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeatureInfo111 extends AbstractGetFeatureInfo {
 

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 /**
  * Junit test for StringToFilterConverter
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class FilterConverterTest extends org.geotoolkit.test.TestBase {
 

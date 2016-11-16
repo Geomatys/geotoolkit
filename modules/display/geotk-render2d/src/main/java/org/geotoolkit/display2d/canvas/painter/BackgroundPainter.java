@@ -21,7 +21,7 @@ import org.geotoolkit.display2d.canvas.*;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public interface BackgroundPainter {
 

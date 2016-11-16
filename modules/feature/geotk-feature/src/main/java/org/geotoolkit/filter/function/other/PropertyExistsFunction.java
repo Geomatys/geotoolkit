@@ -29,7 +29,7 @@ import org.opengis.filter.expression.PropertyName;
 
 /**
  * A new function to check if a property exists.
- * @module pending
+ * @module
  */
 public class PropertyExistsFunction extends AbstractFunction {
 

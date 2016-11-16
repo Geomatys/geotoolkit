@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.AbstractEnvelope;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeType", propOrder = {

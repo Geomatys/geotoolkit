@@ -67,7 +67,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
 /**
  *
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometrytoJTS {
 

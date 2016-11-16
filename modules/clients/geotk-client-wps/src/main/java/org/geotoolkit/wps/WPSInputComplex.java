@@ -19,7 +19,7 @@ package org.geotoolkit.wps;
 /**
  * Complex Input for WPS
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class WPSInputComplex extends AbstractWPSInput{
     

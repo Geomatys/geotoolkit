@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @version 3.20
  * @author Martin Desruisseaux
- * @module pending
+ * @module
  *
  * @since 3.20
  */

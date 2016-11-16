@@ -20,7 +20,7 @@ package org.geotoolkit.ows.xml;
 /**
  *
   * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface ExceptionResponse {
 

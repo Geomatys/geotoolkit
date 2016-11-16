@@ -19,7 +19,7 @@ package org.geotoolkit.xml.parameter;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 final class ParameterConstants {
 

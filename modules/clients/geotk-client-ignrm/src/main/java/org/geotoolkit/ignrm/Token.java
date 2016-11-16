@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamException;
  * The token key and value must be added on each request send to the server.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class Token {
     

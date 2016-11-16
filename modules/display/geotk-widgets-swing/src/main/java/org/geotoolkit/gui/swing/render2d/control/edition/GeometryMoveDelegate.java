@@ -37,7 +37,7 @@ import org.opengis.feature.Feature;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
 

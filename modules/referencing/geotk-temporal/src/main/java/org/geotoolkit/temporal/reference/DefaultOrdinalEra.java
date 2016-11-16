@@ -43,7 +43,7 @@ import org.opengis.util.InternationalString;
  * Provides a reference to the ordinal era in which the instant occurs.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * 
  * @version 4.0
  * @since   4.0

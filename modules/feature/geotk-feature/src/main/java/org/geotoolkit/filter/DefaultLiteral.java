@@ -28,7 +28,7 @@ import org.opengis.geometry.Geometry;
  * Immutable generic Literal.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultLiteral<T> extends AbstractExpression implements Literal{
 

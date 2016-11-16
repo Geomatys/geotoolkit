@@ -38,7 +38,7 @@ import org.geotoolkit.security.ClientSecurity;
  * parameters for a transaction request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class AbstractTransaction extends AbstractCSWRequest implements TransactionRequest {
 

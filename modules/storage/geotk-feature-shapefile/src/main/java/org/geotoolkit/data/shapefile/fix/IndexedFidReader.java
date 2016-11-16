@@ -41,7 +41,7 @@ import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
  *
  * @author Jesse
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IndexedFidReader implements FeatureIDReader, Closeable {
     private ReadableByteChannel readChannel;

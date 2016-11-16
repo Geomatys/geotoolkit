@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Utility class for Shapefile spatial indexing
  * 
  * @author Tommaso Nolli
- * @module pending
+ * @module
  */
 public class ShapeFileIndexer {
     private IndexType idxType;

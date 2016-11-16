@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
 

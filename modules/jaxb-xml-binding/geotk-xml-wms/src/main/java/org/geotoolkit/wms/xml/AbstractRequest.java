@@ -20,7 +20,7 @@ package org.geotoolkit.wms.xml;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractRequest {
     

@@ -28,7 +28,7 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRendererService<LineSymbolizer, CachedLineSymbolizer>{
 

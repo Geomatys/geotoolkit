@@ -33,7 +33,7 @@ import org.geotoolkit.sos.xml.v100.DescribeObservationType;
  * parameters for a DescribeObservationType request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeObservationType extends AbstractSOSRequest implements DescribeObservationTypeRequest {
 

@@ -34,7 +34,7 @@ import org.geotoolkit.security.ByThreadAuthenticator;
  * Simplifies manipulation of an edition session on an osm server.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OpenStreetMapSimpleSession {
 

@@ -47,7 +47,7 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralOutputType", propOrder = {

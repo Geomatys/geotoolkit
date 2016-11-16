@@ -29,7 +29,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * Apply an affine transformation to all FeatureCollection geometries
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AffineTransformProcess extends AbstractProcess {
 

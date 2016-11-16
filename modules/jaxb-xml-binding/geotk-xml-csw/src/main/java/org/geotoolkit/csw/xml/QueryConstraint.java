@@ -21,7 +21,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface QueryConstraint {
 

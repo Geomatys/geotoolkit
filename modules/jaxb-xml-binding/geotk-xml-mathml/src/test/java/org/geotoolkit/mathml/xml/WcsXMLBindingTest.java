@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
 

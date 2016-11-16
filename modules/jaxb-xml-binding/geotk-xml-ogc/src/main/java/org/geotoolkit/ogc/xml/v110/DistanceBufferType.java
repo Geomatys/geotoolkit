@@ -63,7 +63,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceBufferType", propOrder = {

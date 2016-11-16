@@ -45,7 +45,7 @@ import org.geotoolkit.storage.DataStores;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class CatalogServicesClient extends AbstractClient {
     /**

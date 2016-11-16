@@ -22,7 +22,7 @@ import org.apache.sis.storage.DataStoreException;
  * Generator of Feature id for datastores.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureIDReader {
 

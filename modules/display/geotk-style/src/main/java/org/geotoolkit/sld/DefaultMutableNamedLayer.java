@@ -45,7 +45,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default mutable named layer, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
 

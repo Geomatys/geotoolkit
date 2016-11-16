@@ -36,7 +36,7 @@ import org.opengis.style.TextSymbolizer;
  * Cached text symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
 

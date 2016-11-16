@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * IGN right management server
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IGNRMClient extends AbstractClient {
             

@@ -41,7 +41,7 @@ import org.opengis.filter.sort.SortBy;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class QueryUtilities {
 

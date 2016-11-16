@@ -25,7 +25,7 @@ import java.util.Collection;
  *
  * @version 3.20
  * @author Martin Desruisseaux
- * @module pending
+ * @module
  *
  * @since 3.20
  */

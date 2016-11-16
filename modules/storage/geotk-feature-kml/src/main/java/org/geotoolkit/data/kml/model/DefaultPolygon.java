@@ -25,7 +25,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implements Polygon {
 

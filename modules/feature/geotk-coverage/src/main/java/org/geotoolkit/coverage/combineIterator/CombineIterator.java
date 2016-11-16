@@ -37,7 +37,7 @@ import org.apache.sis.referencing.CommonCRS;
  * @author Cédric Briançon (Geomatys).
  * @author Johann Sorel    (Geomatys).
  * @author Remi Marechal   (Geomatys).
- * @module pending
+ * @module
  */
 public class CombineIterator implements Iterator<Envelope> {
         private final List<List<Comparable>> values;

@@ -22,7 +22,7 @@ import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 /**
  *
   * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface UomProperty {
 

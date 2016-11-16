@@ -25,7 +25,7 @@ import org.opengis.feature.FeatureType;
 /**
  * FeatureCollection for Nearest process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class NearestFeatureCollection extends WrapFeatureCollection {
 

@@ -55,7 +55,7 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurveyProcedureType", propOrder = {

@@ -26,7 +26,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetMetadata request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetMetadata extends AbstractRequest implements NcGetMetadataRequest {
 

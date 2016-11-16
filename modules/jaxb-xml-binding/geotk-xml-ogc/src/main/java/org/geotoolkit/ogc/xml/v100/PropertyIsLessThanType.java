@@ -24,7 +24,7 @@ import org.opengis.filter.PropertyIsLessThan;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLessThan")

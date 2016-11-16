@@ -32,7 +32,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * JUnit test of lenght process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class LenghtTest extends AbstractProcessTest {
 

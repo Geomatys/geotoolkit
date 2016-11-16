@@ -127,7 +127,7 @@ import static org.geotoolkit.util.DomUtilities.textValueSafe;
  *
  * @author Johann Sorel (Geomatys)
  * @author Christophe Mourette (Geomatys)
- * @module pending
+ * @module
  */
 @SuppressWarnings("restriction")
 public final class DimapAccessor extends Static {

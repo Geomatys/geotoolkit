@@ -70,7 +70,7 @@ import static org.junit.Assert.*;
  * A Test classes testing the different spatial filters.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class LuceneTest extends org.geotoolkit.test.TestBase {
 

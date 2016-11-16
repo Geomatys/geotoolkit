@@ -25,7 +25,7 @@ import org.geotoolkit.util.Cloneable;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Cloneable{
 

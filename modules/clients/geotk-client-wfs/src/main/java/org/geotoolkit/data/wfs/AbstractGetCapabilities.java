@@ -37,7 +37,7 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
  * Abstract get capabilities request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 

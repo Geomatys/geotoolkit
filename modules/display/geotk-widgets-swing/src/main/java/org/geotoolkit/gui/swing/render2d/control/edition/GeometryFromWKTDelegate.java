@@ -41,7 +41,7 @@ import org.opengis.feature.Feature;
  * Geometry wkt edition tool delegate.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
 

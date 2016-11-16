@@ -25,7 +25,7 @@ import java.util.Locale;
  * TODO
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DimapMetadataFormat implements IIOMetadataFormat{
 

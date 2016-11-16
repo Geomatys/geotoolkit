@@ -42,7 +42,7 @@ import org.opengis.feature.Feature;
  * Geometry simplification delegate.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelegate {
 

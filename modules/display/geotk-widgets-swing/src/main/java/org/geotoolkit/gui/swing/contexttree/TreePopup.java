@@ -28,7 +28,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.TitledSeparatorItem;
  * TreePopup item.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 final class TreePopup extends JPopupMenu {
 

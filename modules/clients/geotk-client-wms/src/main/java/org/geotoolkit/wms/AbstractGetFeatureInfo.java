@@ -24,7 +24,7 @@ import org.geotoolkit.util.StringUtilities;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements GetFeatureInfoRequest {
 

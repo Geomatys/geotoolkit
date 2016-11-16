@@ -56,7 +56,7 @@ import static org.geotoolkit.util.Utilities.listNullEquals;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectPositionType", propOrder = {

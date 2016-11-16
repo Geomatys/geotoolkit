@@ -46,7 +46,7 @@ import org.opengis.filter.expression.Expression;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLikeType", propOrder = {

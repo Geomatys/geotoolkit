@@ -40,7 +40,7 @@ import org.opengis.style.PointPlacement;
  * Label placement panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
 

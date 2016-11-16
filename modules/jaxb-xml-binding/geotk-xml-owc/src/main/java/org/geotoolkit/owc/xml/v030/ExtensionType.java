@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensionType", propOrder = {

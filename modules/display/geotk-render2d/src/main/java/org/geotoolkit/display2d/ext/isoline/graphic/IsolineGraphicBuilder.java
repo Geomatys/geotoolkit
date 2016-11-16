@@ -34,7 +34,7 @@ import org.geotoolkit.style.MutableStyle;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 

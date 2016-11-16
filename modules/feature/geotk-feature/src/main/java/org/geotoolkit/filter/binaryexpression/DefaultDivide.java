@@ -26,7 +26,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  * Immutable "divide" expression.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDivide extends AbstractBinaryExpression<Expression,Expression> implements Divide{
 

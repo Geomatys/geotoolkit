@@ -21,7 +21,7 @@ package org.geotoolkit.db.reverse;
  * Constants defined by JDBC to retrieve a database meta-model.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MetaDataConstants {
 

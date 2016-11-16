@@ -25,7 +25,7 @@ import org.geotoolkit.internal.SetupService;
  * Performs initialization and shutdown of the {@code geotk-coverageio-bil} module.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class SetupBIL implements SetupService {
     

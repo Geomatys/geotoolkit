@@ -35,7 +35,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Generate a FeatureCollection where each Feature are the intersections of the two input
  * FeatureCollection's geometries.It is usually called "Spatial AND".
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class IntersectionProcess extends AbstractProcess {
 

@@ -23,7 +23,7 @@ import org.geotoolkit.sos.xml.v100.EventTime;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetResultRequest extends Request {
     EventTime[] getEventTimes();

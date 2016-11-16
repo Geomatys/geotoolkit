@@ -24,7 +24,7 @@ import org.opengis.filter.capability.FunctionName;
  * Immutable function name.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFunctionName implements FunctionName{
 

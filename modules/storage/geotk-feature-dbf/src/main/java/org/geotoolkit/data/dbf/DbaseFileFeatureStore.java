@@ -59,7 +59,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * DBF DataStore, holds a single feature type.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataFileStore {
 

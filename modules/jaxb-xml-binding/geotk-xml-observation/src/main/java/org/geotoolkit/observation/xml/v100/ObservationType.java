@@ -66,7 +66,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Martin Desruisseaux
  * @author Antoine Hnawia
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Observation", propOrder = {

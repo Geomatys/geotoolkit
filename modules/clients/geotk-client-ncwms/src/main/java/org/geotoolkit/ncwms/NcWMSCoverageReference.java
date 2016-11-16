@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  * Extend WMS Coverage Reference with additional ncWMS parameters.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NcWMSCoverageReference extends WMSCoverageReference{
 

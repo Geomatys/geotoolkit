@@ -52,7 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * ContextCRS property panel
  * 
  * @author  Johann Sorel
- * @module pending
+ * @module
  */
 public class ContextCRSPropertyPanel extends AbstractPropertyPane {
 

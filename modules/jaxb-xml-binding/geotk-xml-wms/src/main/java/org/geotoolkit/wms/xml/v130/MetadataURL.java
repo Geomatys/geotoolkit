@@ -49,7 +49,7 @@ import org.geotoolkit.wms.xml.AbstractMetadataURL;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

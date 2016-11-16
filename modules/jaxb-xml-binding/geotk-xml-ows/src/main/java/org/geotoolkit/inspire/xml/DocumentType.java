@@ -43,7 +43,7 @@ import org.geotoolkit.ows.xml.v100.OnlineResourceType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DocumentType")

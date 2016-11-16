@@ -54,7 +54,7 @@ import org.opengis.util.FactoryException;
  * Wrap an OGC filter object in a Lucene filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements  org.geotoolkit.lucene.filter.Filter {
 

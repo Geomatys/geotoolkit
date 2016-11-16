@@ -58,7 +58,7 @@ import org.geotoolkit.csw.xml.Insert;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertType", propOrder = {

@@ -22,7 +22,7 @@ import org.opengis.style.GraphicFill;
 /**
  *
  * @author eclesia
- * @module pending
+ * @module
  */
 public class JGraphicFillPane extends JGraphicPane{
     

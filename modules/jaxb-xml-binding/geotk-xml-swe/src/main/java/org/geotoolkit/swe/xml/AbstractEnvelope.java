@@ -20,7 +20,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractEnvelope extends AbstractVector {
 

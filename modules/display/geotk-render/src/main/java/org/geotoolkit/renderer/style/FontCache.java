@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * 
  * @author Andrea Aime - TOPP
  * 
- * @module pending
+ * @module
  */
 public class FontCache {
     /** The logger for the rendering module. */

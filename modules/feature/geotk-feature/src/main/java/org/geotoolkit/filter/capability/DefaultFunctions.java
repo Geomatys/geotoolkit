@@ -27,7 +27,7 @@ import org.opengis.filter.capability.Functions;
  * Immutable functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFunctions implements Functions{
 

@@ -87,7 +87,7 @@ import org.opengis.feature.PropertyType;
  *
  * @version $Id$
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String STATE_POP = "shapes/statepop.shp";

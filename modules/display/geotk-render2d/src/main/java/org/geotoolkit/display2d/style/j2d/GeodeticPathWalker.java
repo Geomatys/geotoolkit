@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  * Walk along a path using geodetic distances.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeodeticPathWalker {
 

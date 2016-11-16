@@ -35,7 +35,7 @@ import org.opengis.util.InternationalString;
  * Information about a temporal reference system.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * @version 4.0
  * @since   4.0
  */

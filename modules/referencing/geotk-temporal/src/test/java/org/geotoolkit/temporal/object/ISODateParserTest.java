@@ -34,7 +34,7 @@ import static java.util.Calendar.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ISODateParserTest extends org.geotoolkit.test.TestBase {
 

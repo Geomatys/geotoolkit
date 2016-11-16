@@ -30,7 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CSVModelTest extends AbstractModelTests{
 

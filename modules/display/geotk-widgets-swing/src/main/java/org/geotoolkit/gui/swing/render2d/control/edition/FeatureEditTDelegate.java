@@ -49,7 +49,7 @@ import org.opengis.geometry.Envelope;
  * Feature attribut and geometry tool delegate.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
 

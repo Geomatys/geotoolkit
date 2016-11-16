@@ -120,7 +120,7 @@ import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
  * 
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WCSCapabilityType", propOrder = {

@@ -47,7 +47,7 @@ import org.opengis.filter.sort.SortOrder;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SortPropertyType", propOrder = {

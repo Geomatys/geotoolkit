@@ -64,7 +64,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType", propOrder = {

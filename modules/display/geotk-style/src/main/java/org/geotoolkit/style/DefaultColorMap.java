@@ -26,7 +26,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of Types ColorMap.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultColorMap implements ColorMap{
 

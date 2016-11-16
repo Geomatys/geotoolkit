@@ -24,7 +24,7 @@ import org.geotoolkit.process.ProcessListener;
  * Used by subclass which only need to implement a single method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProcessListenerAdapter implements ProcessListener {
 

@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * Request to expand a changeset.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ExpandChangeSetRequest extends Request{
 

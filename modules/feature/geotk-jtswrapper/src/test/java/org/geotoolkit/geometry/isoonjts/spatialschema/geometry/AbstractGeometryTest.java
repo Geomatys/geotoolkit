@@ -45,7 +45,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author Jody Garnett
  * @author Joel Skelton
- * @module pending
+ * @module
  */
 public abstract class AbstractGeometryTest extends TestCase{
 

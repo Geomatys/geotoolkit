@@ -45,7 +45,7 @@ import org.opengis.filter.capability.Functions;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionNamesType", propOrder = {

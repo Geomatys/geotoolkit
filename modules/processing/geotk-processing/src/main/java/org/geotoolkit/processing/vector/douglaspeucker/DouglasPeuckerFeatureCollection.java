@@ -30,7 +30,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Douglas Peucker simplification process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
 

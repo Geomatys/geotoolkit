@@ -26,7 +26,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
  * Implementation of ObjectConverter to convert a String into a NumberRange array.
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToNumberRangeConverter extends SimpleConverter<String, NumberRange[]> {
 

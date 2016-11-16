@@ -25,7 +25,7 @@ import org.geotoolkit.se.xml.v110.FunctionType;
  * JAXB binding class for Jenks function.
  *
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JenksType", propOrder = {

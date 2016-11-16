@@ -22,7 +22,7 @@ import org.opengis.filter.spatial.DWithin;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class DWithinType extends DistanceBufferType implements DWithin {
      /**

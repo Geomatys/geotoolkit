@@ -19,7 +19,7 @@ package org.geotoolkit.csw.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface TransactionResponse extends CSWResponse {
 

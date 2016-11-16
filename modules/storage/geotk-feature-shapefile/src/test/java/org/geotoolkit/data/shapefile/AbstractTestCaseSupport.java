@@ -48,7 +48,7 @@ import org.opengis.feature.Feature;
  * @version $Id$
  * @author Ian Schneider
  * @author Martin Desruisseaux
- * @module pending
+ * @module
  */
 public abstract class AbstractTestCaseSupport {
     

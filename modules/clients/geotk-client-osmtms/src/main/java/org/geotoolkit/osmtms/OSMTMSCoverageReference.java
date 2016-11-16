@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
  * Open Street Map Tile Map Server.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference {
 

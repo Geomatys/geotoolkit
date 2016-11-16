@@ -23,7 +23,7 @@ import org.opengis.filter.spatial.Disjoint;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class DisjointType extends BinarySpatialOpType implements Disjoint {
     

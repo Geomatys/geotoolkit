@@ -48,7 +48,7 @@ import org.geotoolkit.wfs.xml.DeleteElement;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteElementType", propOrder = {

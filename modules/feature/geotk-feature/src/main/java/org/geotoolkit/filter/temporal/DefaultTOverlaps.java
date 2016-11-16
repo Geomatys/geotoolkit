@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * Immutable temporal "toverlaps" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTOverlaps extends AbstractTemporalFilter implements TOverlaps{
 

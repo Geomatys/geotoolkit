@@ -29,7 +29,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author guilhem
  * @since 3.03
- * @module pending
+ * @module
  */
 public class DocumentIDResolver extends IDResolver {
   Map<String, Referenceable> referenceables = new HashMap<String, Referenceable>();

@@ -62,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Ian Schneider
  * @author Chris Holmes, TOPP
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class ShapefileFeatureReader implements FeatureReader {
 

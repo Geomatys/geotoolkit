@@ -53,7 +53,7 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
  * 
  * @TODO this class seemes to have a lot of error, we must review it
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ApplicationModuleType", propOrder = {

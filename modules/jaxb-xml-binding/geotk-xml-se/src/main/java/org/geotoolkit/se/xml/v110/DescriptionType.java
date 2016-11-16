@@ -48,7 +48,7 @@ import org.opengis.util.InternationalString;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescriptionType", propOrder = {

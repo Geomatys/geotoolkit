@@ -42,7 +42,7 @@ import org.openide.util.Exceptions;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JNavigateToPanel extends javax.swing.JPanel {
 

@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Client for google static maps.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StaticGoogleMapsClient extends AbstractCoverageClient implements Client {
 

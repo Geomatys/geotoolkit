@@ -50,7 +50,7 @@ import org.apache.sis.util.ComparisonMode;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractReferenceSystemType", propOrder = {

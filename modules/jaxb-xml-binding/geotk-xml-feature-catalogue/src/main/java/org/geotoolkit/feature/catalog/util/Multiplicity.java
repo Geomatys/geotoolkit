@@ -49,7 +49,7 @@ import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = {

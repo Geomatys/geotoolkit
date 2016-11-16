@@ -20,7 +20,7 @@ package org.geotoolkit.wms.xml;
  * Interface for Online resource object.
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractOnlineResource {
     

@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  * Geometry panel
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JGeomPane extends StyleElementEditor<Expression> {
 

@@ -49,7 +49,7 @@ import org.geotoolkit.wcs.xml.TimeSequence;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeSequenceType", propOrder = {

@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Description of a create epsg databse process.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class CreateDBDescriptor extends AbstractProcessDescriptor{
 

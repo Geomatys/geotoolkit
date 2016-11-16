@@ -46,7 +46,7 @@ import org.geotoolkit.wcs.xml.Output;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputType", propOrder = {

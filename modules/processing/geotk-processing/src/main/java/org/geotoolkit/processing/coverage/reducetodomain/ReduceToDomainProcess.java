@@ -53,7 +53,7 @@ import org.opengis.referencing.operation.TransformException;
  * Fix possible coverage crossing the antimeridan.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ReduceToDomainProcess extends AbstractProcess {
 

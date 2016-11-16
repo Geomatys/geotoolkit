@@ -34,7 +34,7 @@ import org.opengis.style.Graphic;
  * Graphic panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JGraphicPane extends StyleElementEditor<Graphic> {
 

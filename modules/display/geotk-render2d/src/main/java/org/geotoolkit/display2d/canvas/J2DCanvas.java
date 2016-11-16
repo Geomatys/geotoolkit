@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class J2DCanvas extends AbstractCanvas2D{
 

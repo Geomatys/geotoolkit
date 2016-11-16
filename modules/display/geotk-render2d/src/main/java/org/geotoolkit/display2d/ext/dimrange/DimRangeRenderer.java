@@ -48,7 +48,7 @@ import org.apache.sis.util.Utilities;
  * Renderer for DimRange symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedDimRangeSymbolizer>{
 

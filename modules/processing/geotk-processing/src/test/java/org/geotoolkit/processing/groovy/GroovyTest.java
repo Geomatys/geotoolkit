@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * JUnit test of groovy condition process
  * @author Christophe Mourette
- * @module pending
+ * @module
  */
 public class GroovyTest extends AbstractProcessTest {
 

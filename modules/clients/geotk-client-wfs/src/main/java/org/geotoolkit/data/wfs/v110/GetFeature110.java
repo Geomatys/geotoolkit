@@ -24,7 +24,7 @@ import org.geotoolkit.security.ClientSecurity;
  * Get feature request for WFS 1.1.0
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeature110 extends AbstractGetFeature{
 

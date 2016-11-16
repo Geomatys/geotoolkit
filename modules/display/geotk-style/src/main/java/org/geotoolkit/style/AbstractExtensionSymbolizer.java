@@ -28,7 +28,7 @@ import org.opengis.style.StyleVisitor;
  * Abstract implementation of Types extension symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractExtensionSymbolizer extends AbstractSymbolizer implements ExtensionSymbolizer{
 

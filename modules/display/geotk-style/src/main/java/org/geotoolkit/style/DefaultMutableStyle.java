@@ -43,7 +43,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Mutable implementation of Types style.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListener{
 

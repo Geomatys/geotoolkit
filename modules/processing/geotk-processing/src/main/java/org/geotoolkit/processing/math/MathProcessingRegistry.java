@@ -55,7 +55,7 @@ import org.opengis.metadata.identification.Identification;
  * processes.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MathProcessingRegistry extends AbstractProcessingRegistry{
     

@@ -104,7 +104,7 @@ import org.opengis.feature.PropertyType;
  * This is a Stateless graphic object.
  *
  * @author johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer> implements FeatureStoreListener{
 

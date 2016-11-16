@@ -22,7 +22,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class AvgProcess extends AbstractProcess {
 

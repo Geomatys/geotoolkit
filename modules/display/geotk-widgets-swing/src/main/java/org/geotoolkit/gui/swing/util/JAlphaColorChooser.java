@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * ColorChooser with alpha
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JAlphaColorChooser extends javax.swing.JPanel {
 

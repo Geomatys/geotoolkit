@@ -25,7 +25,7 @@ import org.apache.sis.util.ComparisonMode;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 
 @XmlType(name="AbstractDataRecord")

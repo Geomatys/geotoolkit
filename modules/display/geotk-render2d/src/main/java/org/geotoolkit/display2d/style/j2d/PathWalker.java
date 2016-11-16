@@ -23,7 +23,7 @@ import java.awt.geom.Point2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PathWalker {
 

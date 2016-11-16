@@ -28,7 +28,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * This process return all Features from a FeatureCollection that intersect a geometry.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class IntersectProcess extends AbstractProcess {
 

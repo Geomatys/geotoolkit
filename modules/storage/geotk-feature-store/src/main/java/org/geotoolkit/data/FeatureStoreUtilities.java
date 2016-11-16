@@ -68,7 +68,7 @@ import org.opengis.util.GenericName;
  * Convinient methods to manipulate FeatureStore and FeatureCollection.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FeatureStoreUtilities {
 
@@ -385,7 +385,7 @@ public class FeatureStoreUtilities {
      * collection one after the other.
      *
      * @author Johann Sorel (Geomatys)
-     * @module pending
+     * @module
      */
     private static class FeatureCollectionSequence extends AbstractFeatureCollection {
 
@@ -555,7 +555,7 @@ public class FeatureStoreUtilities {
      * Provide a way to sequence several featureIterator in one.
      *
      * @author Johann Sorel (Geomatys)
-     * @module pending
+     * @module
      */
     private static class FeatureIteratorSequence implements FeatureIterator {
 
@@ -631,7 +631,7 @@ public class FeatureStoreUtilities {
      * Provide a way to sequence several featureReader in one.
      *
      * @author Johann Sorel (Geomatys)
-     * @module pending
+     * @module
      */
     private static class FeatureReaderSequence implements FeatureReader {
 

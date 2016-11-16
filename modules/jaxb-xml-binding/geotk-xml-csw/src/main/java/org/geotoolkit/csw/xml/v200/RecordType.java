@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RecordType", propOrder = {

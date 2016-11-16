@@ -26,7 +26,7 @@ import org.opengis.filter.Filter;
  * Implementation of ObjectConverter to convert a String into a Filter using the
  * CQL syntax.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToFilterConverter extends SimpleConverter<String, Filter> {
 

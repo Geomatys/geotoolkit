@@ -21,7 +21,7 @@ import org.opengis.filter.spatial.Within;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class WithinType extends BinarySpatialOpType implements Within {
     

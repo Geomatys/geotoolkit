@@ -27,7 +27,7 @@ import java.awt.geom.PathIterator;
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @version 2.9
- * @module pending
+ * @module
  */
 public class JTSMultiLineStringJ2D extends AbstractJTSGeometryJ2D<MultiLineString> {
 

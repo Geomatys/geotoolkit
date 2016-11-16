@@ -69,7 +69,7 @@ import org.geotoolkit.csw.xml.Update;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateType", propOrder = {

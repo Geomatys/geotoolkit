@@ -48,7 +48,7 @@ import org.opengis.util.InternationalString;
  * CQL filter panel
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JCQLEditor extends javax.swing.JPanel{
 

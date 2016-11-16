@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.Begins;
  * Immutable temporal "begins" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultBegins extends AbstractTemporalFilter implements Begins{
 

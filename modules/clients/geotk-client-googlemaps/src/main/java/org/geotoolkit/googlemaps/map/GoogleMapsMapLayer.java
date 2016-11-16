@@ -32,7 +32,7 @@ import org.opengis.util.GenericName;
  * Map representation of a Static GoogleMaps layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
 

@@ -29,7 +29,7 @@ import org.apache.sis.storage.DataStoreException;
  * @author aaime
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PointHandler extends AbstractShapeHandler {
 

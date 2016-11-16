@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection clipped</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class ClipDescriptor extends VectorDescriptor {
 

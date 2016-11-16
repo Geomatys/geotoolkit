@@ -52,7 +52,7 @@ import org.opengis.metadata.identification.Identification;
  *
  * @author Quentin Boileau (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class JTSProcessingRegistry extends AbstractProcessingRegistry{
 

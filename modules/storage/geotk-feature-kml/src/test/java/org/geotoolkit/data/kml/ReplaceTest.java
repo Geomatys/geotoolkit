@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class ReplaceTest extends org.geotoolkit.test.TestBase {
 

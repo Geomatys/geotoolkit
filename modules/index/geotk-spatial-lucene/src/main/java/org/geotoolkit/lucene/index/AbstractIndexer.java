@@ -66,7 +66,7 @@ import org.opengis.util.FactoryException;
  * @author Mehdi Sidhoum
  * @author Guilhem Legal
  * @param <E> The object's type to insert in a document.
- * @module pending
+ * @module
  */
 public abstract class AbstractIndexer<E> extends IndexLucene {
 

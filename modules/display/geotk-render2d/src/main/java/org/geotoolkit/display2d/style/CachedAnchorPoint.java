@@ -27,7 +27,7 @@ import org.opengis.style.AnchorPoint;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class CachedAnchorPoint{
 

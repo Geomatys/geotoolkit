@@ -31,7 +31,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable abstract function.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractFunction extends AbstractExpression implements Function {
 

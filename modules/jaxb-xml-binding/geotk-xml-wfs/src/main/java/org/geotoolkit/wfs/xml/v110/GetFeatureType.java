@@ -62,7 +62,7 @@ import org.geotoolkit.wfs.xml.StoredQuery;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {

@@ -49,7 +49,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  *
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class OGC200toGTTransformer {
 

@@ -28,7 +28,7 @@ import org.geotoolkit.swe.xml.TextBlock;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TextBlock", propOrder = {

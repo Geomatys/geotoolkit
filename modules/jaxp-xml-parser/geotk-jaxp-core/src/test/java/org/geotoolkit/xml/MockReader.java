@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamReader;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MockReader extends StaxStreamReader {
 

@@ -21,7 +21,7 @@ package org.geotoolkit.ows.xml;
  *  Super abstract type for all the different versions of GetCapabilities request.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractGetCapabilities extends RequestBase {
 

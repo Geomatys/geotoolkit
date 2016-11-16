@@ -22,7 +22,7 @@ import org.opengis.feature.FeatureType;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public interface FeatureMapper {
 

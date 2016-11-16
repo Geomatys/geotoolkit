@@ -35,7 +35,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "dwithin" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements DWithin {
 

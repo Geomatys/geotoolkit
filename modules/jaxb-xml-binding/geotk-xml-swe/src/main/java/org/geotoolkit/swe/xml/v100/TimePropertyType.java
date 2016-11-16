@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.AbstractTimeProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePropertyType", propOrder = {

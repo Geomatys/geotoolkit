@@ -71,7 +71,7 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Tester {
 

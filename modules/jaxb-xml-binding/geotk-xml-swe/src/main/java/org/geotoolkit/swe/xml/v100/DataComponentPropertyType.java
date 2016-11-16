@@ -77,7 +77,7 @@ import org.apache.sis.util.logging.Logging;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataComponentPropertyType", propOrder = {

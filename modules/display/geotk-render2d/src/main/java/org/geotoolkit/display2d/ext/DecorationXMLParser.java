@@ -77,7 +77,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DecorationXMLParser {
 

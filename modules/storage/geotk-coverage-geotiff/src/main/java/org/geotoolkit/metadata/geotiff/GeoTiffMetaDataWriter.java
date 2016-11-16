@@ -60,7 +60,7 @@ import org.apache.sis.util.Utilities;
  *
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys)
- * @module pending
+ * @module
  */
 public class GeoTiffMetaDataWriter {
 

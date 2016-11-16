@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
  *
  * @author dzwiers
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FileFeatureStoreFactory extends FeatureStoreFactory {
 

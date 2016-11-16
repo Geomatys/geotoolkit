@@ -21,7 +21,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 /**
  * JUnit test of Retype process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class RetypeTest extends AbstractProcessTest {
 

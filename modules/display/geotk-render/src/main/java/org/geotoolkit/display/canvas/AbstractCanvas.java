@@ -46,7 +46,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * &nbsp; {@linkplain #getDeviceCRS       device CRS}
  * </p>
  *
- * @module pending
+ * @module
  * @since 2.3
  * @version $Id$
  * @author Martin Desruisseaux (Geomatys)

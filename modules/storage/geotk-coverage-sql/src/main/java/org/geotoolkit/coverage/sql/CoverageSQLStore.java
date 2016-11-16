@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * and integrated in geotk.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CoverageSQLStore extends AbstractCoverageStore {
 

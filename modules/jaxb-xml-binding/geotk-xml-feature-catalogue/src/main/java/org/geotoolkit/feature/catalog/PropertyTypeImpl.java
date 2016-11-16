@@ -67,7 +67,7 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

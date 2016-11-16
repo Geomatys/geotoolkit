@@ -36,7 +36,7 @@ import org.opengis.style.ShadedRelief;
  * ShadedRelief panel
  * 
  * @author  Johann Sorel
- * @module pending
+ * @module
  */
 public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
 

@@ -27,7 +27,7 @@ import org.geotoolkit.ows.xml.v100.AbstractExtendedCapabilitiesType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="")

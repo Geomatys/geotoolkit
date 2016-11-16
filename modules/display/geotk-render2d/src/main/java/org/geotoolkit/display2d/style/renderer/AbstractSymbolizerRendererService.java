@@ -37,7 +37,7 @@ import org.opengis.style.Symbolizer;
  * createRenderer and use it.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C extends CachedSymbolizer<S>> implements SymbolizerRendererService<S, C>{
 

@@ -75,7 +75,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  * </pre>
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

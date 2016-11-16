@@ -27,7 +27,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * value; the Julian date is a decimal value that allows greater resolution.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultJulianDate extends DefaultTemporalCoordinate implements JulianDate {
 

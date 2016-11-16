@@ -42,7 +42,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
  * between points and the functional description of temporal operations.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * @version 4.0
  * @since   4.0
  */

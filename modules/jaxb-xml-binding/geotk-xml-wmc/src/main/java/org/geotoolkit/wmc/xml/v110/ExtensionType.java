@@ -44,7 +44,7 @@ import org.geotoolkit.ogc.xml.v100.LiteralType;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensionType", propOrder = {

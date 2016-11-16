@@ -27,7 +27,7 @@ import org.opengis.geometry.coordinate.GenericSurface;
  * @todo Why this interface is not defined in the primitive package, since the sub-interfaces
  *          ({@link org.opengis.geometry.primitive.Surface} and {@link org.opengis.geometry.primitive.SurfacePatch})
  *          belong to that package?
- * @module pending
+ * @module
  */
 public abstract class AbstractJTSGenericSurface extends AbstractJTSGeometry implements GenericSurface {
     

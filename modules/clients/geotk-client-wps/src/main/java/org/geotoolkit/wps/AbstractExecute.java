@@ -47,7 +47,8 @@ import org.geotoolkit.wps.xml.v100.ResponseFormType;
 /**
  * Abstract get capabilities request.
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public abstract class AbstractExecute extends AbstractRequest implements ExecuteRequest {
 

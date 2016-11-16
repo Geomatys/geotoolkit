@@ -53,7 +53,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultCalendarEraTest extends org.geotoolkit.test.TestBase {
 

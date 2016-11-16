@@ -27,7 +27,7 @@ import org.opengis.geometry.aggregate.Aggregate;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJTSGeometry implements Aggregate {
 

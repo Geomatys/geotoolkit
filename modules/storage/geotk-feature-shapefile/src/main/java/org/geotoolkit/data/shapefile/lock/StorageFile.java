@@ -38,7 +38,7 @@ import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
  * Encapsulates the idea of a file for writing data to and then later updating the original.
  *
  * @author jesse
- * @module pending
+ * @module
  */
 public final class StorageFile implements Comparable<StorageFile> {
     private final ShpFiles shpFiles;

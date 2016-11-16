@@ -37,7 +37,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Edition tool to create multi polygon parts.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class MultiPolygonPartCreationDelegate extends AbstractFeatureEditionDelegate {
 

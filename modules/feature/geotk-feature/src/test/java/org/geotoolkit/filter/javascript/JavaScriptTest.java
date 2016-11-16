@@ -39,7 +39,7 @@ import org.opengis.filter.expression.PropertyName;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JavaScriptTest extends org.geotoolkit.test.TestBase {
 

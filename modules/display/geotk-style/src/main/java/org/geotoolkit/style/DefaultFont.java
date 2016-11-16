@@ -32,7 +32,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types Font.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFont implements Font{
 

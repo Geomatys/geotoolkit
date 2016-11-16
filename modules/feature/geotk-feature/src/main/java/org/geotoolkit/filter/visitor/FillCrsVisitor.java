@@ -30,7 +30,7 @@ import org.apache.sis.util.logging.Logging;
  * Used to clean PropertyEqualsTo on identifiers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FillCrsVisitor extends DuplicatingFilterVisitor{
 

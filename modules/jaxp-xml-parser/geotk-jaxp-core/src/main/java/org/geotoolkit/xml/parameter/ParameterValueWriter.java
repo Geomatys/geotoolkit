@@ -33,7 +33,7 @@ import static org.geotoolkit.xml.parameter.ParameterConstants.*;
  * <p>This class provides a GeneralParameterValue writing method.</p>
  * 
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class ParameterValueWriter extends StaxStreamWriter {
 

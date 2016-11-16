@@ -19,7 +19,7 @@ package org.geotoolkit.wps;
 /**
  * WPSOutput regroup all parameter about an output from a process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class WPSOutput {
     

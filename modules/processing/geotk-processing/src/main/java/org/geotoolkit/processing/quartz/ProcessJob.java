@@ -38,7 +38,7 @@ import java.util.List;
  * Quartz job executing a geotoolkit process.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProcessJob implements InterruptableJob {
 

@@ -40,7 +40,7 @@ import java.nio.charset.Charset;
  * <CODE>getMyRecord()</CODE> logic...
  * 
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class DbaseFileWriter implements Closeable{
 

@@ -52,7 +52,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

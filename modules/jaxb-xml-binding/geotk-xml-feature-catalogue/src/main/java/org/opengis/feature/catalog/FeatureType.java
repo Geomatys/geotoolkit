@@ -17,7 +17,7 @@ import org.opengis.util.LocalName;
  * class of real world phenomena with common properties.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 //@UML(identifier="FC_FeatureType", specification=ISO_19110)
 public interface FeatureType {

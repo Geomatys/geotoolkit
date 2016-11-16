@@ -29,7 +29,7 @@ import org.apache.sis.geometry.Envelopes;
  * parameters for a get GPS trace request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetGPSTrace extends AbstractRequest implements GetGPSTraceRequest{
 

@@ -30,7 +30,7 @@ import org.opengis.util.InternationalString;
  * of less than a day.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDateAndTime extends DefaultTemporalPosition implements DateAndTime {
 

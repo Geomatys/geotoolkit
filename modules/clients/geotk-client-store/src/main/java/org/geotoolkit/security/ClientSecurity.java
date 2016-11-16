@@ -26,7 +26,7 @@ import java.net.URLConnection;
  * to handle authentication or encryption processes required for security.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ClientSecurity {
     

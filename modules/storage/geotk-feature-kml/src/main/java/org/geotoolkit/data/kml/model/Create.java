@@ -33,7 +33,7 @@ import org.opengis.feature.Feature;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface Create {
 

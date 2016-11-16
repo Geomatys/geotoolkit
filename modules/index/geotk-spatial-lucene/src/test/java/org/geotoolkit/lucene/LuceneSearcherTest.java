@@ -76,7 +76,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  * A Test classes testing the different spatial filters.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 

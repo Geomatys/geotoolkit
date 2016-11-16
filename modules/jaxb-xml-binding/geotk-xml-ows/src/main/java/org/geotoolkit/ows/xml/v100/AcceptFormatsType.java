@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.AcceptFormats;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AcceptFormatsType", propOrder = {

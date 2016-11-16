@@ -38,7 +38,7 @@ import org.geotoolkit.util.StringUtilities;
  * parameters for a GetRecordById request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetRecordById extends AbstractCSWRequest implements GetRecordByIdRequest {
 

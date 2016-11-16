@@ -36,7 +36,7 @@ import org.geotoolkit.style.visitor.CopyStyleVisitor;
  * layer style panel
  *
  * @author  Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class LayerStylePropertyPanel extends MultiPropertyPanel {
 

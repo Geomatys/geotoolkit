@@ -27,7 +27,7 @@ import org.geotoolkit.wms.xml.AbstractHTTP;
 /**
  * <p>Java class for anonymous complex type.
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

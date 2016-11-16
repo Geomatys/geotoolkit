@@ -42,7 +42,7 @@ import org.geotoolkit.se.xml.vext.JenksType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ColorMapType", propOrder = {

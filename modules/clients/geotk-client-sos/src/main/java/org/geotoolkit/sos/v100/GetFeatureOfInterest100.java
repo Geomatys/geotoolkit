@@ -24,7 +24,7 @@ import org.geotoolkit.sos.SensorObservationServiceClient;
  * Implementation for the GetFeatureOfInterest request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeatureOfInterest100 extends AbstractGetFeatureOfInterest {
     /**

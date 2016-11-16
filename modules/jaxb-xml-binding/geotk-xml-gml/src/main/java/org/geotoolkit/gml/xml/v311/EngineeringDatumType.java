@@ -42,7 +42,7 @@ import org.geotoolkit.gml.xml.EngineeringDatum;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EngineeringDatumType")

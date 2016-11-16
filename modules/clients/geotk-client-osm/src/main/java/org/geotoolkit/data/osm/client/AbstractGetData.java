@@ -29,7 +29,7 @@ import org.apache.sis.geometry.Envelopes;
  * parameters for a get data request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetData extends AbstractRequest implements GetDataRequest{
 

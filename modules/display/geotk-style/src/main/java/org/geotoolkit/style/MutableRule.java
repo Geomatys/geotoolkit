@@ -31,7 +31,7 @@ import org.opengis.style.Symbolizer;
  * Mutable interface of geoAPI Rule. 
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableRule extends Rule{
 

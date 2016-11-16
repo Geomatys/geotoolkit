@@ -21,7 +21,7 @@ import org.opengis.metadata.Identifier;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface Phenomenon extends org.opengis.observation.Phenomenon {
     

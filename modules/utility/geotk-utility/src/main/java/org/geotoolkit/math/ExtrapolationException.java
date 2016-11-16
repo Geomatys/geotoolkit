@@ -22,7 +22,7 @@ package org.geotoolkit.math;
  *
  * @author Martin Desruisseaux
  * @version 1.0
- * @module pending
+ * @module
  */
 public class ExtrapolationException extends Exception {
 
