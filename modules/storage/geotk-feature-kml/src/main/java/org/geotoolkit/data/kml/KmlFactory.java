@@ -103,7 +103,7 @@ import org.opengis.feature.Feature;
  * to create objects mapping kml 2.2 /2.1 elements.</p>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface KmlFactory {
 

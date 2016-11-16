@@ -29,7 +29,7 @@ import org.geotoolkit.wmsc.xml.v111.TileSet;
 
 /**
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

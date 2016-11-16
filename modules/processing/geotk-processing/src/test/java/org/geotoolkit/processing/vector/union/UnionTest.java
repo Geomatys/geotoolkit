@@ -49,7 +49,8 @@ import org.opengis.feature.PropertyType;
 /**
  * JUnit test of Union process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class UnionTest extends AbstractProcessTest {
 

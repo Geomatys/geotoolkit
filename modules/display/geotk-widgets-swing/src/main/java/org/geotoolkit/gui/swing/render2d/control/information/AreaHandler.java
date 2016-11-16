@@ -45,7 +45,7 @@ import org.apache.sis.util.logging.Logging;
  * Panoramic handler
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class AreaHandler implements CanvasHandler {
 

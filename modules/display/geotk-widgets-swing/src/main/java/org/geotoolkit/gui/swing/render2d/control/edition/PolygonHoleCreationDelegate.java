@@ -41,7 +41,7 @@ import org.opengis.feature.Feature;
  * Edition tool to create holes in polygons.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate {
 

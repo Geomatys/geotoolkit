@@ -12,7 +12,7 @@ import org.opengis.geometry.primitive.Primitive;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 @XmlType(name="MultiGeometryType", namespace="http://www.opengis.net/gml")
 public class JTSMultiPrimitive extends AbstractJTSAggregate<Primitive> implements MultiPrimitive {

@@ -68,7 +68,7 @@ import org.opengis.feature.PropertyNotFoundException;
 /**
  * @todo : make this concurrent
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MemoryFeatureStore extends AbstractFeatureStore{
 

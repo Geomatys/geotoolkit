@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlRegistry
 public class ObjectFactory {

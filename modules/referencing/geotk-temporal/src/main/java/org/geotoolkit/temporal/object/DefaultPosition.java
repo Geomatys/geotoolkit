@@ -43,7 +43,7 @@
 // * Gregorian calendar and UTC.
 // *
 // * @author Mehdi Sidhoum (Geomatys)
-// * @module pending
+// * @module
 // */
 //@XmlType(name = "timePosition_Type", propOrder = {
 //    "date"

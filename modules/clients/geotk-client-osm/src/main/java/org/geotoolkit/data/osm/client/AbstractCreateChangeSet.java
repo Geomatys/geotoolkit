@@ -33,7 +33,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLWriter;
  * parameters for a create change set request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCreateChangeSet extends AbstractRequest implements CreateChangeSetRequest{
 

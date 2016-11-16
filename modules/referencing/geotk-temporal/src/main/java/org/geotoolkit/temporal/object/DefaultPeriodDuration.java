@@ -29,7 +29,7 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  * about the duration of a period.
  * 
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  * @since   4.0
  * @version 4.0
  */

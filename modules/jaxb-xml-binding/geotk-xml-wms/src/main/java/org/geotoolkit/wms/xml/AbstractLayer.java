@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * @author Guilhem Legal
  * @author Cédric Briançon
  *
- * @module pending
+ * @module
  */
 public interface AbstractLayer {
     /**

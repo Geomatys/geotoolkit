@@ -35,7 +35,7 @@ import org.w3c.dom.Text;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class RecordPropertyTypeTest extends org.geotoolkit.test.TestBase {
 

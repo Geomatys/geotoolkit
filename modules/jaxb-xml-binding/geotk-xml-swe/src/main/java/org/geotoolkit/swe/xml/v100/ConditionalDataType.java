@@ -60,7 +60,7 @@ import org.geotoolkit.swe.xml.AbstractConditionalData;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConditionalDataType", propOrder = {

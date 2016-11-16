@@ -69,7 +69,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultGxFactory implements GxFactory {
 

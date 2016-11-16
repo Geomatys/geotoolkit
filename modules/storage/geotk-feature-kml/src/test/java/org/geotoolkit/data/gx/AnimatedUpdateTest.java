@@ -65,7 +65,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
 

@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Represent a tyle in the fake quad tree.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Node extends AbstractNode{
 

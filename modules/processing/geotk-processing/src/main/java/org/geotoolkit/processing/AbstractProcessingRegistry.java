@@ -32,7 +32,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * Abstract process factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessingRegistry implements ProcessingRegistry {
 

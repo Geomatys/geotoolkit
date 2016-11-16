@@ -95,7 +95,7 @@ import org.geotoolkit.swe.xml.ByteOrder;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

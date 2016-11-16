@@ -21,7 +21,7 @@ package org.geotoolkit.wcs.xml;
  * Abstract type for all range subset values, for the GetCoverage requests.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface RangeSubset {
 

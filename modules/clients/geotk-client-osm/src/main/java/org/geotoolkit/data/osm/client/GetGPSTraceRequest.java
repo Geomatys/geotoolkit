@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * Request to get GPS trace from the osm server.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetGPSTraceRequest extends Request{
 

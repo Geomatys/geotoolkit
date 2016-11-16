@@ -32,7 +32,7 @@ import org.geotoolkit.swe.xml.AnyResult;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Any")

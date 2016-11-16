@@ -48,7 +48,7 @@ import org.geotoolkit.ows.xml.AbstractTelephone;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TelephoneType", propOrder = {

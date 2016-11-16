@@ -25,7 +25,7 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  * Factory registering the commun mathematical functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MathFunctionFactory extends AbstractFunctionFactory{
 

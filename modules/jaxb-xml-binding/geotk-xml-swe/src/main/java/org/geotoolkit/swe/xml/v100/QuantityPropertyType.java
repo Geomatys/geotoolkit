@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.AbstractQuantityProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QuantityPropertyType", propOrder = {

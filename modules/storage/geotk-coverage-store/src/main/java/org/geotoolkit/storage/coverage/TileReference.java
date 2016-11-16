@@ -27,7 +27,7 @@ import javax.imageio.spi.ImageReaderSpi;
  * TODO : should be a parent of {@link org.geotoolkit.image.io.mosaic.Tile}.
  *  
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface TileReference {
     

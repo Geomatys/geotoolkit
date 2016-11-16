@@ -41,7 +41,7 @@ import org.opengis.geometry.coordinate.LineSegment;
  * @version 2.0
  *
  * @see GeometryFactory#createLineString(java.util.List)
- * @module pending
+ * @module
  */
 public class JTSLineSegment extends JTSLineString implements LineSegment {
     

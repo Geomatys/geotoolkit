@@ -28,7 +28,7 @@ import org.opengis.feature.FeatureType;
  * Wrap a feature Iterator and check that it is properly close.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CheckCloseFeatureIterator implements FeatureReader{
 

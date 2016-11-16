@@ -50,7 +50,7 @@ import org.geotoolkit.gml.xml.Polygon;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolygonType", propOrder = {

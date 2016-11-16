@@ -23,7 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  * @author Mehdi Sidhoum
  * @author Guilehm Legal
- * @module pending
+ * @module
  */
 public interface SearchResults {
 

@@ -25,7 +25,7 @@ import org.apache.sis.util.ArgumentChecks;
  * Default legend template, immutable.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultLegendTemplate implements LegendTemplate {
 

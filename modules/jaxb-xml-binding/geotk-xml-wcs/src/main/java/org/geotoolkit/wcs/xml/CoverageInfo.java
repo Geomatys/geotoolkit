@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * Content objects contain a list of information about the coverages.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CoverageInfo {
 

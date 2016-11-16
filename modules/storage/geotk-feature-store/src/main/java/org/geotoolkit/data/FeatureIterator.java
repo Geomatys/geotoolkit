@@ -25,7 +25,7 @@ import org.opengis.feature.Feature;
  * to release potential resources.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureIterator extends CloseableIterator<Feature>{
 

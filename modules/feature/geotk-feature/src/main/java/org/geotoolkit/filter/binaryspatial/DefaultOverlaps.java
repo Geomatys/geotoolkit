@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "overlaps" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOverlaps extends AbstractBinarySpatialOperator<Expression,Expression> implements Overlaps {
 

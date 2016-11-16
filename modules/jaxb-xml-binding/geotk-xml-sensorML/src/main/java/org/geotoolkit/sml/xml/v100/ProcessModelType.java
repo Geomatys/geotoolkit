@@ -43,7 +43,7 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessModelType", propOrder = {

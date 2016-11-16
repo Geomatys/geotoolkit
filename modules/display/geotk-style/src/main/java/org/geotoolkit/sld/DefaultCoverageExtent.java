@@ -31,7 +31,7 @@ import org.opengis.sld.SLDVisitor;
  * Default imumutable coverage extent, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultCoverageExtent implements CoverageExtent{
 

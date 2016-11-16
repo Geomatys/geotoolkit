@@ -22,7 +22,7 @@ import org.opengis.filter.spatial.Beyond;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class BeyondType extends DistanceBufferType implements Beyond {
 

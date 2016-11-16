@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Default implementation of a Client.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractClient extends DataStore implements Client{
 

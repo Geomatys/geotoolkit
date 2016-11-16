@@ -32,7 +32,7 @@ import org.opengis.metadata.identification.Identification;
  * Factory name : "datastore"
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DatastoreProcessingRegistry extends AbstractProcessingRegistry {
 

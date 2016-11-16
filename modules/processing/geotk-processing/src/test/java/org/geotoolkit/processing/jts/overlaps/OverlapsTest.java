@@ -39,7 +39,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  * JUnit test of Overlaps process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau @module
  */
 public class OverlapsTest extends AbstractProcessTest {
 

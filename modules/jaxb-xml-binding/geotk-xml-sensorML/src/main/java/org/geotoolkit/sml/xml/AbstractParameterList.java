@@ -23,7 +23,7 @@ import org.geotoolkit.swe.xml.DataComponentProperty;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractParameterList {
 

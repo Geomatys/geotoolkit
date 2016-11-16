@@ -26,7 +26,7 @@ import org.opengis.filter.expression.PropertyName;
  * Description of a relation between two tables.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RelationMetaModel {
     

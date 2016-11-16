@@ -31,7 +31,7 @@ import org.opengis.filter.Filter;
 /**
  * @author Johann Sorel (Puzzle-GIS)
  * @author Alexis Manin (Geomatys)
- * @module pending
+ * @module
  */
 public class DeleteSelectionAction extends AbstractAction {
 

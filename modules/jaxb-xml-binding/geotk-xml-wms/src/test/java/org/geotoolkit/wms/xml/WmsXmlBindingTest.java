@@ -82,7 +82,7 @@ import org.opengis.referencing.IdentifiedObject;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
    @BeforeClass

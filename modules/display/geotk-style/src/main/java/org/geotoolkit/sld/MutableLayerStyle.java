@@ -25,7 +25,7 @@ import org.opengis.sld.LayerStyle;
  * Mutable style.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableLayerStyle extends LayerStyle{
 

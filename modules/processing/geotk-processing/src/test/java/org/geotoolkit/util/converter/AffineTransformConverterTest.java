@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 /**
  * Junit test for StringToAffineTransformConverter
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AffineTransformConverterTest extends org.geotoolkit.test.TestBase {
 

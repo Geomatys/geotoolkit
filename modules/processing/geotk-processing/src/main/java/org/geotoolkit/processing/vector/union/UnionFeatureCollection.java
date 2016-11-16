@@ -129,7 +129,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
     /**
      * Implementation of FeatureIterator
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     private class IntersectionFeatureIterator implements FeatureIterator {
 

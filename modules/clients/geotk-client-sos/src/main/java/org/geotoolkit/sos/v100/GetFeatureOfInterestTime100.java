@@ -24,7 +24,7 @@ import org.geotoolkit.sos.SensorObservationServiceClient;
  * Implementation for the GetFeatureOfInterestTime request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeatureOfInterestTime100 extends AbstractGetFeatureOfInterestTime {
     /**

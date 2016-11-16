@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * @module pending
+ * @module
  */
 @XmlRegistry
 public class ObjectFactory {

@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default imumutable extent, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultExtent implements Extent{
 

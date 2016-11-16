@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Covers process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CoversTest extends AbstractProcessTest {
 

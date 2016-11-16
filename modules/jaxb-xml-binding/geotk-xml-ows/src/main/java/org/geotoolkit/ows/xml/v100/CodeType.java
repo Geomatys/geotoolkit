@@ -44,7 +44,7 @@ import org.geotoolkit.ows.xml.AbstractCodeType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeType", propOrder = {

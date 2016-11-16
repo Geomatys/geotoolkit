@@ -22,7 +22,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ChainListener extends EventListener{
 

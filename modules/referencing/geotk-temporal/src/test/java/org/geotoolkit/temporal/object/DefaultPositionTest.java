@@ -33,7 +33,7 @@
 ///**
 // *
 // * @author Mehdi Sidhoum (Geomatys)
-// * @module pending
+// * @module
 // */
 //public class DefaultPositionTest extends org.geotoolkit.test.TestBase {
 //

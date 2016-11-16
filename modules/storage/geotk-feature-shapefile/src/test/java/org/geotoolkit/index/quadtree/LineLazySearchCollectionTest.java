@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Jesse
- * @module pending
+ * @module
  */
 public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
 

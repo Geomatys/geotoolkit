@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 /**
  * Junit test for StringToSortByConverter
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class SortByConverterTest extends org.geotoolkit.test.TestBase {
 

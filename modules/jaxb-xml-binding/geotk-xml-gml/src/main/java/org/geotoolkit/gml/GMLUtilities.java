@@ -69,7 +69,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class GMLUtilities {
 

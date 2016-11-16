@@ -32,7 +32,7 @@ import org.opengis.style.Symbolizer;
  * Simple style panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JSymbolizerStylePanel extends AbstractPropertyPane {
 

@@ -25,7 +25,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  * Converter from String to Date
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StringToTimeStampConverter extends SimpleConverter<String, Timestamp>{
 

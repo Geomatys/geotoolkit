@@ -46,7 +46,7 @@ import org.geotoolkit.swe.xml.DataArrayProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataArrayPropertyType", propOrder = {

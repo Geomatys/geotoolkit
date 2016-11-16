@@ -34,7 +34,7 @@ import org.apache.sis.util.logging.Logging;
  * Factory capable to read SVG files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SVGGraphicFactory implements ExternalGraphicFactory {
 

@@ -28,7 +28,7 @@ import org.opengis.style.Stroke;
  * for a given feature.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class CachedStroke extends Cache<Stroke>{
 

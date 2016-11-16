@@ -56,7 +56,7 @@ import org.geotoolkit.wfs.xml.InsertElement;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertElementType", propOrder = {

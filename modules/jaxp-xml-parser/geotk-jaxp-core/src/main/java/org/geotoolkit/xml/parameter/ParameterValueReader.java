@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterNotFoundException;
  * <p>This class provides a GeneralParameterValue reading method.</p>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class ParameterValueReader extends StaxStreamReader {
 

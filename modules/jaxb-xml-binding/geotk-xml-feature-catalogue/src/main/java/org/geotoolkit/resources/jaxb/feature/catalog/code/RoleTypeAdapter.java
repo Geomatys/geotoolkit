@@ -25,7 +25,7 @@ import org.opengis.feature.catalog.RoleType;
  * respecting the ISO-19139 standard. See package documentation to have more information
  * about the handling of CodeList in ISO-19139.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

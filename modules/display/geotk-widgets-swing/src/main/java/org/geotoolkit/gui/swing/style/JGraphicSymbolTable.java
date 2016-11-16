@@ -64,7 +64,7 @@ import org.opengis.util.InternationalString;
  * graphic symbol table
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
 

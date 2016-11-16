@@ -40,7 +40,7 @@ import static org.geotoolkit.processing.metadata.merge.MergeDescriptor.SECOND_IN
  *
  * @author Johann Sorel (Geomatys)
  * @author Benjamin Garcia (Geomatys)
- * @module pending
+ * @module
  */
 public class Merge extends AbstractProcess {
 

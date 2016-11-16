@@ -26,7 +26,7 @@ import org.junit.Test;
  * Server tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSClientFactoryTest extends org.geotoolkit.test.TestBase {
 

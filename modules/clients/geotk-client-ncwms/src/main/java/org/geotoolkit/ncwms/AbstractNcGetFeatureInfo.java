@@ -27,7 +27,7 @@ import org.geotoolkit.wms.AbstractGetFeatureInfo;
  * a GetFeatureInfo request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo implements  NcGetFeatureInfoRequest {
 

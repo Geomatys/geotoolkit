@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="RDF", namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")

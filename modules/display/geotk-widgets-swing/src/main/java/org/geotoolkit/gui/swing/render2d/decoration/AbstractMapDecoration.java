@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * getMap2D and setMap2D methods.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public abstract class AbstractMapDecoration implements MapDecoration{
 

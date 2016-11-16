@@ -24,7 +24,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a capabilities request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
     

@@ -27,7 +27,7 @@ import javax.swing.event.MouseInputListener;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SwingEventPassThrough implements MouseInputListener,MouseWheelListener{
 

@@ -22,7 +22,7 @@ import org.geotoolkit.data.wfs.AbstractUpdate;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Update110 extends AbstractUpdate{
 

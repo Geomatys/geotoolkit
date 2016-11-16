@@ -38,7 +38,7 @@ import static org.geotoolkit.processing.quartz.ProcessJob.*;
  * Quartz job detail specialized for GeotoolKit process.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProcessJobDetail extends JobDetailImpl {
         

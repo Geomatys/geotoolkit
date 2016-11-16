@@ -85,7 +85,7 @@ import static org.junit.Assert.*;
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class CswXMLBindingTest extends org.geotoolkit.test.TestBase {
    @BeforeClass

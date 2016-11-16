@@ -25,7 +25,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WKBUtils {
 

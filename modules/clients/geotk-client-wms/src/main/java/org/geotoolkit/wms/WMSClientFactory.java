@@ -44,7 +44,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
  * WMS Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class WMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 

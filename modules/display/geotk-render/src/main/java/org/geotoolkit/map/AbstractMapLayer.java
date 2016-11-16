@@ -33,7 +33,7 @@ import org.opengis.display.primitive.Graphic;
  * Abstract implementation of the MapLayer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleListener {
 

@@ -55,7 +55,7 @@ import org.geotoolkit.ows.xml.v100.ServiceProvider;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -36,7 +36,7 @@ import org.geotoolkit.swe.xml.XmlBlock;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractEncodingPropertyType", propOrder = {

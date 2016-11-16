@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.BoundingBox;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundingBoxType", propOrder = {

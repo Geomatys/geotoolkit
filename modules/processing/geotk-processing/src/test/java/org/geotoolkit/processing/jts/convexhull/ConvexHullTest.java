@@ -36,7 +36,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  * JUnit test of ConvexHull process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class ConvexHullTest extends AbstractProcessTest {
 

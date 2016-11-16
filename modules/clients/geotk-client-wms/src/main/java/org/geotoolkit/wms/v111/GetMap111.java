@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
  * Implementation for the GetMap request version 1.1.1.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetMap111 extends AbstractGetMap {
     /**

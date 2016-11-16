@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.After;
  * Immutable temporal "after" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultAfter extends AbstractTemporalFilter implements After{
 

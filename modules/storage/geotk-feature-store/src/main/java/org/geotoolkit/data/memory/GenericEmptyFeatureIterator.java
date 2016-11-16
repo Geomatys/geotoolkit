@@ -31,7 +31,7 @@ import org.opengis.feature.FeatureType;
  * Basic support for an empty FeatureIterator.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericEmptyFeatureIterator implements FeatureIterator {
 

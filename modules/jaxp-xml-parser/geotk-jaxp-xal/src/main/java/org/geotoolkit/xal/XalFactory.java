@@ -87,7 +87,7 @@ import org.geotoolkit.xal.model.XalException;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface XalFactory {
 

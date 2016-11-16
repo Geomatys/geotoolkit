@@ -123,7 +123,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * @author dzwiers
  * @author commented and ported from gt to ogc filters by saul.farber
  * @author ported to work upon {@code org.geotoolkit.filter.Capabilities} by Gabriel Roldan
- * @module pending
+ * @module
  * @since 2.5.3
  */
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {

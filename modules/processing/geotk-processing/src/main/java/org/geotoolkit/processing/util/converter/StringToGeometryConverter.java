@@ -28,7 +28,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
 /**
  * Implementation of ObjectConverter to convert a String in WKT format into an Geometry
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToGeometryConverter extends SimpleConverter<String, Geometry> {
 

@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="FeatureCollection")

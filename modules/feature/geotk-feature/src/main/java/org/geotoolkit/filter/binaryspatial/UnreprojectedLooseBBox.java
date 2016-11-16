@@ -29,7 +29,7 @@ import org.opengis.geometry.BoundingBox;
  * Use this only if you are sure that the evaluated object are in the same CRS than the filter
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class UnreprojectedLooseBBox extends LooseBBox{
 

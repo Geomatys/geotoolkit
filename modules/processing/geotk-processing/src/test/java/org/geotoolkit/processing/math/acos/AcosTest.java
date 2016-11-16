@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Arc cosinus process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AcosTest extends AbstractProcessTest {
 

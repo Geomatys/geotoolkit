@@ -30,7 +30,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of Types Graphic.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegend{
 

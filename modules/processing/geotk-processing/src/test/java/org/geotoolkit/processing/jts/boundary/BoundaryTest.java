@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Boundary process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class BoundaryTest extends AbstractProcessTest {
 

@@ -51,7 +51,7 @@ import static org.apache.sis.test.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SweXMLBindingTest extends org.geotoolkit.test.TestBase {
 

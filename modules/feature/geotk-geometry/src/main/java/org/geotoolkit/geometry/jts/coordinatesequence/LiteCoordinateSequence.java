@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  * @todo class description
  *
  * @author jeichar
- * @module pending
+ * @module
  * @since 2.1.x
  */
 public class LiteCoordinateSequence extends PackedCoordinateSequence {

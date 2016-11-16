@@ -41,7 +41,7 @@ import org.geotoolkit.gui.swing.render2d.control.information.presenter.TreeFeatu
  * Panoramic handler
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class PanHandler extends AbstractNavigationHandler {
 

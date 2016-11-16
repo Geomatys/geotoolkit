@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * Test bean accessor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BeanBindingTest extends org.geotoolkit.test.TestBase {
 

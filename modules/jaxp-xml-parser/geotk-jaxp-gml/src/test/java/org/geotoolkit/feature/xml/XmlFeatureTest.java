@@ -67,7 +67,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 

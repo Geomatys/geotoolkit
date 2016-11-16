@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LinearCandidate extends Candidate<LinearLabelDescriptor> {
 

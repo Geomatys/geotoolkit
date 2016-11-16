@@ -25,7 +25,7 @@ import org.geotoolkit.temporal.object.TemporalConstants;
  * A single temporal subdivision used by DateRenderer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface TimeSubdivision {
 

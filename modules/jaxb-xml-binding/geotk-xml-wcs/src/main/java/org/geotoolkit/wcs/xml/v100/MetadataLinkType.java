@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetadataLinkType")

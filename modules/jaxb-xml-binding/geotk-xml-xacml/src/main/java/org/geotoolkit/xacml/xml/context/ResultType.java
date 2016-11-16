@@ -44,7 +44,7 @@ import org.geotoolkit.xacml.xml.policy.ObligationsType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResultType", propOrder =

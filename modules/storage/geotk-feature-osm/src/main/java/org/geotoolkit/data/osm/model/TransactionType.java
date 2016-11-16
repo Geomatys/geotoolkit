@@ -22,7 +22,7 @@ package org.geotoolkit.data.osm.model;
  * the different kinds of transactions are expressed in this enum.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public enum TransactionType {
     CREATE("create"),

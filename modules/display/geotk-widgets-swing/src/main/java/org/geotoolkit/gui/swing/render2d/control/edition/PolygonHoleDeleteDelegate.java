@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Edition tool to remove holes in polygons.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class PolygonHoleDeleteDelegate extends AbstractFeatureEditionDelegate {
 

@@ -27,7 +27,7 @@ import org.opengis.feature.catalog.PropertyType;
  * JAXB adapter in order to map implementing class with the Types PropertyType. See
  * package documentation for more infoFeatureTypermation about JAXB and PropertyType.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

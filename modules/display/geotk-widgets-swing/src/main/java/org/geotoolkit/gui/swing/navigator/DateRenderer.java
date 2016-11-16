@@ -33,7 +33,7 @@ import static javax.swing.SwingConstants.SOUTH;
  * Model renderer displaying dates for JNavigator component.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DateRenderer implements NavigatorRenderer{
 

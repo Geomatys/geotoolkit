@@ -29,7 +29,7 @@ import org.opengis.temporal.IntervalLength;
  * terms of a specified multiple of a single unit of time.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultIntervalLength extends DefaultDuration implements IntervalLength {
 

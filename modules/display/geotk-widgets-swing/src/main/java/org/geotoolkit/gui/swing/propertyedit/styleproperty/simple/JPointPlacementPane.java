@@ -37,7 +37,7 @@ import org.opengis.style.PointPlacement;
  * 
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     

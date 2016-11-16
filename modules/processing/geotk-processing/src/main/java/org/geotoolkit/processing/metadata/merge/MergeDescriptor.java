@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * </ul>
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MergeDescriptor extends AbstractProcessDescriptor {
 

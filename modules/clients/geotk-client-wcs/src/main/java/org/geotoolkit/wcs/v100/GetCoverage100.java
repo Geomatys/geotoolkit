@@ -24,7 +24,7 @@ import org.geotoolkit.wcs.AbstractGetCoverage;
  * Implementation for the GetCoverage request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GetCoverage100 extends AbstractGetCoverage {
     /**

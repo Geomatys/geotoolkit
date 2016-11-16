@@ -24,7 +24,7 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public final class GxConstants {
 

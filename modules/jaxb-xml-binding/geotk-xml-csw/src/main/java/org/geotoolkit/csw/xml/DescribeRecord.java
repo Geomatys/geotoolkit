@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface DescribeRecord extends AbstractCswRequest {
 

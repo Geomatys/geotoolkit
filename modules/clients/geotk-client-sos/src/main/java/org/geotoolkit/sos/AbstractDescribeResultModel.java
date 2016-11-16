@@ -34,7 +34,7 @@ import org.geotoolkit.sos.xml.v100.DescribeResultModel;
  * parameters for a DescribeObservationType request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeResultModel extends AbstractSOSRequest implements DescribeResultModelRequest {
 

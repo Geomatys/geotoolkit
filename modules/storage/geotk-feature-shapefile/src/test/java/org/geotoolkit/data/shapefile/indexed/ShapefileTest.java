@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
- * @module pending
+ * @module
  */
 public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 

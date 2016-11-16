@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Abstract JUnit test for groovy process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 

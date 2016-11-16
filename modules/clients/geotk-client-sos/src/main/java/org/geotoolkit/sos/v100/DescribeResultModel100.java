@@ -24,7 +24,7 @@ import org.geotoolkit.sos.SensorObservationServiceClient;
  * Implementation for the DescribeResultModel request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class DescribeResultModel100 extends AbstractDescribeResultModel {
     /**

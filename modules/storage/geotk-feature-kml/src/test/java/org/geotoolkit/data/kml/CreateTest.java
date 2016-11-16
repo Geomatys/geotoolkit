@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class CreateTest extends org.geotoolkit.test.TestBase {
 

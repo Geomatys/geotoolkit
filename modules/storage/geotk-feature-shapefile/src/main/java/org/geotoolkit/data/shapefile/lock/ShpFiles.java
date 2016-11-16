@@ -57,7 +57,7 @@ import org.geotoolkit.nio.IOUtilities;
  *
  * @author jesse
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ShpFiles {
 

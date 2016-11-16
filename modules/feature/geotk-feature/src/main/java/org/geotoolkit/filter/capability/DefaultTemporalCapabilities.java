@@ -27,7 +27,7 @@ import org.opengis.filter.capability.TemporalOperators;
  * Immutable temporal capabilities
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTemporalCapabilities implements TemporalCapabilities{
 

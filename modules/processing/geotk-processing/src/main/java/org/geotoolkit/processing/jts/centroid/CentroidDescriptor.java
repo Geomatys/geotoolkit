@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class CentroidDescriptor extends AbstractProcessDescriptor {
         

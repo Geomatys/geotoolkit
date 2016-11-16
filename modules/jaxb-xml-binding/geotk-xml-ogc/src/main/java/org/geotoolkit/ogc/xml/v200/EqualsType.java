@@ -21,7 +21,7 @@ import org.opengis.filter.spatial.Equals;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class EqualsType extends BinarySpatialOpType implements Equals {
     

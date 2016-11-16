@@ -39,7 +39,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  * JUnit test of CoveredBy process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CoveredByTest extends AbstractProcessTest {
 

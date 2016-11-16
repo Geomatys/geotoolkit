@@ -36,7 +36,7 @@ import static org.geotoolkit.util.DomUtilities.*;
  * Set of convenient methods to manipulate Dom nodes specific to geotiff.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class GeoTiffMetaDataUtils {
 

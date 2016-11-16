@@ -26,7 +26,7 @@ import org.jdesktop.swingx.JXImagePanel;
  * Image Decoration
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class ImageDecoration extends JXImagePanel implements MapDecoration{
 

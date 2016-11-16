@@ -24,7 +24,7 @@ import java.util.Iterator;
  * An iterator that must be close when not needed anymore.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CloseableIterator<T> extends Iterator<T>, Closeable {
 

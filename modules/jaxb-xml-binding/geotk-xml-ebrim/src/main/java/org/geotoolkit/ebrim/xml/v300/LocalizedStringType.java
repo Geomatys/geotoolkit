@@ -43,7 +43,7 @@ import org.geotoolkit.ebrim.xml.LocalizedString;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LocalizedStringType")

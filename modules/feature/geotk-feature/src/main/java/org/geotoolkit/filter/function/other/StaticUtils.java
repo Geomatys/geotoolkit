@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author David Blasby (The Open Planning Project)
- * @module pending
+ * @module
  */
 public class StaticUtils {
 

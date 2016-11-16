@@ -27,7 +27,7 @@ import org.opengis.filter.capability.SpatialOperators;
  * Immutalbe spatial operators.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSpatialOperators implements SpatialOperators {
 

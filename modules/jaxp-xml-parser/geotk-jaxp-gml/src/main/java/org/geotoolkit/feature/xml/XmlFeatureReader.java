@@ -26,7 +26,7 @@ import org.opengis.feature.FeatureType;
 /**
  * An interface for feature / feature collection XML parsing.
  *
- * @module pending
+ * @module
  * @author Guilhem Legal (Geomatys)
  */
 public interface XmlFeatureReader extends Configurable {

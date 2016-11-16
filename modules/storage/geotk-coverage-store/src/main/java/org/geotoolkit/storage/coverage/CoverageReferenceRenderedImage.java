@@ -55,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  * On the fly calculated tiled image for a Coverage reference and grid definition.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CoverageReferenceRenderedImage implements RenderedImage{
 

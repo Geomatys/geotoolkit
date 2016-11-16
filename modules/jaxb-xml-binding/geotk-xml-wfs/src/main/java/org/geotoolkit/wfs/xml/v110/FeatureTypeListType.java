@@ -51,7 +51,7 @@ import org.geotoolkit.wfs.xml.FeatureTypeList;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeListType", propOrder = {

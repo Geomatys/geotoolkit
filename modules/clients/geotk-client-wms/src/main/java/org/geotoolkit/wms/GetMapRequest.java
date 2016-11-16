@@ -26,7 +26,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetMapRequest extends Request {
     /**

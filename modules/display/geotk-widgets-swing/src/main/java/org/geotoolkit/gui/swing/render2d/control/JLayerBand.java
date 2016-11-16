@@ -82,7 +82,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JLayerBand extends JNavigatorBand implements LayerListener {
 

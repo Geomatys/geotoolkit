@@ -25,7 +25,7 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultWait extends DefaultAbstractObject implements Wait {
 

@@ -51,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public final class CopyDescriptor extends VectorDescriptor {
 

@@ -24,7 +24,7 @@ import java.net.PasswordAuthentication;
  * Authenticator storing login information different for each thread.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ByThreadAuthenticator extends Authenticator{
 

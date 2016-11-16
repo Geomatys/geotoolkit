@@ -24,7 +24,7 @@ import org.apache.sis.util.logging.Logging;
  * Monitor which try to never fail the rendering.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NeverFailMonitor extends AbstractCanvasMonitor{
 

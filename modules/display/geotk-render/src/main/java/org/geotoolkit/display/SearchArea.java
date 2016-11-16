@@ -23,7 +23,7 @@ import org.opengis.geometry.Geometry;
  * the graphic features.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface SearchArea {
 

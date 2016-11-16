@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * JAXB adapter in order to map implementing class with the Types MultiplicityRange. See
  * package documentation for more information about JAXB and MultiplicityRange.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlTransient
 public interface AbstractDimension {

@@ -44,7 +44,7 @@ import org.geotoolkit.ows.xml.AbstractContact;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContactType", propOrder = {

@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokensProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTokensPropertyType", propOrder = {

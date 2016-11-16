@@ -59,7 +59,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StyleCacheTest extends org.geotoolkit.test.TestBase {
 

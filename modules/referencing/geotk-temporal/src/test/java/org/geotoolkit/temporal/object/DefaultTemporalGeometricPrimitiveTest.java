@@ -33,7 +33,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTemporalGeometricPrimitiveTest extends org.geotoolkit.test.TestBase {
 

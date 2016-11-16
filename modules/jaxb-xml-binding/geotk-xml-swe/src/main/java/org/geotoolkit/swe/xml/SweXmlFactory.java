@@ -25,7 +25,7 @@ import java.util.List;
  * An object factory allowing to create SWE object from different version.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SweXmlFactory {
 

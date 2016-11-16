@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultIntervalLengthTest extends org.geotoolkit.test.TestBase {
 

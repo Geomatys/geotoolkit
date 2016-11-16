@@ -35,7 +35,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Compute input geometry centroid.
  * The returned point keep input geometry CRS.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class CentroidProcess extends AbstractProcess {
 

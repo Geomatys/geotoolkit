@@ -39,7 +39,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
 

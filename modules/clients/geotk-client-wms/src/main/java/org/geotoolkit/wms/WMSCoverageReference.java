@@ -69,7 +69,7 @@ import org.apache.sis.util.Utilities;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSCoverageReference extends AbstractCoverageReference{
 

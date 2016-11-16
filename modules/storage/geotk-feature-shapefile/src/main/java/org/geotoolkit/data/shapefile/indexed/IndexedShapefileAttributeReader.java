@@ -32,7 +32,7 @@ import org.opengis.feature.AttributeType;
  * An AttributeReader implementation for shape. Pretty straightforward. <BR/>The
  * default geometry is at position 0, and all dbf columns follow. <BR/>The dbf
  * file may not be necessary, if not, just pass null as the DbaseFileReader
- * @module pending
+ * @module
  */
 public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> extends ShapefileAttributeReader
         implements RecordNumberTracker {

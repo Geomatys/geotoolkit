@@ -25,7 +25,7 @@ import org.opengis.feature.catalog.FeatureAttribute;
  * JAXB adapter in order to map implementing class with the Types FeatureOperation. See
  * package documentation for more information about JAXB and FeatureOperation.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

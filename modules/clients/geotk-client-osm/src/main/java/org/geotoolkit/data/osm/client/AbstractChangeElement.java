@@ -33,7 +33,7 @@ import org.opengis.feature.Feature;
  * parameters for a change element request. the change may be Create/Update/Delete.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractChangeElement extends AbstractRequest implements ChangeElementRequest{
 

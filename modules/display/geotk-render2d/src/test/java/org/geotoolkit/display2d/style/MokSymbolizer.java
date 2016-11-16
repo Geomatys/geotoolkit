@@ -31,7 +31,7 @@ import org.opengis.style.StyleVisitor;
  * Test that symbolizer renderer are properly called and only once.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MokSymbolizer extends AbstractSymbolizer implements ExtensionSymbolizer{
 

@@ -25,7 +25,7 @@ import org.geotoolkit.data.osm.model.Transaction;
  * Request to upload a serie of changes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface UploadRequest extends Request{
 

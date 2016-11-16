@@ -50,7 +50,7 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")

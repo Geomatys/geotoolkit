@@ -53,7 +53,7 @@ import javax.xml.datatype.Duration;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RegistryType")

@@ -21,7 +21,7 @@ import org.geotoolkit.report.RenderableField;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ScaleBarDef extends RenderableField{
 

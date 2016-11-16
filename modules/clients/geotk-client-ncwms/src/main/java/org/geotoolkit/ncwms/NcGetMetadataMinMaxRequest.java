@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Interface for GetMetadata requests
  * 
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public interface NcGetMetadataMinMaxRequest extends NcGetMetadataRequest {    
     

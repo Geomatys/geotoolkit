@@ -59,7 +59,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultCalendarTest extends org.geotoolkit.test.TestBase {
 

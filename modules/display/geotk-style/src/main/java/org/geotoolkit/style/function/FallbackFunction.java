@@ -29,7 +29,7 @@ import org.opengis.filter.expression.Literal;
  * note problem with variable number of agruments (from commit at r30500).
  *
  * @author Jody Garnett
- * @module pending
+ * @module
  */
 public class FallbackFunction implements Function {
 	private List<Expression> parameters;

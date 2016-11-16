@@ -22,7 +22,7 @@ import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class Candidate<T extends LabelDescriptor> {
 

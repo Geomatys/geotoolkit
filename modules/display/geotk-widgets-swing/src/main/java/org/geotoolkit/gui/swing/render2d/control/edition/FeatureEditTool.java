@@ -25,7 +25,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FeatureEditTool extends AbstractEditionTool {
 

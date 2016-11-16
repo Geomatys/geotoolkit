@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Floor process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class FloorTest extends AbstractProcessTest {
 

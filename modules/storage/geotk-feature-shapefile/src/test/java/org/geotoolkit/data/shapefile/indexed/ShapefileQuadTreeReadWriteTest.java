@@ -57,7 +57,7 @@ import org.opengis.feature.FeatureType;
 /**
  * @version $Id$
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = {"shapes/statepop.shp", "shapes/polygontest.shp",

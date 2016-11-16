@@ -66,7 +66,7 @@ import org.opengis.filter.identity.Identifier;
  * completes.
  * 
  * @author Jesse Eichar
- * @module pending
+ * @module
  */
 public class ShapefileFeatureWriter implements FeatureWriter {
 

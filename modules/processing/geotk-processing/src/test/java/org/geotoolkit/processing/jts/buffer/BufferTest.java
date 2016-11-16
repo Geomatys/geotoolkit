@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Buffer process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class BufferTest extends AbstractProcessTest {
 

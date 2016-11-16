@@ -47,7 +47,7 @@ import org.geotoolkit.wps.xml.OutputDescription;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputDescriptionType", propOrder = {

@@ -27,7 +27,7 @@ import org.geotoolkit.util.Exceptions;
  * <p>A spécific exception class for KML parsing errors.</p>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class KmlException extends Exception{
 

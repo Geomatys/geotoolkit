@@ -32,7 +32,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Description of the intersection surface process.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class IntersectionSurfaceDescriptor extends AbstractProcessDescriptor {
     /**Process name : intersectionSurface */

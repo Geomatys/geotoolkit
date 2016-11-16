@@ -36,7 +36,7 @@ import java.beans.PropertyChangeListener;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> {
 

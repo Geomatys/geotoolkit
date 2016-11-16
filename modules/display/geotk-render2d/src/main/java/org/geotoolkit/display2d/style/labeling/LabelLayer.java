@@ -22,7 +22,7 @@ import java.util.List;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface LabelLayer {
 

@@ -24,7 +24,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject implements AbstractLatLonBox {
 

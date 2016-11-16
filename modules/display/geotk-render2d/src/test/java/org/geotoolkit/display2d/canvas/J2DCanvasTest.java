@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * Test envelope configuration on J2DCanvas.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
 

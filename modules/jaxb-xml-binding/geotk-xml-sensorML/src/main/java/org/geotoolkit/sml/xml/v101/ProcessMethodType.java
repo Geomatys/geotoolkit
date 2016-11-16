@@ -179,7 +179,7 @@ import org.apache.sis.metadata.MetadataStandard;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessMethodType", propOrder = {

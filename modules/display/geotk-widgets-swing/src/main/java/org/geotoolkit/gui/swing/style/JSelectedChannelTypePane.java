@@ -37,7 +37,7 @@ import org.opengis.style.SelectedChannelType;
  * SelectedChannel type panel
  * 
  * @author  Johann Sorel
- * @module pending
+ * @module
  */
 public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannelType> implements DocumentListener {
 

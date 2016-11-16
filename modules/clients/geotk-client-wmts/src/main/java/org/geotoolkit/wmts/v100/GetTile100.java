@@ -28,7 +28,7 @@ import org.geotoolkit.wmts.AbstractGetTile;
  * Implementation for the GetMap request version 1.0.0.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class GetTile100 extends AbstractGetTile {
     /**

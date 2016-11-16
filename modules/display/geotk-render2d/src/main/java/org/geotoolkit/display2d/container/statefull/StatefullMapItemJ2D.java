@@ -45,7 +45,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener{
 

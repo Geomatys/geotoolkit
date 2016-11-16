@@ -22,7 +22,7 @@ import org.geotoolkit.storage.coverage.CoverageReference;
  * MapLayer handeling coverages.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CoverageMapLayer extends MapLayer{
 

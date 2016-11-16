@@ -50,7 +50,7 @@ import org.geotoolkit.wcs.xml.v200.ExtensionType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
 

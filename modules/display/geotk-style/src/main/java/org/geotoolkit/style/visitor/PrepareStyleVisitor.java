@@ -60,7 +60,7 @@ import org.opengis.style.TextSymbolizer;
  * Copy and simplify operations
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVisitor{
     

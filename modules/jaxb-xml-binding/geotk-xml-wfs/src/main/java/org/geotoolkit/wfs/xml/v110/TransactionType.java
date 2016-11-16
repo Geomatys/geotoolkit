@@ -61,7 +61,7 @@ import org.geotoolkit.wfs.xml.Transaction;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionType", propOrder = {

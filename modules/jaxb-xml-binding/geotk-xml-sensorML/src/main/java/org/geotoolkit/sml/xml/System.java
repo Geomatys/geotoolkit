@@ -22,7 +22,7 @@ import org.geotoolkit.gml.xml.v311.LocationPropertyType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface System extends AbstractComponent {
 

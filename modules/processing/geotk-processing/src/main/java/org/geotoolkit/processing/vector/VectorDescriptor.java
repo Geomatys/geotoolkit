@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection clipped</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class VectorDescriptor extends AbstractProcessDescriptor {
 

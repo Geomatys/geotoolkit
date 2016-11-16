@@ -58,7 +58,7 @@ import org.opengis.temporal.Period;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePeriodType", propOrder = {

@@ -24,7 +24,7 @@ import org.opengis.filter.Or;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Or")

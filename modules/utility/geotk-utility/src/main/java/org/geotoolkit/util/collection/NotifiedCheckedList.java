@@ -25,7 +25,7 @@ import org.apache.sis.measure.NumberRange;
  * objects are added or removed.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
 

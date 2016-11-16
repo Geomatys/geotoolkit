@@ -46,7 +46,7 @@ import org.geotoolkit.csw.xml.DistributedSearch;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistributedSearchType")

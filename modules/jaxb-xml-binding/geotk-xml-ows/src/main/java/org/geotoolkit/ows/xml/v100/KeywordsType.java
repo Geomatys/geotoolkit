@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "KeywordsType", propOrder = {

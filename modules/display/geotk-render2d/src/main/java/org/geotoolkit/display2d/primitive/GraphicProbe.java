@@ -30,7 +30,7 @@ import org.opengis.geometry.Envelope;
  * A Graphic object that render nothing and fires an event when it is repainted.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GraphicProbe extends GraphicJ2D{
 

@@ -36,7 +36,7 @@ import org.apache.sis.util.ComparisonMode;
  * The value of the gml:location property describes the extent, position or relative location of the feature.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureType", propOrder = {

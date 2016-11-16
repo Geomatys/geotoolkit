@@ -58,7 +58,7 @@ import org.opengis.geometry.Envelope;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageDescriptionType", propOrder = {

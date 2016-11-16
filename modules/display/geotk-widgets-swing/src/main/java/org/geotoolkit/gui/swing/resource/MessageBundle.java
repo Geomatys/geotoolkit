@@ -28,7 +28,7 @@ import org.opengis.util.InternationalString;
  * Internalization of all styling widgets.
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public final class MessageBundle extends IndexedResourceBundle {
 

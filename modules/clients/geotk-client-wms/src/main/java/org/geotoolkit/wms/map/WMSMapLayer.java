@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSMapLayer extends DefaultCoverageMapLayer {
 

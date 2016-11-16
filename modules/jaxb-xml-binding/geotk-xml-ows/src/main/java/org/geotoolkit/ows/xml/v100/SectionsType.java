@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.Sections;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SectionsType", propOrder = {

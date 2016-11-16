@@ -39,7 +39,7 @@ import org.opengis.parameter.*;
  * OSM TMS Server factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMTMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 

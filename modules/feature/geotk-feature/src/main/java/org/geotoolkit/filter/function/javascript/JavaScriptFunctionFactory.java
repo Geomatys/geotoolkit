@@ -24,7 +24,7 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  * Factory registering javascript functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JavaScriptFunctionFactory extends AbstractFunctionFactory{
 

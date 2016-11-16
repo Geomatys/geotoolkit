@@ -38,7 +38,7 @@ import org.opengis.style.Symbolizer;
  * final fields.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> implements SymbolizerRenderer{
 

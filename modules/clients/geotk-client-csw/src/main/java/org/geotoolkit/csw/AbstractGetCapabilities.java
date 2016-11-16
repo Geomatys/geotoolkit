@@ -34,7 +34,7 @@ import org.geotoolkit.security.ClientSecurity;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractCSWRequest implements GetCapabilitiesRequest {
 

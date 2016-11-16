@@ -34,7 +34,7 @@ import org.apache.sis.util.ArgumentChecks;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class EditionHandler implements CanvasHandler, MouseInputListener,KeyListener,MouseWheelListener{
 

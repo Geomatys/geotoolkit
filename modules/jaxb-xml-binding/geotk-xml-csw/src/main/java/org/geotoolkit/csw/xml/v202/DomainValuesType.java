@@ -56,7 +56,7 @@ import org.geotoolkit.csw.xml.DomainValues;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainValuesType", propOrder = {

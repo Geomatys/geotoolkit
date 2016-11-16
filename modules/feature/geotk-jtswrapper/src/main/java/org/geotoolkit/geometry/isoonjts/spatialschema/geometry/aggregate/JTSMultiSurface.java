@@ -14,7 +14,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlType(name="MultiSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSMultiSurface extends AbstractJTSAggregate<OrientableSurface> implements MultiSurface {

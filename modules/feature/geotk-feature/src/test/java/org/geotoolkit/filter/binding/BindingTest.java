@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * Test accessors.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BindingTest extends org.geotoolkit.test.TestBase {
 

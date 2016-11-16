@@ -34,7 +34,7 @@ import org.opengis.feature.PropertyType;
  * using a mapping objet.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class GenericMappingFeatureIterator implements FeatureIterator{
 

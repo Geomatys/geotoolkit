@@ -47,7 +47,7 @@ import org.geotoolkit.ows.xml.AbstractRequestMethod;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestMethodType", propOrder = {

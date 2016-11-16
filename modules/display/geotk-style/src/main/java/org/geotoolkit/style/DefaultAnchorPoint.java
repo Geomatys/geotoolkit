@@ -27,7 +27,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types AnchorPoint.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultAnchorPoint implements AnchorPoint{
 

@@ -21,7 +21,7 @@ import org.geotoolkit.swe.xml.AbstractTime;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractTimePosition {
 

@@ -38,7 +38,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OpenStreetMapClientTest extends org.geotoolkit.test.TestBase {
 

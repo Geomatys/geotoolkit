@@ -20,7 +20,7 @@ import org.opengis.geometry.aggregate.MultiPoint;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 @XmlType(name="MultiPointType", namespace="http://www.opengis.net/gml")
 public class JTSMultiPoint extends AbstractJTSAggregate<Point>	implements MultiPoint {

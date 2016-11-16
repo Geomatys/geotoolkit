@@ -63,7 +63,7 @@ import org.apache.sis.util.logging.Logging;
  * Transform OGC jaxb xml in GT classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OGC110toGTTransformer {
 

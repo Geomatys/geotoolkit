@@ -31,7 +31,7 @@ import org.opengis.sld.Constraint;
  * Listener for user layer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface LayerListener extends PropertyChangeListener{
 

@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class StatisticOp extends Static {
 

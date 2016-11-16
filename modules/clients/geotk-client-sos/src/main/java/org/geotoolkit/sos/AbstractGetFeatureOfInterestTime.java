@@ -33,7 +33,7 @@ import org.geotoolkit.sos.xml.v100.GetFeatureOfInterestTime;
  * parameters for a GetFeatureOfInterestTime request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSRequest implements GetFeatureOfInterestTimeRequest {
 

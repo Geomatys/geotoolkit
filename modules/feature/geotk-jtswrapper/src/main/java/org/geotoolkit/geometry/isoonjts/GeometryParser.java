@@ -87,7 +87,7 @@ import org.opengis.geometry.primitive.OrientableCurve;
  * @author Jody Garnett
  * @author Joel Skelton
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  * @since 2.5
  * @version $Id$
  */

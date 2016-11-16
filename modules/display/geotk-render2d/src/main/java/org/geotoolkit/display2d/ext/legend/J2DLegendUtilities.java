@@ -62,7 +62,7 @@ import org.opengis.util.InternationalString;
  * Utility class to render legend using a provided template.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DLegendUtilities {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.legend");

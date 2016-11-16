@@ -30,7 +30,7 @@ import org.opengis.metadata.identification.Identification;
  * Provide a set operations manipulating mapfiles.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapfileProcessingRegistry extends AbstractProcessingRegistry{
     

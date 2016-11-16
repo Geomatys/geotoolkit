@@ -41,7 +41,7 @@ import org.opengis.geometry.Envelope;
  * occured on some methods.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureCollection extends Collection<Feature> {
 

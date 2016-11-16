@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Internal structure is a Tree which can be viewed as a list using method 'layers'.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MapContext extends MapItem{
 

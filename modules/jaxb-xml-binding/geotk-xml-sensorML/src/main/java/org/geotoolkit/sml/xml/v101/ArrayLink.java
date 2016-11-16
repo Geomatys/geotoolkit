@@ -86,7 +86,7 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

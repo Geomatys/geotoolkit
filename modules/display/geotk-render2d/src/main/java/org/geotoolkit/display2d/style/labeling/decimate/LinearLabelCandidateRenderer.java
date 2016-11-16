@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<LinearLabelDescriptor>{
 

@@ -52,7 +52,7 @@ import org.openide.awt.DropDownButtonFactory;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JEditionBar extends AbstractMapControlBar implements ActionListener,PropertyChangeListener,ListSelectionListener{
 

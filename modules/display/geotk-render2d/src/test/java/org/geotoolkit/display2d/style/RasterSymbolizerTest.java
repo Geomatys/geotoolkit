@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  * Test that raster symbolizer are properly rendered.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 

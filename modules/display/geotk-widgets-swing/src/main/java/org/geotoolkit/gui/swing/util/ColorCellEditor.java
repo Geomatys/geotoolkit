@@ -33,7 +33,7 @@ import static org.geotoolkit.gui.swing.util.ColorCellRenderer.paintComp;
  * Cell Renderer for Color objects.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ColorCellEditor extends AbstractCellEditor implements TableCellEditor,ActionListener {
 

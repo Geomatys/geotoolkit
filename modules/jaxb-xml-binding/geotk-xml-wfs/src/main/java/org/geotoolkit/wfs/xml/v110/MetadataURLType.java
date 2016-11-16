@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlValue;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetadataURLType", propOrder = {

@@ -26,7 +26,7 @@ import org.opengis.geometry.primitive.Curve;
  * Simple and efficient path iterator for ISO Curve.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
 

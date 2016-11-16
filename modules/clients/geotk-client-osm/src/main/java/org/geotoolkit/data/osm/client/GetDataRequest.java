@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * Request to get datas from the osm server.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetDataRequest extends Request{
 

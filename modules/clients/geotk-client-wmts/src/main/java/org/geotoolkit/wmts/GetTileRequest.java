@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetTileRequest extends Request {
 

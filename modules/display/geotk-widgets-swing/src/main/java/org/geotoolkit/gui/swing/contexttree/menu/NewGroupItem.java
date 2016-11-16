@@ -37,7 +37,7 @@ import org.geotoolkit.font.IconBuilder;
  * New MapItem menu item for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class NewGroupItem extends AbstractTreePopupItem{
 

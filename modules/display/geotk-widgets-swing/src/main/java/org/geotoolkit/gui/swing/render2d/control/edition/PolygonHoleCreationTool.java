@@ -32,7 +32,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool to create polygon holes.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PolygonHoleCreationTool extends AbstractEditionTool {
 

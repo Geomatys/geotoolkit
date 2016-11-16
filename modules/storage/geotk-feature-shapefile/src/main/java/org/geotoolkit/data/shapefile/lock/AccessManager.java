@@ -49,7 +49,7 @@ import org.apache.sis.util.logging.Logging;
  * Manage reader and writer creation with proper read/write locks.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class AccessManager {
 

@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get affected relations for the given element
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadElementRelationsRequest extends Request{
 

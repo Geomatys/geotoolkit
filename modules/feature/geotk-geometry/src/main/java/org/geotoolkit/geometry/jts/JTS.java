@@ -76,7 +76,7 @@ import org.apache.sis.util.Utilities;
  * <li>transformation</li> <li>coordinate sequence editing</li> <li>common
  * coordinate sequence implementations for specific uses</li> </ul>
  *
- * @module pending
+ * @module
  * @since 2.2
  * @version $Id$
  * @author Jody Garnett

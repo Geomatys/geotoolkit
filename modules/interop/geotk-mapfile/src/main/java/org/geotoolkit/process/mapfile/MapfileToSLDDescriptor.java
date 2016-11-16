@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapfileToSLDDescriptor extends AbstractProcessDescriptor{
         

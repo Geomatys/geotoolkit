@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  * Remove rotation or any special case from the coverage GridToCRS.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StraightenProcess extends AbstractProcess {
 

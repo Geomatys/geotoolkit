@@ -99,7 +99,7 @@ import org.geotoolkit.nio.IOUtilities;
  * Default implementation of portrayal service.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DefaultPortrayalService implements PortrayalService{
 

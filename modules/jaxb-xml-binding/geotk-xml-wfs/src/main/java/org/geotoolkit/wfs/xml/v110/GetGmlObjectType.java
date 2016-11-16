@@ -53,7 +53,7 @@ import org.geotoolkit.wfs.xml.GetGmlObject;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetGmlObjectType", propOrder = {

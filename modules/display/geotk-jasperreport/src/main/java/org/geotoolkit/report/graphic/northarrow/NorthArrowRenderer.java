@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
  * Jasper Report renderer used to render north arrow graphic.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NorthArrowRenderer implements JRRenderable{
 

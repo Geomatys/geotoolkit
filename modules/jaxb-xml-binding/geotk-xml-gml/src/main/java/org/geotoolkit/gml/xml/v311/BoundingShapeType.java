@@ -53,7 +53,7 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundingShapeType", propOrder = {

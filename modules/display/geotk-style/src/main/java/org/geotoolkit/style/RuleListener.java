@@ -32,7 +32,7 @@ import org.opengis.style.Symbolizer;
  * Listener for Rule.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface RuleListener extends PropertyChangeListener{
     

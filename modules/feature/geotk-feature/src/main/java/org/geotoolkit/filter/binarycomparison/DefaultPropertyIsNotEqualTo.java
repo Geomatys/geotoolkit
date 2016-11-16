@@ -27,7 +27,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is not equal" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implements PropertyIsNotEqualTo{
 

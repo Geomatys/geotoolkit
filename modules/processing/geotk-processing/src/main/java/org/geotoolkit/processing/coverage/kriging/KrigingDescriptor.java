@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Description of a coverage to polygon process.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class KrigingDescriptor extends AbstractProcessDescriptor{
 

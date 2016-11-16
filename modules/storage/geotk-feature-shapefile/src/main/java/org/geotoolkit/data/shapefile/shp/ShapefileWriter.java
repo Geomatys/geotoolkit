@@ -48,7 +48,7 @@ import org.geotoolkit.data.dbf.Closeable;
  * @author jamesm
  * @author aaime
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class ShapefileWriter implements Closeable{
 

@@ -31,7 +31,7 @@ package org.geotoolkit.xal.model;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface SortingCode {
 

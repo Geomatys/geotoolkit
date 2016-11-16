@@ -35,7 +35,7 @@ import org.geotoolkit.sos.xml.v100.GetResult;
  * parameters for a GetObservation request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetResult extends AbstractSOSRequest implements GetResultRequest {
 

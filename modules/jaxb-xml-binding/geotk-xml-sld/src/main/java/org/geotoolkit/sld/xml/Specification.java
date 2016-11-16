@@ -20,7 +20,7 @@ package org.geotoolkit.sld.xml;
  * Enumerations of all specifications versions.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class Specification {
 

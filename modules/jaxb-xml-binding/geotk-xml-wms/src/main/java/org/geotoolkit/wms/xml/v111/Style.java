@@ -32,7 +32,7 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
  * 
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -32,7 +32,7 @@ import org.opengis.feature.FeatureType;
  * Basic support for a  FeatureIterator that starts at a given index.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 

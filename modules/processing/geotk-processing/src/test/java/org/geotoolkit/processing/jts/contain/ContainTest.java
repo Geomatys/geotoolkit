@@ -39,7 +39,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  * JUnit test of Contain process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class ContainTest extends AbstractProcessTest {
 

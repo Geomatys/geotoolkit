@@ -26,7 +26,7 @@ import org.junit.Test;
  * Coverage store tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMTMSCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
 

@@ -19,7 +19,7 @@ package org.geotoolkit.wps;
 /**
  * Literal Input for WPS
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class WPSInputLiteral extends AbstractWPSInput{
     

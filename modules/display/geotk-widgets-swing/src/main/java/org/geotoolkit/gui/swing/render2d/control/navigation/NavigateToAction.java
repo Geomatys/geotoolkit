@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * Shows a dialog to fill in a coordinate and navigate to it.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class NavigateToAction extends AbstractMapAction {
 

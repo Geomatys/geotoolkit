@@ -28,7 +28,7 @@ import org.geotoolkit.util.StringUtilities;
  * Regroup all parameters that define a map area on the jasper report template.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class MapDef extends RenderableField{
 

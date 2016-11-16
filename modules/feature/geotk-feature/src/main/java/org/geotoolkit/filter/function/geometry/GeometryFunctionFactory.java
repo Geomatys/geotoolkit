@@ -26,7 +26,7 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryFunctionFactory extends AbstractFunctionFactory {
     

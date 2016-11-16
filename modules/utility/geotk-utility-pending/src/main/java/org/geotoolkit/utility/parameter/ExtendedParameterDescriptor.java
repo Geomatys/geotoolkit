@@ -35,7 +35,7 @@ import org.opengis.metadata.citation.Citation;
  * 
  * @see org.apache.sis.parameter.DefaultParameterDescriptor
  * 
- * @module pending
+ * @module
  */
 public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
 

@@ -95,7 +95,7 @@ import org.openide.util.Exceptions;
  * layer feature panel
  *
  * @author  Johann Sorel
- * @module pending
+ * @module
  */
 public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements LayerListener {
 

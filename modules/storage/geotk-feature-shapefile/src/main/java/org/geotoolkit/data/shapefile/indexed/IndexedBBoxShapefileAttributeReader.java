@@ -42,7 +42,7 @@ import org.opengis.feature.PropertyType;
  * Attribut reader that will check the geometry bbox and resolution.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttributeReader<LazyTyleSearchIterator.Buffered<ShpData>>{
 

@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
  * </pre>
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class StaxStreamReader extends AbstractConfigurable {
 

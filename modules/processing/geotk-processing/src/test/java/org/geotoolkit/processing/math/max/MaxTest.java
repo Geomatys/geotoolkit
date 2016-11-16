@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Max process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class MaxTest extends AbstractProcessTest {
 

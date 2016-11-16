@@ -30,7 +30,7 @@ import org.opengis.feature.FeatureType;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 

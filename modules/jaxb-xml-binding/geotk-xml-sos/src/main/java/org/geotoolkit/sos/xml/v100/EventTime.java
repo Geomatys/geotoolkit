@@ -41,7 +41,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Guilhem legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EventTime", propOrder = {

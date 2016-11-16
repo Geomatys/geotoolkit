@@ -102,7 +102,7 @@ import org.geotoolkit.style.function.Jenks;
  * while Style, FeatureTypeStyle and Rule are mutable.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultStyleFactory extends Factory implements MutableStyleFactory {
 

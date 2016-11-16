@@ -57,7 +57,7 @@ import org.geotoolkit.wcs.xml.WCSResponse;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

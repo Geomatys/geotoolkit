@@ -46,7 +46,7 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

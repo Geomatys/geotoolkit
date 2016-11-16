@@ -71,7 +71,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IntervalStyleBuilder extends AbstractTableModel{
 

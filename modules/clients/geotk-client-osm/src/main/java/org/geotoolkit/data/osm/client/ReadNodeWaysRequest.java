@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to get ways related to the given node
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ReadNodeWaysRequest extends Request{
 

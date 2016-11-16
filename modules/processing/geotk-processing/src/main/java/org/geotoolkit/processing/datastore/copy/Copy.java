@@ -57,7 +57,7 @@ import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class Copy extends AbstractProcess {
 

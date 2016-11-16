@@ -25,7 +25,7 @@ import org.opengis.feature.FeatureType;
 /**
  * FeatureCollection for SpatialJoin process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
 

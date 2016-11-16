@@ -48,7 +48,7 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LockFeatureResponseType", propOrder = {

@@ -22,7 +22,7 @@ import java.util.List;
  * Abstract main class for capabilities service part.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractCapability {
 

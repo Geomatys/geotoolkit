@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.ext.BackgroundUtilities;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DImageUtilities {
 

@@ -52,7 +52,7 @@ import org.opengis.filter.FilterFactory;
  * Feature collection model
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class FeatureCollectionModel extends DefaultTableModel {
 

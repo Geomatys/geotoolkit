@@ -48,7 +48,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
- * @module pending
+ * @module
  */
 public class JTSLineString extends AbstractJTSGenericCurve
 	implements LineString, Primitive {

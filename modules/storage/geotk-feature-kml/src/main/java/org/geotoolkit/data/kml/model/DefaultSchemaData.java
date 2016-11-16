@@ -24,7 +24,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultSchemaData extends DefaultAbstractObject implements SchemaData {
 

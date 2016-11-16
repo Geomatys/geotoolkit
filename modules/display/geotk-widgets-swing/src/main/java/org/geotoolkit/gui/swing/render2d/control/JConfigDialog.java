@@ -44,7 +44,7 @@ import org.apache.sis.measure.Units;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JConfigDialog extends javax.swing.JDialog {
 

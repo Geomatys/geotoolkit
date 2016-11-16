@@ -53,7 +53,7 @@ import org.geotoolkit.sml.xml.AbstractPerson;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

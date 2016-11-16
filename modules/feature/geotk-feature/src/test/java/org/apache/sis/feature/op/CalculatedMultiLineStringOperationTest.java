@@ -39,7 +39,7 @@ import org.opengis.feature.PropertyType;
  * Test calculated multi line string attribute.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CalculatedMultiLineStringOperationTest {
 

@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Add process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AddTest extends AbstractProcessTest {
 

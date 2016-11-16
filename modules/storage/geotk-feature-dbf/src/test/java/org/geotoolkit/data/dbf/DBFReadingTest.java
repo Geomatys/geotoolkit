@@ -38,7 +38,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class DBFReadingTest extends AbstractReadingTests{
 

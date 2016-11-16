@@ -41,7 +41,7 @@ import org.geotoolkit.se.xml.vext.RecolorType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ColorReplacementType", propOrder = {

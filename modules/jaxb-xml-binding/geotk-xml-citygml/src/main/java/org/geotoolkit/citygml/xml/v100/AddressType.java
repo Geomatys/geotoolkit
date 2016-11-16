@@ -52,7 +52,7 @@ import org.geotoolkit.gml.xml.v311.MultiPointPropertyType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressType", propOrder = {

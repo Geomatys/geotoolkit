@@ -21,7 +21,7 @@ import org.geotoolkit.factory.Hints;
 /**
  * Additional hints that are using in geotoolkit-pending.
  *
- * @module pending
+ * @module
  * @since 2.1
  * @version $Id$
  * @author Martin Desruisseaux

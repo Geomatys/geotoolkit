@@ -24,7 +24,7 @@ import org.geotoolkit.security.ClientSecurity;
  * Get capabilities request for WFS 1.1.0
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetCapabilities110 extends AbstractGetCapabilities{
 

@@ -37,7 +37,7 @@ import org.opengis.feature.Property;
  * Creates property accessors for XPath expressions.
  *
  * @author Johann Sorel, Geomatys
- * @module pending
+ * @module
  */
 public class XPathBinding<C> extends AbstractBinding<C> {
 

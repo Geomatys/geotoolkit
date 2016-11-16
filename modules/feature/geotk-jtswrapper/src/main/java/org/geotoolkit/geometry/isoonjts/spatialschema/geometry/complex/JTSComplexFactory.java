@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JTSComplexFactory extends Factory implements ComplexFactory {
 

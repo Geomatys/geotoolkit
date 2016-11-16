@@ -27,7 +27,7 @@ import org.geotoolkit.process.ProgressController;
  * The default implementations of the other methods do nothing.
  * </p>
  *
- * @module pending
+ * @module
  * @since 2.2
  * @version $Id$
  */

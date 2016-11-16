@@ -48,7 +48,7 @@ import org.xml.sax.XMLReader;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SvgUtils {
 

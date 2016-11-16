@@ -33,7 +33,7 @@ import org.geotoolkit.wps.xml.v100.GetCapabilities;
  * Abstract get capabilities request.
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 

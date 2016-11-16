@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractValues {
 

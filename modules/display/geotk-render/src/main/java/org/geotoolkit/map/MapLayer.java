@@ -28,7 +28,7 @@ import org.opengis.geometry.Envelope;
  * with a given {@link MutableStyle}.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MapLayer extends MapItem {
     

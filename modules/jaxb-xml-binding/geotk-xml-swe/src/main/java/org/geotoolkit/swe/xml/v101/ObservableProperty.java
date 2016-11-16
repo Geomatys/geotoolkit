@@ -38,7 +38,7 @@ import org.geotoolkit.swe.xml.AbstractObservableProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

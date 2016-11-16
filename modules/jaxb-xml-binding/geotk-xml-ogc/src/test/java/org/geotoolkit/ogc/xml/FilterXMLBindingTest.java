@@ -64,7 +64,7 @@ import static org.apache.sis.test.Assert.*;
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
 

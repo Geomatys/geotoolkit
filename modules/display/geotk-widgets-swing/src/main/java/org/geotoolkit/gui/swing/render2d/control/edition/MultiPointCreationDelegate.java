@@ -30,7 +30,7 @@ import java.util.List;
  * multi-point creation handler
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class MultiPointCreationDelegate extends AbstractFeatureEditionDelegate {
 

@@ -33,7 +33,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Compute if the first geometry overlaps the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class OverlapsProcess extends AbstractProcess {
 

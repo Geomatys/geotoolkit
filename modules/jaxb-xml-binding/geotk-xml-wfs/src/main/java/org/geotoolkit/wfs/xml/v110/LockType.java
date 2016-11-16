@@ -52,7 +52,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LockType", propOrder = {

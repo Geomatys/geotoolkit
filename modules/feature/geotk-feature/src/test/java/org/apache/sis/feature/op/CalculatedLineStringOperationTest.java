@@ -37,7 +37,7 @@ import org.opengis.feature.FeatureType;
  * Test calculated linestring attribut.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CalculatedLineStringOperationTest {
 

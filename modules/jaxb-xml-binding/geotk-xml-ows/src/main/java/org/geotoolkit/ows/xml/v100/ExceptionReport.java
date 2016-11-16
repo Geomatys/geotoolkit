@@ -52,7 +52,7 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

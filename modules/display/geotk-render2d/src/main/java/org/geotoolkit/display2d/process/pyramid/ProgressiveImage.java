@@ -47,7 +47,7 @@ import org.apache.sis.util.logging.Logging;
  * On the fly calculated image. multi-threaded.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProgressiveImage implements RenderedImage{
 

@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
  * This class is not thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LucenePropertyBinding extends AbstractBinding<Document> {
     private static final GeometryFactory GF = new GeometryFactory();

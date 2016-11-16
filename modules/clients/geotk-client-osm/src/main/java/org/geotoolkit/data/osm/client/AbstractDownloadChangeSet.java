@@ -24,7 +24,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a download change set request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDownloadChangeSet extends AbstractRequest implements DownloadChangeSetRequest{
 

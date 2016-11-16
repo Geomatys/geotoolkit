@@ -45,7 +45,7 @@ import org.geotoolkit.sml.xml.AbstractRestrictedProcess;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRestrictedProcessType")

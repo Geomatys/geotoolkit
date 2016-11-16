@@ -83,7 +83,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * </code></pre>
  *
  * @author Jody
- * @module pending
+ * @module
  */
 public abstract class DefaultFilterVisitor extends DefaultExpressionVisitor implements FilterVisitor {
 

@@ -27,7 +27,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 /**
  * Geographic bounding box for 1.1.1 version of WMS
  * @author legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

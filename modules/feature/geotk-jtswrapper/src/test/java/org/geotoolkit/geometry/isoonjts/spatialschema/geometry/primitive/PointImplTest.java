@@ -30,7 +30,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
 /**
  * @author gdavis
  *
- * @module pending
+ * @module
  */
 public class PointImplTest extends TestCase {
 

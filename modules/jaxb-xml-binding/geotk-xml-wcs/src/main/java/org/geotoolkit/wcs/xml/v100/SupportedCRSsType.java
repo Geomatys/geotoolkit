@@ -51,7 +51,7 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedCRSsType", propOrder = {

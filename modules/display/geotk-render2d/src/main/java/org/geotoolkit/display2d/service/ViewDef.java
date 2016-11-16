@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
  * geographic area to be rendered.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ViewDef {
 

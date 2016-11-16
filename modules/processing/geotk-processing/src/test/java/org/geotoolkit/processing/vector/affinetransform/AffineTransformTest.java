@@ -50,7 +50,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * JUnit test of AffineTransform process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 @Ignore //TODO : transform is now handle with operations, rewrite whole test
 public class AffineTransformTest extends AbstractProcessTest {

@@ -53,7 +53,7 @@ import org.opengis.metadata.identification.Identification;
  * Factory for vector process
  * Factory name : "vector"
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class VectorProcessingRegistry extends AbstractProcessingRegistry {
 

@@ -44,7 +44,7 @@ import org.apache.sis.util.ComparisonMode;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SquareMatrixType", propOrder = {

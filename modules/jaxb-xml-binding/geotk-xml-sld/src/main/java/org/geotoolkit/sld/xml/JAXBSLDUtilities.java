@@ -40,7 +40,7 @@ import javax.xml.bind.JAXBContext;
  * Utility class to read and write XML OGC SLD files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JAXBSLDUtilities {
 

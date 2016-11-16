@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *     <li>FEATURE_OUT "feature_out" the result FeatureCollection </li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class UnionDescriptor extends VectorDescriptor {
 

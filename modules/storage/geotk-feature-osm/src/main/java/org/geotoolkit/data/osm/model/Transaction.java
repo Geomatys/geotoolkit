@@ -25,7 +25,7 @@ import org.opengis.feature.Feature;
  * Diff files are composed of transactions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Transaction {
 

@@ -30,7 +30,7 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
  * <p>Java class for anonymous complex type.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

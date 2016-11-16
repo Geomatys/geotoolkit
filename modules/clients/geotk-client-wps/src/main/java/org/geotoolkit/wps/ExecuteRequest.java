@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * WPS Execute mutable request interface.
  * 
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public interface ExecuteRequest extends Request {
     

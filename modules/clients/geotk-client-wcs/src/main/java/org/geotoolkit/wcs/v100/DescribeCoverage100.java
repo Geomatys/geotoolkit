@@ -25,7 +25,7 @@ import org.geotoolkit.wcs.WebCoverageClient;
  * Implementation for the DescribeCoverage request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class DescribeCoverage100 extends AbstractDescribeCoverage {
     /**

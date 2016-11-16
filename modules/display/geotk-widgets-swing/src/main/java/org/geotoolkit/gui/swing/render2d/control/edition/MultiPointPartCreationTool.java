@@ -31,7 +31,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool to create multi point parts.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MultiPointPartCreationTool extends AbstractEditionTool {
 

@@ -28,7 +28,7 @@ import org.geotoolkit.security.ClientSecurity;
  *
  * @author Olivier Terral (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
     /**

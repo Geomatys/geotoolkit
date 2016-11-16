@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * Action that display a scroll pan with the legend.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LegendDecorationAction extends AbstractMapAction {
 

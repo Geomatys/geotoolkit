@@ -52,7 +52,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometricUtilities {
 

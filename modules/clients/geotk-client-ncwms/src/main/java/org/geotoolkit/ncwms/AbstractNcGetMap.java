@@ -28,7 +28,7 @@ import org.geotoolkit.wms.AbstractGetMap;
  * a GetMap request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMapRequest {
 

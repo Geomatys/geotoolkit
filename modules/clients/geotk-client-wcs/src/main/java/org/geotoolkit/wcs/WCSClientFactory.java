@@ -35,7 +35,7 @@ import org.opengis.parameter.*;
  * Web Coverage Service Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class WCSClientFactory extends AbstractClientFactory{
 

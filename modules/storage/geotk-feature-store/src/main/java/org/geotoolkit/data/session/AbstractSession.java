@@ -30,7 +30,7 @@ import org.opengis.filter.Id;
  *  Abstract session which handle listeners and add convenient fire event methods.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractSession extends AbstractStorage implements Session, FeatureStoreListener{
 

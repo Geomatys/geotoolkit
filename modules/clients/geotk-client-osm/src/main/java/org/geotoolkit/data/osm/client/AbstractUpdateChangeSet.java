@@ -37,7 +37,7 @@ import org.opengis.feature.Feature;
  * parameters for an update change set request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractUpdateChangeSet extends AbstractRequest implements UpdateChangeSetRequest{
 

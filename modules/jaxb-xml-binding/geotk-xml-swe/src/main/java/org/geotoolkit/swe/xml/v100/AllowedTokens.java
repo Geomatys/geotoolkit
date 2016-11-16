@@ -52,7 +52,7 @@ import org.geotoolkit.swe.xml.AbstractAllowedTokens;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

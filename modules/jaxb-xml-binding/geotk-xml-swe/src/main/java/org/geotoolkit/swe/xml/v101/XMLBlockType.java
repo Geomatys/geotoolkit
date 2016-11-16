@@ -42,7 +42,7 @@ import org.geotoolkit.swe.xml.XmlBlock;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "XMLBlockType")

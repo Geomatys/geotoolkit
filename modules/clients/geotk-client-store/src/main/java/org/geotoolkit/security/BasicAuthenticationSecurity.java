@@ -24,7 +24,7 @@ import org.apache.sis.util.ArgumentChecks;
  * Basic authentication security.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BasicAuthenticationSecurity extends DefaultClientSecurity{
 

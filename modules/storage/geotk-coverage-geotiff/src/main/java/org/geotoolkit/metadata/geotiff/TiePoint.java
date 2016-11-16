@@ -21,7 +21,7 @@ package org.geotoolkit.metadata.geotiff;
  * Define a TiePoint.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class TiePoint {
 

@@ -24,7 +24,7 @@ import java.util.Date;
  * GPX trace file metadatas.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GPXFileMetadata {
     

@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Abstract FeatureStoreFactory for databases.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureStoreFactory {
 

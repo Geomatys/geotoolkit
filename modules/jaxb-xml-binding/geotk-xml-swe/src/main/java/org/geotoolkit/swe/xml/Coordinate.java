@@ -19,7 +19,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 public interface Coordinate {
     public AbstractCount getCount();

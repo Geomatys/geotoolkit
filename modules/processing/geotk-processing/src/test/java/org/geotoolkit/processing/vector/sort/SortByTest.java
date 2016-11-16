@@ -22,7 +22,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 /**
  * JUnit test of SortBy process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class SortByTest extends AbstractProcessTest {
 

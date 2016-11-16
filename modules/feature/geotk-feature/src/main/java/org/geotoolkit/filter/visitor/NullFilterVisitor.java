@@ -97,7 +97,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * </ul>
  * 
  * @author Jody Garnett (Refractions Research)
- * @module pending
+ * @module
  */
 public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisitor {
     static public NullFilterVisitor NULL_VISITOR = new NullFilterVisitor(){

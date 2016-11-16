@@ -44,7 +44,7 @@ import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

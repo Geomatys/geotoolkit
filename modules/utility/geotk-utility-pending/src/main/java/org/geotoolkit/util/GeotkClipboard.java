@@ -28,7 +28,7 @@ import java.io.IOException;
  * A java local clipboard which can be used by widgets.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class GeotkClipboard {
     

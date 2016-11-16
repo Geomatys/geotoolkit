@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractShapeHandler implements ShapeHandler {
 

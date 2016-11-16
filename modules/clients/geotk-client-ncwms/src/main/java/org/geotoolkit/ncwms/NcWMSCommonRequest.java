@@ -20,7 +20,7 @@ package org.geotoolkit.ncwms;
  * Common interface for some ncWMS requests (GetMap, GetLegendGraphic, GetFeatureInfo)
  * 
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public interface NcWMSCommonRequest {
     

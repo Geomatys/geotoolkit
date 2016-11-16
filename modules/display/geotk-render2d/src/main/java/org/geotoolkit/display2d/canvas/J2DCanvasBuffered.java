@@ -51,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Canvas based on a BufferedImage.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DCanvasBuffered extends J2DCanvas{
 

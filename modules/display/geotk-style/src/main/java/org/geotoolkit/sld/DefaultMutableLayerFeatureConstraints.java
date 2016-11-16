@@ -34,7 +34,7 @@ import org.opengis.sld.SLDVisitor;
  * Default mutable feature constraints, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstraints{
 

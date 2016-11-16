@@ -30,7 +30,7 @@ import org.opengis.filter.expression.PropertyName;
  * Abstract implementation of Types symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractSymbolizer implements Symbolizer{
     

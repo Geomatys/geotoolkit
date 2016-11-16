@@ -23,7 +23,7 @@ import org.apache.sis.util.ArraysExt;
  * Default query capabilities implementation.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultQueryCapabilities implements QueryCapabilities{
 

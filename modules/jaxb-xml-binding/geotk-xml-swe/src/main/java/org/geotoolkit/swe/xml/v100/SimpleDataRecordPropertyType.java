@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.SimpleDataRecordProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleDataRecordPropertyType", propOrder = {

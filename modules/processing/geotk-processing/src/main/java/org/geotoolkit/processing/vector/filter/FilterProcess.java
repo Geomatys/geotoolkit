@@ -27,7 +27,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * Adding on the fly attributes of Feature contents.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class FilterProcess extends AbstractProcess {
 

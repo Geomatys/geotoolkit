@@ -24,7 +24,7 @@ import org.opengis.geometry.DirectPosition;
  * Map request for static google maps api.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetMapRequest extends Request{
     

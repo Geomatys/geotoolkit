@@ -47,7 +47,7 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EngineeringDatumRefType", propOrder = {

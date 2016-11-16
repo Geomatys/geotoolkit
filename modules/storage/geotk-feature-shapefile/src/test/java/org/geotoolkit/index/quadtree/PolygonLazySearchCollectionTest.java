@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Jesse
- * @module pending
+ * @module
  */
 public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
 

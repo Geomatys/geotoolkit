@@ -34,7 +34,7 @@ import static javax.swing.SwingConstants.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DoubleRenderer implements NavigatorRenderer{
 

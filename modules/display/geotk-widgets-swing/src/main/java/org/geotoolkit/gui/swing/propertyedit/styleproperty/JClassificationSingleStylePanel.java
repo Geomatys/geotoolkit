@@ -88,7 +88,7 @@ import org.opengis.util.GenericName;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 

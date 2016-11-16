@@ -45,7 +45,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of SpatialJoin process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class SpatialJoinTest extends AbstractProcessTest {
 

@@ -82,7 +82,7 @@ import org.opengis.feature.PropertyNotFoundException;
  * This class will take care to implement the coverage hit method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> extends AbstractSymbolizerRenderer<C>{
 

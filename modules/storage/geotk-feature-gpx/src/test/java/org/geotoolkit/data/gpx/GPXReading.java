@@ -40,7 +40,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GPXReading extends AbstractReadingTests {
 

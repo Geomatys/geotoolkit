@@ -46,7 +46,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JRulePane extends StyleElementEditor<MutableRule> {
 

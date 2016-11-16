@@ -43,7 +43,7 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

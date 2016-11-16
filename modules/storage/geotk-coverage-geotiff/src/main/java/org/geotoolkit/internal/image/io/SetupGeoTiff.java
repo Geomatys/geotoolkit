@@ -33,7 +33,7 @@ import javax.imageio.spi.ImageWriterSpi;
  * Performs initialization and shutdown of the {@code geotk-coverageio-geotiff} module.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class SetupGeoTiff implements SetupService {
     /**

@@ -22,7 +22,7 @@ import org.geotoolkit.client.AbstractRequest;
  * Request to grab a token.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetTokenRequest extends AbstractRequest{
     

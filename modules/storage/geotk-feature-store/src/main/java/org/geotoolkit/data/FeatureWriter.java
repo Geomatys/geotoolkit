@@ -27,7 +27,7 @@ import org.opengis.feature.FeatureType;
  * A FeatureWriter can be created on any FeatureStore which support writing operations.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface FeatureWriter extends FeatureIterator{
 

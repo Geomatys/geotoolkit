@@ -44,7 +44,7 @@ import org.geotoolkit.wps.xml.Reference;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputReferenceType")

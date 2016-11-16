@@ -57,7 +57,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
- * @module pending
+ * @module
  */
 public class JTSGeometryFactory extends Factory implements GeometryFactory {
     

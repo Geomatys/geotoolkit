@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
 /**
  * FeatureCollection for Clip process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class ClipGeometryFeatureCollection extends WrapFeatureCollection {
 

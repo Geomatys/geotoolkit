@@ -29,7 +29,7 @@ import org.geotoolkit.data.kml.model.Model;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface Track extends AbstractGeometry {
 

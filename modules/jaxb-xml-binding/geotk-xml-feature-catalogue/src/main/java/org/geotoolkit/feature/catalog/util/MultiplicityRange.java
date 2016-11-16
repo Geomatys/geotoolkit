@@ -49,7 +49,7 @@ import org.geotoolkit.util.UnlimitedInteger;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiplicityRange_Type", propOrder = {

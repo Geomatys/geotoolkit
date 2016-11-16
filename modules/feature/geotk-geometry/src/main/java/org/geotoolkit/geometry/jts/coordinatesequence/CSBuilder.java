@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * 
  * @author wolf
  *
- * @module pending
+ * @module
  */
 public interface CSBuilder {
 	/**

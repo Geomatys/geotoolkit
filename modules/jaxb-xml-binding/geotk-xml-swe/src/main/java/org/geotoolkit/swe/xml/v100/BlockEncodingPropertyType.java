@@ -51,7 +51,7 @@ import org.geotoolkit.swe.xml.BlockEncodingProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BlockEncodingPropertyType", propOrder = {

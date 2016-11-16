@@ -20,7 +20,7 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
  * Abstract class for feature properties.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 //@UML(identifier="FC_PropertyType", specification=ISO_19110)
 public interface PropertyType {

@@ -28,7 +28,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable "is null" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
 

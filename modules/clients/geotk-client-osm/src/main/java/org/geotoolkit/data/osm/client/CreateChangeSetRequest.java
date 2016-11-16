@@ -24,7 +24,7 @@ import org.geotoolkit.data.osm.model.ChangeSet;
  * Request to open a new changeset.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CreateChangeSetRequest extends Request{
 

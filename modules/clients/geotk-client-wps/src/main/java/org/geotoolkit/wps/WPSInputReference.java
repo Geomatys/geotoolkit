@@ -19,7 +19,7 @@ package org.geotoolkit.wps;
 /**
  * Reference Input for WPS
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class WPSInputReference extends AbstractWPSInput{
     

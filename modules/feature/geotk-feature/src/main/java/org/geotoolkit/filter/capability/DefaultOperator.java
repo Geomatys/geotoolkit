@@ -25,7 +25,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable operator.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOperator implements Operator{
 

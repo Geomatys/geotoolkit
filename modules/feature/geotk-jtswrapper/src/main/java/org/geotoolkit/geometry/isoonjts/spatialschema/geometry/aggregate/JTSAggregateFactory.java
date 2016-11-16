@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author Jody Garnett
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JTSAggregateFactory extends Factory implements AggregateFactory {
 

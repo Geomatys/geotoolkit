@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataType", propOrder = {

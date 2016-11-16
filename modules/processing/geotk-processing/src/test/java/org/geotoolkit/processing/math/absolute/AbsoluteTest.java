@@ -30,7 +30,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * JUnit test of absolute process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class AbsoluteTest extends AbstractProcessTest {
 

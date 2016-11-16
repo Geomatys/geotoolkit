@@ -62,7 +62,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JLayerBandMenu extends JMenu implements ContextListener{
 

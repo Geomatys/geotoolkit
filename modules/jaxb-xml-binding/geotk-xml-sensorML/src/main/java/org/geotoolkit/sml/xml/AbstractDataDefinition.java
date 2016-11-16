@@ -23,7 +23,7 @@ import org.geotoolkit.swe.xml.DataStreamDefinition;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractDataDefinition {
 

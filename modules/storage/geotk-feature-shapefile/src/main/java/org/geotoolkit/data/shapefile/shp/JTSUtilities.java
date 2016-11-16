@@ -34,7 +34,7 @@ import org.apache.sis.storage.DataStoreException;
  * 
  * @author aaime
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public final class JTSUtilities {
 

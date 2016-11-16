@@ -57,7 +57,7 @@ import org.geotoolkit.ows.xml.v100.IdentificationType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractResourceType", propOrder = {

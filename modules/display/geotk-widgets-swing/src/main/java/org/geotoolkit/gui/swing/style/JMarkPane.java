@@ -38,7 +38,7 @@ import org.opengis.style.Mark;
  * Mark panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JMarkPane extends StyleElementEditor<Mark> {
     

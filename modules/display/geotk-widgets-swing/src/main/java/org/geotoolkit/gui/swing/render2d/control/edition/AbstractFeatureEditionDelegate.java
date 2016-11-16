@@ -25,7 +25,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class AbstractFeatureEditionDelegate extends AbstractEditionDelegate{
 

@@ -148,7 +148,7 @@ public class MergeProcess extends AbstractProcess {
     * Implementation of ObjectConverter for JTS Geometry using the MappingUtils class.
     * This class is use to Convert from a JTS Geometry to an other giving an ObjectConverter object.
     * @author Quentin Boileau
-    * @module pending
+    * @module
     */
     private static class GeomConverter extends SimpleConverter {
 

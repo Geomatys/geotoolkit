@@ -49,7 +49,7 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeGeometricPrimitivePropertyType", propOrder = {

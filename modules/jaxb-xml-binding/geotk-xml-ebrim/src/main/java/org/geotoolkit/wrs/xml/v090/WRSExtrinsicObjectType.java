@@ -50,7 +50,7 @@ import org.geotoolkit.ebrim.xml.v250.ExtrinsicObjectType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WRSExtrinsicObjectType", propOrder = {

@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
  * An object factory allowing to create SensorML object from different version.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class SmlFactory {
 

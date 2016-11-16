@@ -28,7 +28,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Color Decoration
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class ColorDecoration extends JPanel implements MapDecoration{
 

@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  * Map representation of a ncWMS layer.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcWMSMapLayer extends WMSMapLayer {
 

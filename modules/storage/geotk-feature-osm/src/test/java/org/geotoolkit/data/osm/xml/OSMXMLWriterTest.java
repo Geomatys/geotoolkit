@@ -43,7 +43,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMXMLWriterTest extends org.geotoolkit.test.TestBase {
 

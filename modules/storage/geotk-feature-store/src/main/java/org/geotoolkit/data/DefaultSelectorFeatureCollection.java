@@ -48,7 +48,7 @@ import org.opengis.feature.FeatureType;
  * Feature collection that takes it's source from a single selector.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 

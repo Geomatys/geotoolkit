@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
  * @todo class description
  *
  * @author jeichar
- * @module pending
+ * @module
  * @since 2.1.x
  */
 public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory {

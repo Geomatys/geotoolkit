@@ -34,7 +34,7 @@ import org.opengis.style.AnchorPoint;
  * Anchor point edition panel
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
 

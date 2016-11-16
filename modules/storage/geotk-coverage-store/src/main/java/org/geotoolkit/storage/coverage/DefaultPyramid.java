@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default pyramid
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPyramid implements Pyramid{
 

@@ -31,7 +31,7 @@ import org.opengis.util.GenericName;
  * Default imumutable feature type constraint, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
 

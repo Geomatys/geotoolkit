@@ -28,7 +28,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
  * Structure is : {login=max, password=secret}
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StringToMapConverter extends SimpleConverter<String, Map> {
 

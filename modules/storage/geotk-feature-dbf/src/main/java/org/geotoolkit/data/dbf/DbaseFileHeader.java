@@ -50,7 +50,7 @@ import org.opengis.feature.PropertyType;
  *
  * Creation date: (5/15/2001 5:15:30 PM)
  *
- * @module pending
+ * @module
  */
 public class DbaseFileHeader {
 

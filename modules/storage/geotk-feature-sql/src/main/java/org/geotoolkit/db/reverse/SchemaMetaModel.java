@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
  * Description of a database schema.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SchemaMetaModel {
 

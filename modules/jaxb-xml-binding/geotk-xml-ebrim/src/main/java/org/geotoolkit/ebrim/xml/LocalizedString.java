@@ -19,7 +19,7 @@ package org.geotoolkit.ebrim.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface LocalizedString {
 

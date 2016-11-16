@@ -43,7 +43,7 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeaturesNotLockedType", propOrder = {

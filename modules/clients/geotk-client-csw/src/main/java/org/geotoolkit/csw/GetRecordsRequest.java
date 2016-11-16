@@ -24,7 +24,7 @@ import org.geotoolkit.csw.xml.ResultType;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetRecordsRequest extends Request {
     String getConstraint();

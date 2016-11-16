@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.DomainMetadata;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainMetadataType", propOrder = {

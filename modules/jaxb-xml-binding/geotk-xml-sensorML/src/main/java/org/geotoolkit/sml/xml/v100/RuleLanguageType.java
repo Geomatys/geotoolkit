@@ -41,7 +41,7 @@ import org.geotoolkit.sml.xml.AbstractRuleLanguage;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ruleLanguageType")

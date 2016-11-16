@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.During;
  * Immutable temporal "during" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDuring extends AbstractTemporalFilter implements During{
 

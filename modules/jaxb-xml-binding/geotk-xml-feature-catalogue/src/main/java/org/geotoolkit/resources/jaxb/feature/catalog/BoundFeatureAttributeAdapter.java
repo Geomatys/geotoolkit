@@ -27,7 +27,7 @@ import org.opengis.feature.catalog.BoundFeatureAttribute;
  * JAXB adapter in order to map implementing class with the Types BoundFeature. See
  * package documentation for more information about JAXB and BoundFeature.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

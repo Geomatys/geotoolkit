@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @since 3.07
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AxisDescriptionType")

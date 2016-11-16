@@ -29,7 +29,7 @@ import org.geotoolkit.index.quadtree.StoreException;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @module pending
+ * @module
  */
 public class IndexHeader {
 

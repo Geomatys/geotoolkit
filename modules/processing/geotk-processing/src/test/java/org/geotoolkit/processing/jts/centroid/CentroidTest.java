@@ -33,7 +33,7 @@ import org.apache.sis.referencing.CommonCRS;
 /**
  * JUnit test of Centroid process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CentroidTest extends AbstractProcessTest {
 

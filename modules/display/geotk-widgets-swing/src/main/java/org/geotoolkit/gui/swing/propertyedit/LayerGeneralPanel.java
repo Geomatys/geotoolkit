@@ -70,7 +70,7 @@ import org.apache.sis.measure.Units;
  *
  * @author Johann Sorel
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class LayerGeneralPanel extends AbstractPropertyPane {
 

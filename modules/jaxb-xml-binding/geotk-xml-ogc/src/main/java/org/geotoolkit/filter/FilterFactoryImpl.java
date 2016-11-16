@@ -176,7 +176,7 @@ import org.opengis.util.GenericName;
  * A factory used by a CQL parser to build filter.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class FilterFactoryImpl implements FilterFactory2 {
 

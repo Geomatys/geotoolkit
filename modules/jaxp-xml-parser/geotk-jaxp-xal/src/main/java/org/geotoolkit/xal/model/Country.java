@@ -44,7 +44,7 @@ import java.util.List;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface Country {
 

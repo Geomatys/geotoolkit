@@ -22,7 +22,7 @@ package org.geotoolkit.util;
  * This avoid calling substring on each part we need.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class XInteger {
 

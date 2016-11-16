@@ -42,7 +42,7 @@ import org.geotoolkit.xml.StaxStreamReader;
  * Stax parser to read a token from a GetToken request.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TokenParser extends StaxStreamReader {
 

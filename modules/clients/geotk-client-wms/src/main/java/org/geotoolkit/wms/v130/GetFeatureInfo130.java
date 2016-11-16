@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
 

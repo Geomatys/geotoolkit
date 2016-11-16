@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
- * @module pending
+ * @module
  */
 @XmlRegistry
 public class ObjectFactory {

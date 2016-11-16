@@ -25,7 +25,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetMetadata?item=minmax request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetMetadataMinMax extends NcGetMetadata implements NcGetMetadataMinMaxRequest {
 

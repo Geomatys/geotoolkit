@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DeleteTest extends org.geotoolkit.test.TestBase {
 

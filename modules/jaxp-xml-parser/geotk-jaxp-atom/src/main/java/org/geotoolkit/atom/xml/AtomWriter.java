@@ -28,7 +28,7 @@ import static org.geotoolkit.atom.xml.AtomConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class AtomWriter extends StaxStreamWriter {
 

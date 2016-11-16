@@ -77,7 +77,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class StyleXmlIO {
 

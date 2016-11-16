@@ -61,7 +61,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  * Class with static methods to help the conversion process between JTS
  * geometries and ISO geometries.
- * @module pending
+ * @module
  */
 public final class JTSUtils {
 

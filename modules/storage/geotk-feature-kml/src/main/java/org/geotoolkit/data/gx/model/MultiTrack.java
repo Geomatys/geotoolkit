@@ -23,7 +23,7 @@ import org.geotoolkit.data.kml.model.AltitudeMode;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface MultiTrack extends AbstractGeometry {
 

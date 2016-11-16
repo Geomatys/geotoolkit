@@ -24,7 +24,7 @@ import org.geotoolkit.security.ClientSecurity;
  * Implementation for the Harvest request version 2.0.2.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class Harvest202 extends AbstractHarvest {
     /**

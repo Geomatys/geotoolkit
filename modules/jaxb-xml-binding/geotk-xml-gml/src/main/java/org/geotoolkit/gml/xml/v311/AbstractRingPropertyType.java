@@ -45,7 +45,7 @@ import org.geotoolkit.gml.xml.AbstractRingProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRingPropertyType", propOrder = {

@@ -41,7 +41,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InterpolationMethodBaseType")

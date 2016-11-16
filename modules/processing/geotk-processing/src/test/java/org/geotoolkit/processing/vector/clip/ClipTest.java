@@ -49,7 +49,8 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of clip with a FeatureCollection process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class ClipTest extends AbstractProcessTest {
 

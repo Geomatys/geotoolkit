@@ -23,7 +23,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class OfferingResponseModeType implements Entry {
 

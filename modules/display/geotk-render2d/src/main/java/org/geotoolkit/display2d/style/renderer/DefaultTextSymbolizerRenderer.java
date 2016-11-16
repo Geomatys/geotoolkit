@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTextSymbolizer>{
 

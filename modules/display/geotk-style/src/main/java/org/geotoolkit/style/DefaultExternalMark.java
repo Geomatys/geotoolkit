@@ -27,7 +27,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of Types External mark.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultExternalMark implements ExternalMark{
 

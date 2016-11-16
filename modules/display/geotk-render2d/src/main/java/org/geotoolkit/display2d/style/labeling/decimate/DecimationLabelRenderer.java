@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
  * overlaping labels and labels partly visible on the map edges.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DecimationLabelRenderer extends DefaultLabelRenderer{
     

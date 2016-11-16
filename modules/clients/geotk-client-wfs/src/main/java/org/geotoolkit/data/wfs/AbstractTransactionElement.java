@@ -20,7 +20,7 @@ package org.geotoolkit.data.wfs;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class AbstractTransactionElement implements TransactionElement{
 

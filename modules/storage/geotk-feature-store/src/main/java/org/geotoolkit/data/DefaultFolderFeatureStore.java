@@ -51,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFolderFeatureStore extends AbstractFeatureStore implements DataFileStore {
 

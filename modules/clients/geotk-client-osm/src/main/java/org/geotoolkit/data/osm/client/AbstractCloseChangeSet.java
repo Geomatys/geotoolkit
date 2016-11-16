@@ -28,7 +28,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a close change set request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCloseChangeSet extends AbstractRequest implements CloseChangeSetRequest{
 

@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractHTTP;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

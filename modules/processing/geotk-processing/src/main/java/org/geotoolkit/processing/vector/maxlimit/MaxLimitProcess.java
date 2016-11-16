@@ -28,7 +28,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 /**
  * Limit a FeatureCollection returns to a maximum
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class MaxLimitProcess extends AbstractProcess {
 

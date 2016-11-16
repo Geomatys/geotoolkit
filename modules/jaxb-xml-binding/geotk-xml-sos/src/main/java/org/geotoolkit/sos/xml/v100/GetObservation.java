@@ -105,7 +105,7 @@ import org.opengis.filter.Filter;
  * </pre>
  * 
  *  @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservation", propOrder = {

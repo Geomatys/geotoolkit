@@ -33,7 +33,7 @@ import org.opengis.style.Symbolizer;
  * as temporary cache while rendering.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedRule extends Cache<Rule>{
 

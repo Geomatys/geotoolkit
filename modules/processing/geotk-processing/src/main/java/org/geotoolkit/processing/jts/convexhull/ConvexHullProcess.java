@@ -33,7 +33,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Compute input geometry convex hull.
  * The returned convexHull geometry keep input geometry CoordinateReferenceSystem.
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public class ConvexHullProcess extends AbstractProcess {
 

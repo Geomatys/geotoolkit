@@ -55,7 +55,7 @@ import org.opengis.filter.expression.Expression;
  * </pre>
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryComparisonOpType", propOrder = {

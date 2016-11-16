@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  * @author legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSet")

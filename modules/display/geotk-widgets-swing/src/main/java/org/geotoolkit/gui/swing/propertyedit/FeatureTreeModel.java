@@ -37,7 +37,7 @@ import org.opengis.util.GenericName;
  * property or propertyDescriptor objects.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FeatureTreeModel extends DefaultTreeModel{
 

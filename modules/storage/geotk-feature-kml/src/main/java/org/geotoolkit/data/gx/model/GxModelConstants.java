@@ -28,7 +28,7 @@ import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class GxModelConstants {
     public static final String GX_NAMESPACE = "http://www.google.com/kml/ext/2.2";

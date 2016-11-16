@@ -19,7 +19,7 @@ package org.geotoolkit.ows.xml;
 /**
  *
  * @author legal
- * @module pending
+ * @module
  */
 public interface AbstractOnlineResourceType {
     

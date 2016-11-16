@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "within" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements Within {
 

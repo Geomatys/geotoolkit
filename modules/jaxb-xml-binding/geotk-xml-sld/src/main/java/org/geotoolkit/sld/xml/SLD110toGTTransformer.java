@@ -60,7 +60,7 @@ import org.opengis.sld.Source;
  * Transform a SLD v1.1.0 in GT classes.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SLD110toGTTransformer extends SE110toGTTransformer{
 

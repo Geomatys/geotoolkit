@@ -27,7 +27,7 @@ import org.opengis.feature.FeatureType;
 /**
  * FeatureCollection for Centroid process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class CentroidFeatureCollection extends WrapFeatureCollection {
 

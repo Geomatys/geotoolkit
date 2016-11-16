@@ -28,7 +28,7 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

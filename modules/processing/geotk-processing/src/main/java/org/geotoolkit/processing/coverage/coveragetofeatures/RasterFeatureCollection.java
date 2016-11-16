@@ -28,7 +28,7 @@ import org.opengis.feature.Feature;
 /**
  *  FeatureCollection for raster process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class RasterFeatureCollection extends AbstractCollection<Feature> {
 
@@ -125,7 +125,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
     /**
      * Implementation ofIterator for RasterFeatureCollection
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     protected class RasterFeatureIterator implements FeatureIterator {
 

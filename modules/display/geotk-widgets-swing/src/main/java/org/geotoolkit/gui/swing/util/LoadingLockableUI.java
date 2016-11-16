@@ -34,7 +34,7 @@ import org.jdesktop.swingx.painter.BusyPainter;
  * Simple lock ui with effects. eye candys.
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class LoadingLockableUI extends LockableUI implements ActionListener {
 

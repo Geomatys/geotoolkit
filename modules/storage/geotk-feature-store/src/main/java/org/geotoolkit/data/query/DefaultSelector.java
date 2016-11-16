@@ -25,7 +25,7 @@ import org.opengis.util.GenericName;
  * Default selector implementation.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DefaultSelector implements Selector{
 

@@ -21,7 +21,7 @@ import org.geotoolkit.util.Versioned;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface RequestBase extends Versioned {
 

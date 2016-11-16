@@ -31,7 +31,7 @@ import org.geotoolkit.wmts.xml.v100.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSPyramidSet extends CachedPyramidSet{
 

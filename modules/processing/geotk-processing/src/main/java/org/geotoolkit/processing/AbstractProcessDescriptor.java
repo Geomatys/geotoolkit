@@ -35,7 +35,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     private static final String DEFAULT_VERSION = "1.0";

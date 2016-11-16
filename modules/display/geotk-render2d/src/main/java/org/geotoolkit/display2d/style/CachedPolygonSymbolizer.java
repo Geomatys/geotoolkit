@@ -30,7 +30,7 @@ import org.opengis.style.Stroke;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>{
     

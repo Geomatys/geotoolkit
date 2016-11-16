@@ -49,7 +49,7 @@ import org.geotoolkit.csw.xml.GetDomain;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetDomainType", propOrder = {

@@ -239,7 +239,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GTtoSE110Transformer implements StyleVisitor {
 

@@ -54,7 +54,7 @@ import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DCMIRecordType", propOrder = {

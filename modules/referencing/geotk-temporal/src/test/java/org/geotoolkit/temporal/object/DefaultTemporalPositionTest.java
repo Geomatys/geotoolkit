@@ -33,7 +33,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTemporalPositionTest extends org.geotoolkit.test.TestBase {
 

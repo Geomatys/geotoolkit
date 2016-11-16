@@ -40,7 +40,7 @@ import org.apache.sis.util.Utilities;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class DefaultFeatureMapper implements FeatureMapper {
 

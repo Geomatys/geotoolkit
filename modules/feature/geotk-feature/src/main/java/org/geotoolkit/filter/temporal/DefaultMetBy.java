@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.MetBy;
  * Immutable temporal "metBy" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultMetBy extends AbstractTemporalFilter implements MetBy{
 

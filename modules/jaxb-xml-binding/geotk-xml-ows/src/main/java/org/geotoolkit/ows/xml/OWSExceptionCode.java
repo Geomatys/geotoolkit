@@ -27,7 +27,7 @@ import org.opengis.util.CodeList;
  * @author Guilhem Legal
  *
  * @todo Rename as {@code ExceptionCode} and move to {@link org.opengis.webservice}.
- * @module pending
+ * @module
  */
 public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     /**

@@ -28,7 +28,7 @@ import org.opengis.style.FeatureTypeStyle;
  * Mutable interface of geoAPI FeatureTypeStyle.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
 

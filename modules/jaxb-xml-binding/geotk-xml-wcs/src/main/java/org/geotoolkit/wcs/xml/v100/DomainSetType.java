@@ -52,7 +52,7 @@ import org.geotoolkit.wcs.xml.CoverageDomain;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainSetType", propOrder = {

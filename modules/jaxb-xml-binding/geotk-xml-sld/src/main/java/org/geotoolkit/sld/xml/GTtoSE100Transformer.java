@@ -122,7 +122,7 @@ import org.apache.sis.measure.Units;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GTtoSE100Transformer implements StyleVisitor{
 

@@ -65,7 +65,7 @@ import org.apache.sis.util.logging.Logging;
  * </pre>
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridCrsType", propOrder = {

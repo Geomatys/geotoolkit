@@ -32,7 +32,7 @@ import org.opengis.feature.Property;
  * JComponent for Features and Properties.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PropertyPresenter extends AbstractInformationPresenter{
 

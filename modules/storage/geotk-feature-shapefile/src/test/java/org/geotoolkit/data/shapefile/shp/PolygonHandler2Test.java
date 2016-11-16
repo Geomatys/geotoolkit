@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 /**
  * @version $Id$
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractTestCaseSupport {
     

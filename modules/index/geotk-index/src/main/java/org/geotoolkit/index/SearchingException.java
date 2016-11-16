@@ -24,7 +24,7 @@ import org.geotoolkit.util.Exceptions;
  * Exceptions thrown by lucene searching should be instances of this type.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  * @since 0.3
  *
  */

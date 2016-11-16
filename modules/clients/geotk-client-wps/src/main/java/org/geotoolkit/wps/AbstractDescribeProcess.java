@@ -35,7 +35,7 @@ import org.geotoolkit.wps.xml.v100.DescribeProcess;
  * Abstract get capabilities request.
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeProcess extends AbstractRequest implements DescribeProcessRequest{
 

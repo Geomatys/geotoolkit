@@ -21,7 +21,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  *
  * @author Mehdi Sidhoum
- * @module pending
+ * @module
  */
 public interface RequestStatus {
     

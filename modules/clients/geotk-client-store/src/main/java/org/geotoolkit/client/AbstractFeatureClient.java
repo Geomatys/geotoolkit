@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Default implementation of a FeatureStore Client.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractFeatureClient extends AbstractFeatureStore {
 

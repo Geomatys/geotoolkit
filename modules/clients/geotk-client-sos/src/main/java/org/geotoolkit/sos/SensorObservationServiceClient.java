@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * SOS server.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class SensorObservationServiceClient extends AbstractClient {
 

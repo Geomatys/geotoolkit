@@ -46,7 +46,7 @@ package org.geotoolkit.data.kml.model;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface LookAt extends AbstractView {
 

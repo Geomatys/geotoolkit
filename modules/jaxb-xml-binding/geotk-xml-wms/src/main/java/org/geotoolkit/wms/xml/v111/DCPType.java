@@ -29,7 +29,7 @@ import org.geotoolkit.wms.xml.AbstractDCP;
  * 
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -31,7 +31,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable "is between" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
 

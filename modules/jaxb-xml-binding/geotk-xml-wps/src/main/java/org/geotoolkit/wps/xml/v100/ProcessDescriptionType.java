@@ -72,7 +72,7 @@ import org.geotoolkit.wps.xml.ProcessDescription;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessDescriptionType", propOrder = {

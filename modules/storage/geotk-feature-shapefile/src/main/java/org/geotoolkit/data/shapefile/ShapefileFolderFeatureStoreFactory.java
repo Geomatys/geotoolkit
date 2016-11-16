@@ -45,7 +45,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  * FeatureStore for a folder of Shapefiles.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 

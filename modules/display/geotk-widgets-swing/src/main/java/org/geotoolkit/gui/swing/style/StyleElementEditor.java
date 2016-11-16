@@ -46,7 +46,7 @@ import org.opengis.util.InternationalString;
  *
  * @param <T> : style element class edited
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public abstract class StyleElementEditor<T> extends JPanel {
 

@@ -44,7 +44,7 @@ import org.apache.sis.util.logging.Logging;
  * ISO/JTS geometries for intersections tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ProjectedGeometry  {
 

@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
  * Server tests.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
     

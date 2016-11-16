@@ -23,7 +23,7 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 /**
  *
  * @author Guilhem legal
- * @module pending
+ * @module
  */
 public class OfferingPhenomenonType implements Entry{
     

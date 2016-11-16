@@ -34,7 +34,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * Immutable implementation of Types Polygon symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements PolygonSymbolizer{
 

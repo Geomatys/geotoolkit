@@ -33,7 +33,7 @@ import org.geotoolkit.sos.xml.v100.DescribeSensor;
  * parameters for a DescribeSensor request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeSensor extends AbstractSOSRequest implements DescribeSensorRequest {
 

@@ -24,7 +24,7 @@ import org.opengis.geometry.Geometry;
  * Simple abstract path iterator for ISO Geometry.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class ISOGeometryIterator<T extends Geometry> implements PathIterator {
 

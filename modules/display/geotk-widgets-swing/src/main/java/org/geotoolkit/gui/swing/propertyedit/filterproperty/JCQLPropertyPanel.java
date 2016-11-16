@@ -30,7 +30,7 @@ import org.apache.sis.util.logging.Logging;
  * CQL property panel
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
 

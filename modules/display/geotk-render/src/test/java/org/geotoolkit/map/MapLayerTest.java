@@ -46,7 +46,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MapLayerTest extends TestCase{
 

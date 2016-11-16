@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *     <li>FEATURE_OUT "feature_out" FeatureCollection re-projected</li>
  * </ul>
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public final class ReprojectDescriptor extends VectorDescriptor {
 

@@ -36,7 +36,7 @@ import org.opengis.feature.PropertyType;
  * Filter/Expression type editor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FilterEditor extends PropertyValueEditor implements ActionListener{
 

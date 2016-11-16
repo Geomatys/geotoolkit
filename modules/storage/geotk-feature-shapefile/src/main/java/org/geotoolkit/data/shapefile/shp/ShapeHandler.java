@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
  * @author aaime
  * @author Ian Schneider
  * 
- * @module pending
+ * @module
  */
 public interface ShapeHandler {
 

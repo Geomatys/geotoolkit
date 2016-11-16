@@ -28,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * Utility class to read HDR file.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class HDRAccessor extends Static {
 

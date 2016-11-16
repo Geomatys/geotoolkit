@@ -21,7 +21,7 @@ package org.geotoolkit.gml.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface EnvelopeWithTimePeriod extends Envelope {
  

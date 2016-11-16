@@ -23,7 +23,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a get node ways request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractReadNodeWays extends AbstractRequest implements ReadNodeWaysRequest{
 

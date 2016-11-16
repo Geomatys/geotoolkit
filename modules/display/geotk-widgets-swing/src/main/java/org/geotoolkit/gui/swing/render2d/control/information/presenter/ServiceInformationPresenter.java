@@ -21,7 +21,7 @@ package org.geotoolkit.gui.swing.render2d.control.information.presenter;
  * Merge available presenter registered in META-INF services
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ServiceInformationPresenter {
 

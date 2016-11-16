@@ -35,7 +35,7 @@ import org.geotoolkit.security.ClientSecurity;
  * parameters for a DescribeRecord request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeRecord extends AbstractCSWRequest implements DescribeRecordRequest {
 

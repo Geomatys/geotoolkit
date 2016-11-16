@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author SAmuel Andrés
- * @module pending
+ * @module
  */
 public class AddressLinesTest extends org.geotoolkit.test.TestBase {
 

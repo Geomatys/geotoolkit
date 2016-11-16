@@ -46,7 +46,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default mutable user layer, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
 

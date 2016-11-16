@@ -22,7 +22,7 @@ import org.geotoolkit.data.wfs.AbstractNative;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Native110 extends AbstractNative{
 

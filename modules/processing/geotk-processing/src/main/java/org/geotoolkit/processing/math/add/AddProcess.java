@@ -25,7 +25,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Addition process between two numbers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class AddProcess extends AbstractProcess {
 

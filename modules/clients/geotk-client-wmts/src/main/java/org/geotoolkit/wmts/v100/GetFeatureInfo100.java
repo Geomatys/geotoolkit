@@ -24,7 +24,7 @@ import org.geotoolkit.wmts.AbstractGetFeatureInfo;
  * Implementation for the GetFeatureInfo request version 1.0.0.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
 

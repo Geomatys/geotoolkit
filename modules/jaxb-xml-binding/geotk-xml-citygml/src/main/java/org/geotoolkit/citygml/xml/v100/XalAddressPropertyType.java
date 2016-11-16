@@ -43,7 +43,7 @@ import org.geotoolkit.xal.xml.v20.AddressDetails;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xalAddressPropertyType", propOrder = {

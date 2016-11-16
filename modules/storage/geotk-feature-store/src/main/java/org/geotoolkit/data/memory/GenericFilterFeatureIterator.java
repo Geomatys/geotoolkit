@@ -35,7 +35,7 @@ import org.opengis.filter.Filter;
  *
  * @author Chris Holmes
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 

@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DataRWTest extends org.geotoolkit.test.TestBase {
 

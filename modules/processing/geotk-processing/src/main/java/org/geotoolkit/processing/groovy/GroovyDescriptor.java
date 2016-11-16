@@ -31,7 +31,7 @@ import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 /**
  * Definition of the process allows you to run a condition written in groovy and retrieve the result.
  * @author Christophe Mourette (Geomatys)
- * @module pending
+ * @module
  */
 public class GroovyDescriptor extends AbstractProcessDescriptor{
 

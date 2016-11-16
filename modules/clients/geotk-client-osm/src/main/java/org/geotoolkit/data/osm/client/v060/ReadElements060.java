@@ -25,7 +25,7 @@ import org.geotoolkit.util.StringUtilities;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ReadElements060 extends AbstractReadElements{
 

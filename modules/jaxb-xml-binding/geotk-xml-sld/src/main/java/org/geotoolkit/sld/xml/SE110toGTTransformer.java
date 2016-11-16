@@ -164,7 +164,7 @@ import org.opengis.style.TextSymbolizer;
  * Transform a SE v1.1.0 symbology in GT classes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SE110toGTTransformer extends OGC110toGTTransformer {
 

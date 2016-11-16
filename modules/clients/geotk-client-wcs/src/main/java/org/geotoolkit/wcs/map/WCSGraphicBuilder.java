@@ -51,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Render WCS layer in default geotoolkit rendering engine.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 

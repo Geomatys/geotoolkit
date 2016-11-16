@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TruncateFirstFunction extends AbstractFunction {
 

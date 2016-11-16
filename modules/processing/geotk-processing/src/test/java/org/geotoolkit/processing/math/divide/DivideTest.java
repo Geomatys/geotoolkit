@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test of Divide process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class DivideTest extends AbstractProcessTest {
 

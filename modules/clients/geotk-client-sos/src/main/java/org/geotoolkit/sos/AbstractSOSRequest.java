@@ -29,7 +29,7 @@ import org.apache.sis.xml.MarshallerPool;
  * Abstract base for all SOS request
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class AbstractSOSRequest extends AbstractRequest {
 

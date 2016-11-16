@@ -31,7 +31,7 @@ import org.opengis.feature.AttributeType;
  * Edition tool to create multi line parts.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MultiLinePartCreationTool extends AbstractEditionTool {
 

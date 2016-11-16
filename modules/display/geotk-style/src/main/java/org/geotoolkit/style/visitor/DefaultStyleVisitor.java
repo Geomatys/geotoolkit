@@ -72,7 +72,7 @@ import org.opengis.style.TextSymbolizer;
  * super method if you want to ensure that the entire style tree is still visited.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implements StyleVisitor{
 

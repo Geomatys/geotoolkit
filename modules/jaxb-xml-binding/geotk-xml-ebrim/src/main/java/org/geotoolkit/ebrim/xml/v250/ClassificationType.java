@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassificationType")

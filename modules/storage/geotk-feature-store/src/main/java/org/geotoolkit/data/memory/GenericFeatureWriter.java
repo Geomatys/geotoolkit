@@ -46,7 +46,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * of the feature store.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericFeatureWriter implements FeatureWriter {
 

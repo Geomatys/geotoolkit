@@ -31,7 +31,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  *
  * @author Johann Sorel (Geomatys)
  * @author Marechal remi (Geomatys)
- * @module pending
+ * @module
  */
 public class ElevationModel {
 

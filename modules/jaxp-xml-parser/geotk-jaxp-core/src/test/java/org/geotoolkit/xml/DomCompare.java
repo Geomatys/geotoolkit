@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  *
  * @deprecated Replaced by {@link org.apache.sis.test.Assert#assertXmlEquals(Object, Object, String[])}.
  */

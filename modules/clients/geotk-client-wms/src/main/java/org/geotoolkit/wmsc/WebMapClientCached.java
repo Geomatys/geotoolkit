@@ -31,7 +31,7 @@ import org.opengis.util.GenericName;
  *
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WebMapClientCached extends WebMapClient {
 

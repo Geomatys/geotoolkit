@@ -32,7 +32,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * JUnit test of IsEmpty process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class IsEmptyTest extends AbstractProcessTest {
 

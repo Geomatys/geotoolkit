@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");

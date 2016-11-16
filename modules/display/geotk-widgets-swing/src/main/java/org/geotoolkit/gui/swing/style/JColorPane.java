@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JColorPane extends javax.swing.JPanel {
 

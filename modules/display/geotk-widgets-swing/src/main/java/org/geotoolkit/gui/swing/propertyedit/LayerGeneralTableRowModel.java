@@ -23,7 +23,7 @@ import org.netbeans.swing.outline.RowModel;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class LayerGeneralTableRowModel implements RowModel {
     public static class CrsCookie{}

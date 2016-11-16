@@ -26,7 +26,7 @@ import org.junit.Test;
  * Tests for XMLCoverageStore
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class XMLCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
 

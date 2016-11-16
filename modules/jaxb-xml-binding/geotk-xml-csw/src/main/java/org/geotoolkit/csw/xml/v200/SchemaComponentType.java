@@ -54,7 +54,7 @@ import org.geotoolkit.csw.xml.SchemaComponent;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SchemaComponentType", propOrder = {

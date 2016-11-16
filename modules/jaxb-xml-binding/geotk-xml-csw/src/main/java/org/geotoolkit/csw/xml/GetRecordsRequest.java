@@ -24,7 +24,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 /**
  * An interface containing the common methods to the different version of the operation GetRecords.
  * 
- * @module pending
+ * @module
  */
 public interface GetRecordsRequest extends AbstractCswRequest {
 

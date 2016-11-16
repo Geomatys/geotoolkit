@@ -46,7 +46,7 @@ import org.opengis.style.Style;
  * Style type editor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StyleEditor extends PropertyValueEditor implements ActionListener{
 

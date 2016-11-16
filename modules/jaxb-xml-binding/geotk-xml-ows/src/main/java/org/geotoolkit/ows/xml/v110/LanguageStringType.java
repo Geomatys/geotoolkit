@@ -43,7 +43,7 @@ import org.geotoolkit.ows.xml.LanguageString;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LanguageStringType", propOrder = {

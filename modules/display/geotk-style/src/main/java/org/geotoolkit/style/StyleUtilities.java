@@ -50,7 +50,7 @@ import org.opengis.style.TextSymbolizer;
  * Convenient methods to transform a style in tree.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class StyleUtilities extends Static {
 

@@ -25,7 +25,7 @@ import org.opengis.feature.catalog.Binding;
  * JAXB adapter in order to map implementing class with the Types Binding. See
  * package documentation for more information about JAXB and Binding.
  *
- * @module pending
+ * @module
  * @since 3.03
  * @author Guilhem Legal
  */

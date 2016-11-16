@@ -20,7 +20,7 @@ package org.geotoolkit.display.canvas.control;
  * Abstract monitor.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCanvasMonitor implements CanvasMonitor{
     

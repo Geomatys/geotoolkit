@@ -33,7 +33,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractProcess implements org.geotoolkit.process.Process {
 

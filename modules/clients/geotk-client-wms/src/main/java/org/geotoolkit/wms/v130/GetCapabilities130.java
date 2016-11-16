@@ -24,7 +24,7 @@ import org.geotoolkit.wms.AbstractGetCapabilities;
  * Implementation for the GetCapabilities request version 1.3.0.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class GetCapabilities130 extends AbstractGetCapabilities {
     /**

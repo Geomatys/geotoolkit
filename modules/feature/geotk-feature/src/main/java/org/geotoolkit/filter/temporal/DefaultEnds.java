@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.Ends;
  * Immutable temporal "ends" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultEnds extends AbstractTemporalFilter implements Ends{
 

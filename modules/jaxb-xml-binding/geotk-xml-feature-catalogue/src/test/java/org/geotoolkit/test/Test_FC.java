@@ -69,7 +69,7 @@ import org.geotoolkit.util.UnlimitedInteger;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 @Ignore
 public class Test_FC {

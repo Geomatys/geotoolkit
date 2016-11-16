@@ -23,7 +23,7 @@ import org.geotoolkit.client.AbstractRequest;
  * parameters for a get element full request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractReadElementFull extends AbstractRequest implements ReadElementFullRequest{
 

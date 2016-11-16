@@ -29,7 +29,7 @@ package org.geotoolkit.data.shapefile.xml;
  * </p>
  * 
  * @author jgarnett
- * @module pending
+ * @module
  * @since 0.3
  */
 public class Metadata {

@@ -74,7 +74,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTemporalFactory extends Factory implements TemporalFactory {
 

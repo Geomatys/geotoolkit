@@ -44,7 +44,7 @@ import org.geotoolkit.swe.xml.MultiplexedStreamFormatProperty;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiplexedStreamFormatPropertyType", propOrder = {

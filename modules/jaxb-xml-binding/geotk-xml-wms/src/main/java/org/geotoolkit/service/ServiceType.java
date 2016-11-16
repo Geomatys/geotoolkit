@@ -45,7 +45,7 @@ import org.opengis.util.LocalName;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_ServiceType_Type")

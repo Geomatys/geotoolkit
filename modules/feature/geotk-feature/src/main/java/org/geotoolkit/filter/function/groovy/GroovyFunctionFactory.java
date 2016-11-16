@@ -26,7 +26,7 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  * Explicitly add the dependency if you which groovy functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GroovyFunctionFactory extends AbstractFunctionFactory {
 

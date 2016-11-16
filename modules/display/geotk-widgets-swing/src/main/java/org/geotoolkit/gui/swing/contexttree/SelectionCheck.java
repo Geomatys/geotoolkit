@@ -28,7 +28,7 @@ import org.geotoolkit.font.IconBuilder;
  * Component used to present layer selectability
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 class SelectionCheck extends JCheckBox {
 

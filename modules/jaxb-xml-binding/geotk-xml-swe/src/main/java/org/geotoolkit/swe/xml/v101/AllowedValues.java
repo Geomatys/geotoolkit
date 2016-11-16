@@ -61,7 +61,7 @@ import org.geotoolkit.swe.xml.AbstractAllowedValues;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

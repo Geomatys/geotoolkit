@@ -36,7 +36,7 @@ import org.opengis.style.LinePlacement;
  * Line placement panel
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     

@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  * Sequence of iterator merge as a single iterator.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SequenceIterator<F extends Object> implements CloseableIterator<F> {
 

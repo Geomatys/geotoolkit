@@ -44,7 +44,7 @@ import org.geotoolkit.sml.xml.AbstractProcessChain;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessChainType", propOrder = {

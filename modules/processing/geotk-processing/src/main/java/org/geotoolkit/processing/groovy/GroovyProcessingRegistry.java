@@ -29,7 +29,7 @@ import java.util.Collections;
  * Provide a set of commun dynamic operations as processes defined by groovy language.
  * 
  * @authorChristophe Mourette (Geomatys)
- * @module pending
+ * @module
  */
 public class GroovyProcessingRegistry extends AbstractProcessingRegistry {
 

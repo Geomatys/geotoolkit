@@ -33,7 +33,7 @@ import org.opengis.metadata.Identifier;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StringUtilities {
 

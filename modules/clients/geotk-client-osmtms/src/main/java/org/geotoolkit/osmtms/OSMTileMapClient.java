@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Represent a Tile Map Server instance.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMTileMapClient extends AbstractCoverageClient implements Client{
 

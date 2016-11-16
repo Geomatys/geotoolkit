@@ -73,7 +73,7 @@ import org.geotoolkit.sml.xml.AbstractDataSource;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataSourceType", propOrder = {

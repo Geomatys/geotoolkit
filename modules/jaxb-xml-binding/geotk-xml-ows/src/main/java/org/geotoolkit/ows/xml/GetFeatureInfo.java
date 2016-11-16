@@ -21,7 +21,7 @@ package org.geotoolkit.ows.xml;
  * Common interface for GetFeatureInfo requests from WMS and WMTS services.
  *
  * @author Quentin Boileau (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetFeatureInfo {
 

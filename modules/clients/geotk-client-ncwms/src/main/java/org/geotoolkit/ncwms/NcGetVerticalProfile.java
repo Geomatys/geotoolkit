@@ -26,7 +26,7 @@ import org.apache.sis.util.logging.Logging;
  * a GetVerticalProfile request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetVerticalProfile extends AbstractRequest implements NcGetVerticalProfileRequest {
 

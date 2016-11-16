@@ -44,7 +44,7 @@ import org.geotoolkit.wfs.xml.Property;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyType", propOrder = {

@@ -20,7 +20,7 @@ import static org.opengis.annotation.Specification.*;
  *
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 //@UML(identifier="FC_FeatureOperation", specification=ISO_19110)
 public interface FeatureOperation extends PropertyType {

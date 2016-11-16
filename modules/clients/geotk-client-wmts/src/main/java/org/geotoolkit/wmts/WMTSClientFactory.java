@@ -40,7 +40,7 @@ import org.opengis.parameter.*;
  * WMTS Server factory.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMTSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
 

@@ -27,7 +27,7 @@ import org.geotoolkit.data.session.Session;
  * from JSR-283 (Java Content Repository 2).
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Selector extends Source{
 

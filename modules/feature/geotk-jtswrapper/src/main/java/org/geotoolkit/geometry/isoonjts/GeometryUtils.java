@@ -63,7 +63,7 @@ import org.apache.sis.geometry.Envelopes;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
- * @module pending
+ * @module
  */
 public final class GeometryUtils {
 

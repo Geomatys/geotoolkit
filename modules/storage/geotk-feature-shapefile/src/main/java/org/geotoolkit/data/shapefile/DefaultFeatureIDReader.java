@@ -26,7 +26,7 @@ import org.opengis.feature.FeatureType;
  * concatenate a String with a number.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFeatureIDReader implements FeatureIDReader {
 

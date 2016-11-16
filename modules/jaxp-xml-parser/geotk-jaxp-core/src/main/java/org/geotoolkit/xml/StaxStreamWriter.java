@@ -67,7 +67,7 @@ import org.apache.sis.xml.Namespaces;
  * </pre>
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class StaxStreamWriter extends AbstractConfigurable {
 

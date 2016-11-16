@@ -49,7 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LonLatEnvelopeType", propOrder = {

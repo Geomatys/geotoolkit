@@ -31,7 +31,7 @@ import org.geotoolkit.filter.function.string.StringFunctionFactory;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FunctionTest extends org.geotoolkit.test.TestBase {
 

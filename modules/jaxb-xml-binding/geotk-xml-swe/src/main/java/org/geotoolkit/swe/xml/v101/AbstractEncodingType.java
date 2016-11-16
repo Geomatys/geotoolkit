@@ -34,7 +34,7 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
  *
  * @version $Id:
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso({TextBlockType.class})

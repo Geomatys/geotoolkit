@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultIntervalPalette implements IntervalPalette{
 

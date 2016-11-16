@@ -23,7 +23,7 @@ import org.geotoolkit.data.session.Session;
 /**
  *
  * @author Johann Sorel (Geoamtys)
- * @module pending
+ * @module
  */
 public class DefaultTextStatement implements TextStatement {
 

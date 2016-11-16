@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.Before;
  * Immutable temporal "before" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultBefore extends AbstractTemporalFilter implements Before{
 

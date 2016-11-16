@@ -49,7 +49,8 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of Reproject process
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class ReprojectTest extends AbstractProcessTest {
 

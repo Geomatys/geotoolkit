@@ -44,7 +44,7 @@ import org.geotoolkit.csw.xml.ListOfValues;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListOfValuesType", propOrder = {

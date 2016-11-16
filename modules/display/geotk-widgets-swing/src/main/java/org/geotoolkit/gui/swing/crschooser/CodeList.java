@@ -38,7 +38,7 @@ import org.opengis.util.FactoryException;
  * is worth to do lazy loading here.
  *
  * @author Martin Desruisseaux (IRD)
- * @module pending
+ * @module
  */
 final class CodeList extends AbstractListModel {
 

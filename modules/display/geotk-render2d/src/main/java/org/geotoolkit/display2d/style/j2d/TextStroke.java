@@ -32,7 +32,7 @@ import java.awt.geom.Point2D;
  * Text Stroke special for OGC Symbology encoding.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TextStroke implements Stroke {
 

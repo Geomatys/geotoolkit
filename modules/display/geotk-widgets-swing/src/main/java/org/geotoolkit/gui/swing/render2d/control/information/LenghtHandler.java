@@ -43,7 +43,7 @@ import org.apache.sis.util.logging.Logging;
  * Lenght mesure handler
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class LenghtHandler implements CanvasHandler {
 

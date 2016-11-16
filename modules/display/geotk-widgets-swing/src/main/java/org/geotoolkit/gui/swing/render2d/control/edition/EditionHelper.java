@@ -78,7 +78,7 @@ import org.opengis.feature.FeatureType;
 /**
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class EditionHelper {
 

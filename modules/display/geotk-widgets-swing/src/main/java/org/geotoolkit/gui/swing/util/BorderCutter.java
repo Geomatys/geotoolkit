@@ -28,7 +28,7 @@ import javax.swing.border.Border;
  * Nice effect when placing several buttons next to each other without borders.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class BorderCutter {
 

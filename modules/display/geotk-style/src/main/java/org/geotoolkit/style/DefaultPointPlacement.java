@@ -29,7 +29,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types point placement.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPointPlacement implements PointPlacement{
 

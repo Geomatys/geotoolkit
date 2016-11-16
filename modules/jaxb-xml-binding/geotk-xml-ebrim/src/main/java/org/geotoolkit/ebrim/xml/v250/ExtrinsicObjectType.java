@@ -48,7 +48,7 @@ import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtrinsicObjectType")

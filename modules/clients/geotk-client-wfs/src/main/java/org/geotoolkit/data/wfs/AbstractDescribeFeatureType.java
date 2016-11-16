@@ -37,7 +37,7 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
  * Abstract describe feature request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractDescribeFeatureType extends AbstractRequest implements DescribeFeatureTypeRequest{
 

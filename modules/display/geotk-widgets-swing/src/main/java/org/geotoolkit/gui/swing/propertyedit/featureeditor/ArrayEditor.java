@@ -45,7 +45,7 @@ import org.opengis.feature.PropertyType;
  * Array Type editor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 

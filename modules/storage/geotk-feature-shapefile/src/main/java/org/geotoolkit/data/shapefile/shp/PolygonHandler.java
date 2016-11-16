@@ -43,7 +43,7 @@ import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
  * @version $Id$
- * @module pending
+ * @module
  */
 public class PolygonHandler extends AbstractShapeHandler {
 

@@ -27,7 +27,7 @@ import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ColorItemType", propOrder = {

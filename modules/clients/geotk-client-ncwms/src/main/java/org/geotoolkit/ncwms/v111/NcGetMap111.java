@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Olivier Terral (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetMap111 extends AbstractNcGetMap {
     /**

@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  * @author Olivier Terral (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetFeatureInfo111 extends AbstractNcGetFeatureInfo {
 

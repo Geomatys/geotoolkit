@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DomUtilitiesTest extends org.geotoolkit.test.TestBase {
 

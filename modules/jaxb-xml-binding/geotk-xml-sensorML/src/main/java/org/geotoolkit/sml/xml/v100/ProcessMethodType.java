@@ -177,7 +177,7 @@ import org.geotoolkit.swe.xml.v100.DataRecordType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessMethodType", propOrder = {

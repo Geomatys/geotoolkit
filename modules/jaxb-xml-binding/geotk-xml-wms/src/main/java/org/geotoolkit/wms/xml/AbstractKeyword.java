@@ -20,7 +20,7 @@ package org.geotoolkit.wms.xml;
 /**
  *
  * @author Mehdi Sidhoum
- * @module pending
+ * @module
  */
 public interface AbstractKeyword {
     

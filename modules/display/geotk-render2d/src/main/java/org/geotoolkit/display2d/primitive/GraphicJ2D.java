@@ -27,7 +27,7 @@ import org.opengis.display.primitive.Graphic;
  * {@link org.geotoolkit.display2d.canvas.J2DCanvas}.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class GraphicJ2D extends SpatialNode {
 

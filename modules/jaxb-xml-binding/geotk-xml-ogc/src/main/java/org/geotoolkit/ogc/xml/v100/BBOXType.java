@@ -44,7 +44,7 @@ import org.geotoolkit.gml.xml.v212.CoordType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {

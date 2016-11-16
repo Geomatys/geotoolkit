@@ -23,7 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 /**
  * A interface to serialize feature or featureCollection in XML.
  *
- * @module pending
+ * @module
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */

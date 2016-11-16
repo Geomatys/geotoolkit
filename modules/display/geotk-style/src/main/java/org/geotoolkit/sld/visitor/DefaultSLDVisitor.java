@@ -50,7 +50,7 @@ import org.opengis.style.Style;
  * super method if you want to ensure that the entire sld tree is still visited.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements SLDVisitor {
 

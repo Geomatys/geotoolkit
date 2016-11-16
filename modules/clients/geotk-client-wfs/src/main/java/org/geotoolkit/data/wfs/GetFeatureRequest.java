@@ -27,7 +27,7 @@ import org.opengis.filter.Filter;
  * The request shall be correctly configured before calling the getURL method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetFeatureRequest extends Request{
 

@@ -23,7 +23,7 @@ import java.util.Iterator;
  * An iterator used in the quadtree to found nodes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface SearchIterator<T> extends Iterator<T>{
 

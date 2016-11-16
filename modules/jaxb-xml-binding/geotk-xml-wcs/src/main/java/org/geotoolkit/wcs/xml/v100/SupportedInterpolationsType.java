@@ -46,7 +46,7 @@ import org.geotoolkit.wcs.xml.SupportedInterpolations;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedInterpolationsType", propOrder = {

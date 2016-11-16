@@ -40,7 +40,7 @@ import org.geotoolkit.nio.IOUtilities;
  * Cached External graphic
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedExternal extends Cache<ExternalGraphic>{
 

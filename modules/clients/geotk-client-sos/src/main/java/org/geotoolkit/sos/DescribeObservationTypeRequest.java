@@ -22,7 +22,7 @@ import org.geotoolkit.client.Request;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface DescribeObservationTypeRequest extends Request {
 

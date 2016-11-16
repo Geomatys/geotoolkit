@@ -56,7 +56,7 @@ import org.geotoolkit.swe.xml.v100.Category;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

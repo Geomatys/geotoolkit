@@ -27,7 +27,7 @@ import org.apache.sis.measure.Units;
  * @version 2.0
  *
  * @todo Should we move this interface elsewhere (e.g. in some kind of units package)?
- * @module pending
+ * @module
  */
 public class JTSBearing implements Bearing {
 

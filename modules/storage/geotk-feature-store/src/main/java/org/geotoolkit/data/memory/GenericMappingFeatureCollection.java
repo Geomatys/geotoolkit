@@ -43,7 +43,7 @@ import org.opengis.geometry.Envelope;
  * using a mapping objet.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class GenericMappingFeatureCollection extends AbstractCollection<Feature> implements FeatureCollection {
 

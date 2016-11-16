@@ -23,7 +23,7 @@ import org.opengis.sld.NamedLayer;
  * Mutable named layer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableNamedLayer extends MutableLayer, NamedLayer{
 

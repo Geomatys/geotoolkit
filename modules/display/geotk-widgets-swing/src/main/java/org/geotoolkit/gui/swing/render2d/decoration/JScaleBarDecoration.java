@@ -46,7 +46,7 @@ import org.apache.sis.util.logging.Logging;
  * Decoration displaying a scale bar
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JScaleBarDecoration extends JComponent implements MapDecoration{
 

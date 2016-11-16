@@ -55,7 +55,7 @@ import org.opengis.filter.temporal.BinaryTemporalOperator;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryTemporalOpType", propOrder = {

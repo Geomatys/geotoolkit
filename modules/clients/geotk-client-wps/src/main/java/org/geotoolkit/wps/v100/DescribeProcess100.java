@@ -24,7 +24,7 @@ import org.geotoolkit.wps.AbstractDescribeProcess;
 /**
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class DescribeProcess100 extends AbstractDescribeProcess {
     

@@ -41,7 +41,7 @@ import org.opengis.feature.Feature;
  * Geometry clipboard edition tool delegate.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegate {
 

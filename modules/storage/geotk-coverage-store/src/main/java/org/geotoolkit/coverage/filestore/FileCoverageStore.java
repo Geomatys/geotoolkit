@@ -53,7 +53,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Coverage Store which rely on standard java readers and writers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileCoverageStore extends AbstractCoverageStore implements DataFileStore {
 

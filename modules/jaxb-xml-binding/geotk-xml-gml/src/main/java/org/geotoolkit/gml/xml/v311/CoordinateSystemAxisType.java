@@ -54,7 +54,7 @@ import org.opengis.referencing.cs.AxisDirection;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoordinateSystemAxisType", propOrder = {

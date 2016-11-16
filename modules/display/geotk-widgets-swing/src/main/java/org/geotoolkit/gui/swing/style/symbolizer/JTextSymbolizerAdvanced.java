@@ -45,7 +45,7 @@ import org.opengis.style.TextSymbolizer;
  * Text Symbolizer edition panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> {
     

@@ -23,7 +23,7 @@ import org.geotoolkit.util.Exceptions;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @module pending
+ * @module
  */
 public class StoreException extends Exception {
 

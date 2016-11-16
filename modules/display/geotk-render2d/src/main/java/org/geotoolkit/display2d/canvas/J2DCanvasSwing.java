@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  * Canvas directly painting on a swing component.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class J2DCanvasSwing extends J2DCanvas{
 

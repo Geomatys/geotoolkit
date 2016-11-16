@@ -26,7 +26,7 @@ import java.util.List;
  * 
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DataDefinition {
 

@@ -47,7 +47,7 @@ import org.opengis.geometry.primitive.Primitive;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometricPrimitiveType")

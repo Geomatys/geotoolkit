@@ -34,7 +34,7 @@ import org.junit.Test;
  *
  * @author Jody Garnett
  * @author Joel Skelton
- * @module pending
+ * @module
  */
 public class GeometryTestCase {
 

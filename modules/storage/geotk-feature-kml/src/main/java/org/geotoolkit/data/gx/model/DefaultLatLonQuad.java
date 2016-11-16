@@ -25,7 +25,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultLatLonQuad extends DefaultAbstractObject implements LatLonQuad {
 

@@ -82,7 +82,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JAdvancedStylePanel extends StyleElementEditor implements PropertyPane, LayerListener {
 

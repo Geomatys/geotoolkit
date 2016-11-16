@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * </ul>
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
 

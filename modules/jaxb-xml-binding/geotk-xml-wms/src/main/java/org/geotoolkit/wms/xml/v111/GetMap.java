@@ -29,7 +29,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
 
 /**
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

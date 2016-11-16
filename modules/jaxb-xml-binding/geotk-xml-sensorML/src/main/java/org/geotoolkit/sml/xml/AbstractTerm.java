@@ -22,7 +22,7 @@ import org.geotoolkit.swe.xml.AbstractCodeSpaceProperty;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractTerm {
 

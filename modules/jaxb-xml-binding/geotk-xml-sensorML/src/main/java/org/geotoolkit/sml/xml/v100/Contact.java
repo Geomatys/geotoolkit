@@ -48,7 +48,7 @@ import org.geotoolkit.sml.xml.AbstractContact;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

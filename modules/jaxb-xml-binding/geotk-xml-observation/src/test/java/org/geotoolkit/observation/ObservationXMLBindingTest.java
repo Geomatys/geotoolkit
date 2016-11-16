@@ -59,7 +59,7 @@ import org.apache.sis.xml.XML;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
 

@@ -74,7 +74,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public class XMLMosaic implements GridMosaic {

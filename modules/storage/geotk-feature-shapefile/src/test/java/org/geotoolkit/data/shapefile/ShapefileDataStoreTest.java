@@ -74,7 +74,7 @@ import org.apache.sis.util.Utilities;
  *
  * @version $Id$
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 

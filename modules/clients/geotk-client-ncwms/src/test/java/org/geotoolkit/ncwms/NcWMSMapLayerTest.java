@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
 

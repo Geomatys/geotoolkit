@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  * Request to download GPS file details.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface DownloadGPSTraceData extends Request{
 

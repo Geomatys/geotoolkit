@@ -19,7 +19,7 @@ package org.geotoolkit.data.kml.xsd;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DefaultCdata implements Cdata{
 

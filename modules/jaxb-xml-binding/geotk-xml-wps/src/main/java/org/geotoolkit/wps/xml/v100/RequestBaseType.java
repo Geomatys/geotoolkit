@@ -45,7 +45,7 @@ import org.apache.sis.util.Version;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestBaseType")

@@ -64,7 +64,7 @@ import org.geotoolkit.storage.coverage.CoverageStore;
  * @author Olivier Terral (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class WebMapClient extends AbstractCoverageClient implements Client {
 

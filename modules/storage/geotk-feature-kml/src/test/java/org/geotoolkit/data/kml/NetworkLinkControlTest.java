@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class NetworkLinkControlTest extends org.geotoolkit.test.TestBase {
 

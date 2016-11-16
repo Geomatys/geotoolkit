@@ -45,7 +45,7 @@ import org.geotoolkit.wps.xml.WPSResponse;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponseBaseType")

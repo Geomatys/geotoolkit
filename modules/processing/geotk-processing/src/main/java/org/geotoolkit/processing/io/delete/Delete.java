@@ -32,7 +32,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Delete a file or folder recursivly.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class Delete extends AbstractProcess {
 

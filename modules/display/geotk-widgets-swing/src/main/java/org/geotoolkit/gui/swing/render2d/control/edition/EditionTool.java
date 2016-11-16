@@ -24,7 +24,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface EditionTool {
 

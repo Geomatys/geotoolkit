@@ -22,7 +22,7 @@ import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class GridPainter implements BackgroundPainter{
 

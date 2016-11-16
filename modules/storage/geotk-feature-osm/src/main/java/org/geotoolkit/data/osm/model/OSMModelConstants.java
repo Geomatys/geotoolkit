@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Global OSM constants, defines the namespace and Feature types.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class OSMModelConstants {
 

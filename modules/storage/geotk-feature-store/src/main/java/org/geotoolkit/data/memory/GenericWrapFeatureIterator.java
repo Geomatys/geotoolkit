@@ -34,7 +34,7 @@ import org.opengis.feature.FeatureType;
  * Basic support for a FeatureIterator that delegate to a standard java iterator.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericWrapFeatureIterator implements FeatureIterator {
 

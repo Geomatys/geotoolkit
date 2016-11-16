@@ -65,7 +65,7 @@ import static java.awt.event.KeyEvent.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
- * @module pending
+ * @module
  */
  public class JMapAxisLine extends JNavigator implements PropertyChangeListener, ContextListener {
 

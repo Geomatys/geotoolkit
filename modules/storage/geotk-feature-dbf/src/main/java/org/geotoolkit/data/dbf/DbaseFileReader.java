@@ -58,7 +58,7 @@ import org.apache.sis.util.logging.Logging;
  *
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DbaseFileReader implements Closeable{
 	/**

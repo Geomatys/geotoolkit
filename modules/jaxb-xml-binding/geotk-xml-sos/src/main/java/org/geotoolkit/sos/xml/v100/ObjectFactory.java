@@ -38,7 +38,7 @@ import org.geotoolkit.gml.xml.v311.CodeType;
  * 
  *
  * @author legal
- * @module pending
+ * @module
  */
 @XmlRegistry
 public class ObjectFactory {

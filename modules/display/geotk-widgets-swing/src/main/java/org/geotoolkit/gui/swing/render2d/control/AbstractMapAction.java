@@ -30,7 +30,7 @@ import org.apache.sis.util.logging.Logging;
  * this action is automatically enable when a map is set.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractMapAction extends AbstractAction{
 

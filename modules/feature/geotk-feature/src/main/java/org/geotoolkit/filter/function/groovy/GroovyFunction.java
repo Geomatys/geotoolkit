@@ -37,7 +37,7 @@ import org.apache.sis.util.logging.Logging;
  * requiered feature properties.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GroovyFunction extends AbstractFunction {
 

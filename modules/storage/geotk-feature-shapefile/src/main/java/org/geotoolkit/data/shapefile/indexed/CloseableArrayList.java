@@ -29,7 +29,7 @@ import org.geotoolkit.index.Data;
  * 
  * @author jesse
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CloseableArrayList<T extends Data> extends ArrayList<T> implements
         CloseableCollection<T> {

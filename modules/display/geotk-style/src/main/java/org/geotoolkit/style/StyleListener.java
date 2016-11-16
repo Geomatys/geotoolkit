@@ -32,7 +32,7 @@ import org.apache.sis.util.Disposable;
  * Listener for Style.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface StyleListener extends PropertyChangeListener{
 

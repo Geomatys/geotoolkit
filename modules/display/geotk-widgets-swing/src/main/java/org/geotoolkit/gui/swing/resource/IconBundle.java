@@ -32,7 +32,7 @@ import javax.swing.ImageIcon;
  * IconBundle, manage icons and avoid double loading
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public final class IconBundle {
 

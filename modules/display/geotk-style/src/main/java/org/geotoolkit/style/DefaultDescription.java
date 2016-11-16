@@ -25,7 +25,7 @@ import org.opengis.util.InternationalString;
  * Immutable implementation of Types description.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDescription implements Description{
 

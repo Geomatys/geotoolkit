@@ -62,7 +62,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 

@@ -42,7 +42,7 @@ import java.util.Calendar;
  * </pre>
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public interface TimeSpan extends AbstractTimePrimitive{
 

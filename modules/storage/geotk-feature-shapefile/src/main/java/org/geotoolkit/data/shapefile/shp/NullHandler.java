@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
  * Wrapper for a Shapefile Null geometry.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NullHandler extends AbstractShapeHandler {
 

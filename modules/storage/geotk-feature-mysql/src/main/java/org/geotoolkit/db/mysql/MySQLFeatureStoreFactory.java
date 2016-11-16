@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
 

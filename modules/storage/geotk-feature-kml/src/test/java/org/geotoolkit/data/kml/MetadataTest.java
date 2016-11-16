@@ -45,7 +45,7 @@ import java.util.List;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class MetadataTest extends org.geotoolkit.test.TestBase {
 

@@ -24,7 +24,7 @@ import org.opengis.geometry.Envelope;
  * Define a collection of pyramid for a give data.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface PyramidSet {
     

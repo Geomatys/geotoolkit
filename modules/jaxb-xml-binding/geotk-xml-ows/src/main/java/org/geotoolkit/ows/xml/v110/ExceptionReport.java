@@ -55,7 +55,7 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

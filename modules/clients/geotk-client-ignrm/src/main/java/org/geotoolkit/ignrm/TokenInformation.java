@@ -20,7 +20,7 @@ package org.geotoolkit.ignrm;
  * Additional informations on the token.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TokenInformation {
     

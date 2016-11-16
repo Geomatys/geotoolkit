@@ -60,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Represent an open street map server.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OpenStreetMapClient extends AbstractClient{
 

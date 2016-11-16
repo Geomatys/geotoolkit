@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * IGN Right Management Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class IGNRMClientFactory extends AbstractClientFactory{
 

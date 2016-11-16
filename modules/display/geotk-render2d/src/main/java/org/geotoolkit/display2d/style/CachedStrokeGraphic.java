@@ -23,7 +23,7 @@ import org.opengis.style.Stroke;
  * The cached stroke work for graphic strokes.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedStrokeGraphic extends CachedStroke{
 

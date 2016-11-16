@@ -32,7 +32,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool to remove holes in polygons.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PolygonHoleDeleteTool extends AbstractEditionTool {
 

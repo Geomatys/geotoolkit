@@ -43,7 +43,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * FeatureCollection that takes it'es source from a join query.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
 

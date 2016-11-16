@@ -29,7 +29,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Start FeatureCollection iteration at given offset
  * @see org.geotoolkit.data.memory.GenericSortByFeatureIterator
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StartOffsetProcess extends AbstractProcess {
 

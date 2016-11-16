@@ -33,7 +33,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
  * Merge available presenter registered in META-INF services
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultInformationPresenter extends AbstractInformationPresenter{
 

@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * 
  * @version $Id$
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class PolygonHandlerTest extends AbstractTestCaseSupport {
 

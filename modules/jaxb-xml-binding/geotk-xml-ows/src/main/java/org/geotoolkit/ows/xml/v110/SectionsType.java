@@ -45,7 +45,7 @@ import org.geotoolkit.ows.xml.Sections;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SectionsType", propOrder = {

@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.WMSResponse;
  * </pre>
  * 
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeLayerResponseType", propOrder = {

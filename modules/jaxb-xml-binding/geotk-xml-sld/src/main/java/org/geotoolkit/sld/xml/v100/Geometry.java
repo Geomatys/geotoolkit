@@ -42,7 +42,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

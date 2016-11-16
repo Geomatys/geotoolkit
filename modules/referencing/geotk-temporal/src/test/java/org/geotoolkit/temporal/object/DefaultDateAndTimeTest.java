@@ -38,7 +38,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultDateAndTimeTest extends org.geotoolkit.test.TestBase {
 

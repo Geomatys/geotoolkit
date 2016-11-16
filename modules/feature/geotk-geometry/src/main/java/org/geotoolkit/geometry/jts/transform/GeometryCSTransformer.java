@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Andrea Aime
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryCSTransformer implements GeometryTransformer{
 

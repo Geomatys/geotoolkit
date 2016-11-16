@@ -63,7 +63,8 @@ import org.jboss.netty.handler.codec.http.*;
 
 /**
  *
- * @author Johann Sorel (Geomatys) @module pending
+ * @author Johann Sorel (Geomatys)
+ * @module
  */
 public abstract class CachedPyramidSet extends DefaultPyramidSet {
 

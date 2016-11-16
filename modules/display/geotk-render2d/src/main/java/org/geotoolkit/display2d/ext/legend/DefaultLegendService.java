@@ -32,7 +32,7 @@ import org.geotoolkit.map.MapItem;
  * Render a complete legend of a mapcontext.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultLegendService {
 

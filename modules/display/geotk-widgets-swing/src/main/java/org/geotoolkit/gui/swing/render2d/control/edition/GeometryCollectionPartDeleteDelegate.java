@@ -34,7 +34,7 @@ import org.opengis.feature.Feature;
  * Edition tool to remove geometry parts in geometry collections.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class GeometryCollectionPartDeleteDelegate extends AbstractFeatureEditionDelegate {
 

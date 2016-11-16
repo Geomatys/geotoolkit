@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Calculates the intersection surface of two geometries.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class IntersectionSurfaceProcess extends AbstractProcess {
     /**

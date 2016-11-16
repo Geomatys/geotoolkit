@@ -31,7 +31,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool to create multi polygon parts.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class MultiPolygonPartCreationTool extends AbstractEditionTool {
 

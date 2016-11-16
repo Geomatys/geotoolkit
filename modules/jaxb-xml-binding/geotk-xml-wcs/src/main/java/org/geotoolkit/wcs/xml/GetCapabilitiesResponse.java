@@ -24,7 +24,7 @@ import org.geotoolkit.ows.xml.AbstractServiceProvider;
 /**
  *
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 public interface GetCapabilitiesResponse extends AbstractCapabilitiesCore {
 

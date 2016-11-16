@@ -46,7 +46,7 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GetCapabilities")

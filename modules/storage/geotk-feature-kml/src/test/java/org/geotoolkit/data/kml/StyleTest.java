@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class StyleTest extends org.geotoolkit.test.TestBase {
 

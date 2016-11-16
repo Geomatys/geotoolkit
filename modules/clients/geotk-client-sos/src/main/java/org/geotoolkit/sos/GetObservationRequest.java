@@ -26,7 +26,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetObservationRequest extends Request {
 

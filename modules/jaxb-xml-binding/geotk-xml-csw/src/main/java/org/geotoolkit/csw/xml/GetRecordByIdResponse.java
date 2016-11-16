@@ -21,7 +21,7 @@ import java.util.List;
 /**
  *
  * @author Mehdi Sidhoum
- * @module pending
+ * @module
  */
 public interface GetRecordByIdResponse extends CSWResponse {
     

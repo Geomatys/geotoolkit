@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * PostgreSQL/PostGIS  feature store factory.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 

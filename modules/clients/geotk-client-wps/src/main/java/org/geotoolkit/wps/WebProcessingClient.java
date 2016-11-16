@@ -77,7 +77,8 @@ import org.apache.sis.measure.Units;
 /**
  * WPS server, used to aquiere capabilites and requests process.
  *
- * @author Quentin Boileau @module pending
+ * @author Quentin Boileau
+ * @module
  */
 public class WebProcessingClient extends AbstractClient implements ProcessingRegistry {
 

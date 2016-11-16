@@ -25,7 +25,7 @@ import org.geotoolkit.xml.StaxStreamReader;
  * Stax parser to read token information from a GetConfig request.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class TokenInformationParser extends StaxStreamReader {
 

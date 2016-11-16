@@ -77,7 +77,7 @@ import org.geotoolkit.sml.xml.ComponentArray;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentArrayType")

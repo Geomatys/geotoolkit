@@ -25,7 +25,7 @@ import org.geotoolkit.security.ClientSecurity;
  * parameters for a GetCapabilities request.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest {
     /**

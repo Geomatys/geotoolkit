@@ -24,7 +24,7 @@ import org.geotoolkit.math.NumberSet;
  *
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DimapConstants {
 

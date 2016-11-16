@@ -32,7 +32,7 @@ import org.opengis.feature.FeatureType;
  * using DouglasPeuker or TopologyPreservingSimplifier Jts classes.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometrySimplificationTool extends AbstractEditionTool {
 

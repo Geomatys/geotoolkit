@@ -46,7 +46,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @see SurfaceBoundary
  * @see Shell
- * @module pending
+ * @module
  */
 @XmlRootElement(name = "Ring", namespace="http://www.opengis.net/gml")
 @XmlType(name="RingType", namespace="http://www.opengis.net/gml")

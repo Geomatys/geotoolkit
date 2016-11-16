@@ -46,7 +46,7 @@ import org.opengis.util.GenericName;
  * JDBC Feature reader, both simple and complexe features.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JDBCFeatureReader implements FeatureReader {
     

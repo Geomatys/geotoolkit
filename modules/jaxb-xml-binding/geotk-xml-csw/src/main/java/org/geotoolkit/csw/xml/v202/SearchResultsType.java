@@ -76,7 +76,7 @@ import org.geotoolkit.csw.xml.SearchResults;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SearchResultsType", propOrder = {

@@ -36,7 +36,7 @@ import org.opengis.parameter.*;
  * Sensor Observation Service Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class SOSClientFactory extends AbstractClientFactory{
 

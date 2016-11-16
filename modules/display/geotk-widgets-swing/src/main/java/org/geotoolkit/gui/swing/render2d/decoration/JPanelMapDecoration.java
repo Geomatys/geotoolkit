@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * This class can be used as a base decoration.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JPanelMapDecoration extends JPanel implements MapDecoration{
 

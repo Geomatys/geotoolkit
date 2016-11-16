@@ -28,7 +28,7 @@ import org.opengis.feature.Feature;
  * Immutable feature id.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFeatureId implements FeatureId,Serializable {
 

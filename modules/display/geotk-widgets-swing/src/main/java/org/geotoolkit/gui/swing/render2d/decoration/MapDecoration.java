@@ -27,7 +27,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Decoration exemples : minimap, scalebar, navigation buttons, image in background ...
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public interface MapDecoration {
 

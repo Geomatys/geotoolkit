@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author guilhem
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     

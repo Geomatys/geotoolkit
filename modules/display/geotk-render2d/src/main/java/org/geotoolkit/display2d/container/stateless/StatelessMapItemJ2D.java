@@ -56,7 +56,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener {
 

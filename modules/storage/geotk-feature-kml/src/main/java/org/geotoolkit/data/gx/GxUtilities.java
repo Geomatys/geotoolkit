@@ -22,7 +22,7 @@ import org.geotoolkit.data.gx.model.Angles;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class GxUtilities {
 

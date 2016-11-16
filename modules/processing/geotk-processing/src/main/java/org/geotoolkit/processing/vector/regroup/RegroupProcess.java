@@ -50,7 +50,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Regroup features and there geometries on a specify attribute name. Each different values of this
  * attribute generate a Feature.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class RegroupProcess extends AbstractProcess {
     /**

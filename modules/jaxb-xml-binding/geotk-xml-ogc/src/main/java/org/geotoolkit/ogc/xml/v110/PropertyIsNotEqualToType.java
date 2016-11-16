@@ -24,7 +24,7 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 /**
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNotEqualTo")

@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.GraphicVisitor;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class VisitDef {
 

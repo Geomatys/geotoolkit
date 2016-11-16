@@ -43,7 +43,7 @@ import org.opengis.display.primitive.Graphic;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2D<T> {
 

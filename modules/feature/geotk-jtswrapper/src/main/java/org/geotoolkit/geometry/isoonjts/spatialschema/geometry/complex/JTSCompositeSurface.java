@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *          of some set theoretic operation. Specifically, {@code Primitive.contains(...)}
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
- * @module pending
+ * @module
  */
 @XmlType(name="CompositeSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSCompositeSurface extends AbstractJTSComposite implements CompositeSurface {//, OrientableSurface {

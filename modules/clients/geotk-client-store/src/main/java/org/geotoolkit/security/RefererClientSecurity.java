@@ -23,7 +23,7 @@ import org.apache.sis.util.ArgumentChecks;
  * Client security which fill the referer for url connections.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RefererClientSecurity extends DefaultClientSecurity{
 

@@ -45,7 +45,7 @@ import org.geotoolkit.wcs.xml.GetCapabilities;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

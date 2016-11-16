@@ -37,7 +37,7 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 /**
- * @module pending
+ * @module
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
     

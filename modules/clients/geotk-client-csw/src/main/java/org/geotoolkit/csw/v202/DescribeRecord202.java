@@ -24,7 +24,7 @@ import org.geotoolkit.security.ClientSecurity;
  * Implementation for the DescribeRecord request version 2.0.2.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class DescribeRecord202 extends AbstractDescribeRecord {
     /**

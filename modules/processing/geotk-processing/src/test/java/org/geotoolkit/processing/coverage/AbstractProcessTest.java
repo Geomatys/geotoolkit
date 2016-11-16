@@ -27,7 +27,7 @@ import org.opengis.util.NoSuchIdentifierException;
  *
  * @author Quentin Boileau
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 

@@ -83,7 +83,7 @@ import org.geotoolkit.utility.parameter.ParametersExt;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CopyCoverageStoreProcess extends AbstractProcess {
 

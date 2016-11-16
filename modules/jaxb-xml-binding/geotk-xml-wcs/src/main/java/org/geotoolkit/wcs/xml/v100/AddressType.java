@@ -50,7 +50,7 @@ import org.geotoolkit.ows.xml.AbstractAddress;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressType", propOrder = {

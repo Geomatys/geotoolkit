@@ -35,7 +35,7 @@ import org.opengis.style.Stroke;
  * only a paint or a color defined.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CachedStrokeSimple extends CachedStroke{
 

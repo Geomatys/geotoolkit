@@ -55,7 +55,7 @@ import org.geotoolkit.index.SpatialQuery;
  * An Lucene index searcher. allowing to perform query on the index.
  * 
  * @author Guilhem legal (Geomatys)
- * @module pending
+ * @module
  */
 public class LuceneIndexSearcher extends IndexLucene {
 

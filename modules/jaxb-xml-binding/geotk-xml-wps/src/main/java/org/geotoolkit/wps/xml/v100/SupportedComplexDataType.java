@@ -47,7 +47,7 @@ import org.geotoolkit.wps.xml.ComplexDataTypeDescription;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedComplexDataType", propOrder = {

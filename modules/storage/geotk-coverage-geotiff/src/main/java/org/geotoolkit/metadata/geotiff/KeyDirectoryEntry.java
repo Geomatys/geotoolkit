@@ -21,7 +21,7 @@ package org.geotoolkit.metadata.geotiff;
  * Entries in the GeoKeyDirectory are always a set of 4 values.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 final class KeyDirectoryEntry {
 

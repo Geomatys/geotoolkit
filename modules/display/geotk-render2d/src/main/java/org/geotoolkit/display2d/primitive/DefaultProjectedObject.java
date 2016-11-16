@@ -31,7 +31,7 @@ import org.opengis.filter.expression.Expression;
  * GraphicJ2D for custom objects.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultProjectedObject<T> implements ProjectedObject {
 

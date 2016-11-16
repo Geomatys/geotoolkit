@@ -49,7 +49,7 @@ import org.opengis.feature.catalog.DefinitionSource;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_DefinitionReference_Type", propOrder = {

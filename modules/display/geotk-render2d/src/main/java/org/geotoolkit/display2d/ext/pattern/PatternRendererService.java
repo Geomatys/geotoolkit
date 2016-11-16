@@ -26,7 +26,7 @@ import org.geotoolkit.map.MapLayer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PatternRendererService extends AbstractSymbolizerRendererService<PatternSymbolizer,CachedPatternSymbolizer>{
     

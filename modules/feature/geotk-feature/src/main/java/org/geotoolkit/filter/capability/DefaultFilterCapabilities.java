@@ -29,7 +29,7 @@ import org.opengis.filter.capability.TemporalCapabilities;
  * Immutable filter capabilities.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFilterCapabilities implements FilterCapabilities {
 

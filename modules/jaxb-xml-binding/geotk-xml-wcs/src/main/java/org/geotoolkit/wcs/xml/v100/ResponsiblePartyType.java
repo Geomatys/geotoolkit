@@ -62,7 +62,7 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponsiblePartyType", propOrder = {

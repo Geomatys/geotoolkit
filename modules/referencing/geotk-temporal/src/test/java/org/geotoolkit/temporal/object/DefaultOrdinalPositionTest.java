@@ -42,7 +42,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOrdinalPositionTest extends org.geotoolkit.test.TestBase {
 

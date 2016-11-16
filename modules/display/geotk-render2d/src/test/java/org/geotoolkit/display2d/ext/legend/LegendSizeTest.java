@@ -48,7 +48,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LegendSizeTest extends org.geotoolkit.test.TestBase {
 

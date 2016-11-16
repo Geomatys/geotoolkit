@@ -59,7 +59,7 @@ import org.apache.sis.util.logging.Logging;
  * @author Martin Desruisseaux
  * @author Howard Freeland
  * @author Johann Sorel (adaptation isoligne et mise a jour sur geotoolkit)
- * @module pending
+ * @module
  *
  * @deprecated Replaced by {@link org.geotoolkit.math.ObjectiveAnalysis} and {@link IsolineCreator}.
  */

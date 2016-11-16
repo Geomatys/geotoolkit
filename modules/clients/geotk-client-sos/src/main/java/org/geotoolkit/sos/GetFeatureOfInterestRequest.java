@@ -24,7 +24,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetFeatureOfInterestRequest extends Request {
     EventTime getEventTime();

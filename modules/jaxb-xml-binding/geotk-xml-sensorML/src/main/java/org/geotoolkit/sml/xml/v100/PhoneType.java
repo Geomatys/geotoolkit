@@ -43,7 +43,7 @@ import org.geotoolkit.sml.xml.AbstractPhone;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

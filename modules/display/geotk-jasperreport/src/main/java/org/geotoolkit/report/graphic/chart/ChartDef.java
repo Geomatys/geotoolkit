@@ -27,7 +27,7 @@ import org.jfree.chart.JFreeChart;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ChartDef implements JRRenderable{
 

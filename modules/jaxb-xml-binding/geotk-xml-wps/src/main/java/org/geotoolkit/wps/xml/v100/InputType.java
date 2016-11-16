@@ -49,7 +49,7 @@ import org.geotoolkit.wps.xml.Input;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InputType", propOrder = {

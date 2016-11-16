@@ -63,7 +63,7 @@ import org.geotoolkit.gml.xml.v311.MultiCurvePropertyType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CityFurnitureType", propOrder = {

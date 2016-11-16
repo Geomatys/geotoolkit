@@ -19,7 +19,7 @@ package org.geotoolkit.data.osm.client;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public enum OSMVersion {
     v060("0.6.0");

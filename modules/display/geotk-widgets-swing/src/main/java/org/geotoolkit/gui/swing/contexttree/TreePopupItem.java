@@ -27,7 +27,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Interface used to build a Popup control for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public interface TreePopupItem {
 

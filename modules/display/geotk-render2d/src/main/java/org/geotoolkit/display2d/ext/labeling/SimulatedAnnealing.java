@@ -31,7 +31,7 @@ import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
  * Really slow and no good result, experimentale.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SimulatedAnnealing {
 

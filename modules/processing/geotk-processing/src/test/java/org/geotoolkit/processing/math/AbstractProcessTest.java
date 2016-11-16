@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Abstract JUnit test for math process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 

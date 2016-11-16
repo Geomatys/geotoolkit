@@ -35,7 +35,7 @@ import org.opengis.feature.Feature;
  * Geometry moving tool.
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class GeometryNodeDelegate extends AbstractFeatureEditionDelegate {
 

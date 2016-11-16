@@ -41,7 +41,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Default mutable Style Layer Descriptor, thread safe.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 

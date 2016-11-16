@@ -53,7 +53,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinition;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataBlockDefinitionType", propOrder = {

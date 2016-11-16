@@ -69,7 +69,7 @@ import org.opengis.feature.FeatureType;
  * - One Tracks
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GPXFeatureStore extends AbstractFeatureStore implements DataFileStore {
 

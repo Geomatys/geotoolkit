@@ -41,7 +41,7 @@ import static org.geotoolkit.util.DomUtilities.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  *
  * note : with java 9 class will become only accessible by its module (no public signature on class header).
  */

@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface EditionDelegate extends MouseInputListener,KeyListener,MouseWheelListener{
 

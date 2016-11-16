@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
 /**
  * FeatureCollection for Intersection process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class IntersectionFeatureCollection extends WrapFeatureCollection {
 
@@ -100,7 +100,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
     /**
      * Implementation of FeatureIterator
      * @author Quentin Boileau
-     * @module pending
+     * @module
      */
     private class IntersectionFeatureIterator implements FeatureIterator {
 

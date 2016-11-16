@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.bil.HDRAccessor;
  * Reader for the <cite>BIL</cite> format.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class BILImageReader extends WorldFileImageReader {
 

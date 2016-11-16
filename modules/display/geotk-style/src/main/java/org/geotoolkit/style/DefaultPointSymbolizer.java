@@ -33,7 +33,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable implementation of Types point symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointSymbolizer{
 

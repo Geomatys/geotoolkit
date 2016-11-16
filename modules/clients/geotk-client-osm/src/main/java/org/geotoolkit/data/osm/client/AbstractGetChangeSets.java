@@ -33,7 +33,7 @@ import org.apache.sis.geometry.Envelopes;
  * parameters for a get changesets request.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetChangeSets extends AbstractRequest implements GetChangeSetsRequest{
 

@@ -44,7 +44,7 @@ import org.opengis.feature.FeatureType;
 /**
  * JUnit test of nearest process
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class NearestTest extends AbstractProcessTest {
 

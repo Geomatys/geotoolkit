@@ -24,7 +24,7 @@ import org.apache.sis.util.logging.Logging;
  * Monitor which fail on first rendering error.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FailOnErrorMonitor extends AbstractCanvasMonitor{
 

@@ -33,7 +33,7 @@ import org.geotoolkit.swe.xml.Quantity;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface IoComponent {
 

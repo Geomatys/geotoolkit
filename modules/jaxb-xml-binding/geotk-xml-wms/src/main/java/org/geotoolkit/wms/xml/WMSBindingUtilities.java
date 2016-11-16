@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
  *
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
  public class WMSBindingUtilities {
 

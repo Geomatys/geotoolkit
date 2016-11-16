@@ -50,7 +50,7 @@ import org.geotoolkit.ows.xml.AbstractDomain;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainType", propOrder = {

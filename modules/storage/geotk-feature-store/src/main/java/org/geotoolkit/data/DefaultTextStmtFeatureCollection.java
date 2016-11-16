@@ -38,7 +38,7 @@ import org.opengis.geometry.Envelope;
  * Example : sql query.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
 

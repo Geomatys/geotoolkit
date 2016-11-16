@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  * overwritten while other will have the normal behavior.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class SessionDecorator implements Session{
 

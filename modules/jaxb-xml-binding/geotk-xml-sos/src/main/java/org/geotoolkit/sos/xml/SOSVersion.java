@@ -20,7 +20,7 @@ package org.geotoolkit.sos.xml;
 /**
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public enum SOSVersion {
     v100("1.0.0");

@@ -35,7 +35,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * that both are unique within this filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultId implements Id,Serializable{
 

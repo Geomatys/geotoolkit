@@ -70,7 +70,7 @@ package org.geotoolkit.math;
  *
  * @see Spline1D
  * @see Polynomial1D
- * @module pending
+ * @module
  */
 public class Hermite1D extends Search1D {
 

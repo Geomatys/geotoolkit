@@ -41,7 +41,7 @@ import org.jdesktop.swingx.JXBusyLabel;
  * Default information decoration
  *
  * @author Johann Sorel (Puzzle-GIS/Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
 

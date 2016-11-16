@@ -64,7 +64,7 @@ import static org.opengis.filter.expression.Expression.*;
  * In reality any expression will do.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultInterpolate extends AbstractExpression implements Interpolate {
 

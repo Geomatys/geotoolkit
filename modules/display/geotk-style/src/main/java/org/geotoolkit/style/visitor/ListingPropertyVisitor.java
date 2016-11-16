@@ -63,7 +63,7 @@ import org.opengis.style.TextSymbolizer;
  * Expression visitor that returns a list of all Feature attributs requiered by this style.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.ListingPropertyVisitor implements StyleVisitor{
 

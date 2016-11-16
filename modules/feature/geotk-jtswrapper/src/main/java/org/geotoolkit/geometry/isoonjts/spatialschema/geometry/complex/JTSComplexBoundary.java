@@ -25,7 +25,7 @@ import org.opengis.geometry.complex.ComplexBoundary;
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
- * @module pending
+ * @module
  */
 public class JTSComplexBoundary extends AbstractJTSBoundary implements ComplexBoundary {
 }

@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.style.labeling;
  * Label descriptor for a text along a shape.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface LinearLabelDescriptor extends LabelDescriptor{
     

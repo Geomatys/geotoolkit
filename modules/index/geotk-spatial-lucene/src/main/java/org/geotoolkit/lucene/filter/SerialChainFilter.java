@@ -48,7 +48,7 @@ import static org.geotoolkit.index.LogicalFilterType.*;
  * 
  * @author Patrick O'Leary
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.filter.Filter {
 

@@ -23,7 +23,7 @@ import org.opengis.referencing.operation.MathTransform;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class QueryTileReference {
     

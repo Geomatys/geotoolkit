@@ -38,7 +38,7 @@ import org.opengis.feature.Feature;
  * Stax writer class for OSM files.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMXMLWriter extends StaxStreamWriter{
 

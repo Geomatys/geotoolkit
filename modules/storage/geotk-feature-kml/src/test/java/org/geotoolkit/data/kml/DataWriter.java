@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Samuel Andrés
- * @module pending
+ * @module
  */
 public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter {
 

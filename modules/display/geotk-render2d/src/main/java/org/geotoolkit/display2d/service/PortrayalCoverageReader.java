@@ -49,7 +49,7 @@ import org.apache.sis.util.Utilities;
  * it was a single coverage layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class PortrayalCoverageReader extends GridCoverageReader {
 

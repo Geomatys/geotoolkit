@@ -51,7 +51,7 @@ import org.geotoolkit.ows.xml.Range;
  * </pre>
  * 
  *  @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeType", propOrder = {

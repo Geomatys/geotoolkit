@@ -69,7 +69,7 @@ import org.apache.sis.measure.Units;
  * Rendering Context for Java2D.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class RenderingContext2D implements RenderingContext{
 

@@ -40,7 +40,7 @@ import org.opengis.style.PointSymbolizer;
  * Point symbolizer edition panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer> {
 

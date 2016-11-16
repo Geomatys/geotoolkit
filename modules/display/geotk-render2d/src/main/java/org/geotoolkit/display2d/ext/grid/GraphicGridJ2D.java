@@ -33,7 +33,7 @@ import org.opengis.geometry.Envelope;
  * Graphic decoration to paint a grid.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GraphicGridJ2D extends GraphicJ2D{
 

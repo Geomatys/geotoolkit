@@ -51,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Generates WMTS requests objects on a WMTS server.
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class WebMapTileClient extends AbstractCoverageClient implements Client{
 

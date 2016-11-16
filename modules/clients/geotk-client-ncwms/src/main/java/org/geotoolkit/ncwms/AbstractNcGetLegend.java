@@ -27,7 +27,7 @@ import org.geotoolkit.wms.AbstractGetLegend;
  * parameters for a GetLegendGraphic request.
  *
  * @author olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractNcGetLegend extends AbstractGetLegend implements NcGetLegendRequest {
 

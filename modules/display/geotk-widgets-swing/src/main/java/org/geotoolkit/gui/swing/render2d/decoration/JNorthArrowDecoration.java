@@ -37,7 +37,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  * Decoration displaying a north arrow.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JNorthArrowDecoration extends JComponent implements MapDecoration{
 

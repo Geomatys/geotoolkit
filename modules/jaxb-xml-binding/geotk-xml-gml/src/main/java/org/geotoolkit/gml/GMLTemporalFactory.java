@@ -33,7 +33,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class GMLTemporalFactory extends DefaultTemporalFactory {
 

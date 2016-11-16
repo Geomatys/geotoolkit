@@ -28,7 +28,7 @@ import static org.opengis.annotation.Obligation.*;
  *
  * @version $Id:
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @UML(identifier="SimpleDataRecord", specification=UNSPECIFIED)
 public interface SimpleDataRecord extends AbstractDataRecord {

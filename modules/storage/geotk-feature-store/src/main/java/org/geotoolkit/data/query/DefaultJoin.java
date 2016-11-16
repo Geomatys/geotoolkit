@@ -26,7 +26,7 @@ import org.opengis.filter.expression.PropertyName;
  * Default join implementation.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class DefaultJoin implements Join{
 

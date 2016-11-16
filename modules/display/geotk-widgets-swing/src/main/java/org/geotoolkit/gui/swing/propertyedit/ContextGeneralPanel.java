@@ -33,7 +33,7 @@ import org.geotoolkit.map.MapContext;
  * Context general panel
  * 
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class ContextGeneralPanel extends AbstractPropertyPane {
     

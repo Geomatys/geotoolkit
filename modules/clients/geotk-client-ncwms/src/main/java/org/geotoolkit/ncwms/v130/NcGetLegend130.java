@@ -25,7 +25,7 @@ import org.geotoolkit.security.ClientSecurity;
  *
  * @author Olivier Terral (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetLegend130 extends AbstractNcGetLegend {
     

@@ -33,7 +33,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * Point creation delegate.
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class PointCreationDelegate extends AbstractFeatureEditionDelegate{
 

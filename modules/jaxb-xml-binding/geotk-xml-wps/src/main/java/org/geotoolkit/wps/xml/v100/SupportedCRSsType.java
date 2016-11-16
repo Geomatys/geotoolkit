@@ -57,7 +57,7 @@ import org.geotoolkit.wps.xml.DataDescription;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedCRSsType", propOrder = {

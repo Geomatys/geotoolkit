@@ -22,7 +22,7 @@ import java.util.List;
  *  Super abstract type for all the different versions of Operation.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public interface AbstractDomain {
 

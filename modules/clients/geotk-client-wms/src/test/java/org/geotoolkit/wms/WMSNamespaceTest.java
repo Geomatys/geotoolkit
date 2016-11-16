@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * check proper namespace parsing.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSNamespaceTest extends org.geotoolkit.test.TestBase {
 

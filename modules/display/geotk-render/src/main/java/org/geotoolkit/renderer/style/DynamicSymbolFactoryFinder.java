@@ -44,7 +44,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * </ul>
  * </p>
  * 
- * @module pending
+ * @module
  */
 public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */

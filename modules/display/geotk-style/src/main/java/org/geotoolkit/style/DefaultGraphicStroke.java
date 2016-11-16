@@ -33,7 +33,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of Types Graphic Stroke.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStroke{
 

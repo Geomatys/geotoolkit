@@ -63,7 +63,7 @@ import org.opengis.feature.FeatureType;
  * Utility class to generate html or pdf reports using JasperReport library.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class JasperReportService extends Static {
 

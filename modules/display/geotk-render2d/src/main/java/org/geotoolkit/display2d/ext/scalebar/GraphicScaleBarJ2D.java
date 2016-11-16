@@ -40,7 +40,7 @@ import org.apache.sis.measure.Units;
  * Java2D graphic object displaying a scalebar.
  *
  * @author Johann sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 

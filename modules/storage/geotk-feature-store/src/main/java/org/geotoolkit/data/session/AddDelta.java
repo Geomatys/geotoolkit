@@ -48,7 +48,7 @@ import org.opengis.geometry.Envelope;
  * Delta which add a collection of features.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  * @todo make this concurrent
  */
 public class AddDelta extends AbstractDelta{

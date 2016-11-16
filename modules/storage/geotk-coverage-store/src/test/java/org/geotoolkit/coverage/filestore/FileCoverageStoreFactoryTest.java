@@ -26,7 +26,7 @@ import org.junit.Test;
  * Tests for FileCoverageStore
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase {
 

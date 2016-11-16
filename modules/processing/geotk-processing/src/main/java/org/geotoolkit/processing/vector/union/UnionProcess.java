@@ -57,7 +57,7 @@ import org.opengis.feature.AttributeType;
  * intersection with the other FeatureCollection Geometry, he keep all of his attributes.
  *
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class UnionProcess extends AbstractProcess {
     /**

@@ -24,7 +24,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 /**
  *
  * @author guilhem
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThanOrEqualTo")

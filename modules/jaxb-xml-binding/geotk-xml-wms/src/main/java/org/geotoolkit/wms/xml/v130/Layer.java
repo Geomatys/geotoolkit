@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Layer", propOrder = {

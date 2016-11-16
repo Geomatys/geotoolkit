@@ -43,7 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Base class to manipulate Lucene index.
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 public abstract class IndexLucene {
 

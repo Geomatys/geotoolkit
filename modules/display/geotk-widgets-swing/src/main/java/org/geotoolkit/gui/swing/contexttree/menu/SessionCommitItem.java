@@ -29,7 +29,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * session commit item for JContextTree
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class SessionCommitItem extends AbstractTreePopupItem{
 

@@ -49,7 +49,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Abstract implementation of a coverage store.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractCoverageStore extends DataStore implements CoverageStore {
 

@@ -34,7 +34,7 @@ import org.opengis.metadata.identification.Identification;
  * Factory name : "io"
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class IOProcessingRegistry extends AbstractProcessingRegistry {
 

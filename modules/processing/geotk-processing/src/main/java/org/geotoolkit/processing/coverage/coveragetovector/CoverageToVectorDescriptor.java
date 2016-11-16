@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Description of a coverage to polygon process.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor {
 

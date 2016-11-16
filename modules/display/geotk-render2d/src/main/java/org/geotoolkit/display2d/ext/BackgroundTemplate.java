@@ -24,7 +24,7 @@ import java.awt.Stroke;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface BackgroundTemplate {
 

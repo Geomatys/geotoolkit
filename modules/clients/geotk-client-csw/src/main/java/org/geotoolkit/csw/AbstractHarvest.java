@@ -39,7 +39,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
  * parameters for a transaction request.
  *
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class AbstractHarvest extends AbstractCSWRequest implements HarvestRequest {
 

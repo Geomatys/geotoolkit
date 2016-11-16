@@ -27,7 +27,7 @@ import org.opengis.filter.Or;
  * Immutable "or" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
 

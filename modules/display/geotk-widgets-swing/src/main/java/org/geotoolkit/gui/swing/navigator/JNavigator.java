@@ -52,7 +52,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class JNavigator extends JPanel implements
         MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {

@@ -28,7 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Test parameter accessor.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ParameterBindingTest extends org.geotoolkit.test.TestBase {
 

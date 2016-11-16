@@ -30,7 +30,7 @@ import org.opengis.geometry.DirectPosition;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GoogleMapsMosaic extends AbstractGridMosaic{
 

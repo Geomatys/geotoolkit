@@ -57,7 +57,7 @@ import org.opengis.filter.capability.FilterCapabilities;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesType")

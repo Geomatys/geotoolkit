@@ -24,7 +24,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class JUOMChooser extends JComboBox{
 

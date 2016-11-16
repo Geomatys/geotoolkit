@@ -45,7 +45,7 @@ import org.opengis.feature.PropertyType;
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
  *          jgarnett $
  * @author Ian Schneider
- * @module pending
+ * @module
  */
 public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = { "shapes/statepop.shp", "shapes/polygontest.shp",

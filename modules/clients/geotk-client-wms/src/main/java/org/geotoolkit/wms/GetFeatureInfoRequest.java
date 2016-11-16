@@ -21,7 +21,7 @@ package org.geotoolkit.wms;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetFeatureInfoRequest extends GetMapRequest {
 

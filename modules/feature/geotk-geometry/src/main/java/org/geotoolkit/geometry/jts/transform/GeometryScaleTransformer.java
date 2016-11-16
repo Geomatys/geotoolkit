@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  * Decimate points at the given resolution.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryScaleTransformer extends AbstractGeometryTransformer{
 

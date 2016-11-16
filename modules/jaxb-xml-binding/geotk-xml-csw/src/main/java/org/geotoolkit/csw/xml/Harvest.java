@@ -22,7 +22,7 @@ import javax.xml.datatype.Duration;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface Harvest extends AbstractCswRequest {
 

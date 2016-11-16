@@ -26,7 +26,7 @@ import org.opengis.filter.expression.Subtract;
  * Immutable "subtract" expression.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSubtract extends AbstractBinaryExpression<Expression,Expression> implements Subtract{
 

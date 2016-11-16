@@ -29,7 +29,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * session rollback item for JContextTree
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class SessionRollbackItem extends AbstractTreePopupItem{
 

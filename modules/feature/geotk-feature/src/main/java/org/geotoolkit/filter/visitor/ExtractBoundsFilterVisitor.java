@@ -63,7 +63,7 @@ import org.apache.sis.util.logging.Logging;
  * This is a replacement for FilterConsumer.
  *
  * @author Jody Garnett
- * @module pending
+ * @module
  */
 public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     static public NullFilterVisitor BOUNDS_VISITOR = new ExtractBoundsFilterVisitor();

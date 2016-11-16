@@ -34,7 +34,7 @@ import java.util.Map;
  * Implementation of ObjectConverter to convert a path to a file in a String to a
  * FeatureCollection.
  * @author Quentin Boileau
- * @module pending
+ * @module
  */
 public class StringToFeatureCollectionConverter extends SimpleConverter<String, FeatureCollection> {
 

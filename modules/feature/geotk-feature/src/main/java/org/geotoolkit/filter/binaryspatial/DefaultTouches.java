@@ -32,7 +32,7 @@ import org.apache.sis.util.logging.Logging;
  * Immutable "touches" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Expression> implements Touches {
 

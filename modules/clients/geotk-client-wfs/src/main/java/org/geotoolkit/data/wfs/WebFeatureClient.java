@@ -60,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * WFS server, used to aquiere capabilites and requests objects.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WebFeatureClient extends AbstractFeatureClient implements Client {
     /**

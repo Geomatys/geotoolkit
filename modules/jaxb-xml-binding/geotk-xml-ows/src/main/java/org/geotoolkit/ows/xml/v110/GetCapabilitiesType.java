@@ -49,7 +49,7 @@ import org.apache.sis.util.Version;
  * </pre>
  *
  * @author Guilhem Legal
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType", propOrder = {

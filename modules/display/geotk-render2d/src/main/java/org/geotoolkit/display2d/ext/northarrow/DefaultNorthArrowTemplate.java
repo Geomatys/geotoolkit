@@ -33,7 +33,7 @@ import org.apache.sis.util.logging.Logging;
  * Default north arrow template, immutable.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
 

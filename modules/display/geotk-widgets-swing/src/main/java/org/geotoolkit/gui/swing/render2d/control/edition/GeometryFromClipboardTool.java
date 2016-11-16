@@ -31,7 +31,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool displaying a dialog to edit the geometry extracting geometry from the clipboard.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryFromClipboardTool extends AbstractEditionTool {
 

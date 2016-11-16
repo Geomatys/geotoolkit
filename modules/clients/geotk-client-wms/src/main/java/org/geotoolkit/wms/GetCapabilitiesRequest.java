@@ -23,7 +23,7 @@ import org.geotoolkit.client.Request;
  *
  * @author Olivier Terral (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public interface GetCapabilitiesRequest extends Request {
     /**

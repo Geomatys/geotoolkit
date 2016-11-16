@@ -22,7 +22,7 @@ import org.geotoolkit.swe.xml.Vector;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractPosition {
 

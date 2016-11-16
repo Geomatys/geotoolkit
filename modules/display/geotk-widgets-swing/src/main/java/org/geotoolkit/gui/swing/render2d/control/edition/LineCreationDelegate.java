@@ -30,7 +30,7 @@ import java.util.List;
  * line creation handler
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class LineCreationDelegate extends AbstractFeatureEditionDelegate {
 

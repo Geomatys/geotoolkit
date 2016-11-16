@@ -65,7 +65,7 @@ import org.opengis.filter.expression.Subtract;
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OGCforSLD100Test extends TestCase{
 

@@ -31,7 +31,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  * Listen to properties and children changes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface ItemListener extends PropertyChangeListener {
 

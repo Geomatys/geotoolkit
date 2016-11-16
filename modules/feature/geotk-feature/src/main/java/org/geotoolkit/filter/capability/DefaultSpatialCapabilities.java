@@ -29,7 +29,7 @@ import org.opengis.filter.capability.SpatialOperators;
  * Immutable spatial capabilities
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSpatialCapabilities implements SpatialCapabilities{
 

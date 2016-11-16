@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Beyond")

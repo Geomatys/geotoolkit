@@ -27,7 +27,7 @@ import java.awt.geom.AffineTransform;
  * Simple and efficient path iterator for JTS GeometryCollection.
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  * @since 2.9
  */
 public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIterator {

@@ -42,7 +42,7 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OnlineResourceType")

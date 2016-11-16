@@ -43,7 +43,7 @@ import org.apache.sis.util.logging.Logging;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2D<T> {
 

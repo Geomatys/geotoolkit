@@ -31,7 +31,7 @@ import org.opengis.filter.expression.Function;
  * IndexedColorModel should always be used prior to this model.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CompatibleColorModel extends ColorModel{
 

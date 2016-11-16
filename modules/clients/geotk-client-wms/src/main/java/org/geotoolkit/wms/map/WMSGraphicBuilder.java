@@ -42,7 +42,7 @@ import org.geotoolkit.wms.WebMapClient;
  * Render WMS layer in default geotoolkit rendering engine.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 

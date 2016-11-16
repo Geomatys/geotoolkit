@@ -35,7 +35,7 @@ import org.opengis.feature.FeatureType;
  * FeatureCollection that takes it's source from a join query.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCollection{
 

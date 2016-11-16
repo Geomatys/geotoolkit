@@ -25,7 +25,7 @@ import java.awt.*;
 /**
  * Implementation of ObjectConverter to convert a String into a Color.
  *
- * @module pending
+ * @module
  */
 public class ColorToStringConverter extends SimpleConverter<Color, String> {
 

@@ -32,7 +32,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  * deltas and lock when commiting or reverting changes.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSessionDiff{
 

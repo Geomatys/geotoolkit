@@ -57,7 +57,7 @@ import org.opengis.style.Symbolizer;
  * Property panel
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JPropertyPane extends JPanel{
 

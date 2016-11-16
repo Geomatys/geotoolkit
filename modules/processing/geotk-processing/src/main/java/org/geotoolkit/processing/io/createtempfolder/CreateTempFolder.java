@@ -30,7 +30,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * Create a temporary folder.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CreateTempFolder extends AbstractProcess {
 

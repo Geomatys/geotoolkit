@@ -83,7 +83,7 @@ import org.opengis.feature.FeatureType;
  * CRSChooser component
  *
  * @author Johann Sorel
- * @module pending
+ * @module
  */
 public class JCRSChooser extends javax.swing.JDialog {
 

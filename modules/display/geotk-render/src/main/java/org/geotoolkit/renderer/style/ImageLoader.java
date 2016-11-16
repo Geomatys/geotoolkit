@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * $Id$
  *
  * @author Ian Turton
- * @module pending
+ * @module
  */
 class ImageLoader implements Runnable {
     /** The logger for the rendering module. */

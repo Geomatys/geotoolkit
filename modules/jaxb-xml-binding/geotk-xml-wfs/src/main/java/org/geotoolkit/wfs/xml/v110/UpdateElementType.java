@@ -53,7 +53,7 @@ import org.geotoolkit.wfs.xml.UpdateElement;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateElementType", propOrder = {

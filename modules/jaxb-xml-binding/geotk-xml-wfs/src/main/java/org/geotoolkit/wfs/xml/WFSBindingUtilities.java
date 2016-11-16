@@ -41,7 +41,7 @@ import org.xml.sax.InputSource;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class WFSBindingUtilities {
 

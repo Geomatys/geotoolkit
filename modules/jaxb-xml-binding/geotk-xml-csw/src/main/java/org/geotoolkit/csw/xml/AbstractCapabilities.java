@@ -22,7 +22,7 @@ import org.opengis.filter.capability.FilterCapabilities;
 /**
  * TODO this interface duplicate a lot from AbstractCapabiltiesBase because of CSWResponse.
  * @author Guilhem legal (Geomatys)
- * @module pending
+ * @module
  */
 public interface AbstractCapabilities extends AbstractCapabilitiesBase {
 

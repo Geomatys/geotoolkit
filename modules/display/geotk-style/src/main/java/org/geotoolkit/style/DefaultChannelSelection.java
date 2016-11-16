@@ -29,7 +29,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * Immutable implementation of Types ChannelSelection.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultChannelSelection implements ChannelSelection{
 

@@ -65,7 +65,7 @@ import org.apache.sis.util.Utilities;
  * features.ContextContainer2D
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ContextContainer2D extends DefaultGraphicContainer implements MapContextContainer {
 

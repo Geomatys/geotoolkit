@@ -23,7 +23,7 @@ import java.awt.Dimension;
  * Definition of a canvas, dimension, background and image stretching.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class CanvasDef {
 

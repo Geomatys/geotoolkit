@@ -57,7 +57,7 @@ import org.opengis.feature.catalog.FeatureOperation;
  * </pre>
  *
  *
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

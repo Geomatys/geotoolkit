@@ -26,7 +26,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * Model is organised in a tree where node with children have the key 'GROUP'
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class LandSatMetaNode extends DefaultMutableTreeNode {
 

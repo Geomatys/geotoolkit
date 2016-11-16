@@ -22,7 +22,7 @@ package org.geotoolkit.data.query;
  * Some feature store might not be able to handle sort by parameters for example.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface QueryCapabilities {
 

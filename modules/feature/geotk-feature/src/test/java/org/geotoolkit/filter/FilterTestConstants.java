@@ -47,7 +47,7 @@ import org.apache.sis.referencing.CommonCRS;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @module
  */
 public class FilterTestConstants {
 

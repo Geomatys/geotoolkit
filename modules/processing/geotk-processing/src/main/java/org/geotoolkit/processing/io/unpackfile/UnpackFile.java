@@ -46,7 +46,7 @@ import static org.geotoolkit.processing.io.unpackfile.UnpackFileDescriptor.*;
  * Uncompress an archive.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class UnpackFile extends AbstractProcess {
 

@@ -22,6 +22,6 @@ import org.geotoolkit.wms.GetFeatureInfoRequest;
  * Interface for GetFeatureInfo requests
  * 
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public interface NcGetFeatureInfoRequest extends NcGetMapRequest, GetFeatureInfoRequest {}

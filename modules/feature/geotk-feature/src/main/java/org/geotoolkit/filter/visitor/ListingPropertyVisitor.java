@@ -78,7 +78,7 @@ import org.opengis.filter.temporal.TOverlaps;
  * Expression visitor that returns a list of all Feature attributs requiered by this expression.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     

@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @version $Id: XacmlAnnotationsTest.java 1542 2009-04-20 14:57:56Z glegal $
  * @author Cédric Briançon
- * @module pending
+ * @module
  */
 public class XacmlAnnotationsTest extends org.geotoolkit.test.TestBase {
     private Logger logger = Logging.getLogger("org.geotoolkit.xacml.xml");

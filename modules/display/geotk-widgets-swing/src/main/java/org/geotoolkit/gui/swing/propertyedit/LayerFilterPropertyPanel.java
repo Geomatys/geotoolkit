@@ -31,7 +31,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * layer filter panel
  * 
  * @author  Johann Sorel (Puzzle-GIS)
- * @module pending
+ * @module
  */
 public class LayerFilterPropertyPanel extends MultiPropertyPanel {
 

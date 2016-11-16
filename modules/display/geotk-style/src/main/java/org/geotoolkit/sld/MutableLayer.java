@@ -24,7 +24,7 @@ import org.opengis.style.Description;
  * Common mutable interface for MutableNamedLayer and MutableUserLayer
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface MutableLayer extends Layer{
 

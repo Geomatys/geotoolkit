@@ -28,7 +28,7 @@ import java.net.URL;
  * parameters for a GetCapabilities request.
  *
  * @author Olivier Terral (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
     /**

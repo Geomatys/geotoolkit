@@ -24,7 +24,7 @@ import org.opengis.filter.temporal.TEquals;
  * Immutable temporal "tequals" filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultTEquals extends AbstractTemporalFilter implements TEquals{
 

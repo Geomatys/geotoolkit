@@ -31,7 +31,7 @@ import org.opengis.style.Symbolizer;
  * This interface provide commun methods.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
 

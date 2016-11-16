@@ -52,7 +52,7 @@ import org.geotoolkit.wps.xml.StatusInfo;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StatusType", propOrder = {

@@ -22,7 +22,7 @@ package org.geotoolkit.data.dbf;
  * This allows to log messages when objects are not properly disposed.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface Closeable extends java.io.Closeable{
     

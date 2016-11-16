@@ -45,7 +45,7 @@ import org.geotoolkit.ows.xml.AbstractDCP;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

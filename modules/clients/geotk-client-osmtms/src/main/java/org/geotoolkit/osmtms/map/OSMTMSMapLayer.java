@@ -30,7 +30,7 @@ import org.apache.sis.util.ArgumentChecks;
  * Map representation of a TMS layer.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 

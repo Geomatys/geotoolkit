@@ -34,7 +34,7 @@ import org.opengis.feature.FeatureType;
  *
  * @author Chris Holmes
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 

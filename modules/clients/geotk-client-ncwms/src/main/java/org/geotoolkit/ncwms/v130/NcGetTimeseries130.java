@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
  * Implementation for the GetTimeseries request version 1.3.0.
  *
  * @author Fabien BERNARD (Geomatys)
- * @module pending
+ * @module
  */
 public class NcGetTimeseries130 extends AbstractNcGetTimeseries {
 

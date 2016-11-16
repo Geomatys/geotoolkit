@@ -34,7 +34,7 @@ import org.opengis.temporal.RelativePosition;
  * 
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @module pending
+ * @module
  * @version 4.0
  * @since   4.0
  */

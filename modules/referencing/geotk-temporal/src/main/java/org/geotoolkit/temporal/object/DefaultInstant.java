@@ -36,7 +36,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * 
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
- * @module pending
+ * @module
  */
 @XmlType(name = "TimeInstant_Type", propOrder = {
     "date"

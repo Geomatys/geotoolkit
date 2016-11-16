@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class GeometryFromWKTTool extends AbstractEditionTool {
 

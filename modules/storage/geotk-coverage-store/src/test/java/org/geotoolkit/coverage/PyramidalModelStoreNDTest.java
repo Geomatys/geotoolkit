@@ -56,7 +56,7 @@ import org.junit.Test;
  * Abstract pyramid store test.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.TestBase {
 

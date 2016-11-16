@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.MathTransform;
  * Default mosaic grid.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public abstract class AbstractGridMosaic implements GridMosaic{
 

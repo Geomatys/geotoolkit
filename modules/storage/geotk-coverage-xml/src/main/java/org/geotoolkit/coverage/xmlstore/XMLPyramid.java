@@ -48,7 +48,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="XMLPyramid")

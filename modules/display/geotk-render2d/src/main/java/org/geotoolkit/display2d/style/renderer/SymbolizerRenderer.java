@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
  * And you can generate glyphs using the glyph method.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface SymbolizerRenderer {
 

@@ -27,7 +27,7 @@ import org.opengis.style.PointSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
 

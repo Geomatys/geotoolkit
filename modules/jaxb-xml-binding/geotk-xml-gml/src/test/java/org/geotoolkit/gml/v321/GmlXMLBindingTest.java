@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @module
  */
 public class GmlXMLBindingTest extends org.geotoolkit.test.TestBase {
 

@@ -93,7 +93,7 @@ import org.opengis.geometry.BoundingBox;
  * </ul>
  * @author Jesse
  *
- * @module pending
+ * @module
  */
 public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisitor {
 

@@ -29,7 +29,7 @@ import org.geotoolkit.lang.Static;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public final class EditionTools extends Static {
 

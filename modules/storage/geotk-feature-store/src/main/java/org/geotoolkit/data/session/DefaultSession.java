@@ -63,7 +63,7 @@ import org.opengis.feature.FeatureType;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class DefaultSession extends AbstractSession {
 

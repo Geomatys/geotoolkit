@@ -22,7 +22,7 @@ import java.util.EventListener;
  * Interface to listen to collection events.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public interface CollectionChangeListener<T> extends EventListener{
 

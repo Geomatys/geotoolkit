@@ -53,7 +53,7 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  * </pre>
  * 
  * 
- * @module pending
+ * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TrafficAreaType", propOrder = {

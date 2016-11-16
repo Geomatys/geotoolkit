@@ -39,7 +39,7 @@ import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
  * 
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @module
  */
 public class FileSystemIndexStore implements IndexStore {
 
