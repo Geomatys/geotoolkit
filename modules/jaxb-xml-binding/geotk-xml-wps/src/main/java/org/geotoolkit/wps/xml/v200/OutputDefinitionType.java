@@ -83,12 +83,14 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
         
     }
     
-    public OutputDefinitionType(String id, boolean asReference) {
+    public OutputDefinitionType(String id, Boolean asReference) {
         this.id = id;
-        if (asReference) {
-            this.transmission = DataTransmissionModeType.REFERENCE;
-        } else {
-            this.transmission = DataTransmissionModeType.VALUE;
+        if (asReference != null) {
+            if (asReference) {
+                this.transmission = DataTransmissionModeType.REFERENCE;
+            } else {
+                this.transmission = DataTransmissionModeType.VALUE;
+            }
         }
     }
 
@@ -260,7 +262,15 @@ public class OutputDefinitionType implements DocumentOutputDefinition {
     
     @Override
     public void setAsReference(Boolean value) {
-        this.transmission = DataTransmissionModeType.REFERENCE;
+        if (value != null) {
+            if (value) {
+                this.transmission = DataTransmissionModeType.REFERENCE;
+            } else {
+                this.transmission = DataTransmissionModeType.VALUE;
+            }
+        }
+        this.transmission = null;
+        
     }
 
     @Override

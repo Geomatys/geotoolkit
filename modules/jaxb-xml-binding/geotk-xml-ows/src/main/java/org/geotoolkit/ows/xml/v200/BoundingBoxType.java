@@ -124,7 +124,7 @@ public class BoundingBoxType implements BoundingBox {
             final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();
             if (crss != null) {
                 try {
-                    crs = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true);
+                    crs = org.apache.sis.referencing.IdentifiedObjects.lookupURN(crss,null);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception while creating OWS BoundingBox from opengis one", ex);
                 }
