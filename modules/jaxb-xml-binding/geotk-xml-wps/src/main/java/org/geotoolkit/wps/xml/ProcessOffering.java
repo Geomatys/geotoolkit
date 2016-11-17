@@ -16,14 +16,19 @@
  */
 package org.geotoolkit.wps.xml;
 
-import java.util.List;
-import org.geotoolkit.ows.xml.AbstractGetCapabilities;
+import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.LanguageString;
 
 /**
- *
- * @author guilhem
+ * 
+ * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
+ * @module
  */
-public interface GetCapabilities extends AbstractGetCapabilities {
-    
-    List<String> getLanguages();
+public interface ProcessOffering {
+
+    AbstractCodeType getIdentifier();
+
+    LanguageString getSingleAbstract();
+
 }

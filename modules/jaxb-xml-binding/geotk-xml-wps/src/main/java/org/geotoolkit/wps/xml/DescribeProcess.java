@@ -26,7 +26,28 @@ import org.geotoolkit.ows.xml.RequestBase;
  */
 public interface DescribeProcess extends RequestBase {
     
-     List<? extends AbstractCodeType> getIdentifier();
-     
-     String getLanguage();
+    /**
+     * Returns identifiers, never {@code null}.
+     * List can be modified.
+     *
+     * @return
+     */
+    List<? extends AbstractCodeType> getIdentifier();
+
+    void setIdentifier(List<String> ids);
+
+    /**
+     * RFC 4646 language code of the human-readable text (e.g. "en-CA") in the process description.
+     *
+     * @return possible object is {@link String }
+     */
+    String getLanguage();
+
+    /**
+     * Sets the value of the lang property.
+     *
+     * @param language allowed object is {@link String }
+     */
+    void setLanguage(String language);
+
 }

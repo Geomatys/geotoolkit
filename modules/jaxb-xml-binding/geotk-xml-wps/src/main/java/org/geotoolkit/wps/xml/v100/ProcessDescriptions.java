@@ -79,4 +79,9 @@ public class ProcessDescriptions extends ResponseBaseType implements org.geotool
         return this.processDescription;
     }
 
+    @Override
+    public List<ProcessDescriptionType> getProcesses() {
+        return getProcessDescription();
+    }
+
 }

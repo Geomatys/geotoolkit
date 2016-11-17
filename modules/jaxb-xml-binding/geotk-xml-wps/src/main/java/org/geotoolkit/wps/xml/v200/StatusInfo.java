@@ -87,6 +87,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(name = "StatusInfo")
 public class StatusInfo implements org.geotoolkit.wps.xml.StatusInfo {
 
+    /** The job has finished with no errors. */
+    public static final String STATUS_SUCCEEDED = "Succeeded";
+    /** The job has finished with errors. */
+    public static final String STATUS_FAILED = "Failed";
+    /** The job is queued for execution. */
+    public static final String STATUS_ACCEPTED = "Accepted";
+    /** The job is running. */
+    public static final String STATUS_RUNNING = "Running";
+    
     @XmlElement(name = "JobID", required = true)
     protected String jobID;
     @XmlElement(name = "Status", required = true)

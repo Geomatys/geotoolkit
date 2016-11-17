@@ -22,19 +22,36 @@ import org.geotoolkit.ows.xml.RequestBase;
 
 /**
  *
- * @author guilhem
+ * @author guilhem (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public interface Execute extends RequestBase {
-    
+
+    /**
+     * Returns process identifier, never {@code null}.
+     */
     AbstractCodeType getIdentifier();
+
+    /**
+     * Sets process identifiers to use.
+     */
+    void setIdentifier(String identifiers);
     
     List<? extends Input> getInput();
     
     List<? extends OutputDefinition> getOutput();
     
     String getLanguage();
-    
+
+    /**
+     * Returns OutputLineage state.
+     */
     boolean isLineage();
+
+    /**
+     * Sets OutputLineage state.
+     */
+    void setLineage(boolean outLineage);
     
     boolean isRawOutput();
     

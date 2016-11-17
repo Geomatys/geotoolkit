@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ExceptionType", propOrder = {
     "exceptionText"
 })
-public class ExceptionType implements Serializable {
+public class ExceptionType implements Serializable, org.geotoolkit.ows.xml.ExceptionType {
 
     @XmlElement(name = "ExceptionText")
     private List<String> exceptionText;
@@ -86,6 +86,7 @@ public class ExceptionType implements Serializable {
     /**
      * Gets the value of the exceptionText property.
      */
+    @Override
     public List<String> getExceptionText() {
         return Collections.unmodifiableList(exceptionText);
     }
@@ -93,6 +94,7 @@ public class ExceptionType implements Serializable {
     /**
      * Gets the value of the exceptionCode property.
      */
+    @Override
     public String getExceptionCode() {
         return exceptionCode;
     }

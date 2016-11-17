@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
@@ -54,7 +55,7 @@ import org.geotoolkit.wps.xml.ProcessSummary;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessSummaryType")
-public class ProcessSummaryType extends DescriptionType implements ProcessSummary {
+public class ProcessSummaryType extends DescriptionType implements ProcessSummary, org.geotoolkit.wps.xml.ProcessOffering {
 
     @XmlAttribute(name = "jobControlOptions", required = true)
     protected List<String> jobControlOptions;
@@ -74,8 +75,13 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
         super(identifier, title, _abstract, keywords);
         this.processVersion = processVersion;
     }
-    
-    
+
+    @Override
+    public LanguageString getSingleAbstract() {
+        final List<LanguageStringType> lst = getAbstract();
+        return lst.isEmpty() ? null : lst.get(0);
+    }
+
     /**
      * Gets the value of the jobControlOptions property.
      * 

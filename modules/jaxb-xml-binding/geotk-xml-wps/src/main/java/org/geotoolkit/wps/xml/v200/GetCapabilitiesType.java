@@ -18,10 +18,13 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.geotoolkit.ows.xml.v200.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v200.SectionsType;
@@ -65,6 +68,15 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v200.GetCapabili
             return languages.getLanguage();
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public Map<String, String> toKVP() throws UnsupportedOperationException {
+        final Map<String,String> params = new HashMap<>();
+        params.put("SERVICE",    "WPS");
+        params.put("REQUEST",    "GetCapabilities");
+        params.put("ACCEPTVERSIONS",    StringUtils.join(getAcceptVersions().getVersion(), ','));
+        return params;
     }
 
 }

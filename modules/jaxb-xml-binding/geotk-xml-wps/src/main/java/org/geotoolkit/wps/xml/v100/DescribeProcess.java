@@ -17,7 +17,9 @@
 package org.geotoolkit.wps.xml.v100;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -78,6 +80,33 @@ public class DescribeProcess extends RequestBaseType implements org.geotoolkit.w
             identifier = new ArrayList<>();
         }
         return this.identifier;
+    }
+
+    @Override
+    public void setIdentifier(List<String> ids) {
+        final List<CodeType> codes = new ArrayList<>();
+        for(String id : ids) {
+            codes.add(new CodeType(id));
+        }
+        identifier = codes;
+    }
+
+    @Override
+    public Map<String, String> toKVP() throws UnsupportedOperationException {
+        final Map<String, String> kvp = new HashMap<>();
+        kvp.put("SERVICE",getService());
+        kvp.put("REQUEST","DescribeProcess");
+        kvp.put("VERSION",getVersion().toString());
+
+        final StringBuilder ids = new StringBuilder();
+        final List<CodeType> identifiers = getIdentifier();
+        for(int i=0; i<identifiers.size();i++){
+            ids.append(identifiers.get(i).getValue());
+            if(i != identifiers.size()-1)
+                ids.append(',');
+        }
+        kvp.put("IDENTIFIER", ids.toString() );
+        return kvp;
     }
 
 }
