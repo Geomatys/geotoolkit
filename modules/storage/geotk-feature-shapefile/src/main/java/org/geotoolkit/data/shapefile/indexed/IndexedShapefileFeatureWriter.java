@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -138,6 +139,8 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
+        //ensure the user did not modify the id between next() and write() calls
+        currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), currentFid);
         super.write();
     }
     

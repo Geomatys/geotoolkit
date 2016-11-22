@@ -59,6 +59,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import net.iharder.Base64;
 import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.Features;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Import;
 import org.geotoolkit.xsd.xml.v2001.Include;
@@ -80,12 +81,6 @@ import org.opengis.feature.PropertyType;
  */
 public class Utils {
 
-    /**
-     * This named is used for complex simple element to indicate the real node value opposed to attribute values
-     * Tested cases :
-     * "",".","$value",":value","#value" conflict with xpath qname constraint
-     */
-    public static final String VALUE_PROPERTY_NAME = "_value";
     /**
      * This named is used for element of type xsd:any.
      */
@@ -853,8 +848,14 @@ public class Utils {
         if(nsuri!=null) ns.add(nsuri);
 
         if(type instanceof FeatureAssociationRole){
-            final FeatureType valueType = ((FeatureAssociationRole)type).getValueType();
-            listAllNamespaces(valueType, ns, visited);
+            final FeatureAssociationRole far = (FeatureAssociationRole)type;
+            try {
+                final FeatureType valueType = far.getValueType();
+                listAllNamespaces(valueType, ns, visited);
+            } catch(IllegalStateException ex) {
+                String n = NamesExt.getNamespace(Features.getValueTypeName(far));
+                if(n!=null) ns.add(n);
+            }
         }
     }
 

@@ -185,7 +185,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
             if (pt.getPropertyName().equals("")) return true;
 
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -199,7 +199,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (beyond.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) beyond.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -213,7 +213,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (cntns.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) cntns.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -227,7 +227,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (crs.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) crs.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -241,7 +241,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (dsjnt.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) dsjnt.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -255,7 +255,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (dw.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) dw.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -269,7 +269,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (equals.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) equals.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -283,7 +283,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (i.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) i.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -297,7 +297,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (ovrlps.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) ovrlps.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -311,7 +311,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (tchs.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) tchs.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;
@@ -325,7 +325,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         if (within.getExpression1() instanceof PropertyName) {
             final PropertyName pt = (PropertyName) within.getExpression1();
             try{
-                final PropertyType desc = ft.getProperty(pt.getPropertyName());
+                final PropertyType desc = pt.evaluate(ft, PropertyType.class);
                 return AttributeConvention.isGeometryAttribute(desc);
             }catch(PropertyNotFoundException ex){
                 return false;

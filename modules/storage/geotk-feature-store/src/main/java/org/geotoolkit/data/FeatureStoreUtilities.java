@@ -159,7 +159,7 @@ public class FeatureStoreUtilities {
      */
     public static List<FeatureId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
             throws FeatureStoreRuntimeException{
-        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        final List<FeatureId> ids = new ArrayList<>();
 
         final Iterator<? extends Feature> ite = collection.iterator();
         try{

@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -66,7 +68,11 @@ import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.xml.StaxStreamWriter;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -294,7 +300,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 continue;
             }
             
-            final Object value = feature.getPropertyValue(desc.getName().toString());
+            Object value = feature.getPropertyValue(desc.getName().toString());
             final GenericName nameA = desc.getName();
             String nameProperty = nameA.tip().toString();
             String namespaceProperty = NamesExt.getNamespace(nameA);
@@ -302,7 +308,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             //remove the @
             nameProperty = nameProperty.substring(1);
 
-            if("nilReason".equals(nameProperty)) nil = true;
+            nil |= "nil".equals(nameProperty) && Boolean.TRUE.equals(value);
+            if(value instanceof Boolean) {
+                value = (Boolean)value ? "1" : "0";
+            }
 
             String valueStr = Utils.getStringValue(value);
             if (valueStr != null) {
@@ -312,11 +321,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     writer.writeAttribute(nameProperty, valueStr);
                 }
             }
-        }
-
-        if(nil){
-            //add the xsi:nill attribute
-            writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "nil","1");
         }
 
         return nil;
@@ -331,75 +335,84 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      */
     private static Object isNill(Feature feature){
         try {
-            Object niReason = feature.getPropertyValue("@nilReason");
-            if (niReason != null) {
-                return Utils.getStringValue(niReason);
-            } else {
-                return null;
+            if(Boolean.TRUE.equals(feature.getPropertyValue("@nil"))){
+                try {
+                    Object reason = feature.getPropertyValue("@nilReason");
+                    if (reason!=null) {
+                       return Utils.getStringValue(reason);
+                    }
+                }catch(PropertyNotFoundException ex){
+                }
+                return true;
             }
         } catch(PropertyNotFoundException ex) {
             return null;
         }
+        return null;
     }
 
     private void writeComplexProperties(final Feature feature, String id) throws XMLStreamException {
 
-        final FeatureType type = feature.getType();
+        final boolean isNil = writeAttributeProperties(feature);
+        if(isNil) return;
 
-        if(isPrimitiveType(type)){
-            //this type is in reality a single xml element with attributes
-            final boolean isNil = writeAttributeProperties(feature);
-            if(isNil) return;
-
-            //write the value
-            Object value = feature.getPropertyValue(Utils.VALUE_PROPERTY_NAME);
-            if (value == null) {
-                value = "";
-            }
-            writer.writeCharacters(Utils.getStringValue(value));
-
-
-        }else{
-            final boolean isNil = writeAttributeProperties(feature);
-            if(isNil) return;
-
-            //write properties in the type order
-            for(PropertyType pt : feature.getType().getProperties(true)){
-                final Object value = feature.getPropertyValue(pt.getName().toString());
-                final Collection<Object> values;
-                if(value instanceof Collection){
-                    values = (Collection<Object>) value;
-                }else{
-                    values = Collections.singleton(value);
-                }
-
-                if(!values.isEmpty()){
-                    for (Object a : values) {
-                        writeProperty(feature,pt,a,false,id);
-                    }
-                }else if(Utils.isNillable(pt)){
-                    //we must have at least one tag with nil=1
-                    final GenericName nameA = pt.getName();
-                    final String namespaceProperty = NamesExt.getNamespace(nameA);
-                    final String nameProperty = nameA.tip().toString();
-                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                        writer.writeStartElement(namespaceProperty, nameProperty);
-                    } else {
-                        writer.writeStartElement(nameProperty);
-                    }
-                    writer.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "nil", "1");
-                    writer.writeEndElement();
-                }
+        //write properties in the type order
+        for(PropertyType pt : feature.getType().getProperties(true)){
+            final Object value = feature.getPropertyValue(pt.getName().toString());
+            final Collection<Object> values;
+            if(value instanceof Collection){
+                values = (Collection<Object>) value;
+            }else{
+                values = Collections.singleton(value);
             }
 
+            if(!values.isEmpty()){
+                for (Object a : values) {
+                    writeProperty(feature,pt,a,id);
+                }
+            }else if(Utils.isNillable(pt)){
+                //we must have at least one tag with nil=1
+                final GenericName nameA = pt.getName();
+                final String namespaceProperty = NamesExt.getNamespace(nameA);
+                final String nameProperty = nameA.tip().toString();
+                if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                    writer.writeStartElement(namespaceProperty, nameProperty);
+                } else {
+                    writer.writeStartElement(nameProperty);
+                }
+                writer.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "nil", "1");
+                writer.writeEndElement();
+            }
         }
     }
 
-    private void writeProperty(Feature parent, PropertyType typeA, Object valueA, boolean isSubstitute, String id) throws XMLStreamException{
+    private void writeCharacteristics(Attribute att) throws XMLStreamException {
+        final Iterator<Attribute> ite = att.characteristics().values().iterator();
+        while (ite.hasNext()) {
+            final Attribute chara = ite.next();
+            final GenericName name = chara.getName();
+            final String namespace = NamesExt.getNamespace(name);
+            String localPart = name.tip().toString();
+            if(localPart.startsWith("@")){
+                //remove the @
+                localPart = localPart.substring(1);
+            }
+            Object value = chara.getValue();
+            if(value instanceof Boolean) {
+                value = (Boolean)value ? "1" : "0";
+            }
+            if (value!=null) {
+                writer.writeAttribute(namespace, localPart,ObjectConverters.convert(value, String.class));
+            }
+        }
+    }
+
+    private void writeProperty(Feature parent, PropertyType typeA, Object valueA, String id) throws XMLStreamException{
         final FeatureType parentType = parent.getType();
         final GenericName nameA = typeA.getName();
         final String nameProperty = nameA.tip().toString();
         String namespaceProperty = NamesExt.getNamespace(nameA);
+        final boolean hasChars = typeA instanceof AttributeType && !((AttributeType)typeA).characteristics().isEmpty();
 
         if(isAttributeProperty(nameA)) return;
 
@@ -484,6 +497,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
+                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 writer.writeCharacters(Utils.getStringValue(value));
                 writer.writeEndElement();
             }
@@ -496,6 +510,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
+                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 final Object value = Array.get(valueA, i);
                 final String textValue;
                 if (value != null && value.getClass().isArray()) { // matrix
@@ -522,6 +537,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(nameProperty);
                 }
+                if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
                 final Object key = entry.getKey();
                 if (key != null) {
                     writer.writeAttribute("name", (String)key);
@@ -552,6 +568,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     } else {
                         writer.writeStartElement(nameProperty);
                     }
+                    if(hasChars) writeCharacteristics((Attribute) parent.getProperty(nameA.toString()));
 
                     if(valueA instanceof Feature){
                         //some types, like Observation & Measurement have Object types which can be
@@ -837,22 +854,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     public static boolean isAttributeProperty(GenericName name){
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
-    }
-
-    /**
-     * XML can have primitive types with attributes.
-     * We decompose them in a complex type with an empty name attribute and @properties.
-     *
-     * @param type
-     * @return
-     */
-    public static boolean isPrimitiveType(FeatureType type){
-        try{
-            type.getProperty(Utils.VALUE_PROPERTY_NAME);
-            return true;
-        }catch(PropertyNotFoundException ex){
-            return false;
-        }
     }
 
 }

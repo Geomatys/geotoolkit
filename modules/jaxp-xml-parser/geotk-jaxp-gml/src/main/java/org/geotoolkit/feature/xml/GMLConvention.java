@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.feature.xml;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.util.LocalName;
 import org.opengis.util.NameFactory;
@@ -32,6 +36,12 @@ public class GMLConvention {
     
     public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     public static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
+    public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+
+    public static final FeatureType ABSTRACTGMLTYPE_31;
+    public static final FeatureType ABSTRACTGMLTYPE_32;
+    public static final FeatureType ABSTRACTFEATURETYPE_31;
+    public static final FeatureType ABSTRACTFEATURETYPE_32;
 
     /**
      * Namespace of all names defined by GML convention.
@@ -47,7 +57,7 @@ public class GMLConvention {
     /**
      * XSD type is nillable.
      */
-    public static final LocalName NILLABLE_PROPERTY;
+    public static final GenericName NILLABLE_PROPERTY;
     public static final AttributeType<Boolean> NILLABLE_CHARACTERISTIC;
 
     /**
@@ -65,7 +75,7 @@ public class GMLConvention {
         NAMESPACE               = factory.createGenericName(null, "Geotk", "GML");
         NameSpace ns            = factory.createNameSpace(NAMESPACE, null);
         XSD_TYPE_ID_PROPERTY    = factory.createLocalName(ns, "xsdTypeId");
-        NILLABLE_PROPERTY       = factory.createLocalName(ns, "nillable");
+        NILLABLE_PROPERTY       = NamesExt.create(XSI_NAMESPACE, "@nil");
         SUBTYPE_PROPERTY        = factory.createLocalName(ns, "gmlPropertyType");
         NO_SUBTYPE              = factory.createLocalName(ns, "noPropertyType");
 
@@ -80,6 +90,7 @@ public class GMLConvention {
                 .setName(NILLABLE_PROPERTY)
                 .setMinimumOccurs(0)
                 .setMaximumOccurs(1)
+                .setDefaultValue(Boolean.TRUE)
                 .build();
         SUBTYPE_CHARACTERISTIC = new FeatureTypeBuilder()
                 .addAttribute(GenericName.class)
@@ -87,5 +98,28 @@ public class GMLConvention {
                 .setMinimumOccurs(0)
                 .setMaximumOccurs(1)
                 .build();
+
+
+
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"AbstractGMLType");
+        ftb.addAttribute(String.class).setName(GML_311_NAMESPACE,"@id").setMinimumOccurs(0).setMaximumOccurs(1).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ABSTRACTGMLTYPE_31 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_321_NAMESPACE,"AbstractGMLType");
+        AttributeTypeBuilder<String> atb = ftb.addAttribute(String.class).setName(GML_321_NAMESPACE,"@id").setMinimumOccurs(1).setMaximumOccurs(1);
+        atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ABSTRACTGMLTYPE_32 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"AbstractFeatureType");
+        ftb.setSuperTypes(ABSTRACTGMLTYPE_31);
+        ABSTRACTFEATURETYPE_31 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_321_NAMESPACE,"AbstractFeatureType");
+        ftb.setSuperTypes(ABSTRACTGMLTYPE_32);
+        ABSTRACTFEATURETYPE_32 = ftb.build();
     }
 }

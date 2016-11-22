@@ -42,6 +42,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -85,7 +86,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
         ftb.addAttribute(Object.class).setName(NamesExt.create(GML_311_NAMESPACE, "any")).setMinimumOccurs(0).setMaximumOccurs(1);
         final FeatureType simpleTypeAny = ftb.build();
 
@@ -102,7 +103,7 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
         ftb.addAttribute(String.class).setName(NamesExt.create(GML_311_NAMESPACE, "attString")).setMaximalLength(3)
                 .addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC).setDefaultValue(Boolean.TRUE);
         final FeatureType simpleTypeRestriction = ftb.build();
@@ -131,10 +132,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final String ns = "http://mapserver.gis.umn.edu/mapserver";
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(ns,"quadrige");
-        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
-        ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC).setDefaultValue(Boolean.FALSE);
-        ftb.addAttribute(String.class).setName(ns, "C_SIEPT38").setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC).setDefaultValue(Boolean.FALSE);
-        ftb.addAttribute(String.class).setName(ns, "L_SIEPT").setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC).setDefaultValue(Boolean.FALSE);
+        ftb.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAttribute(String.class).setName(ns, "C_SIEPT38").setMinimumOccurs(1).setMaximumOccurs(1);
+        ftb.addAttribute(String.class).setName(ns, "L_SIEPT").setMinimumOccurs(1).setMaximumOccurs(1);
         final FeatureType wfsType = ftb.build();
 
         assertEquals(wfsType, types.get(0));
@@ -237,10 +238,11 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final FeatureType type = types.get(0);
         final PropertyType itype = type.getProperty("identifier");
         assertNotNull(itype);
-        assertTrue(itype instanceof FeatureAssociationRole);
-        final FeatureType ct = ((FeatureAssociationRole) itype).getValueType();
-        assertEquals("CodeWithAuthorityType", ct.getName().tip().toString());
-        assertEquals(2, ct.getProperties(true).size());
+        assertTrue(itype instanceof AttributeType);
+        final AttributeType ct = (AttributeType) itype;
+        assertEquals(String.class, ct.getValueClass());
+        assertNotNull(ct.characteristics().get("@codeSpace"));
+        //assertEquals("CodeWithAuthorityType", ct.getName().tip().toString());
 
     }
 

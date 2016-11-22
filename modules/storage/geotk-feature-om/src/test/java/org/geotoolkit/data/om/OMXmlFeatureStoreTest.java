@@ -38,6 +38,7 @@ import org.geotoolkit.data.om.xml.XmlObservationStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
@@ -67,10 +68,11 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
             featureTypeBuilder.setName(name);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "id")).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description"));
+            featureTypeBuilder.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "description")).setMinimumOccurs(0).setMaximumOccurs(1);
             featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsGML, "name")).setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE);
-            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature")).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
+            featureTypeBuilder.addAttribute(String.class).setName(NamesExt.create(nsOM, "sampledFeature"))
+                    .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
             featureTypeBuilder.addAttribute(Geometry.class).setName(NamesExt.create(nsOM, "position")).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             int size = 1;
