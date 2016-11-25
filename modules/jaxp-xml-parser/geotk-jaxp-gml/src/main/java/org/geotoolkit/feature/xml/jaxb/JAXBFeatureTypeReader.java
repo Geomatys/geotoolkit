@@ -58,6 +58,7 @@ import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.Group;
 import org.geotoolkit.xsd.xml.v2001.GroupRef;
+import org.geotoolkit.xsd.xml.v2001.LocalComplexType;
 import org.geotoolkit.xsd.xml.v2001.LocalSimpleType;
 import org.geotoolkit.xsd.xml.v2001.NamedGroup;
 import org.geotoolkit.xsd.xml.v2001.NumFacet;
@@ -71,6 +72,7 @@ import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.Union;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -88,10 +90,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final String FLAG_ID = "isId";
+    private static final GenericName UNNAMED = NamesExt.create("unnamed");
 
     private final XSDSchemaContext xsdContext;
 
-    private boolean skipStandardObjectProperties = true;
+    private boolean skipStandardObjectProperties = false;
 
     private final Map<GenericName,FeatureType> featureTypeCache = new HashMap<>();
 
@@ -235,6 +238,65 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
         System.out.println("GET TYPE "+name);
 
+
+        //read simple content type if defined
+        final SimpleContent simpleContent = type.getSimpleContent();
+        if(simpleContent!=null){
+            final ExtensionType sext = simpleContent.getExtension();
+
+            if(sext!=null){
+                //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
+                //it is not named, so we call it value
+                final QName base = sext.getBase();
+                final AttributeType st = (AttributeType) resolveType(base, stack);
+                final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(st);
+                atb.setName(name);
+
+                //read attributes
+                for (PropertyType property : getAnnotatedAttributes(namespaceURI, sext.getAttributeOrAttributeGroup(), stack)) {
+                    CharacteristicTypeBuilder cb = atb.getCharacteristic(property.getName().toString());
+                    if (cb==null) {
+                        atb.addCharacteristic((AttributeType) property);
+                    } else {
+                        //characteristic already exist
+                    }
+                }
+                return atb.build();
+            }
+
+            final SimpleRestrictionType restriction = simpleContent.getRestriction();
+            if(restriction!=null){
+
+                final QName base = restriction.getBase();
+                if(base !=null){
+                    final ComplexType sct = xsdContext.findComplexType(base);
+                    if(sct!=null){
+                        final AttributeType tct = (AttributeType) getType(namespaceURI, sct, stack);
+                        final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(tct);
+                        atb.setName(name);
+
+                        //read attributes
+                        for (PropertyType property : getAnnotatedAttributes(namespaceURI, restriction.getAttributeOrAttributeGroup(), stack)) {
+                            CharacteristicTypeBuilder cb = atb.getCharacteristic(property.getName().toString());
+                            if (cb==null) {
+                                atb.addCharacteristic((AttributeType) property);
+                            } else {
+                                //characteristic already exist
+                            }
+                            
+                        }
+                        return atb.build();
+                    }else{
+//                        final PropertyType restType = resolveType(base, stack);
+//                        addOrReplace(finalType.builder, atb.create(restType, NamesExt.create(namespaceURI, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
+                    }
+                }
+            }
+
+            throw new MismatchedFeatureException("Undefined simple type : "+name);
+        }
+
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
 
@@ -276,56 +338,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             }
         }
 
-        //read simple content type if defined
-        final SimpleContent simpleContent = type.getSimpleContent();
-        if(simpleContent!=null){
-            final ExtensionType sext = simpleContent.getExtension();
-
-            if(sext!=null){
-                //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
-                //it is not named, so we call it value
-                final QName base = sext.getBase();
-                final PropertyType st = resolveType(base, stack);
-
-                if(st instanceof FeatureAssociationRole){
-                    addProperty(ftb,st);
-                }else{
-                    addProperty(ftb,st);
-                }
-
-                //read attributes
-                for (PropertyType property : getAnnotatedAttributes(namespaceURI, sext.getAttributeOrAttributeGroup(), stack)) {
-                    addProperty(ftb, property);
-                }
-            }
-
-            final SimpleRestrictionType restriction = simpleContent.getRestriction();
-            if(restriction!=null){
-
-                final QName base = restriction.getBase();
-                if(base !=null){
-                    final ComplexType sct = xsdContext.findComplexType(base);
-                    if(sct!=null){
-                        final Object tct = getType(namespaceURI, sct, stack);
-                        ftb.setSuperTypes((FeatureType) tct);
-                    }else{
-//                        final PropertyType restType = resolveType(base, stack);
-//                        addOrReplace(finalType.builder, atb.create(restType, NamesExt.create(namespaceURI, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
-                    }
-                }
-
-                //read attributes
-                for (PropertyType property : getAnnotatedAttributes(namespaceURI, restriction.getAttributeOrAttributeGroup(), stack)) {
-                    addProperty(ftb, property);
-                }
-            }
-
-        }
-
         //read choice if set
         final ExplicitGroup choice = type.getChoice();
         if (choice != null) {
-            //TODO
+            //this is the case of gml:location
         }
 
         final FeatureType featureType = ftb.build();
@@ -431,11 +447,24 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
             return reDefine(restrictionType, name, minMax[0], minMax[1], element.isNillable());
         }
 
+        final LocalComplexType complexType = element.getComplexType();
+        if (complexType != null) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder((FeatureType)getType(null, complexType, stack));
+            ftb.setName(name);
+            if(element.isNillable()) {
+                ftb.addAttribute(GMLConvention.NILLABLE_CHARACTERISTIC);
+            }
+            return new DefaultAssociationRole(Collections.singletonMap("name", name), ftb.build(), minMax[0], minMax[1]);
+        }
+
         if (element.isAbstract()) {
             //create an abstract feature type with nothing in it
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(name);
             ftb.setAbstract(true);
+            if(element.isNillable()) {
+                ftb.addAttribute(GMLConvention.NILLABLE_CHARACTERISTIC);
+            }
             return new DefaultAssociationRole(Collections.singletonMap("name", name), ftb.build(), minMax[0], minMax[1]);
         } else {
             throw new UnsupportedOperationException("No type defined for "+element);
@@ -460,21 +489,28 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                     .setName(name)
                     .setMinimumOccurs(minOcc)
                     .setMaximumOccurs(maxOcc);
-            CharacteristicTypeBuilder cb = atb.getCharacteristic(GMLConvention.NILLABLE_PROPERTY.toString());
-            if (cb == null) cb = atb.addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
-            cb.setDefaultValue(nillable);
+            if(nillable) {
+                CharacteristicTypeBuilder cb = atb.getCharacteristic(GMLConvention.NILLABLE_PROPERTY.toString());
+                if (cb == null) cb = atb.addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
+                cb.setDefaultValue(true);
+            }
             return atb.build();
         } else if (type instanceof FeatureAssociationRole) {
             final Map properties = Collections.singletonMap("name", name);
             try {
-                return new DefaultAssociationRole(properties,
-                    ((FeatureAssociationRole)type).getValueType(), minOcc, maxOcc);
+                FeatureType valueType = ((FeatureAssociationRole)type).getValueType();
+                if (nillable) {
+                    final FeatureTypeBuilder ftb = new FeatureTypeBuilder(valueType);
+                    ftb.addAttribute(GMLConvention.NILLABLE_CHARACTERISTIC);
+                    valueType = ftb.build();
+                }
+                return new DefaultAssociationRole(properties,valueType, minOcc, maxOcc);
             } catch (IllegalStateException ex) {
                 return new DefaultAssociationRole(properties,
                         Features.getValueTypeName(type), minOcc, maxOcc);
             }
         } else {
-            throw new UnsupportedOperationException("Unexpected type "+type);
+            throw new UnsupportedOperationException("Unexpected type "+type.getClass());
         }
     }
 
@@ -634,6 +670,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 return new DefaultAssociationRole(properties, (GenericName)sct, 1, 1);
             } else if(sct instanceof FeatureType) {
                 return new DefaultAssociationRole(properties, (FeatureType)sct, 1, 1);
+            } else if(sct instanceof AttributeType) {
+                return (AttributeType)sct;
             } else {
                 throw new MismatchedFeatureException("Unexpected type "+sct);
             }
@@ -758,9 +796,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                         if (pt instanceof FeatureAssociationRole) {
                             final FeatureAssociationRole subFar = (FeatureAssociationRole)pt;
                             ftb.addAssociation(subFar)
-                                .setName(((FeatureAssociationRole) property).getName())
-                                .setMinimumOccurs(((FeatureAssociationRole) property).getMinimumOccurs())
-                                .setMaximumOccurs(((FeatureAssociationRole) property).getMaximumOccurs());
+                                .setName(far.getName())
+                                .setMinimumOccurs(far.getMinimumOccurs())
+                                .setMaximumOccurs(far.getMaximumOccurs());
                             break;
                         }
                     }
@@ -779,6 +817,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
     private GenericName extractFinalName(String namespaceURI, ComplexType type) {
         String localName = type.getName();
         if(localName==null) localName = type.getId();
+        if(localName==null && namespaceURI==null) return UNNAMED;
 
         //we remove the 'Type' extension for feature types.
         GenericName name;

@@ -39,8 +39,8 @@ public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implement
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(final Object candidate) {
-        return !super.evaluate(candidate);
+    public boolean evaluateOne(Object value1, Object value2) {
+        return !super.evaluateOne(value1,value2);
     }
 
     /**

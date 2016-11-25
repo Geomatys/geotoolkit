@@ -165,6 +165,7 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
      * Wrap a FeatureReader with a max limit.
      */
     public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
+        if(limit==Integer.MAX_VALUE) return reader;
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
@@ -178,6 +179,7 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
      * Wrap a FeatureReader with a max limit.
      */
     public static FeatureReader wrap(final FeatureReader reader, final int limit){
+        if(limit==Integer.MAX_VALUE) return reader;
         return new GenericMaxFeatureReader(reader, limit);
     }
 
@@ -185,6 +187,7 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
      * Wrap a FeatureWriter with a max limit.
      */
     public static  FeatureWriter wrap(final FeatureWriter writer, final int limit){
+        if(limit==Integer.MAX_VALUE) return writer;
         return new GenericMaxFeatureWriter(writer, limit);
     }
 
@@ -192,6 +195,7 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
      * Create an limited FeatureCollection wrapping the given collection.
      */
     public static FeatureCollection wrap(final FeatureCollection original, final int max){
+        if(max==Integer.MAX_VALUE) return original;
         return new GenericMaxFeatureCollection(original, max);
     }
 

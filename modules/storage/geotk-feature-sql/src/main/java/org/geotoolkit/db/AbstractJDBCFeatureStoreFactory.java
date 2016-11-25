@@ -252,7 +252,9 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             while (rs.next()) {
                 final String currentSchema = rs.getString(1);
                 if (currentSchema.equals(schema)) {
-                    throw new DataStoreException("Schema " + schema+ " already exist. Unable to create DataStore.");
+                    //shema already exist, might be normal, like 'public' on postgres and H2.
+                    return store;
+                    //throw new DataStoreException("Schema " + schema+ " already exist. Unable to create DataStore.");
                 }
             }
 

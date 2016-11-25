@@ -19,7 +19,6 @@ package org.geotoolkit.filter.binding;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,7 +41,6 @@ import org.jaxen.util.SelfAxisIterator;
 
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Attribute;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureAssociationRole;
@@ -142,10 +140,10 @@ final class JaxenFeatureNavigator implements Navigator{
         String str = null;
         if(o instanceof Fake){
             final Fake candidate = (Fake) o;
-            str = candidate.name.toString();
+            str = candidate.name.tip().toString();
         }else if(o instanceof Property){
             final Property candidate = (Property) o;
-            str = candidate.getName().toString();
+            str = candidate.getName().tip().toString();
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
             str = candidate.getName().tip().toString();
@@ -282,9 +280,13 @@ final class JaxenFeatureNavigator implements Navigator{
             return new PropTypeIterator(ct.getProperties(true).iterator(),false);
         }else if(o instanceof FeatureAssociationRole){
             final FeatureAssociationRole ct = (FeatureAssociationRole) o;
-            return new PropTypeIterator(ct.getValueType().getProperties(true).iterator(),false);
+            try {
+                return new PropTypeIterator(ct.getValueType().getProperties(true).iterator(),false);
+            } catch(IllegalStateException ex) {
+                //TODO : can happen when the feature type relations are uncomplete
+                //may be normal or a bug
+            }
         }
-
         return JaxenConstants.EMPTY_ITERATOR;
     }
 
@@ -474,7 +476,7 @@ final class JaxenFeatureNavigator implements Navigator{
                 final GenericName gname = candidate.getName();
                 final String name = candidate.getName().toString();
                 
-                final boolean isAtt = name.startsWith("@");
+                final boolean isAtt = candidate.getName().tip().toString().startsWith("@");
                 if((attributes && !isAtt) || (!attributes && isAtt)){
                     continue;
                 }

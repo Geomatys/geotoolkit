@@ -19,7 +19,9 @@ package org.geotoolkit.filter.binarycomparison;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -49,6 +51,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         this.right = right;
         this.match = match;
         this.matchAction = matchAction;
+        ArgumentChecks.ensureNonNull("matchAction", matchAction);
     }
     
     /**
@@ -80,8 +83,74 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         return matchAction;
     }
     
-    protected Integer compare(final Object object){
-        Object objleft = left.evaluate(object);
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final boolean evaluate(final Object candidate) {
+        final Object objleft = left.evaluate(candidate);
+        final Object objright = right.evaluate(candidate);
+
+        if (objleft instanceof Collection && objright instanceof Collection) {
+            return evaluateOne(objleft, objright);
+        } else if (objleft instanceof Collection) {
+            final Collection col = (Collection) objleft;
+            if(col.isEmpty()) return false;
+            switch(matchAction){
+                case ALL:
+                    for(Object o : col){
+                        if(!evaluateOne(o, objright)) return false;
+                    }
+                    return true;
+                case ANY:
+                    for(Object o : col){
+                        if(evaluateOne(o, objright)) return true;
+                    }
+                    return false;
+                case ONE:
+                    boolean found = false;
+                    for(Object o : col){
+                        if(evaluateOne(o, objright)){
+                            if(found) return false;
+                            found = true;
+                        }
+                    }
+                    return found;
+                default: return false;
+            }
+        } else if (objright instanceof Collection) {
+            final Collection col = (Collection) objright;
+            if(col.isEmpty()) return false;
+            switch(matchAction){
+                case ALL:
+                    for(Object o : col){
+                        if(!evaluateOne(objleft,o)) return false;
+                    }
+                    return true;
+                case ANY:
+                    for(Object o : col){
+                        if(evaluateOne(objleft,o)) return true;
+                    }
+                    return false;
+                case ONE:
+                    boolean found = false;
+                    for(Object o : col){
+                        if(evaluateOne(objleft,o)){
+                            if(found) return false;
+                            found = true;
+                        }
+                    }
+                    return found;
+                default: return false;
+            }
+        } else {
+            return evaluateOne(objleft, objright);
+        }
+    }
+
+    protected abstract boolean evaluateOne(Object objleft,Object objright);
+
+    protected Integer compare(Object objleft, Object objright){
 
         if(!(objleft instanceof Comparable)){
             return null;
@@ -89,7 +158,6 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
 
         //see if the right type might be more appropriate for test
         if( !(objleft instanceof Date) ){
-            Object objright = right.evaluate(object);
 
             if(objright instanceof Date){
                 //object right class is more appropriate
@@ -103,7 +171,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
 
         }
 
-        Object objright = right.evaluate(object,objleft.getClass());
+        objright = ObjectConverters.convert(objright, objleft.getClass());
 
         if (objleft instanceof java.sql.Date && objright instanceof java.sql.Date) {
             final Calendar cal1 = Calendar.getInstance();

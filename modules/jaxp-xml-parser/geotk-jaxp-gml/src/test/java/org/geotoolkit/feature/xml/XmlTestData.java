@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -53,6 +54,8 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -62,10 +65,6 @@ public class XmlTestData {
 
     public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    public static final FeatureType ABSTRACTGMLTYPE_31;
-    public static final FeatureType ABSTRACTGMLTYPE_32;
-    public static final FeatureType ABSTRACTFEATURETYPE_31;
-    public static final FeatureType ABSTRACTFEATURETYPE_32;
     public static final FeatureType simpleTypeBasic;
     public static final FeatureType simpleTypeFull;
     public static final FeatureType typeWithAtts;
@@ -99,25 +98,6 @@ public class XmlTestData {
 
 
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(GML_311_NAMESPACE,"AbstractGMLType");
-        ftb.addAttribute(String.class).setName(GML_311_NAMESPACE,"@id").setMinimumOccurs(0).setMaximumOccurs(1).addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        ABSTRACTGMLTYPE_31 = ftb.build();
-
-        ftb = new FeatureTypeBuilder();
-        ftb.setName(GML_32_NAMESPACE,"AbstractGMLType");
-        AttributeTypeBuilder<String> atb = ftb.addAttribute(String.class).setName(GML_32_NAMESPACE,"@id").setMinimumOccurs(1).setMaximumOccurs(1);
-        atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        ABSTRACTGMLTYPE_32 = ftb.build();
-
-        ftb = new FeatureTypeBuilder();
-        ftb.setName(GML_311_NAMESPACE,"AbstractFeatureType");
-        ftb.setSuperTypes(ABSTRACTGMLTYPE_31);
-        ABSTRACTFEATURETYPE_31 = ftb.build();
-
-        ftb = new FeatureTypeBuilder();
-        ftb.setName(GML_32_NAMESPACE,"AbstractFeatureType");
-        ftb.setSuperTypes(ABSTRACTGMLTYPE_32);
-        ABSTRACTFEATURETYPE_32 = ftb.build();
 
         //NOTE : store the xsd simple type name using characteristic : Utils.SIMPLETYPE_NAME_CHARACTERISTIC
 
@@ -221,24 +201,25 @@ public class XmlTestData {
         ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
         typeEmpty = ftb.build();
 
-        ftb = new FeatureTypeBuilder();
-        ftb.setName(GML_32_NAMESPACE,"identifier");
-        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
-        ftb.addAttribute(String.class)         .setName(GML_32_NAMESPACE,Utils.VALUE_PROPERTY_NAME)  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
-        ftb.addAttribute(String.class).setName(NamesExt.create(GML_32_NAMESPACE, "@codeBase")).setMinimumOccurs(1).setMaximumOccurs(1);
-        final FeatureType identifierType = ftb.build();
+        AttributeTypeBuilder ib = new FeatureTypeBuilder().addAttribute(String.class);
+        ib.setName(GML_32_NAMESPACE,"identifier");
+        ib.setMinimumOccurs(0).setMaximumOccurs(1);
+        ib.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ib.addCharacteristic(String.class).setName(NamesExt.create(GML_32_NAMESPACE, "@codeBase"));
+        final AttributeType identifierType = ib.build();
 
         ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
         ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
         ftb.addAttribute(String.class).setName(GML_311_NAMESPACE,"@id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
-        ftb.addAssociation(identifierType).setName(NamesExt.create(GML_32_NAMESPACE, "identifier")).setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAttribute(identifierType);
         typeEmpty2 = ftb.build();
 
         ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
         ftb.addAttribute(String.class).setName(NamesExt.create("@nilReason")).setMinimumOccurs(0).setMaximumOccurs(1);
-        ftb.addAttribute(String.class).setName(GML_32_NAMESPACE,"attString")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(false);
+        ftb.addAttribute(String.class).setName(GML_32_NAMESPACE,"attString")  .setMinimumOccurs(1).setMaximumOccurs(1);
+        ftb.addAttribute(GMLConvention.NILLABLE_CHARACTERISTIC);
         final FeatureType subRecordType = ftb.build();
 
         ftb = new FeatureTypeBuilder();
@@ -400,15 +381,17 @@ public class XmlTestData {
         //feature with gml identifier property
         featureEmpty = typeEmpty2.newInstance();
         featureEmpty.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
-        final Feature prop = identifierType.newInstance();
-        prop.setPropertyValue(Utils.VALUE_PROPERTY_NAME,"some text");
-        prop.setPropertyValue("@codeBase","something");
-        featureEmpty.setPropertyValue("identifier", prop);
+        final AttributeType charType = (AttributeType) ((AttributeType)typeEmpty2.getProperty("identifier")).characteristics().get("http://www.opengis.net/gml/3.2:@codeBase");
+        final Attribute charac = charType.newInstance();
+        charac.setValue("something");
+        featureEmpty.setPropertyValue("identifier","some text");
+        ((Attribute)featureEmpty.getProperty("identifier")).characteristics().put("http://www.opengis.net/gml/3.2:@codeBase",charac);
 
         //feature with a nil complex property
         featureNil = typeWithNil.newInstance();
         featureNil.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
         final Feature propnil = subRecordType.newInstance();
+        propnil.setPropertyValue("@nil", true);
         propnil.setPropertyValue("@nilReason", "unknown");
         featureNil.setPropertyValue("record",propnil);
 

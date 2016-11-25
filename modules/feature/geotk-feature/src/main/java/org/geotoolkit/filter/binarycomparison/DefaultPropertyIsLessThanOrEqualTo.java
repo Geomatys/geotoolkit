@@ -39,8 +39,8 @@ public class DefaultPropertyIsLessThanOrEqualTo extends AbstractBinaryComparison
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(final Object object) {
-        final Integer v = compare(object);
+    public boolean evaluateOne(Object l, Object r) {
+        final Integer v = compare(l,r);
         return (v == null) ? false : (v <= 0) ;
     }
 

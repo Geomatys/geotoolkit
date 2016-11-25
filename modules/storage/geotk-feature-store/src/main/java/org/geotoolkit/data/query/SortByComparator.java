@@ -17,6 +17,7 @@
 package org.geotoolkit.data.query;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.Classes;
@@ -50,8 +51,29 @@ public class SortByComparator implements Comparator<Feature> {
 
         for (final SortBy order : orders) {
             final PropertyName property = order.getPropertyName();
-            final Comparable o1 = (Comparable) property.evaluate(f1);
-            final Comparable o2 = (Comparable) property.evaluate(f2);
+            Object val1 = property.evaluate(f1);
+            Object val2 = property.evaluate(f2);
+            if (val1 instanceof Collection) {
+                //TODO find a correct way to compare collection values
+                //pick the first value
+                if (((Collection)val1).isEmpty()) {
+                    val1 = null;
+                } else {
+                    val1 = ((Collection)val1).iterator().next();
+                }
+            }
+            if (val2 instanceof Collection) {
+                //TODO find a correct way to compare collection values
+                //pick the first value
+                if (((Collection)val2).isEmpty()) {
+                    val2 = null;
+                } else {
+                    val2 = ((Collection)val2).iterator().next();
+                }
+            }
+
+            final Comparable o1 = (Comparable) val1;
+            final Comparable o2 = (Comparable) val2;
 
             if(o1 == null){
                 return -1;

@@ -44,9 +44,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(final Object candidate) {
-        final Object value1 = left.evaluate(candidate);
-        final Object value2 = right.evaluate(candidate);
+    public boolean evaluateOne(Object value1, Object value2) {
 
         if (value1 == value2) {
             // Includes the (value1 == null && value2 == null) case.

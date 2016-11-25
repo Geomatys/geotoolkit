@@ -18,6 +18,7 @@ package org.geotoolkit.filter.binding;
 
 import java.util.regex.Pattern;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 
@@ -41,6 +42,11 @@ public class ComplexTypeBinding extends AbstractBinding<FeatureType>{
     public <T> T get(FeatureType candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null) return null;
         xpath = stripPrefix(xpath);
+
+        if (!xpath.isEmpty() && xpath.charAt(0) == '{') {
+            xpath = NamesExt.valueOf(xpath).toString();
+        }
+
         try{
             return (T) candidate.getProperty(xpath);
         }catch(PropertyNotFoundException ex){
