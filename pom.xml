@@ -959,15 +959,19 @@
           <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
           <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
+          <additionalparam>
+            -Xdoclint:none        <!-- pending corrections through the whole codebase. -->
+          </additionalparam>
+
           <!-- Custom taglets implemented in Java. -->
           <taglets>
-            <taglet><tagletClass>org.apache.sis.internal.taglet.Section</tagletClass></taglet>
+            <taglet><tagletClass>org.apache.sis.internal.taglet.Module</tagletClass></taglet>
             <taglet><tagletClass>org.apache.sis.internal.taglet.Preformat</tagletClass></taglet>
           </taglets>
           <tagletArtifact>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-build-helper</artifactId>
-            <version>0.5</version>
+            <version>0.7</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
