@@ -197,7 +197,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         final FeatureType   baseType = getFeatureType();
         final String        queryTypeName = query.getTypeName();
-        final GenericName[] queryPropertyNames = query.getPropertyNames();
+        final String[]      queryPropertyNames = query.getPropertyNames();
         final Hints         queryHints = query.getHints();
         final double[]      queryRes = query.getResolution();
         Filter              queryFilter = query.getFilter();
@@ -220,8 +220,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             //return only a subset of properties
             readProperties = new HashSet<>(queryPropertyNames.length);
             returnedProperties = new HashSet<>(queryPropertyNames.length);
-            for(GenericName n : queryPropertyNames){
-                final PropertyType cdt = baseType.getProperty(n.toString());
+            for(String n : queryPropertyNames){
+                final PropertyType cdt = baseType.getProperty(n);
                 if (cdt instanceof AttributeType) {
                     readProperties.add((AttributeType) cdt);
                 } else if (cdt instanceof AbstractOperation) {

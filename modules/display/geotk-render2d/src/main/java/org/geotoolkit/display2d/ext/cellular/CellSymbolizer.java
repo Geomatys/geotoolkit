@@ -253,13 +253,13 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         for(int b=0,n=nbBand;b<n;b++){
             final String name = "band_"+b;
             final String bandName = (bandnames!=null) ? bandnames[b] : "";
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_COUNT);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MIN);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MEAN);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MAX);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RANGE);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RMS);
-            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_SUM);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_COUNT);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MIN);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MEAN);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MAX);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RANGE);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RMS);
+            ftb.addAttribute(Double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_SUM);
         }
         return ftb.build();
     }

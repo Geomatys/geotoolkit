@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -37,15 +36,15 @@ import org.apache.sis.internal.feature.AttributeConvention;
  */
 public final class QueryBuilder {
 
-    private static final GenericName[] ONLY_ID_PROPERTIES = new GenericName[]{
-        AttributeConvention.IDENTIFIER_PROPERTY
+    private static final String[] ONLY_ID_PROPERTIES = new String[]{
+        AttributeConvention.IDENTIFIER_PROPERTY.toString()
     };
 
     private Source source = null;
     private String typeName = null;
 
     private Filter filter = Filter.INCLUDE;
-    private GenericName[] properties = null;
+    private String[] properties = null;
     private SortBy[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
     private int startIndex = 0;
@@ -130,22 +129,11 @@ public final class QueryBuilder {
         this.filter = filter;
     }
 
-    public GenericName[] getProperties() {
+    public String[] getProperties() {
         return properties;
     }
 
     public void setProperties(final String[] properties) {
-        if(properties == null){
-            this.properties = null;
-        }else{
-            this.properties = new GenericName[properties.length];
-            for(int i=0;i<properties.length;i++){
-                this.properties[i] = NamesExt.valueOf(properties[i]);
-            }
-        }
-    }
-
-    public void setProperties(final GenericName[] properties) {
         this.properties = properties;
     }
 

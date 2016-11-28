@@ -52,7 +52,7 @@ public class GenericQueryFeatureIterator {
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
-        final GenericName[] properties = remainingParameters.getPropertyNames();
+        final String[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
@@ -104,27 +104,15 @@ public class GenericQueryFeatureIterator {
 
         //wrap properties  -----------------------------------------------------
         final FeatureType original = reader.getFeatureType();
-        FeatureType mask = null;
-        if(properties != null){
-            final List<GenericName> names = new ArrayList<>();
-            loop:
-            for(GenericName n : properties){
-                for(GenericName dn : names){
-                    if(NamesExt.match(n, dn)) continue loop;
-                }
-                names.add(n);
-            }
-            
+
+        if(properties!=null && !FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                mask = FeatureTypeExt.createSubType(original, names.toArray(new GenericName[0]));
-            } catch (MismatchedFeatureException ex) {
+                reader = GenericDecoratedFeatureIterator.wrap(reader,  new ViewFeatureType(original, properties),hints);
+            } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
         }
-        if(mask instanceof ViewFeatureType){
-            reader = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) mask, hints);
-        }
-
+        
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
             final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);

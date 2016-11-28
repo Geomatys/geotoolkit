@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
@@ -70,8 +71,6 @@ class NetcdfFeatureReader implements FeatureReader {
     protected final Feature getFeatureFromFOI(final AnyFeature foi) {
         if (foi instanceof SamplingFeature) {
             final SamplingFeature feature = (SamplingFeature) foi;
-            final Feature f = type.newInstance();
-            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
 
             final org.opengis.geometry.Geometry isoGeom = feature.getGeometry();
             try {
@@ -84,9 +83,11 @@ class NetcdfFeatureReader implements FeatureReader {
                 if (firstCRS && isoGeom != null) {
                     //configure crs in the feature type
                     final CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
-                    type = FeatureTypeExt.transform(type, crs);
+                    type = new ReprojectFeatureType(type, crs);
                     firstCRS = false;
                 }
+                final Feature f = type.newInstance();
+                f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), feature.getId());
                 f.setPropertyValue(OMFeatureTypes.ATT_DESC.toString(), feature.getDescription());
                 f.setPropertyValue(OMFeatureTypes.ATT_NAME.toString(), feature.getName());
                 f.setPropertyValue(OMFeatureTypes.ATT_POSITION.toString(),geom);

@@ -361,7 +361,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
             final GenericName[] extraAttributes = extractor.getAttributeNames();
-            final List<GenericName> allAttributes = new ArrayList<>(Arrays.asList(query.getPropertyNames()));
+            
+            final List<GenericName> allAttributes = new ArrayList<>();
+            for(String str : query.getPropertyNames()){
+                allAttributes.add(type.getProperty(str).getName());
+            }
             for (GenericName extraAttribute : extraAttributes) {
                 if(!allAttributes.contains(extraAttribute)) {
                     allAttributes.add(extraAttribute);

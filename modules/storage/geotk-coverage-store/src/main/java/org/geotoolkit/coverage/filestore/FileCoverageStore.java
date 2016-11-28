@@ -162,7 +162,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                         test(file);
                     } catch (UnsupportedImageFormatException ex) {
                         // Tried to parse a incompatible file, not really an error.
-                        final LogRecord rec = new LogRecord(Level.WARNING, "Unsupported image format encoding or compression for file "+IOUtilities.filename(file)+" : "+ex.getMessage());
+                        final LogRecord rec = new LogRecord(Level.FINE, "Unsupported image format encoding or compression for file "+IOUtilities.filename(file)+" : "+ex.getMessage());
                         rec.setThrown(ex);
                         listeners.warning(rec);
                     } catch (Exception ex) {

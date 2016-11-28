@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
@@ -34,7 +33,6 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
@@ -87,10 +85,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     @Override
     public FeatureType getFeatureType() throws FeatureStoreRuntimeException{
         try {
-            FeatureType ft = getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            ft = FeatureTypeExt.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
-
-            return ft;
+            return getSession().getFeatureStore().getFeatureType(query);
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         } catch (MismatchedFeatureException ex) {
