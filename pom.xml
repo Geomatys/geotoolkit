@@ -161,10 +161,18 @@
       </build>
     </profile>
 
-    <!-- this profile is for javafx widgets -->
+    <!--disable javadoc verifications-->
+    <!-- TODO fix javadocs -->
     <profile>
-        <id>jdk8</id>
+        <id>disable-java8-doclint</id>
+        <activation>
+            <jdk>[1.8,)</jdk>
+        </activation>
+        <properties>
+            <additionalparam>-Xdoclint:none</additionalparam>
+        </properties>
     </profile>
+
   </profiles>
 
 
