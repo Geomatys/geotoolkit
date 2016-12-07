@@ -506,7 +506,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
             final QueryBuilder qb = new QueryBuilder(groupName);
             qb.setFilter(filter);
-            qb.setProperties(new GenericName[]{AttributeConvention.IDENTIFIER_PROPERTY}); //no properties, only ids
+            qb.setProperties(new String[]{AttributeConvention.IDENTIFIER_PROPERTY.toString()}); //no properties, only ids
             final FeatureReader reader = getFeatureReader(qb.buildQuery());
             try{
                 while(reader.hasNext()){

@@ -19,7 +19,6 @@ package org.geotoolkit.data.query;
 
 import java.util.Date;
 import org.geotoolkit.factory.Hints;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -139,7 +138,7 @@ public interface Query {
      *       I think Query.FIDS fills this role to some degree.
      *       Query.FIDS.equals( filter ) would meet this need?
      */
-    GenericName[] getPropertyNames();
+    String[] getPropertyNames();
 
     /**
      * Convenience method to determine if the query should use the full schema

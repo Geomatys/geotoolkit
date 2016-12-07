@@ -281,7 +281,7 @@ public class QueryUtilities {
         qb.setMaxFeatures(max);
 
         //join attributes names-------------------------------------------------
-        final GenericName[] propNames = retainAttributes(
+        final String[] propNames = retainAttributes(
                 original.getPropertyNames(),
                 second.getPropertyNames());
         qb.setProperties(propNames);
@@ -414,7 +414,7 @@ public class QueryUtilities {
                 secondQuery.getMaxFeatures());
 
         //join attributes names
-        final GenericName[] propNames = joinAttributes(firstQuery.getPropertyNames(),
+        final String[] propNames = joinAttributes(firstQuery.getPropertyNames(),
                 secondQuery.getPropertyNames());
 
         //join filters
@@ -466,7 +466,7 @@ public class QueryUtilities {
      * @return Set of attribute names from <code>atts1</code> and
      *         <code>atts2</code>
      */
-    private static GenericName[] joinAttributes(final GenericName[] atts1, final GenericName[] atts2) {
+    private static String[] joinAttributes(final String[] atts1, final String[] atts2) {
         if (atts1 == null && atts2 == null) {
             return null;
         }
@@ -485,7 +485,7 @@ public class QueryUtilities {
             }
         }
 
-        final GenericName[] propNames = new GenericName[atts.size()];
+        final String[] propNames = new String[atts.size()];
         atts.toArray(propNames);
 
         return propNames;
@@ -495,7 +495,7 @@ public class QueryUtilities {
      * Creates a set of attribute names from the two input lists of names,
      * while keep only the attributes from the second list
      */
-    private static GenericName[] retainAttributes(final GenericName[] atts1, final GenericName[] atts2) {
+    private static String[] retainAttributes(final String[] atts1, final String[] atts2) {
         if (atts1 == null && atts2 == null) {
             return null;
         }
@@ -517,7 +517,7 @@ public class QueryUtilities {
             }
         }
 
-        final GenericName[] propNames = new GenericName[atts.size()];
+        final String[] propNames = new String[atts.size()];
         atts.toArray(propNames);
 
         return propNames;
