@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import javax.imageio.stream.ImageOutputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
@@ -37,7 +38,16 @@ public class PathImageStreamTest {
 
     private boolean isUnix() {
         String os = System.getProperty("os.name").toLowerCase();
-        return os.contains("nix") || os.contains("nux") || os.indexOf("aix") > 0;
+        if(os.contains("nix") || os.contains("nux") || os.indexOf("aix") > 0) {
+            //check lsof tool exist
+            try{
+                Runtime.getRuntime().exec("lsof -h");
+                return true;
+            }catch(IOException ex){
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
