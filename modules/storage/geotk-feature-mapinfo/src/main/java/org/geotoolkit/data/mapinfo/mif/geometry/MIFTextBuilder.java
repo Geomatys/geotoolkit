@@ -28,7 +28,6 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,12 +37,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+
+import static org.geotoolkit.data.mapinfo.mif.style.LabelLine.LABEL;
+import org.geotoolkit.geometry.jts.JTS;
 
 /**
  * A class which manage MIF text geometry.
@@ -51,7 +51,7 @@ import org.opengis.feature.Feature;
  * @author Alexis Manin (Geomatys)
  *         Date : 26/02/13
  */
-public class MIFTextBuilder extends MIFGeometryBuilder {
+public class MIFTextBuilder extends MIFRectangleBuilder {
     public static final GenericName NAME = NamesExt.create("ENVELOPE");
     public static final GenericName TEXT_NAME = NamesExt.create("TEXT");
     public static final GenericName SPACING_NAME = NamesExt.create("SPACING");
@@ -62,8 +62,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     public static final AttributeType FONT_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Font.NAME), String.class, 1, 1, null);
     public static final AttributeType SPACING_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", SPACING_NAME), Float.class, 1, 1, 1f);
     public static final AttributeType JUSTIFY_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", JUSTIFY_NAME), String.class, 1, 1, "Left");
-    public static final AttributeType ANGLE_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", ANGLE_NAME), String.class, 1, 1, null);
-    public static final AttributeType LABEL_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", LabelLine.NAME), Double.class, 1, 1, null);
+    public static final AttributeType ANGLE_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", ANGLE_NAME), Double.class, 1, 1, null);
 
     public static final Pattern SPACING_PATTERN = Pattern.compile(SPACING_NAME.tip().toString()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
     public static final Pattern JUSTIFY_PATTERN = Pattern.compile(JUSTIFY_NAME.tip().toString(), Pattern.CASE_INSENSITIVE);
@@ -108,7 +107,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
 
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), env);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
         } catch (Exception e) {
             throw new DataStoreException("Unable to build envelope from given data", e);
         }
@@ -189,28 +188,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
 
         StringBuilder builder = new StringBuilder(TEXT_NAME.tip().toString()).append(' ');
         builder.append(' ').append(text).append('\n');
-        Object value = MIFUtils.getGeometryValue(source);
-        if(value instanceof Envelope) {
-            Envelope env = (Envelope) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else if (value instanceof Rectangle2D) {
-            Rectangle2D rect = (Rectangle2D) value;
-            builder.append(rect.getMinX()).append(' ')
-                    .append(rect.getMinY()).append(' ')
-                    .append(rect.getMaxX()).append(' ')
-                    .append(rect.getMaxY());
-        } else if(value instanceof Envelope2D) {
-            Envelope2D env = (Envelope2D) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else {
-            throw new DataStoreException("Unable to build a text with the current geometry (Non compatible type"+value.getClass()+").");
-        }
+        appendMIFEnvelope(builder, MIFUtils.getGeometryValue(source));
         builder.append('\n');
 
         Object styleData = MIFUtils.getPropertySafe(source, Font.NAME.toString());
@@ -241,16 +219,6 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Class getGeometryBinding() {
-        return Envelope.class;
-    }
-
-    @Override
-    public Class[] getPossibleBindings() {
-        return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
-    }
-
-    @Override
     public GenericName getName() {
         return NAME;
     }
@@ -262,7 +230,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         descList.add(FONT_DESCRIPTOR);
         descList.add(SPACING_DESCRIPTOR);
         descList.add(ANGLE_DESCRIPTOR);
-        descList.add(LABEL_DESCRIPTOR);
+        descList.add(LABEL);
         return descList;
     }
 }

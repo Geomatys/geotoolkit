@@ -24,11 +24,12 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Class Description
+ * Java representation of MIF-MID font style.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 27/02/13
@@ -96,7 +97,7 @@ public class Font implements MIFSymbolizer {
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return null;
+        return Units.POINT;
     }
 
     @Override
@@ -111,7 +112,7 @@ public class Font implements MIFSymbolizer {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        return NAME.tip().toString();
     }
 
     @Override

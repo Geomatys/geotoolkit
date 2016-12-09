@@ -1,12 +1,15 @@
 
 package org.apache.sis.feature;
 
+import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -88,4 +91,27 @@ public class FeatureExtTest {
         assertEquals(expectedFeature, feature);
     }
 
+    @Test
+    public void samePropertiesTest() {
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("base type")
+                .addAttribute(String.class).setName("first").setDefaultValue("this is a test");
+        builder.addAttribute(Point.class).setName("I'm a geometry !").addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType baseType = builder.build();
+
+        final FeatureType challenger = builder.setName("challenger type").build();
+        Assert.assertTrue("We should detect that both feature types have got the same properties", FeatureExt.sameProperties(baseType, challenger, false));
+
+        builder = new FeatureTypeBuilder();
+        builder.setSuperTypes(baseType)
+                .setName("a child")
+                .addAttribute(Boolean.class).setName("a boolean");
+
+        final FeatureType firstChild = builder.build();
+        final FeatureType secondChild = builder.setSuperTypes(challenger).build();
+        Assert.assertTrue("We should detect that both feature types have got the same properties (inherited ones included).", FeatureExt.sameProperties(firstChild, secondChild, true));
+
+        FeatureType thirdChild = builder.setSuperTypes(firstChild).build();
+        Assert.assertFalse("We should detect a difference in inherited properties", FeatureExt.sameProperties(firstChild, thirdChild, true));
+    }
 }

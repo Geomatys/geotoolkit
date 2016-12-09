@@ -17,6 +17,7 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import java.util.Collections;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
@@ -25,11 +26,14 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Class Description
+ * Java representation of MIF-MID label style.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 27/02/13
@@ -37,10 +41,12 @@ import org.opengis.filter.expression.Expression;
 public class LabelLine implements MIFSymbolizer {
 
     public static final GenericName NAME = NamesExt.create("LABEL");
+    public static final AttributeType LABEL = new DefaultAttributeType(Collections.singletonMap("name", LabelLine.NAME), LabelLine.class, 1, 1, null);
+
     public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString(), Pattern.CASE_INSENSITIVE);
 
-    private String type = "simple";
-    private Coordinate point;
+    private final String type;
+    private final Coordinate point;
 
     public LabelLine(String lineType, Coordinate pt) {
         type = lineType;
@@ -54,7 +60,7 @@ public class LabelLine implements MIFSymbolizer {
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        return Units.POINT;
     }
 
     @Override

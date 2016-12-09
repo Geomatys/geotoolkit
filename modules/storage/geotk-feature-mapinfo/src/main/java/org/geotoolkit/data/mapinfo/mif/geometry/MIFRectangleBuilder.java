@@ -18,6 +18,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
@@ -37,12 +38,15 @@ import java.util.logging.Level;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+
+import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
+import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+import org.geotoolkit.geometry.jts.JTS;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.
@@ -54,11 +58,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     public GenericName NAME = NamesExt.create("RECTANGLE");
     public static final GenericName ROUND_NAME = NamesExt.create("ROUNDING");
 
-    private static final AttributeType ROUNDING = new DefaultAttributeType(Collections.singletonMap("name", ROUND_NAME), String.class, 1, 1, null);
-    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
-    private static final AttributeType BRUSH = new DefaultAttributeType(Collections.singletonMap("name", Brush.NAME), String.class, 1, 1, null);
-
-    public FeatureType featureType;
+    private static final AttributeType ROUNDING = new DefaultAttributeType(Collections.singletonMap("name", ROUND_NAME), Float.class, 1, 1, null);
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -82,14 +82,14 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(pts, 2);
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), env);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(env));
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Rectangle is not properly defined : not enough points found.", ex);
         }
 
         if(scanner.hasNext(ProjectionUtils.DOUBLE_PATTERN)) {
-            toFill.setPropertyValue(ROUND_NAME.toString(),Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
+            toFill.setPropertyValue(ROUND_NAME.toString(),Float.parseFloat(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
         }
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
@@ -139,28 +139,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         }
 
         StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
-        Object value = MIFUtils.getGeometryValue(source);
-        if(value instanceof Envelope) {
-            Envelope env = (Envelope) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else if (value instanceof Rectangle2D) {
-            Rectangle2D rect = (Rectangle2D) value;
-            builder.append(rect.getMinX()).append(' ')
-                    .append(rect.getMinY()).append(' ')
-                    .append(rect.getMaxX()).append(' ')
-                    .append(rect.getMaxY());
-        } else if(value instanceof Envelope2D) {
-            Envelope2D env = (Envelope2D) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else {
-            throw new DataStoreException("Unable to build a rectangle with the current geometry (Non compatible type"+value.getClass()+").");
-        }
+        appendMIFEnvelope(builder, MIFUtils.getGeometryValue(source));
         builder.append('\n');
 
         final Object round = MIFUtils.getPropertySafe(source, ROUND_NAME.toString());
@@ -181,14 +160,56 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         return builder.toString();
     }
 
+    /**
+     * Append MIF-MID representation of given object in input string builder.
+     * @param toAppendInto The builder to add data into.
+     * @param sourceEnvelope The object which represents the envelope to write.
+     * @throws NullPointerException If any input is null.
+     * @throws DataStoreException If input object is not manageable for now. For
+     * an overview of possible types, see {@link #getPossibleBindings() }.
+     */
+    protected void appendMIFEnvelope(final StringBuilder toAppendInto, Object sourceEnvelope) throws DataStoreException, NullPointerException {
+        if (sourceEnvelope instanceof Geometry)
+            sourceEnvelope = ((Geometry) sourceEnvelope).getEnvelopeInternal();
+        if (sourceEnvelope instanceof com.esri.core.geometry.Envelope) {
+            final com.esri.core.geometry.Envelope env = (com.esri.core.geometry.Envelope) sourceEnvelope;
+            toAppendInto.append(env.getXMin()).append(' ')
+                    .append(env.getYMin()).append(' ')
+                    .append(env.getXMax()).append(' ')
+                    .append(env.getYMax());
+        } else if (sourceEnvelope instanceof Envelope) {
+            Envelope env = (Envelope) sourceEnvelope;
+            toAppendInto.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else if (sourceEnvelope instanceof Rectangle2D) {
+            Rectangle2D rect = (Rectangle2D) sourceEnvelope;
+            toAppendInto.append(rect.getMinX()).append(' ')
+                    .append(rect.getMinY()).append(' ')
+                    .append(rect.getMaxX()).append(' ')
+                    .append(rect.getMaxY());
+        } else if (sourceEnvelope instanceof Envelope2D) {
+            Envelope2D env = (Envelope2D) sourceEnvelope;
+            toAppendInto.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else if (sourceEnvelope == null) {
+            throw new NullArgumentException("Input envelope is null !");
+        } else {
+            throw new DataStoreException("Unable to build a rectangle with the current geometry (Non compatible type" + sourceEnvelope.getClass() + ").");
+        }
+    }
+
     @Override
     public Class getGeometryBinding() {
-        return Envelope.class;
+        return Geometry.class; // TODO : replace with esri envelope once rendering engine supports it.
     }
 
     @Override
     public Class[] getPossibleBindings() {
-        return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
+        return new Class[]{Geometry.class, com.esri.core.geometry.Envelope.class, Envelope.class, Envelope2D.class, Rectangle2D.class};
     }
 
     @Override
@@ -199,7 +220,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     @Override
     protected List<AttributeType> getAttributes() {
 
-        final List<AttributeType> descList = new ArrayList<AttributeType>(3);
+        final List<AttributeType> descList = new ArrayList<>(3);
         descList.add(ROUNDING);
         descList.add(PEN);
         descList.add(BRUSH);

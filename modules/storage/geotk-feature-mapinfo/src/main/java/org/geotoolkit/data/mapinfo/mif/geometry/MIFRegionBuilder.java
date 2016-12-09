@@ -27,18 +27,18 @@ import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
-import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
+import static org.geotoolkit.data.mapinfo.mif.style.Brush.BRUSH;
+import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
+
 /**
- * Class Description
+ * Utility class to read and write MIF-MID Region geometries.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 26/02/13
@@ -46,9 +46,6 @@ import org.opengis.feature.Feature;
 public class MIFRegionBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("REGION");
-
-    private static final AttributeType BRUSH  = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
-    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Brush.NAME), String.class, 1, 1, null);
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

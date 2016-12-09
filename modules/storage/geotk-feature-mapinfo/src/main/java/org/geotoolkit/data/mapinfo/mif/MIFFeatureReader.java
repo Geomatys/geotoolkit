@@ -22,7 +22,6 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.nio.IOUtilities;
-import org.opengis.util.GenericName;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,7 +132,6 @@ public class MIFFeatureReader implements FeatureReader {
     public Feature next() throws FeatureStoreRuntimeException {
 
         Feature resFeature = null;
-        final Feature mifFeature;
 
         try {
             checkScanners();

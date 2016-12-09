@@ -536,6 +536,7 @@ public class MIFManager {
 
     /**
      * Ensure that dataTypes are built. If not, call {@link MIFManager#buildDataTypes()}.
+     * @throws DataStoreException If we cannot read header to build data types.
      */
     public void checkDataTypes() throws DataStoreException {
         if (mifBaseType == null && mifColumnsCount < 0) {

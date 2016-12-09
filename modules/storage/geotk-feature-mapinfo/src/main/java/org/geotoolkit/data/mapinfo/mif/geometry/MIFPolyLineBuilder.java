@@ -36,11 +36,11 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+
+import static org.geotoolkit.data.mapinfo.mif.style.Pen.PEN;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -54,9 +54,6 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     public static final GenericName SMOOTH_NAME = NamesExt.create("SMOOTH");
 
     private static final AttributeType SMOOTH = new DefaultAttributeType(Collections.singletonMap("name", SMOOTH_NAME), Boolean.class, 1, 1, null);
-    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
-
-    public FeatureType featureType;
 
     /**
      * {@inheritDoc}

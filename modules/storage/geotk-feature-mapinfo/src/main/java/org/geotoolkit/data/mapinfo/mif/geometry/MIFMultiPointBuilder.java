@@ -31,11 +31,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
-import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+
+import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
 
 /**
  * Create collection of points from MIF MultiPoint
@@ -46,12 +46,6 @@ import org.opengis.feature.Feature;
 public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("MULTIPOINT");
-
-    public static final AttributeType SYMBOL_DESCRIPTOR;
-
-    static {
-        SYMBOL_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Symbol.NAME), String.class, 1, 1, null);
-    }
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -77,7 +71,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
             toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPoint(seq));
 
-            if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL_DESCRIPTOR)) {
+            if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL)) {
                 String args = scanner.next()+scanner.nextLine();
                 String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                         .replaceAll("[^\\d^,]+", "")
@@ -143,6 +137,6 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
     @Override
     protected List<AttributeType> getAttributes() {
-        return Collections.singletonList(SYMBOL_DESCRIPTOR);
+        return Collections.singletonList(SYMBOL);
     }
 }
