@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.style;
 
+import java.util.Collections;
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultDescription;
@@ -26,11 +27,14 @@ import org.opengis.style.*;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
 
 /**
- * Class Description
+ * Java representation of MIF-MID brush style.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 25/02/13
@@ -38,6 +42,7 @@ import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     public static final GenericName NAME = NamesExt.create("BRUSH");
+    public static final AttributeType BRUSH  = new DefaultAttributeType(Collections.singletonMap("name", Brush.NAME), Brush.class, 1, 1, null);
 
     public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
@@ -69,7 +74,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return null;
+        return Units.POINT;
     }
 
     @Override

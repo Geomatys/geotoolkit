@@ -76,8 +76,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.geometry.jts.JTS;
-
 
 /**
  * NOTE : merge with Apache SIS 'org.apache.sis.feature.Features' class.
@@ -321,9 +319,9 @@ public final class FeatureExt extends Static {
 
     /**
      * Get AttributeType or FeatureAssociationRole of the given property.
-     * 
+     *
      * @param property
-     * @return 
+     * @return
      */
     public static PropertyType getType(Property property){
         if(property instanceof Attribute){
@@ -364,7 +362,7 @@ public final class FeatureExt extends Static {
                     continue;
                 }
             }
-            
+
 
             if(pt instanceof AttributeType){
                 Object val = feature.getPropertyValue(name);
@@ -412,12 +410,12 @@ public final class FeatureExt extends Static {
     public static Feature deepCopy(Feature feature){
         return copy(feature, true);
     }
-    
+
     /**
-     * 
+     *
      * @param feature
      * @param deep true for a deep copy
-     * @return 
+     * @return
      */
     private static Feature copy(Feature feature, boolean deep){
         final FeatureType type = feature.getType();
@@ -457,7 +455,7 @@ public final class FeatureExt extends Static {
                             cp.setPropertyValue(name, copy((Feature)val));
                         }
                     }
-                    
+
                 }
             }
             return cp;
@@ -989,5 +987,20 @@ public final class FeatureExt extends Static {
         return null;
     }
 
+    /**
+     * Check that given feature types have got the exact same properties. It is
+     * sort of an equality, where type name and property order are ignored.
+     * @param first First type to compare.
+     * @param second Second type to compare.
+     * @param checkSuperTypes True if super types properties must be included in
+     * the comparison, false otherwise.
+     * @return True if both feature types contains the same properties (whatever
+     * order theyr appear in), false otherwise.
+     */
+    public static boolean sameProperties(final FeatureType first, final FeatureType second, boolean checkSuperTypes) {
+        final Collection<? extends PropertyType> firstProperties = first.getProperties(checkSuperTypes);
+        final Collection<? extends PropertyType> secondProperties = second.getProperties(checkSuperTypes);
 
+        return firstProperties.size() == secondProperties.size() && firstProperties.containsAll(secondProperties);
+    }
 }
