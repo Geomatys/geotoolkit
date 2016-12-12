@@ -55,6 +55,7 @@ import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
@@ -62,7 +63,6 @@ import javafx.util.Callback;
 import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.controlsfx.dialog.Dialogs;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.FeatureIterator;
@@ -173,7 +173,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
     @FXML
     private void addValue(ActionEvent event) {
-        final Optional<String> str = Dialogs.create().message(GeotkFX.getString(FXStyleClassifSinglePane.class,"newvalue")).showTextInput();
+        final TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText(GeotkFX.getString(FXStyleClassifSinglePane.class,"newvalue"));
+        final Optional<String> str = dialog.showAndWait();
         if(str.get()==null)return;
         final String val = str.get();
         final MutableRule r = createRule(uiProperty.getSelectionModel().getSelectedItem(), val,uiTable.getItems().size());
