@@ -16,13 +16,19 @@
  */
 package org.geotoolkit.coverage.landsat;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -36,24 +42,26 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.util.ArgumentChecks;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+import org.geotoolkit.storage.coverage.CoverageReaderHelper;
 
 /**
  * Reader to read Landsat datas.
@@ -261,77 +269,126 @@ public class LandsatReader extends GridCoverageReader {
      * @throws CancellationException
      */
     @Override
-    public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(int index, GridCoverageReadParam param)
+            throws CoverageStoreException, CancellationException {
 
+        //-- get all needed band to build coverage (see Landsat spec)
         final int[] bandId = getBandsIndex(index);
+
+        //-- create an adapted coverage name
+        StringBuilder strBuild = new StringBuilder("Landsat8 : ");
+        switch (index) {
+            case 0 : {
+                //-- Reflective case RGB band 1, 2, 3, 4, 5, 6, 7, 9
+                strBuild.append(REFLECTIVE_LABEL);
+                break;
+            }
+            case 1 : {
+                //-- Panchromatic case one sample band 8
+                strBuild.append(PANCHROMATIC_LABEL);
+                break;
+            }
+            case 2 : {
+                //-- Thermic case band 10 and 11
+                strBuild.append(THERMAL_LABEL);
+                break;
+            }
+            default : strBuild.append("Unknow type");
+        }
+
+        strBuild.append("-");
+        strBuild.append(parenPath.getName(parenPath.getNameCount()-1));
 
         try {
 
-            final GridCoverage2D[] bands = new GridCoverage2D[bandId.length];
-            //-- TODO multi threader cette boucle
+            final CoverageReaderHelper crh        = new CoverageReaderHelper((GridGeometry2D) getGridGeometry(index), param);
+            final Dimension outImgSize            = crh.getOutImgSize();
+            final Rectangle srcImgBoundary        = crh.getSrcImgBoundary();
+            final GridGeometry2D destGridGeometry = crh.getDestGridGeometry();
+
+            final RenderedImage[] bands = new RenderedImage[bandId.length];
+
             int currentCov = 0;
             for (int i : bandId) {
-                final String bandName = metaParse.getValue(true, BAND_NAME_LABEL+i);
+                //-- get band name
+                final String bandName = metaParse.getValue(true, BAND_NAME_LABEL + i);
+                //-- add to coverage name
                 final Path band = parenPath.resolve(bandName);
-                final ImageCoverageReader bandReader = new ImageCoverageReader();
+
+                //-- reader config
+                final TiffImageReader tiffReader = (TiffImageReader) TIFF_SPI.createReaderInstance();
+                tiffReader.setInput(band);
+                final ImageReadParam readParam = tiffReader.getDefaultReadParam();
+                readParam.setSourceRegion(srcImgBoundary);
+                readParam.setSourceSubsampling(Math.max((int) Math.round(srcImgBoundary.getWidth()  / outImgSize.getWidth()), 1),
+                                               Math.max((int) Math.round(srcImgBoundary.getHeight() / outImgSize.getHeight()), 1), 0, 0);
+
                 try {
-                    final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
-                    tiffReader.setInput(band);
-                    bandReader.setInput(tiffReader);
-                    param.setDeferred(true);
-                    final GridCoverage2D read = bandReader.read(0, param);
+                    BufferedImage read = tiffReader.read(0, readParam);
                     bands[currentCov++] = read;
                 } finally {
-                    bandReader.dispose();
+                    tiffReader.dispose();
                 }
             }
-
 
         //-- test avec ca
 //        GridCoverage2D coverageRGBIR = new BandCombineProcess(
 //                    coverageR,coverageG,coverageB,coverageIR).executeNow();
 
-
-            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "bandcombine");
+            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
             assert (desc != null);
 
             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-            params.parameter("coverages").setValue(bands);
+            params.parameter("images").setValue(bands);
 
 
             final org.geotoolkit.process.Process process = desc.createProcess(params);
             final ParameterValueGroup result = process.call();
 
             //check result coverage
-            final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
+            final RenderedImage outImage =  (RenderedImage) result.parameter("result").getValue();
 
-            final Envelope projectedEnvelope = metaParse.getProjectedEnvelope();
-            final int projDim = projectedEnvelope.getDimension();
+            /*
+             * After image reading with integer subsampling scales image haven't got expected size.
+             * Re-build coverage from image and requested envelope
+             */
+            final int originFHA = CRSUtilities.firstHorizontalAxis(destGridGeometry.getCoordinateReferenceSystem());
 
-            if (projDim > 2) {
+            //-- gridToCRS
+            final Envelope envelope       = destGridGeometry.getEnvelope();
+            final MathTransform gridToCRS = destGridGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
+            final int srcDim              = gridToCRS.getSourceDimensions();
+            final int destDim             = gridToCRS.getTargetDimensions();
+            int[] upper = new int[destDim];
+            Arrays.fill(upper, 1);
+            upper[originFHA]     = outImage.getWidth();
+            upper[originFHA + 1] = outImage.getHeight();
 
-                final GridEnvelope2D extent2D = outCoverage.getGridGeometry().getExtent2D();
-                final int[] high = new int[projDim];
-                high[0] = extent2D.width;
-                high[1] = extent2D.height;
-                high[2] = 1;
+            final GeneralGridEnvelope ggE = new GeneralGridEnvelope(new int[srcDim], upper, false);
+            final MatrixSIS sisMatrix     = Matrices.createDiagonal(destDim + 1, srcDim + 1);
+            final double scaleX = envelope.getSpan(originFHA) / outImage.getWidth();
+            final double scaleY = envelope.getSpan(originFHA + 1) / outImage.getHeight();
+            final double transX = envelope.getMinimum(originFHA);
+            final double transY = envelope.getMaximum(originFHA + 1);
 
-                final GridEnvelope grEnv3D = new GeneralGridEnvelope(new int[projDim], high, false);
+            sisMatrix.setElement(originFHA, originFHA, scaleX);
+            sisMatrix.setElement(originFHA + 1, originFHA + 1, - scaleY);
+            sisMatrix.setElement(originFHA, srcDim, transX);
+            sisMatrix.setElement(originFHA + 1, srcDim, transY);
 
-                final Envelope env2D = outCoverage.getGridGeometry().getEnvelope2D();
+            final GridGeometry2D gridGeometry2D = new GridGeometry2D(ggE, PixelInCell.CELL_CORNER, gridToCRS,
+                                                        destGridGeometry.getCoordinateReferenceSystem(), null);
+            //-- new built grid to CRS
 
-                final GeneralEnvelope gE = new GeneralEnvelope(projectedEnvelope);
-                gE.setRange(0, env2D.getMinimum(0), env2D.getMaximum(0));
-                gE.setRange(1, env2D.getMinimum(1), env2D.getMaximum(1));
-
-                final GridGeometry2D gridGeometry2D = new GridGeometry2D(grEnv3D, gE);
-
-                return new GridCoverage2D(outCoverage.getName().toString(), outCoverage.getRenderedImage(),
-                    gridGeometry2D, outCoverage.getSampleDimensions(),
-                    null, null, null);
-            } else {
-                return outCoverage;
-            }
+            //-- build new coverage
+            final GridCoverageBuilder gridCoverageBuilder = new GridCoverageBuilder();
+            gridCoverageBuilder.setName(strBuild.toString());
+            gridCoverageBuilder.setGridGeometry(gridGeometry2D);
+            gridCoverageBuilder.setRenderedImage(outImage);
+            List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
+            gridCoverageBuilder.setSampleDimensions(sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]));
+            
+            return gridCoverageBuilder.build();
 
         } catch (Exception ex) {
             throw new CoverageStoreException(ex);
