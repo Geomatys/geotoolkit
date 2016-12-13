@@ -17,9 +17,11 @@
 package org.geotoolkit.coverage.landsat;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 
 import org.opengis.metadata.Metadata;
@@ -77,7 +79,16 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * @throws DataStoreException
      */
     public LandsatCoverageStore(Path path) throws DataStoreException {
-        this(toParameters(path));
+        this(toParameters(path.toUri()));
+    }
+
+    /**
+     *
+     * @param path
+     * @throws DataStoreException
+     */
+    public LandsatCoverageStore(URI uri) throws DataStoreException {
+        this(toParameters(uri));
     }
 
     /**
@@ -88,10 +99,17 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * @param params
      * @throws DataStoreException
      */
-    public LandsatCoverageStore(ParameterValueGroup params) throws DataStoreException {
+    public LandsatCoverageStore(ParameterValueGroup params)
+            throws DataStoreException {
         super(params);
 
-        final Path path = (Path) ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).getValue();
+        final Object uri = ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).getValue();
+        final Path path;
+        if (uri != null) {
+            path = Paths.get((URI) uri);
+        } else {
+            throw new DataStoreException("Landsat8 store : path must be setted.");
+        }
 
         //-- add 3 Coverage References : REFLECTIVE, PANCHROMATIQUE, THERMIC.
         metadataParser          = getMetadataParser(path);
@@ -116,9 +134,9 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * @param url Landsat 8 path.
      * @return
      */
-    private static ParameterValueGroup toParameters(Path url) {
+    private static ParameterValueGroup toParameters(URI uri) {
         final ParameterValueGroup params = LandsatStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).setValue(url);
+        ParametersExt.getOrCreateValue(params, LandsatStoreFactory.PATH.getName().getCode()).setValue(uri);
         return params;
     }
 
@@ -212,7 +230,8 @@ public class LandsatCoverageStore extends AbstractCoverageStore {
      * @return the found Landsat metadata path.
      * @throws DataStoreException if impossible to found metadata file.
      */
-    private LandsatMetadataParser getMetadataParser(final Path landsatPath) throws DataStoreException {
+    private LandsatMetadataParser getMetadataParser(final Path landsatPath)
+            throws DataStoreException {
         try {
             if (Files.isDirectory(landsatPath)) {
                 //search metadata file

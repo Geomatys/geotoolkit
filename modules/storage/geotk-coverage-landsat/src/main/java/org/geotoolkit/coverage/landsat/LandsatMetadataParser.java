@@ -63,6 +63,7 @@ import org.opengis.util.FactoryException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.internal.util.Constants;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -818,17 +819,13 @@ public class LandsatMetadataParser {
         final String westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
         final String estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
 
-        final LocalizationGrid localizationGrid = new LocalizationGrid(2, 2);
-        //-- note : high corner values increased by 1 because value are define at pixel orientation corner
-        //-- lower left
-        localizationGrid.setLocalizationPoint(gridExtent.getLow(0), gridExtent.getLow(1), Double.valueOf(lowWest), Double.valueOf(westSouth));
-        //-- upper left
-        localizationGrid.setLocalizationPoint(gridExtent.getLow(0), gridExtent.getHigh(1) + 1, Double.valueOf(upWest), Double.valueOf(westNorth));
-        //-- lower right
-        localizationGrid.setLocalizationPoint(gridExtent.getHigh(0) + 1, gridExtent.getLow(1), Double.valueOf(lowEst), Double.valueOf(estSouth));
-        localizationGrid.setLocalizationPoint(gridExtent.getHigh(0) + 1, gridExtent.getHigh(1) + 1, Double.valueOf(upEst), Double.valueOf(estNorth));
+        final double minLong  = Math.min(Double.valueOf(lowWest), Double.valueOf(upWest));
+        final double spanLong = Math.max(Double.valueOf(lowEst), Double.valueOf(upEst)) - minLong;
 
-        return localizationGrid.getAffineTransform();
+        final double maxLat   = Math.max(Double.valueOf(westNorth), Double.valueOf(estNorth));
+        final double spanLat  = maxLat - Math.min(Double.valueOf(westSouth), Double.valueOf(estSouth));
+
+        return new AffineTransform2D(spanLong / gridExtent.getSpan(0), 0, 0, - spanLat / gridExtent.getSpan(1), minLong, maxLat);
     }
 
     /**
