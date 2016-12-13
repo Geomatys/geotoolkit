@@ -65,6 +65,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -293,13 +294,31 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- else
         //-- Note : in the case of NAN values we try later to clip requested envelope with coverage boundary.
 
+        final GeneralEnvelope intersectionIntoRender2D = GeneralEnvelope.castOrCopy(coverageIntoRender2DCRS);
+        intersectionIntoRender2D.intersect(renderingBound2D);
         /*
          * Study rendering context envelope and internal coverage envelope.
          * For example if we store data with a third dimension or more, with the 2 dimensional renderer
          * it is possible to miss some internal stored data.
          * To avoid this comportment we can "complete"(fill) render envelope with missing dimensions.
          */
-        final GeneralEnvelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
+        GeneralEnvelope paramEnvelope;
+        {
+            try {
+                paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
+            } catch(ProjectionException ex) {
+               /*
+                * Recently a new kind of exception is thrown when envelope is out of validity domain of target CRS.
+                * To avoid no rendering, try to intersect 2D part and re-project into data CRS and add after others dimensions.
+                */
+                //-- 1: get intersection between dataBBox and renderBBox into render space
+                //-- 2: projection into dataBBox space
+                paramEnvelope = GeneralEnvelope.castOrCopy(Envelopes.transform(intersectionIntoRender2D, CRSUtilities.getCRS2D(dataBBox.getCoordinateReferenceSystem())));
+                //-- 3: add others dataBBox dimensions
+                paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, paramEnvelope);
+            }
+        }
+
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
 
         //-- Check if projected coverage has NAN values on other dimension than geographic 2D part
@@ -315,25 +334,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         assert !org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope) : "paramEnvelope can't contain NAN values";
 
         //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
-        final double[] paramRes = ReferencingUtilities.convertResolution(renderingBound, resolution, paramEnvelope.getCoordinateReferenceSystem());
-
-        //-- find most appropriate interpolation
-        final InterpolationCase interpolation;
-        if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
-        || (!(gridGeometry instanceof GridGeometry2D))){
-            //hints forced nearest neighbor interpolation
-            interpolation = InterpolationCase.NEIGHBOR;
-        }else{
-            interpolation = findInterpolationCase(sampleDimensions);
-        }
-
-        //-- expand param envelope if we use an interpolation
-        switch(interpolation){
-            case BILINEAR : expand(paramEnvelope, 1, gridGeometry); break;
-            case BICUBIC :
-            case BICUBIC2 : expand(paramEnvelope, 2, gridGeometry); break;
-            case LANCZOS : expand(paramEnvelope, 4, gridGeometry); break;
-        }
+        final double[] paramRes = ReferencingUtilities.convertResolution(org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(renderingBound, intersectionIntoRender2D), resolution, paramEnvelope.getCoordinateReferenceSystem());
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);
@@ -401,6 +402,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             return null;
         }
         //-----------------------------------------------------------------------
+
+        //-- find most appropriate interpolation
+        InterpolationCase interpolation;
+        if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
+        || (!(gridGeometry instanceof GridGeometry2D))
+        || width  < 2
+        || height < 2) {
+            //hints forced nearest neighbor interpolation
+            interpolation = InterpolationCase.NEIGHBOR;
+        } else {
+            interpolation = findInterpolationCase(sampleDimensions);
+        }
+
+        //-- expand param envelope if we use an interpolation
+        switch(interpolation){
+            case BILINEAR : expand(paramEnvelope, 1, gridGeometry); break;
+            case BICUBIC :
+            case BICUBIC2 : expand(paramEnvelope, 2, gridGeometry); break;
+            case LANCZOS : expand(paramEnvelope, 4, gridGeometry); break;
+        }
 
         //-- Use into DefaultRasterSymbolizerRenderer
         //-- force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
