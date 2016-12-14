@@ -29,6 +29,7 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -85,7 +86,7 @@ public abstract class MIFGeometryBuilder {
         }
 
         builder.setName(getName());
-        builder.addAttribute(getGeometryBinding()).setName(getName()).setCRS(crs);
+        builder.addAttribute(getGeometryBinding()).setName(getName()).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
         return builder.build();
     }

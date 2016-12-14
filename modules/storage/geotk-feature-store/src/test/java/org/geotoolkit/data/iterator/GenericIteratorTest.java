@@ -555,7 +555,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     public void testRetypeFeatureIterator() throws DataStoreException{
 
         final FeatureCollection collection = buildSimpleFeatureCollection();
-        final FeatureType reducedType = FeatureTypeExt.createSubType(collection.getFeatureType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
+        final FeatureType reducedType = new ViewFeatureType(collection.getFeatureType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(collection.getFeatureType().getName());
         final Query query = qb.buildQuery();

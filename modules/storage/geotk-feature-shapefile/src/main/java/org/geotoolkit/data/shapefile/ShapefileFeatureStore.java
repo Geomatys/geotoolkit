@@ -89,6 +89,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -325,7 +326,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         final Hints hints = query.getHints();
         final String typeName = type.getName().tip().toString();
-        final GenericName[] propertyNames = query.getPropertyNames();
+        final String[] propertyNames = query.getPropertyNames();
         final AttributeType geomAtt = FeatureExt.getDefaultGeometryAttribute(schema);
         final GenericName defaultGeomName = geomAtt.getName();
         final double[] resample = query.getResolution();
@@ -345,7 +346,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         // to return attribute _and_ to run the query filter
         if (   propertyNames != null
             && propertyNames.length == 1
-            && propertyNames[0].tip().toString().equals(defaultGeomName.tip().toString())
+            && NamesExt.valueOf(propertyNames[0]).tip().toString().equals(defaultGeomName.tip().toString())
             && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].tip().toString()
                         .equals(defaultGeomName.tip().toString())))) {
             try {

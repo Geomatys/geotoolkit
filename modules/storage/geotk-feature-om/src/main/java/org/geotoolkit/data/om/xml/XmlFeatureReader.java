@@ -112,7 +112,7 @@ class XmlFeatureReader implements FeatureReader {
                 if (firstCRS && isoGeom != null) {
                     //configure crs in the feature type
                     final CoordinateReferenceSystem crs = ((AbstractGeometry) isoGeom).getCoordinateReferenceSystem(false);
-                    type = FeatureTypeExt.transform(type, crs);
+                    type = FeatureTypeExt.createSubType(type, null, crs);
                     firstCRS = false;
                 }
                 f.setPropertyValue(ATT_DESC.toString(), feature.getDescription());

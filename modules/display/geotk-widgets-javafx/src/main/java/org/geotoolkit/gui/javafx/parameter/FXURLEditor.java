@@ -43,7 +43,7 @@ import org.geotoolkit.internal.Loggers;
  */
 public class FXURLEditor extends FXValueEditor {
 
-    private static final Pattern PROTOCOL_START = Pattern.compile("(?i)^[A-Za-z]+://");
+    private static final Pattern PROTOCOL_START = Pattern.compile("^\\w+://");
     private static final Class[] ALLOWED_CLASSES = new Class[]{URL.class, URI.class, Path.class, File.class};
 
     /**

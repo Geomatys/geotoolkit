@@ -405,7 +405,7 @@ public class ReprojectFeatureType implements DecoratedFeatureType {
                 }
                 return att;
             }else{
-                throw new IllegalArgumentException("Invalid input feature, was expecting a feature of type "+ReprojectFeatureType.this.getName());
+                throw new IllegalArgumentException("Invalid input feature, was expecting a feature of type "+ReprojectFeatureType.this.getName()+" but found a "+feature.getClass());
             }
         }
     }

@@ -28,13 +28,17 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.awt.*;
+import java.util.Collections;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Class Description
+ * Java representation of MIF-MID symbol style.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 25/02/13
@@ -42,6 +46,7 @@ import org.opengis.filter.expression.Expression;
 public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
     public static final GenericName NAME = NamesExt.create("SYMBOL");
+    public static final AttributeType SYMBOL = new DefaultAttributeType(Collections.singletonMap("name", NAME), Symbol.class, 1, 1, null);
 
     public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
@@ -95,7 +100,7 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
-        return null;
+        return Units.POINT;
     }
 
     @Override

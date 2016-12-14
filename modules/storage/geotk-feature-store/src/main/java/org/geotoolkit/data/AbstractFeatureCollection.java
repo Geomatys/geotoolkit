@@ -260,7 +260,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
-        final GenericName[] properties = remainingParameters.getPropertyNames();
+        final String[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
@@ -309,15 +309,12 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         //wrap properties --------------------
         final FeatureType original = result.getFeatureType();
         FeatureType mask = original;
-        if(properties != null){
+        if(properties!=null && FeatureTypeExt.isAllProperties(original, properties)) {
             try {
-                mask = FeatureTypeExt.createSubType(mask, properties);
-            } catch (MismatchedFeatureException ex) {
+                result = GenericDecoratedFeatureIterator.wrap(result,  new ViewFeatureType(mask, properties));
+            } catch (MismatchedFeatureException | IllegalStateException ex) {
                 throw new DataStoreException(ex);
             }
-        }
-        if(mask instanceof ViewFeatureType){
-            result = GenericDecoratedFeatureIterator.wrap(result, (ViewFeatureType) mask);
         }
 
         //wrap resampling ------------------------------------------------------

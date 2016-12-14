@@ -26,7 +26,6 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InputMismatchException;
@@ -35,10 +34,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
@@ -48,7 +46,7 @@ import org.opengis.feature.Feature;
  * @author Alexis Manin (Geomatys)
  *         Date : 26/02/13
  */
-public class MIFArcBuilder extends MIFGeometryBuilder {
+public class MIFArcBuilder extends MIFRectangleBuilder {
 
     public static final GenericName NAME = NamesExt.create("ARC");
     public static final GenericName BEGIN_ANGLE_NAME = NamesExt.create("BEGIN_ANGLE");
@@ -56,7 +54,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
 
     public static final AttributeType BEGIN_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", BEGIN_ANGLE_NAME), Double.class, 1, 1, null);
     public static final AttributeType END_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", END_ANGLE_NAME), Double.class, 1, 1, null);
-    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), Pen.class, 1, 1, null);
 
 
     @Override
@@ -81,7 +79,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(linePts, 2);
             }
             final Envelope line = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), line);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), JTS.toGeometry(line));
 
             // Get arc angles
             Double beginAngle = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
@@ -124,28 +122,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         }
 
         StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
-        Object value = MIFUtils.getGeometryValue(source);
-        if(value instanceof Envelope) {
-            Envelope env = (Envelope) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else if (value instanceof Rectangle2D) {
-            Rectangle2D rect = (Rectangle2D) value;
-            builder.append(rect.getMinX()).append(' ')
-                    .append(rect.getMinY()).append(' ')
-                    .append(rect.getMaxX()).append(' ')
-                    .append(rect.getMaxY());
-        } else if(value instanceof Envelope2D) {
-            Envelope2D env = (Envelope2D) value;
-            builder.append(env.getMinX()).append(' ')
-                    .append(env.getMinY()).append(' ')
-                    .append(env.getMaxX()).append(' ')
-                    .append(env.getMaxY());
-        } else {
-            throw new DataStoreException("Unable to build an arc with the current geometry (Non compatible type"+value.getClass()+").");
-        }
+        appendMIFEnvelope(builder, MIFUtils.getGeometryValue(source));
         builder.append('\n');
 
         builder.append(beginAngle).append(' ')
@@ -157,16 +134,6 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         }
 
         return builder.toString();
-    }
-
-    @Override
-    public Class getGeometryBinding() {
-        return Envelope.class;
-    }
-
-    @Override
-    public Class[] getPossibleBindings() {
-        return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
     }
 
     public GenericName getName() {

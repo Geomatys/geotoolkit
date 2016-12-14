@@ -29,11 +29,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
-import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+
+import static org.geotoolkit.data.mapinfo.mif.style.Symbol.SYMBOL;
 
 /**
  * Util class to build a feature from Point object of a MIF file.
@@ -44,8 +44,6 @@ import org.opengis.feature.Feature;
 public final class MIFPointBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("POINT");
-
-    public static final AttributeType SYMBOL_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Symbol.NAME), String.class, 1, 1, null);
 
     /**
      * Build a feature describing a MIF point geometry. That assume that user gave a {@link Scanner} which is placed on
@@ -89,7 +87,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
 
         // Style
-        if (scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL_DESCRIPTOR)) {
+        if (scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL)) {
             String args = scanner.next() + scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(') + 1, args.length() - 1)
                     .replaceAll("[^\\d^,]+", "")
@@ -147,7 +145,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
     @Override
     protected List<AttributeType> getAttributes() {
-        return Collections.singletonList(SYMBOL_DESCRIPTOR);
+        return Collections.singletonList(SYMBOL);
     }
 
 }

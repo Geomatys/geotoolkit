@@ -37,7 +37,7 @@ class DefaultQuery implements Query {
 
     private final String language;
     private final Source source;
-    private final GenericName[] properties;
+    private final String[] properties;
     private final Integer maxFeatures;
     private final int startIndex;
     private final Filter filter;
@@ -61,7 +61,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Source name, final GenericName[] attributs) {
+    DefaultQuery(final Source name, final String[] attributs) {
         this(name,
                 Filter.INCLUDE,
                 attributs,
@@ -74,7 +74,7 @@ class DefaultQuery implements Query {
                 null);
     }
     
-    DefaultQuery(final Source source, final Filter filter, final GenericName[] attributs, final SortBy[] sort,
+    DefaultQuery(final Source source, final Filter filter, final String[] attributs, final SortBy[] sort,
             final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
             final double[] resolution, final Object version, final Hints hints){
 
@@ -196,7 +196,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public GenericName[] getPropertyNames() {
+    public String[] getPropertyNames() {
         return properties;
     }
 

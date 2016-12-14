@@ -114,28 +114,28 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
         FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
-        GenericName[] propNames = query.getPropertyNames();
+        String[] propNames = query.getPropertyNames();
 
-        List<GenericName> props = new ArrayList<GenericName>();
+        List<String> props = new ArrayList<>();
         if(propNames != null){
-            for(GenericName str : propNames){
+            for(String str : propNames){
                 props.add(str);
             }
             for(PropertyType desc : ft.getProperties(true)){
                 if((AttributeConvention.isGeometryAttribute(desc))){
-                    props.remove(desc.getName());
+                    props.remove(desc.getName().toString());
                 }
             }
         }else{
             for(PropertyType desc : ft.getProperties(true)){
                 if(!(AttributeConvention.isGeometryAttribute(desc))){
-                    props.add(desc.getName());
+                    props.add(desc.getName().toString());
                 }
             }
         }
 
         final QueryBuilder builder = new QueryBuilder(query);
-        builder.setProperties(props.toArray(new GenericName[props.size()]));
+        builder.setProperties(props.toArray(new String[props.size()]));
         if(!selectIds){
             builder.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         }

@@ -326,7 +326,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //prepare the cell feature type
         final FeatureType cellType = CellSymbolizer.buildCellType(coverage);
-        final Object[] values = new Object[1+7*nbBand];
         final Feature feature = cellType.newInstance();
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
@@ -356,16 +355,16 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 double cx = area.getMinimum(0) + (0.5+x)*objCellSize;
                 double cy = area.getMinimum(1) + (0.5+y)*objCellSize;
 
-                values[0] = GF.createPoint(new Coordinate(cx,cy));
+                feature.setPropertyValue(CellSymbolizer.PROPERY_GEOM_CENTER, GF.createPoint(new Coordinate(cx,cy)));
                 int k=0;
                 for(int b=0,n=nbBand;b<n;b++){
-                    values[++k] = stats[b][y][x].count();
-                    values[++k] = stats[b][y][x].minimum();
-                    values[++k] = stats[b][y][x].mean();
-                    values[++k] = stats[b][y][x].maximum();
-                    values[++k] = stats[b][y][x].span();
-                    values[++k] = stats[b][y][x].rms();
-                    values[++k] = stats[b][y][x].sum();
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_COUNT,(double)stats[b][y][x].count());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_MIN,stats[b][y][x].minimum());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_MEAN,stats[b][y][x].mean());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_MAX,stats[b][y][x].maximum());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_RANGE,stats[b][y][x].span());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_RMS,stats[b][y][x].rms());
+                    feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_SUM,stats[b][y][x].sum());
                 }
 
                 renderCellFeature(feature, pf, renderers);

@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
@@ -168,7 +170,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if(Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector){
             final Selector selector = (Selector) source;
             FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
-            ft = FeatureTypeExt.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
+            final String[] properties = query.getPropertyNames();
+            if (properties!=null && FeatureTypeExt.isAllProperties(ft, properties)) {
+                ft = new ViewFeatureType(ft, properties);
+            }
+            if(query.getCoordinateSystemReproject()!=null){
+                ft = new ReprojectFeatureType(ft, query.getCoordinateSystemReproject());
+            }
 
             return ft;
         }
@@ -244,16 +252,16 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         if(query.retrieveAllProperties()){
             //we simplify it, get only geometry attributes + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
-            final List<GenericName> names = new ArrayList<>();
+            final List<String> names = new ArrayList<>();
             for(PropertyType desc : ft.getProperties(true)){
                 if(AttributeConvention.isGeometryAttribute(desc)){
-                    names.add(desc.getName());
+                    names.add(desc.getName().toString());
                 } else if (query.getSortBy() != null) {
                     for (SortBy sortBy : query.getSortBy()) {
                         final String propName = sortBy.getPropertyName().getPropertyName();
                         if (desc.getName().toString().equals(propName) ||
                             desc.getName().tip().toString().equals(propName)) {
-                            names.add(desc.getName());
+                            names.add(desc.getName().toString());
                         }
                     }
                 }
@@ -265,12 +273,12 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             }
 
             final QueryBuilder qb = new QueryBuilder(query);
-            qb.setProperties(names.toArray(new GenericName[names.size()]));
+            qb.setProperties(names.toArray(new String[names.size()]));
             query = qb.buildQuery();
         }
 
 
-        final GenericName[] wantedProp = query.getPropertyNames();
+        final String[] wantedProp = query.getPropertyNames();
         if(wantedProp.length==0){
             return null;
         }

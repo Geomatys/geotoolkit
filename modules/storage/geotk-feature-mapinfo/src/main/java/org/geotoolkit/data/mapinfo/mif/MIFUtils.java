@@ -186,7 +186,7 @@ public final class MIFUtils {
             superParam = (FeatureType) toIdentify.getSuperTypes().iterator().next();
         }
         for(GeometryType gType : GeometryType.values()) {
-            if(gType.getBinding(crsParam, superParam).equals(toIdentify)) {
+            if(FeatureExt.sameProperties(gType.getBinding(crsParam, superParam), toIdentify, true)) {
                 type = gType;
                 break;
             }
@@ -363,7 +363,6 @@ public final class MIFUtils {
         }
     }
 
-
     /**
      * Parse the given {@link FeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
      * @param toWorkWith The FeatureType to parse, can't be null.
@@ -403,46 +402,6 @@ public final class MIFUtils {
         return "file".equalsIgnoreCase(uri.getScheme());
     }
 
-
-//
-//    public static OutputStream openOutConnection(URI source) throws IOException {
-//        OutputStream out = null;
-//
-//        try {
-//        if(MIFUtils.isLocal(source)) {
-//            final File tmpFile = new File(source);
-//            out = new FileOutputStream(tmpFile, true);
-//        } else {
-//            URLConnection connection = source.openConnection();
-//            connection.setDoOutput(true);
-//            out = connection.getOutputStream();
-//        }
-//        } catch (Exception e) {
-//            throw new IOException("Unable to open data in write mode.", e);
-//        }
-//        return out;
-//    }
-//
-//
-//    public static InputStream openInConnection(URL source) throws IOException {
-//        InputStream in = null;
-//
-//        try {
-//        if(MIFUtils.isLocal(source)) {
-//            final File tmpFile = new File(source.toURI());
-//            in = new FileInputStream(tmpFile);
-//        } else {
-//            URLConnection connection = source.openConnection();
-//            connection.setDoOutput(true);
-//            in = connection.getInputStream();
-//        }
-//        } catch (Exception e) {
-//            throw new IOException("Unable to open data in read mode.", e);
-//        }
-//        return in;
-//    }
-
-
     /**
      * Write a stream into another.
      * @param in The source inputStream
@@ -457,7 +416,6 @@ public final class MIFUtils {
             writer.write(inBuffer, 0, byteRead);
         }
     }
-
 
     /**
      * Return a String which is the ready-to-write (for MID file) representation of the given property.

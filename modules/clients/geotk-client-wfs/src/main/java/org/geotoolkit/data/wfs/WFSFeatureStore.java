@@ -500,8 +500,8 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException, IllegalNameException {
         final GenericName name = NamesExt.create(typeName);
-        FeatureType sft = types.get(name.toString());
-        sft = FeatureTypeExt.createSubType(sft, query.getPropertyNames());
+        FeatureType type = types.get(name.toString());
+        type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
 
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
@@ -520,12 +520,21 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 request.setMaxFeatures(max);
             }
 
-            request.setPropertyNames(query.getPropertyNames());
+            final String[] propertyNames = query.getPropertyNames();
+            GenericName[] names = null;
+            if (propertyNames!=null) {
+                names = new GenericName[propertyNames.length];
+                for(int i=0;i<propertyNames.length;i++) {
+                    names[i] = type.getProperty(propertyNames[i]).getName();
+                }
+            }
+
+            request.setPropertyNames(names);
         }
 
         XmlFeatureReader reader = null;
         try {
-            reader = new JAXPStreamFeatureReader(sft);
+            reader = new JAXPStreamFeatureReader(type);
             reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
             final InputStream stream;
             if (getUsePost()) {
@@ -541,14 +550,14 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
-                final FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
+                final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
                 col.add(sf);
                 return col;
             }else if(result instanceof FeatureCollection){
                 final FeatureCollection col = (FeatureCollection) result;
                 return col;
             }else{
-                final FeatureCollection col = FeatureStoreUtilities.collection("", sft);
+                final FeatureCollection col = FeatureStoreUtilities.collection("", type);
                 return col;
             }
 

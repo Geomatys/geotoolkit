@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
@@ -601,7 +602,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
 
             try {
-                expected = FeatureTypeExt.createSubType(schema, atts);
+                expected = new ViewFeatureType(schema, atts);
             } catch (MismatchedFeatureException ex) {
                 throw new PortrayalException(ex);
             }

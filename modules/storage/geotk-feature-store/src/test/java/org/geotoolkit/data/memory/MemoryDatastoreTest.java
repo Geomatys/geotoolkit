@@ -497,7 +497,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(store.getCount(query),3);
 
         reader = store.getFeatureReader(query);
-        assertEquals(reader.getFeatureType().getProperties(true).size(),2);
+        assertEquals(2,reader.getFeatureType().getProperties(true).size());
         assertNotNull(reader.getFeatureType().getProperty("string"));
         assertNotNull(reader.getFeatureType().getProperty("date"));
 

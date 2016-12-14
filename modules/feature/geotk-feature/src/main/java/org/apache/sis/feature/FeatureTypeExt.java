@@ -16,10 +16,7 @@
  */
 package org.apache.sis.feature;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,12 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.util.Static;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
@@ -44,6 +38,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -64,7 +59,23 @@ public final class FeatureTypeExt extends Static {
         if (properties == null) {
             return featureType;
         }
-        return new ViewFeatureType(featureType, properties);
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(featureType);
+        ftb.properties().clear();
+        //rebuild type, preserve original property order
+        boolean same = true;
+        loop:
+        for (PropertyType pt : featureType.getProperties(true)) {
+            for (String name : properties) {
+                if(featureType.getProperty(name).equals(pt)){
+                    ftb.addProperty(pt);
+                    continue loop;
+                }
+            }
+            same = false;
+        }
+
+        return same ? featureType : ftb.build();
     }
 
     public static FeatureType createSubType(final FeatureType featureType,
@@ -76,9 +87,8 @@ public final class FeatureTypeExt extends Static {
         for(int i=0;i<names.length;i++){
             names[i] = properties[i].toString();
         }
-        return new ViewFeatureType(featureType, names);
+        return createSubType(featureType, names);
     }
-
 
     /**
      * Create a derived FeatureType
@@ -91,136 +101,57 @@ public final class FeatureTypeExt extends Static {
      * @throws MismatchedFeatureException
      */
     public static FeatureType createSubType(final FeatureType featureType,
-            final GenericName[] properties, final CoordinateReferenceSystem override) throws MismatchedFeatureException{
-        URI namespaceURI = null;
-        final String ns = NamesExt.getNamespace(featureType.getName());
-        if (ns != null) {
-            try {
-                namespaceURI = new URI(ns);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+            final String[] properties, final CoordinateReferenceSystem override) throws MismatchedFeatureException{
+
+        FeatureType type = featureType;
+
+        if (properties!=null) {
+            type = createSubType(featureType, properties);
+        }
+        if (override!=null) {
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setAbstract(type.isAbstract());
+            ftb.setDefinition(type.getDefinition());
+            ftb.setDescription(type.getDescription());
+            ftb.setDesignation(type.getDesignation());
+            ftb.setName(type.getName());
+            ftb.setSuperTypes(type.getSuperTypes().toArray(new FeatureType[0]));
+
+            for (PropertyType property : type.getProperties(true)) {
+                //replace operations by ViewOperation
+                if (AttributeConvention.isGeometryAttribute(property) && property instanceof AttributeType) {
+                    ftb.addAttribute((AttributeType) property).setCRS(override);
+                } else {
+                    ftb.addProperty(property);
+                }
             }
+
+            type = ftb.build();
         }
 
-        return createSubType(featureType, properties, override, featureType.getName().tip().toString(), namespaceURI);
-    }
-
-    public static FeatureType createSubType(final FeatureType featureType,
-            GenericName[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
-            throws MismatchedFeatureException {
-
-        if ((properties == null) && (override == null)) {
-            return featureType;
-        }
-
-        final Collection<? extends PropertyType> baseProperties = featureType.getProperties(true);
-        final int propCount = baseProperties.size();
-
-        if (properties == null) {
-            properties = new GenericName[propCount];
-            int i=0;
-            for(PropertyType desc : baseProperties) {
-                properties[i] = desc.getName();
-                i++;
-            }
-        }
-
-        final String namespaceURI = namespace != null ? namespace.toString() : null;
-        boolean same = (propCount == properties.length) &&
-                featureType.getName().tip().toString().equals(typeName) &&
-                Objects.equals(NamesExt.getNamespace(featureType.getName()), namespaceURI);
-
-        int i=0;
-        if (same) {
-            for (PropertyType desc : baseProperties) {
-                same = desc.getName().equals(properties[i]) && ((override != null) && AttributeConvention.isGeometryAttribute(desc)
-                        ? Objects.equals(override, FeatureExt.getCRS(desc))
-                        : true);
-                if (!same) break;
-                i++;
-            }
-        }
-
-        if (same) {
-            return featureType;
-        }
-
-
-        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        if (typeName == null) {
-            typeName = featureType.getName().tip().toString();
-        }
-        if (namespace == null && NamesExt.getNamespace(featureType.getName()) != null) {
-            try {
-                namespace = new URI(NamesExt.getNamespace(featureType.getName()));
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        tb.setName(NamesExt.create(namespaceURI, typeName));
-        FeatureType type = tb.build();
-
-        if (override != null) {
-            return new ReprojectFeatureType(type, override);
-        }
         return type;
     }
 
-
     /**
-     * Forces the specified CRS on all geometry attributes
-     * @param schema the original schema
-     * @param crs the forced crs
-     * @return {@link SimpleFeatureType}
-     * @throws SchemaException
+     * 
+     * @param featureType
+     * @param properties
+     * @return true if property list contains all feature type properties.
      */
-    public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs)
-            throws MismatchedFeatureException{
-        return transform(schema, crs, false);
-    }
+    public static boolean isAllProperties(final FeatureType featureType, String ... properties) {
+        final int size = featureType.getProperties(true).size();
+        if(size>properties.length) return false;
 
-    /**
-     * Forces the specified CRS on geometry attributes (all or some, depends on the parameters).
-     * @param type the original schema
-     * @param crs the forced crs
-     * @param forceOnlyMissing if true, will force the specified crs only on the attributes that
-     *        do miss one
-     * @return {@link SimpleFeatureType}
-     * @throws MismatchedFeatureException
-     */
-    public static FeatureType transform(final FeatureType type, final CoordinateReferenceSystem crs,
-            final boolean forceOnlyMissing) throws MismatchedFeatureException{
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(type.getName());
-        ftb.setDescription(type.getDescription());
-        ftb.setDefinition(type.getDefinition());
-        ftb.setDesignation(type.getDesignation());
-        ftb.setAbstract(type.isAbstract());
-        ftb.setSuperTypes(type.getSuperTypes().toArray(new FeatureType[0]));
-
-        //preserve property order
-        for(PropertyType pt : type.getProperties(false)){
-            /*
-             * TODO: Change the CRS on Operation. Current implementation relies on the fact that
-             * the CRS is changed for all attributes, which indirectly change the CRS of LinkOperations only.
-             */
-            if(pt instanceof AttributeType<?> && AttributeConvention.isGeometryAttribute(pt)){
-                final CoordinateReferenceSystem baseCrs = FeatureExt.getCRS(pt);
-
-                if (!forceOnlyMissing || baseCrs == null) {
-                    final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
-                    atb.copy((AttributeType) pt);
-                    atb.setCRS(crs);
-                    ftb.addProperty(atb.build());
-                }else{
-                    ftb.addProperty(pt);
-                }
-            }else{
-                ftb.addProperty(pt);
+        //check list contains all properties, using a Set to avoid duplicated names
+        final Set<GenericName> names = new HashSet<>();
+        for (String name : properties) {
+            try{
+                names.add(featureType.getProperty(name).getName());
+            }catch(PropertyNotFoundException ex) {
+                return false;
             }
         }
-
-        return ftb.build();
+        return names.size() == size;
     }
 
     /**
