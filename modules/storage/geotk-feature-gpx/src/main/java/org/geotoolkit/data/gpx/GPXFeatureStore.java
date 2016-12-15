@@ -122,9 +122,9 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         return (FeatureStoreFactory) DataStores.getFactoryById(GPXFeatureStoreFactory.NAME);
     }
 
-    private GPXReader createReader() throws DataStoreException, XMLStreamException, IOException {
+    private GPXReader createReader() throws Exception {             // Too many exceptions for listing them all.
         final StorageConnector c = new StorageConnector(file);
-        return new GPXReader(new GPXStore(c), file, c);
+        return new GPXReader(new GPXStore(c), c);
     }
 
     public Metadata getGPXMetaData() throws DataStoreException{
@@ -136,7 +136,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
                     data = reader.getMetadata();
                 }
                 return data;
-            } catch (IOException | XMLStreamException ex) {
+            } catch (Exception ex) {
                 throw new DataStoreException(ex);
             } finally{
                 RWLock.readLock().unlock();
@@ -239,7 +239,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
             if(Files.exists(file)){
                 try {
                     reader = createReader();
-                } catch (IOException | XMLStreamException ex) {
+                } catch (Exception ex) {
                     throw new DataStoreException(ex);
                 }
             }else{
