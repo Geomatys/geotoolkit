@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -29,9 +30,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -39,6 +38,7 @@ import static org.apache.sis.test.Assert.*;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.io.WPSSchema;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.wps.xml.Execute;
 
 
 /**
@@ -57,7 +57,7 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException {
         try {
-            final List<Double> corner = new ArrayList<Double>();
+            final List<Double> corner = new ArrayList<>();
             corner.add(10.0);
             corner.add(10.0);
 
@@ -65,28 +65,29 @@ public class ExecuteTest extends org.geotoolkit.test.TestBase {
             final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
             JTS.setCRS(point, CommonCRS.WGS84.geographic());
 
-            final List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
+            final List<AbstractWPSInput> inputs = new ArrayList<>();
             inputs.add(new WPSInputLiteral("literal", "10"));
             inputs.add(new WPSInputBoundingBox("bbox", corner, corner, "EPSG:4326", 2));
             inputs.add(new WPSInputComplex("complex", point, Geometry.class, "UTF-8", WPSSchema.OGC_GML_3_1_1.getValue(), WPSMimeType.APP_GML.val()));
             inputs.add(new WPSInputReference("reference", "http://link.to/reference/"));
 
-            final List<WPSOutput> outputs = new ArrayList<WPSOutput>();
+            final List<WPSOutput> outputs = new ArrayList<>();
             outputs.add(new WPSOutput("output"));
 
-            final Execute100 exec100 = new Execute100("http://test.com", null);
-            exec100.setIdentifier("identifier");
-            exec100.setInputs(inputs);
-            exec100.setOutputs(outputs);
+            final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
+            final ExecuteRequest request = client.createExecute();
+            request.getContent().setIdentifier("identifier");
+            request.setInputs(inputs);
+            request.setOutputs(outputs);
 
-            final Execute request = exec100.makeRequest();
-            assertEquals("WPS", request.getService());
-            assertEquals("1.0.0", request.getVersion().toString());
-            assertEquals(request.getIdentifier().getValue(), "identifier");
+            final Execute execute = request.getContent();
+            assertEquals("WPS", execute.getService());
+            assertEquals("1.0.0", execute.getVersion().toString());
+            assertEquals(execute.getIdentifier().getValue(), "identifier");
 
             final StringWriter stringWriter = new StringWriter();
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(request, stringWriter);
+            marshaller.marshal(execute, stringWriter);
 
             String result = stringWriter.toString();
             String expected = expectedRequest();

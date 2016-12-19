@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wps.xml;
 
-import java.util.List;
-
 /**
  *
  * @author guilhem

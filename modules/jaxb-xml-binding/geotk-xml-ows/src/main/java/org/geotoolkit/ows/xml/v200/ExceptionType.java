@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ExceptionType", propOrder = {
     "exceptionText"
 })
-public class ExceptionType {
+public class ExceptionType implements org.geotoolkit.ows.xml.ExceptionType {
 
     @XmlElement(name = "ExceptionText")
     private List<String> exceptionText;
@@ -84,6 +84,7 @@ public class ExceptionType {
      * Gets the value of the exceptionText property.
      * 
      */
+    @Override
     public List<String> getExceptionText() {
         if (exceptionText == null) {
             exceptionText = new ArrayList<>();
@@ -99,6 +100,7 @@ public class ExceptionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getExceptionCode() {
         return exceptionCode;
     }
@@ -138,5 +140,5 @@ public class ExceptionType {
     public void setLocator(String value) {
         this.locator = value;
     }
-
+    
 }

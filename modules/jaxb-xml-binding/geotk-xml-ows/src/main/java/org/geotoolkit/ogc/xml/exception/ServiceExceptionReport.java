@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.apache.sis.util.Version;
+import org.geotoolkit.ows.xml.ExceptionType;
 
 
 /**
@@ -97,4 +98,10 @@ public final class ServiceExceptionReport implements ExceptionResponse {
     public String getVersion() {
         return version;
     }
+
+    @Override
+    public List<? extends ExceptionType> getException() {
+        return getServiceExceptions();
+    }
+    
 }

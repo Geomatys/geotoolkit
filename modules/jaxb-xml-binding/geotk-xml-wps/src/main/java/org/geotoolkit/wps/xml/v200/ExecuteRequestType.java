@@ -133,6 +133,14 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setIdentifier(String identifiers) {
+        setIdentifier(new CodeType(identifiers));
+    }
+
+    /**
      * Gets the value of the input property.
      * 
      * Objects of the following type(s) are allowed in the list
@@ -222,6 +230,11 @@ public class ExecuteRequestType extends RequestBaseType implements Execute {
     @Override
     public boolean isLineage() {
         return false;
+    }
+
+    @Override
+    public void setLineage(boolean outLineage) {
+        //do nothing
     }
 
     @Override

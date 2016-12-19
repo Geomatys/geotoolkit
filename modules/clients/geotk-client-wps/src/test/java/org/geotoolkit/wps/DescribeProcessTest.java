@@ -21,12 +21,12 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.ows.xml.v110.CodeType;
-import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DescribeProcess;
 import org.junit.Test;
@@ -48,17 +48,16 @@ public class DescribeProcessTest extends org.geotoolkit.test.TestBase {
      * with the parameters given.
      */
     @Test
-    public void testDescribeProcess110() {
-        List<String> identifiers = new ArrayList<String>();
-        identifiers.add("identifier1");
-        identifiers.add("identifier2");
-        identifiers.add("identifier3");
+    public void testDescribeProcess110() throws MalformedURLException {
+        final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
 
-        final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
-        desc100.setIdentifiers(identifiers);
+        final DescribeProcessRequest request = client.createDescribeProcess();
+        final org.geotoolkit.wps.xml.DescribeProcess content = request.getContent();
+        content.setIdentifier(Arrays.asList("identifier1","identifier2","identifier3"));
+
         final URL url;
         try {
-            url = desc100.getURL();
+            url = request.getURL();
         } catch (MalformedURLException ex) {
             fail(ex.getLocalizedMessage());
             return;
@@ -74,27 +73,25 @@ public class DescribeProcessTest extends org.geotoolkit.test.TestBase {
 
    @Test
    public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException{
-        try {
-            final List<String> identifiers = new ArrayList<String>();
-            identifiers.add("identifier1");
-            identifiers.add("identifier2");
-            identifiers.add("identifier3");
+        final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
 
-            final List<CodeType> identifierList = new ArrayList<CodeType>();
+        final DescribeProcessRequest request = client.createDescribeProcess();
+        final org.geotoolkit.wps.xml.DescribeProcess content = request.getContent();
+        content.setIdentifier(Arrays.asList("identifier1","identifier2","identifier3"));
+
+        try {
+            final List<CodeType> identifierList = new ArrayList<>();
             identifierList.add(new CodeType("identifier1"));
             identifierList.add(new CodeType("identifier2"));
             identifierList.add(new CodeType("identifier3"));
 
-            final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
-            desc100.setIdentifiers(identifiers);
-            final DescribeProcess request = desc100.makeRequest();
-            assertEquals("WPS", request.getService());
-            assertEquals("1.0.0", request.getVersion().toString());
-            assertEquals(request.getIdentifier(),identifierList);
+            assertEquals("WPS", content.getService());
+            assertEquals("1.0.0", content.getVersion().toString());
+            assertEquals(content.getIdentifier(),identifierList);
 
             final StringWriter stringWriter = new StringWriter();
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(request,stringWriter);
+            marshaller.marshal(content,stringWriter);
 
             String result = stringWriter.toString();
             final String expectedMarshalledRequest =

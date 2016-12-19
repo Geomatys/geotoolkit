@@ -2,32 +2,41 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
  *
  *    This library is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps.v100;
 
-import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.wps.AbstractExecute;
+package org.geotoolkit.ows.xml;
+
+import java.util.List;
+
 
 /**
  *
- * @author Quentin Boileau
+ * @author Johann Sorel (Geomatys)
  * @module
  */
-public class Execute100 extends AbstractExecute {
-    
-    public Execute100(final String serverURL, final ClientSecurity security){
-        super(serverURL, "1.0.0",security);
-    }
-      
+public interface ExceptionType {
+
+    /**
+     * Get the exception texts.
+     * @return
+     */
+    List<String> getExceptionText();
+
+    /**
+     * Get the exception code.
+     * @return
+     */
+    String getExceptionCode();
+
 }

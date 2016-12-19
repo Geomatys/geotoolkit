@@ -17,11 +17,32 @@
 
 package org.geotoolkit.ows.xml;
 
+import java.util.List;
+
 /**
  *
-  * @author Guilhem Legal (Geomatys)
+ * @author Guilhem Legal (Geomatys)
  * @module
  */
 public interface ExceptionResponse {
 
+    List<? extends ExceptionType> getException();
+
+    /**
+     * Convert this object to a java Exception object.
+     * 
+     * @return Exception
+     */
+    default Exception toException() {
+        
+        final StringBuilder sb = new StringBuilder();
+        for (ExceptionType type : getException()) {
+            if(sb.length()!=0) sb.append('\n');
+            sb.append(type.getExceptionCode()).append(" : ");
+            for (String txt : type.getExceptionText()) {
+                sb.append("\n\t").append(txt);
+            }
+        }
+        return new Exception(sb.toString());
+    }
 }

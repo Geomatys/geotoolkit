@@ -83,4 +83,9 @@ public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings
         return this.processOffering;
     }
 
+    @Override
+    public List<ProcessOffering> getProcesses() {
+        return getProcessOffering();
+    }
+
 }

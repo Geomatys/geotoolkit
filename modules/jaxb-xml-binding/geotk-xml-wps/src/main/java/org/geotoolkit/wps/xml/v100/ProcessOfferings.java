@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.ProcessOffering;
 
 
 /**
@@ -75,6 +76,11 @@ public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings
             process = new ArrayList<>();
         }
         return this.process;
+    }
+
+    @Override
+    public List<ProcessBriefType> getProcesses() {
+        return getProcess();
     }
 
 }

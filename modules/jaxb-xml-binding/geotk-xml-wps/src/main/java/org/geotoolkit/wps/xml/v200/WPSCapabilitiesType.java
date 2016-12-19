@@ -34,6 +34,7 @@ import org.geotoolkit.ows.xml.v200.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v200.OperationsMetadata;
 import org.geotoolkit.ows.xml.v200.ServiceIdentification;
 import org.geotoolkit.ows.xml.v200.ServiceProvider;
+import org.geotoolkit.wps.xml.ProcessOfferings;
 import org.geotoolkit.wps.xml.WPSCapabilities;
 import org.geotoolkit.wps.xml.WPSResponse;
 import org.w3c.dom.Element;
@@ -124,6 +125,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         return contents;
     }
 
+    @Override
+    public ProcessOfferings getProcessOfferings() {
+        return contents;
+    }
+    
     /**
      * Sets the value of the contents property.
      * 

@@ -27,7 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
-import org.geotoolkit.wps.WebProcessingClient.WPSVersion;
+import org.geotoolkit.wps.WPSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -97,11 +97,7 @@ public class WPSClientFactory extends AbstractClientFactory{
     @Override
     public WebProcessingClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        try {
-            return new WebProcessingClient(params);
-        } catch (CapabilitiesException e) {
-            throw new DataStoreException("Unable to initialize WPS client.", e);
-        }
+        return new WebProcessingClient(params);
     }
 
 }

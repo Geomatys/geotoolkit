@@ -26,8 +26,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.LanguageString;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.xml.ProcessOffering;
 import org.geotoolkit.wps.xml.ProcessSummary;
 
 
@@ -61,7 +63,7 @@ import org.geotoolkit.wps.xml.ProcessSummary;
 @XmlSeeAlso({
     ProcessDescriptionType.class
 })
-public class ProcessBriefType extends DescriptionType implements ProcessSummary {
+public class ProcessBriefType extends DescriptionType implements ProcessSummary, ProcessOffering {
 
     @XmlElement(name = "Profile")
     @XmlSchemaType(name = "anyURI")
@@ -78,6 +80,11 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary 
     public ProcessBriefType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, String processVersion) {
         super(identifier, title, _abstract);
         this.processVersion = processVersion;
+    }
+
+    @Override
+    public LanguageString getSingleAbstract() {
+        return getAbstract();
     }
     
     /**

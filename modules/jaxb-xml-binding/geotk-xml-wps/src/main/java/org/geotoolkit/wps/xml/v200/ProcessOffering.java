@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.LanguageString;
 import org.w3c.dom.Element;
 
 
@@ -58,7 +60,7 @@ import org.w3c.dom.Element;
     "any"
 })
 @XmlRootElement(name = "ProcessOffering")
-public class ProcessOffering {
+public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     @XmlElement(name = "Process")
     protected ProcessDescriptionType process;
@@ -80,6 +82,17 @@ public class ProcessOffering {
     public ProcessOffering(ProcessDescriptionType process) {
         this.process = process;
     }
+
+    @Override
+    public AbstractCodeType getIdentifier() {
+        return process.getIdentifier();
+    }
+
+    @Override
+    public LanguageString getSingleAbstract() {
+        return process.getAbstract().get(0);
+    }
+    
     /**
      * Gets the value of the process property.
      * 
