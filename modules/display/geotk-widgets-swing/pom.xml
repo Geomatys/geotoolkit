@@ -103,21 +103,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage-sql</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>swingx</artifactId>
     </dependency>
@@ -140,28 +125,7 @@
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-render2d</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-render3d</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-style</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-feature-store</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage-store</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -187,13 +151,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-xml-sld</artifactId>
+      <artifactId>geotk-coverage-sql</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
-
 
     <!-- Additional swing componants -->
     <dependency>

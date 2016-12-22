@@ -61,22 +61,15 @@
   <!--     Dependencies to be inherited by all modules.            -->
   <!-- =========================================================== -->
   <dependencies>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-render2d</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-temporal</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-feature-store</artifactId>
       <version>${project.version}</version>
     </dependency>
 

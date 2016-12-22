@@ -51,10 +51,6 @@
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>javax.measure</groupId>
-      <artifactId>unit-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.opengis</groupId>
       <artifactId>geoapi-conformance</artifactId>
       <scope>test</scope>

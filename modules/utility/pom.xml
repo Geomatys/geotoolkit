@@ -50,14 +50,6 @@
            Dependency Management
        =========================================================== -->
   <dependencies>
-    <dependency>
-      <groupId>org.apache.sis.core</groupId>
-      <artifactId>sis-utility</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.sis.core</groupId>
-      <artifactId>sis-metadata</artifactId>
-    </dependency>
 
     <!-- Test dependencies -->
     <dependency>

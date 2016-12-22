@@ -63,12 +63,12 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-imagery</artifactId>
+            <artifactId>geotk-temporal</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
+            <artifactId>geotk-jtswrapper</artifactId>
             <version>${project.version}</version>
         </dependency>
 
