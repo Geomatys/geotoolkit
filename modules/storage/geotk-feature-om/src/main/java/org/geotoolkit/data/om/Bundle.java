@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,32 +41,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * NetCDF feature file.
          */
-        public static final short NCdatastoreDescription = 0;
+        public static final short NCdatastoreDescription = 1;
 
         /**
          * OGC.O&M.netCDF
          */
-        public static final short NCdatastoreTitle = 1;
+        public static final short NCdatastoreTitle = 2;
 
         /**
          * Observation & Measurements file (.omxml)
          */
-        public static final short OMdatastoreDescription = 2;
+        public static final short OMdatastoreDescription = 3;
 
         /**
          * OGC.O&M
          */
-        public static final short OMdatastoreTitle = 3;
+        public static final short OMdatastoreTitle = 4;
 
         /**
          * Sensor Observation Service Database
          */
-        public static final short SOSdatastoreDescription = 4;
+        public static final short SOSdatastoreDescription = 5;
 
         /**
          * OGC.SOS
          */
-        public static final short SOSdatastoreTitle = 5;
+        public static final short SOSdatastoreTitle = 6;
     }
 
     /**

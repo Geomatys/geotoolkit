@@ -35,8 +35,6 @@ public class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -50,7 +48,7 @@ public class Bundle extends IndexedResourceBundle {
         /**
          * LandSat 8
          */
-        public static final short title = 0;
+        public static final short title = 2;
     }
 
     /**

@@ -26,7 +26,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * Internalization of all styling widgets.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
@@ -37,11 +37,6 @@ public final class MessageBundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.2
      */
     public static final class Keys {
         private Keys() {
@@ -50,3512 +45,3512 @@ public final class MessageBundle extends IndexedResourceBundle {
         /**
          * Accreditation
          */
-        public static final short Accreditation = 0;
+        public static final short Accreditation = 1;
 
         /**
          * Abstract
          */
-        public static final short abstrac = 1;
+        public static final short abstrac = 2;
 
         /**
          * Add symbol
          */
-        public static final short addSymbol = 2;
+        public static final short addSymbol = 3;
 
         /**
          * Add all values
          */
-        public static final short add_all_values = 333;
+        public static final short add_all_values = 4;
 
         /**
          * Add dimension
          */
-        public static final short add_dimension = 334;
+        public static final short add_dimension = 5;
 
         /**
          * Add value
          */
-        public static final short add_value = 335;
+        public static final short add_value = 6;
 
         /**
          * Add vector file data ...
          */
-        public static final short add_vector_file = 336;
+        public static final short add_vector_file = 7;
 
         /**
          * Advanced
          */
-        public static final short advanced = 3;
+        public static final short advanced = 8;
 
         /**
          * Aligned
          */
-        public static final short aligned = 4;
+        public static final short aligned = 9;
 
         /**
          * All
          */
-        public static final short all = 5;
+        public static final short all = 10;
 
         /**
          * All Geometries
          */
-        public static final short allGeom = 6;
+        public static final short allGeom = 11;
 
         /**
          * all status
          */
-        public static final short allStatus = 7;
+        public static final short allStatus = 12;
 
         /**
          * Analyze
          */
-        public static final short analyze = 8;
+        public static final short analyze = 13;
 
         /**
          * Raster analyze
          */
-        public static final short analyze_raster = 337;
+        public static final short analyze_raster = 14;
 
         /**
          * Vector analyze
          */
-        public static final short analyze_vector = 338;
+        public static final short analyze_vector = 15;
 
         /**
          * Anchor
          */
-        public static final short anchor = 9;
+        public static final short anchor = 16;
 
         /**
          * Animation
          */
-        public static final short animation = 10;
+        public static final short animation = 17;
 
         /**
          * Anti-Aliasing
          */
-        public static final short antialiasing = 11;
+        public static final short antialiasing = 18;
 
         /**
          * Application clipboard
          */
-        public static final short applicationclipboard = 12;
+        public static final short applicationclipboard = 19;
 
         /**
          * Apply
          */
-        public static final short apply = 13;
+        public static final short apply = 20;
 
         /**
          * Validity area
          */
-        public static final short area_validity = 339;
+        public static final short area_validity = 21;
 
         /**
          * Background
          */
-        public static final short background = 14;
+        public static final short background = 22;
 
         /**
          * Backward
          */
-        public static final short backward = 15;
+        public static final short backward = 23;
 
         /**
          * Begin
          */
-        public static final short begin = 16;
+        public static final short begin = 24;
 
         /**
          * Blue channel
          */
-        public static final short blue = 17;
+        public static final short blue = 25;
 
         /**
          * Border
          */
-        public static final short border = 18;
+        public static final short border = 26;
 
         /**
          * Brightness only
          */
-        public static final short brightnessonly = 19;
+        public static final short brightnessonly = 27;
 
         /**
          * Cancel
          */
-        public static final short cancel = 20;
+        public static final short cancel = 28;
 
         /**
          * Category
          */
-        public static final short category = 21;
+        public static final short category = 29;
 
         /**
          * Chain
          */
-        public static final short chain = 22;
+        public static final short chain = 30;
 
         /**
          * Chain editor
          */
-        public static final short chainEditor = 23;
+        public static final short chainEditor = 31;
 
         /**
          * Input parameters
          */
-        public static final short chainInputs = 24;
+        public static final short chainInputs = 32;
 
         /**
          * Output parameters
          */
-        public static final short chainOutputs = 25;
+        public static final short chainOutputs = 33;
 
         /**
          * Chains table
          */
-        public static final short chainTable = 26;
+        public static final short chainTable = 34;
 
         /**
          * Change
          */
-        public static final short change = 27;
+        public static final short change = 35;
 
         /**
          * Channels
          */
-        public static final short channels = 28;
+        public static final short channels = 36;
 
         /**
          * Choose image :
          */
-        public static final short chooseImage = 29;
+        public static final short chooseImage = 37;
 
         /**
          * Connect
          */
-        public static final short choosercoveragestore_connect = 340;
+        public static final short choosercoveragestore_connect = 38;
 
         /**
          * Open coverage store
          */
-        public static final short choosercoveragestore_label = 341;
+        public static final short choosercoveragestore_label = 39;
 
         /**
          * New
          */
-        public static final short choosercoveragestore_new = 342;
+        public static final short choosercoveragestore_new = 40;
 
         /**
          * OK
          */
-        public static final short choosercoveragestore_ok = 343;
+        public static final short choosercoveragestore_ok = 41;
 
         /**
          * Connect
          */
-        public static final short chooserfeaturestore_connect = 344;
+        public static final short chooserfeaturestore_connect = 42;
 
         /**
          * Open feature store
          */
-        public static final short chooserfeaturestore_label = 345;
+        public static final short chooserfeaturestore_label = 43;
 
         /**
          * New
          */
-        public static final short chooserfeaturestore_new = 346;
+        public static final short chooserfeaturestore_new = 44;
 
         /**
          * OK
          */
-        public static final short chooserfeaturestore_ok = 347;
+        public static final short chooserfeaturestore_ok = 45;
 
         /**
          * Connect
          */
-        public static final short chooserserver_connect = 348;
+        public static final short chooserserver_connect = 46;
 
         /**
          * Open serveur connection
          */
-        public static final short chooserserver_label = 349;
+        public static final short chooserserver_label = 47;
 
         /**
          * OK
          */
-        public static final short chooserserver_ok = 350;
+        public static final short chooserserver_ok = 48;
 
         /**
          * Classes
          */
-        public static final short classes = 30;
+        public static final short classes = 49;
 
         /**
          * Classify
          */
-        public static final short classify = 31;
+        public static final short classify = 50;
 
         /**
          * Clear selection
          */
-        public static final short clear_selection = 351;
+        public static final short clear_selection = 51;
 
         /**
          * Clipboard
          */
-        public static final short clipboard = 32;
+        public static final short clipboard = 52;
 
         /**
          * Code
          */
-        public static final short code = 33;
+        public static final short code = 53;
 
         /**
          * Crs
          */
-        public static final short colCrs = 34;
+        public static final short colCrs = 54;
 
         /**
          * Delete
          */
-        public static final short colDelete = 35;
+        public static final short colDelete = 55;
 
         /**
          * Duplicate
          */
-        public static final short colDuplicate = 36;
+        public static final short colDuplicate = 56;
 
         /**
          * Edit
          */
-        public static final short colEdit = 37;
+        public static final short colEdit = 57;
 
         /**
          * Job
          */
-        public static final short colJob = 38;
+        public static final short colJob = 58;
 
         /**
          * Log
          */
-        public static final short colLog = 39;
+        public static final short colLog = 59;
 
         /**
          * Lower
          */
-        public static final short colLower = 40;
+        public static final short colLower = 60;
 
         /**
          * Metadata
          */
-        public static final short colMetadata = 41;
+        public static final short colMetadata = 61;
 
         /**
          * Pause
          */
-        public static final short colPause = 42;
+        public static final short colPause = 62;
 
         /**
          * Play
          */
-        public static final short colPlay = 43;
+        public static final short colPlay = 63;
 
         /**
          * Priority
          */
-        public static final short colPriority = 44;
+        public static final short colPriority = 64;
 
         /**
          * Progress
          */
-        public static final short colProgress = 45;
+        public static final short colProgress = 65;
 
         /**
          * Remaining time
          */
-        public static final short colRemain = 46;
+        public static final short colRemain = 66;
 
         /**
          * Responsible
          */
-        public static final short colResponsible = 47;
+        public static final short colResponsible = 67;
 
         /**
          * Start date
          */
-        public static final short colStartDate = 48;
+        public static final short colStartDate = 68;
 
         /**
          * Status
          */
-        public static final short colStatus = 49;
+        public static final short colStatus = 69;
 
         /**
          * Stop
          */
-        public static final short colStop = 50;
+        public static final short colStop = 70;
 
         /**
          * Upper
          */
-        public static final short colUpper = 51;
+        public static final short colUpper = 71;
 
         /**
          * Version
          */
-        public static final short colVersion = 52;
+        public static final short colVersion = 72;
 
         /**
          * View
          */
-        public static final short colView = 53;
+        public static final short colView = 73;
 
         /**
          * Color
          */
-        public static final short color = 54;
+        public static final short color = 74;
 
         /**
          * Colors
          */
-        public static final short colors = 55;
+        public static final short colors = 75;
 
         /**
          * Commit
          */
-        public static final short commit = 56;
+        public static final short commit = 76;
 
         /**
          * Compare
          */
-        public static final short compare = 57;
+        public static final short compare = 77;
 
         /**
          * completed
          */
-        public static final short completed = 58;
+        public static final short completed = 78;
 
         /**
          * False
          */
-        public static final short conditionalFailed = 59;
+        public static final short conditionalFailed = 79;
 
         /**
          * True
          */
-        public static final short conditionalSuccess = 60;
+        public static final short conditionalSuccess = 80;
 
         /**
          * Conditional
          */
-        public static final short conditionalTitle = 61;
+        public static final short conditionalTitle = 81;
 
         /**
          * Configuration of process
          */
-        public static final short configProcessTitle = 62;
+        public static final short configProcessTitle = 82;
 
         /**
          * Confirm deletion ?
          */
-        public static final short confirm_delete = 352;
+        public static final short confirm_delete = 83;
 
         /**
          * Constant
          */
-        public static final short constantTitle = 63;
+        public static final short constantTitle = 84;
 
         /**
          * copy
          */
-        public static final short contexttreetable_a_copy = 353;
+        public static final short contexttreetable_a_copy = 85;
 
         /**
          * Activated
          */
-        public static final short contexttreetable_activated = 354;
+        public static final short contexttreetable_activated = 86;
 
         /**
          * Contexts
          */
-        public static final short contexttreetable_contexts = 355;
+        public static final short contexttreetable_contexts = 87;
 
         /**
          * Copy
          */
-        public static final short contexttreetable_copy = 356;
+        public static final short contexttreetable_copy = 88;
 
         /**
          * Cut
          */
-        public static final short contexttreetable_cut = 357;
+        public static final short contexttreetable_cut = 89;
 
         /**
          * Delete
          */
-        public static final short contexttreetable_delete = 358;
+        public static final short contexttreetable_delete = 90;
 
         /**
          * Duplicate
          */
-        public static final short contexttreetable_duplicate = 359;
+        public static final short contexttreetable_duplicate = 91;
 
         /**
          * Feature table
          */
-        public static final short contexttreetable_feature_table = 360;
+        public static final short contexttreetable_feature_table = 92;
 
         /**
          * Layers
          */
-        public static final short contexttreetable_layers = 361;
+        public static final short contexttreetable_layers = 93;
 
         /**
          * New layer group
          */
-        public static final short contexttreetable_newgroup = 362;
+        public static final short contexttreetable_newgroup = 94;
 
         /**
          * Paste
          */
-        public static final short contexttreetable_paste = 363;
+        public static final short contexttreetable_paste = 95;
 
         /**
          * Properties
          */
-        public static final short contexttreetable_properties = 364;
+        public static final short contexttreetable_properties = 96;
 
         /**
          * Visible
          */
-        public static final short contexttreetable_visible = 365;
+        public static final short contexttreetable_visible = 97;
 
         /**
          * Contrast
          */
-        public static final short contrast = 64;
+        public static final short contrast = 98;
 
         /**
          * Coordinates :
          */
-        public static final short coordinates_title = 366;
+        public static final short coordinates_title = 99;
 
         /**
          * Copy
          */
-        public static final short copy = 65;
+        public static final short copy = 100;
 
         /**
          * Copy selection
          */
-        public static final short copyselection = 66;
+        public static final short copyselection = 101;
 
         /**
          * Copy selection (append)
          */
-        public static final short copyselectionappend = 67;
+        public static final short copyselectionappend = 102;
 
         /**
          * Copy to application clipboard
          */
-        public static final short copytoappclipboard = 68;
+        public static final short copytoappclipboard = 103;
 
         /**
          * Copy to system clipboard
          */
-        public static final short copytosysclipboard = 69;
+        public static final short copytosysclipboard = 104;
 
         /**
          * Count
          */
-        public static final short count = 70;
+        public static final short count = 105;
 
         /**
          * Advanced
          */
-        public static final short cql_advanced = 367;
+        public static final short cql_advanced = 106;
 
         /**
          * Simple
          */
-        public static final short cql_simple = 368;
+        public static final short cql_simple = 107;
 
         /**
          * CQL filter (Ex : Attribute = 'text' or attribute > number)
          */
-        public static final short cql_text_help = 369;
+        public static final short cql_text_help = 108;
 
         /**
          * Create
          */
-        public static final short create = 71;
+        public static final short create = 109;
 
         /**
          * Create hole
          */
-        public static final short createHole = 72;
+        public static final short createHole = 110;
 
         /**
          * Create linestring
          */
-        public static final short createLineString = 73;
+        public static final short createLineString = 111;
 
         /**
          * Create multi-linestring
          */
-        public static final short createMultiLineString = 74;
+        public static final short createMultiLineString = 112;
 
         /**
          * Create multi-point
          */
-        public static final short createMultiPoint = 75;
+        public static final short createMultiPoint = 113;
 
         /**
          * Create multi-polygon
          */
-        public static final short createMultiPolygon = 76;
+        public static final short createMultiPolygon = 114;
 
         /**
          * Create new
          */
-        public static final short createNew = 77;
+        public static final short createNew = 115;
 
         /**
          * Create geometry piece
          */
-        public static final short createPart = 78;
+        public static final short createPart = 116;
 
         /**
          * Create point
          */
-        public static final short createPoint = 79;
+        public static final short createPoint = 117;
 
         /**
          * Create polygon
          */
-        public static final short createPolygon = 80;
+        public static final short createPolygon = 118;
 
         /**
          * Creation date
          */
-        public static final short creationDate = 81;
+        public static final short creationDate = 119;
 
         /**
          * CRS
          */
-        public static final short crs = 82;
+        public static final short crs = 120;
 
         /**
          * Coordinate system :
          */
-        public static final short crs_title = 370;
+        public static final short crs_title = 121;
 
         /**
          * Apply
          */
-        public static final short crschooser_apply = 371;
+        public static final short crschooser_apply = 122;
 
         /**
          * Cancel
          */
-        public static final short crschooser_cancel = 372;
+        public static final short crschooser_cancel = 123;
 
         /**
          * Coordinate Reference Systems
          */
-        public static final short crschooser_crs = 373;
+        public static final short crschooser_crs = 124;
 
         /**
          * List
          */
-        public static final short crschooser_list = 374;
+        public static final short crschooser_list = 125;
 
         /**
          * CRS Chooser
          */
-        public static final short crschooser_title = 375;
+        public static final short crschooser_title = 126;
 
         /**
          * WKT
          */
-        public static final short crschooser_wkt = 376;
+        public static final short crschooser_wkt = 127;
 
         /**
          * Dashes
          */
-        public static final short dashes = 83;
+        public static final short dashes = 128;
 
         /**
          * Data
          */
-        public static final short data = 84;
+        public static final short data = 129;
 
         /**
          * Data structure
          */
-        public static final short dataStructure = 85;
+        public static final short dataStructure = 130;
 
         /**
          * Datas
          */
-        public static final short datas = 86;
+        public static final short datas = 131;
 
         /**
          * Default value
          */
-        public static final short defaultValue = 87;
+        public static final short defaultValue = 132;
 
         /**
          * Default style
          */
-        public static final short defaut = 88;
+        public static final short defaut = 133;
 
         /**
          * Delete
          */
-        public static final short delete = 89;
+        public static final short delete = 134;
 
         /**
          * Deleting this chain will delete related jobs. Are you sure to delete it ?
          */
-        public static final short deleteChainAndJobs = 90;
+        public static final short deleteChainAndJobs = 135;
 
         /**
          * Delete chain
          */
-        public static final short deleteChainTitle = 91;
+        public static final short deleteChainTitle = 136;
 
         /**
          * Do you really want to delete this job?
          */
-        public static final short deleteJob = 92;
+        public static final short deleteJob = 137;
 
         /**
          * Delete job
          */
-        public static final short deleteJobTitle = 93;
+        public static final short deleteJobTitle = 138;
 
         /**
          * Description
          */
-        public static final short description = 94;
+        public static final short description = 139;
 
         /**
          * Deviation
          */
-        public static final short deviation = 95;
+        public static final short deviation = 140;
 
         /**
          * Displacement
          */
-        public static final short displacement = 96;
+        public static final short displacement = 141;
 
         /**
          * Displacement X
          */
-        public static final short displacementX = 97;
+        public static final short displacementX = 142;
 
         /**
          * Displacement Y
          */
-        public static final short displacementY = 98;
+        public static final short displacementY = 143;
 
         /**
          * Division
          */
-        public static final short division = 99;
+        public static final short division = 144;
 
         /**
          * Douglas Peuker
          */
-        public static final short douglaspeuker = 100;
+        public static final short douglaspeuker = 145;
 
         /**
          * Down
          */
-        public static final short down = 101;
+        public static final short down = 146;
 
         /**
          * Failed to download metadata document.
          */
-        public static final short downloadMetadataFail = 102;
+        public static final short downloadMetadataFail = 147;
 
         /**
          * Downloading chains list
          */
-        public static final short downloadingChains = 103;
+        public static final short downloadingChains = 148;
 
         /**
          * Downloading jobs list
          */
-        public static final short downloadingJobs = 104;
+        public static final short downloadingJobs = 149;
 
         /**
          * Downloading status list
          */
-        public static final short downloadingStatus = 105;
+        public static final short downloadingStatus = 150;
 
         /**
          * Edit
          */
-        public static final short edit = 106;
+        public static final short edit = 151;
 
         /**
          * Edit nodes
          */
-        public static final short editNode = 107;
+        public static final short editNode = 152;
 
         /**
          * Edit symbol
          */
-        public static final short editSymbol = 108;
+        public static final short editSymbol = 153;
 
         /**
          * Edition tool
          */
-        public static final short editTool = 109;
+        public static final short editTool = 154;
 
         /**
          * All dimension of layer need to be selected before editing.style_twostate_simple=Simple
          */
-        public static final short edition_coverage_warrningdimension = 377;
+        public static final short edition_coverage_warrningdimension = 155;
 
         /**
          * Groovy script
          */
-        public static final short editor = 110;
+        public static final short editor = 156;
 
         /**
          * Default value
          */
-        public static final short editorHelpDefaultLabel = 111;
+        public static final short editorHelpDefaultLabel = 157;
 
         /**
          * Description
          */
-        public static final short editorHelpDescriptionLabel = 112;
+        public static final short editorHelpDescriptionLabel = 158;
 
         /**
          * mandatory
          */
-        public static final short editorHelpMandatory = 113;
+        public static final short editorHelpMandatory = 159;
 
         /**
          * Mandatory
          */
-        public static final short editorHelpMandatoryLabel = 114;
+        public static final short editorHelpMandatoryLabel = 160;
 
         /**
          * optional
          */
-        public static final short editorHelpOptional = 115;
+        public static final short editorHelpOptional = 161;
 
         /**
          * Data type
          */
-        public static final short editorHelpTypeLabel = 116;
+        public static final short editorHelpTypeLabel = 162;
 
         /**
          * Unit
          */
-        public static final short editorHelpUnitLabel = 117;
+        public static final short editorHelpUnitLabel = 163;
 
         /**
          * Valid values
          */
-        public static final short editorHelpValidLabel = 118;
+        public static final short editorHelpValidLabel = 164;
 
         /**
          * El
          */
-        public static final short el = 119;
+        public static final short el = 165;
 
         /**
          * Elevation attributs
          */
-        public static final short elevation_configuration = 378;
+        public static final short elevation_configuration = 166;
 
         /**
          * Is else filter
          */
-        public static final short else_filter = 379;
+        public static final short else_filter = 167;
 
         /**
          * Active
          */
-        public static final short enabled = 120;
+        public static final short enabled = 168;
 
         /**
          * End
          */
-        public static final short end = 121;
+        public static final short end = 169;
 
         /**
          * Error while publishing chain
          */
-        public static final short errorPublish = 122;
+        public static final short errorPublish = 170;
 
         /**
          * Unable to reach the server
          */
-        public static final short errorURL = 123;
+        public static final short errorURL = 171;
 
         /**
          * Estimated time (min)
          */
-        public static final short estimatedTime = 124;
+        public static final short estimatedTime = 172;
 
         /**
          * Execute
          */
-        public static final short execute = 125;
+        public static final short execute = 173;
 
         /**
          * Test execution
          */
-        public static final short executeTest = 126;
+        public static final short executeTest = 174;
 
         /**
          * Export XML
          */
-        public static final short exportXML = 127;
+        public static final short exportXML = 175;
 
         /**
          * External
          */
-        public static final short external = 128;
+        public static final short external = 176;
 
         /**
          * Factor
          */
-        public static final short factor = 129;
+        public static final short factor = 177;
 
         /**
          * failed
          */
-        public static final short failed = 130;
+        public static final short failed = 178;
 
         /**
          * Family
          */
-        public static final short family = 131;
+        public static final short family = 179;
 
         /**
          * Feature type name
          */
-        public static final short featuretypename = 132;
+        public static final short featuretypename = 180;
 
         /**
          * File trigger
          */
-        public static final short fileTrigger = 133;
+        public static final short fileTrigger = 181;
 
         /**
          * Fill
          */
-        public static final short fill = 134;
+        public static final short fill = 182;
 
         /**
          * Fill Graphic
          */
-        public static final short fillgraphic = 135;
+        public static final short fillgraphic = 183;
 
         /**
          * Filter
          */
-        public static final short filter = 136;
+        public static final short filter = 184;
 
         /**
          * Filter
          */
-        public static final short filter2 = 137;
+        public static final short filter2 = 185;
 
         /**
          * Apply filters
          */
-        public static final short filterApply = 138;
+        public static final short filterApply = 186;
 
         /**
          * Reset filters
          */
-        public static final short filterReset = 139;
+        public static final short filterReset = 187;
 
         /**
          * Access Database
          */
-        public static final short filter_access = 380;
+        public static final short filter_access = 188;
 
         /**
          * ESRI ASCII Grid
          */
-        public static final short filter_asc = 381;
+        public static final short filter_asc = 189;
 
         /**
          * CSV
          */
-        public static final short filter_csv = 382;
+        public static final short filter_csv = 190;
 
         /**
          * Dimap, Spot image
          */
-        public static final short filter_dimap = 383;
+        public static final short filter_dimap = 191;
 
         /**
          * AutoCAD DWG
          */
-        public static final short filter_dwg = 384;
+        public static final short filter_dwg = 192;
 
         /**
          * ERMapper Compressed Wavelets
          */
-        public static final short filter_ecw = 385;
+        public static final short filter_ecw = 193;
 
         /**
          * Erdas Imagine
          */
-        public static final short filter_erdas_img = 386;
+        public static final short filter_erdas_img = 194;
 
         /**
          * Folders
          */
-        public static final short filter_folder = 387;
+        public static final short filter_folder = 195;
 
         /**
          * Georeferenced Tiff
          */
-        public static final short filter_geotiff = 388;
+        public static final short filter_geotiff = 196;
 
         /**
          * GML
          */
-        public static final short filter_gml = 389;
+        public static final short filter_gml = 197;
 
         /**
          * Joint Photographic Experts Group
          */
-        public static final short filter_jpg = 390;
+        public static final short filter_jpg = 198;
 
         /**
          * JPEG 2000
          */
-        public static final short filter_jpg2 = 391;
+        public static final short filter_jpg2 = 199;
 
         /**
          * Keyhole Markup Language - Google Earth/Map
          */
-        public static final short filter_kml = 392;
+        public static final short filter_kml = 200;
 
         /**
          * Zipped Keyhole Markup Language - Google Earth/Map
          */
-        public static final short filter_kmz = 393;
+        public static final short filter_kmz = 201;
 
         /**
          * MicroStation
          */
-        public static final short filter_microstation_dgn = 394;
+        public static final short filter_microstation_dgn = 202;
 
         /**
          * MapInfo Exchange
          */
-        public static final short filter_mif = 395;
+        public static final short filter_mif = 203;
 
         /**
          * NetCDF-CF, NcML, Grib 1-2
          */
-        public static final short filter_netcdfgrib = 396;
+        public static final short filter_netcdfgrib = 204;
 
         /**
          * GPS Measures (NMEA)
          */
-        public static final short filter_nmea = 397;
+        public static final short filter_nmea = 205;
 
         /**
          * Adobe PDF
          */
-        public static final short filter_pdf = 398;
+        public static final short filter_pdf = 206;
 
         /**
          * Portable Network Graphics
          */
-        public static final short filter_png = 399;
+        public static final short filter_png = 207;
 
         /**
          * ENC S-57
          */
-        public static final short filter_s57 = 400;
+        public static final short filter_s57 = 208;
 
         /**
          * ESRI Shapefile
          */
-        public static final short filter_shapefile = 401;
+        public static final short filter_shapefile = 209;
 
         /**
          * Style Layer Descriptor
          */
-        public static final short filter_sld = 402;
+        public static final short filter_sld = 210;
 
         /**
          * Scalable Vector Graphics
          */
-        public static final short filter_svg = 403;
+        public static final short filter_svg = 211;
 
         /**
          * MapInfo
          */
-        public static final short filter_tab = 404;
+        public static final short filter_tab = 212;
 
         /**
          * Tagged Image File Format
          */
-        public static final short filter_tiff = 405;
+        public static final short filter_tiff = 213;
 
         /**
          * VisualDEM
          */
-        public static final short filter_vdem = 406;
+        public static final short filter_vdem = 214;
 
         /**
          * Web Map Context
          */
-        public static final short filter_wmc = 407;
+        public static final short filter_wmc = 215;
 
         /**
          * World Image
          */
-        public static final short filter_world_image = 408;
+        public static final short filter_world_image = 216;
 
         /**
          * Filters
          */
-        public static final short filters = 140;
+        public static final short filters = 217;
 
         /**
          * Folder
          */
-        public static final short folder = 141;
+        public static final short folder = 218;
 
         /**
          * Fonts
          */
-        public static final short fonts = 142;
+        public static final short fonts = 219;
 
         /**
          * Force longitude first
          */
-        public static final short force_longitude_first = 409;
+        public static final short force_longitude_first = 220;
 
         /**
          * From file :
          */
-        public static final short fromFile = 143;
+        public static final short fromFile = 221;
 
         /**
          * Function
          */
-        public static final short function = 144;
+        public static final short function = 222;
 
         /**
          * Gamma
          */
-        public static final short gamma = 145;
+        public static final short gamma = 223;
 
         /**
          * Gap
          */
-        public static final short gap = 146;
+        public static final short gap = 224;
 
         /**
          * General
          */
-        public static final short general = 147;
+        public static final short general = 225;
 
         /**
          * Generalized
          */
-        public static final short generalize = 148;
+        public static final short generalize = 226;
 
         /**
          * Generate
          */
-        public static final short generate = 149;
+        public static final short generate = 227;
 
         /**
          * Geographic
          */
-        public static final short geographic = 150;
+        public static final short geographic = 228;
 
         /**
          * Geometry
          */
-        public static final short geometry = 151;
+        public static final short geometry = 229;
 
         /**
          * Drag view
          */
-        public static final short gesture_drag = 410;
+        public static final short gesture_drag = 230;
 
         /**
          * Add new geometry
          */
-        public static final short gesture_geom_add = 411;
+        public static final short gesture_geom_add = 231;
 
         /**
          * Delete geometry
          */
-        public static final short gesture_geom_delete = 412;
+        public static final short gesture_geom_delete = 232;
 
         /**
          * Move geometry
          */
-        public static final short gesture_geom_move = 413;
+        public static final short gesture_geom_move = 233;
 
         /**
          * Select geometry
          */
-        public static final short gesture_geom_select = 414;
+        public static final short gesture_geom_select = 234;
 
         /**
          * Add node
          */
-        public static final short gesture_node_add = 415;
+        public static final short gesture_node_add = 235;
 
         /**
          * Delete node
          */
-        public static final short gesture_node_delete = 416;
+        public static final short gesture_node_delete = 236;
 
         /**
          * Move node
          */
-        public static final short gesture_node_move = 417;
+        public static final short gesture_node_move = 237;
 
         /**
          * Select node
          */
-        public static final short gesture_node_select = 418;
+        public static final short gesture_node_select = 238;
 
         /**
          * Add sub-geometry
          */
-        public static final short gesture_subgeom_add = 419;
+        public static final short gesture_subgeom_add = 239;
 
         /**
          * Delete sub-geometry
          */
-        public static final short gesture_subgeom_delete = 420;
+        public static final short gesture_subgeom_delete = 240;
 
         /**
          * Move sub-geometry
          */
-        public static final short gesture_subgeom_move = 421;
+        public static final short gesture_subgeom_move = 241;
 
         /**
          * Validate sub-geometry
          */
-        public static final short gesture_subgeom_validate = 422;
+        public static final short gesture_subgeom_validate = 242;
 
         /**
          * Validate
          */
-        public static final short gesture_validate = 423;
+        public static final short gesture_validate = 243;
 
         /**
          * Zoom +/-
          */
-        public static final short gesture_zoom = 424;
+        public static final short gesture_zoom = 244;
 
         /**
          * Graphics
          */
-        public static final short graphic = 152;
+        public static final short graphic = 245;
 
         /**
          * Graphic color
          */
-        public static final short graphic_color = 425;
+        public static final short graphic_color = 246;
 
         /**
          * Graphic fill
          */
-        public static final short graphic_fill = 426;
+        public static final short graphic_fill = 247;
 
         /**
          * Graphic stroke
          */
-        public static final short graphic_stroke = 427;
+        public static final short graphic_stroke = 248;
 
         /**
          * Gray channel
          */
-        public static final short gray = 153;
+        public static final short gray = 249;
 
         /**
          * Green channel
          */
-        public static final short green = 154;
+        public static final short green = 250;
 
         /**
          * Grid
          */
-        public static final short grid = 155;
+        public static final short grid = 251;
 
         /**
          * Groovy editor
          */
-        public static final short groovyEditror = 156;
+        public static final short groovyEditror = 252;
 
         /**
          * Groovy script
          */
-        public static final short groovyScriptLbl = 157;
+        public static final short groovyScriptLbl = 253;
 
         /**
          * Advanced
          */
-        public static final short guiToogleAdvancedView = 158;
+        public static final short guiToogleAdvancedView = 254;
 
         /**
          * Basic
          */
-        public static final short guiToogleBasicView = 159;
+        public static final short guiToogleBasicView = 255;
 
         /**
          * Intermediate
          */
-        public static final short guiToogleInterView = 160;
+        public static final short guiToogleInterView = 256;
 
         /**
          * Halo
          */
-        public static final short halo = 161;
+        public static final short halo = 257;
 
         /**
          * Hide help
          */
-        public static final short hideHelp = 162;
+        public static final short hideHelp = 258;
 
         /**
          * Identifier
          */
-        public static final short identifier = 163;
+        public static final short identifier = 259;
 
         /**
          * Image
          */
-        public static final short image = 164;
+        public static final short image = 260;
 
         /**
          * Import XML
          */
-        public static final short importXML = 165;
+        public static final short importXML = 261;
 
         /**
          * Import/Export
          */
-        public static final short import_export = 428;
+        public static final short import_export = 262;
 
         /**
          * Initial gap
          */
-        public static final short initial_gap = 429;
+        public static final short initial_gap = 263;
 
         /**
          * Not supported input
          */
-        public static final short inputNotSupported = 166;
+        public static final short inputNotSupported = 264;
 
         /**
          * Inputs
          */
-        public static final short inputs = 167;
+        public static final short inputs = 265;
 
         /**
          * Interpolation
          */
-        public static final short interpolation = 168;
+        public static final short interpolation = 266;
 
         /**
          * Bicubic
          */
-        public static final short interpolation_bicubic = 430;
+        public static final short interpolation_bicubic = 267;
 
         /**
          * Linear
          */
-        public static final short interpolation_linear = 431;
+        public static final short interpolation_linear = 268;
 
         /**
          * None
          */
-        public static final short interpolation_none = 432;
+        public static final short interpolation_none = 269;
 
         /**
          * Invert palette
          */
-        public static final short invert = 169;
+        public static final short invert = 270;
 
         /**
          * Invert colors
          */
-        public static final short invert_palette = 433;
+        public static final short invert_palette = 271;
 
         /**
          * Color map
          */
-        public static final short isolineEditor_colormap = 434;
+        public static final short isolineEditor_colormap = 272;
 
         /**
          * Isolines
          */
-        public static final short isolineEditor_displayName = 435;
+        public static final short isolineEditor_displayName = 273;
 
         /**
          * Show isolines only
          */
-        public static final short isolineEditor_isolineOnly = 436;
+        public static final short isolineEditor_isolineOnly = 274;
 
         /**
          * Line
          */
-        public static final short isolineEditor_line = 437;
+        public static final short isolineEditor_line = 275;
 
         /**
          * Show isoline value
          */
-        public static final short isolineEditor_showLabel = 438;
+        public static final short isolineEditor_showLabel = 276;
 
         /**
          * Text
          */
-        public static final short isolineEditor_text = 439;
+        public static final short isolineEditor_text = 277;
 
         /**
          * Dynamic method, no value/color association.
          */
-        public static final short jenks_notable = 440;
+        public static final short jenks_notable = 278;
 
         /**
          * Job
          */
-        public static final short job = 170;
+        public static final short job = 279;
 
         /**
          * Job editor
          */
-        public static final short jobEditor = 171;
+        public static final short jobEditor = 280;
 
         /**
          * The job has been launch on the server.
          */
-        public static final short jobExecuting = 172;
+        public static final short jobExecuting = 281;
 
         /**
          * Input parameters
          */
-        public static final short jobInputs = 173;
+        public static final short jobInputs = 282;
 
         /**
          * Output parameters
          */
-        public static final short jobOutputs = 174;
+        public static final short jobOutputs = 283;
 
         /**
          * Jobs table
          */
-        public static final short jobTable = 175;
+        public static final short jobTable = 284;
 
         /**
          * Label
          */
-        public static final short label = 176;
+        public static final short label = 285;
 
         /**
          * Layers
          */
-        public static final short layers = 177;
+        public static final short layers = 286;
 
         /**
          * Legend
          */
-        public static final short legend = 178;
+        public static final short legend = 287;
 
         /**
          * Lenght
          */
-        public static final short lenght = 179;
+        public static final short lenght = 288;
 
         /**
          * Font and Style
          */
-        public static final short libPoliceStyle = 180;
+        public static final short libPoliceStyle = 289;
 
         /**
          * Line
          */
-        public static final short line = 181;
+        public static final short line = 290;
 
         /**
          * Line shape and color
          */
-        public static final short lineShapeAndColor = 182;
+        public static final short lineShapeAndColor = 291;
 
         /**
          * Line cap
          */
-        public static final short linecap = 183;
+        public static final short linecap = 292;
 
         /**
          * Line join
          */
-        public static final short linejoin = 184;
+        public static final short linejoin = 293;
 
         /**
          * Line placement
          */
-        public static final short lineplacement = 185;
+        public static final short lineplacement = 294;
 
         /**
          * Loading
          */
-        public static final short loading = 186;
+        public static final short loading = 295;
 
         /**
          * Mandatory
          */
-        public static final short mandatory = 187;
+        public static final short mandatory = 296;
 
         /**
          * Manual
          */
-        public static final short manual = 188;
+        public static final short manual = 297;
 
         /**
          * Enter a description for the manual intervention.
          */
-        public static final short manualDesc = 189;
+        public static final short manualDesc = 298;
 
         /**
          * Manual intervention
          */
-        public static final short manualInt = 190;
+        public static final short manualInt = 299;
 
         /**
          * Map
          */
-        public static final short map = 191;
+        public static final short map = 300;
 
         /**
          * Rendering parameters
          */
-        public static final short map_config = 441;
+        public static final short map_config = 301;
 
         /**
          * Activate
          */
-        public static final short map_control_activate = 442;
+        public static final short map_control_activate = 302;
 
         /**
          * cannot calculate coordinate
          */
-        public static final short map_control_coord_error = 443;
+        public static final short map_control_coord_error = 303;
 
         /**
          * Coordinate :
          */
-        public static final short map_control_mouse_coord = 444;
+        public static final short map_control_mouse_coord = 304;
 
         /**
          * Unit
          */
-        public static final short map_control_unit = 445;
+        public static final short map_control_unit = 305;
 
         /**
          * Map Coordinate Reference System
          */
-        public static final short map_crs = 446;
+        public static final short map_crs = 306;
 
         /**
          * Rendering informations
          */
-        public static final short map_debug = 447;
+        public static final short map_debug = 307;
 
         /**
          * Edit mode
          */
-        public static final short map_edit = 448;
+        public static final short map_edit = 308;
 
         /**
          * Elevation slider
          */
-        public static final short map_elevation_slider = 449;
+        public static final short map_elevation_slider = 309;
 
         /**
          * Grab informations
          */
-        public static final short map_information = 450;
+        public static final short map_information = 310;
 
         /**
          * Measure area
          */
-        public static final short map_measure_area = 451;
+        public static final short map_measure_area = 311;
 
         /**
          * Measure lenght
          */
-        public static final short map_measure_lenght = 452;
+        public static final short map_measure_lenght = 312;
 
         /**
          * Move center here
          */
-        public static final short map_move_elevation_center = 453;
+        public static final short map_move_elevation_center = 313;
 
         /**
          * Move maximum limit here
          */
-        public static final short map_move_elevation_maximum = 454;
+        public static final short map_move_elevation_maximum = 314;
 
         /**
          * Move minimum limit here
          */
-        public static final short map_move_elevation_minimum = 455;
+        public static final short map_move_elevation_minimum = 315;
 
         /**
          * Move center here
          */
-        public static final short map_move_temporal_center = 456;
+        public static final short map_move_temporal_center = 316;
 
         /**
          * Move left limit here
          */
-        public static final short map_move_temporal_left = 457;
+        public static final short map_move_temporal_left = 317;
 
         /**
          * Move right limit here
          */
-        public static final short map_move_temporal_right = 458;
+        public static final short map_move_temporal_right = 318;
 
         /**
          * Go to coordinate
          */
-        public static final short map_nav_to = 459;
+        public static final short map_nav_to = 319;
 
         /**
          * Painting
          */
-        public static final short map_painting = 460;
+        public static final short map_painting = 320;
 
         /**
          * Free move
          */
-        public static final short map_pan = 461;
+        public static final short map_pan = 321;
 
         /**
          * Repaint
          */
-        public static final short map_refresh = 462;
+        public static final short map_refresh = 322;
 
         /**
          * Remove elevation range
          */
-        public static final short map_remove_elevation = 463;
+        public static final short map_remove_elevation = 323;
 
         /**
          * Remove maximum limit
          */
-        public static final short map_remove_elevation_maximum = 464;
+        public static final short map_remove_elevation_maximum = 324;
 
         /**
          * Remove minimum limit
          */
-        public static final short map_remove_elevation_minimum = 465;
+        public static final short map_remove_elevation_minimum = 325;
 
         /**
          * Remove time range
          */
-        public static final short map_remove_temporal = 466;
+        public static final short map_remove_temporal = 326;
 
         /**
          * Remove left limit
          */
-        public static final short map_remove_temporal_left = 467;
+        public static final short map_remove_temporal_left = 327;
 
         /**
          * Remove right limit
          */
-        public static final short map_remove_temporal_right = 468;
+        public static final short map_remove_temporal_right = 328;
 
         /**
          * Selection mode
          */
-        public static final short map_select = 469;
+        public static final short map_select = 329;
 
         /**
          * Selection properties
          */
-        public static final short map_select_config = 470;
+        public static final short map_select_config = 330;
 
         /**
          * Statefull rendering mode
          */
-        public static final short map_statefull = 471;
+        public static final short map_statefull = 331;
 
         /**
          * Render by symbol order
          */
-        public static final short map_style_order = 472;
+        public static final short map_style_order = 332;
 
         /**
          * Temporal slider
          */
-        public static final short map_temporal_slider = 473;
+        public static final short map_temporal_slider = 333;
 
         /**
          * Preserve X-Y ratio
          */
-        public static final short map_xy_ratio = 474;
+        public static final short map_xy_ratio = 334;
 
         /**
          * Zoom to extent
          */
-        public static final short map_zoom_all = 475;
+        public static final short map_zoom_all = 335;
 
         /**
          * Zoom in
          */
-        public static final short map_zoom_in = 476;
+        public static final short map_zoom_in = 336;
 
         /**
          * Next
          */
-        public static final short map_zoom_next = 477;
+        public static final short map_zoom_next = 337;
 
         /**
          * Zoom out
          */
-        public static final short map_zoom_out = 478;
+        public static final short map_zoom_out = 338;
 
         /**
          * Previous
          */
-        public static final short map_zoom_previous = 479;
+        public static final short map_zoom_previous = 339;
 
         /**
          * Zoom on layer
          */
-        public static final short map_zoom_to_layer = 480;
+        public static final short map_zoom_to_layer = 340;
 
         /**
          * Mark
          */
-        public static final short mark = 192;
+        public static final short mark = 341;
 
         /**
          * Maximum
          */
-        public static final short maximum = 193;
+        public static final short maximum = 342;
 
         /**
          * Max scale
          */
-        public static final short maxscale = 194;
+        public static final short maxscale = 343;
 
         /**
          * Mean
          */
-        public static final short mean = 195;
+        public static final short mean = 344;
 
         /**
          * Median
          */
-        public static final short median = 196;
+        public static final short median = 345;
 
         /**
          * Method
          */
-        public static final short method = 197;
+        public static final short method = 346;
 
         /**
          * Histogram
          */
-        public static final short method_histogram = 481;
+        public static final short method_histogram = 347;
 
         /**
          * None
          */
-        public static final short method_none = 482;
+        public static final short method_none = 348;
 
         /**
          * Normalize
          */
-        public static final short method_normalize = 483;
+        public static final short method_normalize = 349;
 
         /**
          * Mime type
          */
-        public static final short mime = 198;
+        public static final short mime = 350;
 
         /**
          * Mime type
          */
-        public static final short mimeType = 199;
+        public static final short mimeType = 351;
 
         /**
          * Minimum
          */
-        public static final short minimum = 200;
+        public static final short minimum = 352;
 
         /**
          * Min scale
          */
-        public static final short minscale = 201;
+        public static final short minscale = 353;
 
         /**
          * Model
          */
-        public static final short model = 202;
+        public static final short model = 354;
 
         /**
          * Move
          */
-        public static final short move = 203;
+        public static final short move = 355;
 
         /**
          * Move to position
          */
-        public static final short movetoposition = 204;
+        public static final short movetoposition = 356;
 
         /**
          * Multithread
          */
-        public static final short multithread = 205;
+        public static final short multithread = 357;
 
         /**
          * Name
          */
-        public static final short name = 206;
+        public static final short name = 358;
 
         /**
          * NaN value
          */
-        public static final short nanValue = 207;
+        public static final short nanValue = 359;
 
         /**
          * New chain
          */
-        public static final short newChain = 208;
+        public static final short newChain = 360;
 
         /**
          * New Job
          */
-        public static final short newJob = 209;
+        public static final short newJob = 361;
 
         /**
          * New Groovy process
          */
-        public static final short newProcess = 210;
+        public static final short newProcess = 362;
 
         /**
          * New trigger
          */
-        public static final short newTrigger = 211;
+        public static final short newTrigger = 363;
 
         /**
          * External
          */
-        public static final short new_external = 484;
+        public static final short new_external = 364;
 
         /**
          * New
          */
-        public static final short new_file = 485;
+        public static final short new_file = 365;
 
         /**
          * Mark
          */
-        public static final short new_mark = 486;
+        public static final short new_mark = 366;
 
         /**
          * No
          */
-        public static final short no = 212;
+        public static final short no = 367;
 
         /**
          * No data values
          */
-        public static final short noData = 213;
+        public static final short noData = 368;
 
         /**
          * no name
          */
-        public static final short noname = 214;
+        public static final short noname = 369;
 
         /**
          * None
          */
-        public static final short none = 215;
+        public static final short none = 370;
 
         /**
          * Normalize
          */
-        public static final short normalize = 216;
+        public static final short normalize = 371;
 
         /**
          * Not supported
          */
-        public static final short notSupported = 217;
+        public static final short notSupported = 372;
 
         /**
          * not started
          */
-        public static final short not_started = 487;
+        public static final short not_started = 373;
 
         /**
          * Offset
          */
-        public static final short offset = 218;
+        public static final short offset = 374;
 
         /**
          * Offset
          */
-        public static final short offset2 = 219;
+        public static final short offset2 = 375;
 
         /**
          * Ok
          */
-        public static final short ok = 220;
+        public static final short ok = 376;
 
         /**
          * Opacity
          */
-        public static final short opacity = 221;
+        public static final short opacity = 377;
 
         /**
          * Open
          */
-        public static final short open = 222;
+        public static final short open = 378;
 
         /**
          * Open
          */
-        public static final short open_file = 488;
+        public static final short open_file = 379;
 
         /**
          * Operand
          */
-        public static final short operand = 223;
+        public static final short operand = 380;
 
         /**
          * Azimuth
          */
-        public static final short org_geotoolkit_gui_swing_render3d_azimut = 489;
+        public static final short org_geotoolkit_gui_swing_render3d_azimut = 381;
 
         /**
          * Layers
          */
-        public static final short org_geotoolkit_gui_swing_render3d_layer = 490;
+        public static final short org_geotoolkit_gui_swing_render3d_layer = 382;
 
         /**
          * DEM
          */
-        public static final short org_geotoolkit_gui_swing_render3d_mnt = 491;
+        public static final short org_geotoolkit_gui_swing_render3d_mnt = 383;
 
         /**
          * Rotation
          */
-        public static final short org_geotoolkit_gui_swing_render3d_rotation = 492;
+        public static final short org_geotoolkit_gui_swing_render3d_rotation = 384;
 
         /**
          * Show shadows
          */
-        public static final short org_geotoolkit_gui_swing_render3d_show = 493;
+        public static final short org_geotoolkit_gui_swing_render3d_show = 385;
 
         /**
          * Others
          */
-        public static final short other = 224;
+        public static final short other = 386;
 
         /**
          * Other rule
          */
-        public static final short otherRule = 225;
+        public static final short otherRule = 387;
 
         /**
          * Outline
          */
-        public static final short outline = 226;
+        public static final short outline = 388;
 
         /**
          * Outputs
          */
-        public static final short outputs = 227;
+        public static final short outputs = 389;
 
         /**
          * Overlap
          */
-        public static final short overlap = 228;
+        public static final short overlap = 390;
 
         /**
          * Palette
          */
-        public static final short palette = 229;
+        public static final short palette = 391;
 
         /**
          * Activate parameter
          */
-        public static final short parameters_activateParam = 494;
+        public static final short parameters_activateParam = 392;
 
         /**
          * Add a parameter group
          */
-        public static final short parameters_addNewGroupParameter = 495;
+        public static final short parameters_addNewGroupParameter = 393;
 
         /**
          * Add new parameter
          */
-        public static final short parameters_addNewSimpleParameter = 496;
+        public static final short parameters_addNewSimpleParameter = 394;
 
         /**
          * Code
          */
-        public static final short parameters_code = 497;
+        public static final short parameters_code = 395;
 
         /**
          * Collapse group
          */
-        public static final short parameters_collapse = 498;
+        public static final short parameters_collapse = 396;
 
         /**
          * Default value
          */
-        public static final short parameters_defaultValue = 499;
+        public static final short parameters_defaultValue = 397;
 
         /**
          * Description
          */
-        public static final short parameters_description = 500;
+        public static final short parameters_description = 398;
 
         /**
          * Default value
          */
-        public static final short parameters_editorHelpDefaultLabel = 501;
+        public static final short parameters_editorHelpDefaultLabel = 399;
 
         /**
          * Description
          */
-        public static final short parameters_editorHelpDescriptionLabel = 502;
+        public static final short parameters_editorHelpDescriptionLabel = 400;
 
         /**
          * mandatory
          */
-        public static final short parameters_editorHelpMandatory = 503;
+        public static final short parameters_editorHelpMandatory = 401;
 
         /**
          * Mandatory
          */
-        public static final short parameters_editorHelpMandatoryLabel = 504;
+        public static final short parameters_editorHelpMandatoryLabel = 402;
 
         /**
          * optional
          */
-        public static final short parameters_editorHelpOptional = 505;
+        public static final short parameters_editorHelpOptional = 403;
 
         /**
          * Data type
          */
-        public static final short parameters_editorHelpTypeLabel = 506;
+        public static final short parameters_editorHelpTypeLabel = 404;
 
         /**
          * Unit
          */
-        public static final short parameters_editorHelpUnitLabel = 507;
+        public static final short parameters_editorHelpUnitLabel = 405;
 
         /**
          * Valid values
          */
-        public static final short parameters_editorHelpValidLabel = 508;
+        public static final short parameters_editorHelpValidLabel = 406;
 
         /**
          * Error
          */
-        public static final short parameters_editorHelpValidationErrorLabel = 509;
+        public static final short parameters_editorHelpValidationErrorLabel = 407;
 
         /**
          * Parameter can't be null or empty :
          */
-        public static final short parameters_errorNullEmptyParameterValue = 510;
+        public static final short parameters_errorNullEmptyParameterValue = 408;
 
         /**
          * Expend group
          */
-        public static final short parameters_expend = 511;
+        public static final short parameters_expend = 409;
 
         /**
          * Mandatory
          */
-        public static final short parameters_mandatory = 512;
+        public static final short parameters_mandatory = 410;
 
         /**
          * Max
          */
-        public static final short parameters_max = 513;
+        public static final short parameters_max = 411;
 
         /**
          * Max. occurences
          */
-        public static final short parameters_maxOccurs = 514;
+        public static final short parameters_maxOccurs = 412;
 
         /**
          * Min
          */
-        public static final short parameters_min = 515;
+        public static final short parameters_min = 413;
 
         /**
          * Min. occurences
          */
-        public static final short parameters_minOccurs = 516;
+        public static final short parameters_minOccurs = 414;
 
         /**
          * Occurences :
          */
-        public static final short parameters_occurences = 517;
+        public static final short parameters_occurences = 415;
 
         /**
          * Remove group value
          */
-        public static final short parameters_removeGroup = 518;
+        public static final short parameters_removeGroup = 416;
 
         /**
          * Remove parameter
          */
-        public static final short parameters_removeParameter = 519;
+        public static final short parameters_removeParameter = 417;
 
         /**
          * Type
          */
-        public static final short parameters_type = 520;
+        public static final short parameters_type = 418;
 
         /**
          * Unactivate parameter
          */
-        public static final short parameters_unactivateParam = 521;
+        public static final short parameters_unactivateParam = 419;
 
         /**
          * Password
          */
-        public static final short password = 230;
+        public static final short password = 420;
 
         /**
          * Paste
          */
-        public static final short paste = 231;
+        public static final short paste = 421;
 
         /**
          * paused
          */
-        public static final short paused = 232;
+        public static final short paused = 422;
 
         /**
          * Placement
          */
-        public static final short placement = 233;
+        public static final short placement = 423;
 
         /**
          * Bottom left
          */
-        public static final short placement_bottomleft = 522;
+        public static final short placement_bottomleft = 424;
 
         /**
          * Bottom
          */
-        public static final short placement_bottommiddle = 523;
+        public static final short placement_bottommiddle = 425;
 
         /**
          * Bottom right
          */
-        public static final short placement_bottomright = 524;
+        public static final short placement_bottomright = 426;
 
         /**
          * Left
          */
-        public static final short placement_centerleft = 525;
+        public static final short placement_centerleft = 427;
 
         /**
          * Center
          */
-        public static final short placement_centermiddle = 526;
+        public static final short placement_centermiddle = 428;
 
         /**
          * Right
          */
-        public static final short placement_centerright = 527;
+        public static final short placement_centerright = 429;
 
         /**
          * Top left
          */
-        public static final short placement_topleft = 528;
+        public static final short placement_topleft = 430;
 
         /**
          * Top
          */
-        public static final short placement_topmiddle = 529;
+        public static final short placement_topmiddle = 431;
 
         /**
          * Top right
          */
-        public static final short placement_topright = 530;
+        public static final short placement_topright = 432;
 
         /**
          * Plain color
          */
-        public static final short plainColor = 234;
+        public static final short plainColor = 433;
 
         /**
          * Planning table
          */
-        public static final short planningTable = 235;
+        public static final short planningTable = 434;
 
         /**
          * Point :
          */
-        public static final short point = 236;
+        public static final short point = 435;
 
         /**
          * Point placement
          */
-        public static final short pointplacement = 237;
+        public static final short pointplacement = 436;
 
         /**
          * Polygon
          */
-        public static final short polygon = 238;
+        public static final short polygon = 437;
 
         /**
          * Position
          */
-        public static final short position = 239;
+        public static final short position = 438;
 
         /**
          * Predefined shapes
          */
-        public static final short predefinedShape = 240;
+        public static final short predefinedShape = 439;
 
         /**
          * Priority
          */
-        public static final short priority = 241;
+        public static final short priority = 440;
 
         /**
          * Groovy process
          */
-        public static final short processGroovy = 242;
+        public static final short processGroovy = 441;
 
         /**
          * Name
          */
-        public static final short processIdLbl = 243;
+        public static final short processIdLbl = 442;
 
         /**
          * Input parameters of process
          */
-        public static final short processInputParameters = 244;
+        public static final short processInputParameters = 443;
 
         /**
          * Editor
          */
-        public static final short processTabEditor = 245;
+        public static final short processTabEditor = 444;
 
         /**
          * Groovy process list
          */
-        public static final short processTable = 246;
+        public static final short processTable = 445;
 
         /**
          * Processes
          */
-        public static final short processes = 247;
+        public static final short processes = 446;
 
         /**
          * processing
          */
-        public static final short processing = 248;
+        public static final short processing = 447;
 
         /**
          * Properties
          */
-        public static final short properties = 249;
+        public static final short properties = 448;
 
         /**
          * Property
          */
-        public static final short property = 250;
+        public static final short property = 449;
 
         /**
          * Action
          */
-        public static final short property_action = 531;
+        public static final short property_action = 450;
 
         /**
          * All
          */
-        public static final short property_all = 532;
+        public static final short property_all = 451;
 
         /**
          * Apply
          */
-        public static final short property_apply = 533;
+        public static final short property_apply = 452;
 
         /**
          * Close
          */
-        public static final short property_close = 534;
+        public static final short property_close = 453;
 
         /**
          * Geometric
          */
-        public static final short property_cql_advance = 535;
+        public static final short property_cql_advance = 454;
 
         /**
          * Commun
          */
-        public static final short property_cql_basic = 536;
+        public static final short property_cql_basic = 455;
 
         /**
          * Error in CQL query
          */
-        public static final short property_cql_error = 537;
+        public static final short property_cql_error = 456;
 
         /**
          * Fields
          */
-        public static final short property_cql_field = 538;
+        public static final short property_cql_field = 457;
 
         /**
          * CQL
          */
-        public static final short property_cql_filter = 539;
+        public static final short property_cql_filter = 458;
 
         /**
          * Edit
          */
-        public static final short property_edit = 540;
+        public static final short property_edit = 459;
 
         /**
          * Editor
          */
-        public static final short property_editor = 541;
+        public static final short property_editor = 460;
 
         /**
          * Feature table
          */
-        public static final short property_feature_table = 542;
+        public static final short property_feature_table = 461;
 
         /**
          * Filter
          */
-        public static final short property_filter = 543;
+        public static final short property_filter = 462;
 
         /**
          * General
          */
-        public static final short property_general_title = 544;
+        public static final short property_general_title = 463;
 
         /**
          * Description :
          */
-        public static final short property_info_description = 545;
+        public static final short property_info_description = 464;
 
         /**
          * Keywords :
          */
-        public static final short property_info_keyword = 546;
+        public static final short property_info_keyword = 465;
 
         /**
          * Publisher :
          */
-        public static final short property_info_publisher = 547;
+        public static final short property_info_publisher = 466;
 
         /**
          * Schema :
          */
-        public static final short property_info_schema = 548;
+        public static final short property_info_schema = 467;
 
         /**
          * Source :
          */
-        public static final short property_info_source = 549;
+        public static final short property_info_source = 468;
 
         /**
          * Info title :
          */
-        public static final short property_info_title = 550;
+        public static final short property_info_title = 469;
 
         /**
          * Properties
          */
-        public static final short property_properties = 551;
+        public static final short property_properties = 470;
 
         /**
          * Revert
          */
-        public static final short property_revert = 552;
+        public static final short property_revert = 471;
 
         /**
          * Style
          */
-        public static final short property_style = 553;
+        public static final short property_style = 472;
 
         /**
          * Advanced
          */
-        public static final short property_style_advanced = 554;
+        public static final short property_style_advanced = 473;
 
         /**
          * Classification : interval
          */
-        public static final short property_style_classification_interval = 555;
+        public static final short property_style_classification_interval = 474;
 
         /**
          * Classification : unique symbol
          */
-        public static final short property_style_classification_unique = 556;
+        public static final short property_style_classification_unique = 475;
 
         /**
          * Color map
          */
-        public static final short property_style_colormap = 557;
+        public static final short property_style_colormap = 476;
 
         /**
          * Jenks classification
          */
-        public static final short property_style_jenks = 558;
+        public static final short property_style_jenks = 477;
 
         /**
          * Label
          */
-        public static final short property_style_label = 559;
+        public static final short property_style_label = 478;
 
         /**
          * Enable Label
          */
-        public static final short property_style_label_enable = 560;
+        public static final short property_style_label_enable = 479;
 
         /**
          * Simple
          */
-        public static final short property_style_simple = 561;
+        public static final short property_style_simple = 480;
 
         /**
          * Style
          */
-        public static final short property_style_style = 562;
+        public static final short property_style_style = 481;
 
         /**
          * Unknown Layer Style
          */
-        public static final short property_style_unknown_simplestyle = 563;
+        public static final short property_style_unknown_simplestyle = 482;
 
         /**
          * Title :
          */
-        public static final short property_title = 564;
+        public static final short property_title = 483;
 
         /**
          * Publish
          */
-        public static final short publish = 251;
+        public static final short publish = 484;
 
         /**
          * Publish chain
          */
-        public static final short publishChain = 252;
+        public static final short publishChain = 485;
 
         /**
          * Qantile
          */
-        public static final short qantile = 253;
+        public static final short qantile = 486;
 
         /**
          * Quantity
          */
-        public static final short quantity = 254;
+        public static final short quantity = 487;
 
         /**
          * Radius
          */
-        public static final short radius = 255;
+        public static final short radius = 488;
 
         /**
          * Raw data
          */
-        public static final short rawData = 256;
+        public static final short rawData = 489;
 
         /**
          * Red channel
          */
-        public static final short red = 257;
+        public static final short red = 490;
 
         /**
          * Refresh
          */
-        public static final short refresh = 258;
+        public static final short refresh = 491;
 
         /**
          * Refresh table
          */
-        public static final short refresh_table = 565;
+        public static final short refresh_table = 492;
 
         /**
          * Related to
          */
-        public static final short relatedTo = 259;
+        public static final short relatedTo = 493;
 
         /**
          * Relief
          */
-        public static final short relief = 260;
+        public static final short relief = 494;
 
         /**
          * Remove hole
          */
-        public static final short removeHole = 261;
+        public static final short removeHole = 495;
 
         /**
          * Remove geometry piece
          */
-        public static final short removePart = 262;
+        public static final short removePart = 496;
 
         /**
          * Remove all values
          */
-        public static final short remove_all_values = 566;
+        public static final short remove_all_values = 497;
 
         /**
          * Repeat interval (min)
          */
-        public static final short repeatTime = 263;
+        public static final short repeatTime = 498;
 
         /**
          * Repeated
          */
-        public static final short repeated = 264;
+        public static final short repeated = 499;
 
         /**
          * Responsible
          */
-        public static final short responsible = 265;
+        public static final short responsible = 500;
 
         /**
          * RGB
          */
-        public static final short rgb = 266;
+        public static final short rgb = 501;
 
         /**
          * RollBack
          */
-        public static final short rollback = 267;
+        public static final short rollback = 502;
 
         /**
          * Rotation
          */
-        public static final short rotation = 268;
+        public static final short rotation = 503;
 
         /**
          * Run
          */
-        public static final short run = 269;
+        public static final short run = 504;
 
         /**
          * Area table
          */
-        public static final short s52_areatable = 567;
+        public static final short s52_areatable = 505;
 
         /**
          * Attributes filter
          */
-        public static final short s52_attributefilter = 568;
+        public static final short s52_attributefilter = 506;
 
         /**
          * Background
          */
-        public static final short s52_background = 569;
+        public static final short s52_background = 507;
 
         /**
          * Base
          */
-        public static final short s52_base = 570;
+        public static final short s52_base = 508;
 
         /**
          * Category
          */
-        public static final short s52_category = 571;
+        public static final short s52_category = 509;
 
         /**
          * Chart
          */
-        public static final short s52_chart = 572;
+        public static final short s52_chart = 510;
 
         /**
          * Object class
          */
-        public static final short s52_class = 573;
+        public static final short s52_class = 511;
 
         /**
          * Code
          */
-        public static final short s52_code = 574;
+        public static final short s52_code = 512;
 
         /**
          * Contour labels
          */
-        public static final short s52_contourlabel = 575;
+        public static final short s52_contourlabel = 513;
 
         /**
          * Deep contour
          */
-        public static final short s52_deepcontour = 576;
+        public static final short s52_deepcontour = 514;
 
         /**
          * Description
          */
-        public static final short s52_description = 577;
+        public static final short s52_description = 515;
 
         /**
          * Details
          */
-        public static final short s52_detail = 578;
+        public static final short s52_detail = 516;
 
         /**
          * Distance tag
          */
-        public static final short s52_distancetag = 579;
+        public static final short s52_distancetag = 517;
 
         /**
          * Filter
          */
-        public static final short s52_filter = 580;
+        public static final short s52_filter = 518;
 
         /**
          * Full sector
          */
-        public static final short s52_fullsector = 581;
+        public static final short s52_fullsector = 519;
 
         /**
          * Global
          */
-        public static final short s52_global = 582;
+        public static final short s52_global = 520;
 
         /**
          * Show isolated danger (shallow water)
          */
-        public static final short s52_isolateDanger = 583;
+        public static final short s52_isolateDanger = 521;
 
         /**
          * Light description
          */
-        public static final short s52_lightdescription = 584;
+        public static final short s52_lightdescription = 522;
 
         /**
          * Line table
          */
-        public static final short s52_linetable = 585;
+        public static final short s52_linetable = 523;
 
         /**
          * Low accuracy symbols
          */
-        public static final short s52_lowaccsymbol = 586;
+        public static final short s52_lowaccsymbol = 524;
 
         /**
          * Mariner
          */
-        public static final short s52_mariner = 587;
+        public static final short s52_mariner = 525;
 
         /**
          * No text
          */
-        public static final short s52_notext = 588;
+        public static final short s52_notext = 526;
 
         /**
          * Other
          */
-        public static final short s52_other = 589;
+        public static final short s52_other = 527;
 
         /**
          * Palette
          */
-        public static final short s52_palette = 590;
+        public static final short s52_palette = 528;
 
         /**
          * Palettes
          */
-        public static final short s52_palettes = 591;
+        public static final short s52_palettes = 529;
 
         /**
          * Point table
          */
-        public static final short s52_pointtable = 592;
+        public static final short s52_pointtable = 530;
 
         /**
          * Preview
          */
-        public static final short s52_preview = 593;
+        public static final short s52_preview = 531;
 
         /**
          * Priority
          */
-        public static final short s52_priority = 594;
+        public static final short s52_priority = 532;
 
         /**
          * Radar
          */
-        public static final short s52_radar = 595;
+        public static final short s52_radar = 533;
 
         /**
          * null
          */
-        public static final short s52_radarnull = 596;
+        public static final short s52_radarnull = 534;
 
         /**
          * Over
          */
-        public static final short s52_radarover = 597;
+        public static final short s52_radarover = 535;
 
         /**
          * Under
          */
-        public static final short s52_radarunder = 598;
+        public static final short s52_radarunder = 536;
 
         /**
          * Rules
          */
-        public static final short s52_rules = 599;
+        public static final short s52_rules = 537;
 
         /**
          * Safety contour
          */
-        public static final short s52_safetycontour = 600;
+        public static final short s52_safetycontour = 538;
 
         /**
          * Safety depth (meters)
          */
-        public static final short s52_safetydepth = 601;
+        public static final short s52_safetydepth = 539;
 
         /**
          * Scale filter (SCAMIN/SCAMAX)
          */
-        public static final short s52_scalefilter = 602;
+        public static final short s52_scalefilter = 540;
 
         /**
          * Shallow contour
          */
-        public static final short s52_shallowcontour = 603;
+        public static final short s52_shallowcontour = 541;
 
         /**
          * Shallow pattern
          */
-        public static final short s52_shallowpattern = 604;
+        public static final short s52_shallowpattern = 542;
 
         /**
          * Ship outline
          */
-        public static final short s52_shipoutline = 605;
+        public static final short s52_shipoutline = 543;
 
         /**
          * Standard
          */
-        public static final short s52_standard = 606;
+        public static final short s52_standard = 544;
 
         /**
          * Symbol instructions
          */
-        public static final short s52_symbolinstructions = 607;
+        public static final short s52_symbolinstructions = 545;
 
         /**
          * Symbols
          */
-        public static final short s52_symbols = 608;
+        public static final short s52_symbols = 546;
 
         /**
          * Time tag
          */
-        public static final short s52_timetag = 609;
+        public static final short s52_timetag = 547;
 
         /**
          * Title
          */
-        public static final short s52_title = 610;
+        public static final short s52_title = 548;
 
         /**
          * Two shades
          */
-        public static final short s52_twoshades = 611;
+        public static final short s52_twoshades = 549;
 
         /**
          * Viewing group
          */
-        public static final short s52_viewinggroup = 612;
+        public static final short s52_viewinggroup = 550;
 
         /**
          * Visible
          */
-        public static final short s52_visible = 613;
+        public static final short s52_visible = 551;
 
         /**
          * Save
          */
-        public static final short save = 270;
+        public static final short save = 552;
 
         /**
          * Save as Draft
          */
-        public static final short saveDraft = 271;
+        public static final short saveDraft = 553;
 
         /**
          * Save
          */
-        public static final short save_file = 614;
+        public static final short save_file = 554;
 
         /**
          * Save as ...
          */
-        public static final short saveas_file = 615;
+        public static final short saveas_file = 555;
 
         /**
          * Scale
          */
-        public static final short scale = 272;
+        public static final short scale = 556;
 
         /**
          * Scale :
          */
-        public static final short scale_title = 616;
+        public static final short scale_title = 557;
 
         /**
          * Edition area
          */
-        public static final short select_area = 617;
+        public static final short select_area = 558;
 
         /**
          * Geographic
          */
-        public static final short select_geographic = 618;
+        public static final short select_geographic = 559;
 
         /**
          * Intersect
          */
-        public static final short select_intersect = 619;
+        public static final short select_intersect = 560;
 
         /**
          * Free form
          */
-        public static final short select_lasso = 620;
+        public static final short select_lasso = 561;
 
         /**
          * Rectangle
          */
-        public static final short select_square = 621;
+        public static final short select_square = 562;
 
         /**
          * Visual
          */
-        public static final short select_visual = 622;
+        public static final short select_visual = 563;
 
         /**
          * Within
          */
-        public static final short select_within = 623;
+        public static final short select_within = 564;
 
         /**
          * Selected channels
          */
-        public static final short selecteds = 273;
+        public static final short selecteds = 565;
 
         /**
          * Any
          */
-        public static final short semantic_any = 624;
+        public static final short semantic_any = 566;
 
         /**
          * Lines
          */
-        public static final short semantic_line = 625;
+        public static final short semantic_line = 567;
 
         /**
          * Points
          */
-        public static final short semantic_point = 626;
+        public static final short semantic_point = 568;
 
         /**
          * Polygons
          */
-        public static final short semantic_polygon = 627;
+        public static final short semantic_polygon = 569;
 
         /**
          * Rasters
          */
-        public static final short semantic_raster = 628;
+        public static final short semantic_raster = 570;
 
         /**
          * Texts
          */
-        public static final short semantic_text = 629;
+        public static final short semantic_text = 571;
 
         /**
          * server URL
          */
-        public static final short serverURL = 274;
+        public static final short serverURL = 572;
 
         /**
          * Commit
          */
-        public static final short sessionCommit = 275;
+        public static final short sessionCommit = 573;
 
         /**
          * Rollback
          */
-        public static final short sessionRollback = 276;
+        public static final short sessionRollback = 574;
 
         /**
          * Shape border
          */
-        public static final short shapeBorder = 277;
+        public static final short shapeBorder = 575;
 
         /**
          * Shape fill
          */
-        public static final short shapeFill = 278;
+        public static final short shapeFill = 576;
 
         /**
          * Exp
          */
-        public static final short shortexpression = 279;
+        public static final short shortexpression = 577;
 
         /**
          * Display help
          */
-        public static final short showHelp = 280;
+        public static final short showHelp = 578;
 
         /**
          * Show identifying properties
          */
-        public static final short show_id = 630;
+        public static final short show_id = 579;
 
         /**
          * Shapefile creation
          */
-        public static final short shp_Shapefile_creation = 632;
+        public static final short shp_Shapefile_creation = 580;
 
         /**
          * Add
          */
-        public static final short shp_add = 633;
+        public static final short shp_add = 581;
 
         /**
          * Attributs
          */
-        public static final short shp_attributs = 634;
+        public static final short shp_attributs = 582;
 
         /**
          * Create
          */
-        public static final short shp_create = 635;
+        public static final short shp_create = 583;
 
         /**
          * CRS
          */
-        public static final short shp_crs = 636;
+        public static final short shp_crs = 584;
 
         /**
          * default
          */
-        public static final short shp_default = 637;
+        public static final short shp_default = 585;
 
         /**
          * Delete
          */
-        public static final short shp_delete = 638;
+        public static final short shp_delete = 586;
 
         /**
          * Down
          */
-        public static final short shp_down = 639;
+        public static final short shp_down = 587;
 
         /**
          * File :
          */
-        public static final short shp_file = 640;
+        public static final short shp_file = 588;
 
         /**
          * Geometry
          */
-        public static final short shp_geometry = 641;
+        public static final short shp_geometry = 589;
 
         /**
          * List
          */
-        public static final short shp_list = 642;
+        public static final short shp_list = 590;
 
         /**
          * MultiLine
          */
-        public static final short shp_multiline = 643;
+        public static final short shp_multiline = 591;
 
         /**
          * MultiPoint
          */
-        public static final short shp_multipoint = 644;
+        public static final short shp_multipoint = 592;
 
         /**
          * MultiPolygon
          */
-        public static final short shp_multipolygon = 645;
+        public static final short shp_multipolygon = 593;
 
         /**
          * Name
          */
-        public static final short shp_name = 646;
+        public static final short shp_name = 594;
 
         /**
          * Point
          */
-        public static final short shp_point = 647;
+        public static final short shp_point = 595;
 
         /**
          * ...
          */
-        public static final short shp_ppp = 631;
+        public static final short shp_ppp = 596;
 
         /**
          * Shapefile creation
          */
-        public static final short shp_shapefile_creation = 648;
+        public static final short shp_shapefile_creation = 597;
 
         /**
          * Type
          */
-        public static final short shp_type = 649;
+        public static final short shp_type = 598;
 
         /**
          * Up
          */
-        public static final short shp_up = 650;
+        public static final short shp_up = 599;
 
         /**
          * Simplification
          */
-        public static final short simplification = 281;
+        public static final short simplification = 600;
 
         /**
          * Single
          */
-        public static final short single = 282;
+        public static final short single = 601;
 
         /**
          * Size
          */
-        public static final short size = 283;
+        public static final short size = 602;
 
         /**
          * SLD
          */
-        public static final short sld = 284;
+        public static final short sld = 603;
 
         /**
          * Editor
          */
-        public static final short sldeditor = 285;
+        public static final short sldeditor = 604;
 
         /**
          * Spatial
          */
-        public static final short spatial = 286;
+        public static final short spatial = 605;
 
         /**
          * Standard
          */
-        public static final short standard = 287;
+        public static final short standard = 606;
 
         /**
          * Start edition
          */
-        public static final short start = 288;
+        public static final short start = 607;
 
         /**
          * Start time
          */
-        public static final short startTime = 289;
+        public static final short startTime = 608;
 
         /**
          * started
          */
-        public static final short started = 290;
+        public static final short started = 609;
 
         /**
          * Status table
          */
-        public static final short statusTable = 291;
+        public static final short statusTable = 610;
 
         /**
          * Stop
          */
-        public static final short stop = 292;
+        public static final short stop = 611;
 
         /**
          * Stroke
          */
-        public static final short stroke = 293;
+        public static final short stroke = 612;
 
         /**
          * Stroke Graphic
          */
-        public static final short strokegraphic = 294;
+        public static final short strokegraphic = 613;
 
         /**
          * Style
          */
-        public static final short style = 295;
+        public static final short style = 614;
 
         /**
          * Style bank
          */
-        public static final short styleBank = 296;
+        public static final short styleBank = 615;
 
         /**
          * X
          */
-        public static final short style_anchorpoint_x = 651;
+        public static final short style_anchorpoint_x = 616;
 
         /**
          * Y
          */
-        public static final short style_anchorpoint_y = 652;
+        public static final short style_anchorpoint_y = 617;
 
         /**
          * Cell size
          */
-        public static final short style_cellsymbolizer_cellsize = 653;
+        public static final short style_cellsymbolizer_cellsize = 618;
 
         /**
          * Edit
          */
-        public static final short style_cellsymbolizer_edit = 654;
+        public static final short style_cellsymbolizer_edit = 619;
 
         /**
          * Filter
          */
-        public static final short style_cellsymbolizer_filter = 655;
+        public static final short style_cellsymbolizer_filter = 620;
 
         /**
          * Cell patches
          */
-        public static final short style_cellsymbolizer_tooltip = 656;
+        public static final short style_cellsymbolizer_tooltip = 621;
 
         /**
          * Type
          */
-        public static final short style_cellsymbolizer_type = 657;
+        public static final short style_cellsymbolizer_type = 622;
 
         /**
          * Blue channel
          */
-        public static final short style_channelSelection_bluechannel = 658;
+        public static final short style_channelSelection_bluechannel = 623;
 
         /**
          * Override grayscale
          */
-        public static final short style_channelSelection_gray = 659;
+        public static final short style_channelSelection_gray = 624;
 
         /**
          * Gray channel
          */
-        public static final short style_channelSelection_graychannel = 660;
+        public static final short style_channelSelection_graychannel = 625;
 
         /**
          * Green channel
          */
-        public static final short style_channelSelection_greenchannel = 661;
+        public static final short style_channelSelection_greenchannel = 626;
 
         /**
          * Red channel
          */
-        public static final short style_channelSelection_redchannel = 662;
+        public static final short style_channelSelection_redchannel = 627;
 
         /**
          * Override RGB
          */
-        public static final short style_channelSelection_rgb = 663;
+        public static final short style_channelSelection_rgb = 628;
 
         /**
          * Native colors
          */
-        public static final short style_channelselection_native = 664;
+        public static final short style_channelselection_native = 629;
 
         /**
          * Band
          */
-        public static final short style_rastercolormappane_band = 665;
+        public static final short style_rastercolormappane_band = 630;
 
         /**
          * Fit to data
          */
-        public static final short style_rastercolormappane_fittodata = 666;
+        public static final short style_rastercolormappane_fittodata = 631;
 
         /**
          * Interpolate
          */
-        public static final short style_rastercolormappane_interpolate = 667;
+        public static final short style_rastercolormappane_interpolate = 632;
 
         /**
          * Invert
          */
-        public static final short style_rastercolormappane_invert = 668;
+        public static final short style_rastercolormappane_invert = 633;
 
         /**
          * NaN
          */
-        public static final short style_rastercolormappane_nan = 669;
+        public static final short style_rastercolormappane_nan = 634;
 
         /**
          * Palette
          */
-        public static final short style_rastercolormappane_palette = 670;
+        public static final short style_rastercolormappane_palette = 635;
 
         /**
          * Channels
          */
-        public static final short style_rastersymbolizer_channels = 671;
+        public static final short style_rastersymbolizer_channels = 636;
 
         /**
          * ColorMap
          */
-        public static final short style_rastersymbolizer_cm_colormap = 672;
+        public static final short style_rastersymbolizer_cm_colormap = 637;
 
         /**
          * Grayscale/RGB
          */
-        public static final short style_rastersymbolizer_cm_rgb = 673;
+        public static final short style_rastersymbolizer_cm_rgb = 638;
 
         /**
          * Color
          */
-        public static final short style_rastersymbolizer_color = 674;
+        public static final short style_rastersymbolizer_color = 639;
 
         /**
          * Color model
          */
-        public static final short style_rastersymbolizer_colormodel = 675;
+        public static final short style_rastersymbolizer_colormodel = 640;
 
         /**
          * Divisions
          */
-        public static final short style_rastersymbolizer_divisions = 676;
+        public static final short style_rastersymbolizer_divisions = 641;
 
         /**
          * Edit
          */
-        public static final short style_rastersymbolizer_edit = 677;
+        public static final short style_rastersymbolizer_edit = 642;
 
         /**
          * General
          */
-        public static final short style_rastersymbolizer_general = 678;
+        public static final short style_rastersymbolizer_general = 643;
 
         /**
          * Line
          */
-        public static final short style_rastersymbolizer_line = 679;
+        public static final short style_rastersymbolizer_line = 644;
 
         /**
          * Lower
          */
-        public static final short style_rastersymbolizer_lower = 680;
+        public static final short style_rastersymbolizer_lower = 645;
 
         /**
          * None
          */
-        public static final short style_rastersymbolizer_none = 681;
+        public static final short style_rastersymbolizer_none = 646;
 
         /**
          * Opacity
          */
-        public static final short style_rastersymbolizer_opacity = 682;
+        public static final short style_rastersymbolizer_opacity = 647;
 
         /**
          * Outline
          */
-        public static final short style_rastersymbolizer_outline = 683;
+        public static final short style_rastersymbolizer_outline = 648;
 
         /**
          * Overlap
          */
-        public static final short style_rastersymbolizer_overlap = 684;
+        public static final short style_rastersymbolizer_overlap = 649;
 
         /**
          * Polygon
          */
-        public static final short style_rastersymbolizer_polygon = 685;
+        public static final short style_rastersymbolizer_polygon = 650;
 
         /**
          * Upper
          */
-        public static final short style_rastersymbolizer_upper = 686;
+        public static final short style_rastersymbolizer_upper = 651;
 
         /**
          * Value
          */
-        public static final short style_rastersymbolizer_value = 687;
+        public static final short style_rastersymbolizer_value = 652;
 
         /**
          * Advanced
          */
-        public static final short style_twostate_advanced = 688;
+        public static final short style_twostate_advanced = 653;
 
         /**
          * Simple
          */
-        public static final short style_twostate_simple = 689;
+        public static final short style_twostate_simple = 654;
 
         /**
          * Sum
          */
-        public static final short sum = 297;
+        public static final short sum = 655;
 
         /**
          * Symbol
          */
-        public static final short symbol = 298;
+        public static final short symbol = 656;
 
         /**
          * Symbols layer
          */
-        public static final short symbolLayer = 299;
+        public static final short symbolLayer = 657;
 
         /**
          * Symbol preview
          */
-        public static final short symbolPreview = 300;
+        public static final short symbolPreview = 658;
 
         /**
          * Line symbol
          */
-        public static final short symbol_line = 690;
+        public static final short symbol_line = 659;
 
         /**
          * Point symbol
          */
-        public static final short symbol_point = 691;
+        public static final short symbol_point = 660;
 
         /**
          * Polygon symbol
          */
-        public static final short symbol_polygon = 692;
+        public static final short symbol_polygon = 661;
 
         /**
          * System clipboard
          */
-        public static final short systemclipboard = 301;
+        public static final short systemclipboard = 662;
 
         /**
          * Graph
          */
-        public static final short tabGraphTitle = 302;
+        public static final short tabGraphTitle = 663;
 
         /**
          * General informations
          */
-        public static final short tabInfoTitle = 303;
+        public static final short tabInfoTitle = 664;
 
         /**
          * Metadata
          */
-        public static final short tabMetadataTitle = 304;
+        public static final short tabMetadataTitle = 665;
 
         /**
          * Speed  T x
          */
-        public static final short temp_factor = 693;
+        public static final short temp_factor = 666;
 
         /**
          * Refresh rate (ms) =
          */
-        public static final short temp_refresh = 694;
+        public static final short temp_refresh = 667;
 
         /**
          * Temporal
          */
-        public static final short temporal = 305;
+        public static final short temporal = 668;
 
         /**
          * Temporal attributs
          */
-        public static final short temporal_configuration = 695;
+        public static final short temporal_configuration = 669;
 
         /**
          * Ending attribut
          */
-        public static final short temporal_end = 696;
+        public static final short temporal_end = 670;
 
         /**
          * Starting attribut
          */
-        public static final short temporal_start = 697;
+        public static final short temporal_start = 671;
 
         /**
          * Text color
          */
-        public static final short textColor = 306;
+        public static final short textColor = 672;
 
         /**
          * Time trigger
          */
-        public static final short timeTrigger = 307;
+        public static final short timeTrigger = 673;
 
         /**
          * Title
          */
-        public static final short title = 308;
+        public static final short title = 674;
 
         /**
          * Gap
          */
-        public static final short tooltip_gap = 698;
+        public static final short tooltip_gap = 675;
 
         /**
          * Lenght
          */
-        public static final short tooltip_lenght = 699;
+        public static final short tooltip_lenght = 676;
 
         /**
          * Offset
          */
-        public static final short tooltip_offset = 700;
+        public static final short tooltip_offset = 677;
 
         /**
          * Topologic
          */
-        public static final short topologic = 309;
+        public static final short topologic = 678;
 
         /**
          * Type
          */
-        public static final short type = 310;
+        public static final short type = 679;
 
         /**
          * undefined
          */
-        public static final short undefined = 311;
+        public static final short undefined = 680;
 
         /**
          * Units
          */
-        public static final short unit = 312;
+        public static final short unit = 681;
 
         /**
          * more...
          */
-        public static final short uom_more = 701;
+        public static final short uom_more = 682;
 
         /**
          * Up
          */
-        public static final short up = 313;
+        public static final short up = 683;
 
         /**
          * Update date
          */
-        public static final short updateDate = 314;
+        public static final short updateDate = 684;
 
         /**
          * URL
          */
-        public static final short url = 315;
+        public static final short url = 685;
 
         /**
          * User
          */
-        public static final short user = 316;
+        public static final short user = 686;
 
         /**
          * Validate
          */
-        public static final short validate = 317;
+        public static final short validate = 687;
 
         /**
          * Value
          */
-        public static final short value = 318;
+        public static final short value = 688;
 
         /**
          * Version
          */
-        public static final short version = 319;
+        public static final short version = 689;
 
         /**
          * waiting
          */
-        public static final short waiting = 320;
+        public static final short waiting = 690;
 
         /**
          * Weight
          */
-        public static final short weight = 321;
+        public static final short weight = 691;
 
         /**
          * Well Knowed Form
          */
-        public static final short wellknowned = 322;
+        public static final short wellknowned = 692;
 
         /**
          * Well Knowed Form
          */
-        public static final short wellknownedform = 323;
+        public static final short wellknownedform = 693;
 
         /**
          * Well known name
          */
-        public static final short wellknownname = 324;
+        public static final short wellknownname = 694;
 
         /**
          * Width
          */
-        public static final short width = 325;
+        public static final short width = 695;
 
         /**
          * Well-Known Text
          */
-        public static final short wkt = 326;
+        public static final short wkt = 696;
 
         /**
          * WPS Chain
          */
-        public static final short wpsChain = 327;
+        public static final short wpsChain = 697;
 
         /**
          * X
          */
-        public static final short x = 328;
+        public static final short x = 698;
 
         /**
          * Graphic
          */
-        public static final short xmlGraphic = 329;
+        public static final short xmlGraphic = 699;
 
         /**
          * XML
          */
-        public static final short xmlview = 330;
+        public static final short xmlview = 700;
 
         /**
          * Y
          */
-        public static final short y = 331;
+        public static final short y = 701;
 
         /**
          * Yes
          */
-        public static final short yes = 332;
+        public static final short yes = 702;
     }
 
     /**

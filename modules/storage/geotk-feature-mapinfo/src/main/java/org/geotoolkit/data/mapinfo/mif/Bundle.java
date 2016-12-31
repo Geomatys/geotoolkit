@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,22 +41,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * vector data file (.mif)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * multiple vector data files (.mif)
          */
-        public static final short datastoreFolderDescription = 1;
+        public static final short datastoreFolderDescription = 2;
 
         /**
          * MapInfo exchange File Format (folder)
          */
-        public static final short datastoreFolderTitle = 2;
+        public static final short datastoreFolderTitle = 3;
 
         /**
          * MapInfo exchange File Format
          */
-        public static final short datastoreTitle = 3;
+        public static final short datastoreTitle = 4;
     }
 
     /**

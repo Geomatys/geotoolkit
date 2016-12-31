@@ -15,8 +15,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -25,77 +23,77 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Auto incremented
          */
-        public static final short autoIncrement = 0;
+        public static final short autoIncrement = 1;
 
         /**
          * Catalogs
          */
-        public static final short catalogs = 1;
+        public static final short catalogs = 2;
 
         /**
          * Columns
          */
-        public static final short cols = 2;
+        public static final short cols = 3;
 
         /**
          * Default value
          */
-        public static final short defaultVal = 3;
+        public static final short defaultVal = 4;
 
         /**
          * Remarks
          */
-        public static final short desc = 4;
+        public static final short desc = 5;
 
         /**
          * Foreign keys
          */
-        public static final short fKeys = 5;
+        public static final short fKeys = 6;
 
         /**
          * Generated
          */
-        public static final short generated = 6;
+        public static final short generated = 7;
 
         /**
          * Imported from
          */
-        public static final short importedFrom = 7;
+        public static final short importedFrom = 8;
 
         /**
          * Maximum length (bytes)
          */
-        public static final short maxLength = 8;
+        public static final short maxLength = 9;
 
         /**
          * Name
          */
-        public static final short name = 9;
+        public static final short name = 10;
 
         /**
          * No entry
          */
-        public static final short noEntry = 10;
+        public static final short noEntry = 11;
 
         /**
          * Nullable
          */
-        public static final short nullable = 11;
+        public static final short nullable = 12;
 
         /**
          * Primary keys
          */
-        public static final short pKeys = 12;
+        public static final short pKeys = 13;
 
         /**
          * refers to
          */
-        public static final short refers = 13;
+        public static final short refers = 14;
 
         /**
          * Type
          */
-        public static final short type = 14;
+        public static final short type = 15;
     }
 
     /**

@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,62 +41,62 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Geographic Markup Language format (.gml)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * Geographic Markup Language format (.gml)
          */
-        public static final short datastoreFolderDescription = 1;
+        public static final short datastoreFolderDescription = 2;
 
         /**
          * GML (folder)
          */
-        public static final short datastoreFolderTitle = 2;
+        public static final short datastoreFolderTitle = 3;
 
         /**
          * GML
          */
-        public static final short datastoreTitle = 3;
+        public static final short datastoreTitle = 4;
 
         /**
          * Longitude First
          */
-        public static final short longitudeFirstAlias = 4;
+        public static final short longitudeFirstAlias = 5;
 
         /**
          * Longitude First
          */
-        public static final short longitudeFirstRemarks = 5;
+        public static final short longitudeFirstRemarks = 6;
 
         /**
          * Sparse files
          */
-        public static final short paramSparseAlias = 6;
+        public static final short paramSparseAlias = 7;
 
         /**
          * Separated feature files
          */
-        public static final short paramSparseRemarks = 7;
+        public static final short paramSparseRemarks = 8;
 
         /**
          * XSD
          */
-        public static final short paramXSDAlias = 8;
+        public static final short paramXSDAlias = 9;
 
         /**
          * XSD used if gml doesn't exist
          */
-        public static final short paramXSDRemarks = 9;
+        public static final short paramXSDRemarks = 10;
 
         /**
          * XSD type name
          */
-        public static final short paramXSDTypeNameAlias = 10;
+        public static final short paramXSDTypeNameAlias = 11;
 
         /**
          * XSD type name
          */
-        public static final short paramXSDTypeNameRemarks = 11;
+        public static final short paramXSDTypeNameRemarks = 12;
     }
 
     /**

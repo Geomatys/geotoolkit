@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,32 +41,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Comma-Separated Values format (.csv)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * Comma-Separated Values format (.csv)
          */
-        public static final short datastoreFolderDescription = 1;
+        public static final short datastoreFolderDescription = 2;
 
         /**
          * CSV (folder)
          */
-        public static final short datastoreFolderTitle = 2;
+        public static final short datastoreFolderTitle = 3;
 
         /**
          * CSV
          */
-        public static final short datastoreTitle = 3;
+        public static final short datastoreTitle = 4;
 
         /**
          * Separator
          */
-        public static final short paramSeparatorAlias = 4;
+        public static final short paramSeparatorAlias = 5;
 
         /**
          * Value separator
          */
-        public static final short paramSeparatorRemarks = 5;
+        public static final short paramSeparatorRemarks = 6;
     }
 
     /**

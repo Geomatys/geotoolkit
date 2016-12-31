@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class ProcessBundle extends IndexedResourceBundle {
     /**
@@ -35,11 +33,6 @@ public final class ProcessBundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.2
      */
     public static final class Keys {
         private Keys() {
@@ -48,452 +41,452 @@ public final class ProcessBundle extends IndexedResourceBundle {
         /**
          * Input coverages
          */
-        public static final short coverage_bandcombine_inCoverages = 0;
+        public static final short coverage_bandcombine_inCoverages = 1;
 
         /**
          * Coverages to merge
          */
-        public static final short coverage_bandcombine_inCoveragesDesc = 1;
+        public static final short coverage_bandcombine_inCoveragesDesc = 2;
 
         /**
          * Output coverage
          */
-        public static final short coverage_bandcombine_outCoverage = 2;
+        public static final short coverage_bandcombine_outCoverage = 3;
 
         /**
          * Result combined coverage
          */
-        public static final short coverage_bandcombine_outCoverageDesc = 3;
+        public static final short coverage_bandcombine_outCoverageDesc = 4;
 
         /**
          * Input band selection
          */
-        public static final short coverage_bandselect_inBands = 4;
+        public static final short coverage_bandselect_inBands = 5;
 
         /**
          * Indexes of coverage bands to extract
          */
-        public static final short coverage_bandselect_inBandsDesc = 5;
+        public static final short coverage_bandselect_inBandsDesc = 6;
 
         /**
          * Input coverage
          */
-        public static final short coverage_bandselect_inCoverage = 6;
+        public static final short coverage_bandselect_inCoverage = 7;
 
         /**
          * Coverage from where to extract bands
          */
-        public static final short coverage_bandselect_inCoverageDesc = 7;
+        public static final short coverage_bandselect_inCoverageDesc = 8;
 
         /**
          * Output coverage
          */
-        public static final short coverage_bandselect_outCoverage = 8;
+        public static final short coverage_bandselect_outCoverage = 9;
 
         /**
          * Result coverage
          */
-        public static final short coverage_bandselect_outCoverageDesc = 9;
+        public static final short coverage_bandselect_outCoverageDesc = 10;
 
         /**
          * Create an isoline FeatureCollection from a GridCoverage and an array of intervals.
          */
-        public static final short coverage_isoline_abstract = 10;
+        public static final short coverage_isoline_abstract = 11;
 
         /**
          * Input GridCoverage.
          */
-        public static final short coverage_isoline_inCoverage = 11;
+        public static final short coverage_isoline_inCoverage = 12;
 
         /**
          * Input CoverageReference.
          */
-        public static final short coverage_isoline_inCoverageRef = 12;
+        public static final short coverage_isoline_inCoverageRef = 13;
 
         /**
          * Input FeatureStore used to store output isolines.
          */
-        public static final short coverage_isoline_inFeatureStore = 13;
+        public static final short coverage_isoline_inFeatureStore = 14;
 
         /**
          * Output isoline FeatureType name
          */
-        public static final short coverage_isoline_inFeatureTypeName = 14;
+        public static final short coverage_isoline_inFeatureTypeName = 15;
 
         /**
          * Array of intervals.
          */
-        public static final short coverage_isoline_inIntervals = 15;
+        public static final short coverage_isoline_inIntervals = 16;
 
         /**
          * Output FeatureCollection.
          */
-        public static final short coverage_isoline_outFeatureCollection = 16;
+        public static final short coverage_isoline_outFeatureCollection = 17;
 
         /**
          * Input coverages
          */
-        public static final short coverage_mathcalc_inCoverages = 17;
+        public static final short coverage_mathcalc_inCoverages = 18;
 
         /**
          * Formula
          */
-        public static final short coverage_mathcalc_inFormula = 18;
+        public static final short coverage_mathcalc_inFormula = 19;
 
         /**
          * Coverage to formula variable
          */
-        public static final short coverage_mathcalc_inMapping = 19;
+        public static final short coverage_mathcalc_inMapping = 20;
 
         /**
          * Output writable coverage
          */
-        public static final short coverage_mathcalc_inResultCoverage = 20;
+        public static final short coverage_mathcalc_inResultCoverage = 21;
 
         /**
          * Input coverages
          */
-        public static final short coverage_merge_inCoverages = 21;
+        public static final short coverage_merge_inCoverages = 22;
 
         /**
          * Coverages to merge
          */
-        public static final short coverage_merge_inCoveragesDesc = 22;
+        public static final short coverage_merge_inCoveragesDesc = 23;
 
         /**
          * Merge envelope
          */
-        public static final short coverage_merge_inEnvelope = 23;
+        public static final short coverage_merge_inEnvelope = 24;
 
         /**
          * Result coverage envelope
          */
-        public static final short coverage_merge_inEnvelopeDesc = 24;
+        public static final short coverage_merge_inEnvelopeDesc = 25;
 
         /**
          * Merge resolution
          */
-        public static final short coverage_merge_inResolution = 25;
+        public static final short coverage_merge_inResolution = 26;
 
         /**
          * Result coverage resolution
          */
-        public static final short coverage_merge_inResolutionDesc = 26;
+        public static final short coverage_merge_inResolutionDesc = 27;
 
         /**
          * Output coverage
          */
-        public static final short coverage_merge_outCoverage = 27;
+        public static final short coverage_merge_outCoverage = 28;
 
         /**
          * Result combined coverage
          */
-        public static final short coverage_merge_outCoverageDesc = 28;
+        public static final short coverage_merge_outCoverageDesc = 29;
 
         /**
          * Source coverage
          */
-        public static final short coverage_metaextract_inCoverage = 29;
+        public static final short coverage_metaextract_inCoverage = 30;
 
         /**
          * Coverage to extract metadata from.
          */
-        public static final short coverage_metaextract_inCoverageDesc = 30;
+        public static final short coverage_metaextract_inCoverageDesc = 31;
 
         /**
          * Extracted metadata
          */
-        public static final short coverage_metaextract_outMeta = 31;
+        public static final short coverage_metaextract_outMeta = 32;
 
         /**
          * The metadata process succeed to get from the source coverage.
          */
-        public static final short coverage_metaextract_outMetaDesc = 32;
+        public static final short coverage_metaextract_outMetaDesc = 33;
 
         /**
          * Input coverage
          */
-        public static final short coverage_reformat_inCoverage = 33;
+        public static final short coverage_reformat_inCoverage = 34;
 
         /**
          * Coverage to reformat
          */
-        public static final short coverage_reformat_inCoverageDesc = 34;
+        public static final short coverage_reformat_inCoverageDesc = 35;
 
         /**
          * Sample type
          */
-        public static final short coverage_reformat_inType = 35;
+        public static final short coverage_reformat_inType = 36;
 
         /**
          * Sample primitive type
          */
-        public static final short coverage_reformat_inTypeDesc = 36;
+        public static final short coverage_reformat_inTypeDesc = 37;
 
         /**
          * Output coverage
          */
-        public static final short coverage_reformat_outCoverage = 37;
+        public static final short coverage_reformat_outCoverage = 38;
 
         /**
          * Result reformated coverage
          */
-        public static final short coverage_reformat_outCoverageDesc = 38;
+        public static final short coverage_reformat_outCoverageDesc = 39;
 
         /**
          * input coordinate reference system
          */
-        public static final short coverage_resample_inCRS = 39;
+        public static final short coverage_resample_inCRS = 40;
 
         /**
          * target crs for resampling
          */
-        public static final short coverage_resample_inCRSDesc = 40;
+        public static final short coverage_resample_inCRSDesc = 41;
 
         /**
          * input coverage
          */
-        public static final short coverage_resample_inCoverage = 41;
+        public static final short coverage_resample_inCoverage = 42;
 
         /**
          * the input coverage to resample
          */
-        public static final short coverage_resample_inCoverageDesc = 42;
+        public static final short coverage_resample_inCoverageDesc = 43;
 
         /**
          * input envelope
          */
-        public static final short coverage_resample_inEnvelope = 43;
+        public static final short coverage_resample_inEnvelope = 44;
 
         /**
          * the target envelope of resampling
          */
-        public static final short coverage_resample_inEnvelopeDesc = 44;
+        public static final short coverage_resample_inEnvelopeDesc = 45;
 
         /**
          * output coverage
          */
-        public static final short coverage_resample_outCoverage = 45;
+        public static final short coverage_resample_outCoverage = 46;
 
         /**
          * result resampled coverage
          */
-        public static final short coverage_resample_outCoverageDesc = 46;
+        public static final short coverage_resample_outCoverageDesc = 47;
 
         /**
          * Graphical shaded relief
          */
-        public static final short coverage_shadedrelief_abstract = 47;
+        public static final short coverage_shadedrelief_abstract = 48;
 
         /**
          * Input base coverage
          */
-        public static final short coverage_shadedrelief_inCoverage = 48;
+        public static final short coverage_shadedrelief_inCoverage = 49;
 
         /**
          * Input elevation coverage
          */
-        public static final short coverage_shadedrelief_inElevation = 49;
+        public static final short coverage_shadedrelief_inElevation = 50;
 
         /**
          * Result shaded coverage
          */
-        public static final short coverage_shadedrelief_outCoverage = 50;
+        public static final short coverage_shadedrelief_outCoverage = 51;
 
         /**
          * Give statistics on image (min, max, distribution array)
          */
-        public static final short coverage_statistic_abstract = 51;
+        public static final short coverage_statistic_abstract = 52;
 
         /**
          * Statistic Process
          */
-        public static final short coverage_statistic_display_name = 52;
+        public static final short coverage_statistic_display_name = 53;
 
         /**
          * Input coverage
          */
-        public static final short coverage_statistic_inCoverage = 53;
+        public static final short coverage_statistic_inCoverage = 54;
 
         /**
          * Exclude no-data
          */
-        public static final short coverage_statistic_inExcludeNoData = 54;
+        public static final short coverage_statistic_inExcludeNoData = 55;
 
         /**
          * Input image
          */
-        public static final short coverage_statistic_inImage = 55;
+        public static final short coverage_statistic_inImage = 56;
 
         /**
          * Input image index
          */
-        public static final short coverage_statistic_inImageIdx = 56;
+        public static final short coverage_statistic_inImageIdx = 57;
 
         /**
          * Input coverage reader
          */
-        public static final short coverage_statistic_inReader = 57;
+        public static final short coverage_statistic_inReader = 58;
 
         /**
          * Input coverage reference
          */
-        public static final short coverage_statistic_inReference = 58;
+        public static final short coverage_statistic_inReference = 59;
 
         /**
          * Statistic from input coverage
          */
-        public static final short coverage_statistic_outCoverage = 59;
+        public static final short coverage_statistic_outCoverage = 60;
 
         /**
          * Input images
          */
-        public static final short image_bandcombine_inImages = 60;
+        public static final short image_bandcombine_inImages = 61;
 
         /**
          * Images to merge
          */
-        public static final short image_bandcombine_inImagesDesc = 61;
+        public static final short image_bandcombine_inImagesDesc = 62;
 
         /**
          * Output image
          */
-        public static final short image_bandcombine_outImage = 62;
+        public static final short image_bandcombine_outImage = 63;
 
         /**
          * Result combined image
          */
-        public static final short image_bandcombine_outImageDesc = 63;
+        public static final short image_bandcombine_outImageDesc = 64;
 
         /**
          * Input band selection
          */
-        public static final short image_bandselect_inBands = 64;
+        public static final short image_bandselect_inBands = 65;
 
         /**
          * Indexes of image bands to extract
          */
-        public static final short image_bandselect_inBandsDesc = 65;
+        public static final short image_bandselect_inBandsDesc = 66;
 
         /**
          * Input image
          */
-        public static final short image_bandselect_inImage = 66;
+        public static final short image_bandselect_inImage = 67;
 
         /**
          * Image from where to extract bands
          */
-        public static final short image_bandselect_inImageDesc = 67;
+        public static final short image_bandselect_inImageDesc = 68;
 
         /**
          * Output image
          */
-        public static final short image_bandselect_outImage = 68;
+        public static final short image_bandselect_outImage = 69;
 
         /**
          * Result image
          */
-        public static final short image_bandselect_outImageDesc = 69;
+        public static final short image_bandselect_outImageDesc = 70;
 
         /**
          * Input band selection
          */
-        public static final short image_colorstretch_inBands = 70;
+        public static final short image_colorstretch_inBands = 71;
 
         /**
          * Indexes of image bands to extract
          */
-        public static final short image_colorstretch_inBandsDesc = 71;
+        public static final short image_colorstretch_inBandsDesc = 72;
 
         /**
          * Input image
          */
-        public static final short image_colorstretch_inImage = 72;
+        public static final short image_colorstretch_inImage = 73;
 
         /**
          * Image to recolor
          */
-        public static final short image_colorstretch_inImageDesc = 73;
+        public static final short image_colorstretch_inImageDesc = 74;
 
         /**
          * Input band value range
          */
-        public static final short image_colorstretch_inRanges = 74;
+        public static final short image_colorstretch_inRanges = 75;
 
         /**
          * Input band value range
          */
-        public static final short image_colorstretch_inRangesDesc = 75;
+        public static final short image_colorstretch_inRangesDesc = 76;
 
         /**
          * Output image
          */
-        public static final short image_colorstretch_outImage = 76;
+        public static final short image_colorstretch_outImage = 77;
 
         /**
          * Result recolored image
          */
-        public static final short image_colorstretch_outImageDesc = 77;
+        public static final short image_colorstretch_outImageDesc = 78;
 
         /**
          * Input image
          */
-        public static final short image_reformat_inImage = 78;
+        public static final short image_reformat_inImage = 79;
 
         /**
          * Image to reformat
          */
-        public static final short image_reformat_inImageDesc = 79;
+        public static final short image_reformat_inImageDesc = 80;
 
         /**
          * Sample type
          */
-        public static final short image_reformat_inType = 80;
+        public static final short image_reformat_inType = 81;
 
         /**
          * Sample primitive type
          */
-        public static final short image_reformat_inTypeDesc = 81;
+        public static final short image_reformat_inTypeDesc = 82;
 
         /**
          * Output image
          */
-        public static final short image_reformat_outImage = 82;
+        public static final short image_reformat_outImage = 83;
 
         /**
          * Result reformated image
          */
-        public static final short image_reformat_outImageDesc = 83;
+        public static final short image_reformat_outImageDesc = 84;
 
         /**
          * Input image
          */
-        public static final short image_replace_inImage = 84;
+        public static final short image_replace_inImage = 85;
 
         /**
          * Image where to replace samples
          */
-        public static final short image_replace_inImageDesc = 85;
+        public static final short image_replace_inImageDesc = 86;
 
         /**
          * Replacement values
          */
-        public static final short image_replace_inReplacements = 86;
+        public static final short image_replace_inReplacements = 87;
 
         /**
          * Replacement values
          */
-        public static final short image_replace_inReplacementsDesc = 87;
+        public static final short image_replace_inReplacementsDesc = 88;
 
         /**
          * Output image
          */
-        public static final short image_replace_outImage = 88;
+        public static final short image_replace_outImage = 89;
 
         /**
          * Result image
          */
-        public static final short image_replace_outImageDesc = 89;
+        public static final short image_replace_outImageDesc = 90;
     }
 
     /**

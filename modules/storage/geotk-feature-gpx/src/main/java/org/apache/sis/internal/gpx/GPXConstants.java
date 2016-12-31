@@ -54,11 +54,6 @@ public final class GPXConstants extends Static {
     public static final FeatureType TYPE_ROUTE = Types.DEFAULT.route;
 
     /**
-     * Track segment GPX feature type.
-     */
-    public static final FeatureType TYPE_TRACK_SEGMENT = Types.DEFAULT.trackSegment;
-
-    /**
      * Do not allow instantiation of this class.
      */
     private GPXConstants() {

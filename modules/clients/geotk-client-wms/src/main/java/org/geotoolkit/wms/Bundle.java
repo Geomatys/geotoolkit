@@ -27,12 +27,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 2.2
- * @module
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -40,11 +34,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.2
      */
     public static final class Keys {
         private Keys() {
@@ -53,12 +42,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Web Map Service
          */
-        public static final short coverageDescription = 0;
+        public static final short coverageDescription = 1;
 
         /**
          * OGC.WMS
          */
-        public static final short coverageTitle = 1;
+        public static final short coverageTitle = 2;
     }
 
     /**

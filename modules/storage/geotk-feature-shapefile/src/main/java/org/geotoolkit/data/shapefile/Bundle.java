@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,62 +41,62 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Charset
          */
-        public static final short charset = 0;
+        public static final short charset = 1;
 
         /**
          * character used to decode strings from the DBF file
          */
-        public static final short charset_remarks = 1;
+        public static final short charset_remarks = 2;
 
         /**
          * Create spatial index
          */
-        public static final short create_spatial_index = 2;
+        public static final short create_spatial_index = 3;
 
         /**
          * enable/disable the automatic creation of spatial index
          */
-        public static final short create_spatial_index_remarks = 3;
+        public static final short create_spatial_index_remarks = 4;
 
         /**
          * vector data file (.shp)
          */
-        public static final short datastoreDescription = 4;
+        public static final short datastoreDescription = 5;
 
         /**
          * multiple vector data files (.shp)
          */
-        public static final short datastoreFolderDescription = 5;
+        public static final short datastoreFolderDescription = 6;
 
         /**
          * Shapefile (folder)
          */
-        public static final short datastoreFolderTitle = 6;
+        public static final short datastoreFolderTitle = 7;
 
         /**
          * Shapefile
          */
-        public static final short datastoreTitle = 7;
+        public static final short datastoreTitle = 8;
 
         /**
          * QIX in memory
          */
-        public static final short load_qix = 8;
+        public static final short load_qix = 9;
 
         /**
          * Load in memory the quadtree if exist.
          */
-        public static final short load_qix_remarks = 9;
+        public static final short load_qix_remarks = 10;
 
         /**
          * Memory-mapped IO
          */
-        public static final short memory_mapped_buffer = 10;
+        public static final short memory_mapped_buffer = 11;
 
         /**
          * enable/disable the use of memory-mapped io
          */
-        public static final short memory_mapped_buffer_remarks = 11;
+        public static final short memory_mapped_buffer_remarks = 12;
     }
 
     /**

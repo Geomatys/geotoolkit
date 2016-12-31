@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,22 +41,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * DataBase File (.dbf)
          */
-        public static final short databaseDescription = 0;
+        public static final short databaseDescription = 1;
 
         /**
          * Multiple DataBase Files (.dbf)
          */
-        public static final short databaseFolderDescription = 1;
+        public static final short databaseFolderDescription = 2;
 
         /**
          * DBF (folder)
          */
-        public static final short databaseFolderTitle = 2;
+        public static final short databaseFolderTitle = 3;
 
         /**
          * DBF
          */
-        public static final short databaseTitle = 3;
+        public static final short databaseTitle = 4;
     }
 
     /**
