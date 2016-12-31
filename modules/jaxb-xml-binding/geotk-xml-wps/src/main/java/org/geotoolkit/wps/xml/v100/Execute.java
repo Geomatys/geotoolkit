@@ -101,6 +101,14 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setIdentifier(String identifiers) {
+        setIdentifier(new CodeType(identifiers));
+    }
+    
+    /**
      * Gets the value of the dataInputs property.
      * 
      * @return
@@ -183,6 +191,18 @@ public class Execute extends RequestBaseType implements org.geotoolkit.wps.xml.E
         }
         return false;
     }
+
+    @Override
+    public void setLineage(boolean outLineage) {
+        if (responseForm==null) {
+           responseForm = new ResponseFormType();
+        }
+        if (responseForm.responseDocument==null) {
+            responseForm.responseDocument = new ResponseDocumentType();
+        }
+        responseForm.responseDocument.lineage = outLineage;
+    }
+
 
     @Override
     public boolean isRawOutput() {

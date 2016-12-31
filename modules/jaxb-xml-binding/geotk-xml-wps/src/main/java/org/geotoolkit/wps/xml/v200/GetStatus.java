@@ -17,6 +17,9 @@
 
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -84,6 +87,16 @@ public class GetStatus extends RequestBaseType implements org.geotoolkit.wps.xml
      */
     public void setJobID(String value) {
         this.jobID = value;
+    }
+
+    @Override
+    public Map<String, String> toKVP() throws UnsupportedOperationException {
+        final Map<String, String> kvp = new HashMap<>();
+        kvp.put("SERVICE",getService());
+        kvp.put("REQUEST","GetStatus");
+        kvp.put("VERSION",getVersion().toString());
+        kvp.put("JOBID",jobID);
+        return kvp;
     }
 
 }

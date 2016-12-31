@@ -25,4 +25,6 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
  */
 public interface WPSCapabilities extends AbstractCapabilitiesBase {
 
+    ProcessOfferings getProcessOfferings();
+    
 }

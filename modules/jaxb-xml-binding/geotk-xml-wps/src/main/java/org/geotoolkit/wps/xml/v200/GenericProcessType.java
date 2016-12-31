@@ -63,7 +63,6 @@ public class GenericProcessType extends DescriptionType {
      * Objects of the following type(s) are allowed in the list
      * {@link GenericInputType }
      * 
-     * 
      */
     public List<GenericInputType> getInput() {
         if (input == null) {

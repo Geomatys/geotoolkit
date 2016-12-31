@@ -34,6 +34,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.wps.WPSProcessingRegistry;
+import org.geotoolkit.wps.WPSVersion;
 
 /**
  * A simple example of web processing querying.
@@ -85,10 +87,11 @@ public class WPSClientDemo {
         // Instantiate client :
         final URL wpsURL = new URL(SERVICE_URL);
         final WebProcessingClient wpsClient =
-                new WebProcessingClient(wpsURL, WebProcessingClient.WPSVersion.v100.getCode());
+                new WebProcessingClient(wpsURL, WPSVersion.v100.getCode());
 
         // Once initialized, we can ask a description of wanted process, using its id.
-        ProcessDescriptor desc = wpsClient.getDescriptor(PROCESS_ID);
+        final WPSProcessingRegistry registry = wpsClient.asRegistry();
+        ProcessDescriptor desc = registry.getDescriptor(PROCESS_ID);
 
         //We can check process input & output.
         ParameterDescriptorGroup inputDesc = desc.getInputDescriptor();
@@ -119,8 +122,8 @@ public class WPSClientDemo {
         input.parameter(INPUT.distance.name).setValue(bufDistance);
 
         // If queried WPS supports storage, we ask output as reference. It should cause asynchronous processing server-side.
-        if (wpsClient.supportStorage(PROCESS_ID)) {
-            wpsClient.setOutputsAsReference(PROCESS_ID, true);
+        if (registry.supportStorage(PROCESS_ID)) {
+            registry.setOutputsAsReference(PROCESS_ID, true);
         }
 
         // Process execution. It's synchronous here (talking only of client side, WPS can execute asynchronous process).

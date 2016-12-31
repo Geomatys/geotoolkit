@@ -34,21 +34,25 @@ public interface Request {
 
     /**
      * Returns a map that represents the request header parameters.
+     * @return Map, never null
      */
     Map<String,String> getHeaderMap();
 
     /**
      * Returns the URL of a request on a web service, in REST mode.
      *
+     * @return request URL
      * @throws MalformedURLException if the request does not comply with the {@link URL}
      *                               specification.
      */
     URL getURL() throws MalformedURLException;
 
     /**
-     * Returns the stream of the SOAP response.
+     * Returns the response stream of the request.
      *
+     * @return InputStream, never null
      * @throws IOException if an exception occurs while getting the output stream.
      */
     InputStream getResponseStream() throws IOException;
+    
 }

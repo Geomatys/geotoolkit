@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import org.apache.sis.io.TableAppender;
 import org.geotoolkit.security.ClientSecurity;
@@ -70,14 +71,17 @@ public abstract class AbstractRequest implements Request {
     /**
      * Parameters of the request, for key-value-pair requests.
      */
-    protected final Map<String, String> requestParameters = new HashMap<String, String>();
+    protected final Map<String, String> requestParameters = new HashMap<>();
 
     /**
      * The request header map that contains a set of key-value for HTTP header
      * fields (user-agent, referer, accept-language...)
      */
-    protected final Map<String,String> headerMap = new HashMap<String, String>();
+    protected final Map<String,String> headerMap = new HashMap<>();
 
+    /**
+     * Request timeout in milliseconds
+     */
     protected int timeout;
 
     protected AbstractRequest(final Client server) {
@@ -125,6 +129,24 @@ public abstract class AbstractRequest implements Request {
     @Override
     public Map<String,String> getHeaderMap(){
         return headerMap;
+    }
+
+    /**
+     * Returns request timeout.
+     * 
+     * @return timeout in milliseconds.
+     */
+    public int getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Set request timeout.
+     *
+     * @param timeout in milliseconds.
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     /**
@@ -179,7 +201,7 @@ public abstract class AbstractRequest implements Request {
                         }
                     }
                 } catch (UnsupportedEncodingException ex) {
-                    Logging.getLogger("org.geotoolkit.client").warning("Unsupported charset encoding:" + ex.getMessage());
+                    Logging.getLogger("org.geotoolkit.client").log(Level.WARNING, "Unsupported charset encoding:{0}", ex.getMessage());
                 }
                 firstKeyRead = true;
             }
@@ -238,13 +260,27 @@ public abstract class AbstractRequest implements Request {
     }
 
     /**
+     * Open an url connection from getURL method.
+     * connection timeout and security are configured.
+     * 
+     * @return URLConnection
+     */
+    protected URLConnection openConnection() throws MalformedURLException, IOException {
+        URLConnection cnx = getURL().openConnection();
+        cnx = security.secure(cnx);
+        cnx.setReadTimeout(timeout);
+        cnx.setReadTimeout(timeout);
+        return cnx;
+    }
+
+    /**
      * Java do not follow urls if there is a change in protocol.
      * See : http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4620571
      * 
      * @param cnx
      * @return 
      */
-    protected InputStream followLink(URLConnection cnx) throws IOException{
+    protected InputStream followLink(URLConnection cnx) throws IOException {
 
         while(cnx instanceof HttpURLConnection) {
             HttpURLConnection httpCnx = (HttpURLConnection) cnx;

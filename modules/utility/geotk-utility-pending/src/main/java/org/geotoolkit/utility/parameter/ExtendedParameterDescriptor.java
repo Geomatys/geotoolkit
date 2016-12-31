@@ -201,8 +201,10 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
     private static <T> Range<?> toRange(Class<T> valueClass, Comparable<T> minimum, Comparable<T> maximum, Unit<?> unit) {
         if (unit != null && Number.class.isAssignableFrom(valueClass)) {
             return new MeasurementRange(valueClass, (Number)minimum, true, (Number)maximum, true, unit);
-        } else {
+        } else if(Comparable.class.isAssignableFrom(valueClass) && (minimum!=null || maximum!=null) )  {
             return new Range(valueClass, minimum, true, maximum, true);
+        } else {
+            return null;
         }
     }
     

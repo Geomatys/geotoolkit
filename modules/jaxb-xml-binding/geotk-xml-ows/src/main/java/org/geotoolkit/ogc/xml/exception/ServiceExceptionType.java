@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.exception;
 
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.ExceptionType;
 import org.opengis.util.CodeList;
 
 
@@ -45,7 +48,7 @@ import org.opengis.util.CodeList;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceExceptionType", propOrder = {"message"})
-public final class ServiceExceptionType {
+public final class ServiceExceptionType implements ExceptionType {
     /**
      * The exception message.
      */
@@ -135,5 +138,15 @@ public final class ServiceExceptionType {
      */
     public String getLocator() {
         return locator;
+    }
+
+    @Override
+    public List<String> getExceptionText() {
+        return Collections.singletonList(getMessage());
+    }
+
+    @Override
+    public String getExceptionCode() {
+        return code;
     }
 }

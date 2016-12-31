@@ -17,10 +17,15 @@
 
 package org.geotoolkit.wps.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public interface ProcessOfferings extends WPSResponse {
+
+    List<? extends ProcessOffering> getProcesses();
 
 }

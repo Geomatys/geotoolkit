@@ -20,7 +20,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.GetCapabilities;
 import org.junit.Test;
@@ -42,11 +41,12 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
      * with the parameters given.
      */
     @Test
-    public void testGetCapabilities110() {
-        final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
+    public void testGetCapabilities110() throws MalformedURLException {
+        final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
+
         final URL url;
         try {
-            url = caps100.getURL();
+            url = client.createGetCapabilities().getURL();
         } catch (MalformedURLException ex) {
             fail(ex.getLocalizedMessage());
             return;
@@ -60,8 +60,10 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
    public void testRequestAndMarshall(){
        Marshaller marshaller = null;
         try {
-            final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
-            final GetCapabilities request = caps100.makeRequest();
+            final WebProcessingClient client = new WebProcessingClient(new URL("http://test.com"), null, WPSVersion.v100);
+
+            final GetCapabilitiesRequest caps100 = client.createGetCapabilities();
+            final GetCapabilities request = (GetCapabilities) caps100.getContent();
             assertEquals("WPS", request.getService());
             assertEquals("1.0.0", request.getAcceptVersions().getVersion().get(0));
 

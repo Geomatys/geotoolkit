@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml;
 
+import java.util.Map;
 import org.geotoolkit.util.Versioned;
 
 /**
@@ -30,4 +31,8 @@ public interface RequestBase extends Versioned {
     void setService(final String value);
 
     void setVersion(final String version);
+
+    public default Map<String,String> toKVP() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Request get not be converted to Rest parameters.");
+    }
 }
