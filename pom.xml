@@ -204,14 +204,12 @@
        =========================================================== -->
   <dependencyManagement>
     <dependencies>
-      <!-- Import all dependency management used by the Apache SIS project.
-           This include an import of NetCDF and Log4J dependencies, which
-           are overwritten in this pom.xml because Geotk uses a different
-           NetCDF library version for now. -->
+      <!-- Import all dependency management used by the GeAPI project.
+           This include JUnit and units of measurement. -->
       <dependency>
-        <groupId>org.apache.sis</groupId>
-        <artifactId>parent</artifactId>
-        <version>${sis.version}</version>
+        <groupId>org.opengis</groupId>
+        <artifactId>geoapi-parent</artifactId>
+        <version>${geoapi.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -222,6 +220,16 @@
           <artifactId>sis-utility</artifactId>
           <version>${sis.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.opengis</groupId>
+          <artifactId>geoapi-pending</artifactId>
+          <version>${geoapi.version}</version>
+      </dependency>
+        <dependency>
+          <groupId>org.opengis</groupId>
+          <artifactId>geoapi-conformance</artifactId>
+          <version>${geoapi.version}</version>
+        </dependency>
 
       <dependency>
           <groupId>org.apache.sis.core</groupId>

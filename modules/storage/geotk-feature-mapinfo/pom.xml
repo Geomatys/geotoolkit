@@ -54,11 +54,6 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-utility-pending</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-style</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -74,12 +69,6 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-temporal</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 

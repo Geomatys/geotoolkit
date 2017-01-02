@@ -61,22 +61,12 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-store</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-dbf</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-index</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
