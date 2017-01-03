@@ -22,8 +22,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CentroidDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : centroid */
-    public static final String NAME = "centroid";
+    public static final String NAME = "jts:centroid";
     
     /**
      * Input parameters
@@ -66,7 +66,7 @@ public class CentroidDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new CentroidDescriptor();
 
     private CentroidDescriptor() {
-        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return the centroid point of an input JTS geometry"),
                 INPUT_DESC, OUTPUT_DESC);
     }

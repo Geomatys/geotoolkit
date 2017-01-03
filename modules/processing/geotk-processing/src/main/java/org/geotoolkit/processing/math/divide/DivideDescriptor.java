@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class DivideDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : divide */
-    public static final String NAME = "divide";
+    public static final String NAME = "math:divide";
     
     /**
      * Input parameters
@@ -67,7 +67,7 @@ public class DivideDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new DivideDescriptor();
 
     private DivideDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Divide two double (first/second)."),
                 INPUT_DESC, OUTPUT_DESC);
     }

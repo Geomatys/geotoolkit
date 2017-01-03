@@ -20,8 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class StraightenDescriptor extends AbstractProcessDescriptor {
 
     /**Process name : straighten */
-    public static final String NAME = "straighten";
+    public static final String NAME = "coverage:straighten";
 
     /**
      * Mandatory - Coverage
@@ -71,7 +71,7 @@ public class StraightenDescriptor extends AbstractProcessDescriptor {
      * Default constructor
      */
     private StraightenDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Straighten a coverage, make a coverage with regular scale and no rotation."),
                 INPUT_DESC, OUTPUT_DESC);
     }

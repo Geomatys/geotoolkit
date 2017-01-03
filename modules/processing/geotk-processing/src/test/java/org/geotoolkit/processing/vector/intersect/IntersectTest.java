@@ -34,13 +34,13 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -56,7 +56,7 @@ public class IntersectTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public IntersectTest() {
-        super("intersect");
+        super("vector:intersect");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class IntersectTest extends AbstractProcessTest {
         final Geometry geom = buildIntersectionGeometry();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "intersect");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:intersect");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

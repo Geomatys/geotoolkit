@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class SortByDescriptor extends VectorDescriptor {
 
     /**Process name : sortby */
-    public static final String NAME = "sortby";
+    public static final String NAME = "vector:sortby";
     /**
      * Mandatory - Array of SortBy used give the order
      */

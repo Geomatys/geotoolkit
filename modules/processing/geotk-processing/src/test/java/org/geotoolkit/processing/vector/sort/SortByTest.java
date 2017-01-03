@@ -27,7 +27,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 public class SortByTest extends AbstractProcessTest {
 
     public SortByTest() {
-        super("sortby");
+        super("vector:sortby");
     }
 
 }

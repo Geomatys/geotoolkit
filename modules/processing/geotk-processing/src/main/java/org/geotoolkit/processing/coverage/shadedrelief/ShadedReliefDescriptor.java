@@ -22,8 +22,8 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +36,7 @@ import org.opengis.util.InternationalString;
  */
 public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "shadedrelief";
+    public static final String NAME = "coverage:shadedrelief";
     public static final InternationalString abs = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_abstract);
 
     /*
@@ -94,7 +94,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ShadedReliefDescriptor();
 
     private ShadedReliefDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, abs, INPUT_DESC, OUTPUT_DESC);
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, abs, INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override

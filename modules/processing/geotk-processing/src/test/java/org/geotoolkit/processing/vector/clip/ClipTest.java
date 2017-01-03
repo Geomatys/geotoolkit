@@ -35,6 +35,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -43,7 +44,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-import static org.junit.Assert.*;
 
 
 /**
@@ -58,7 +58,7 @@ public class ClipTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public ClipTest() {
-        super("clip");
+        super("vector:clip");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ClipTest extends AbstractProcessTest {
         final FeatureCollection featuresClip = buildFeatureClip();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "clip");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clip");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

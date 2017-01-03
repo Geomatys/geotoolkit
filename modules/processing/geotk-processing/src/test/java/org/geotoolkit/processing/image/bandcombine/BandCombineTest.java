@@ -30,6 +30,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,7 +51,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         final RenderedImage img3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, BandCombineDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
@@ -131,7 +132,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         blue.setData(raster);
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, BandCombineDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

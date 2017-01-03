@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ToDegreeDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : toDegree */
-    public static final String NAME = "toDegree";
+    public static final String NAME = "math:toDegree";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class ToDegreeDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ToDegreeDescriptor();
 
     private ToDegreeDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Converts an angle measured in radians to an approximately "
                 + "equivalent angle measured in degrees."),
                 INPUT_DESC, OUTPUT_DESC);

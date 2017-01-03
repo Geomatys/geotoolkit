@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class AffineTransformDescriptor extends VectorDescriptor {
 
     /**Process name : affinetransform */
-    public static final String NAME = "affinetransform";
+    public static final String NAME = "vector:affinetransform";
 
     /**
      * Mandatory - Feature Collection for clipping

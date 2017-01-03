@@ -28,9 +28,9 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
@@ -130,7 +130,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ResampleDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "Resample";
+    public static final String NAME = "coverage:resample";
 
     /**
      * Convenience constant for the first source {@link GridCoverage2D}. The parameter name
@@ -215,7 +215,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ResampleDescriptor();
 
     private ResampleDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Resample a coverage."),
                 INPUT_DESC,
                 OUTPUT_DESC);

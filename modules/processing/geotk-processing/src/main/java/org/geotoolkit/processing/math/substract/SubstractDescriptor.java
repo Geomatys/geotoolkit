@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class SubstractDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : substract */
-    public static final String NAME = "substract";
+    public static final String NAME = "math:substract";
     
     /**
      * Input parameters
@@ -67,7 +67,7 @@ public class SubstractDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new SubstractDescriptor();
 
     private SubstractDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Substract two double (first - second)."),
                 INPUT_DESC, OUTPUT_DESC);
     }

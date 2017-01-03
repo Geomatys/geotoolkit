@@ -23,7 +23,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "image_Statistics";
+    public static final String NAME = "image:statistics";
     
     public static final String INPUT_IMAGE_PARAM_NAME = "image_in";
     
@@ -81,7 +81,7 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
      * Default constructor.
      */
     private ImageStatisticsDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Parameter description of Image to get its Statistics."),
                 INPUT_DESC, OUTPUT_DESC);
     }

@@ -21,7 +21,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,6 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 /**
  * JUnit test of Centroid process
@@ -39,7 +40,7 @@ public class CentroidTest extends AbstractProcessTest {
 
 
     public CentroidTest() {
-        super("centroid");
+        super("jts:centroid");
     }
 
     @Test
@@ -62,7 +63,7 @@ public class CentroidTest extends AbstractProcessTest {
         JTS.setCRS(geom, crs1);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "centroid");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:centroid");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);

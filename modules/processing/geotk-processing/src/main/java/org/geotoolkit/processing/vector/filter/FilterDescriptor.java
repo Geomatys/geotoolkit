@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class FilterDescriptor extends VectorDescriptor {
 
     /**Process name : filter */
-    public static final String NAME = "filter";
+    public static final String NAME = "vector:filter";
 
     /**
      * Mandatory - Filter

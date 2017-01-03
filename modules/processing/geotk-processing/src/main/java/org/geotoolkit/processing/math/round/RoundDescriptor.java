@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class RoundDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : round */
-    public static final String NAME = "round";
+    public static final String NAME = "math:round";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class RoundDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new RoundDescriptor();
 
     private RoundDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the closest long to the argument. The result is "
                 + "rounded to an integer by adding 1/2, taking the floor of the result, and casting the "
                 + "result to type long."),

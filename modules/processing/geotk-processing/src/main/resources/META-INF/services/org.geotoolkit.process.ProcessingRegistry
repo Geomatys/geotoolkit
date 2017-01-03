@@ -1,11 +1,1 @@
-org.geotoolkit.processing.image.ImageProcessingRegistry
-org.geotoolkit.processing.coverage.CoverageProcessingRegistry
-org.geotoolkit.processing.vector.VectorProcessingRegistry
-org.geotoolkit.processing.datastore.DatastoreProcessingRegistry
-org.geotoolkit.processing.math.MathProcessingRegistry
-org.geotoolkit.processing.io.IOProcessingRegistry
-org.geotoolkit.processing.groovy.GroovyProcessingRegistry
-org.geotoolkit.processing.jts.JTSProcessingRegistry
-org.geotoolkit.processing.referencing.ReferencingProcessingRegistry
-org.geotoolkit.processing.metadata.MetadataProcessingRegistry
-org.geotoolkit.processing.string.StringProcessingRegistry
+org.geotoolkit.processing.GeotkProcessingRegistry

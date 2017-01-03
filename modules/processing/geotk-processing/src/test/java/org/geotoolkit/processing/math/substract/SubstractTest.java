@@ -17,10 +17,11 @@
 package org.geotoolkit.processing.math.substract;
 
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class SubstractTest extends AbstractProcessTest {
    
 
     public SubstractTest() {
-        super("substract");
+        super("math:substract");
     }
 
     @Test
@@ -47,7 +48,7 @@ public class SubstractTest extends AbstractProcessTest {
         final double second = 10.5;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "substract");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:substract");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);

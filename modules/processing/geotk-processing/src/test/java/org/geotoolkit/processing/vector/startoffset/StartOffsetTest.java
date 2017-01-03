@@ -26,7 +26,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 public class StartOffsetTest extends AbstractProcessTest {
 
     public StartOffsetTest() {
-        super("startoffset");
+        super("vector:startoffset");
     }
 
 }

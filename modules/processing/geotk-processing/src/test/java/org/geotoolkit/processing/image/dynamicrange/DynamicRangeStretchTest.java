@@ -25,6 +25,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,7 +50,7 @@ public class DynamicRangeStretchTest extends org.geotoolkit.test.TestBase {
         inputRaster.setPixel(0, 4, new double[]{12,8});
         inputRaster.setPixel(0, 5, new double[]{Double.NaN,Double.NaN});
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "dynamicrangestretch");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, DynamicRangeStretchDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

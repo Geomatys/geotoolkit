@@ -24,6 +24,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ import org.opengis.feature.PropertyType;
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 
-    private static final String factory = "vector";
+    private static final String factory = GeotkProcessingRegistry.NAME;
     private String process;
 
 

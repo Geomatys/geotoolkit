@@ -28,7 +28,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.image.reformat.ReformatProcess;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.*;
@@ -59,7 +59,7 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
 
         final SampleModel inSampleModel = inputImage.getSampleModel();
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "reformat");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ReformatDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.copy;
 
-import org.geotoolkit.processing.coverage.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 
 /**

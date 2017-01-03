@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class IntersectionDescriptor extends VectorDescriptor {
 
     /**Process name : intersection */
-    public static final String NAME = "intersection";
+    public static final String NAME = "vector:intersection";
 
     /**
      * Mandatory - Feature Collection for clipping

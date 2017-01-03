@@ -23,7 +23,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,6 +30,7 @@ import org.opengis.util.InternationalString;
 
 import java.awt.image.RenderedImage;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 
 /**
@@ -41,7 +41,7 @@ import org.geotoolkit.processing.ProcessBundle;
  */
 public class StatisticsDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "statistic";
+    public static final String NAME = "coverage:statistic";
     public static final InternationalString abs = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_abstract);
     public static final InternationalString displayName = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_display_name);
 
@@ -133,7 +133,7 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new StatisticsDescriptor();
 
     private StatisticsDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, abs, displayName, INPUT_DESC, OUTPUT_DESC);
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, abs, displayName, INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override

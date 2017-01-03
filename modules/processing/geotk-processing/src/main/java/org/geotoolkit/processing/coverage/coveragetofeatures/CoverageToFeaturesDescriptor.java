@@ -22,8 +22,8 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.feature.Feature;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -64,7 +64,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
             .create(Collection.class, null);
 
     /**Process name : coveragetofeatures */
-    public static final String NAME = "coveragetofeatures";
+    public static final String NAME = "coverage:coveragetofeatures";
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -81,7 +81,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
      * Default constructor
      */
     private CoverageToFeaturesDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Parameter description of Coverage to Feature process."),
                 INPUT_DESC, OUTPUT_DESC);
     }

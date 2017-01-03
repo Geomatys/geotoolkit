@@ -32,13 +32,13 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -54,7 +54,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public SpatialJoinTest() {
-        super("spatialjoin");
+        super("vector:spatialjoin");
     }
 
     /**
@@ -68,7 +68,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection sourceFeatures = buildFeatureList2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);
@@ -95,7 +95,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection sourceFeatures = buildFeatureListInter2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);
@@ -122,7 +122,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         final FeatureCollection sourceFeatures = buildFeatureListInter2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);

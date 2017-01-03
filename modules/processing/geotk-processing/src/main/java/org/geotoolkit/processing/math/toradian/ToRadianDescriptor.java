@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ToRadianDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : toRadian */
-    public static final String NAME = "toRadian";
+    public static final String NAME = "math:toRadian";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class ToRadianDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ToRadianDescriptor();
 
     private ToRadianDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Converts an angle measured in degrees to an approximately "
                 + "equivalent angle measured in radians."),
                 INPUT_DESC, OUTPUT_DESC);

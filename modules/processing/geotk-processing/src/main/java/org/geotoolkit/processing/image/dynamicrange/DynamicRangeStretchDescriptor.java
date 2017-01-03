@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.processing.image.ImageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "dynamicrangestretch";
+    public static final String NAME = "image:dynamicrangestretch";
 
     /**
      * Mandatory - image.
@@ -87,7 +87,7 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new DynamicRangeStretchDescriptor();
 
     private DynamicRangeStretchDescriptor() {
-        super(NAME, ImageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Stretch colors in an image."), 
                 INPUT_DESC, OUTPUT_DESC);
     }

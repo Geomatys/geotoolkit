@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class SpatialJoinDescriptor extends VectorDescriptor {
 
     /**Process name : spatialjoin */
-    public static final String NAME = "spatialjoin";
+    public static final String NAME = "vector:spatialjoin";
 
     /**
      * Mandatory - Target FeatureCollection

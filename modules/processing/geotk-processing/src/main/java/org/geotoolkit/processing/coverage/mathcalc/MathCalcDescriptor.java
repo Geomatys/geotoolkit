@@ -22,8 +22,8 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class MathCalcDescriptor extends AbstractProcessDescriptor {
     
-    public static final String NAME = "mathcalc";
+    public static final String NAME = "coverage:mathcalc";
 
     /**
      * Coverage images
@@ -83,7 +83,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup();
     
     public MathCalcDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, 
                 new SimpleInternationalString("Perform a mathematic equation on input datas."),
                 INPUT_DESC, OUTPUT_DESC);
     }

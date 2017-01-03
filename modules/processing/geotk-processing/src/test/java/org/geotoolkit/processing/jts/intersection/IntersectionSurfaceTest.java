@@ -23,7 +23,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,7 +40,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public class IntersectionSurfaceTest extends AbstractProcessTest {
 
     public IntersectionSurfaceTest() {
-        super("intersectionSurface");
+        super("jts:intersectionSurface");
     }
 
     @Test
@@ -69,7 +70,7 @@ public class IntersectionSurfaceTest extends AbstractProcessTest {
 
         final Geometry geom2 = fact.createPolygon(ring2, null);
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "intersectionSurface");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:intersectionSurface");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);

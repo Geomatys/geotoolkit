@@ -26,7 +26,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 public class RetypeTest extends AbstractProcessTest {
 
     public RetypeTest() {
-        super("retype");
+        super("vector:retype");
     }
 
 }

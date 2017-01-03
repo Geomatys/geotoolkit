@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class CentroidDescriptor extends VectorDescriptor {
 
     /**Process name : centroid */
-    public static final String NAME = "centroid";
+    public static final String NAME = "vector:centroid";
     
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

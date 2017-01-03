@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class DifferenceGeometryDescriptor extends VectorDescriptor {
 
     /**Process name : diffGeometry */
-    public static final String NAME = "diffGeometry";
+    public static final String NAME = "vector:diffGeometry";
     /**
      * Mandatory - Difference Geometry
      */

@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public final class ReprojectDescriptor extends VectorDescriptor {
 
     /**Process name : reproject */
-    public static final String NAME = "reproject";
+    public static final String NAME = "vector:reproject";
 
     /**
      * Mandatory - New CoordinateReferenceSystem

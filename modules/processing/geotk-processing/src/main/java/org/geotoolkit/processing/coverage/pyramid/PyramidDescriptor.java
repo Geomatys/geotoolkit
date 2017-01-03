@@ -24,8 +24,8 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class PyramidDescriptor extends AbstractProcessDescriptor{
 
-    public static final String NAME = "coveragepyramid";
+    public static final String NAME = "coverage:coveragepyramid";
 
                                     /*INPUT*/
     /**************************************************************************/
@@ -144,7 +144,7 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new PyramidDescriptor();
 
     private PyramidDescriptor(){
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid/mosaic from the given"
                 + "coverage. Created tiles are stored in the given Coverage store."),
                 INPUT_DESC, OUTPUT_DESC);
