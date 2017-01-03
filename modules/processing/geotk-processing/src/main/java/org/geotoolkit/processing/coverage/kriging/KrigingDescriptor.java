@@ -23,8 +23,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterDescriptor;
@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
-    public static final String NAME = "kriging";
+    public static final String NAME = "coverage:kriging";
 
     /**
      * Mandatory - Source points
@@ -110,7 +110,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
 
     private KrigingDescriptor(){
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Transform an array of points in a coverage"
                 + "by using a kriging operation."),INPUT_DESC, OUTPUT_DESC);
     }

@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AsinDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : asin */
-    public static final String NAME = "asin";
+    public static final String NAME = "math:asin";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class AsinDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new AsinDescriptor();
 
     private AsinDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return arc sinus of a double."),
                 INPUT_DESC, OUTPUT_DESC);
     }

@@ -20,7 +20,8 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class AvgTest extends AbstractProcessTest {
 
 
     public AvgTest() {
-        super("avg");
+        super("math:avg");
     }
 
     @Test
@@ -51,7 +52,7 @@ public class AvgTest extends AbstractProcessTest {
                               new Double(-6.21)};
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "avg");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:avg");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("set").setValue(set);

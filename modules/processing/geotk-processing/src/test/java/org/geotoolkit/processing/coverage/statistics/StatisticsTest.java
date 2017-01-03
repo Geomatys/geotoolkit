@@ -25,8 +25,7 @@ import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.coverage.statistics.NumericHistogram;
-import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +58,7 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void executionTestRepartition() throws NoSuchIdentifierException, ProcessException {
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, StatisticsDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverage").setValue(coverage);
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);

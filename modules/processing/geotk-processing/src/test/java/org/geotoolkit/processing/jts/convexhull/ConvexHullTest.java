@@ -24,7 +24,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -32,6 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 /**
  * JUnit test of ConvexHull process
@@ -42,7 +43,7 @@ public class ConvexHullTest extends AbstractProcessTest {
 
 
     public ConvexHullTest() {
-        super("convexHull");
+        super("jts:convexHull");
     }
 
     @Test
@@ -65,7 +66,7 @@ public class ConvexHullTest extends AbstractProcessTest {
         JTS.setCRS(geom, crs1);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "convexHull");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:convexHull");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);

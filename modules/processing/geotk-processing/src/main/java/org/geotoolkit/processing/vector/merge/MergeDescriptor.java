@@ -22,7 +22,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.processing.vector.VectorProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class MergeDescriptor extends AbstractProcessDescriptor {
 
    /**Process name : merge */
-    public static final String NAME = "merge";
+    public static final String NAME = "vector:merge";
     /**
      * Mandatory - Array of FeatureCollection
      */
@@ -74,7 +74,7 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      */
     protected MergeDescriptor() {
 
-        super(NAME, VectorProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Merge many FeatureCollection in one. The fist FeatureCollection found in "
                 + "the input Collection have his FeatureType preserved. The others will be adapted to this one."),
                 INPUT_DESC, OUTPUT_DESC);

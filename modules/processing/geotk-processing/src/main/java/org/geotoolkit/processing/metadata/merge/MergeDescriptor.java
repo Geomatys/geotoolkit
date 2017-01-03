@@ -20,8 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.metadata.MetadataProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -48,7 +48,7 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Process name : merge
      */
-    public static final String NAME = "merge";
+    public static final String NAME = "metadata:merge";
 
     /**
      * Mandatory - first metadata
@@ -95,7 +95,7 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 
     private MergeDescriptor() {
-        super(NAME, MetadataProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Merge two metadata objects."),
                 INPUT_DESC, OUTPUT_DESC);
     }

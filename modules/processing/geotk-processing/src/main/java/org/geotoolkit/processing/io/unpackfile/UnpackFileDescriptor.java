@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.io.IOProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -48,7 +48,7 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Process name : unpack
      */
-    public static final String NAME = "unpackFile";
+    public static final String NAME = "io:unpackFile";
 
     /**
      * Mandatory - path
@@ -92,7 +92,7 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new UnpackFileDescriptor();
 
     private UnpackFileDescriptor() {
-        super(NAME, IOProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Unpack a compressed archive in a given directory, supports : zip,jar,tar,tar.gz ."),
                 INPUT_DESC, OUTPUT_DESC);
     }

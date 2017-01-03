@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ContainDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : contain */
-    public static final String NAME = "contain";
+    public static final String NAME = "jts:contain";
     
     /**
      * Input parameters
@@ -70,7 +70,7 @@ public class ContainDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new ContainDescriptor();
 
     private ContainDescriptor() {
-        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return true if source geometry (geom1) contains the specified geometry(geom2)."),
                 INPUT_DESC, OUTPUT_DESC);
     }

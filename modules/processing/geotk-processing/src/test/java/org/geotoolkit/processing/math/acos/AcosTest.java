@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.processing.math.acos;
 
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class AcosTest extends AbstractProcessTest {
 
    
     public AcosTest() {
-        super("acos");
+        super("math:acos");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class AcosTest extends AbstractProcessTest {
         final double first = 0.64;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "acos");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:acos");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);

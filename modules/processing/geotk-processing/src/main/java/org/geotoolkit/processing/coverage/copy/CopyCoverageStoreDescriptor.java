@@ -21,8 +21,8 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
 
     /**Process name : copycoveragestore */
-    public static final String NAME = "copycoveragestore";
+    public static final String NAME = "coverage:copycoveragestore";
 
     /**
      * Mandatory - CoverageStore
@@ -89,7 +89,7 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
      * Default constructor
      */
     private CopyCoverageStoreDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Parameter description of Coverage to Feature process."),
                 INPUT_DESC, OUTPUT_DESC);
     }

@@ -21,7 +21,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -30,6 +29,7 @@ import org.opengis.referencing.operation.MathTransform;
 import javax.imageio.ImageReader;
 import java.awt.*;
 import java.io.File;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 /**
  * Descriptor for a generic resample operation. It converts a given image source (given by {@link javax.imageio.ImageReader})
@@ -42,7 +42,7 @@ import java.io.File;
  */
 public class IOResampleDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "IOResample";
+    public static final String NAME = "coverage:ioresample";
 
     public static final ParameterDescriptor<ImageReader> IN_COVERAGE;
     public static final ParameterDescriptor<MathTransform> OPERATOR;
@@ -87,7 +87,7 @@ public class IOResampleDescriptor extends AbstractProcessDescriptor {
     }
 
     public IOResampleDescriptor() {
-                super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+                super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Resample a coverage using the given operation."),
                 INPUT_DESC,
                 OUTPUT_DESC);

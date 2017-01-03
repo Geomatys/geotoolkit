@@ -32,6 +32,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -40,7 +41,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-import static org.junit.Assert.*;
 
 
 /**
@@ -55,7 +55,7 @@ public class CentroidTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public CentroidTest() {
-        super("centroid");
+        super("vector:centroid");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CentroidTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureList();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:centroid");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

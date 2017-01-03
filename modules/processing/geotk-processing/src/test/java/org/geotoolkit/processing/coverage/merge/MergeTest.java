@@ -31,6 +31,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -78,7 +79,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
 
 
         //call the merge process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "merge");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, MergeDescriptor.NAME);
         assertNotNull(desc);
 
         final GeneralEnvelope penv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());

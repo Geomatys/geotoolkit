@@ -33,8 +33,9 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.coverage.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -79,7 +80,7 @@ public class ResampleTest extends AbstractProcessTest {
 
 
         //get the description of the process we want
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "Resample");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ResampleDescriptor.NAME);
 
         //create a process
         //set the input parameters

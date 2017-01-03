@@ -17,10 +17,11 @@
 package org.geotoolkit.processing.math.atan2;
 
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class Atan2Test extends AbstractProcessTest {
 
 
     public Atan2Test() {
-        super("atan2");
+        super("math:atan2");
     }
 
     @Test
@@ -47,7 +48,7 @@ public class Atan2Test extends AbstractProcessTest {
         final double y = 25.29;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "atan2");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:atan2");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(x);

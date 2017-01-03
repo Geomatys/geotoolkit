@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class MaxLimitDescriptor extends VectorDescriptor {
 
     /**Process name : maxlimit */
-    public static final String NAME = "maxlimit";
+    public static final String NAME = "vector:maxlimit";
 
     /**
      * Mandatory - Number maximum of Feature

@@ -24,6 +24,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 import java.util.HashMap;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,7 +38,7 @@ public class GroovyTest extends AbstractProcessTest {
 
 
     public GroovyTest() {
-        super("condition");
+        super("groovy:condition");
     }
 
     @Test
@@ -48,7 +49,7 @@ public class GroovyTest extends AbstractProcessTest {
         final String  expression = "(i>2)";
         variables.put("i",new Integer(3)) ;
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GroovyProcessingRegistry.NAME, "condition");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, "groovy:condition");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("variables").setValue(variables);

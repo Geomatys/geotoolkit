@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Map;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 
 /**
@@ -36,7 +37,7 @@ import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 public class GroovyDescriptor extends AbstractProcessDescriptor{
 
     /**Process name : addition */
-    public static final String NAME = "condition";
+    public static final String NAME = "groovy:condition";
 
     /**
      * Input parameters
@@ -75,7 +76,7 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new GroovyDescriptor();
 
     private GroovyDescriptor() {
-        super(NAME, GroovyProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Evaluate expression given in parameter w"),
                 INPUT_DESC, OUTPUT_DESC);
     }

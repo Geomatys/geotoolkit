@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class RetypeDescriptor extends VectorDescriptor {
 
     /**Process name : retype */
-    public static final String NAME = "retype";
+    public static final String NAME = "vector:retype";
 
     /**
      * Mandatory - FeatureType used to as a mask to retype the FeatureCollection

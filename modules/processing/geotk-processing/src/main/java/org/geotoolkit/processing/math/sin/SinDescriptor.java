@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class SinDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : sin */
-    public static final String NAME = "sin";
+    public static final String NAME = "math:sin";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class SinDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new SinDescriptor();
 
     private SinDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the trigonometric sine of an angle in double."),
                 INPUT_DESC, OUTPUT_DESC);
     }

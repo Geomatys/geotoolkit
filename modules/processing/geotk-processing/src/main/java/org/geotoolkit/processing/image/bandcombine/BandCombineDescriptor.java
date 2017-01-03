@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.processing.image.ImageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class BandCombineDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "bandcombine";
+    public static final String NAME = "image:bandcombine";
 
     /**
      * Mandatory - Images to combine
@@ -65,7 +65,7 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();
 
     private BandCombineDescriptor() {
-        super(NAME, ImageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Combine multiple images."), 
                 INPUT_DESC, OUTPUT_DESC);
     }

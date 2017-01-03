@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class BufferDescriptor extends VectorDescriptor {
 
     /**Process name : buffer */
-    public static final String NAME = "buffer";
+    public static final String NAME = "vector:buffer";
 
     /**
      * Mandatory - Buffer distance in meters

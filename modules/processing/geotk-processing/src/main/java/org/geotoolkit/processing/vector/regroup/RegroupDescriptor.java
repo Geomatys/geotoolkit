@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class RegroupDescriptor extends VectorDescriptor {
 
     /**Process name : regroup */
-    public static final String NAME = "regroup";
+    public static final String NAME = "vector:regroup";
 
     /**
      * Optional - Attribute name to apply the regroup process

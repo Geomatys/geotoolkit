@@ -27,11 +27,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.operation.buffer.BufferOp;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -44,7 +45,7 @@ public class BufferTest extends AbstractProcessTest {
 
 
     public BufferTest() {
-        super("buffer");
+        super("jts:buffer");
     }
 
     @Test
@@ -62,7 +63,7 @@ public class BufferTest extends AbstractProcessTest {
         JTS.setCRS(geom, crs1);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "buffer");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:buffer");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);

@@ -22,8 +22,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +36,7 @@ import org.opengis.util.InternationalString;
  */
 public class IsolineDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "isoline";
+    public static final String NAME = "coverage:isoline";
     public static final InternationalString abs = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_abstract);
 
     /*
@@ -84,7 +84,7 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new IsolineDescriptor();
 
     private IsolineDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, abs, INPUT_DESC, OUTPUT_DESC);
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, abs, INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override

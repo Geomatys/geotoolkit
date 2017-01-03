@@ -41,6 +41,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
@@ -58,7 +59,7 @@ public class ReprojectTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public ReprojectTest() {
-        super("reproject");
+        super("vector:reproject");
     }
 
     @Test
@@ -67,7 +68,7 @@ public class ReprojectTest extends AbstractProcessTest {
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "reproject");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:reproject");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

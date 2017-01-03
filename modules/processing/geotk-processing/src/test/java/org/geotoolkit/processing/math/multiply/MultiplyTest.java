@@ -20,7 +20,8 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class MultiplyTest extends AbstractProcessTest {
 
 
     public MultiplyTest() {
-        super("multiply");
+        super("math:multiply");
     }
 
     @Test
@@ -47,7 +48,7 @@ public class MultiplyTest extends AbstractProcessTest {
         final double second = 10.5;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "multiply");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:multiply");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);

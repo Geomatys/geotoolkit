@@ -34,6 +34,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -71,7 +72,7 @@ public class AffineTransformTest extends AbstractProcessTest {
         transform.setToTranslation(100, 100);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "affinetransform");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:affinetransform");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

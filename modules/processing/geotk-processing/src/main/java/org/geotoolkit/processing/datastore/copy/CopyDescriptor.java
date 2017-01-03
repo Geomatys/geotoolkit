@@ -58,7 +58,7 @@ public final class CopyDescriptor extends VectorDescriptor {
     /**
      * Process name : copy
      */
-    public static final String NAME = "copy";
+    public static final String NAME = "datastore:copy";
 
     /**
      * Mandatory - Source datastore.

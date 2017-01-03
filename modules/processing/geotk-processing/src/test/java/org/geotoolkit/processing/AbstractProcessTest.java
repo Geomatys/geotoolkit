@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,23 +14,24 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-package org.geotoolkit.processing.jts;
+package org.geotoolkit.processing;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.util.NoSuchIdentifierException;
+
 /**
- * Abstract JUnit test for math process
+ * Abstract JUnit test for vector process
+ *
  * @author Quentin Boileau
+ * @author Cédric Briançon (Geomatys)
  * @module
  */
 public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 
-    private static final String factory = "jts";
+    public static final String FACTORY = GeotkProcessingRegistry.NAME;
     private String process;
 
 
@@ -40,7 +41,7 @@ public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void findProcessTest() throws NoSuchIdentifierException{
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(factory, process);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(FACTORY, process);
         assertNotNull(desc);
     }
 }

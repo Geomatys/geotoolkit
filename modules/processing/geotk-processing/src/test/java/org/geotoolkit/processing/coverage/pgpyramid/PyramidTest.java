@@ -46,6 +46,8 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.coverage.pyramid.PyramidDescriptor;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
@@ -98,7 +100,7 @@ public class PyramidTest extends org.geotoolkit.test.TestBase {
         final Map<Envelope, double[]> res = new HashMap<>();
         res.put(env, scales);
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragepyramid");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, PyramidDescriptor.NAME);
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("coverageref").setValue(new DefaultCoverageReference(coverage, name));
         input.parameter("in_coverage_store").setValue(store);

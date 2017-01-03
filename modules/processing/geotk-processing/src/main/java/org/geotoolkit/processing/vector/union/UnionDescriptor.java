@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class UnionDescriptor extends VectorDescriptor {
 
     /**Process name : union */
-    public static final String NAME = "union";
+    public static final String NAME = "vector:union";
     /**
      * Mandatory - Union Feature Collection
      */

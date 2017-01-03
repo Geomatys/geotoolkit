@@ -17,10 +17,11 @@
 package org.geotoolkit.processing.math.min;
 
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class MinTest extends AbstractProcessTest {
 
 
     public MinTest() {
-        super("min");
+        super("math:min");
     }
 
     @Test
@@ -51,7 +52,7 @@ public class MinTest extends AbstractProcessTest {
                               new Double(-6.21)};
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "min");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:min");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("set").setValue(set);

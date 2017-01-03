@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.io.IOProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,7 +49,7 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Process name : createTempFile 
      */
-    public static final String NAME = "createTempFile";
+    public static final String NAME = "io:createTempFile";
 
     /**
      * Optional - file prefix
@@ -102,7 +102,7 @@ public final class CreateTempFileDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new CreateTempFileDescriptor();
 
     private CreateTempFileDescriptor() {
-        super(NAME, IOProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a temporary file."),
                 INPUT_DESC, OUTPUT_DESC);
     }

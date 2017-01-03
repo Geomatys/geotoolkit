@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class NearestDescriptor extends VectorDescriptor {
 
     /**Process name : nearest */
-    public static final String NAME = "nearest";
+    public static final String NAME = "vector:nearest";
     /**
      * Mandatory - Intersection geometry
      */

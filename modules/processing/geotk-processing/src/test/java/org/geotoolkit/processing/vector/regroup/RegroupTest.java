@@ -37,6 +37,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -59,7 +60,7 @@ public class RegroupTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public RegroupTest() {
-        super("regroup");
+        super("vector:regroup");
     }
 
     @Test
@@ -68,7 +69,7 @@ public class RegroupTest extends AbstractProcessTest {
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:regroup");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -89,7 +90,7 @@ public class RegroupTest extends AbstractProcessTest {
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:regroup");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

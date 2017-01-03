@@ -27,11 +27,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -44,7 +45,7 @@ public class BoundaryTest extends AbstractProcessTest {
 
 
     public BoundaryTest() {
-        super("boundary");
+        super("jts:boundary");
     }
 
     @Test
@@ -67,7 +68,7 @@ public class BoundaryTest extends AbstractProcessTest {
         JTS.setCRS(geom, crs1);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "boundary");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:boundary");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);
