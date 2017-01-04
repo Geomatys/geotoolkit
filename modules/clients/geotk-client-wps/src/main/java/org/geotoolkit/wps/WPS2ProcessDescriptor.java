@@ -71,8 +71,8 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
     private ProcessSummaryType summary;
 
     public WPS2ProcessDescriptor(String name, WPSProcessingRegistry registry, InternationalString abs,
-            ParameterDescriptorGroup inputs, ParameterDescriptorGroup outputs) {
-        super(name,registry.getIdentification(),abs,inputs,outputs);
+            InternationalString displayName, ParameterDescriptorGroup inputs, ParameterDescriptorGroup outputs) {
+        super(name,registry.getIdentification(),abs,displayName,inputs,outputs);
         this.registry = registry;
     }
 
@@ -89,10 +89,17 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final String processIdentifier = summary.getIdentifier().getValue();
 
         final InternationalString abs;
-        if (summary.getSingleAbstract() != null) {
-            abs = new DefaultInternationalString(summary.getSingleAbstract().getValue());
+        if (summary.getFirstAbstract()!= null) {
+            abs = new DefaultInternationalString(summary.getFirstAbstract());
         } else {
             abs = new DefaultInternationalString("");
+        }
+        
+        final InternationalString displayName;
+        if (summary.getFirstTitle()!= null) {
+            displayName = new DefaultInternationalString(summary.getFirstTitle());
+        } else {
+            displayName = new DefaultInternationalString("");
         }
 
         final ProcessOfferings offerings = getDescribeProcess(registry, processIdentifier);
@@ -114,17 +121,24 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
                 outputLst.toArray(new GeneralParameterDescriptor[outputLst.size()]));
 
-        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, inputs, outputs);
+        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, displayName, inputs, outputs);
     }
     
     public static ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering offering) throws IOException, JAXBException, UnsupportedParameterException {
         final String processIdentifier = offering.getIdentifier().getValue();
 
         final InternationalString abs;
-        if (offering.getSingleAbstract() != null) {
-            abs = new DefaultInternationalString(offering.getSingleAbstract().getValue());
+        if (offering.getFirstAbstract()!= null) {
+            abs = new DefaultInternationalString(offering.getFirstAbstract());
         } else {
             abs = new DefaultInternationalString("");
+        }
+        
+        final InternationalString displayName;
+        if (offering.getFirstTitle()!= null) {
+            displayName = new DefaultInternationalString(offering.getFirstTitle());
+        } else {
+            displayName = new DefaultInternationalString("");
         }
 
         final ProcessDescriptionType process = offering.getProcess();
@@ -144,7 +158,7 @@ public class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
         final ParameterDescriptorGroup outputs = new ParameterBuilder().addName("ouptuts").createGroup(
                 outputLst.toArray(new GeneralParameterDescriptor[outputLst.size()]));
 
-        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, inputs, outputs);
+        return new WPS2ProcessDescriptor(processIdentifier, registry, abs, displayName, inputs, outputs);
     }
 
     /**

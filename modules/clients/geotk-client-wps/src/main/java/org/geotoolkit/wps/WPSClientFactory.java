@@ -63,7 +63,7 @@ public class WPSClientFactory extends AbstractClientFactory{
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, WPSVersion.v100.getCode());
+        VERSION = createVersionDescriptor(validValues, WPSVersion.auto.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
