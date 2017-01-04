@@ -29,6 +29,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 
@@ -76,6 +77,27 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
+     * Auto detect version.
+     * 
+     * @param serverURL
+     */
+    public WebProcessingClient(final URL serverURL) {
+        this(serverURL,null,null,true);
+    }
+    
+    /**
+     * Constructor
+     * Auto detect version.
+     * 
+     * @param serverURL
+     * @param security
+     */
+    public WebProcessingClient(final URL serverURL, final ClientSecurity security) {
+        this(serverURL,security,null,true);
+    }
+    
+    /**
+     * Constructor
      *
      * @param serverURL
      * @param security
@@ -93,7 +115,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param version
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
-        this(serverURL, security, version.getCode(), true);
+        this(serverURL, security, version==null?null:version.getCode(), true);
     }
 
     /**
@@ -104,8 +126,23 @@ public class WebProcessingClient extends AbstractClient {
      * @param version
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
      */
-    public WebProcessingClient(final URL serverURL, final ClientSecurity security, final String version, final boolean forceGET) {
+    public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET) {
         super(create(WPSClientFactory.PARAMETERS, serverURL, security));
+        
+        if(version==null || "auto".equalsIgnoreCase(version)){
+            //if version is null, call getCapabilities to found service version
+            if(LOGGER.isLoggable(Level.FINE)){
+                LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
+            }
+            try {
+                this.capabilities = getCapabilities();
+                //set version
+                version = WPSVersion.getVersion(this.capabilities.getVersion()).getCode();
+            } catch (CapabilitiesException e) {
+                LOGGER.log(Level.WARNING,  e.getLocalizedMessage(), e);
+                version = WPSVersion.v200.getCode();
+            }
+        }
         if (version.equals("1.0.0")) {
             Parameters.castOrWrap(parameters).getOrCreate(WPSClientFactory.VERSION).setValue(WPSVersion.v100.getCode());
         } else if (version.equals("2.0.0")) {
@@ -166,6 +203,10 @@ public class WebProcessingClient extends AbstractClient {
             if(obj instanceof JAXBElement) {
                 obj = ((JAXBElement)obj).getValue();
             }
+            if(obj instanceof ExceptionResponse) {
+                final ExceptionResponse er = (ExceptionResponse) obj;
+                throw new CapabilitiesException(er.toException().getMessage(), er.toException());
+            }
             capabilities = (WPSCapabilities) obj;
             WPSMarshallerPool.getInstance().recycle(unmarshaller);
         } catch (Exception ex) {
@@ -201,8 +242,15 @@ public class WebProcessingClient extends AbstractClient {
                 cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("2.0.0"));
                 request.setContent(cap);
                 } break;
-            default:
-                throw new IllegalArgumentException("Version not defined or unsupported.");
+            default:{
+                if(LOGGER.isLoggable(Level.FINE)){
+                    LOGGER.log(Level.FINE, "Version was not defined");
+                }
+                final org.geotoolkit.wps.xml.v200.GetCapabilitiesType cap = new org.geotoolkit.wps.xml.v200.GetCapabilitiesType();
+                cap.setService("WPS");
+                cap.setAcceptVersions(new org.geotoolkit.ows.xml.v200.AcceptVersionsType("1.0.0","2.0.0"));
+                request.setContent(cap);
+                } break;
         }
 
         return request;
