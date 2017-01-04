@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.AbstractKeywords;
 import org.geotoolkit.ows.xml.LanguageString;
 import org.w3c.dom.Element;
 
@@ -87,10 +88,20 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     public AbstractCodeType getIdentifier() {
         return process.getIdentifier();
     }
+    
+    @Override
+    public String getFirstTitle() {
+        return process.getFirstTitle();
+    }
 
     @Override
-    public LanguageString getSingleAbstract() {
-        return process.getAbstract().get(0);
+    public String getFirstAbstract() {
+        return process.getFirstAbstract();
+    }
+
+    @Override
+    public List<? extends AbstractKeywords> getKeywords() {
+        return process.getKeywords();
     }
     
     /**

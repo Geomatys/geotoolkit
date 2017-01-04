@@ -72,9 +72,10 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     private WPS1ProcessDescriptor(WPSProcessingRegistry registry, ProcessDescriptionType type,
             String processIdentifier,
             InternationalString processAbstract,
+            InternationalString displayName,
             ParameterDescriptorGroup inputs,
             ParameterDescriptorGroup outputs) {
-        super(processIdentifier, registry.getIdentification(), processAbstract,inputs,outputs);
+        super(processIdentifier, registry.getIdentification(), processAbstract, displayName, inputs,outputs);
         this.registry = registry;
         this.type = type;
     }
@@ -116,10 +117,17 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
         final String processIdentifier = processBriefType.getIdentifier().getValue();
 
         final InternationalString processAbstract;
-        if (processBriefType.getSingleAbstract() != null) {
-            processAbstract = new DefaultInternationalString(processBriefType.getSingleAbstract().getValue());
+        if (processBriefType.getFirstAbstract()!= null) {
+            processAbstract = new DefaultInternationalString(processBriefType.getFirstAbstract());
         } else {
             processAbstract = new DefaultInternationalString("");
+        }
+        
+        final InternationalString processDisplayName;
+        if (processBriefType.getFirstTitle()!= null) {
+            processDisplayName = new DefaultInternationalString(processBriefType.getFirstTitle());
+        } else {
+            processDisplayName = new DefaultInternationalString("");
         }
 
         final List<ParameterDescriptor> inputDescriptors = new ArrayList<>();
@@ -316,7 +324,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
                 outputDescriptors.toArray(new ParameterDescriptor[outputDescriptors.size()]));
 
 
-        return new WPS1ProcessDescriptor(registry, wpsProcessDesc, processIdentifier, processAbstract, inputs, outputs);
+        return new WPS1ProcessDescriptor(registry, wpsProcessDesc, processIdentifier, processAbstract, processDisplayName, inputs, outputs);
     }
 
 

@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDescription;
+import org.geotoolkit.ows.xml.AbstractKeywords;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.ows.xml.v110.MetadataType;
@@ -67,7 +69,7 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
     InputDescriptionType.class,
     OutputDescriptionType.class
 })
-public class DescriptionType {
+public class DescriptionType implements AbstractDescription {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;
@@ -178,6 +180,25 @@ public class DescriptionType {
             metadata = new ArrayList<>();
         }
         return this.metadata;
+    }
+    
+    @Override
+    public String getFirstTitle() {
+        return title==null ? null : title.getValue();
+    }
+
+    @Override
+    public String getFirstAbstract() {
+        return _abstract==null ? null : _abstract.getValue();
+    }
+
+    /**
+     * Information is not available on this version.
+     * @return 
+     */
+    @Override
+    public List<? extends AbstractKeywords> getKeywords() {
+        return new ArrayList<>();
     }
     
     @Override

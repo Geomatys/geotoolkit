@@ -81,11 +81,6 @@ public class ProcessBriefType extends DescriptionType implements ProcessSummary,
         super(identifier, title, _abstract);
         this.processVersion = processVersion;
     }
-
-    @Override
-    public LanguageString getSingleAbstract() {
-        return getAbstract();
-    }
     
     /**
      * Gets the value of the profile property.
