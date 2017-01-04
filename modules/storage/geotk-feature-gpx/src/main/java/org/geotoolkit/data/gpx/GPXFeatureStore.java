@@ -44,21 +44,23 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.internal.gpx.Store;
-import org.apache.sis.internal.gpx.GPXConstants;
 import org.apache.sis.internal.gpx.Metadata;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.data.internal.GenericNameIndex;
 
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.FeatureCatalogueDescription;
+import org.opengis.metadata.content.FeatureTypeInfo;
 
 
 /**
@@ -78,10 +80,11 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     private static final QueryCapabilities QUERY_CAPABILITIES = new DefaultQueryCapabilities(false);
 
-    private final GenericNameIndex<FeatureType> index = new GenericNameIndex<>();
     private final Path file;
 
     private final Store reader;
+
+    private final FeatureType rootType;
 
     /**
      * @deprecated use {@link #GPXFeatureStore(Path)} instead
@@ -104,11 +107,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
             throw new DataStoreException(ex);
         }
         reader = new Store(null, new StorageConnector(file));
-
-        index.add(GPXConstants.TYPE_GPX_ENTITY.getName(), GPXConstants.TYPE_GPX_ENTITY);
-        index.add(GPXConstants.TYPE_WAYPOINT.getName(),   GPXConstants.TYPE_WAYPOINT);
-        index.add(GPXConstants.TYPE_ROUTE.getName(),      GPXConstants.TYPE_ROUTE);
-        index.add(GPXConstants.TYPE_TRACK.getName(),      GPXConstants.TYPE_TRACK);
+        rootType = reader.getFeatureType("Route").getSuperTypes().iterator().next();
     }
 
     private static ParameterValueGroup toParameter(final Path f) throws MalformedURLException{
@@ -132,18 +131,24 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
-        return index.getNames();
+        final Set<GenericName> names = new LinkedHashSet<>();
+        for (ContentInformation c : getGPXMetaData().features) {
+            for (FeatureTypeInfo f : ((FeatureCatalogueDescription) c).getFeatureTypeInfo()) {
+                names.add(f.getFeatureTypeName());
+            }
+        }
+        return names;
     }
 
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        return index.get(typeName);
+        return reader.getFeatureType(typeName);
     }
 
     @Override
     public boolean isWritable(String typeName) throws DataStoreException {
         typeCheck(typeName);
-        return Files.isWritable(file) && getFeatureType(typeName) != GPXConstants.TYPE_GPX_ENTITY;
+        return Files.isWritable(file) && getFeatureType(typeName) != rootType;
     }
 
 
@@ -246,7 +251,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
             try {
                 while(features.hasNext()) {
                     current = features.next();
-                    if (restriction == GPXConstants.TYPE_GPX_ENTITY || current.getType() == restriction) {
+                    if (restriction == rootType || current.getType() == restriction) {
                         return; //type match
                     }
                 }
@@ -278,9 +283,9 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         private final List<Feature> features = new ArrayList<>();
 
         private GPXFeatureWriter(final FeatureType restriction) throws DataStoreException {
-            super(GPXConstants.TYPE_GPX_ENTITY);
+            super(rootType);
 
-            if (restriction == GPXConstants.TYPE_GPX_ENTITY) {
+            if (restriction == rootType) {
                 super.close(); //release read lock
                 throw new DataStoreException("Writer not allowed on GPX entity writer, choose a defined type.");
             }
@@ -317,7 +322,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
                 return edited;
             }else{
                 //we reach append mode
-                if (writeRestriction != GPXConstants.TYPE_GPX_ENTITY) {
+                if (writeRestriction != rootType) {
                     edited = writeRestriction.newInstance();
                 }else{
                     throw new FeatureStoreRuntimeException("Writer append not allowed "

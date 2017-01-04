@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +31,6 @@ import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.feature.ReprojectFeatureType;
 import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -139,7 +137,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     /**
      * Overwrite to enable versioning.
-     * @param version
      */
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException{
@@ -187,10 +184,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Default implementation, will return a list with the single feature tpe from method
      * {@link #getFeatureType(org.geotoolkit.feature.type.Name) }
-     *
-     * @param typeName
-     * @return
-     * @throws DataStoreException
      */
     @Override
     public List<FeatureType> getFeatureTypeHierarchy(String typeName) throws DataStoreException {
@@ -243,8 +236,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * This implementation will aquiere a reader and iterate to expend an envelope.
      * Subclasses should override this method if they have a faster way to
      * calculate envelope.
-     * @throws DataStoreException
-     * @throws FeatureStoreRuntimeException
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
@@ -381,7 +372,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Convenient method to check that the given type name exist.
      * Will raise a datastore exception if the name do not exist in this FeatureStore.
-     * 
+     *
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
@@ -438,10 +429,9 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * are not handle by this FeatureStore implementation.
      *
      * @param reader FeatureReader to wrap
-     * @param remainingParameters , query holding the parameters that where not handle
+     * @param remainingParameters query holding the parameters that where not handle
      * by the FeatureStore implementation
      * @return FeatureReader Reader wrapping the given reader with all query parameters
-     * @throws org.apache.sis.storage.DataStoreException
      */
     protected FeatureReader handleRemaining(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
         return GenericQueryFeatureIterator.wrap(reader, remainingParameters);
@@ -455,7 +445,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param writer featureWriter to filter
      * @param filter filter to use for hiding feature while iterating
      * @return Filtered FeatureWriter
-     * @throws DataStoreException
      */
     protected FeatureWriter handleRemaining(FeatureWriter writer, Filter filter) throws DataStoreException{
 
@@ -471,14 +460,11 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
      *
-     * @param groupName
-     * @param newFeatures
      * @return list of ids of the features added.
-     * @throws DataStoreException
      */
     protected List<FeatureId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
-        
+
         try(FeatureWriter featureWriter = getFeatureWriter(QueryBuilder.filtered(groupName, Filter.EXCLUDE))) {
             while (featureWriter.hasNext()) {
                 featureWriter.next();
@@ -492,11 +478,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
-     *
-     * @param groupName
-     * @param filter
-     * @param values
-     * @throws DataStoreException
      */
     protected void handleUpdateWithFeatureWriter(final String groupName, final Filter filter,
             final Map<String, ?> values) throws DataStoreException {
@@ -517,10 +498,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
-     *
-     * @param groupName
-     * @param filter
-     * @throws DataStoreException
      */
     protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter) throws DataStoreException {
         try(FeatureWriter writer = getFeatureWriter(QueryBuilder.filtered(groupName, filter))) {
@@ -536,10 +513,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Convenient method to handle modification operation by using the
      * add, remove, update methods.
-     *
-     * @param query
-     * @return 
-     * @throws DataStoreException
      */
     protected FeatureWriter handleWriter(Query query) throws DataStoreException {
         final Filter filter = query.getFilter();
@@ -550,7 +523,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
             return GenericFeatureWriter.wrap(this, groupName, filter);
         }
     }
-    
+
     public static GenericName ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
             return NamesExt.create(GML_311_NAMESPACE, GML_NAME);
@@ -577,7 +550,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     /**
      * Forward a structure event to all listeners.
-     * @param event , event to send to listeners.
+     * @param event event to send to listeners.
      */
     protected void sendStructureEvent(final StorageEvent event){
         final StorageListener[] lst;
@@ -591,7 +564,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
     /**
      * Forward a data event to all listeners.
-     * @param event , event to send to listeners.
+     * @param event event to send to listeners.
      */
     protected void sendContentEvent(final StorageEvent event){
         final StorageListener[] lst;
@@ -606,7 +579,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Forward given event, changing the source by this object.
      * For implementation use only.
-     * @param event
      */
     public void forwardStructureEvent(StorageEvent event){
         sendStructureEvent(event.copy(this));
@@ -615,7 +587,6 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     /**
      * Forward given event, changing the source by this object.
      * For implementation use only.
-     * @param event
      */
     public void forwardContentEvent(StorageEvent event){
         sendContentEvent(event.copy(this));

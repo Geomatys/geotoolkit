@@ -58,9 +58,9 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     private final GenericNameIndex<Query> queries = new GenericNameIndex<>();
-    
+
     private final Map<GenericName,FeatureType> featureTypes = new ConcurrentHashMap<>();
-    
+
     private final FeatureStore wrapped;
 
     public ExtendedFeatureStore(final FeatureStore wrapped) {
@@ -84,17 +84,17 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     public Query getQuery(final GenericName name) throws IllegalNameException{
-        return queries.get(name.toString());
+        return queries.get(this, name.toString());
     }
 
     public void addQuery(final Query query) throws IllegalNameException{
         ArgumentChecks.ensureNonNull("query name", query.getTypeName());
-        queries.add(NamesExt.valueOf(query.getTypeName()), query);
+        queries.add(this, NamesExt.valueOf(query.getTypeName()), query);
         featureTypes.clear();
     }
 
     public void removeQuery(final GenericName name) throws IllegalNameException{
-        queries.remove(name);
+        queries.remove(this, name);
         featureTypes.clear();
     }
 
@@ -124,7 +124,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public void deleteFeatureType(final String typeName) throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             removeQuery(NamesExt.valueOf(typeName));
         }
         wrapped.deleteFeatureType(typeName);
@@ -133,14 +133,14 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             // return from cache when available
             final GenericName n = NamesExt.valueOf(typeName);
             if (featureTypes.containsKey(n)) {
                 return featureTypes.get(n);
             }
-            
-            final Query original = queries.get(typeName);
+
+            final Query original = queries.get(this, typeName);
             try {
                 final FeatureType ft = wrapped.getFeatureType(original);
                 featureTypes.put(n, ft);
@@ -151,10 +151,10 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
         }
         return wrapped.getFeatureType(typeName);
     }
-    
+
     @Override
     public boolean isWritable(final String typeName) throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             //stored queries are not writeable.
             return false;
         }
@@ -168,7 +168,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public long getCount(final Query query) throws DataStoreException {
-        if(queries.get(query.getTypeName())!=null){
+        if(queries.get(this, query.getTypeName())!=null){
             try(FeatureReader reader = getFeatureReader(query)) {
                 return FeatureStoreUtilities.calculateCount(reader);
             }
@@ -178,7 +178,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException {
-        if(queries.get(query.getTypeName())!=null){
+        if(queries.get(this, query.getTypeName())!=null){
             try(FeatureReader reader = getFeatureReader(query)) {
                 return FeatureStoreUtilities.calculateEnvelope(reader);
             }
@@ -193,7 +193,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     @Override
     public List<FeatureId> addFeatures(final String typeName,
             final Collection<? extends Feature> newFeatures, final Hints hints) throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             throw new DataStoreException("Group name corresponed to a stored query, it can not be updated.");
         }
         return wrapped.addFeatures(typeName, newFeatures, hints);
@@ -204,7 +204,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     public void updateFeatures(final String typeName, final Filter filter,
             final Map<String, ?> values)
             throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             throw new DataStoreException("Group name corresponed to a stored query, it can not be updated.");
         }
         wrapped.updateFeatures(typeName, filter, values);
@@ -212,7 +212,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public void removeFeatures(final String typeName, final Filter filter) throws DataStoreException {
-        if(queries.get(typeName)!=null){
+        if(queries.get(this, typeName)!=null){
             throw new DataStoreException("Group name corresponed to a stored query, it can not be updated.");
         }
         wrapped.removeFeatures(typeName, filter);
@@ -221,8 +221,8 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final String typeName = query.getTypeName();
-        if(queries.get(typeName)!=null){
-            final Query original = queries.get(typeName);
+        if(queries.get(this, typeName)!=null){
+            final Query original = queries.get(this, typeName);
             final FeatureReader baseReader = wrapped.getFeatureReader(original);
             return handleRemaining(baseReader, query);
         }
@@ -231,7 +231,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if(queries.get(query.getTypeName())!=null){
+        if(queries.get(this, query.getTypeName())!=null){
             throw new DataStoreException("Group name corresponed to a stored query, writing is not possible.");
         }
         return wrapped.getFeatureWriter(query);

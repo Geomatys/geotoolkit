@@ -200,7 +200,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         this.singleTypeLock = singleTypeLock;
         final GenericName name = type.getName();
         try {
-            groups.add(name, hasIdentifier(type) ? new GroupWithId(type) : new GroupNoId(type));
+            groups.add(this, name, hasIdentifier(type) ? new GroupWithId(type) : new GroupNoId(type));
         } catch (IllegalNameException ex) {
             //wont happen
             getLogger().log(Level.WARNING, ex.getMessage(), ex);
@@ -223,7 +223,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureType getFeatureType(final String name) throws DataStoreException {
-        final Group grp = groups.get(name);
+        final Group grp = groups.get(this, name);
 
         if(grp == null){
             throw new DataStoreException("Schema "+ name +" doesnt exist in this feature store.");
@@ -247,7 +247,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             throw new IllegalArgumentException("FeatureType with name : " + type.getName() + " already exist.");
         }
 
-        groups.add(name, hasIdentifier(type) ? new GroupWithId(type) : new GroupNoId(type));
+        groups.add(this, name, hasIdentifier(type) ? new GroupWithId(type) : new GroupNoId(type));
 
         //clear name cache
         nameCache = null;
@@ -270,12 +270,12 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         ensureNonNull("feature type", newType);
         ensureNonNull("name", typeName);
 
-        final Group grp = groups.get(typeName.toString());
+        final Group grp = groups.get(this, typeName.toString());
 
-        groups.remove(typeName);
+        groups.remove(this, typeName);
 
         final FeatureType type = grp.getFeatureType();
-        groups.add(typeName, hasIdentifier(newType) ? new GroupWithId(newType) : new GroupNoId(newType));
+        groups.add(this, typeName, hasIdentifier(newType) ? new GroupWithId(newType) : new GroupNoId(newType));
 
         //clear name cache
         nameCache = null;
@@ -292,9 +292,9 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
-        final Group grp = groups.get(typeName);
+        final Group grp = groups.get(this, typeName);
 
-        groups.remove(grp.type.getName());
+        groups.remove(this, grp.type.getName());
 
         //clear name cache
         nameCache = null;
@@ -318,7 +318,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
     public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> collection,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
-        final Group grp = groups.get(groupName);
+        final Group grp = groups.get(this, groupName);
 
         final List<FeatureId> addedIds = new ArrayList<>();
         for(final Feature f : collection){
@@ -394,7 +394,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         typeCheck(groupName);
 
         //get features which will be modified
-        final Group grp = groups.get(groupName);
+        final Group grp = groups.get(this, groupName);
 
         //ensure crs is set on geometric values
         for(Map.Entry<String, ?> entry : values.entrySet()){
@@ -467,7 +467,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
     public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
         typeCheck(groupName);
 
-        final Group grp = groups.get(groupName);
+        final Group grp = groups.get(this, groupName);
         if(grp instanceof GroupWithId){
             final GroupWithId grpwithid = (GroupWithId) grp;
             final Collection<Identifier> toRemove = getAffectedFeatures(groupName, filter);
@@ -491,11 +491,11 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
             fireFeaturesDeleted(grpnoid.type.getName(),FF.id(new HashSet(Collections.EMPTY_SET)));
         }
-        
+
     }
 
     private Collection<Identifier> getAffectedFeatures(final String groupName, final Filter filter) throws DataStoreException{
-        final Group grp = groups.get(groupName);
+        final Group grp = groups.get(this, groupName);
 
         final Collection<Identifier> affected;
         if(filter instanceof Id){
@@ -524,7 +524,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final Group grp = groups.get(query.getTypeName());
+        final Group grp = groups.get(this, query.getTypeName());
 
         if(grp == null){
             throw new DataStoreException("No featureType for name : " + query.getTypeName());

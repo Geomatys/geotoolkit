@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.internal.storage.GenericNameMap;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.FeatureNaming;
 import org.apache.sis.storage.IllegalNameException;
 import org.opengis.util.GenericName;
 
@@ -30,7 +31,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericNameIndex<T> extends GenericNameMap<T> {
+public class GenericNameIndex<T> extends FeatureNaming<T> {
 
     private final Map<GenericName,T> names = new HashMap<>();
 
@@ -49,7 +50,7 @@ public class GenericNameIndex<T> extends GenericNameMap<T> {
 
     public boolean contains(String name) {
         try {
-            get(name);
+            get(null, name);
             return true;
         } catch (IllegalNameException ex) {
             return false;
@@ -57,14 +58,14 @@ public class GenericNameIndex<T> extends GenericNameMap<T> {
     }
 
     @Override
-    public synchronized void add(GenericName name, T value) throws IllegalNameException {
-        super.add(name, value);
+    public synchronized void add(DataStore store, GenericName name, T value) throws IllegalNameException {
+        super.add(store, name, value);
         names.put(name,value);
     }
 
     @Override
-    public synchronized boolean remove(GenericName name) throws IllegalNameException {
-        final boolean res = super.remove(name);
+    public synchronized boolean remove(DataStore store, GenericName name) throws IllegalNameException {
+        final boolean res = super.remove(store, name);
         if (res) names.remove(name);
         return res;
     }
@@ -75,7 +76,7 @@ public class GenericNameIndex<T> extends GenericNameMap<T> {
 
     public void clear() throws IllegalNameException {
         for (GenericName name : new ArrayList<>(names.keySet())) {
-            remove(name);
+            remove(null, name);
         }
     }
 }
