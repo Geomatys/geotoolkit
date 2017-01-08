@@ -30,6 +30,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.NoSuchIdentifierException;
@@ -66,7 +67,7 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
         gcb.setEnvelope(0,0,500,30);
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "reformat");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ReformatDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

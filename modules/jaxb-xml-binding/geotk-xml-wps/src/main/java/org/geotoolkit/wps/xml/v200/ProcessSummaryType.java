@@ -76,12 +76,6 @@ public class ProcessSummaryType extends DescriptionType implements ProcessSummar
         this.processVersion = processVersion;
     }
 
-    @Override
-    public LanguageString getSingleAbstract() {
-        final List<LanguageStringType> lst = getAbstract();
-        return lst.isEmpty() ? null : lst.get(0);
-    }
-
     /**
      * Gets the value of the jobControlOptions property.
      * 

@@ -25,8 +25,8 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -41,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class TilingDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "tiling";
+    public static final String NAME = "coverage:tiling";
 
     /**
      * Mandatory - Coverage to process
@@ -108,7 +108,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
 
 
     private TilingDescriptor(){
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid/mosaic from the given"
                 + "source. Created tiles are stored in the given folder."),
                 INPUT_DESC, OUTPUT_DESC);

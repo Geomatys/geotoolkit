@@ -20,8 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class BandSelectDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "bandselect";
+    public static final String NAME = "coverage:bandselect";
 
     /**
      * Mandatory - Coverage.
@@ -74,7 +74,7 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new BandSelectDescriptor();
 
     private BandSelectDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, 
                 new SimpleInternationalString("Select bands in a coverage."), 
                 INPUT_DESC, OUTPUT_DESC);
     }

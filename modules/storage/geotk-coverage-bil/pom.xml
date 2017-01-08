@@ -61,11 +61,6 @@
             <artifactId>geotk-coverage</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
 </project>

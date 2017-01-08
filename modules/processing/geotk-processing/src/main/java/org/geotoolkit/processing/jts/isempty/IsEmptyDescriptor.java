@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class IsEmptyDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : isEmpty */
-    public static final String NAME = "isEmpty";
+    public static final String NAME = "jts:isEmpty";
     
     /**
      * Input parameters
@@ -66,7 +66,7 @@ public class IsEmptyDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new IsEmptyDescriptor();
 
     private IsEmptyDescriptor() {
-        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns true if this geometry source is an empty geometry."),
                 INPUT_DESC, OUTPUT_DESC);
     }

@@ -23,7 +23,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -40,7 +41,7 @@ public class AreaTest extends AbstractProcessTest {
 
 
     public AreaTest() {
-        super("area");
+        super("jts:area");
     }
 
     @Test
@@ -62,7 +63,7 @@ public class AreaTest extends AbstractProcessTest {
 
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "area");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, "jts:area");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);

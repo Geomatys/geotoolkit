@@ -33,13 +33,13 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -55,7 +55,7 @@ public class DifferenceTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public DifferenceTest() {
-        super("difference");
+        super("vector:difference");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DifferenceTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureList();
         final FeatureCollection featuresClip = buildFeatureClip();
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "difference");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:difference");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

@@ -1,6 +1,8 @@
 
 package org.geotoolkit.pending.demo.processing;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.pending.demo.Demos;
@@ -26,6 +28,12 @@ public class FindProcessDemo {
 
             //Get factory process descriptor in order to find the description of all process of this factory.
             final List<ProcessDescriptor> descriptorList = registry.getDescriptors();
+            Collections.sort(descriptorList, new Comparator<ProcessDescriptor>() {
+                @Override
+                public int compare(ProcessDescriptor o1, ProcessDescriptor o2) {
+                    return o1.getIdentifier().getCode().compareTo(o2.getIdentifier().getCode());
+                }
+            });
 
             for (ProcessDescriptor descriptor : descriptorList) {
                 System.out.println("    Process : "+descriptor.getIdentifier().getCode());

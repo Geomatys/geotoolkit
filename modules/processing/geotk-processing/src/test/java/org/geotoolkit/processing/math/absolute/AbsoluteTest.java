@@ -19,7 +19,8 @@ package org.geotoolkit.processing.math.absolute;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class AbsoluteTest extends AbstractProcessTest {
 
 
     public AbsoluteTest() {
-        super("absolute");
+        super("math:absolute");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class AbsoluteTest extends AbstractProcessTest {
         final double first = -2.6;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "absolute");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, "math:absolute");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);

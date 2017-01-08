@@ -22,7 +22,6 @@ import org.geotoolkit.csw.xml.CSWMarshallerPool;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.metadata.MetadataProcessingRegistry;
 import org.geotoolkit.processing.metadata.merge.MergeDescriptor;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -33,6 +32,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 /**
  * Metadata merge process test.
@@ -52,7 +52,7 @@ public class MetadataProcessTest extends org.geotoolkit.test.TestBase {
         final InputStream finalFile = MetadataProcessTest.class.getResourceAsStream("/final.xml");
         final DefaultMetadata finalMetadata = (DefaultMetadata) xmlReader.unmarshal(finalFile);
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(MetadataProcessingRegistry.NAME, MergeDescriptor.NAME);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, MergeDescriptor.NAME);
         final ParameterValueGroup inputs = desc.getInputDescriptor().createValue();
         inputs.parameter(MergeDescriptor.FIRST_IN_NAME).setValue(dataMetadata);
         inputs.parameter(MergeDescriptor.SECOND_IN_NAME).setValue(templateMetadata);

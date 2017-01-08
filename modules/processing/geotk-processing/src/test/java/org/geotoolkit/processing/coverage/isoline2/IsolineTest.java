@@ -30,6 +30,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.feature.Property;
 import org.opengis.parameter.ParameterValueGroup;
@@ -64,7 +65,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{150});
@@ -98,7 +99,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{15});
@@ -132,7 +133,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{15});
@@ -170,7 +171,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         double[] intervales = {3.163};
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(intervales);

@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CeilDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : ceil */
-    public static final String NAME = "ceil";
+    public static final String NAME = "math:ceil";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class CeilDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new CeilDescriptor();
 
     private CeilDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the nearest upper or equals integer (in double) to the argument double."),
                 INPUT_DESC, OUTPUT_DESC);
     }

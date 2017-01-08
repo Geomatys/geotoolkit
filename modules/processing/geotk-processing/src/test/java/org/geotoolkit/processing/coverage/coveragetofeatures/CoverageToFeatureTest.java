@@ -54,7 +54,8 @@ import org.geotoolkit.process.Process;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.processing.coverage.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
@@ -97,7 +98,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final PixelInCell pixPos = PixelInCell.CELL_CENTER;
         final GridCoverageReader reader = buildReader(pixPos);
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, CoverageToFeaturesDescriptor.NAME);
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
         final Process proc = desc.createProcess(in);
@@ -149,7 +150,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         final PixelInCell pixPos = PixelInCell.CELL_CORNER;
         final GridCoverageReader reader = buildReader(pixPos);
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, CoverageToFeaturesDescriptor.NAME);
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
         final Process proc = desc.createProcess(in);

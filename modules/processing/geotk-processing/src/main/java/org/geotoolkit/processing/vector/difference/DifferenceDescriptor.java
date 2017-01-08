@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class DifferenceDescriptor extends VectorDescriptor {
 
     /**Process name : difference */
-    public static final String NAME = "difference";
+    public static final String NAME = "vector:difference";
 
     /**
      * Mandatory - Feature Collection for clipping

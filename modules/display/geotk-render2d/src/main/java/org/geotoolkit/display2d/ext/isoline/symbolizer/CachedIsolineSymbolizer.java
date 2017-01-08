@@ -22,8 +22,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.*;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
@@ -33,12 +31,10 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
-import org.opengis.util.NoSuchIdentifierException;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -64,11 +60,7 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
             this.cachedRS = null;
         }
 
-        try {
-            this.isolineDesc = ProcessFinder.getProcessDescriptor(CoverageProcessingRegistry.NAME, IsolineDescriptor2.NAME);
-        } catch (NoSuchIdentifierException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-        }
+        this.isolineDesc = IsolineDescriptor2.INSTANCE;
     }
 
     /**

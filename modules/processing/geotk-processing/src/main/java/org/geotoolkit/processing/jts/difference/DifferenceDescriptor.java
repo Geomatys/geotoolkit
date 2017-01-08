@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class DifferenceDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : difference */
-    public static final String NAME = "difference";
+    public static final String NAME = "jts:difference";
     
     /**
      * Input parameters
@@ -70,7 +70,7 @@ public class DifferenceDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new DifferenceDescriptor();
 
     private DifferenceDescriptor() {
-        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Computes a difference Geometry between the source geometry "
                 + "(geom1) and the other (geom2)."),
                 INPUT_DESC, OUTPUT_DESC);

@@ -33,6 +33,7 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 
 
@@ -58,7 +59,7 @@ public class MaxLimitTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public MaxLimitTest() {
-        super("maxlimit");
+        super("vector:maxlimit");
     }
 
     @Test
@@ -68,7 +69,7 @@ public class MaxLimitTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureList();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "maxlimit");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:maxlimit");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

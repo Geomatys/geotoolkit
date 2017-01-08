@@ -62,39 +62,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Dependences for data converters -->
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-jaxp-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-jaxp-gml</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-processing</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-geotiff</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-geojson</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- End of dependences for converters -->
-
     </dependencies>
 
 </project>

@@ -24,7 +24,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;

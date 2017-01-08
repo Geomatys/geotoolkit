@@ -17,10 +17,11 @@
 package org.geotoolkit.processing.math.asin;
 
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.math.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,7 +37,7 @@ public class AsinTest extends AbstractProcessTest {
 
 
     public AsinTest() {
-        super("asin");
+        super("math:asin");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class AsinTest extends AbstractProcessTest {
         final double first = 0.64;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "asin");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"math:asin");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);

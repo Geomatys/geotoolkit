@@ -30,11 +30,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
 public class CoversTest extends AbstractProcessTest {
 
     public CoversTest() {
-        super("covers");
+        super("jts:covers");
     }
 
     @Test
@@ -69,7 +70,7 @@ public class CoversTest extends AbstractProcessTest {
         final Geometry geom2 = fact.createPoint(new Coordinate(5, 5));
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "covers");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:covers");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);
@@ -109,7 +110,7 @@ public class CoversTest extends AbstractProcessTest {
         JTS.setCRS(geom2, crs2);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "covers");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:covers");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);

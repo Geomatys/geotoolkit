@@ -41,6 +41,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -67,7 +68,7 @@ public class BufferTest extends AbstractProcessTest {
     private static final Double distance = new Double(5);
 
     public BufferTest() {
-        super("buffer");
+        super("vector:buffer");
     }
 
     /**
@@ -83,7 +84,7 @@ public class BufferTest extends AbstractProcessTest {
         Unit<Length> unit = Units.METRE;
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "buffer");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:buffer");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

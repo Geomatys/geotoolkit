@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class PowerDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : power */
-    public static final String NAME = "power";
+    public static final String NAME = "math:power";
     
     /**
      * Input parameters
@@ -67,7 +67,7 @@ public class PowerDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new PowerDescriptor();
 
     private PowerDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return first double raised to the power of the second (first^second)."),
                 INPUT_DESC, OUTPUT_DESC);
     }

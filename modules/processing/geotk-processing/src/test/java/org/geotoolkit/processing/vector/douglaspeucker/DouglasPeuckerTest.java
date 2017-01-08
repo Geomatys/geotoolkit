@@ -35,6 +35,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -58,7 +59,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public DouglasPeuckerTest() {
-        super("douglasPeucker");
+        super("vector:douglasPeucker");
     }
 
     /**
@@ -73,7 +74,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureCollectionInput1();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:douglasPeucker");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -126,7 +127,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureCollectionInput2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:douglasPeucker");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -152,7 +153,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureCollectionInput2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:douglasPeucker");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -178,7 +179,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         final FeatureCollection featureList = buildFeatureCollectionInput2();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:douglasPeucker");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

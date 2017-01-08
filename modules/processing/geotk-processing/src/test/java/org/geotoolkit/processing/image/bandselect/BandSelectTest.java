@@ -25,6 +25,7 @@ import java.awt.image.SampleModel;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -49,7 +50,7 @@ public class BandSelectTest extends org.geotoolkit.test.TestBase {
 
         final SampleModel inSampleModel = inputImage.getSampleModel();
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandselect");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, BandSelectDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

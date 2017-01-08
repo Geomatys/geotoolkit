@@ -34,6 +34,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -56,7 +57,7 @@ public class ConvexHullTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public ConvexHullTest() {
-        super("convexhull");
+        super("vector:convexhull");
     }
 
     @Test
@@ -65,7 +66,7 @@ public class ConvexHullTest extends AbstractProcessTest {
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "convexhull");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:convexhull");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -80,7 +81,7 @@ public class ConvexHullTest extends AbstractProcessTest {
         //assertEquals(geomteryResult1, resultGeom);
 
         //select the second feature geometry
-        ProcessDescriptor desc2 = ProcessFinder.getProcessDescriptor("vector", "convexhull");
+        ProcessDescriptor desc2 = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:convexhull");
 
         ParameterValueGroup in2 = desc2.getInputDescriptor().createValue();
         in2.parameter("feature_in").setValue(featureList);

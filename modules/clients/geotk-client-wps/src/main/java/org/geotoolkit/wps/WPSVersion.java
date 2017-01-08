@@ -21,7 +21,9 @@ package org.geotoolkit.wps;
  */
 public enum WPSVersion {
     v100("1.0.0"),
-    v200("2.0.0");
+    v200("2.0.0"),
+    auto("auto");
+    
     private final String code;
 
     private WPSVersion(final String code) {

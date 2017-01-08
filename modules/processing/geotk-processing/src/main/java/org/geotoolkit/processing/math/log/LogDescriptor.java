@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class LogDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : log */
-    public static final String NAME = "log";
+    public static final String NAME = "math:log";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class LogDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new LogDescriptor();
 
     private LogDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return the natural logarithm of a double"),
                 INPUT_DESC, OUTPUT_DESC);
     }

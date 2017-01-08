@@ -33,6 +33,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -41,7 +42,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * JUnit test of clip with a geometry process
@@ -55,7 +55,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
     private static FeatureType type;
 
     public ClipGeometryTest() {
-        super("clipGeometry");
+        super("vector:clipGeometry");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
         final Geometry geometryClip = buildGeometryClip();
 
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "clipGeometry");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clipGeometry");
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);

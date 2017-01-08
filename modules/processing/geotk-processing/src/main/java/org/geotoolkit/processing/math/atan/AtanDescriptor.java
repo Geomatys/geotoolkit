@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AtanDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : atan */
-    public static final String NAME = "atan";
+    public static final String NAME = "math:atan";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class AtanDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new AtanDescriptor();
 
     private AtanDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return arc tangent of a double."),
                 INPUT_DESC, OUTPUT_DESC);
     }

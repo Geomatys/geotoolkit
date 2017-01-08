@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.xml;
 
 import org.geotoolkit.ows.xml.AbstractCodeType;
-import org.geotoolkit.ows.xml.LanguageString;
+import org.geotoolkit.ows.xml.AbstractDescription;
 
 /**
  * 
@@ -25,10 +25,8 @@ import org.geotoolkit.ows.xml.LanguageString;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface ProcessOffering {
+public interface ProcessOffering extends AbstractDescription {
 
     AbstractCodeType getIdentifier();
-
-    LanguageString getSingleAbstract();
 
 }

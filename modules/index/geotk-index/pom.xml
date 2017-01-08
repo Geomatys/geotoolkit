@@ -52,17 +52,8 @@
   <dependencies>
     <dependency>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-utility</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-feature</artifactId>
         <version>${project.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.vividsolutions</groupId>
-        <artifactId>jts</artifactId>
     </dependency>
       <dependency>
           <groupId>org.postgresql</groupId>

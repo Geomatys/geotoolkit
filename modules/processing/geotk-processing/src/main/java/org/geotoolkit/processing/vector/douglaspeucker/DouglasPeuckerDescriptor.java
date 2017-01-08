@@ -51,7 +51,7 @@ import org.opengis.referencing.IdentifiedObject;
 public final class DouglasPeuckerDescriptor extends VectorDescriptor {
 
     /**Process name : douglaspeucker */
-    public static final String NAME = "douglasPeucker";
+    public static final String NAME = "vector:douglasPeucker";
 
     private static final Map ACCURACY_PROPERTIES = new HashMap();
     static{

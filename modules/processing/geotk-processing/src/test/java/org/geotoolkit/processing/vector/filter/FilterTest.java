@@ -27,7 +27,7 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 public class FilterTest extends AbstractProcessTest {
 
     public FilterTest() {
-        super("filter");
+        super("vector:filter");
     }
 
 }

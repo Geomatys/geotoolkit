@@ -140,6 +140,9 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
                 if(processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessDescriptionType) {
                     final ProcessDescriptor processDesc = WPS1ProcessDescriptor.create(this, processBriefType);
                     descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
+                }else if(processBriefType instanceof org.geotoolkit.wps.xml.v100.ProcessBriefType) {
+                    final ProcessDescriptor processDesc = WPS1ProcessDescriptor.create(this, processBriefType);
+                    descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
                 } else if(processBriefType instanceof org.geotoolkit.wps.xml.v200.ProcessSummaryType) {
                     final ProcessDescriptor processDesc = WPS2ProcessDescriptor.create(this, (org.geotoolkit.wps.xml.v200.ProcessSummaryType)processBriefType);
                     descriptors.put(processDesc.getIdentifier().getCode(), processDesc);

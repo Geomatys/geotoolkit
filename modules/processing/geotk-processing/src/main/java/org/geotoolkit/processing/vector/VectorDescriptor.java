@@ -20,6 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -66,7 +67,7 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
     protected VectorDescriptor(final String name, final String msg,
             final ParameterDescriptorGroup input, final ParameterDescriptorGroup output) {
 
-        super(name, VectorProcessingRegistry.IDENTIFICATION,
+        super(name, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString(msg),
                 input, output);
     }

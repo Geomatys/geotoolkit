@@ -20,8 +20,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.referencing.ReferencingProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public final class CreateDBDescriptor extends AbstractProcessDescriptor{
 
-    public static final String NAME = "CreateDB";
+    public static final String NAME = "referencing:createdb";
 
     public static final ParameterDescriptor<String> DBURL = new ParameterBuilder()
             .addName("dburl")
@@ -66,7 +66,7 @@ public final class CreateDBDescriptor extends AbstractProcessDescriptor{
 
 
     private CreateDBDescriptor(){
-        super(NAME, ReferencingProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create an epsg database."),
                 INPUT_DESC, OUTPUT_DESC);
     }

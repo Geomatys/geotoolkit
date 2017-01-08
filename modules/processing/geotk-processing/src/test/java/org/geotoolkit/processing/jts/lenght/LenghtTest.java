@@ -23,7 +23,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,7 +39,7 @@ public class LenghtTest extends AbstractProcessTest {
 
 
     public LenghtTest() {
-        super("lenght");
+        super("jts:lenght");
     }
 
     @Test
@@ -58,7 +59,7 @@ public class LenghtTest extends AbstractProcessTest {
         final Geometry geom1 = fact.createPolygon(ring, null) ;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "lenght");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:lenght");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom1);

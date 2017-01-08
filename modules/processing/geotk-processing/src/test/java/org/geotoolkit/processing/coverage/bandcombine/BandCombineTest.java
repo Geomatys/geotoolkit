@@ -29,6 +29,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.coverage.Coverage;
@@ -48,7 +49,7 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         final GridCoverage2D cov3 = create(BufferedImage.TYPE_3BYTE_BGR, Color.GREEN, Color.RED);
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "bandcombine");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, BandCombineDescriptor.NAME);
         assertNotNull(desc);
 
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

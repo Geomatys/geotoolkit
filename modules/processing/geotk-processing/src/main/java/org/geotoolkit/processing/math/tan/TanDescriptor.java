@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class TanDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : tan */
-    public static final String NAME = "tan";
+    public static final String NAME = "math:tan";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class TanDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new TanDescriptor();
 
     private TanDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the trigonometric tangent of an angle in double."),
                 INPUT_DESC, OUTPUT_DESC);
     }

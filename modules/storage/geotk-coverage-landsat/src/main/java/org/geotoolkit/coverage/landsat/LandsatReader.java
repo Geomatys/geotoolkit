@@ -335,7 +335,7 @@ public class LandsatReader extends GridCoverageReader {
 //        GridCoverage2D coverageRGBIR = new BandCombineProcess(
 //                    coverageR,coverageG,coverageB,coverageIR).executeNow();
 
-            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
+            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "image:bandcombine");
             assert (desc != null);
 
             final ParameterValueGroup params = desc.getInputDescriptor().createValue();

@@ -19,13 +19,13 @@ package org.geotoolkit.display2d.process.pyramid;
 import java.awt.Dimension;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.display2d.process.GO2ProcessingRegistry;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -135,7 +135,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
 
 
     private MapcontextPyramidDescriptor(){
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GO2ProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid/mosaic from the given"
                 + "mapcontext. Created tiles are stored in the given container."),
                 INPUT_DESC, OUTPUT_DESC);

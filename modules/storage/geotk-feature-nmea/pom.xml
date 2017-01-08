@@ -34,11 +34,6 @@
             <artifactId>geotk-feature-store</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-utility-pending</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>net.sf.marineapi</groupId>

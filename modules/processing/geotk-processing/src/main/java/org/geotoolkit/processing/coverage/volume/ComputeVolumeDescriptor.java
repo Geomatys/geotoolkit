@@ -23,7 +23,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "computeVolume";
+    public static final String NAME = "coverage:computeVolume";
 
                                     /*INPUTS*/
     /**************************************************************************/
@@ -131,7 +131,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new ComputeVolumeDescriptor();
     
     private ComputeVolumeDescriptor() {
-        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid / mosaic from the given"
                 + "coverage. Created tiles are stored in the given Coverage store."),
                 INPUT_DESC, OUTPUT_DESC);

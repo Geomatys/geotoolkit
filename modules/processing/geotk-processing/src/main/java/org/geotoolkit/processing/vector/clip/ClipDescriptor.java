@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class ClipDescriptor extends VectorDescriptor {
 
     /**Process name : clip */
-    public static final String NAME = "clip";
+    public static final String NAME = "vector:clip";
 
     /**
      * Mandatory - Feature Collection for clipping

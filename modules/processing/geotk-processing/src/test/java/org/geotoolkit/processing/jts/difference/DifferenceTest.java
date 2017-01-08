@@ -24,7 +24,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.jts.AbstractProcessTest;
+import org.geotoolkit.processing.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 /**
  * JUnit test of Difference process
@@ -44,7 +45,7 @@ import org.apache.sis.referencing.CommonCRS;
 public class DifferenceTest extends AbstractProcessTest {
 
     public DifferenceTest() {
-        super("difference");
+        super("jts:difference");
     }
 
     @Test
@@ -74,7 +75,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         final Geometry geom2 = fact.createPolygon(ring2, null);
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "difference");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:difference");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);
@@ -120,7 +121,7 @@ public class DifferenceTest extends AbstractProcessTest {
         JTS.setCRS(geom2, crs2);
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "difference");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"jts:difference");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);

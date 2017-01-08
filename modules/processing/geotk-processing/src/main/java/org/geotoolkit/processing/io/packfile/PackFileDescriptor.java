@@ -22,7 +22,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.io.IOProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +36,7 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Process name : unpack
      */
-    public static final String NAME = "packFile";
+    public static final String NAME = "io:packFile";
 
     /**
      * Mandatory - path
@@ -80,7 +80,7 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new PackFileDescriptor();
 
     public PackFileDescriptor() {
-        super(NAME, IOProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Pack a file list into a compressed archive."),
                 INPUT_DESC, OUTPUT_DESC);
     }

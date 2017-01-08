@@ -21,8 +21,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class BufferDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : buffer */
-    public static final String NAME = "buffer";
+    public static final String NAME = "jts:buffer";
     
     /**
      * Input parameters
@@ -79,7 +79,7 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new BufferDescriptor();
 
     private BufferDescriptor() {
-        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Apply JTS buffer to a geometry."),
                 INPUT_DESC, OUTPUT_DESC);
     }

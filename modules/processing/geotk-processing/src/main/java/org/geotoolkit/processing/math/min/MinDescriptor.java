@@ -20,7 +20,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.math.MathProcessingRegistry;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class MinDescriptor extends AbstractProcessDescriptor {
         
     /**Process name : min */
-    public static final String NAME = "min";
+    public static final String NAME = "math:min";
     
     /**
      * Input parameters
@@ -63,7 +63,7 @@ public class MinDescriptor extends AbstractProcessDescriptor {
     public static final ProcessDescriptor INSTANCE = new MinDescriptor();
 
     private MinDescriptor() {
-        super(NAME, MathProcessingRegistry.IDENTIFICATION,
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return the min double from an array of double"),
                 INPUT_DESC, OUTPUT_DESC);
     }

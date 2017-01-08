@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class StartOffsetDescriptor extends VectorDescriptor {
 
     /**Process name : startoffset */
-    public static final String NAME = "startoffset";
+    public static final String NAME = "vector:startoffset";
     /**
      * Mandatory - Start offset iteration on the FeatureCollection
      */

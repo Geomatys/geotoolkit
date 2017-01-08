@@ -49,7 +49,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
     @Test
     public void createTempFileTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException{
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "createTempFile");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "io:createTempFile");
         assertNotNull(desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
@@ -75,7 +75,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
     @Test
     public void createTempFolderTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException{
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "createTempFolder");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "io:createTempFolder");
         assertNotNull(desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
@@ -102,7 +102,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
         final File f = File.createTempFile("test", ".td");
         f.createNewFile();
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "delete");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "io:delete");
         assertNotNull(desc);
 
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
@@ -158,7 +158,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
         target.delete();
         target.mkdirs();
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "unpackFile");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "io:unpackFile");
         assertNotNull(desc);
 
         // TEST ZIP UNPACK -----------------------------------------------------
