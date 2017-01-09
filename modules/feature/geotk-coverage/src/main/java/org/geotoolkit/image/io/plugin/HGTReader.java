@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.measure.Units;
-import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.metadata.spatial.CellGeometry;
