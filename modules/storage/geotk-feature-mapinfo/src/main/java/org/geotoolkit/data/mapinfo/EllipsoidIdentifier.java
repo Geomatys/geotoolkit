@@ -18,7 +18,6 @@ package org.geotoolkit.data.mapinfo;
 
 import java.util.Collections;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -27,6 +26,7 @@ import org.opengis.util.FactoryException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -88,7 +88,7 @@ public class EllipsoidIdentifier {
      * @return the MIF code which match the given ellipsoid.
      */
     public static int getMIFCode(Ellipsoid source) throws FactoryException {
-        int mifCode = getMIFCodeFromEPSG(IdentifiedObjects.lookupEpsgCode(source, false));
+        int mifCode = getMIFCodeFromEPSG(IdentifiedObjects.lookupEPSG(source));
 
         if (mifCode < 0) {
             for (Map.Entry<Integer, Ellipsoid> ellipsoid : CUSTOM_ELLIPSOIDS.entrySet()) {

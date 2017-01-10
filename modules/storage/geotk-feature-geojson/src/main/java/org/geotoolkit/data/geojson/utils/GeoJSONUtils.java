@@ -12,7 +12,6 @@ import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -34,6 +33,7 @@ import org.apache.sis.util.Utilities;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import org.apache.sis.referencing.IdentifiedObjects;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
 
@@ -97,11 +97,14 @@ public final class GeoJSONUtils extends Static {
                 return "urn:ogc:def:crs:OGC:1.3:CRS84";
             }
 
-            int code = IdentifiedObjects.lookupEpsgCode(crs, true);
-            return "urn:ogc:def:crs:EPSG::"+code;
+//            int code = IdentifiedObjects.lookupEpsgCode(crs, true);
+            final Integer code = IdentifiedObjects.lookupEPSG(crs);
+            if (code != null)
+                return "urn:ogc:def:crs:EPSG::"+code;
         } catch (FactoryException e) {
             GeoJSONParser.LOGGER.log(Level.WARNING, "Unable to extract epsg code from given CRS "+crs, e);
         }
+        GeoJSONParser.LOGGER.log(Level.WARNING, "Unable to extract epsg code from given CRS "+crs);
         return null;
     }
 
