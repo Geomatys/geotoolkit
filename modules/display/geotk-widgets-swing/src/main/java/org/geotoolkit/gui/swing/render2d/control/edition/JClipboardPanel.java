@@ -187,7 +187,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
             //we use the regroup process without any attribute define
             FeatureIterator ite = null;
             try{
-                final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
+                final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "vector:regroup");
                 final ParameterValueGroup in = desc.getInputDescriptor().createValue();
                 in.parameter("feature_in").setValue(col);
                 org.geotoolkit.process.Process proc = desc.createProcess(in);

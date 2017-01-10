@@ -107,7 +107,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             final GridCoverage coverage = reader.read(getImageIndex(), param);
             if(!(coverage instanceof GridCoverage2D)) return null;
 
-            final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
+            final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:statistic");
             final ParameterValueGroup processParam = processDesc.getInputDescriptor().createValue();
             ParametersExt.getOrCreateValue(processParam, "inCoverage").setValue(coverage);
             ParametersExt.getOrCreateValue(processParam, "inExcludeNoData").setValue(true);
