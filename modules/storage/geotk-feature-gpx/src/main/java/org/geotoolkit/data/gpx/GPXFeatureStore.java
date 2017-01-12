@@ -50,8 +50,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.sis.internal.gpx.Store;
-import org.apache.sis.internal.gpx.Metadata;
+import org.apache.sis.internal.storage.gpx.Store;
+import org.apache.sis.internal.storage.gpx.Metadata;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.collection.BackingStoreException;
 
@@ -132,7 +132,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     @Override
     public Set<GenericName> getNames() throws DataStoreException {
         final Set<GenericName> names = new LinkedHashSet<>();
-        for (ContentInformation c : getGPXMetaData().features) {
+        for (ContentInformation c : getGPXMetaData().getContentInfo()) {
             for (FeatureTypeInfo f : ((FeatureCatalogueDescription) c).getFeatureTypeInfo()) {
                 names.add(f.getFeatureTypeName());
             }
