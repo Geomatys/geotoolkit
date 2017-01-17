@@ -83,6 +83,11 @@
             <artifactId>geotk-render2d</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-xml-kml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>stax</groupId>
