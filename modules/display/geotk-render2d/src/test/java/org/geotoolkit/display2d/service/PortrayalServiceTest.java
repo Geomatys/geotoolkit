@@ -27,14 +27,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 import javax.measure.Unit;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -100,9 +104,11 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Testing portrayal service.
@@ -382,6 +388,50 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 //        //todo
 //    }
 
+    /**
+     * Test rendering a coverage which envelope is larger then the objective CRS
+     * validity area.
+     */
+    @Test
+    public void testCoverageOutofValidityArea() throws FactoryException, PortrayalException {
+        
+        final double scale = 360.0 / 4320.0;
+        final AffineTransform gridToCRS = new AffineTransform(scale, 0, 0, -scale, -180, 90);
+        final BufferedImage img = new BufferedImage(4320, 2160, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = img.createGraphics();
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 0, 4320, 2160);
+        g.dispose();
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("world");
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
+        gcb.setGridToCRS(gridToCRS);
+        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
+        gcb.setRenderedImage(img);
+        final GridCoverage coverage = gcb.build();
+        
+        final MapContext context = MapBuilder.createContext();
+        final MapLayer layer = MapBuilder.createCoverageLayer(coverage);
+        context.layers().add(layer);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:3857"));
+        env.setRange(0, -20037508.342789244, 20037508.342789244);
+        env.setRange(1, -20037508.342789244, 20037508.342789244);
+        
+        final SceneDef scene = new SceneDef(context);
+        final ViewDef view = new ViewDef(env);
+        final CanvasDef canvas = new CanvasDef(new Dimension(256, 256),null);
+        
+        final BufferedImage result = DefaultPortrayalService.portray(canvas, scene, view);
+        final int color = Color.BLUE.getRGB();
+        for (int y=0;y<256;y++) {
+            for (int x=0;x<256;x++) {
+                assertEquals(color, result.getRGB(x, y));
+            }
+        }
+    }
+    
     @Test
     public void testLongitudeFirst() throws Exception{
 
