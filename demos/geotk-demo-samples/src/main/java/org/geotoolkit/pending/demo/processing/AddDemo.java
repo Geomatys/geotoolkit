@@ -18,7 +18,7 @@ public class AddDemo {
         double number2 = 15.3;
 
         //Find the addition process
-        ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("math", "add");
+        ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("geotoolkit", "math:add");
 
         //fill process input from process descriptor
         ParameterValueGroup in = descriptor.getInputDescriptor().createValue();
