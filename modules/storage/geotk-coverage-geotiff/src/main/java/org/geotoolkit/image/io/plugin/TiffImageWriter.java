@@ -754,7 +754,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         //-- get metadata from image --//
         if (imageMetadata != null) {
-            final IIOMetadata imgMetadata = toGTiffFormat(streamMetadata);
+            final IIOMetadata imgMetadata = toGTiffFormat(imageMetadata);
             final Node iioNode    = imgMetadata.getAsTree(imgMetadata.getNativeMetadataFormatName());
             addMetadataProperties(iioNode, headProperties);
         }
