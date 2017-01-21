@@ -43,7 +43,7 @@ public class UnionDemo {
 
 
         //get the description of the process we want
-        ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("vector", "union");
+        ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("geotoolkit", "vector:union");
 
         //fill process input from process descriptor
         ParameterValueGroup in = descriptor.getInputDescriptor().createValue();

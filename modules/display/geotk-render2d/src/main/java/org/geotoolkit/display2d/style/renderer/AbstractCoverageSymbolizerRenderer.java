@@ -250,22 +250,21 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         resolution = checkResolution(resolution, renderingBound);
 
-        final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-        final CoverageReference ref          = coverageLayer.getCoverageReference();
-        final Envelope layerBounds           = coverageLayer.getBounds();
-        final CoordinateReferenceSystem coverageMapLayerCRS = layerBounds.getCoordinateReferenceSystem();
+        final CoverageMapLayer coverageLayer   = projectedCoverage.getLayer();
+        final CoverageReference ref            = coverageLayer.getCoverageReference();
+        final GridCoverageReader reader        = ref.acquireReader();
+        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+        final Envelope dataBBox                = gridGeometry.getEnvelope();
+        ref.recycle(reader);
+        
+        final CoordinateReferenceSystem coverageMapLayerCRS = dataBBox.getCoordinateReferenceSystem();
 
         final Map<String, Double> queryValues = extractQuery(projectedCoverage.getLayer());
         if (queryValues != null && !queryValues.isEmpty()) {
             renderingBound = fixEnvelopeWithQuery(queryValues, renderingBound, coverageMapLayerCRS);
         }
-
-        final GridCoverageReader reader = ref.acquireReader();
-        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
-        final Envelope dataBBox = gridGeometry.getEnvelope();
-        ref.recycle(reader);
-
+        
         /*
         * Study rendering context envelope and internal coverage envelope.
         * We try to define if the two geographic part from the two respectively
@@ -273,7 +272,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         */
         final CoordinateReferenceSystem renderingContextObjectiveCRS2D = CRSUtilities.getCRS2D(renderingBound.getCoordinateReferenceSystem());
         final GeneralEnvelope renderingBound2D                         = GeneralEnvelope.castOrCopy(Envelopes.transform(renderingBound, renderingContextObjectiveCRS2D));
-        final GeneralEnvelope coverageIntoRender2DCRS                  = GeneralEnvelope.castOrCopy(Envelopes.transform(dataBBox, renderingContextObjectiveCRS2D));
+        GeneralEnvelope coverageIntoRender2DCRS                        = GeneralEnvelope.castOrCopy(Envelopes.transform(dataBBox, renderingContextObjectiveCRS2D));
 
 
         if (!org.geotoolkit.geometry.Envelopes.containNAN(renderingBound2D)
@@ -294,6 +293,15 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- else
         //-- Note : in the case of NAN values we try later to clip requested envelope with coverage boundary.
 
+        if(org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)){
+            /*
+             * Envelope might contains NaN when for some reason the envelope is larger then the validity area.
+             */
+            final GeneralEnvelope normalizedEnvelope = new GeneralEnvelope(dataBBox);
+            normalizedEnvelope.normalize();
+            coverageIntoRender2DCRS = GeneralEnvelope.castOrCopy(Envelopes.transform(normalizedEnvelope,renderingContextObjectiveCRS2D));
+        }
+        
         final GeneralEnvelope intersectionIntoRender2D = GeneralEnvelope.castOrCopy(coverageIntoRender2DCRS);
         intersectionIntoRender2D.intersect(renderingBound2D);
         /*
@@ -303,20 +311,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          * To avoid this comportment we can "complete"(fill) render envelope with missing dimensions.
          */
         GeneralEnvelope paramEnvelope;
-        {
-            try {
-                paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
-            } catch(ProjectionException ex) {
-               /*
-                * Recently a new kind of exception is thrown when envelope is out of validity domain of target CRS.
-                * To avoid no rendering, try to intersect 2D part and re-project into data CRS and add after others dimensions.
-                */
-                //-- 1: get intersection between dataBBox and renderBBox into render space
-                //-- 2: projection into dataBBox space
-                paramEnvelope = GeneralEnvelope.castOrCopy(Envelopes.transform(intersectionIntoRender2D, CRSUtilities.getCRS2D(dataBBox.getCoordinateReferenceSystem())));
-                //-- 3: add others dataBBox dimensions
-                paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, paramEnvelope);
-            }
+        try {
+            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
+        } catch(ProjectionException ex) {
+           /*
+            * Recently a new kind of exception is thrown when envelope is out of validity domain of target CRS.
+            * To avoid no rendering, try to intersect 2D part and re-project into data CRS and add after others dimensions.
+            */
+            //-- 1: get intersection between dataBBox and renderBBox into render space
+            //-- 2: projection into dataBBox space
+            paramEnvelope = GeneralEnvelope.castOrCopy(Envelopes.transform(intersectionIntoRender2D, CRSUtilities.getCRS2D(dataBBox.getCoordinateReferenceSystem())));
+            //-- 3: add others dataBBox dimensions
+            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, paramEnvelope);
         }
 
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
