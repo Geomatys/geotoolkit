@@ -373,7 +373,10 @@ public class ObservationType implements Entry, AbstractObservation {
 
     @Override
     public Identifier getName() {
-        return new DefaultIdentifier(this.name);
+        if (name != null) {
+            return new DefaultIdentifier(this.name);
+        }
+        return null;
     }
 
     @Override
