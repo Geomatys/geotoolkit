@@ -16,33 +16,32 @@
  */
 package org.geotoolkit.csw;
 
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.csw.xml.*;
+import org.geotoolkit.filter.FilterFactoryImpl;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
+import org.geotoolkit.security.ClientSecurity;
+import org.opengis.filter.Filter;
+import org.opengis.filter.sort.SortOrder;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.csw.xml.ElementSetName;
-import org.geotoolkit.csw.xml.ElementSetType;
-import org.geotoolkit.csw.xml.ResultType;
-import org.geotoolkit.csw.xml.TypeNames;
-import org.geotoolkit.csw.xml.Query;
-import org.geotoolkit.csw.xml.DistributedSearch;
-import org.geotoolkit.csw.xml.QueryConstraint;
-import org.geotoolkit.filter.FilterFactoryImpl;
-import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.ogc.xml.v110.SortByType;
-import org.geotoolkit.security.ClientSecurity;
-import org.opengis.filter.Filter;
 
-import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import static org.geotoolkit.csw.xml.CswXmlFactory.*;
+import static org.opengis.filter.sort.SortOrder.ASCENDING;
+import static org.opengis.filter.sort.SortOrder.DESCENDING;
 
 /**
  * Abstract implementation of {@link GetRecordsRequest}, which defines the
@@ -51,6 +50,7 @@ import static org.geotoolkit.csw.xml.CswXmlFactory.*;
  * @author Cédric Briançon (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)
  * @author Giuseppe La Scaleia (IMAA)
+ * @author Ilia Nedoluzhko
  * @module
  */
 public abstract class AbstractGetRecords extends AbstractCSWRequest implements GetRecordsRequest {
@@ -81,10 +81,10 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
      * Defines the server url and the service version for this kind of request.
      *
      * @param serverURL The server url.
-     * @param version The version of the request.
+     * @param version   The version of the request.
      */
-    protected AbstractGetRecords(final String serverURL, final String version, final ClientSecurity security){
-        super(serverURL,security);
+    protected AbstractGetRecords(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL, security);
         this.version = version;
     }
 
@@ -261,11 +261,11 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             throw new IllegalArgumentException("The parameter \"CONSTRAINT_LANGUAGE_VERSION\" is not defined");
         }
 
-        requestParameters.put("SERVICE",                     "CSW");
-        requestParameters.put("REQUEST",                     "GetRecords");
-        requestParameters.put("VERSION",                     version);
-        requestParameters.put("TYPENAMES",                   typeNames);
-        requestParameters.put("CONSTRAINTLANGUAGE",          constraintLanguage);
+        requestParameters.put("SERVICE", "CSW");
+        requestParameters.put("REQUEST", "GetRecords");
+        requestParameters.put("VERSION", version);
+        requestParameters.put("TYPENAMES", typeNames);
+        requestParameters.put("CONSTRAINTLANGUAGE", constraintLanguage);
         requestParameters.put("CONSTRAINT_LANGUAGE_VERSION", constraintLanguageVersion);
 
         if (constraint != null) {
@@ -346,25 +346,19 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
 
             /*
              * Getting  SortByType value, default is null
-             *
-             * @TODO if sortBy is not null we must creates SortByType instance
-             * the value can be sortBy=Title:A,Abstract:D where A for ascending order and D for decending.
-             * see Table 29 - Parameters in GetRecords operation request in document named
-             * OpenGIS Catalogue Services Specification 2.0.2 -ISO Metadata Application Profile
-             *
              */
-            final SortByType sort;
+            SortByType sort = null;
             if (sortBy != null) {
-                throw new UnsupportedOperationException("The parameter SortBy is not implemented yet for Method POST.");
-            } else {
-                sort = null;
+                String[] split = this.sortBy.split(":");
+                SortOrder sortOrder = split.length == 1 ? null : ("D".equals(split[1]) ? DESCENDING : ASCENDING);
+                sort = new SortByType(Collections.singletonList(new SortPropertyType(split[0], sortOrder)));
             }
 
             /*
              * Building QueryType from the cql constraint
              */
             QueryConstraint qct = null;
-            if (constraint != null && !constraint.isEmpty())  {
+            if (constraint != null && !constraint.isEmpty()) {
                 try {
                     final FilterType filterType;
                     Filter filter = CQL.parseFilter(constraint, new FilterFactoryImpl());
