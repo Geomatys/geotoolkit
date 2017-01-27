@@ -353,9 +353,13 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
              */
             SortByType sort = null;
             if (sortBy != null) {
-                String[] split = this.sortBy.split(":");
-                SortOrder sortOrder = split.length == 1 ? null : ("D".equals(split[1]) ? DESCENDING : ASCENDING);
-                sort = new SortByType(Collections.singletonList(new SortPropertyType(split[0], sortOrder)));
+                String[] fields = sortBy.split(",");
+
+                for (String field : fields) {
+                    String[] split = field.split(":");
+                    SortOrder sortOrder = split.length == 1 ? null : ("D".equals(split[1]) ? DESCENDING : ASCENDING);
+                    sort = new SortByType(Collections.singletonList(new SortPropertyType(split[0], sortOrder)));
+                }
             }
 
             /*
