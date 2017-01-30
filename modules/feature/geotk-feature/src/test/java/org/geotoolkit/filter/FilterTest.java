@@ -21,6 +21,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.junit.Test;
 
 import org.opengis.filter.Filter;
@@ -34,6 +36,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -48,7 +51,7 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testId() {
-        Set<Identifier> ids = new HashSet<Identifier>();
+        Set<Identifier> ids = new HashSet<>();
         ids.add(FF.featureId("dummyid"));
         ids.add(FF.featureId("dummyid2"));
         ids.add(FF.featureId("dummyid45"));
@@ -66,6 +69,34 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         assertTrue(id.evaluate(CANDIDATE_1));
     }
 
+    /**
+     * Test identifier match for not string types.
+     */
+    @Test
+    public void testId2() {
+        Set<Identifier> ids = new HashSet<>();
+        ids.add(FF.featureId("13"));
+        ids.add(FF.featureId("42"));
+
+        Id id = FF.id(ids);
+
+        //test against string identifier
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("StringFT");
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        final Feature feat1 = ftb.build().newInstance();
+        feat1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "13");
+        assertTrue(id.evaluate(feat1));
+        
+        //test against long identifier
+        ftb = new FeatureTypeBuilder();
+        ftb.setName("LongFT");
+        ftb.addAttribute(Long.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        final Feature feat2 = ftb.build().newInstance();
+        feat2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), 42l);
+        assertTrue(id.evaluate(feat2));
+    }
+    
     @Test
     public void testLiteral(){
         Literal literal;
