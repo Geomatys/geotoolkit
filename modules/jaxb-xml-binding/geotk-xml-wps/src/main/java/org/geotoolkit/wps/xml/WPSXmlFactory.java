@@ -1006,9 +1006,9 @@ public class WPSXmlFactory {
 
     public static AbstractServiceIdentification buildServiceIdentification(String version, String name, String description, List<String> keywords, String service, List<String> versions, String fees, List<String> accessConstraint) {
         if ("1.0.0".equals(version)) {
-            return OWSXmlFactory.buildServiceIdentification("1.1.0", name, service, keywords, service, versions, fees, versions);
+            return OWSXmlFactory.buildServiceIdentification("1.1.0", name, service, keywords, service, versions, fees, accessConstraint);
         } else if ("2.0.0".equals(version)) {
-            return OWSXmlFactory.buildServiceIdentification("2.0.0", name, service, keywords, service, versions, fees, versions);
+            return OWSXmlFactory.buildServiceIdentification("2.0.0", name, service, keywords, service, versions, fees, accessConstraint);
         }
         throw new IllegalArgumentException("Unexpected version:" + version + " expecting 1.0.0 or 2.0.0");
     }

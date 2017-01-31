@@ -22,6 +22,7 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sos.xml.InsertObservationResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
@@ -45,6 +46,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertObservationResponseType")
+@XmlRootElement(name="InsertObservationResponse")
 public class InsertObservationResponseType extends ExtensibleResponseType implements InsertObservationResponse {
 
     @XmlElement

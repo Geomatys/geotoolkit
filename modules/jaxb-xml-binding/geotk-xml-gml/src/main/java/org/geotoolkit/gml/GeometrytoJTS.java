@@ -138,11 +138,11 @@ public class GeometrytoJTS {
         final double[] max = gmlEnvelope.getUpperCorner().getCoordinate();
 
         final LinearRing ring = GF.createLinearRing(new Coordinate[]{
-            new Coordinate(min[0], min[1]),
-            new Coordinate(min[0], max[1]),
-            new Coordinate(max[0], max[1]),
-            new Coordinate(max[0], min[1]),
-            new Coordinate(min[0], min[1])
+                new Coordinate(min[0], min[1]),
+                new Coordinate(min[0], max[1]),
+                new Coordinate(max[0], max[1]),
+                new Coordinate(max[0], min[1]),
+                new Coordinate(min[0], min[1])
         });
         final com.vividsolutions.jts.geom.Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);
         final CoordinateReferenceSystem crs = toCRS(crsName, longitudeFirst);
@@ -216,27 +216,29 @@ public class GeometrytoJTS {
             crsName = gmlPoint.getPos().getSrsName();
         }
 
-        final double[] coordinates = new double[2];
+        final List<Double> coordinates;
         if (gmlPoint.getCoordinates() != null) {
             final String coord = gmlPoint.getCoordinates().getValue();
-
+            coordinates = new ArrayList<>();
             final StringTokenizer tokens = new StringTokenizer(coord, ",");
-            int index = 0;
             while (tokens.hasMoreTokens()) {
                 final double value = parseDouble(tokens.nextToken());
-                if (index >= coordinates.length) {
-                    throw new IllegalArgumentException("This service support only 2D point.");
-                }
-                coordinates[index++] = value;
+                coordinates.add(value);
             }
-        } else if (gmlPoint.getPos().getValue() != null && gmlPoint.getPos().getValue().size() == 2){
-            coordinates[0] = gmlPoint.getPos().getValue().get(0);
-            coordinates[1] = gmlPoint.getPos().getValue().get(1);
+        } else if (gmlPoint.getPos().getValue() != null && !gmlPoint.getPos().getValue().isEmpty()){
+            coordinates = gmlPoint.getPos().getValue();
         } else {
-            throw new IllegalArgumentException("The GML point is malformed.");
+            throw new IllegalArgumentException("The GML point is malformed missing coordinates.");
         }
 
-        final com.vividsolutions.jts.geom.Point pt = GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));
+        final com.vividsolutions.jts.geom.Point pt;
+        if (coordinates.size() == 2) {
+            pt = GF.createPoint(new Coordinate(coordinates.get(0), coordinates.get(1)));
+        } else if (coordinates.size() == 3) {
+            pt = GF.createPoint(new Coordinate(coordinates.get(0), coordinates.get(1), coordinates.get(2)));
+        } else {
+            throw new IllegalArgumentException("Only 2D or 3D point are supported.");
+        }
         final CoordinateReferenceSystem crs;
         if (crsName != null) {
             crs = toCRS(crsName, longitudeFirst);
@@ -333,12 +335,19 @@ public class GeometrytoJTS {
         final com.vividsolutions.jts.geom.LineString ls;
         final Coordinates coord = gmlLine.getCoordinates();
         if(coord != null){
+            final int dim = gmlLine.getCoordinateDimension();
             final List<Double> values = coord.getValues();
-            final Coordinate[] coordinates = new Coordinate[values.size() / 2];
+            final Coordinate[] coordinates = new Coordinate[values.size() / dim];
             if (!values.isEmpty()) {
                 int cpt = 0;
-                for (int i=0; i < values.size(); i = i + 2) {
-                    coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1));
+                for (int i=0; i < values.size(); i = i + dim) {
+                    if (dim == 2) {
+                        coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1));
+                    } else if (dim == 3) {
+                        coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1), values.get(i + 2));
+                    } else {
+                        throw new IllegalArgumentException("Only 2D or 3D point are supported.");
+                    }
                     cpt++;
                 }
             }
@@ -437,7 +446,13 @@ public class GeometrytoJTS {
         final List<Coordinate> coords = new ArrayList<>();
 
         for(DirectPosition dp : pos){
-            coords.add( new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1)));
+            if (dp.getDimension() == 2) {
+                coords.add(new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1)));
+            } else if (dp.getDimension() == 3) {
+                coords.add(new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1), dp.getOrdinate(2)));
+            } else {
+                throw new IllegalArgumentException("More than 3 dimension or less than 2 are not supported in JTS");
+            }
         }
         return coords;
     }
@@ -447,7 +462,13 @@ public class GeometrytoJTS {
         final List<Coordinate> coords = new ArrayList<>();
 
         for(int i=0,n=values.size();i<n;i+=dim){
-            coords.add( new Coordinate(values.get(i), values.get(i+1)) );
+            if (dim == 2) {
+                coords.add(new Coordinate(values.get(i), values.get(i+1)));
+            } else if (dim == 3) {
+                coords.add(new Coordinate(values.get(i), values.get(i+1), values.get(i+2)));
+            } else {
+                throw new IllegalArgumentException("More than 3 dimension or less than 2 are not supported in JTS");
+            }
         }
         return coords;
     }
@@ -615,7 +636,13 @@ public class GeometrytoJTS {
         final int dim = gml.getCoordinateDimension();
         final List<Coordinate> coords = new ArrayList<>(dim);
         for (int i=0,n=values.size(); i<n; i+=dim) {
-            coords.add( new Coordinate(values.get(i), values.get(i+1)) );
+            if (dim == 2) {
+                coords.add(new Coordinate(values.get(i), values.get(i+1)));
+            } else if (dim == 3) {
+                coords.add(new Coordinate(values.get(i), values.get(i+1), values.get(i+2)));
+            } else {
+                throw new IllegalArgumentException("More than 3 dimension or less than 2 are not supported in JTS");
+            }
         }
 
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
@@ -675,16 +702,31 @@ public class GeometrytoJTS {
 
                             if(coords.isEmpty()){
                                 for (DirectPosition pos : lsst.getPos()) {
-                                    coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
+                                    if (pos.getDimension() == 2) {
+                                        coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
+                                    } else if (pos.getDimension() == 3) {
+                                        coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1), pos.getOrdinate(2)));
+                                    } else {
+                                        throw new IllegalArgumentException("More than 3 dimension or less than 2 are not supported in JTS");
+                                    }
                                 }
                                 if (!lsst.getRest().isEmpty()) {
                                     throw new IllegalArgumentException("not supported yet");
                                 }
                             } else {
                                 for(DirectPosition pos : lsst.getPos()){
-                                    final Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
-                                    if (!c.equals2D(coords.getLast())){
-                                        coords.add(c);
+                                    if (pos.getDimension() == 2) {
+                                        final Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
+                                        if (!c.equals2D(coords.getLast())){
+                                            coords.add(c);
+                                        }
+                                    } else if (pos.getDimension() == 3) {
+                                        final Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1), pos.getOrdinate(2));
+                                        if (!c.equals3D(coords.getLast())){
+                                            coords.add(c);
+                                        }
+                                    } else {
+                                        throw new IllegalArgumentException("More than 3 dimension or less than 2 are not supported in JTS");
                                     }
                                 }
                                 if (!lsst.getRest().isEmpty()) {
