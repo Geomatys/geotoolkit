@@ -16,15 +16,16 @@
  */
 package org.geotoolkit.data.mapinfo;
 
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.measure.Unit;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.*;
@@ -38,20 +39,22 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
-import javax.measure.Unit;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.geotoolkit.factory.FactoryFinder;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.PARAMETER_LIST;
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
@@ -183,9 +186,8 @@ public class ProjectionUtils {
         }
 
         String[] crsParameters = mifCRS.split(",");
-        if(crsParameters.length < 3) {
-            throw new DataStoreException("Missing informations : A CoordSys must at least define projection type, datum and unit.");
-        }
+        if (crsParameters.length < 2)
+            throw new DataStoreException("Missing informations : A CoordSys must at least define projection type, datum.");
 
         Pattern codeMatch = Pattern.compile("\\d+");
 
@@ -222,14 +224,8 @@ public class ProjectionUtils {
             }
         }
 
-        // Unit
-        unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
-
-        if(datum == null) {
+        if(datum == null)
             throw new DataStoreException("One of the following mandatory parameter can't be read : datum code");
-        } else if (unit == null) {
-            throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
-        }
 
         /*
          * If Bounds param is defined, we parse it to find the four numbers defining lower and upper corners. If there's
@@ -273,9 +269,16 @@ public class ProjectionUtils {
             throw new DataStoreException("A problem has been encountered while creating base geographic CRS.", e);
         }
 
-        if(projCode == GEO_PROJ_CODE) {
+        if (projCode == GEO_PROJ_CODE) {
+            //-- no setted Unit.MIF/MID format assume degree with no setted Unit
             result = baseCRS;
         } else {
+            //-- Unit is only requested into Projected CRS context
+            //-- MIF/MID write Unit if unit is not degree
+            unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
+            if (unit == null)
+                throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
+
             /**
              * If projection code is not the geographical code, we must build a projected crs matching the projection
              * pointed by given code.
@@ -382,9 +385,8 @@ public class ProjectionUtils {
         final String mifUnitCode = '\"'+cs.getAxis(0).getUnit().toString()+'\"';
 
         // Geographic CRS (special) case, mapinfo proj code is 1.
-        if(crs instanceof GeographicCRS) {
-            builder.append('1').append(", ").append(mifDatum).append(", ").append(mifUnitCode);
-
+        if (crs instanceof GeographicCRS) {
+            builder.append('1').append(", ").append(mifDatum);
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
             Conversion proj = pCRS.getConversionFromBase();
@@ -435,5 +437,4 @@ public class ProjectionUtils {
         }
         return builder.toString();
     }
-
 }

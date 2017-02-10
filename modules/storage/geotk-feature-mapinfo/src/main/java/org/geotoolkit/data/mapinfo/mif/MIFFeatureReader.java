@@ -16,19 +16,6 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.CharSequences;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -37,9 +24,24 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import org.opengis.util.GenericName;
+
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * MIF reader which is designed to browse data AND ONLY data, it's to say geometry data from MIF file, and all data from
@@ -332,7 +334,7 @@ public class MIFFeatureReader implements FeatureReader {
                 mifStream = IOUtilities.open(master.getMIFPath());
             }
             if(mifScanner == null) {
-                mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
+                mifScanner = new Scanner(mifStream, master.getCharset().name());
                 repositionMIFReader();
             }
         }
@@ -342,7 +344,7 @@ public class MIFFeatureReader implements FeatureReader {
                 midStream = IOUtilities.open(master.getMIDPath());
             }
             if(midScanner == null) {
-                midScanner = new Scanner(midStream, MIFUtils.DEFAULT_CHARSET);
+                midScanner = new Scanner(midStream, master.getCharset().name());
 
                 // Reposition the scanner.
                 int midPosition = 0;

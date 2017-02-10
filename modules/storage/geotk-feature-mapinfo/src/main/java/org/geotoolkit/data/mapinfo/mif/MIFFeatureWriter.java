@@ -16,17 +16,20 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
+import java.util.logging.Level;
+
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-
-import java.io.*;
-import java.util.UUID;
-import java.util.logging.Level;
-import org.apache.sis.util.ArgumentChecks;
 
 /**
  * An iterator to write features into MIF/MID files.
@@ -44,11 +47,11 @@ public class MIFFeatureWriter implements FeatureWriter {
 
     private int featureCount = 0;
 
-    private File tmpMifFile;
-    private FileWriter tmpMifWriter;
+    private Path tmpMifFile;
+    private BufferedWriter tmpMifWriter;
 
-    private File tmpMidFile;
-    private FileWriter tmpMidWriter;
+    private Path tmpMidFile;
+    private BufferedWriter tmpMidWriter;
 
     public MIFFeatureWriter(MIFManager parent, MIFFeatureReader readingIterator) throws DataStoreException {
         ArgumentChecks.ensureNonNull("File manager", parent);
@@ -59,13 +62,11 @@ public class MIFFeatureWriter implements FeatureWriter {
 
         // Initialize temp containers
         try {
-            tmpMidFile = File.createTempFile(UUID.randomUUID().toString(), ".mid");
-            tmpMifFile = File.createTempFile(UUID.randomUUID().toString(), ".mif");
-            tmpMidFile.deleteOnExit();
-            tmpMifFile.deleteOnExit();
+            tmpMidFile = Files.createTempFile(UUID.randomUUID().toString(), ".mid");
+            tmpMifFile = Files.createTempFile(UUID.randomUUID().toString(), ".mif");
 
-            tmpMifWriter = new FileWriter(tmpMifFile);
-            tmpMidWriter = new FileWriter(tmpMidFile);
+            tmpMifWriter = Files.newBufferedWriter(tmpMifFile, master.getCharset());
+            tmpMidWriter = Files.newBufferedWriter(tmpMidFile, master.getCharset());
         } catch (IOException e) {
             throw new DataStoreException("Unable to initialize Feature writer.", e);
         }
@@ -188,13 +189,18 @@ public class MIFFeatureWriter implements FeatureWriter {
             MIFManager.LOGGER.log(Level.WARNING, "Temporary MIF data writer can't be closed", e);
         }
 
+        // Update real data files
         try {
-            flush();
-        } catch(Exception ex) {
-            throw new FeatureStoreRuntimeException("Data flushing impossible, there's a possibility of data loss.");
+            master.flushData(tmpMifFile, tmpMidFile);
+        } catch (IOException ex) {
+            throw new FeatureStoreRuntimeException("Data flushing impossible, there's a possibility of data loss.", ex);
         } finally {
-            tmpMidFile.delete();
-            tmpMifFile.delete();
+            try {
+                Files.delete(tmpMidFile);
+                Files.delete(tmpMifFile);
+            } catch (IOException ex) {
+                MIFManager.LOGGER.log(Level.FINE, "Cannot delete temporary files", ex);
+            }
         }
     }
 
@@ -210,35 +216,5 @@ public class MIFFeatureWriter implements FeatureWriter {
                 MIFManager.LOGGER.log(Level.WARNING, "Can't close MIF feature writer", e);
             }
         }
-    }
-
-    /**
-     * Update the real MIF file.
-     */
-    private void flush() throws IOException {
-        try {
-            master.flushData(this);
-        } catch (DataStoreException e) {
-            throw new IOException("A problem have been encountered while writing file header.");
-        }
-    }
-
-
-    /**
-     * Get input stream to temporary geometry data.
-     * @return A {@link FileInputStream} pointing to the temporary file containing MIF geometry.
-     * @throws FileNotFoundException If we can't retrieve the temp data.
-     */
-    public InputStream getMIFTempStore() throws FileNotFoundException {
-        return new FileInputStream(tmpMifFile);
-    }
-
-    /**
-     * Get input stream to temporary attribute data.
-     * @return A {@link FileInputStream} pointing to the temporary file containing MID attributes.
-     * @throws FileNotFoundException If we can't retrieve the temp data.
-     */
-    public InputStream getMIDTempStore() throws FileNotFoundException {
-        return new FileInputStream(tmpMidFile);
     }
 }

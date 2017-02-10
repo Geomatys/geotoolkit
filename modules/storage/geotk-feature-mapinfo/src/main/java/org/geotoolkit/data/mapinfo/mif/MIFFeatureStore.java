@@ -16,7 +16,23 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.opengis.util.FactoryException;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
+
 import org.apache.sis.storage.DataStoreException;
+
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
@@ -24,22 +40,10 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 
 /**
@@ -118,7 +122,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
     public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         try {
             manager.addSchema(typeName, featureType);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | FactoryException | IOException e) {
             throw new DataStoreException("We're unable to add a schema because we can't access source files.", e);
         }
     }

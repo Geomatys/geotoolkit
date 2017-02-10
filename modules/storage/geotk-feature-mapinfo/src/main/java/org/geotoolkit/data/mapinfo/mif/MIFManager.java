@@ -16,24 +16,11 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
-import org.geotoolkit.nio.IOUtilities;
-import org.opengis.util.GenericName;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,13 +31,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.nio.file.StandardOpenOption.*;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-
 import org.apache.sis.util.Utilities;
-import static java.nio.file.StandardOpenOption.*;
+
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultAttributeType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.type.*;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.util.NamesExt;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -74,7 +79,7 @@ public class MIFManager {
      * Mif file access
      */
     private String mifName;
-    private URI mifPath;
+    private final URI mifPath;
     private Scanner mifScanner;
 
     /** Path to the MID file. */
@@ -86,8 +91,8 @@ public class MIFManager {
     private short mifVersion = 300;
     private String mifCharset = "Neutral";
     public char mifDelimiter = '\t';
-    private ArrayList<Short> mifUnique = new ArrayList<Short>();
-    private ArrayList<Short> mifIndex = new ArrayList<Short>();
+    private final ArrayList<Short> mifUnique = new ArrayList<>();
+    private final ArrayList<Short> mifIndex = new ArrayList<>();
     private CoordinateReferenceSystem mifCRS = CommonCRS.WGS84.normalizedGeographic();
     private MathTransform mifTransform = null;
     private int mifColumnsCount = -1;
@@ -186,7 +191,7 @@ public class MIFManager {
      * @throws DataStoreException If an unexpected error occurs while referencing given type.
      * @throws URISyntaxException If the URL specified at store creation is invalid.
      */
-    public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
+    public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException, IOException, FactoryException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
 
         /*
@@ -426,7 +431,7 @@ public class MIFManager {
 
             RWLock.readLock().lock();
             mifStream = IOUtilities.open(mifPath);
-            mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
+            mifScanner = new Scanner(mifStream, getCharset().name());
 
             // A trigger to tell us if all mandatory categories have been parsed.
             boolean columnsParsed = false;
@@ -447,7 +452,13 @@ public class MIFManager {
                     }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.CHARSET.name())) {
-                    final String charset = mifScanner.findInLine(ALPHA_PATTERN);
+                    final String tmpCharset = mifScanner.findInLine(ALPHA_PATTERN);
+                    if (tmpCharset != null && !tmpCharset.equalsIgnoreCase(tmpCharset)) {
+                        // if charset has changed. we must reset parsing.
+                        mifCharset = tmpCharset;
+                        parseHeader();
+                        return;
+                    }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.DELIMITER.name())) {
                     final String tmpStr = mifScanner.findInLine("(\"|\')[^\"](\"|\')");
@@ -519,7 +530,7 @@ public class MIFManager {
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "File header can't be read (creation mode ?).");
-        } catch (Exception e) {
+        } catch (FactoryException e) {
             throw new DataStoreException("MIF file header can't be read.", e);
         } finally {
             if(mifStream != null) {
@@ -545,7 +556,7 @@ public class MIFManager {
             try {
                 mifScanner.close();
                 RWLock.readLock().lock();
-                mifScanner = new Scanner(IOUtilities.open(mifPath), MIFUtils.DEFAULT_CHARSET);
+                mifScanner = new Scanner(IOUtilities.open(mifPath), getCharset().name());
                 buildDataTypes();
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
@@ -662,45 +673,41 @@ public class MIFManager {
      * @throws DataStoreException If the current FeatureType is not fully compliant with MIF constraints. If there's a
      * problem while writing the featureType in MIF header.
      */
-    public String buildHeader() throws DataStoreException {
+    public String buildHeader() throws DataStoreException, FactoryException {
 
         final FeatureType toWorkWith = mifBaseType;
         int tmpCount = toWorkWith.getDescriptors().size();
         final StringBuilder headBuilder = new StringBuilder();
-        try {
-            headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
-            headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
-            headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append('\"').append(mifDelimiter).append('\"').append('\n');
+        headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
+        headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
+        headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append('\"').append(mifDelimiter).append('\"').append('\n');
 
-            if (mifCRS != null && mifCRS != CommonCRS.WGS84.normalizedGeographic()) {
-                String strCRS = ProjectionUtils.crsToMIFSyntax(mifCRS);
-                if(!strCRS.isEmpty()) {
-                    headBuilder.append(strCRS).append('\n');
-                } else {
-                    throw new DataStoreException("Given CRS can't be written in MIF file.");
-                }
+        if (mifCRS != null && mifCRS != CommonCRS.WGS84.normalizedGeographic()) {
+            String strCRS = ProjectionUtils.crsToMIFSyntax(mifCRS);
+            if (!strCRS.isEmpty()) {
+                headBuilder.append(strCRS).append('\n');
+            } else {
+                throw new DataStoreException("Given CRS can't be written in MIF file.");
             }
-
-            // Check the number of attributes, as the fact we've got at most one geometry.
-            boolean geometryFound = false;
-            for (PropertyDescriptor desc : toWorkWith.getDescriptors()) {
-                if (desc instanceof GeometryDescriptor) {
-                    if (geometryFound) {
-                        throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
-                    } else {
-                        tmpCount--;
-                        geometryFound = true;
-                    }
-                }
-            }
-            headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(mifColumnsCount).append('\n');
-            MIFUtils.featureTypeToMIFSyntax(toWorkWith, headBuilder);
-
-            headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
-
-        } catch (Exception e) {
-            throw new DataStoreException("Datastore can't write MIF file header.", e);
         }
+
+        // Check the number of attributes, as the fact we've got at most one geometry.
+        boolean geometryFound = false;
+        for (PropertyDescriptor desc : toWorkWith.getDescriptors()) {
+            if (desc instanceof GeometryDescriptor) {
+                if (geometryFound) {
+                    throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
+                } else {
+                    tmpCount--;
+                    geometryFound = true;
+                }
+            }
+        }
+        headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(mifColumnsCount).append('\n');
+        MIFUtils.featureTypeToMIFSyntax(toWorkWith, headBuilder);
+
+        headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
+
         // Header successfully built, we can report featureType values on datastore attributes.
         mifColumnsCount = tmpCount;
         mifBaseType = toWorkWith;
@@ -709,29 +716,18 @@ public class MIFManager {
     }
 
 
-    private void flushHeader() throws DataStoreException {
+    private void flushHeader() throws IOException, DataStoreException, FactoryException {
         // Cache the header in memory.
         final String head = buildHeader();
 
         // Writing pass, with datastore locking.
-        OutputStreamWriter stream = null;
         RWLock.writeLock().lock();
-        try {
+        try (OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, TRUNCATE_EXISTING);
+            final OutputStreamWriter stream = new OutputStreamWriter(out, getCharset())) {
             // writing MIF header and geometries.
-            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, TRUNCATE_EXISTING);
-            stream = new OutputStreamWriter(out);
             stream.write(head);
-        } catch (Exception e) {
-            throw new DataStoreException("A problem have been encountered while flushing data.", e);
         } finally {
             RWLock.writeLock().unlock();
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
-                }
-            }
         }
     }
 
@@ -740,53 +736,23 @@ public class MIFManager {
      * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing tmp file
      * data into the real file.
      */
-    public void flushData(MIFFeatureWriter dataToWrite) throws DataStoreException {
+    public void flushData(final Path mifToFlush, final Path midToFlush) throws IOException {
 
         // Writing pass, with datastore locking.
-        OutputStreamWriter stream = null;
-        InputStream mifInput = null;
-        InputStreamReader reader;
-        InputStream midInput = null;
         RWLock.writeLock().lock();
         try {
-            // writing MIF header and geometries.
-            OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, APPEND);
-            stream = new OutputStreamWriter(out);
-            mifInput = dataToWrite.getMIFTempStore();
-            MIFUtils.write(mifInput, stream);
-            stream.close();
+            try (final OutputStream out = IOUtilities.openWrite(mifPath, CREATE, WRITE, APPEND)) {
+                // writing MIF header and geometries.
+                Files.copy(mifToFlush, out);
+            }
 
             // MID writing
-            out = IOUtilities.openWrite(midPath, CREATE, WRITE, APPEND);
-            stream = new OutputStreamWriter(out);
-            midInput = dataToWrite.getMIDTempStore();
-            MIFUtils.write(midInput, stream);
+            try (final OutputStream out = IOUtilities.openWrite(midPath, CREATE, WRITE, APPEND)) {
+                Files.copy(midToFlush, out);
+            }
 
-        } catch (Exception e) {
-            throw new DataStoreException("A problem have been encountered while flushing data.", e);
         } finally {
             RWLock.writeLock().unlock();
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
-                }
-            }
-            if (mifInput != null) {
-                try {
-                    mifInput.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
-                }
-            }
-            if (midInput != null) {
-                try {
-                    midInput.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
-                }
-            }
         }
     }
 
@@ -832,5 +798,13 @@ public class MIFManager {
 
     public CoordinateReferenceSystem getWrittenCRS() {
         return writtenCRS;
+    }
+
+    public Charset getCharset() {
+        try {
+            return Charset.forName(mifCharset);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            return StandardCharsets.ISO_8859_1;
+        }
     }
 }

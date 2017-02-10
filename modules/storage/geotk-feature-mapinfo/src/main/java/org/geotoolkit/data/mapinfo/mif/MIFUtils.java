@@ -16,27 +16,27 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import java.awt.geom.Rectangle2D;
+import java.net.URI;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+
 import com.vividsolutions.jts.geom.*;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-
-import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
@@ -308,7 +308,6 @@ public final class MIFUtils {
         }
     }
 
-
     /**
      * Parse the given {@link FeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
      * @param toWorkWith The FeatureType to parse, can't be null.
@@ -347,64 +346,9 @@ public final class MIFUtils {
         return "file".equalsIgnoreCase(uri.getScheme());
     }
 
-
-//
-//    public static OutputStream openOutConnection(URI source) throws IOException {
-//        OutputStream out = null;
-//
-//        try {
-//        if(MIFUtils.isLocal(source)) {
-//            final File tmpFile = new File(source);
-//            out = new FileOutputStream(tmpFile, true);
-//        } else {
-//            URLConnection connection = source.openConnection();
-//            connection.setDoOutput(true);
-//            out = connection.getOutputStream();
-//        }
-//        } catch (Exception e) {
-//            throw new IOException("Unable to open data in write mode.", e);
-//        }
-//        return out;
-//    }
-//
-//
-//    public static InputStream openInConnection(URL source) throws IOException {
-//        InputStream in = null;
-//
-//        try {
-//        if(MIFUtils.isLocal(source)) {
-//            final File tmpFile = new File(source.toURI());
-//            in = new FileInputStream(tmpFile);
-//        } else {
-//            URLConnection connection = source.openConnection();
-//            connection.setDoOutput(true);
-//            in = connection.getInputStream();
-//        }
-//        } catch (Exception e) {
-//            throw new IOException("Unable to open data in read mode.", e);
-//        }
-//        return in;
-//    }
-
-
-    /**
-     * Write a stream into another.
-     * @param in The source inputStream
-     * @param writer The {@link OutputStreamWriter} which will write input stream into destination stream.
-     * @throws IOException If there's a problem connecting to one of the streams.
-     */
-    public static void write(InputStream in, OutputStreamWriter writer) throws IOException {
-        InputStreamReader reader = new InputStreamReader(in);
-        char[] inBuffer = new char[1024];
-        int byteRead = 0;
-        while((byteRead = reader.read(inBuffer)) >= 0) {
-            writer.write(inBuffer, 0, byteRead);
-        }
-    }
-
-
     /**
      * Return a String which is the ready-to-write (for MID file) representation of the given property.
+     *
      * @param prop The property to extract value from.
      * @return A string which is the value of the given property. Never Null, but can be empty.
      */
@@ -419,7 +363,6 @@ public final class MIFUtils {
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             return format.format(value);
         }
-
         return value.toString();
     }
 
