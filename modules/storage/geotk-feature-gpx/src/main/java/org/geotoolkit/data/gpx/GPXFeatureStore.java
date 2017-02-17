@@ -220,7 +220,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         private GPXFeatureReader(final FeatureType restriction) throws DataStoreException{
             RWLock.readLock().lock();
             this.restriction = restriction;
-            features = reader.getFeatures().iterator();
+            features = reader.features().iterator();
         }
 
         @Override

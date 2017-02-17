@@ -57,6 +57,18 @@ public class GenericNameIndex<T> extends FeatureNaming<T> {
         }
     }
 
+    public T get(String name) throws IllegalNameException {
+        return super.get(null, name);
+    }
+    
+    public void add(GenericName name, final T value) throws IllegalNameException {
+        add(null,name,value);
+    }
+
+    public boolean remove(GenericName name) throws IllegalNameException {
+        return remove(null,name);
+    }
+
     @Override
     public synchronized void add(DataStore store, GenericName name, T value) throws IllegalNameException {
         super.add(store, name, value);
