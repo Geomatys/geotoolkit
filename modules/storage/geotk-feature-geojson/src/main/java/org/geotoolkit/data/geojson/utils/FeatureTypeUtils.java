@@ -292,8 +292,10 @@ public final class FeatureTypeUtils extends Static {
         }
         writer.writeStringField(JAVA_TYPE, geometryType.getValueClass().getCanonicalName());
         CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
-        String crsCode = GeoJSONUtils.toURN(crs);
-        writer.writeStringField(CRS, crsCode);
+        if (crs != null) {
+            String crsCode = GeoJSONUtils.toURN(crs);
+            writer.writeStringField(CRS, crsCode);
+        }
         writer.writeStringField(GEOMETRY_ATT_NAME, geometryType.getName().tip().toString());
         writer.writeEndObject();
         return true;
@@ -405,14 +407,16 @@ public final class FeatureTypeUtils extends Static {
             }
         }
 
-        if (binding == null || crs == null) {
-            throw new DataStoreException("Geometry crs or binding not found.");
+        if (binding == null) {
+            throw new DataStoreException("Binding class not found.");
         }
 
         final GenericName name = geometryName != null ? NamesExt.create(geometryName) : NamesExt.create("geometry");
         final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
         atb.setName(name);
-        atb.setCRS(crs);
+        if (crs != null) {
+            atb.setCRS(crs);
+        }
         atb.setValueClass(binding);
         atb.setMinimumOccurs(1);
         atb.setMaximumOccurs(1);

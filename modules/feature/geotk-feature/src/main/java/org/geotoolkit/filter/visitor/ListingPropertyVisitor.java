@@ -20,6 +20,7 @@ package org.geotoolkit.filter.visitor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
@@ -251,8 +252,11 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      */
     @Override
     public Object visit(final Id filter, final Object data) {
-        if(data instanceof Collection) return (Collection<String>)data;
-        return Collections.emptyList();
+        final Collection<String> names;
+        if(data instanceof Collection) names = (Collection<String>) data;
+        else names = new HashSet<String>();
+        names.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        return names;
     }
 
     /** 

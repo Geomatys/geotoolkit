@@ -612,7 +612,7 @@
       <dependency>
         <groupId>net.sf.marineapi</groupId>
         <artifactId>marineapi</artifactId>
-        <version>0.6.0</version>
+        <version>0.9.0</version>
       </dependency>
       <dependency>
         <groupId>org.rxtx</groupId>

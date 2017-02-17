@@ -1,5 +1,6 @@
 package org.geotoolkit.data.geojson.utils;
 
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -13,8 +14,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
@@ -42,9 +45,48 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
 
         testFeatureTypes(featureType, readFeatureType);
     }
+    
+    @Test
+    public void writeReadNoCRSFTTest() throws Exception {
+
+        Path featureTypeFile = Files.createTempFile("geomFTNC", ".json");
+
+        FeatureType featureType = createGeometryNoCRSFeatureType();
+        FeatureTypeUtils.writeFeatureType(featureType, featureTypeFile);
+
+        assertTrue(Files.size(featureTypeFile) > 0);
+
+        FeatureType readFeatureType = FeatureTypeUtils.readFeatureType(featureTypeFile);
+
+        assertNotNull(readFeatureType);
+        assertTrue(FeatureExt.hasAGeometry(readFeatureType));
+        assertNull(FeatureExt.getCRS(readFeatureType));
+
+        testFeatureTypes(featureType, readFeatureType);
+    }
+    
+    @Test
+    public void writeReadCRSFTTest() throws Exception {
+
+        Path featureTypeFile = Files.createTempFile("geomFTC", ".json");
+
+        FeatureType featureType = createGeometryCRSFeatureType();
+        FeatureTypeUtils.writeFeatureType(featureType, featureTypeFile);
+
+        assertTrue(Files.size(featureTypeFile) > 0);
+
+        FeatureType readFeatureType = FeatureTypeUtils.readFeatureType(featureTypeFile);
+
+        assertNotNull(readFeatureType);
+        assertTrue(FeatureExt.hasAGeometry(readFeatureType));
+        assertNotNull(FeatureExt.getCRS(readFeatureType));
+
+        testFeatureTypes(featureType, readFeatureType);
+    }
 
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
-        assertEquals(expected, result);
+        FeatureTypeExt.equalsIgnoreConvention(expected, result);
+        
     }
 
 //    private void testDescriptors(Collection<PropertyDescriptor> expected, Collection<PropertyDescriptor> result) {
@@ -116,6 +158,26 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         ftb.addAssociation(complexAtt1).setName("complexAtt1");
         ftb.addAssociation(complexAtt2).setName("complexAtt2").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         ftb.setDescription(new SimpleInternationalString("Description"));
+        return ftb.build();
+    }
+    
+    private FeatureType createGeometryNoCRSFeatureType() {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("FT1");
+        ftb.addAttribute(Point.class).setName("geometry").addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("type");
+        
+        return ftb.build();
+    }
+    
+    private FeatureType createGeometryCRSFeatureType() {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("FT2");
+        ftb.addAttribute(Point.class).setName("geometry").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("type");
+        
         return ftb.build();
     }
 }

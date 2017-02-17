@@ -62,7 +62,7 @@ public class DefaultId implements Id,Serializable{
      */
     @Override
     public Set<Identifier> getIdentifiers() {
-        return new HashSet<Identifier>(keys.values());
+        return new HashSet<>(keys.values());
     }
 
     /**
@@ -79,7 +79,15 @@ public class DefaultId implements Id,Serializable{
         if (binding == null) {
             return false;
         }
-        return keys.containsKey(binding.get(object, XPATH_ID, null));
+        Object k = binding.get(object, XPATH_ID, null);
+        if (k instanceof String) {
+            return keys.containsKey(k);
+        } else {
+            //it often happens like in web services that keys are sent as Strings
+            //but the real type might be different
+            return keys.containsKey(k) || keys.containsKey(String.valueOf(k));
+        }
+        
     }
 
     /**
