@@ -20,10 +20,14 @@ import java.awt.AlphaComposite;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -37,6 +41,7 @@ import org.geotoolkit.math.Histogram;
 import org.geotoolkit.metadata.DefaultSampleDimensionExt;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
@@ -58,19 +63,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
         
         try{
-            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
-            if(dataCoverage == null){
-                return;
-            }
-
             final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
-            final CoverageDescription covdesc = covref.getMetadata();
+            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
             
-            if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) 
-                dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
-            
-            
-            final RenderedImage ri = dataCoverage.getRenderedImage();
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
             
             final int[] bands = new int[]{-1,-1,-1,-1};
@@ -78,6 +73,15 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
             final Map<String,Object> stats = new HashMap<>();
 
+            //we can avoid loading metadata if all ranges are literals,
+            //metadata can be expensive because of histogram informations
+            boolean allLiteral = true;
+            for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
+                allLiteral &= channel.getLower().getValue() instanceof Literal;
+                allLiteral &= channel.getUpper().getValue() instanceof Literal;
+            }
+            final CoverageDescription covdesc = allLiteral ? null : covref.getMetadata();
+            
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
                 final Integer bandIdx;
                 try{
@@ -101,24 +105,26 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
                 //search for band statistics
                 stats.clear();
-                search:
-                for(AttributeGroup attg : covdesc.getAttributeGroups()){
-                    for(RangeDimension rd : attg.getAttributes()){
-                        if(!(rd instanceof SampleDimension)) continue;
-                        final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                        if(i==bandIdx){
-                            final SampleDimension sd = (SampleDimension) rd;
-                            stats.put(DynamicRangeSymbolizer.PROPERTY_MIN, sd.getMinValue());
-                            stats.put(DynamicRangeSymbolizer.PROPERTY_MAX, sd.getMaxValue());
-                            stats.put(DynamicRangeSymbolizer.PROPERTY_MEAN, sd.getMeanValue());
-                            stats.put(DynamicRangeSymbolizer.PROPERTY_STD, sd.getStandardDeviation());
-                            if(sd instanceof DefaultSampleDimensionExt){
-                                final DefaultSampleDimensionExt dsd = (DefaultSampleDimensionExt) sd;
-                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO, dsd.getHistogram());
-                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN, dsd.getHistogramMin());
-                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX, dsd.getHistogramMax());
+                if (!allLiteral) {
+                    search:
+                    for(AttributeGroup attg : covdesc.getAttributeGroups()){
+                        for(RangeDimension rd : attg.getAttributes()){
+                            if(!(rd instanceof SampleDimension)) continue;
+                            final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
+                            if(i==bandIdx){
+                                final SampleDimension sd = (SampleDimension) rd;
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_MIN, sd.getMinValue());
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_MAX, sd.getMaxValue());
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_MEAN, sd.getMeanValue());
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_STD, sd.getStandardDeviation());
+                                if(sd instanceof DefaultSampleDimensionExt){
+                                    final DefaultSampleDimensionExt dsd = (DefaultSampleDimensionExt) sd;
+                                    stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO, dsd.getHistogram());
+                                    stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN, dsd.getHistogramMin());
+                                    stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX, dsd.getHistogramMax());
+                                }
+                                break search;
                             }
-                            break search;
                         }
                     }
                 }
@@ -126,6 +132,49 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 ranges[idx][0] = evaluate(channel.getLower(), stats);
                 ranges[idx][1] = evaluate(channel.getUpper(), stats);
             }
+            
+            
+            //read only requested coverage bands
+            int[] toRead = new int[0];
+            final int[] mapping = new int[4];
+            for(int i=0;i<4;i++){
+                if (bands[i]!=-1){
+                    int index = Arrays.binarySearch(toRead, bands[i]);
+                    if(index<0) {
+                        toRead = Arrays.copyOf(toRead, toRead.length+1);
+                        index = toRead.length-1;
+                        toRead[index] = bands[i];
+                    }
+                    mapping[i] = index;
+                }
+            }            
+            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage, 
+                    renderingContext.getCanvasObjectiveBounds(),
+                    renderingContext.getResolution(), 
+                    renderingContext.getObjectiveToDisplay(), 
+                    false,toRead);
+            if(dataCoverage == null){
+                return;
+            }            
+            
+            //check if the reader honored the band request
+            final GridSampleDimension[] readDimensions = dataCoverage.getSampleDimensions();
+            boolean bandReadHonored = (readDimensions.length == toRead.length);
+            for (int i=0;bandReadHonored && i<toRead.length;i++) {
+                bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), sampleDimensions.get(toRead[i]).getDescription());
+            }
+            
+            //swap new band indexes
+            if (bandReadHonored) {
+                for (int i=0;i<4;i++) {
+                    if (bands[i]!=-1) bands[i] = mapping[i];
+                }
+            }
+            
+            if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) {
+                dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
+            }
+            final RenderedImage ri = dataCoverage.getRenderedImage();
             
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
             RenderedImage img = p.executeNow();
