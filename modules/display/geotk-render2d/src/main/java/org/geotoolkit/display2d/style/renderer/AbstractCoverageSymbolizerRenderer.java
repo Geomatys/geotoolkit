@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -238,6 +239,30 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
             Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp, final boolean isElevation)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
+        return getObjectiveCoverage(projectedCoverage, renderingBound, resolution, objToDisp, isElevation, null);
+    }
+    
+    /**
+     * Returns expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
+     * from given {@link ProjectedCoverage}.
+     *
+     * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
+     * @param renderingBound Rendering context enveloppe
+     * @param resolution Rendering resolution in envelope crs
+     * @param objToDisp Objective to displace affine transform
+     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
+     * @param sourceBands coverage source bands to read
+     * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
+     * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
+     * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
+     * @throws org.opengis.util.FactoryException if problem during {@link Envelope} study.
+     * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
+     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     */
+    protected GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage,
+            Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp, final boolean isElevation, int[] sourceBands)
+            throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
         //-- ArgumentChecks.ensureNonNull("CanvasType", displayOrObjective);
 
@@ -254,7 +279,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final CoverageReference ref            = coverageLayer.getCoverageReference();
         final GridCoverageReader reader        = ref.acquireReader();
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
-        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
         final Envelope dataBBox                = gridGeometry.getEnvelope();
         ref.recycle(reader);
         
@@ -345,6 +369,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);
         param.setResolution(paramRes);
+        if (sourceBands!=null) param.setSourceBands(sourceBands);
 
         GridCoverage2D dataCoverage = (isElevation) ? projectedCoverage.getElevationCoverage(param) : projectedCoverage.getCoverage(param);
 
@@ -410,6 +435,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-----------------------------------------------------------------------
 
         //-- find most appropriate interpolation
+        final List<GridSampleDimension> sampleDimensions = Arrays.asList(dataCoverage.getSampleDimensions());
         InterpolationCase interpolation;
         if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
         || (!(gridGeometry instanceof GridGeometry2D))
