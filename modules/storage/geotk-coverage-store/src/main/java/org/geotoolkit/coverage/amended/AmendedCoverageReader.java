@@ -37,6 +37,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 /**
  * Decorate a coverage reader changing behavior to match overriden properties
@@ -159,7 +161,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
 
             //change the crs to original one
             if(overrideCRS!=null){
-                coverageEnv = GeneralEnvelope.castOrCopy(coverageEnv);
+                coverageEnv = new GeneralEnvelope(coverageEnv);
                 ((GeneralEnvelope)coverageEnv).setCoordinateReferenceSystem(
                         originalGridGeometry.getCoordinateReferenceSystem());
             }
@@ -173,7 +175,7 @@ public class AmendedCoverageReader extends GridCoverageReader{
                     fixedToOriginal = MathTransforms.concatenate(overrideCrsToGrid, originalGridGeometry.getGridToCRS());
                     originalToFixed = fixedToOriginal.inverse();
                     coverageEnv = Envelopes.transform(fixedToOriginal, coverageEnv);
-                    coverageEnv = GeneralEnvelope.castOrCopy(coverageEnv);
+                    coverageEnv = new GeneralEnvelope(coverageEnv);
                     ((GeneralEnvelope)coverageEnv).setCoordinateReferenceSystem(
                             originalGridGeometry.getCoordinateReferenceSystem());
                 } catch (TransformException ex) {
@@ -181,6 +183,12 @@ public class AmendedCoverageReader extends GridCoverageReader{
                 }
             }
 
+            if (originalToFixed!=null && coverageRes!=null) {
+                //adjust resolution
+                double s = XAffineTransform.getScale((AffineTransform2D)originalToFixed);
+                coverageRes[0] /= s;
+                coverageRes[1] /= s;
+            }
 
             //query original reader
             final GridCoverageReadParam refParam = new GridCoverageReadParam(param);
