@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -28,13 +28,13 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.geometry.GeometricUtilities;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -128,9 +128,9 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
      */
     public ProjectedGeometry getEnvelopeGeometry() {
         final Envelope env = layer.getBounds();
-        final Polygon polygon = JTS.toGeometry(env);
+        final Geometry jtsBounds = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
         border = new ProjectedGeometry(params);
-        border.setDataGeometry(polygon,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
+        border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
     }
 
