@@ -34,7 +34,6 @@ import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 import org.geotoolkit.index.tree.manager.postgres.PGTreeWrapper;
 import org.geotoolkit.index.tree.star.FileStarRTree;
-import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.tree.TreeAccessSQLByteArray;
 
 /**
@@ -43,7 +42,7 @@ import org.geotoolkit.internal.tree.TreeAccessSQLByteArray;
  */
 public class SQLRtreeManager extends AbstractRtreeManager {
 
-    public final static String JDBC_TYPE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.type";
+    public final static String POSTGRES_DATABASE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.type";
 
 
     public static synchronized Tree<NamedEnvelope> get(final Path directory, final Object owner) {
@@ -51,26 +50,18 @@ public class SQLRtreeManager extends AbstractRtreeManager {
         if (tree == null || tree.isClosed()) {
             if (existTree(directory)) {
 
-                if (System.getProperty(JDBC_TYPE_KEY)!= null){
+                if (System.getProperty(POSTGRES_DATABASE_KEY)!= null){
 
-                    // postgres
-                    if (System.getProperty(JDBC_TYPE_KEY).equals("postgres")) {
-                        try {
-                            DataSource ds                = PGDataSource.getDataSource();
-                            TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
-                            byte[] data                  = TreeAccessSQLByteArray.getData(directory, ds);
-                            tree                         = new PGTreeWrapper(data, directory, ds, treeMapper);
+                    try {
+                        DataSource ds                = PGDataSource.getDataSource();
+                        TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
+                        byte[] data                  = TreeAccessSQLByteArray.getData(directory, ds);
+                        tree                         = new PGTreeWrapper(data, directory, ds, treeMapper);
 
-                        } catch ( SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
-                            LOGGER.log(Level.SEVERE, null, e);
-                            return null;
-                        }
-
-                    // other DB not yet implemented
-                    } else {
-                        throw new IllegalArgumentException("Unexpected JDBC type: " + JDBC_TYPE_KEY);
+                    } catch ( SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
+                        LOGGER.log(Level.SEVERE, null, e);
+                        return null;
                     }
-
 
                 } else {
                     // derby DB as default
@@ -111,7 +102,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                 final Path treeFile       = directory.resolve("tree.bin");
                 Files.createFile(treeFile);
                 // postgres
-                if ("postgres".equals(System.getProperty(JDBC_TYPE_KEY))) {
+                if (System.getProperty(POSTGRES_DATABASE_KEY) != null) {
                     TreeElementMapper treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
                     return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
 
@@ -138,7 +129,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             tree.flush();
             tree.clear();
         }
-        if ("postgres".equals(System.getProperty(JDBC_TYPE_KEY))) {
+        if (System.getProperty(POSTGRES_DATABASE_KEY) != null) {
             LucenePostgresSQLTreeEltMapper.resetDB(directory);
         } else {
             final Path mapperDir = directory.resolve("treemap-db");
@@ -151,19 +142,10 @@ public class SQLRtreeManager extends AbstractRtreeManager {
 
 
     private static boolean existTree(final Path directory) {
-        if (System.getProperty(JDBC_TYPE_KEY) != null) {
-
-            // postgres
-            if (System.getProperty(JDBC_TYPE_KEY).equals("postgres")) {
-                DataSource ds = PGDataSource.getDataSource();
-                return LucenePostgresSQLTreeEltMapper.treeExist(ds, directory);
-
-            // other DB not yet implemented
-            } else {
-                throw new IllegalArgumentException("Unexpected JDBC type: " + JDBC_TYPE_KEY);
-            }
+        if (System.getProperty(POSTGRES_DATABASE_KEY) != null) {
+            DataSource ds = PGDataSource.getDataSource();
+            return LucenePostgresSQLTreeEltMapper.treeExist(ds, directory);
         } else {
-
             // derby DB as default
             final Path treeFile   = directory.resolve("tree.bin");
             return Files.exists(treeFile);
