@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import java.util.logging.Level;
-import org.apache.sis.geometry.GeneralEnvelope;
+import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -28,17 +27,14 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.logging.Logging;
+import org.apache.sis.referencing.CRS;
+import org.geotoolkit.geometry.GeometricUtilities;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -131,19 +127,10 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
      * @return ProjectedGeometry
      */
     public ProjectedGeometry getEnvelopeGeometry() {
-        if(border == null){
-            Envelope env = layer.getBounds();
-            try {
-                env = Envelopes.transform(env, params.context.getObjectiveCRS2D());
-            } catch (TransformException ex) {
-                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.SEVERE, null, ex);
-            }
-            env = new GeneralEnvelope(env);
-            GO2Utilities.removeNaN((GeneralEnvelope)env);
-
-            border = new ProjectedGeometry(params);
-            border.setDataGeometry(JTS.toGeometry(env),env.getCoordinateReferenceSystem());
-        }
+        final Envelope env = layer.getBounds();
+        final Geometry jtsBounds = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
+        border = new ProjectedGeometry(params);
+        border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
     }
 
