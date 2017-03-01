@@ -25,35 +25,44 @@ import org.postgresql.ds.PGPoolingDataSource;
 import javax.sql.DataSource;
 
 /**
- * Created by christophem on 05/06/15.
+ *
+ * @author Christophe Mourrette
+ * @author Guilhem Legal (Geomatys)
  */
 public class PGDataSource {
-    private static DataSource ds;
 
-    public final static String POSTGRES_DATABASE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.database";
-    
+    private static DataSource ds = null;
 
-    static {
-        final PGPoolingDataSource source = new PGPoolingDataSource();
-        final String databaseURL = System.getProperty(POSTGRES_DATABASE_KEY);
-        final Map<String, String> infos = extractDbInfo(databaseURL);
-        source.setServerName(infos.get("host"));
-        source.setDatabaseName(infos.get("database"));
-        source.setUser(infos.get("user"));
-        source.setPassword(infos.get("password"));
-//        source.setMaxConnections(10);
-        ds = source;
+    private final static String POSTGRES_DATABASE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.database";
+
+    public static boolean isSetPGDataSource() {
+        return getDataSource() != null;
     }
 
     public static DataSource getDataSource() {
+        final String databaseURL = System.getProperty(POSTGRES_DATABASE_KEY);
+        if (ds == null && databaseURL != null) {
+            final PGPoolingDataSource source = new PGPoolingDataSource();
+            final Map<String, String> infos = extractDbInfo(databaseURL);
+            source.setServerName(infos.get("host"));
+            source.setDatabaseName(infos.get("database"));
+            source.setUser(infos.get("user"));
+            source.setPassword(infos.get("password"));
+            //        source.setMaxConnections(10);
+            ds = source;
+        }
         return ds;
+    }
+
+    public static void setDataSource(DataSource datasource) {
+        ds = datasource;
     }
 
     /**
      * postgres://cstl:admin@localhost:5432/cstl-test
-     * 
+     *
      * @param databaseURL
-     * @return 
+     * @return
      */
     public static Map<String, String> extractDbInfo(String databaseURL) {
         Map<String, String> results = new HashMap<>();
