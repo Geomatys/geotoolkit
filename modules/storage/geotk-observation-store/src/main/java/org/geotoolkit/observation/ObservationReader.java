@@ -44,6 +44,17 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getOfferingNames(final String version) throws DataStoreException;
+    
+    /**
+     * Return the list of offering names filtering on the procedure type.
+     *
+     * @param version SOS version of the request
+     * @param sensorType A filter on the type of sensor or @{code null}
+     * 
+     * @return A list of offering name.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Collection<String> getOfferingNames(final String version, final String sensorType) throws DataStoreException;
 
     /**
      * Return The offering with the specified name.
@@ -73,6 +84,16 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException;
+    
+    /**
+     * Return a list of all the offerings filtering on the procedure type.
+     * 
+     * @param version SOS version of the request
+     * @param sensorType A filter on the type of sensor or @{code null}
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    List<ObservationOffering> getObservationOfferings(final String version, final String sensorType) throws DataStoreException;
 
     /**
      * Return a list of the sensor identifiers.
@@ -80,6 +101,15 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Collection<String> getProcedureNames() throws DataStoreException;
+    
+    /**
+     * Return a list of the sensor identifiers.
+     * @param sensorType A filter on the type of sensor or @{code null}
+     * 
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Collection<String> getProcedureNames(final String sensorType) throws DataStoreException;
 
     /**
      * Return a list of the phenomenon identifiers.

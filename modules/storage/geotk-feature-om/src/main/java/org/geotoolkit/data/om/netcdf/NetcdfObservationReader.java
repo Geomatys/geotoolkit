@@ -63,6 +63,12 @@ public class NetcdfObservationReader implements ObservationReader {
         return names;
     }
     
+    @Override
+    public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
+        // no filter yet
+        return getProcedureNames();
+    }
+    
     private String getProcedureID() {
         return IOUtilities.filenameWithoutExtension(dataFile);
     }
@@ -230,5 +236,15 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
+    }
+
+    @Override
+    public Collection<String> getOfferingNames(String version, String sensorType) throws DataStoreException {
+        throw new DataStoreException("offerings are not handled in File observation reader.");
+    }
+
+    @Override
+    public List<ObservationOffering> getObservationOfferings(String version, String sensorType) throws DataStoreException {
+        throw new DataStoreException("offerings are not handled in File observation reader.");
     }
 }
