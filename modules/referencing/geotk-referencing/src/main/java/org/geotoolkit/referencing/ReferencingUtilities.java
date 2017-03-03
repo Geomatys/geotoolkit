@@ -103,8 +103,6 @@ public final class ReferencingUtilities {
      *     [0] : start wrap around position in given CRS.
      *     [1] : end wrap around position in given CRS.
      *    null if crs does not have a wrap around axis
-     *
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public static DirectPosition[] findWrapAround(CoordinateReferenceSystem crs) throws TransformException{
         if(crs instanceof GeographicCRS){
@@ -169,7 +167,7 @@ public final class ReferencingUtilities {
      * You may pass the same array than oldResolution if you want to store result in the same array.
      *
      * @return a new resolution array compute from oldResolution exprimate into targetCRS.
-     * @throws org.opengis.referencing.operation.TransformException if problem during Envelope transformation into targetCrs.
+     * @throws TransformException if problem during Envelope transformation into targetCrs.
      * @throws NullArgumentException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
      * @throws MismatchedDimensionException if oldResolution array have length different than 2.
      * @throws MismatchedDimensionException if newResolution array length and target CRS dimension are differents.
@@ -291,7 +289,6 @@ public final class ReferencingUtilities {
      * @param env source Envelope
      * @param targetCRS target CoordinateReferenceSystem
      * @return transformed envelope
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public static Envelope transform(Envelope env, CoordinateReferenceSystem targetCRS) throws TransformException{
         try {
@@ -349,8 +346,6 @@ public final class ReferencingUtilities {
      * [0, 1] : geographic
      * [2] : elevation
      * [3] : temporal
-     * @param crs
-     * @return
      */
     private static int[] findDimensionIndexes(CoordinateReferenceSystem crs) {
 
@@ -391,11 +386,6 @@ public final class ReferencingUtilities {
 
     /**
      * Make a new envelope with vertical and temporal dimensions.
-     * @param bounds
-     * @param temporal
-     * @param elevation
-     * @return
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public static GeneralEnvelope combine(final Envelope bounds, final Date[] temporal, final Double[] elevation) throws TransformException{
         CoordinateReferenceSystem crs = bounds.getCoordinateReferenceSystem();
@@ -409,12 +399,6 @@ public final class ReferencingUtilities {
 
     /**
      * Make a new envelope with vertical and temporal dimensions.
-     * @param crs
-     * @param bounds
-     * @param temporal
-     * @param elevation
-     * @return
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public static GeneralEnvelope combine(CoordinateReferenceSystem crs, final Rectangle2D bounds,
             final Date[] temporal, final Double[] elevation) throws TransformException{
@@ -526,10 +510,8 @@ public final class ReferencingUtilities {
     /**
      * Change the 2D CRS part of the CRS.
      *
-     * @param originalCRS : base CRS, possible multi-dimension
-     * @param crs2D : replacement 2D crs
-     * @return CoordinateReferenceSystem
-     * @throws TransformException
+     * @param originalCRS  base CRS, possible multi-dimension
+     * @param crs2D  replacement 2D crs
      */
     public static CoordinateReferenceSystem change2DComponent( final CoordinateReferenceSystem originalCRS,
             final CoordinateReferenceSystem crs2D) throws TransformException {
@@ -570,10 +552,6 @@ public final class ReferencingUtilities {
     /**
      * Transform the CRS 2D component of this envelope.
      * This preserve temporal/elevation or other axis.
-     * @param env
-     * @param crs2D
-     * @return
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public static Envelope transform2DCRS(final Envelope env, final CoordinateReferenceSystem crs2D) throws TransformException{
         final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
@@ -584,10 +562,6 @@ public final class ReferencingUtilities {
     /**
      * Try to change a coordinate reference system axis order to place the east axis first.
      * Reproject the envelope.
-     * @param env
-     * @return
-     * @throws org.opengis.referencing.operation.TransformException
-     * @throws org.opengis.util.FactoryException
      */
     public static Envelope setLongitudeFirst(final Envelope env) throws TransformException, FactoryException{
         if(env == null) return env;
@@ -599,9 +573,6 @@ public final class ReferencingUtilities {
 
     /**
      * Try to change a coordinate reference system axis order to place the east axis first.
-     * @param crs
-     * @return
-     * @throws org.opengis.util.FactoryException
      *
      * @deprecated Use {@link org.apache.sis.referencing.crs.AbstractCRS#forConvention} instead.
      */
@@ -616,7 +587,6 @@ public final class ReferencingUtilities {
                 //can't change anything if it's only one axis
                 return crs;
             }
-
 
             //find the east axis
             int eastAxis = -1;
@@ -669,11 +639,8 @@ public final class ReferencingUtilities {
     /**
      * Create an affine transform object where (0,0) in the dimension
      * match the top left corner of the envelope.
-     * This method assume that the Y axis of the rectangle is going down.
-     * This return the display to objective transform (rect to env).
-     * @param rect
-     * @param env
-     * @return
+     * This method assumes that the Y axis of the rectangle is going down.
+     * This returns the display to objective transform (rect to env).
      */
     public static AffineTransform toAffine(final Dimension rect, final Envelope env){
         final double minx = env.getMinimum(0);
@@ -684,10 +651,6 @@ public final class ReferencingUtilities {
     }
 
     /**
-     *
-     * @param base
-     * @param values
-     * @return
      * @deprecated replaced by {@link #toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int)
      */
     @Deprecated
@@ -789,8 +752,6 @@ public final class ReferencingUtilities {
     /**
      * Recursively explore given crs, and return a list of distinct single CRS.
      *
-     * @param crs
-     * @return List<CoordinateReferenceSystem>
      * @deprecated moved to {@link org.apache.sis.referencing.CRS#getSingleComponents(org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
     @Deprecated
@@ -800,7 +761,7 @@ public final class ReferencingUtilities {
 
     /**
      * Decompose CRS and return each sub-crs along with their dimension index.
-     * @param crs
+     *
      * @return Map of index and sub-crs
      */
     public static Map<Integer, CoordinateReferenceSystem> indexedDecompose(CoordinateReferenceSystem crs) {
@@ -822,6 +783,7 @@ public final class ReferencingUtilities {
      * For each axis value of the source envelope, we'll set corresponding one
      * in destination envelope, if we find a valid transform. For all the components
      * of the destination that can't be filled, they're left as is.
+     *
      * @param source The envelope to take values from.
      * @param destination The envelope to set values into. Will be modified.
      * @return The destination envelope that have been modified.
@@ -966,12 +928,12 @@ public final class ReferencingUtilities {
      * Build an envelope which is the intersection between both of the parameters.
      * The CRS of the two input envelopes can be different, with different number
      * of dimension.
-     * @param layerEnvelope The envelope of the source layer. Result envelope will
-     * keep this object CRS.
-     * @param filterEnvelope the envelope used as filter.
+     *
+     * @param  layerEnvelope The envelope of the source layer. Result envelope will keep this object CRS.
+     * @param  filterEnvelope the envelope used as filter.
      * @return An envelope which is the found intersection between the two inputs.
-     * The CRS of the result will be the same as the first input.
-     * @throws TransformException If an incompatibility between CRSs is found.
+     *         The CRS of the result will be the same as the first input.
+     * @throws TransformException if an incompatibility between CRSs is found.
      */
     public static GeneralEnvelope intersectEnvelopes(final Envelope layerEnvelope, final Envelope filterEnvelope)
             throws TransformException {
@@ -1049,11 +1011,6 @@ public final class ReferencingUtilities {
 
     /**
      * Read TFW file and return the content affine transform.
-     *
-     * @param f
-     * @return
-     * @throws IOException
-     * @throws NumberFormatException
      */
     public static AffineTransform readTransform(Path f) throws IOException, NumberFormatException {
         final String str = IOUtilities.toString(f);

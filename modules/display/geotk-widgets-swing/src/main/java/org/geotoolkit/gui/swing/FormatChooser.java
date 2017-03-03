@@ -45,7 +45,7 @@ import java.awt.event.ActionListener;
 
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.AngleFormat;
-import org.geotoolkit.measure.CoordinateFormat;
+import org.apache.sis.geometry.CoordinateFormat;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.apache.sis.util.Classes;
@@ -265,8 +265,7 @@ public class FormatChooser extends JComponent implements Dialog {
             return new Angle(39.3); // Could be any random value.
         }
         if (format instanceof CoordinateFormat) {
-            final int dimension = ((CoordinateFormat) format)
-                    .getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+            final int dimension = 2;
             final GeneralDirectPosition point = new GeneralDirectPosition(dimension);
             for (int i=0; i<dimension; i++) {
                 point.setOrdinate(i, (i&1)==0 ? 39.3 : 27.9); // Could be any random value.
@@ -356,12 +355,7 @@ public class FormatChooser extends JComponent implements Dialog {
         }
         if (format instanceof CoordinateFormat) {
             final CoordinateFormat format = (CoordinateFormat) this.format;
-            for (int i=format.getCoordinateReferenceSystem().getCoordinateSystem().getDimension(); --i>=0;) {
-                final Format sub = format.getFormat(i);
-                if (sub instanceof AngleFormat) {
-                    return ((AngleFormat) sub).toPattern();
-                }
-            }
+            return format.getPattern(Angle.class);
         }
         throw new IllegalStateException(Classes.getShortClassName(format));
     }
@@ -385,7 +379,7 @@ public class FormatChooser extends JComponent implements Dialog {
         } else if (format instanceof AngleFormat) {
             ((AngleFormat) format).applyPattern(pattern);
         } else if (format instanceof CoordinateFormat) {
-            ((CoordinateFormat) format).setAnglePattern(pattern);
+            ((CoordinateFormat) format).applyPattern(Angle.class, pattern);
         } else {
             throw new IllegalStateException(Classes.getShortClassName(format));
         }
