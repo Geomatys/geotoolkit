@@ -394,7 +394,8 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         final Path tileFile = Paths.get(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
         if (isWritableRenderedImage || !Files.exists(tileFile)) {
             final BufferedImage toWrite = new BufferedImage(
-                    cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
+                    cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT),
+                    cm.isAlphaPremultiplied(), null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
             final ImageWriter imgWriter = WRITER_SPI.createWriterInstance();
             try {
