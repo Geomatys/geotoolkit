@@ -30,6 +30,7 @@ import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 
 import javax.imageio.ImageTypeSpecifier;
@@ -853,6 +854,117 @@ public class ImageUtils extends Static{
         return new ComponentColorModel(cs, bits, hasAlpha, false,
                 hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
     }
+
+    /**
+     * Create and returns an adapted {@link ColorModel} from given parameters.
+     *
+     * @param sampleBitsSize
+     * @param numBand
+     * @param photometricInterpretation
+     * @param sampleFormat
+     * @param minSampleValue minimum raster sample value to build needed {@link ColorSpace},
+     * may be {@code null}, if null the default choosen value will be {@link Double#MIN_VALUE}.
+     * @param maxSampleValue maximum raster sample value to build needed {@link ColorSpace},
+     * may be {@code null}, if null the default choosen value will be {@link Double#MAX_VALUE}.
+     * @param hasAlpha
+     * @param isAlphaPreMultiplied
+     * @param java2DColorMap associate color map array in case where a palette color model is define.
+     * @return an adapted {@link ColorModel} from given parameters.
+     * @throws IllegalArgumentException if photometric interpretation is define
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
+     * @throws IllegalArgumentException if minSampleValue or maxSampleValue is(are) equals to {@link Double#NaN}.
+     * @see ScaledColorSpace
+     */
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand,
+                                              final short photometricInterpretation, final short sampleFormat,
+                                              final Double minSampleValue, final Double maxSampleValue,
+                                              final boolean hasAlpha, final boolean isAlphaPreMultiplied,
+                                              /*final long[] geotiffColorMap,*/ int[] java2DColorMap)
+                                              throws UnsupportedOperationException {
+        if (minSampleValue != null) {
+            if (Double.isNaN(minSampleValue))
+                throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
+        }
+
+        if (maxSampleValue != null) {
+            if (Double.isNaN(maxSampleValue))
+                throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
+        }
+
+        final int dataBufferType;
+
+        if (sampleFormat == 3) {
+            /*
+             * Case to defferency 32 bits Float to 32 bits Integer.
+             */
+            switch (sampleBitsSize) {
+                case Float.SIZE  : dataBufferType = DataBuffer.TYPE_FLOAT; break;
+                case Double.SIZE : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
+                default : {
+                    throw new UnsupportedOperationException( "unsupported bitsPerSample size : "+sampleBitsSize);
+                }
+            }
+        } else {
+
+           /*
+            * We require exact value, because the reading process read all sample values
+            * in one contiguous read operation.
+            */
+           switch (sampleBitsSize) {
+               case java.lang.Byte.SIZE  : dataBufferType = DataBuffer.TYPE_BYTE;   break;
+               case java.lang.Short.SIZE : dataBufferType = (sampleFormat == SAMPLEFORMAT_INT)
+                                                            ? DataBuffer.TYPE_SHORT
+                                                            : DataBuffer.TYPE_USHORT; break;
+               case Integer.SIZE         : dataBufferType = DataBuffer.TYPE_INT;    break;
+               case Double.SIZE          : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
+               default : {
+                    throw new UnsupportedOperationException( "unsupported bitsPerSample size : "+sampleBitsSize);
+               }
+           }
+        }
+
+        final ColorSpace cs;
+        switch (photometricInterpretation) {
+            case 0 :   //--minIsWhite
+            case 1 : { //-- minIsBlack
+                if (numBand > 1
+                 || dataBufferType == DataBuffer.TYPE_FLOAT
+                 || dataBufferType == DataBuffer.TYPE_DOUBLE) {
+                    final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
+                    final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
+                    cs = new ScaledColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
+                } else {
+                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+                }
+                break;
+            }
+            case 2 : { //-- RGB
+                cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+                break;
+            }
+            case 3 : {//-- palette
+                if (java2DColorMap == null)
+                     throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
+
+                final ColorModel cm = new IndexColorModel(sampleBitsSize, java2DColorMap.length, java2DColorMap, 0, true, -1, dataBufferType);
+                /*
+                 * Create a SampleModel with size of 1x1 volontary just to know image properties.
+                 * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
+                 */
+                return cm;
+            }
+            default : {
+                throw new UnsupportedOperationException( "photometricInterpretation : "+photometricInterpretation);
+            }
+        }
+
+        final int[] bits = new int[numBand];
+        Arrays.fill(bits, sampleBitsSize);
+
+        return new ComponentScaledColorModel(cs, bits, hasAlpha, isAlphaPreMultiplied,
+                hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
+    }
+
     /**
      * Returns {@link BufferedImage} with the {@link ColorModel} replaced by another better color model if it is possible.<br>
      * This method is efficient only for float or double {@linkplain SampleModel#getDataType() data buffer type}.<br><br>
@@ -886,5 +998,41 @@ public class ImageUtils extends Static{
                                                                                     ? Transparency.TRANSLUCENT
                                                                                     : Transparency.OPAQUE, databufferType);
         return new BufferedImage(cm2, image.getRaster(), image.isAlphaPremultiplied(), new Hashtable<>());
+    }
+
+    static class ComponentScaledColorModel extends ComponentColorModel {
+
+        private final int numbands;
+        private final int[] bits;
+
+        public ComponentScaledColorModel(ColorSpace colorSpace, int[] bits, boolean hasAlpha,
+                boolean isAlphaPremultiplied, int transparency, int transferType) {
+            super(colorSpace, bits, hasAlpha, isAlphaPremultiplied, transparency, transferType);
+            numbands = bits.length;
+            this.bits = bits;
+        }
+
+        @Override
+        public boolean isCompatibleSampleModel(SampleModel sm) {
+            return ((sm instanceof ComponentSampleModel)
+                 && (numbands == sm.getNumBands())
+                 && (sm.getTransferType() == transferType));
+        }
+
+        @Override
+        public SampleModel createCompatibleSampleModel(int w, int h) {
+            return createSampleModel(INTERLEAVED, SampleType.valueOf(transferType), w, h, numbands);
+        }
+
+        @Override
+        public boolean isCompatibleRaster(Raster raster) {
+            final SampleModel sm = raster.getSampleModel();
+            if (!(sm instanceof ComponentSampleModel))
+                return false;
+            for (int i = 0; i < bits.length; i++) {
+                if (sm.getSampleSize(i) < bits[i]) return false;
+            }
+            return (raster.getTransferType() == transferType);
+        }
     }
 }

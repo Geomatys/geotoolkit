@@ -511,7 +511,7 @@ public class TiffImageReader extends SpatialImageReader {
 
         //-- verify CRS pertinency
         {
-            //search for the coordinate reference system
+            //-- search for the coordinate reference system
             final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
 
             if (crs == null)
@@ -892,10 +892,8 @@ public class TiffImageReader extends SpatialImageReader {
             }
 
             //-- code in attempt to upgrade TiffImageReader
-//            final boolean hasAlpha = hasAlpha();
-//            final boolean isAlphaPreMulti = hasAlpha && getAlphaValue() == 1;
-//            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, isAlphaPreMulti,
-//                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
+            final boolean hasAlpha = hasAlpha();
+            final boolean isAlphaPreMulti = hasAlpha && getAlphaValue() == 1;
 
             assert sampleBitSize > 0;
             assert samplesPerPixel > 0;
@@ -906,7 +904,12 @@ public class TiffImageReader extends SpatialImageReader {
             if (index != null) {
                 java2DPaletteColorMap = convertColorMapArray(index);
             }
-            final ColorModel cm = ImageUtils.createColorModel(sampleBitSize, samplesPerPixel, photoInter, samplFormat, minSV, maxSV, java2DPaletteColorMap);
+            final ColorModel cm = ImageUtils.createColorModel(
+                    sampleBitSize, samplesPerPixel, //-- samples properties
+                    photoInter, samplFormat,        //-- image color properties
+                    minSV, maxSV,                   //-- samplesProperties
+                    hasAlpha, isAlphaPreMulti,      //-- alphaproperties
+                    java2DPaletteColorMap);         //-- color palette
 
             /*
             * Create a SampleModel with size of 1x1 volontary just to know image properties.
