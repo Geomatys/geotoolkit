@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -64,7 +66,6 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         
         try{
             final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
-            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
             
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
             
@@ -159,6 +160,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             
             //check if the reader honored the band request
             final GridSampleDimension[] readDimensions = dataCoverage.getSampleDimensions();
+            final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
             boolean bandReadHonored = (readDimensions.length == toRead.length);
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
                 bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), sampleDimensions.get(toRead[i]).getDescription());
@@ -183,6 +185,13 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             
             renderCoverage(img, trs2D);
         
+        } catch (CoverageStoreException e) {
+            if(e.getCause() instanceof ProjectionException) {
+                //out of domain exception
+                monitor.exceptionOccured(e, Level.FINE);
+            } else {
+                monitor.exceptionOccured(e, Level.WARNING);
+            }
         } catch (Exception e) {
             monitor.exceptionOccured(e, Level.WARNING);
         }
