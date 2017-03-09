@@ -75,6 +75,12 @@ public class XmlObservationReader implements ObservationReader {
         }
         return names;
     }
+    
+     @Override
+    public Collection<String> getProcedureNames(String sensorType) throws DataStoreException {
+        // no filter yet
+        return getProcedureNames();
+    }
 
     @Override
     public Collection<String> getPhenomenonNames() throws DataStoreException {
@@ -332,5 +338,14 @@ public class XmlObservationReader implements ObservationReader {
     public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
-    
+
+    @Override
+    public Collection<String> getOfferingNames(String version, String sensorType) throws DataStoreException {
+        throw new DataStoreException("offerings are not handled in XML observation reader.");
+    }
+
+    @Override
+    public List<ObservationOffering> getObservationOfferings(String version, String sensorType) throws DataStoreException {
+        throw new DataStoreException("offerings are not handled in XML observation reader.");
+    }
 }

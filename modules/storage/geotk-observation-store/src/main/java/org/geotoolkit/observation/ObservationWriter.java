@@ -128,7 +128,17 @@ public interface ObservationWriter {
     void updateOfferings();
 
     /**
-     * Record the location of a sensor in a separated dataSource if there is one (depends on the implementation).
+     * Record a procedure with its location and parent.
+     * 
+     * @param procedureID identifier of the procedure.
+     * @param position The GML position of the procedure or @{code null}.
+     * @param parent The parent procedure identifier @{code null}
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void writeProcedure(final String procedureID, final AbstractGeometry position, final String parent, final String type) throws DataStoreException;
+    
+    /**
+     * Record the location of a sensor.
      *
      * @param physicalID The physical id of the sensor.
      * @param position The GML position of the sensor.
