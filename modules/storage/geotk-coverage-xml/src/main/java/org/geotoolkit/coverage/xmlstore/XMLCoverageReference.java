@@ -197,6 +197,23 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private Double maxColorSampleValue = null;
 
     /**
+     * Define if current {@link ColorModel} own an alpha component.
+     * @see #getColorModel()
+     * @see ColorModel#hasAlpha()
+     */
+    @XmlElement(name="HasAlpha")
+    private Boolean hasAlpha = null;
+
+    /**
+     * Define if alpha has been premultiplied in the
+     * pixel values from by this {@linkplain #colorModel ColorModel}.
+     * @see #getColorModel()
+     * @see ColorModel#isAlphaPremultiplied()
+     */
+    @XmlElement(name="IsAlphaPremultiplied")
+    private Boolean isAlphaPremultiplied = null;
+
+    /**
      * {@link SampleModel} of all internally pyramid stored tiles.
      */
     private SampleModel sampleModel;
@@ -479,7 +496,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                 }
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
                         (short) photometricInterpretation, (short) sampleFormat,
-                        minColorSampleValue, maxColorSampleValue, colorMap);
+                        minColorSampleValue, maxColorSampleValue,
+                        (hasAlpha != null) ? hasAlpha : false, (isAlphaPremultiplied != null) ? isAlphaPremultiplied : false,
+                        colorMap);
             }
         }
         return colorModel;
@@ -499,6 +518,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         ArgumentChecks.ensureNonNull("colorModel", colorModel);
         //--photometric
         this.photometricInterpretation = ImageUtils.getPhotometricInterpretation(colorModel);
+        this.hasAlpha                  = colorModel.hasAlpha();
+        this.isAlphaPremultiplied      = colorModel.isAlphaPremultiplied();
         if (photometricInterpretation == 3) {
             assert colorModel instanceof IndexColorModel : "with photometric interpretation "
                     + "define as palette color model should be instance of IndexColorModel.";

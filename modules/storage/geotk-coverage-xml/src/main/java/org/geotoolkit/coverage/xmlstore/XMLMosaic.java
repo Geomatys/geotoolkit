@@ -271,7 +271,9 @@ public class XMLMosaic implements GridMosaic {
                     }
                     emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()),
                             sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel),
-                            ImageUtils.getEnumPlanarConfiguration(sampleModel), java2DColorMap);
+                            ImageUtils.getEnumPlanarConfiguration(sampleModel),
+                            colorModel.hasAlpha(), colorModel.isAlphaPremultiplied(),
+                            java2DColorMap);
 
                 } else {
                     emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
@@ -302,10 +304,10 @@ public class XMLMosaic implements GridMosaic {
     public String getId() {
         final StringBuilder sb = new StringBuilder();
         sb.append(scale);
-        
+
         final XMLCoverageReference ref = pyramid.getPyramidSet().getRef();
         final String version = ref.getVersion();
-        
+
         if("1.0".equals(version)){
             //backward compatibility for older pyramid files
             for(int i=0;i<upperLeft.length;i++){
@@ -661,13 +663,13 @@ public class XMLMosaic implements GridMosaic {
     }
 
      void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
-         
+
          try {
              checkMosaicFolderExist();
          } catch (IOException e) {
              throw new DataStoreException("Unable to create mosaic folder "+e.getLocalizedMessage(), e);
          }
-         
+
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
 
@@ -726,9 +728,9 @@ public class XMLMosaic implements GridMosaic {
     }
 
     /**
-     * Check if a current mosaic folder exist. 
+     * Check if a current mosaic folder exist.
      * If not create it.
-     * 
+     *
      * @throws IOException
      */
     private void checkMosaicFolderExist() throws IOException {
