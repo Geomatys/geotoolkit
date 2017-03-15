@@ -266,7 +266,7 @@ public class Statistics extends AbstractProcess {
             final GridSampleDimension[] sampleDimensions = candidate.getSampleDimensions();
             //add no data values and name on bands
             for (int i = 0; i < sampleDimensions.length; i++) {
-                sc.getBand(i).setNoData(sampleDimensions[i].getNoDataValues());
+                sc.getBand(i).setNoData(sampleDimensions[i].geophysics(false).getNoDataValues());
                 sc.getBand(i).setName(sampleDimensions[i].getDescription().toString());
             }
 

@@ -136,7 +136,10 @@ public class Landsat8RenderedImage extends AbstractLargeRenderedImage {
         trsy       = srcImgBoundary.getMinY();
         sampleType = SampleType.valueOf(sampleModel.getDataType());
 
-        oneBandColorModel = ImageUtils.createColorModel(sampleType, 1, PhotometricInterpretation.GRAYSCALE, null);
+        oneBandColorModel = ImageUtils.createColorModel(sampleType, 1,
+                                                        PhotometricInterpretation.GRAYSCALE,
+                                                        colorModel.hasAlpha(), colorModel.isAlphaPremultiplied(),
+                                                        null);
     }
 
     @Override

@@ -89,7 +89,7 @@ public final strictfp class WritableLargeRenderedImageTests {
     public void test() throws InterruptedException, ExecutionException {
 
         WritableLargeRenderedImage outPutImageTest = ImageUtils.createRGBLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE);
-        WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, null);
+        WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, false, false, null);
 
         final ExecutorService poule = Executors.newFixedThreadPool(3);
 
