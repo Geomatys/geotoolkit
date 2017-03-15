@@ -19,9 +19,10 @@ package org.geotoolkit.display.shape;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.Serializable;
+import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 
-import org.apache.sis.util.Classes;
 
 
 /**
@@ -42,12 +43,28 @@ import org.apache.sis.util.Classes;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated There is no need anymore to use this class for serialization purpose since standard Java2D
+ *             classes are now serializable. Furthermore code are encouraged to reduce Java2D dependency
+ *             and use more {@code Envelope} instead, for better support of multi-dimensional data and
+ *             easier portability to JavaFX or Android platforms.
  */
-public class XRectangle2D extends Rectangle2D implements Serializable {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -1918221103635749436L;
+public class XRectangle2D extends IntervalRectangle implements Serializable {
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeDouble(xmin);
+        out.writeDouble(xmax);
+        out.writeDouble(ymin);
+        out.writeDouble(ymax);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        xmin = in.readDouble();
+        xmax = in.readDouble();
+        ymin = in.readDouble();
+        ymax = in.readDouble();
+    }
 
     /**
      * A small number for testing intersection between an arbitrary shape and a rectangle.
@@ -65,11 +82,6 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
      * constructor} for initializing a new {@code XRectangle2D} to infinite bounds.
      */
     public static final Rectangle2D INFINITY = new InfiniteRectangle2D();
-
-    /** Minimal <var>x</var> ordinate value. */ protected double xmin;
-    /** Minimal <var>y</var> ordinate value. */ protected double ymin;
-    /** Maximal <var>x</var> ordinate value. */ protected double xmax;
-    /** Maximal <var>y</var> ordinate value. */ protected double ymax;
 
     /**
      * Constructs a default rectangle initialized to {@code (0,0,0,0)}.
@@ -130,211 +142,28 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     }
 
     /**
-     * Determines whether this rectangle is empty. If this rectangle has at least one
-     * {@linkplain java.lang.Double#NaN NaN} value, then it is considered empty.
+     * Tests if the interior and/or the edge of two rectangles intersect. This method is similar to
+     * {@link Rectangle2D#intersects(Rectangle2D)} except for the following points:
      *
-     * @return {@code true} if this rectangle is empty; {@code false} otherwise.
-     */
-    @Override
-    public boolean isEmpty() {
-        return !(xmin < xmax && ymin < ymax);
-    }
-
-    /**
-     * Returns the minimal <var>x</var> ordinate value.
-     *
-     * @return The minimal <var>x</var> ordinate value.
-     */
-    @Override
-    public double getX() {
-        return xmin;
-    }
-
-    /**
-     * Returns the minimal <var>y</var> ordinate value.
-     *
-     * @return The minimal <var>y</var> ordinate value.
-     */
-    @Override
-    public double getY() {
-        return ymin;
-    }
-
-    /**
-     * Returns the width of the rectangle.
-     *
-     * @return The width of the rectangle.
-     */
-    @Override
-    public double getWidth() {
-        return xmax - xmin;
-    }
-
-    /**
-     * Returns the height of the rectangle.
-     *
-     * @return The height of the rectangle.
-     */
-    @Override
-    public double getHeight() {
-        return ymax - ymin;
-    }
-
-    /**
-     * Returns the minimal <var>x</var> ordinate value.
-     */
-    @Override
-    public double getMinX() {
-        return xmin;
-    }
-
-    /**
-     * Returns the minimal <var>y</var> ordinate value.
-     */
-    @Override
-    public double getMinY() {
-        return ymin;
-    }
-
-    /**
-     * Returns the maximal <var>x</var> ordinate value.
-     */
-    @Override
-    public double getMaxX() {
-        return xmax;
-    }
-
-    /**
-     * Returns the maximal <var>y</var> ordinate value.
-     */
-    @Override
-    public double getMaxY() {
-        return ymax;
-    }
-
-    /**
-     * Returns the <var>x</var> ordinate of the center of the rectangle.
-     */
-    @Override
-    public double getCenterX() {
-        return (xmin + xmax) * 0.5;
-    }
-
-    /**
-     * Returns the <var>y</var> ordinate of the center of the rectangle.
-     */
-    @Override
-    public double getCenterY() {
-        return (ymin + ymax) * 0.5;
-    }
-
-    /**
-     * Sets the location and size of this rectangle to the specified values.
-     *
-     * @param x The <var>x</var> minimal ordinate value.
-     * @param y The <var>y</var> minimal ordinate value.
-     * @param width The rectangle width.
-     * @param height The rectangle height.
-     */
-    @Override
-    public void setRect(final double x, final double y, final double width, final double height) {
-        this.xmin = x;
-        this.ymin = y;
-        this.xmax = x + width;
-        this.ymax = y + height;
-    }
-
-    /**
-     * Sets this rectangle to be the same as the specified rectangle.
-     *
-     * @param r The rectangle to copy values from.
-     */
-    @Override
-    public void setRect(final Rectangle2D r) {
-        this.xmin = r.getMinX();
-        this.ymin = r.getMinY();
-        this.xmax = r.getMaxX();
-        this.ymax = r.getMaxY();
-    }
-
-    /**
-     * Sets the framing rectangle to the given rectangle. The default implementation delegates
-     * to {@link #setRect(Rectangle2D)}. This is consistent with the default implementation of
-     * {@link #setFrame(double, double, double, double)}, which delegates to the corresponding
-     * method of {@link #setRect(double, double, double, double) setRect}.
-     */
-    @Override
-    public void setFrame(final Rectangle2D r) {
-        setRect(r);
-    }
-
-    /**
-     * Tests if the interior of this rectangle intersects the interior of a
-     * specified set of rectangular coordinates.
-     *
-     * @param  x The <var>x</var> minimal ordinate value.
-     * @param  y The <var>y</var> minimal ordinate value.
-     * @param  width The rectangle width.
-     * @param  height The rectangle height.
-     * @return {@code true} if this rectangle intersects the interior of the
-     *         specified set of rectangular coordinates; {@code false} otherwise.
-     */
-    @Override
-    public boolean intersects(final double x,     final double y,
-                              final double width, final double height)
-    {
-        if (!(xmin < xmax && ymin < ymax && width > 0 && height > 0)) {
-            return false;
-        } else {
-            return (x < xmax && y < ymax && x+width > xmin && y+height > ymin);
-        }
-    }
-
-    /**
-     * Tests if the interior of this shape intersects the interior of a specified rectangle.
-     *
-     * @param  rect The specified rectangle.
-     * @return {@code true} if this shape and the specified rectangle intersect each other.
-     *
-     * @see #intersectInclusive(Rectangle2D, Rectangle2D)
-     */
-    @Override
-    public boolean intersects(final Rectangle2D rect) {
-        if (!(xmin < xmax && ymin < ymax)) {
-            return false;
-        } else {
-            final double xmin2 = rect.getMinX();
-            final double xmax2 = rect.getMaxX(); if (!(xmax2 > xmin2)) return false;
-            final double ymin2 = rect.getMinY();
-            final double ymax2 = rect.getMaxY(); if (!(ymax2 > ymin2)) return false;
-            return (xmin2 < xmax && ymin2 < ymax && xmax2 > xmin && ymax2 > ymin);
-        }
-    }
-
-    /**
-     * Tests if the interior and/or the edge of two rectangles intersect. This method
-     * is similar to {@link #intersects(Rectangle2D)} except for the following points:
-     * <p>
      * <ul>
-     *   <li>This method doesn't test only if the <em>interiors</em> intersect.
-     *       It tests for the edges as well.</li>
-     *   <li>This method tests also rectangle with zero {@linkplain Rectangle2D#getWidth width} or
-     *       {@linkplain Rectangle2D#getHeight height} (which are {@linkplain Rectangle2D#isEmpty
-     *       empty} according {@link Shape} contract). However, rectangle with negative width or
-     *       height are still considered as empty.</li>
-     *   <li>This method work correctly with {@linkplain java.lang.Double#POSITIVE_INFINITY
-     *       infinites} and {@linkplain java.lang.Double#NaN NaN} values.</li>
+     *   <li>This method works correctly with {@linkplain Double#POSITIVE_INFINITY infinites} and
+     *       {@linkplain Double#NaN NaN} values.</li>
+     *   <li>This method does not test only if the <em>interiors</em> intersect. It tests for the edges as well.
+     *       In other words, this method tests bounds as <em>closed</em> intervals rather then open intervals.</li>
      * </ul>
-     * <p>
+     *
+     * <div class="note"><b>Rational:</b>
+     * usage of closed interval is required if at least one rectangle may be the bounding box of a perfectly
+     * horizontal or vertical line; such a bounding box has 0 width or height.</div>
+     *
      * This method is said <cite>inclusive</cite> because it tests bounds as closed interval
      * rather then open interval (the default Java2D behavior). Usage of closed interval is
      * required if at least one rectangle may be the bounding box of a perfectly horizontal
      * or vertical line; such a bounding box has 0 width or height.
      *
-     * @param  rect1 The first rectangle to test.
-     * @param  rect2 The second rectangle to test.
-     * @return {@code true} if the interior and/or the edge of the two specified rectangles
-     *         intersects.
+     * @param  rect1  the first rectangle to test.
+     * @param  rect2  the second rectangle to test.
+     * @return {@code true} if the interior and/or the edge of the two specified rectangles intersects.
      */
     public static boolean intersectInclusive(final Rectangle2D rect1, final Rectangle2D rect2) {
         final double xmin1 = rect1.getMinX();
@@ -391,236 +220,34 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     }
 
     /**
-     * Tests if the interior of this rectangle entirely
-     * contains the specified set of rectangular coordinates.
+     * Tests if the interior of the {@code inner} rectangle is contained in the interior and/or the edge
+     * of the {@code outter} rectangle. This method is similar to {@link Rectangle2D#contains(Rectangle2D)}
+     * except for the following points:
      *
-     * @param  x The <var>x</var> minimal ordinate value.
-     * @param  y The <var>y</var> minimal ordinate value.
-     * @param  width The rectangle width.
-     * @param  height The rectangle height.
-     * @return {@code true} if this rectangle entirely contains specified set of rectangular
-     *         coordinates; {@code false} otherwise.
-     */
-    @Override
-    public boolean contains(final double x,     final double y,
-                            final double width, final double height)
-    {
-        if (!(xmin < xmax && ymin < ymax && width > 0 && height > 0)) {
-            return false;
-        } else {
-            return (x >= xmin && y >= ymin && (x+width) <= xmax && (y+height) <= ymax);
-        }
-    }
-
-    /**
-     * Tests if the interior of this shape entirely contains the specified rectangle.
-     * This methods overrides the default {@link Rectangle2D} implementation in order
-     * to work correctly with {@linkplain java.lang.Double#POSITIVE_INFINITY infinites}
-     * and {@linkplain java.lang.Double#NaN NaN} values.
-     *
-     * @param  rect The specified rectangle.
-     * @return {@code true} if this shape entirely contains the specified rectangle.
-     */
-    @Override
-    public boolean contains(final Rectangle2D rect) {
-        if (!(xmin < xmax && ymin < ymax)) {
-            return false;
-        } else {
-            final double xmin2 = rect.getMinX();
-            final double xmax2 = rect.getMaxX(); if (!(xmax2 > xmin2)) return false;
-            final double ymin2 = rect.getMinY();
-            final double ymax2 = rect.getMaxY(); if (!(ymax2 > ymin2)) return false;
-            return (xmin2 >= xmin && ymin2 >= ymin && xmax2 <= xmax && ymax2 <= ymax);
-        }
-    }
-
-    /**
-     * Tests if a specified coordinate is inside the boundary of this {@code Rectangle2D}.
-     *
-     * @param x the <var>x</var> coordinates to test.
-     * @param y the <var>y</var> coordinates to test.
-     * @return {@code true} if the specified coordinates are inside the boundary of this
-     *         rectangle, {@code false} otherwise.
-     */
-    @Override
-    public boolean contains(final double x, final double y) {
-        return (x >= xmin && y >= ymin && x < xmax && y < ymax);
-    }
-
-    /**
-     * Tests if the interior of the {@code inner} rectangle is contained in the interior
-     * and/or the edge of the {@code outter} rectangle. This method is similar to
-     * {@link #contains(Rectangle2D)} except for the following points:
-     * <p>
      * <ul>
-     *   <li>This method doesn't test only the <em>interiors</em> of {@code outter}.
-     *       It tests for the edges as well.</li>
-     *   <li>This method tests also rectangle with zero {@linkplain Rectangle2D#getWidth width} or
-     *       {@linkplain Rectangle2D#getHeight height} (which are {@linkplain Rectangle2D#isEmpty
-     *       empty} according {@link Shape} contract).</li>
-     *   <li>This method work correctly with {@linkplain java.lang.Double#POSITIVE_INFINITY
-     *       infinites} and {@linkplain java.lang.Double#NaN NaN} values.</li>
+     *   <li>This method works correctly with {@linkplain Double#POSITIVE_INFINITY infinites} and
+     *       {@linkplain Double#NaN NaN} values.</li>
+     *   <li>This method does not test only the <em>interiors</em> of {@code outter}. It tests for the edges as well.
+     *       In other words, this method tests bounds as <em>closed</em> intervals rather then open intervals.</li>
      * </ul>
-     * <p>
+     *
+     * <div class="note"><b>Rational:</b>
+     * usage of closed interval is required if at least one rectangle may be the bounding box of a perfectly
+     * horizontal or vertical line; such a bounding box has 0 width or height.</div>
+     *
      * This method is said <cite>inclusive</cite> because it tests bounds as closed interval
      * rather then open interval (the default Java2D behavior). Usage of closed interval is
      * required if at least one rectangle may be the bounding box of a perfectly horizontal
      * or vertical line; such a bounding box has 0 width or height.
      *
-     * @param  outter The first rectangle to test.
-     * @param  inner The second rectangle to test.
-     * @return {@code true} if the interior of {@code inner} is inside the interior
-     *         and/or the edge of {@code outter}.
+     * @param  outter  the first rectangle to test.
+     * @param  inner   the second rectangle to test.
+     * @return {@code true} if the interior of {@code inner} is inside the interior and/or the edge of {@code outter}.
      *
      * @todo Check for negative width or height (should returns {@code false}).
      */
     public static boolean containsInclusive(final Rectangle2D outter, final Rectangle2D inner) {
         return outter.getMinX() <= inner.getMinX() && outter.getMaxX() >= inner.getMaxX() &&
                outter.getMinY() <= inner.getMinY() && outter.getMaxY() >= inner.getMaxY();
-    }
-
-    /**
-     * Determines where the specified coordinates lie with respect to this rectangle.
-     * This method computes a binary OR of the appropriate mask values indicating,
-     * for each side of this {@code Rectangle2D}, whether or not the specified coordinates
-     * are on the same side of the edge as the rest of this {@code Rectangle2D}.
-     *
-     * @return The logical OR of all appropriate out codes.
-     *
-     * @see #OUT_LEFT
-     * @see #OUT_TOP
-     * @see #OUT_RIGHT
-     * @see #OUT_BOTTOM
-     */
-    @Override
-    public int outcode(final double x, final double y) {
-        int out = 0;
-        if (!(xmax > xmin)) out |= OUT_LEFT | OUT_RIGHT;
-        else if (x < xmin)  out |= OUT_LEFT;
-        else if (x > xmax)  out |= OUT_RIGHT;
-
-        if (!(ymax > ymin)) out |= OUT_TOP | OUT_BOTTOM;
-        else if (y < ymin)  out |= OUT_TOP;
-        else if (y > ymax)  out |= OUT_BOTTOM;
-        return out;
-    }
-
-    /**
-     * Returns a new {@code Rectangle2D} object representing the
-     * intersection of this rectangle with the specified one.
-     *
-     * @param  rect The {@code Rectangle2D} to be intersected with this rectangle.
-     * @return The largest {@code Rectangle2D} contained in both the specified
-     *         rectangle and this one.
-     *
-     * @see #intersect(Rectangle2D)
-     */
-    @Override
-    public Rectangle2D createIntersection(final Rectangle2D rect) {
-        final XRectangle2D r = new XRectangle2D();
-        r.xmin = Math.max(xmin, rect.getMinX());
-        r.ymin = Math.max(ymin, rect.getMinY());
-        r.xmax = Math.min(xmax, rect.getMaxX());
-        r.ymax = Math.min(ymax, rect.getMaxY());
-        return r;
-    }
-
-    /**
-     * Returns a new {@code Rectangle2D} object representing the
-     * union of this rectangle with the specified one.
-     *
-     * @param  rect The {@code Rectangle2D} to be combined with this rectangle.
-     * @return The smallest {@code Rectangle2D} containing both the specified
-     *         {@code Rectangle2D} and this one.
-     */
-    @Override
-    public Rectangle2D createUnion(final Rectangle2D rect) {
-        final XRectangle2D r = new XRectangle2D();
-        r.xmin = Math.min(xmin, rect.getMinX());
-        r.ymin = Math.min(ymin, rect.getMinY());
-        r.xmax = Math.max(xmax, rect.getMaxX());
-        r.ymax = Math.max(ymax, rect.getMaxY());
-        return r;
-    }
-
-    /**
-     * Adds a point, specified by the arguments {@code x} and {@code y}, to this rectangle.
-     * The resulting {@code Rectangle2D} is the smallest rectangle that contains both the
-     * original rectangle and the specified point.
-     * <p>
-     * After adding a point, a call to {@code contains} with the added point as an argument
-     * does not necessarily return {@code true}. The {@code contains} method does not return
-     * {@code true} for points on the right or bottom edges of a rectangle. Therefore, if the
-     * added point falls on the left or bottom edge of the enlarged rectangle, {@code contains}
-     * returns {@code false} for that point.
-     *
-     * @param x X ordinate value of the point to add.
-     * @param y Y ordinate value of the point to add.
-     */
-    @Override
-    public void add(final double x, final double y) {
-        if (x < xmin) xmin = x;
-        if (x > xmax) xmax = x;
-        if (y < ymin) ymin = y;
-        if (y > ymax) ymax = y;
-    }
-
-    /**
-     * Adds a {@code Rectangle2D} object to this rectangle.
-     * The resulting rectangle is the union of the two {@code Rectangle2D} objects.
-     *
-     * @param rect The {@code Rectangle2D} to add to this rectangle.
-     */
-    @Override
-    public void add(final Rectangle2D rect) {
-        double t;
-        if ((t = rect.getMinX()) < xmin) xmin = t;
-        if ((t = rect.getMaxX()) > xmax) xmax = t;
-        if ((t = rect.getMinY()) < ymin) ymin = t;
-        if ((t = rect.getMaxY()) > ymax) ymax = t;
-    }
-
-    /**
-     * Intersects a {@link Rectangle2D} object with this rectangle. The resulting
-     * rectangle is the intersection of the two {@code Rectangle2D} objects.
-     * <p>
-     * Invoking this method is equivalent to invoking the following code, except
-     * that this method behaves correctly with infinite values.
-     *
-     * {@preformat java
-     *     Rectangle2D.intersect(this, rect, this);
-     * }
-     *
-     * @param rect The {@code Rectangle2D} to intersect with this rectangle.
-     *
-     * @see #intersect(Rectangle2D, Rectangle2D, Rectangle2D)
-     * @see #createIntersection(Rectangle2D)
-     *
-     * @since 3.10
-     */
-    public void intersect(final Rectangle2D rect) {
-        double t;
-        if ((t = rect.getMinX()) > xmin) xmin = t;
-        if ((t = rect.getMaxX()) < xmax) xmax = t;
-        if ((t = rect.getMinY()) > ymin) ymin = t;
-        if ((t = rect.getMaxY()) < ymax) ymax = t;
-    }
-
-    /**
-     * Returns the {@code String} representation of this {@code Rectangle2D}.
-     * The ordinate order is (<var>x</var><sub>min</sub>, <var>y</var><sub>min</sub>,
-     * <var>x</var><sub>max</sub>, <var>y</var><sub>max</sub>), which is consistent
-     * with the {@link #createFromExtremums(double, double, double, double)} constructor
-     * and with the {@code BBOX} <cite>Well Known Text</cite> (WKT) syntax.
-     *
-     * @return a {@code String} representing this {@code Rectangle2D}.
-     */
-    @Override
-    public String toString() {
-        return Classes.getShortClassName(this) +
-                "[xmin=" + xmin +
-                " ymin=" + ymin +
-                " xmax=" + xmax +
-                " ymax=" + ymax + ']';
     }
 }
