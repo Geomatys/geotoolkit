@@ -48,12 +48,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Open Street Map, edition API
          */
-        public static final short serverDescription = 0;
+        public static final short serverDescription = 1;
 
         /**
          * OSM.API
          */
-        public static final short serverTitle = 1;
+        public static final short serverTitle = 2;
     }
 
     /**

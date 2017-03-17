@@ -45,7 +45,7 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Keyhole Markup Language format (.kml)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * Keyhole Markup Language format (.kml)
@@ -60,7 +60,7 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * KML
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 4;
     }
 
     /**

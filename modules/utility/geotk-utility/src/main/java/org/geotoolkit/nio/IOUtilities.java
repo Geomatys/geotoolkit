@@ -210,11 +210,11 @@ public final class IOUtilities extends Static {
         if (path instanceof File) {
             return (File) path;
         } else if (path instanceof CharSequence) {
-            return org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
+            return org.apache.sis.internal.storage.io.IOUtilities.toFileOrURL(path.toString(), null);
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
-                return org.apache.sis.internal.storage.IOUtilities.toFile(url, null);
+                return org.apache.sis.internal.storage.io.IOUtilities.toFile(url, null);
             }
         } else if (path instanceof URI) {
             final URI uri = (URI) path;
@@ -296,7 +296,7 @@ public final class IOUtilities extends Static {
             }
         } else if (candidate instanceof URL) {
             final URL url = (URL) candidate;
-            return org.apache.sis.internal.storage.IOUtilities.toPath(url, null);
+            return org.apache.sis.internal.storage.io.IOUtilities.toPath(url, null);
         } else if (candidate instanceof File) {
             return ((File) candidate).toPath();
         } else if (candidate instanceof URI) {
@@ -394,7 +394,7 @@ public final class IOUtilities extends Static {
         URI uri = null;
         if (path instanceof URL) {
             try {
-                uri = org.apache.sis.internal.storage.IOUtilities.toURI((URL) path, "UTF-8");
+                uri = org.apache.sis.internal.storage.io.IOUtilities.toURI((URL) path, "UTF-8");
             } catch (IOException e) {
                 //unable to create URI from URL
                 return false;
@@ -437,7 +437,7 @@ public final class IOUtilities extends Static {
      * @return The filename in the given input, or {@code null} if the given object is null or of unknown type.
      */
     public static String filename(Object input) {
-        return org.apache.sis.internal.storage.IOUtilities.filename(input);
+        return org.apache.sis.internal.storage.io.IOUtilities.filename(input);
     }
 
     /**
@@ -451,7 +451,7 @@ public final class IOUtilities extends Static {
      *         if the given object is null or of unknown type.
      */
     public static String extension(Object input) {
-        return org.apache.sis.internal.storage.IOUtilities.extension(input);
+        return org.apache.sis.internal.storage.io.IOUtilities.extension(input);
     }
 
     /**
@@ -549,7 +549,7 @@ public final class IOUtilities extends Static {
      * @return The path with the new extension.
      */
     public static Path changeExtension(final Path path, final String extension) {
-        final String previousExt = org.apache.sis.internal.storage.IOUtilities.extension(path);
+        final String previousExt = org.apache.sis.internal.storage.io.IOUtilities.extension(path);
         if ((previousExt == null && extension == null) || (previousExt != null && previousExt.equals(extension))) {
             return path;
         }
@@ -1134,7 +1134,7 @@ public final class IOUtilities extends Static {
     public static Path getResourceAsPath(String resource, ClassLoader classLoader) throws URISyntaxException, IOException {
 
         //change package based location to path based
-        final String extension = org.apache.sis.internal.storage.IOUtilities.extension(resource);
+        final String extension = org.apache.sis.internal.storage.io.IOUtilities.extension(resource);
         int lastDotIdx = resource.lastIndexOf('.');
         if (lastDotIdx > 0) {
             resource = resource.substring(0, lastDotIdx);

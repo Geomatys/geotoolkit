@@ -45,73 +45,73 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * A coverage built from a file
          */
-        public static final short coverageFileDescription = 0;
+        public static final short coverageFileDescription = 1;
 
         /**
          * File coverage
          */
-        public static final short coverageFileTitle = 1;
+        public static final short coverageFileTitle = 2;
 
         /**
          * Structured Query Language database
          */
-        public static final short coverageSQLDescription = 2;
+        public static final short coverageSQLDescription = 3;
 
         /**
          * Coverage SQL
          */
-        public static final short coverageSQLTitle = 3;
+        public static final short coverageSQLTitle = 4;
 
         /**
          * Source type
          */
-        public static final short paramIdentifierAlias = 4;
+        public static final short paramIdentifierAlias = 5;
 
         /**
          * Source type identifier
          */
-        public static final short paramIdentifierRemarks = 5;
+        public static final short paramIdentifierRemarks = 6;
 
         /**
          * Namespace
          */
-        public static final short paramNamespaceAlias = 6;
+        public static final short paramNamespaceAlias = 7;
 
         /**
          * Namespace used for all data names (use "no namespace" for none)
          */
-        public static final short paramNamespaceRemarks = 7;
+        public static final short paramNamespaceRemarks = 8;
 
         /**
          * URL
          */
-        public static final short path = 8;
+        public static final short path = 9;
 
         /**
          * Full path as name
          */
-        public static final short pathSeparator = 9;
+        public static final short pathSeparator = 10;
 
         /**
          * If specified, layer names will be built by concatenating image file name with its parent
          * folder until the store root. Given separator will be used as separator in path
          */
-        public static final short pathSeparator_remarks = 10;
+        public static final short pathSeparator_remarks = 11;
 
         /**
          * Path to the file or parent directory of image(s) to read
          */
-        public static final short path_remarks = 11;
+        public static final short path_remarks = 12;
 
         /**
          * Image format
          */
-        public static final short type = 12;
+        public static final short type = 13;
 
         /**
          * Name of the image format to use for reading
          */
-        public static final short type_remarks = 13;
+        public static final short type_remarks = 14;
     }
 
     /**

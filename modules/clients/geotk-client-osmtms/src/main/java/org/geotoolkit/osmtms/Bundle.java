@@ -48,22 +48,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Open Street Map, tile service
          */
-        public static final short coverageDescription = 0;
+        public static final short coverageDescription = 1;
 
         /**
          * OSM.TMS
          */
-        public static final short coverageTitle = 1;
+        public static final short coverageTitle = 2;
 
         /**
          * Max zoom level
          */
-        public static final short maxZoomLevel = 2;
+        public static final short maxZoomLevel = 3;
 
         /**
          * Maximum zoom level.
          */
-        public static final short maxZoomLevelRemarks = 3;
+        public static final short maxZoomLevelRemarks = 4;
     }
 
     /**

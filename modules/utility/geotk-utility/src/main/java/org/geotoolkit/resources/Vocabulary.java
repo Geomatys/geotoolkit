@@ -53,1482 +53,1482 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * About
          */
-        public static final short About = 0;
+        public static final short About = 1;
 
         /**
          * Abridged Molodensky transform
          */
-        public static final short AbridgedMolodenskyTransform = 1;
+        public static final short AbridgedMolodenskyTransform = 5;
 
         /**
          * Add
          */
-        public static final short Add = 2;
+        public static final short Add = 6;
 
         /**
          * Administrator
          */
-        public static final short Administrator = 3;
+        public static final short Administrator = 7;
 
         /**
          * Albers Equal Area projection
          */
-        public static final short AlbersEqualAreaProjection = 4;
+        public static final short AlbersEqualAreaProjection = 8;
 
         /**
          * All
          */
-        public static final short All = 5;
+        public static final short All = 9;
 
         /**
          * All users
          */
-        public static final short AllUsers = 6;
+        public static final short AllUsers = 10;
 
         /**
          * Altitude
          */
-        public static final short Altitude = 7;
+        public static final short Altitude = 11;
 
         /**
          * Altitudes
          */
-        public static final short Altitudes = 8;
+        public static final short Altitudes = 12;
 
         /**
          * Apply
          */
-        public static final short Apply = 9;
+        public static final short Apply = 13;
 
         /**
          * Authority
          */
-        public static final short Authority = 10;
+        public static final short Authority = 14;
 
         /**
          * Automatic
          */
-        public static final short Automatic = 11;
+        public static final short Automatic = 15;
 
         /**
          * Axis changes
          */
-        public static final short AxisChanges = 12;
+        public static final short AxisChanges = 16;
 
         /**
          * {0} axis
          */
-        public static final short Axis_1 = 13;
+        public static final short Axis_1 = 17;
 
         /**
          * Azimuth
          */
-        public static final short Azimuth = 14;
+        public static final short Azimuth = 18;
 
         /**
          * Band
          */
-        public static final short Band = 15;
+        public static final short Band = 19;
 
         /**
          * Band {0}
          */
-        public static final short Band_1 = 16;
+        public static final short Band_1 = 20;
 
         /**
          * Cancel
          */
-        public static final short Cancel = 17;
+        public static final short Cancel = 21;
 
         /**
          * Cartesian
          */
-        public static final short Cartesian = 18;
+        public static final short Cartesian = 22;
 
         /**
          * Cartesian 2D
          */
-        public static final short Cartesian2d = 19;
+        public static final short Cartesian2d = 23;
 
         /**
          * Cartesian 3D
          */
-        public static final short Cartesian3d = 20;
+        public static final short Cartesian3d = 24;
 
         /**
          * Cassini-Soldner projection
          */
-        public static final short CassiniSoldnerProjection = 21;
+        public static final short CassiniSoldnerProjection = 25;
 
         /**
          * Category
          */
-        public static final short Category = 22;
+        public static final short Category = 26;
 
         /**
          * Choose
          */
-        public static final short Choose = 23;
+        public static final short Choose = 27;
 
         /**
          * Class
          */
-        public static final short Class = 24;
+        public static final short Class = 28;
 
         /**
          * Close
          */
-        public static final short Close = 25;
+        public static final short Close = 29;
 
         /**
          * Code
          */
-        public static final short Code = 26;
+        public static final short Code = 30;
 
         /**
          * {0} color{0,choice,1#|2#s}
          */
-        public static final short ColorCount_1 = 27;
+        public static final short ColorCount_1 = 31;
 
         /**
          * Color model
          */
-        public static final short ColorModel = 28;
+        public static final short ColorModel = 32;
 
         /**
          * Color space
          */
-        public static final short ColorSpace = 29;
+        public static final short ColorSpace = 33;
 
         /**
          * Colors
          */
-        public static final short Colors = 30;
+        public static final short Colors = 34;
 
         /**
          * Column
          */
-        public static final short Column = 31;
+        public static final short Column = 35;
 
         /**
          * Columns
          */
-        public static final short Columns = 32;
+        public static final short Columns = 36;
 
         /**
          * Commands
          */
-        public static final short Commands = 33;
+        public static final short Commands = 37;
 
         /**
          * Compare with
          */
-        public static final short CompareWith = 34;
+        public static final short CompareWith = 38;
 
         /**
          * Completed
          */
-        public static final short Completed = 35;
+        public static final short Completed = 39;
 
         /**
          * {0} component{0,choice,1#|2#s}
          */
-        public static final short ComponentCount_1 = 36;
+        public static final short ComponentCount_1 = 40;
 
         /**
          * Configure
          */
-        public static final short Configure = 37;
+        public static final short Configure = 41;
 
         /**
          * Confirm
          */
-        public static final short Confirm = 38;
+        public static final short Confirm = 42;
 
         /**
          * Connection parameters
          */
-        public static final short ConnectionParameters = 39;
+        public static final short ConnectionParameters = 43;
 
         /**
          * Coordinate Reference System
          */
-        public static final short CoordinateReferenceSystem = 40;
+        public static final short CoordinateReferenceSystem = 44;
 
         /**
          * Coordinates selection
          */
-        public static final short CoordinatesSelection = 41;
+        public static final short CoordinatesSelection = 45;
 
         /**
          * Current user
          */
-        public static final short CurrentUser = 42;
+        public static final short CurrentUser = 46;
 
         /**
          * Data
          */
-        public static final short Data = 43;
+        public static final short Data = 47;
 
         /**
          * Data are present
          */
-        public static final short DataArePresent = 44;
+        public static final short DataArePresent = 48;
 
         /**
          * {0} data base
          */
-        public static final short DataBase_1 = 45;
+        public static final short DataBase_1 = 49;
 
         /**
          * {0} data base version {1} on {2} engine.
          */
-        public static final short DataBase_3 = 46;
+        public static final short DataBase_3 = 50;
 
         /**
          * Data type
          */
-        public static final short DataType = 47;
+        public static final short DataType = 51;
 
         /**
          * {1} bits {0,choice,0#unsigned integer|1#signed integer|2#real number}
          */
-        public static final short DataType_2 = 48;
+        public static final short DataType_2 = 52;
 
         /**
          * {0} data
          */
-        public static final short Data_1 = 49;
+        public static final short Data_1 = 53;
 
         /**
          * Database
          */
-        public static final short Database = 50;
+        public static final short Database = 54;
 
         /**
          * Database engine
          */
-        public static final short DatabaseEngine = 51;
+        public static final short DatabaseEngine = 55;
 
         /**
          * Database URL
          */
-        public static final short DatabaseUrl = 52;
+        public static final short DatabaseUrl = 56;
 
         /**
          * Datum
          */
-        public static final short Datum = 53;
+        public static final short Datum = 57;
 
         /**
          * Datum shift
          */
-        public static final short DatumShift = 54;
+        public static final short DatumShift = 58;
 
         /**
          * day
          */
-        public static final short Day = 55;
+        public static final short Day = 59;
 
         /**
          * days
          */
-        public static final short Days = 56;
+        public static final short Days = 60;
 
         /**
          * Debug
          */
-        public static final short Debug = 57;
+        public static final short Debug = 61;
 
         /**
          * Decoders
          */
-        public static final short Decoders = 58;
+        public static final short Decoders = 62;
 
         /**
          * Default
          */
-        public static final short Default = 59;
+        public static final short Default = 63;
 
         /**
          * Define
          */
-        public static final short Define = 60;
+        public static final short Define = 64;
 
         /**
          * Delete
          */
-        public static final short Delete = 61;
+        public static final short Delete = 65;
 
         /**
          * Depth
          */
-        public static final short Depth = 62;
+        public static final short Depth = 66;
 
         /**
          * Derived from {0}
          */
-        public static final short DerivedFrom_1 = 63;
+        public static final short DerivedFrom_1 = 67;
 
         /**
          * Description
          */
-        public static final short Description = 64;
+        public static final short Description = 68;
 
         /**
          * Directories
          */
-        public static final short Directories = 65;
+        public static final short Directories = 69;
 
         /**
          * Display
          */
-        public static final short Display = 66;
+        public static final short Display = 70;
 
         /**
          * Distance
          */
-        public static final short Distance = 67;
+        public static final short Distance = 71;
 
         /**
          * Domain
          */
-        public static final short Domain = 68;
+        public static final short Domain = 72;
 
         /**
          * Down
          */
-        public static final short Down = 69;
+        public static final short Down = 73;
 
         /**
          * Download
          */
-        public static final short Download = 70;
+        public static final short Download = 74;
 
         /**
          * Downloading
          */
-        public static final short Downloading = 71;
+        public static final short Downloading = 75;
 
         /**
          * Duplicated value
          */
-        public static final short DuplicatedValue = 72;
+        public static final short DuplicatedValue = 76;
 
         /**
          * Duration
          */
-        public static final short Duration = 73;
+        public static final short Duration = 77;
 
         /**
          * Easting
          */
-        public static final short Easting = 74;
+        public static final short Easting = 78;
 
         /**
          * Edit
          */
-        public static final short Edit = 75;
+        public static final short Edit = 79;
 
         /**
          * Efficiency
          */
-        public static final short Efficiency = 76;
+        public static final short Efficiency = 80;
 
         /**
          * Ellipsoid
          */
-        public static final short Ellipsoid = 77;
+        public static final short Ellipsoid = 81;
 
         /**
          * Ellipsoid shift
          */
-        public static final short EllipsoidShift = 78;
+        public static final short EllipsoidShift = 82;
 
         /**
          * Ellipsoidal height
          */
-        public static final short EllipsoidalHeight = 79;
+        public static final short EllipsoidalHeight = 83;
 
         /**
          * Empty
          */
-        public static final short Empty = 80;
+        public static final short Empty = 84;
 
         /**
          * Encoders
          */
-        public static final short Encoders = 81;
+        public static final short Encoders = 85;
 
         /**
          * End time
          */
-        public static final short EndTime = 82;
+        public static final short EndTime = 86;
 
         /**
          * Error
          */
-        public static final short Error = 83;
+        public static final short Error = 87;
 
         /**
          * Error filters
          */
-        public static final short ErrorFilters = 84;
+        public static final short ErrorFilters = 88;
 
         /**
          * Error - {0}
          */
-        public static final short Error_1 = 85;
+        public static final short Error_1 = 89;
 
         /**
          * Event logger
          */
-        public static final short EventLogger = 86;
+        public static final short EventLogger = 90;
 
         /**
          * Examples
          */
-        public static final short Examples = 87;
+        public static final short Examples = 91;
 
         /**
          * Exception
          */
-        public static final short Exception = 88;
+        public static final short Exception = 92;
 
         /**
          * Exponential
          */
-        public static final short Exponential = 89;
+        public static final short Exponential = 93;
 
         /**
          * False
          */
-        public static final short False = 90;
+        public static final short False = 94;
 
         /**
          * File
          */
-        public static final short File = 91;
+        public static final short File = 95;
 
         /**
          * Line {1} in file {0}
          */
-        public static final short FilePosition_2 = 92;
+        public static final short FilePosition_2 = 96;
 
         /**
          * File {0}
          */
-        public static final short File_1 = 93;
+        public static final short File_1 = 97;
 
         /**
          * {0} files
          */
-        public static final short Files_1 = 94;
+        public static final short Files_1 = 98;
 
         /**
          * Format
          */
-        public static final short Format = 95;
+        public static final short Format = 99;
 
         /**
          * General
          */
-        public static final short General = 96;
+        public static final short General = 100;
 
         /**
          * Generic Cartesian 2D
          */
-        public static final short GenericCartesian2d = 97;
+        public static final short GenericCartesian2d = 101;
 
         /**
          * Generic Cartesian 3D
          */
-        public static final short GenericCartesian3d = 98;
+        public static final short GenericCartesian3d = 102;
 
         /**
          * Geocentric
          */
-        public static final short Geocentric = 99;
+        public static final short Geocentric = 103;
 
         /**
          * Geocentric radius
          */
-        public static final short GeocentricRadius = 100;
+        public static final short GeocentricRadius = 104;
 
         /**
          * Geocentric transform
          */
-        public static final short GeocentricTransform = 101;
+        public static final short GeocentricTransform = 105;
 
         /**
          * Geocentric X
          */
-        public static final short GeocentricX = 102;
+        public static final short GeocentricX = 106;
 
         /**
          * Geocentric Y
          */
-        public static final short GeocentricY = 103;
+        public static final short GeocentricY = 107;
 
         /**
          * Geocentric Z
          */
-        public static final short GeocentricZ = 104;
+        public static final short GeocentricZ = 108;
 
         /**
          * Geodetic 2D
          */
-        public static final short Geodetic2d = 105;
+        public static final short Geodetic2d = 109;
 
         /**
          * Geodetic 3D
          */
-        public static final short Geodetic3d = 106;
+        public static final short Geodetic3d = 110;
 
         /**
          * Geodetic latitude
          */
-        public static final short GeodeticLatitude = 107;
+        public static final short GeodeticLatitude = 111;
 
         /**
          * Geodetic longitude
          */
-        public static final short GeodeticLongitude = 108;
+        public static final short GeodeticLongitude = 112;
 
         /**
          * Geographic coordinates
          */
-        public static final short GeographicCoordinates = 109;
+        public static final short GeographicCoordinates = 113;
 
         /**
          * Geospatial
          */
-        public static final short Geospatial = 110;
+        public static final short Geospatial = 114;
 
         /**
          * Gradient masks
          */
-        public static final short GradientMasks = 111;
+        public static final short GradientMasks = 115;
 
         /**
          * Gravity-related height
          */
-        public static final short GravityRelatedHeight = 112;
+        public static final short GravityRelatedHeight = 116;
 
         /**
          * Gray scale
          */
-        public static final short GrayScale = 113;
+        public static final short GrayScale = 117;
 
         /**
          * Grid
          */
-        public static final short Grid = 114;
+        public static final short Grid = 118;
 
         /**
          * Gridded data
          */
-        public static final short GriddedData = 115;
+        public static final short GriddedData = 119;
 
         /**
          * Height
          */
-        public static final short Height = 116;
+        public static final short Height = 120;
 
         /**
          * Help
          */
-        public static final short Help = 117;
+        public static final short Help = 121;
 
         /**
          * Hide
          */
-        public static final short Hide = 118;
+        public static final short Hide = 122;
 
         /**
          * Horizontal
          */
-        public static final short Horizontal = 119;
+        public static final short Horizontal = 123;
 
         /**
          * Horizontal component
          */
-        public static final short HorizontalComponent = 120;
+        public static final short HorizontalComponent = 124;
 
         /**
          * {0}-{1}
          */
-        public static final short Hyphen_2 = 121;
+        public static final short Hyphen_2 = 125;
 
         /**
          * Identification
          */
-        public static final short Identification = 122;
+        public static final short Identification = 126;
 
         /**
          * Identifier
          */
-        public static final short Identifier = 123;
+        public static final short Identifier = 127;
 
         /**
          * Identity
          */
-        public static final short Identity = 124;
+        public static final short Identity = 128;
 
         /**
          * Image of class {0}
          */
-        public static final short ImageClass_1 = 125;
+        public static final short ImageClass_1 = 129;
 
         /**
          * {1} Image {0,choice,0#Reader|1#Writer} with World File
          */
-        public static final short ImageCodecWithWorldFile_2 = 126;
+        public static final short ImageCodecWithWorldFile_2 = 130;
 
         /**
          * Image list
          */
-        public static final short ImageList = 127;
+        public static final short ImageList = 131;
 
         /**
          * Image root directory
          */
-        public static final short ImageRootDirectory = 128;
+        public static final short ImageRootDirectory = 132;
 
         /**
          * Image size
          */
-        public static final short ImageSize = 129;
+        public static final short ImageSize = 133;
 
         /**
          * {0} × {1} pixels × {2} bands
          */
-        public static final short ImageSize_3 = 130;
+        public static final short ImageSize_3 = 134;
 
         /**
          * Image {0}
          */
-        public static final short Image_1 = 131;
+        public static final short Image_1 = 135;
 
         /**
          * Images
          */
-        public static final short Images = 132;
+        public static final short Images = 136;
 
         /**
          * Implementations
          */
-        public static final short Implementations = 133;
+        public static final short Implementations = 137;
 
         /**
          * Index
          */
-        public static final short Index = 134;
+        public static final short Index = 138;
 
         /**
          * Informations
          */
-        public static final short Informations = 135;
+        public static final short Informations = 139;
 
         /**
          * Install
          */
-        public static final short Install = 136;
+        public static final short Install = 140;
 
         /**
          * {0} installation
          */
-        public static final short Installation_1 = 137;
+        public static final short Installation_1 = 141;
 
         /**
          * Inverse operation
          */
-        public static final short InverseOperation = 138;
+        public static final short InverseOperation = 142;
 
         /**
          * Inverse transform
          */
-        public static final short InverseTransform = 139;
+        public static final short InverseTransform = 143;
 
         /**
          * {0}
          */
-        public static final short JavaVendor_1 = 140;
+        public static final short JavaVendor_1 = 144;
 
         /**
          * Java version {0}
          */
-        public static final short JavaVersion_1 = 141;
+        public static final short JavaVersion_1 = 145;
 
         /**
          * Kernel
          */
-        public static final short Kernel = 142;
+        public static final short Kernel = 146;
 
         /**
          * Latitude
          */
-        public static final short Latitude = 143;
+        public static final short Latitude = 147;
 
         /**
          * Layers
          */
-        public static final short Layers = 144;
+        public static final short Layers = 148;
 
         /**
          * Left
          */
-        public static final short Left = 145;
+        public static final short Left = 149;
 
         /**
          * Level
          */
-        public static final short Level = 146;
+        public static final short Level = 150;
 
         /**
          * Line {0}
          */
-        public static final short Line_1 = 147;
+        public static final short Line_1 = 151;
 
         /**
          * Lines
          */
-        public static final short Lines = 148;
+        public static final short Lines = 152;
 
         /**
          * Loading…
          */
-        public static final short Loading = 149;
+        public static final short Loading = 153;
 
         /**
          * Loading headers
          */
-        public static final short LoadingHeaders = 150;
+        public static final short LoadingHeaders = 154;
 
         /**
          * Loading image {0}
          */
-        public static final short LoadingImage_1 = 151;
+        public static final short LoadingImage_1 = 155;
 
         /**
          * Loading images {0} and {1}
          */
-        public static final short LoadingImages_2 = 152;
+        public static final short LoadingImages_2 = 156;
 
         /**
          * Loading {0}…
          */
-        public static final short Loading_1 = 153;
+        public static final short Loading_1 = 157;
 
         /**
          * Logarithmic
          */
-        public static final short Logarithmic = 154;
+        public static final short Logarithmic = 158;
 
         /**
          * Logger
          */
-        public static final short Logger = 155;
+        public static final short Logger = 159;
 
         /**
          * Longitude
          */
-        public static final short Longitude = 156;
+        public static final short Longitude = 160;
 
         /**
          * Magnifier
          */
-        public static final short Magnifier = 157;
+        public static final short Magnifier = 161;
 
         /**
          * Mandatory
          */
-        public static final short Mandatory = 158;
+        public static final short Mandatory = 162;
 
         /**
          * Math transform
          */
-        public static final short MathTransform = 159;
+        public static final short MathTransform = 163;
 
         /**
          * Maximum
          */
-        public static final short Maximum = 160;
+        public static final short Maximum = 164;
 
         /**
          * Allocated memory: {0} MB
          */
-        public static final short MemoryHeapSize_1 = 161;
+        public static final short MemoryHeapSize_1 = 165;
 
         /**
          * Allocation used: {0,number,percent}
          */
-        public static final short MemoryHeapUsage_1 = 162;
+        public static final short MemoryHeapUsage_1 = 166;
 
         /**
          * Message
          */
-        public static final short Message = 163;
+        public static final short Message = 167;
 
         /**
          * Metadata
          */
-        public static final short Metadata = 164;
+        public static final short Metadata = 168;
 
         /**
          * Method
          */
-        public static final short Method = 165;
+        public static final short Method = 169;
 
         /**
          * Minimum
          */
-        public static final short Minimum = 166;
+        public static final short Minimum = 170;
 
         /**
          * Molodensky transform
          */
-        public static final short MolodenskyTransform = 167;
+        public static final short MolodenskyTransform = 171;
 
         /**
          * … {0} more…
          */
-        public static final short More_1 = 168;
+        public static final short More_1 = 172;
 
         /**
          * NADCON transform
          */
-        public static final short NadconTransform = 169;
+        public static final short NadconTransform = 173;
 
         /**
          * Name
          */
-        public static final short Name = 170;
+        public static final short Name = 174;
 
         /**
          * Navigate
          */
-        public static final short Navigate = 171;
+        public static final short Navigate = 175;
 
         /**
          * New format
          */
-        public static final short NewFormat = 172;
+        public static final short NewFormat = 176;
 
         /**
          * New layer
          */
-        public static final short NewLayer = 173;
+        public static final short NewLayer = 177;
 
         /**
          * {0} (no details)
          */
-        public static final short NoDetails_1 = 174;
+        public static final short NoDetails_1 = 178;
 
         /**
          * No duplicated value found.
          */
-        public static final short NoDuplicationFound = 175;
+        public static final short NoDuplicationFound = 179;
 
         /**
          * No data
          */
-        public static final short Nodata = 176;
+        public static final short Nodata = 180;
 
         /**
          * None
          */
-        public static final short None = 177;
+        public static final short None = 181;
 
         /**
          * Northing
          */
-        public static final short Northing = 178;
+        public static final short Northing = 182;
 
         /**
          * Not installed
          */
-        public static final short NotInstalled = 179;
+        public static final short NotInstalled = 183;
 
         /**
          * Note
          */
-        public static final short Note = 180;
+        public static final short Note = 184;
 
         /**
          * Oblique Mercator projection
          */
-        public static final short ObliqueMercatorProjection = 181;
+        public static final short ObliqueMercatorProjection = 185;
 
         /**
          * Occurrence
          */
-        public static final short Occurrence = 182;
+        public static final short Occurrence = 186;
 
         /**
          * Offset
          */
-        public static final short Offset = 183;
+        public static final short Offset = 187;
 
         /**
          * Ok
          */
-        public static final short Ok = 184;
+        public static final short Ok = 188;
 
         /**
          * {0} operation
          */
-        public static final short Operation_1 = 185;
+        public static final short Operation_1 = 189;
 
         /**
          * Operations
          */
-        public static final short Operations = 186;
+        public static final short Operations = 190;
 
         /**
          * Options
          */
-        public static final short Options = 187;
+        public static final short Options = 191;
 
         /**
          * Order
          */
-        public static final short Order = 188;
+        public static final short Order = 192;
 
         /**
          * Orthodromic distance
          */
-        public static final short OrthodromicDistance = 189;
+        public static final short OrthodromicDistance = 193;
 
         /**
          * Orthographic projection
          */
-        public static final short OrthographicProjection = 190;
+        public static final short OrthographicProjection = 194;
 
         /**
          * {0} system
          */
-        public static final short OsName_1 = 191;
+        public static final short OsName_1 = 195;
 
         /**
          * Version {0} for {1}
          */
-        public static final short OsVersion_2 = 192;
+        public static final short OsVersion_2 = 196;
 
         /**
          * Others
          */
-        public static final short Others = 193;
+        public static final short Others = 197;
 
         /**
          * Output directory
          */
-        public static final short OutputDirectory = 194;
+        public static final short OutputDirectory = 198;
 
         /**
          * Parameter {0}
          */
-        public static final short Parameter_1 = 195;
+        public static final short Parameter_1 = 199;
 
         /**
          * Password
          */
-        public static final short Password = 196;
+        public static final short Password = 200;
 
         /**
          * Paused
          */
-        public static final short Paused = 197;
+        public static final short Paused = 201;
 
         /**
          * Personalized
          */
-        public static final short Personalized = 198;
+        public static final short Personalized = 202;
 
         /**
          * Pixel size
          */
-        public static final short PixelSize = 199;
+        public static final short PixelSize = 203;
 
         /**
          * Pixels
          */
-        public static final short Pixels = 200;
+        public static final short Pixels = 204;
 
         /**
          * {0} points on a {1} × {2} grid.
          */
-        public static final short PointCountInGrid_3 = 201;
+        public static final short PointCountInGrid_3 = 205;
 
         /**
          * Port
          */
-        public static final short Port = 202;
+        public static final short Port = 206;
 
         /**
          * Predefined kernels
          */
-        public static final short PredefinedKernels = 203;
+        public static final short PredefinedKernels = 207;
 
         /**
          * Preferences
          */
-        public static final short Preferences = 204;
+        public static final short Preferences = 208;
 
         /**
          * Preferred resolution
          */
-        public static final short PreferredResolution = 205;
+        public static final short PreferredResolution = 209;
 
         /**
          * Preview
          */
-        public static final short Preview = 206;
+        public static final short Preview = 210;
 
         /**
          * Progression
          */
-        public static final short Progression = 207;
+        public static final short Progression = 211;
 
         /**
          * Projected
          */
-        public static final short Projected = 208;
+        public static final short Projected = 212;
 
         /**
          * Properties
          */
-        public static final short Properties = 209;
+        public static final short Properties = 213;
 
         /**
          * Properties of {0}
          */
-        public static final short PropertiesOf_1 = 210;
+        public static final short PropertiesOf_1 = 214;
 
         /**
          * Quit
          */
-        public static final short Quit = 211;
+        public static final short Quit = 215;
 
         /**
          * Range
          */
-        public static final short Range = 212;
+        public static final short Range = 216;
 
         /**
          * {0} bits real number
          */
-        public static final short RealNumber_1 = 213;
+        public static final short RealNumber_1 = 217;
 
         /**
          * Area: x=[{0} … {1}], y=[{2} … {3}]
          */
-        public static final short Rectangle_4 = 214;
+        public static final short Rectangle_4 = 218;
 
         /**
          * Refresh
          */
-        public static final short Refresh = 215;
+        public static final short Refresh = 219;
 
         /**
          * Remarks
          */
-        public static final short Remarks = 216;
+        public static final short Remarks = 220;
 
         /**
          * Remove
          */
-        public static final short Remove = 217;
+        public static final short Remove = 221;
 
         /**
          * Reset
          */
-        public static final short Reset = 218;
+        public static final short Reset = 222;
 
         /**
          * Resolution
          */
-        public static final short Resolution = 219;
+        public static final short Resolution = 223;
 
         /**
          * Resumed
          */
-        public static final short Resumed = 220;
+        public static final short Resumed = 224;
 
         /**
          * Right
          */
-        public static final short Right = 221;
+        public static final short Right = 225;
 
         /**
          * Root directory
          */
-        public static final short RootDirectory = 222;
+        public static final short RootDirectory = 226;
 
         /**
          * Rotate left
          */
-        public static final short RotateLeft = 223;
+        public static final short RotateLeft = 2;
 
         /**
          * Rotate right
          */
-        public static final short RotateRight = 224;
+        public static final short RotateRight = 3;
 
         /**
          * Row
          */
-        public static final short Row = 225;
+        public static final short Row = 227;
 
         /**
          * Running tasks
          */
-        public static final short RunningTasks = 226;
+        public static final short RunningTasks = 4;
 
         /**
          * Sample dimensions
          */
-        public static final short SampleDimensions = 227;
+        public static final short SampleDimensions = 228;
 
         /**
          * Sample model
          */
-        public static final short SampleModel = 228;
+        public static final short SampleModel = 229;
 
         /**
          * Saving {0}…
          */
-        public static final short Saving_1 = 229;
+        public static final short Saving_1 = 230;
 
         /**
          * Scale
          */
-        public static final short Scale = 230;
+        public static final short Scale = 231;
 
         /**
          * Schema
          */
-        public static final short Schema = 231;
+        public static final short Schema = 232;
 
         /**
          * Search
          */
-        public static final short Search = 232;
+        public static final short Search = 233;
 
         /**
          * Selected colors
          */
-        public static final short SelectedColors = 233;
+        public static final short SelectedColors = 234;
 
         /**
          * Server
          */
-        public static final short Server = 234;
+        public static final short Server = 235;
 
         /**
          * Service
          */
-        public static final short Service = 235;
+        public static final short Service = 236;
 
         /**
          * Set preferred resolution
          */
-        public static final short SetPreferredResolution = 236;
+        public static final short SetPreferredResolution = 237;
 
         /**
          * Show magnifier
          */
-        public static final short ShowMagnifier = 237;
+        public static final short ShowMagnifier = 238;
 
         /**
          * {0} bits signed integer
          */
-        public static final short SignedInteger_1 = 238;
+        public static final short SignedInteger_1 = 239;
 
         /**
          * Size
          */
-        public static final short Size = 239;
+        public static final short Size = 240;
 
         /**
          * (in angle minutes)
          */
-        public static final short SizeInMinutes = 240;
+        public static final short SizeInMinutes = 241;
 
         /**
          * {0} × {1}
          */
-        public static final short Size_2 = 241;
+        public static final short Size_2 = 242;
 
         /**
          * Source CRS
          */
-        public static final short SourceCrs = 242;
+        public static final short SourceCrs = 243;
 
         /**
          * Source point
          */
-        public static final short SourcePoint = 243;
+        public static final short SourcePoint = 244;
 
         /**
          * Southing
          */
-        public static final short Southing = 244;
+        public static final short Southing = 245;
 
         /**
          * Spatial objects
          */
-        public static final short SpatialObjects = 245;
+        public static final short SpatialObjects = 246;
 
         /**
          * Spherical
          */
-        public static final short Spherical = 246;
+        public static final short Spherical = 247;
 
         /**
          * Spherical latitude
          */
-        public static final short SphericalLatitude = 247;
+        public static final short SphericalLatitude = 248;
 
         /**
          * Spherical longitude
          */
-        public static final short SphericalLongitude = 248;
+        public static final short SphericalLongitude = 249;
 
         /**
          * Standard
          */
-        public static final short Standard = 249;
+        public static final short Standard = 250;
 
         /**
          * Start time
          */
-        public static final short StartTime = 250;
+        public static final short StartTime = 251;
 
         /**
          * Started
          */
-        public static final short Started = 251;
+        public static final short Started = 252;
 
         /**
          * Stereographic projection
          */
-        public static final short StereographicProjection = 252;
+        public static final short StereographicProjection = 253;
 
         /**
          * Subsampling
          */
-        public static final short Subsampling = 253;
+        public static final short Subsampling = 254;
 
         /**
          * Superseded by {0}.
          */
-        public static final short SupersededBy_1 = 254;
+        public static final short SupersededBy_1 = 255;
 
         /**
          * System
          */
-        public static final short System = 255;
+        public static final short System = 256;
 
         /**
          * Target
          */
-        public static final short Target = 256;
+        public static final short Target = 257;
 
         /**
          * Target CRS
          */
-        public static final short TargetCrs = 257;
+        public static final short TargetCrs = 258;
 
         /**
          * Target point
          */
-        public static final short TargetPoint = 258;
+        public static final short TargetPoint = 259;
 
         /**
          * Tasks
          */
-        public static final short Tasks = 259;
+        public static final short Tasks = 260;
 
         /**
          * Tile cache capacity: {0} Mb
          */
-        public static final short TileCacheCapacity_1 = 260;
+        public static final short TileCacheCapacity_1 = 261;
 
         /**
          * {0}×{1} tiles of {2} × {3} pixels
          */
-        public static final short TileSize_4 = 261;
+        public static final short TileSize_4 = 262;
 
         /**
          * Tiles size
          */
-        public static final short TilesSize = 262;
+        public static final short TilesSize = 263;
 
         /**
          * Time
          */
-        public static final short Time = 263;
+        public static final short Time = 264;
 
         /**
          * Time
          */
-        public static final short TimeOfDay = 264;
+        public static final short TimeOfDay = 265;
 
         /**
          * Time range
          */
-        public static final short TimeRange = 265;
+        public static final short TimeRange = 266;
 
         /**
          * Time zone
          */
-        public static final short TimeZone = 266;
+        public static final short TimeZone = 267;
 
         /**
          * Transformation accuracy
          */
-        public static final short TransformationAccuracy = 267;
+        public static final short TransformationAccuracy = 268;
 
         /**
          * Transverse Mercator projection
          */
-        public static final short TransverseMercatorProjection = 268;
+        public static final short TransverseMercatorProjection = 269;
 
         /**
          * True
          */
-        public static final short True = 269;
+        public static final short True = 270;
 
         /**
          * Type
          */
-        public static final short Type = 270;
+        public static final short Type = 271;
 
         /**
          * Undefined
          */
-        public static final short Undefined = 271;
+        public static final short Undefined = 272;
 
         /**
          * Units
          */
-        public static final short Units = 272;
+        public static final short Units = 273;
 
         /**
          * Unknown
          */
-        public static final short Unknown = 273;
+        public static final short Unknown = 274;
 
         /**
          * {0} bits unsigned integer ({1} bits/pixel)
          */
-        public static final short UnsignedInteger_2 = 274;
+        public static final short UnsignedInteger_2 = 275;
 
         /**
          * Untitled
          */
-        public static final short Untitled = 275;
+        public static final short Untitled = 276;
 
         /**
          * Up
          */
-        public static final short Up = 276;
+        public static final short Up = 277;
 
         /**
          * URL
          */
-        public static final short Url = 277;
+        public static final short Url = 278;
 
         /**
          * Use best resolution
          */
-        public static final short UseBestResolution = 278;
+        public static final short UseBestResolution = 279;
 
         /**
          * User
          */
-        public static final short User = 279;
+        public static final short User = 280;
 
         /**
          * Valid values
          */
-        public static final short ValidValues = 280;
+        public static final short ValidValues = 281;
 
         /**
          * Value
          */
-        public static final short Value = 281;
+        public static final short Value = 282;
 
         /**
          * Value range
          */
-        public static final short ValueRange = 282;
+        public static final short ValueRange = 283;
 
         /**
          * Vendor
          */
-        public static final short Vendor = 283;
+        public static final short Vendor = 284;
 
         /**
          * Verifying
          */
-        public static final short Verifying = 284;
+        public static final short Verifying = 285;
 
         /**
          * “{0}” version
          */
-        public static final short VersionOf_1 = 285;
+        public static final short VersionOf_1 = 286;
 
         /**
          * Version {0}
          */
-        public static final short Version_1 = 286;
+        public static final short Version_1 = 287;
 
         /**
          * Vertical
          */
-        public static final short Vertical = 287;
+        public static final short Vertical = 288;
 
         /**
          * Vertical component
          */
-        public static final short VerticalComponent = 288;
+        public static final short VerticalComponent = 289;
 
         /**
          * Warning
          */
-        public static final short Warning = 289;
+        public static final short Warning = 290;
 
         /**
          * Westing
          */
-        public static final short Westing = 290;
+        public static final short Westing = 291;
 
         /**
          * Width
          */
-        public static final short Width = 291;
+        public static final short Width = 292;
 
         /**
          * Wizards
          */
-        public static final short Wizards = 292;
+        public static final short Wizards = 293;
 
         /**
          * Zoom in
          */
-        public static final short ZoomIn = 293;
+        public static final short ZoomIn = 294;
 
         /**
          * Close zoom
          */
-        public static final short ZoomMax = 294;
+        public static final short ZoomMax = 295;
 
         /**
          * Zoom out
          */
-        public static final short ZoomOut = 295;
+        public static final short ZoomOut = 296;
     }
 
     /**

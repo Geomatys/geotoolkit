@@ -48,57 +48,57 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Identifier
          */
-        public static final short identifier = 0;
+        public static final short identifier = 1;
 
         /**
          * Factory identifier.
          */
-        public static final short identifierRemarks = 7;
+        public static final short identifierRemarks = 2;
 
         /**
          * Cache images
          */
-        public static final short imageCache = 1;
+        public static final short imageCache = 3;
 
         /**
          * Cache images or make a new query each time.
          */
-        public static final short imageCacheRemarks = 8;
+        public static final short imageCacheRemarks = 4;
 
         /**
          * NIO
          */
-        public static final short nio = 2;
+        public static final short nio = 5;
 
         /**
          * Use Java NIO parallal queries.
          */
-        public static final short nioRemarks = 9;
+        public static final short nioRemarks = 6;
 
         /**
          * Security
          */
-        public static final short security = 3;
+        public static final short security = 7;
 
         /**
          * Connexion securities, authentication, token ...
          */
-        public static final short securityRemarks = 10;
+        public static final short securityRemarks = 8;
 
         /**
          * TimeOut(ms)
          */
-        public static final short timeout = 4;
+        public static final short timeout = 9;
 
         /**
          * TimeOut(ms)
          */
-        public static final short timeoutRemarks = 11;
+        public static final short timeoutRemarks = 10;
 
         /**
          * URL
          */
-        public static final short url = 5;
+        public static final short url = 11;
 
         /**
          * Server URL.
@@ -108,12 +108,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Version
          */
-        public static final short version = 6;
+        public static final short version = 13;
 
         /**
          * Service version.
          */
-        public static final short versionRemarks = 13;
+        public static final short versionRemarks = 14;
     }
 
     /**

@@ -35,7 +35,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.internal.storage.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;

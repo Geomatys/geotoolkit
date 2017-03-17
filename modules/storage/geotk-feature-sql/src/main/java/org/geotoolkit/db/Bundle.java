@@ -45,142 +45,142 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Database
          */
-        public static final short database = 0;
+        public static final short database = 1;
 
         /**
          * Database name
          */
-        public static final short database_remarks = 1;
+        public static final short database_remarks = 2;
 
         /**
          * DataSource
          */
-        public static final short datasource = 2;
+        public static final short datasource = 3;
 
         /**
          * DataSource java object
          */
-        public static final short datasource_remarks = 3;
+        public static final short datasource_remarks = 4;
 
         /**
          * Fetch size
          */
-        public static final short fetch_size = 4;
+        public static final short fetch_size = 5;
 
         /**
          * Number of records read with each iteraction with the dbms
          */
-        public static final short fetch_size_remarks = 5;
+        public static final short fetch_size_remarks = 6;
 
         /**
          * Host
          */
-        public static final short host = 6;
+        public static final short host = 7;
 
         /**
          * Host database server
          */
-        public static final short host_remarks = 7;
+        public static final short host_remarks = 8;
 
         /**
          * Max connections
          */
-        public static final short max_connections = 8;
+        public static final short max_connections = 9;
 
         /**
          * maximum number of open connections
          */
-        public static final short max_connections_remarks = 9;
+        public static final short max_connections_remarks = 10;
 
         /**
          * Min connections
          */
-        public static final short min_connections = 10;
+        public static final short min_connections = 11;
 
         /**
          * minimum number of open connections o keep alive
          */
-        public static final short min_connections_remarks = 11;
+        public static final short min_connections_remarks = 12;
 
         /**
          * Password
          */
-        public static final short password = 12;
+        public static final short password = 13;
 
         /**
          * Password used to login
          */
-        public static final short password_remarks = 13;
+        public static final short password_remarks = 14;
 
         /**
          * Port
          */
-        public static final short port = 14;
+        public static final short port = 15;
 
         /**
          * Database connection port
          */
-        public static final short port_remarks = 15;
+        public static final short port_remarks = 16;
 
         /**
          * Schema
          */
-        public static final short schema = 16;
+        public static final short schema = 17;
 
         /**
          * Database schema
          */
-        public static final short schema_remarks = 17;
+        public static final short schema_remarks = 18;
 
         /**
          * Simple types
          */
-        public static final short simpletype = 18;
+        public static final short simpletype = 19;
 
         /**
          * Set to false if relation between tables must not appear in the feature type
          */
-        public static final short simpletype_remarks = 19;
+        public static final short simpletype_remarks = 20;
 
         /**
          * Table
          */
-        public static final short table = 20;
+        public static final short table = 21;
 
         /**
          * Restrict featurestore to only given tables.
          */
-        public static final short table_remarks = 21;
+        public static final short table_remarks = 22;
 
         /**
          * Timeout(s)
          */
-        public static final short timeout = 22;
+        public static final short timeout = 23;
 
         /**
          * number of seconds the connection pool wait for login
          */
-        public static final short timeout_remarks = 23;
+        public static final short timeout_remarks = 24;
 
         /**
          * User
          */
-        public static final short user = 24;
+        public static final short user = 25;
 
         /**
          * user name to login as
          */
-        public static final short user_remarks = 25;
+        public static final short user_remarks = 26;
 
         /**
          * Validate connection
          */
-        public static final short validate_connections = 26;
+        public static final short validate_connections = 27;
 
         /**
          * Check connection is alive before using it
          */
-        public static final short validate_connections_remarks = 27;
+        public static final short validate_connections_remarks = 28;
     }
 
     /**

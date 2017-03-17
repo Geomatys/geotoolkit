@@ -45,32 +45,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * NetCDF feature file.
          */
-        public static final short NCdatastoreDescription = 0;
+        public static final short NCdatastoreDescription = 1;
 
         /**
          * OGC.O&M.netCDF
          */
-        public static final short NCdatastoreTitle = 1;
+        public static final short NCdatastoreTitle = 2;
 
         /**
          * Observation & Measurements file (.omxml)
          */
-        public static final short OMdatastoreDescription = 2;
+        public static final short OMdatastoreDescription = 3;
 
         /**
          * OGC.O&M
          */
-        public static final short OMdatastoreTitle = 3;
+        public static final short OMdatastoreTitle = 4;
 
         /**
          * Sensor Observation Service Database
          */
-        public static final short SOSdatastoreDescription = 4;
+        public static final short SOSdatastoreDescription = 5;
 
         /**
          * OGC.SOS
          */
-        public static final short SOSdatastoreTitle = 5;
+        public static final short SOSdatastoreTitle = 6;
     }
 
     /**

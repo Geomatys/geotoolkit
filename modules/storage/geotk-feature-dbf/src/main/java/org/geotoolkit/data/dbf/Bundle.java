@@ -45,22 +45,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * DataBase File (.dbf)
          */
-        public static final short databaseDescription = 0;
+        public static final short databaseDescription = 1;
 
         /**
          * Multiple DataBase Files (.dbf)
          */
-        public static final short databaseFolderDescription = 1;
+        public static final short databaseFolderDescription = 2;
 
         /**
          * DBF (folder)
          */
-        public static final short databaseFolderTitle = 2;
+        public static final short databaseFolderTitle = 3;
 
         /**
          * DBF
          */
-        public static final short databaseTitle = 3;
+        public static final short databaseTitle = 4;
     }
 
     /**

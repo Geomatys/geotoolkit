@@ -45,33 +45,33 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Extensible Markup Language file (.xml)
          */
-        public static final short coverageXMLDescription = 0;
+        public static final short coverageXMLDescription = 1;
 
         /**
          * URL
          */
-        public static final short coverageXMLPath = 1;
+        public static final short coverageXMLPath = 2;
 
         /**
          * "Path to the folder which contains pyramid set description files (.xml)."
          */
-        public static final short coverageXMLPathRemarks = 2;
+        public static final short coverageXMLPathRemarks = 3;
 
         /**
          * Cache tile state
          */
-        public static final short coverageXMLTileState = 3;
+        public static final short coverageXMLTileState = 4;
 
         /**
          * True if we want to check tile state (missing, empty or filled) at tile file accesses.
          * Otherwise, it will be read/written from/to pyramid set description file.
          */
-        public static final short coverageXMLTileStateRemarks = 4;
+        public static final short coverageXMLTileStateRemarks = 5;
 
         /**
          * XML coverage
          */
-        public static final short coverageXMLTitle = 5;
+        public static final short coverageXMLTitle = 6;
     }
 
     /**

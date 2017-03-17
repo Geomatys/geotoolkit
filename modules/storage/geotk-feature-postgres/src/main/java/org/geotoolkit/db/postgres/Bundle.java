@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Loose bbox
          */
-        public static final short lbbox = 0;
+        public static final short lbbox = 1;
 
         /**
          * Perform only primary filter on bbox
          */
-        public static final short lbbox_remarks = 1;
+        public static final short lbbox_remarks = 2;
     }
 
     /**

@@ -48,17 +48,17 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Web Feature Service
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * OGC.WFS
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 2;
 
         /**
          * Longitude first
          */
-        public static final short longitudeFirst = 2;
+        public static final short longitudeFirst = 3;
 
         /**
          * Longitude first, set to true for server not preserving axis order.
@@ -68,12 +68,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * POST queries
          */
-        public static final short post = 3;
+        public static final short post = 5;
 
         /**
          * Use post queries.
          */
-        public static final short postRemarks = 5;
+        public static final short postRemarks = 6;
     }
 
     /**

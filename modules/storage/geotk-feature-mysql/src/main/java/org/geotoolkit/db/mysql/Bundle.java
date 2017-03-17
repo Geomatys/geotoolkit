@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * MySQL database
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * MySQL
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 2;
     }
 
     /**

@@ -48,12 +48,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * IGN tokens management server
          */
-        public static final short serverDescription = 0;
+        public static final short serverDescription = 1;
 
         /**
          * IGN RM
          */
-        public static final short serverTitle = 1;
+        public static final short serverTitle = 2;
     }
 
     /**

@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Sensor Markup Language (.sml)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * OGC.SML
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 2;
     }
 
     /**

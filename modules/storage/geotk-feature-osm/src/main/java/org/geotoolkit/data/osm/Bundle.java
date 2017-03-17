@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * OpenStreetMap data defined into xml file (.xml)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * OSM XML
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 2;
     }
 
     /**
