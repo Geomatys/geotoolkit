@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.image.io.stream;
 
-import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -33,7 +33,7 @@ import static java.nio.file.StandardOpenOption.*;
  *
  * @author Quentin Boileau (Geomatys)
  *
- * @see org.apache.sis.internal.storage.ChannelImageInputStream
+ * @see org.apache.sis.internal.storage.io.ChannelImageInputStream
  */
 public class PathImageInputStream extends ChannelImageInputStream {
 

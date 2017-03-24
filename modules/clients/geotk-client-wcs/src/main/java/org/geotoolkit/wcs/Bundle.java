@@ -48,12 +48,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Web Coverage Service
          */
-        public static final short serverDescription = 0;
+        public static final short serverDescription = 1;
 
         /**
          * OGC.WCS
          */
-        public static final short serverTitle = 1;
+        public static final short serverTitle = 2;
     }
 
     /**

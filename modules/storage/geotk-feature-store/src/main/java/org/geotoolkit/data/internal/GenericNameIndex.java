@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.internal.storage.GenericNameMap;
+import org.apache.sis.storage.FeatureNaming;
 import org.apache.sis.storage.IllegalNameException;
 import org.opengis.util.GenericName;
 
@@ -30,7 +30,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericNameIndex<T> extends GenericNameMap<T> {
+public class GenericNameIndex<T> extends FeatureNaming<T> {
 
     private final Map<GenericName,T> names = new HashMap<>();
 
@@ -47,6 +47,10 @@ public class GenericNameIndex<T> extends GenericNameMap<T> {
         return new ArrayList<>(names.values());
     }
 
+    public final T get(String name) throws IllegalNameException {
+        return get(null, name);
+    }
+
     public boolean contains(String name) {
         try {
             get(name);
@@ -56,15 +60,13 @@ public class GenericNameIndex<T> extends GenericNameMap<T> {
         }
     }
 
-    @Override
     public synchronized void add(GenericName name, T value) throws IllegalNameException {
-        super.add(name, value);
+        super.add(null, name, value);
         names.put(name,value);
     }
 
-    @Override
     public synchronized boolean remove(GenericName name) throws IllegalNameException {
-        final boolean res = super.remove(name);
+        final boolean res = super.remove(null, name);
         if (res) names.remove(name);
         return res;
     }

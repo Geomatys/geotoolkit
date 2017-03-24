@@ -53,12 +53,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Web Map Service
          */
-        public static final short coverageDescription = 0;
+        public static final short coverageDescription = 1;
 
         /**
          * OGC.WMS
          */
-        public static final short coverageTitle = 1;
+        public static final short coverageTitle = 2;
     }
 
     /**

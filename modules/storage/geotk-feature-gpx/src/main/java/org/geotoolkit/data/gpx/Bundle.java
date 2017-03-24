@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * GPS eXchange format (.gpx)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * GPX
          */
-        public static final short datastoreTitle = 1;
+        public static final short datastoreTitle = 2;
     }
 
     /**

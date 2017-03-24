@@ -29,7 +29,6 @@ import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.internal.system.XMLInputFactory;
 import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
 
 
 /**
@@ -118,7 +117,7 @@ public abstract class StaxStreamReader extends StaxStream {
                 sourceStream = in;
                 storage.closeAllExcept(in);
             } else {
-                throw new DataStoreException(Errors.format(Errors.Keys.IllegalInputTypeForReader_2, "XML", Classes.getClass(input)));
+                throw new DataStoreException();
             }
         }
     }
@@ -133,7 +132,7 @@ public abstract class StaxStreamReader extends StaxStream {
         if (reader != null) {
             return reader;
         }
-        throw new IOException(errors().getString(Errors.Keys.ClosedReader_1, "XML"));
+        throw new IOException();
     }
 
     /**

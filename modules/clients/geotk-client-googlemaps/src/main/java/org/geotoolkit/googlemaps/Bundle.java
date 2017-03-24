@@ -48,17 +48,17 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * From Google maps server
          */
-        public static final short coverageDescription = 0;
+        public static final short coverageDescription = 1;
 
         /**
          * Google maps
          */
-        public static final short coverageTitle = 1;
+        public static final short coverageTitle = 2;
 
         /**
          * Google map type.
          */
-        public static final short mapType = 2;
+        public static final short mapType = 3;
     }
 
     /**

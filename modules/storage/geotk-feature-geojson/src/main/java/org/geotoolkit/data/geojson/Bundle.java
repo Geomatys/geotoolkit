@@ -45,32 +45,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Number of decimals
          */
-        public static final short coordinate_accuracy = 0;
+        public static final short coordinate_accuracy = 1;
 
         /**
          * Number of decimals (default 7).
          */
-        public static final short coordinate_accuracy_remarks = 1;
+        public static final short coordinate_accuracy_remarks = 2;
 
         /**
          * GeoJSON data file (.json)
          */
-        public static final short datastoreDescription = 2;
+        public static final short datastoreDescription = 3;
 
         /**
          * multiple GeoJSON data files (.json)
          */
-        public static final short datastoreFolderDescription = 3;
+        public static final short datastoreFolderDescription = 4;
 
         /**
          * GeoJSON (folder)
          */
-        public static final short datastoreFolderTitle = 4;
+        public static final short datastoreFolderTitle = 5;
 
         /**
          * GeoJSON
          */
-        public static final short datastoreTitle = 5;
+        public static final short datastoreTitle = 6;
     }
 
     /**

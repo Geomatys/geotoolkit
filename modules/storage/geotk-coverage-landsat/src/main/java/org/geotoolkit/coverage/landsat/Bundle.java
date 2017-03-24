@@ -50,7 +50,7 @@ public class Bundle extends IndexedResourceBundle {
         /**
          * LandSat 8
          */
-        public static final short title = 0;
+        public static final short title = 2;
     }
 
     /**

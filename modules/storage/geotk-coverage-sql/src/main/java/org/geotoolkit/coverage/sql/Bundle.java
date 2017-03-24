@@ -45,12 +45,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * CoverageSQL
          */
-        public static final short coverageSQLDescription = 0;
+        public static final short coverageSQLDescription = 1;
 
         /**
          * CoverageSQL
          */
-        public static final short coverageSQLTitle = 1;
+        public static final short coverageSQLTitle = 2;
     }
 
     /**

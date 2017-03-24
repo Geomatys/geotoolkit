@@ -48,12 +48,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Sensor Observation Service
          */
-        public static final short serverDescription = 0;
+        public static final short serverDescription = 1;
 
         /**
          * OGC.SOS
          */
-        public static final short serverTitle = 1;
+        public static final short serverTitle = 2;
     }
 
     /**

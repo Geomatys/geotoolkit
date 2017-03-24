@@ -41,7 +41,6 @@ public final class Bundle extends IndexedResourceBundle {
     public static final class Keys {
         private Keys() {
         }
-
     }
 
     /**

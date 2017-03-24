@@ -45,32 +45,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Source type
          */
-        public static final short paramIdentifierAlias = 0;
+        public static final short paramIdentifierAlias = 1;
 
         /**
          * Source type identifier
          */
-        public static final short paramIdentifierRemarks = 1;
+        public static final short paramIdentifierRemarks = 2;
 
         /**
          * Namespace
          */
-        public static final short paramNamespaceAlias = 4;
+        public static final short paramNamespaceAlias = 3;
 
         /**
          * Namespace
          */
-        public static final short paramNamespaceRemarks = 5;
+        public static final short paramNamespaceRemarks = 4;
 
         /**
          * URL
          */
-        public static final short paramURLAlias = 2;
+        public static final short paramURLAlias = 5;
 
         /**
          * URL toward datas
          */
-        public static final short paramURLRemarks = 3;
+        public static final short paramURLRemarks = 6;
     }
 
     /**

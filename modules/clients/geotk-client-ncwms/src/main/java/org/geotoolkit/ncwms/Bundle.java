@@ -48,12 +48,12 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Extension, NetCDF Web Map Server
          */
-        public static final short serverDescription = 0;
+        public static final short serverDescription = 1;
 
         /**
          * OGC.WMS : ncWMS
          */
-        public static final short serverTitle = 1;
+        public static final short serverTitle = 2;
     }
 
     /**

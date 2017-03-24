@@ -45,32 +45,32 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Comma-Separated Values format (.csv)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * Comma-Separated Values format (.csv)
          */
-        public static final short datastoreFolderDescription = 1;
+        public static final short datastoreFolderDescription = 2;
 
         /**
          * CSV (folder)
          */
-        public static final short datastoreFolderTitle = 2;
+        public static final short datastoreFolderTitle = 3;
 
         /**
          * CSV
          */
-        public static final short datastoreTitle = 3;
+        public static final short datastoreTitle = 4;
 
         /**
          * Separator
          */
-        public static final short paramSeparatorAlias = 4;
+        public static final short paramSeparatorAlias = 5;
 
         /**
          * Value separator
          */
-        public static final short paramSeparatorRemarks = 5;
+        public static final short paramSeparatorRemarks = 6;
     }
 
     /**

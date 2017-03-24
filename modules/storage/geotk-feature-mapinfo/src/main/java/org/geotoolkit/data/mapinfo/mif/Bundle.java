@@ -45,22 +45,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * vector data file (.mif)
          */
-        public static final short datastoreDescription = 0;
+        public static final short datastoreDescription = 1;
 
         /**
          * multiple vector data files (.mif)
          */
-        public static final short datastoreFolderDescription = 1;
+        public static final short datastoreFolderDescription = 2;
 
         /**
          * MapInfo exchange File Format (folder)
          */
-        public static final short datastoreFolderTitle = 2;
+        public static final short datastoreFolderTitle = 3;
 
         /**
          * MapInfo exchange File Format
          */
-        public static final short datastoreTitle = 3;
+        public static final short datastoreTitle = 4;
     }
 
     /**
