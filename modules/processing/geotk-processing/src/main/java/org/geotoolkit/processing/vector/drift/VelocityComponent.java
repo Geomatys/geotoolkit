@@ -1,13 +1,6 @@
 package org.geotoolkit.processing.vector.drift;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.opengis.referencing.operation.MathTransform;
@@ -66,12 +59,6 @@ abstract class VelocityComponent {
      */
     static final class HYCOM extends VelocityComponent {
         /**
-         * Temporary file where to cache the {@link #coordToGrid} transform for next execution.
-         * Set to {@code null} for disabling the cache.
-         */
-        private static final File CACHE = new File("/Users/desruisseaux/Data/NetCDF/NOAA/coordToGrid.tmp");
-
-        /**
          * The variables to read.
          */
         private static final String[] VARIABLES = {
@@ -119,7 +106,7 @@ abstract class VelocityComponent {
                 width  = share.width;
                 height = share.height;
                 coordToGrid = share.coordToGrid;
-            } else if (CACHE == null || !CACHE.exists()) {
+            } else {
                 final CoordinateSystem cs = v.getCoordinateSystems().get(0);
                 final ArrayFloat.D2 lonValues = (ArrayFloat.D2) cs.getLonAxis().read();
                 final ArrayFloat.D2 latValues = (ArrayFloat.D2) cs.getLatAxis().read();
@@ -139,17 +126,6 @@ abstract class VelocityComponent {
                     }
                 }
                 coordToGrid = builder.create(null).inverse();
-                if (CACHE != null) {
-                    try (final ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(CACHE)))) {
-                        out.writeInt(width);
-                        out.writeInt(height);
-                        out.writeObject(coordToGrid);
-                    }
-                }
-            } else try (final ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(CACHE)))) {
-                width  = in.readInt();
-                height = in.readInt();
-                coordToGrid = (MathTransform) in.readObject();
             }
             values = (ArrayFloat.D4) v.read();
             fillValue = v.findAttribute("_FillValue").getNumericValue().floatValue();
