@@ -82,6 +82,10 @@
             <artifactId>groovy-all</artifactId>
         </dependency>
         <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-csw</artifactId>
             <version>${project.version}</version>
