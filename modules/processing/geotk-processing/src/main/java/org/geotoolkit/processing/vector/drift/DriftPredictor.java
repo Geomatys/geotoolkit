@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.parameter.Parameters;
@@ -28,7 +29,6 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  *
@@ -63,12 +63,12 @@ public class DriftPredictor extends AbstractProcess {
      * Time elapsed between two steps, in seconds. Hard-coded for now but could become a parameter
      * in a future version (we do not use the upper-case convention for that reason).
      */
-    private static final double timeStep = 24*60*60;
+    private static final long timeStep = 3*60*60;
 
     /**
      * East-West (u) and North-South (v) component of the velocity vectors, in metres per second.
      */
-    private VelocityComponent uComponents, vComponents;
+    private DataSource current;
 
     public static final class Weight {
         /**
@@ -118,6 +118,16 @@ public class DriftPredictor extends AbstractProcess {
      * Index of an element in a tuple of length {@value #TUPLE_LENGTH}.
      */
     private static final int WEIGHT_OFFSET = 2;
+
+    /**
+     * Current time.
+     */
+    private Instant currentTime;
+
+    /**
+     * When to stop the simulation (inclusive).
+     */
+    private Instant endTime;
 
     /**
      * List of possible locations as (x,y) tuples in metres followed by their weight.
@@ -177,9 +187,8 @@ public class DriftPredictor extends AbstractProcess {
     protected void execute() throws ProcessException {
         final Parameters input = Parameters.castOrWrap(inputParameters);
         final DirectPosition startPoint = geographic(input.getValue(DriftPredictionDescriptor.START_POINT));
-        final long startTimestamp = input.getValue(DriftPredictionDescriptor.START_TIMESTAMP);
-        final long endTimestamp = input.getValue(DriftPredictionDescriptor.END_TIMESTAMP);
-
+        currentTime  = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.START_TIMESTAMP));
+        endTime      = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.END_TIMESTAMP));
         threshold    = 0.005;
         modelCRS     = CommonCRS.WGS84.universal(startPoint.getOrdinate(1), startPoint.getOrdinate(0));
         positions    = new float[10_000_000 * TUPLE_LENGTH];
@@ -201,24 +210,41 @@ public class DriftPredictor extends AbstractProcess {
         coordToGrid.scale(1./gridResolution, 1./gridResolution);
         coordToGrid.translate(-positions[0], -positions[1]);
 
+        current = new DataSource.Archive(null);     // TODO: specift directory
+        try {
+            while (!currentTime.isAfter(endTime)) {
+                if (!advance()) {
+                    throw new ProcessException("No data at " + currentTime, this);
+                }
+            }
+        } catch (Exception e) {
+            throw new ProcessException(null, this, e);
+        }
         // TODO : Put the processing
 
         final Path outputPath = null; // TODO : replace with real result
         final CoverageReference result = new DefaultCoverageReference(outputPath, Names.createLocalName(null, ":", "drift"));
-        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(this);
-    }
-
-    private void loadRTOS(final String file) throws Exception {
-        final NetcdfDataset nf = NetcdfDataset.openDataset(file);
-        uComponents = new VelocityComponent.HYCOM(nf, 0, null);
-        vComponents = new VelocityComponent.HYCOM(nf, 1, (VelocityComponent.HYCOM) uComponents);
-        nf.close();
+        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(result);
     }
 
     /**
      * Moves all drift positions by one {@link #timeStep}.
+     *
+     * @return {@code true} on success, or {@code false} if there is no data for this step.
      */
-    private void advance() throws TransformException, ProcessException {
+    private boolean advance() throws Exception {
+        if (!current.load(currentTime)) {
+            if (current instanceof DataSource.RTOFS) {
+                return false;
+            }
+            current = new DataSource.RTOFS(current.directory);
+            if (!current.load(currentTime)) {
+                return false;
+            }
+        }
+        /*
+         * At this point data have been loaded. Start computation.
+         */
         final int numLastRun = numOrdinates;
         int newPosIndex = numLastRun;
         numOrdinates = 0;
@@ -229,8 +255,8 @@ public class DriftPredictor extends AbstractProcess {
             final double northing = tmp.y = positions[posIndex++];
             final double weight           = positions[posIndex++];
             modelToUV.transform(tmp, tmp);
-            final double u = uComponents.valueAt(tmp.y, tmp.x);
-            final double v = vComponents.valueAt(tmp.y, tmp.x);
+            final double u = current.u.valueAt(tmp.y, tmp.x);
+            final double v = current.v.valueAt(tmp.y, tmp.x);
             final double uWind = u * (1 + Math.random());           // TODO
             final double vWind = v * (1 + Math.random());
             if (!Double.isNaN(u) && !Double.isNaN(v)) {
@@ -347,6 +373,8 @@ public class DriftPredictor extends AbstractProcess {
             newPosIndex -= (numLastRun - numOrdinates);
         }
         numOrdinates = newPosIndex;
+        currentTime = currentTime.plusSeconds(timeStep);
+        return true;
     }
 
     private void snapshot(final String filename) throws IOException {
