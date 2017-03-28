@@ -582,12 +582,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 resultImage = coverage.view(ViewType.PACKED).getRenderedImage();//-- same as rendered view into implementation
             }
 
-            //-- if RGB force ARGB to delete black border
-            final int[] componentSize = resultImage.getColorModel().getComponentSize();
-            if (componentSize.length == 3 && componentSize[0] == 8) {
-                resultImage = GO2Utilities.forceAlpha(resultImage);
-                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage);
-            }
+//            //-- if RGB force ARGB to delete black border
+//            final int[] componentSize = resultImage.getColorModel().getComponentSize();
+//            if (componentSize.length == 3 && componentSize[0] == 8) {
+//                resultImage = GO2Utilities.forceAlpha(resultImage);
+//                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage);
+//            }
         }
 
         assert resultImage != null : "applyColorMapStyle : image can't be null.";

@@ -44,7 +44,10 @@ public class BandTestTiffImageWriter extends TestTiffImageWriter {
     protected ImageTypeSpecifier buildImageTypeSpecifier(SampleType sampleType, int numBand,
                                                          PhotometricInterpretation photometricInterpretation)
             throws UnsupportedImageFormatException {
-        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand, photometricInterpretation, PlanarConfiguration.BANDED, buildColorMapArray(sampleType));
+        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand,
+                                                    photometricInterpretation, PlanarConfiguration.BANDED,
+                                                    false, false,
+                                                    buildColorMapArray(sampleType));
     }
 
     /**
