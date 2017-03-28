@@ -2,11 +2,21 @@ package org.geotoolkit.processing.vector.drift;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.Instant;
-import ucar.nc2.Variable;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import ucar.nc2.dataset.NetcdfDataset;
 
+
+/**
+ * Loads data of some specific format.
+ * Sources:
+ * <ul>
+ *   <li>Current:    <a href="ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.1/2015">HYCOM FTP access</a></li>
+ *   <li>Wind speed: <a href="ftp://podaac-ftp.jpl.nasa.gov/OceanWinds/windsat/L3/rss/v7/2015">NOAA FTP access</a></li>
+ * </ul>
+ */
 abstract class DataSource {
     /**
      * Where to search for the data files.
@@ -34,54 +44,25 @@ abstract class DataSource {
     abstract boolean load(Instant requested) throws Exception;
 
     /**
-     * Open files used for archives. They are the preferred data to use before to fallback on predictions.
+     * Open files for current data.
      */
-    static final class Archive extends DataSource {
+    static final class HYCOM extends DataSource {
         /**
-         * Creates a new data source.
-         *
-         * @param path  where to search for the data files.
+         * Pattern of RTOFS filename with one parameter, which is the day.
          */
-        Archive(final Path directory) {
-            super(directory);
-        }
+        private static final String FILENAME_PATTERN = "archv.2015_%03d_00_3z%c.nc";
 
         /**
-         * Loads the archive file for the given time.
-         * If no data is available, return {@code false}.
+         * The current day. Used for checking if we need to load new data.
          */
-        @Override
-        boolean load(final Instant requested) throws Exception {
-            return false;    // TODO
-        }
-    }
-
-    /**
-     * Open files used for predictions. Those files are used as a fallback when no archive file
-     * is available for the given time.
-     */
-    static final class RTOFS extends DataSource {
-        /**
-         * The time between two RTOFS files, in hours.
-         */
-        private static final int TIME_STEP = 3;
-
-        /**
-         * Pattern of RTOFS filename with one parameter, which is the hour as a multiple of {@link #TIME_STEP}.
-         */
-        private static final String FILENAME_PATTERN = "rtofs_glo_2ds_n%03d_" + TIME_STEP + "hrly_prog.nc";
-
-        /**
-         * Day 0 in RTOFS file, as documented in the MT variable.
-         */
-        private static final Instant EPOCH = Instant.parse("1900-12-31T00:00:00Z");
+        private int currentDay;
 
         /**
          * Creates a new data source.
          *
          * @param path  where to search for the data files.
          */
-        RTOFS(final Path directory) {
+        HYCOM(final Path directory) {
             super(directory);
         }
 
@@ -91,30 +72,28 @@ abstract class DataSource {
          */
         @Override
         boolean load(final Instant requested) throws Exception {
-            int hour = (int) ((requested.getEpochSecond() / (60*60)) % 24);
-            hour -= hour % TIME_STEP;
-            do {
-                final Path file = directory.resolve(String.format(FILENAME_PATTERN, hour));
-                if (Files.exists(file)) {
-                    final NetcdfDataset nf = NetcdfDataset.openDataset(file.toString());
-                    try {
-                        final Variable mt = nf.findVariable("MT");
-                        if (mt != null) {
-                            final Instant actual = EPOCH.plusSeconds(Math.round(mt.read().getDouble(0) * (24*60*60)));
-                            final Duration delay = Duration.between(actual, requested);
-                            if (Math.abs(delay.toHours()) < TIME_STEP) {
-                                u = new VelocityComponent.HYCOM(nf, 0, (VelocityComponent.HYCOM) u);
-                                v = new VelocityComponent.HYCOM(nf, 1, (VelocityComponent.HYCOM) u);
-                                return true;
-                            }
-                        }
-                    } finally {
-                        nf.close();
-                    }
+            final int day = OffsetDateTime.ofInstant(requested, ZoneOffset.UTC).get(ChronoField.DAY_OF_YEAR);
+            if (day != currentDay) {
+                currentDay = day;
+                final Path uFile = directory.resolve(String.format(FILENAME_PATTERN, day, 'u'));
+                final Path vFile = directory.resolve(String.format(FILENAME_PATTERN, day, 'v'));
+                if (!Files.exists(uFile) || !Files.exists(vFile)) {
+                    return false;
                 }
-                hour += 24;
-            } while (false);        // TODO: stop condition here.
-            return false;
+                NetcdfDataset nc = NetcdfDataset.openDataset(uFile.toString());
+                try {
+                    u = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u);
+                } finally {
+                    nc.close();
+                }
+                nc = NetcdfDataset.openDataset(vFile.toString());
+                try {
+                    v = new VelocityComponent.HYCOM(nc, "v", (VelocityComponent.HYCOM) u);  // Really 'u', not 'v'.
+                } finally {
+                    nc.close();
+                }
+            }
+            return true;
         }
     }
 }

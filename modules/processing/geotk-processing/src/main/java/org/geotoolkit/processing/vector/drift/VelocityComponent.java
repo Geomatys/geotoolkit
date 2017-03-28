@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 import ucar.ma2.ArrayFloat;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -59,14 +58,6 @@ abstract class VelocityComponent {
      */
     static final class HYCOM extends VelocityComponent {
         /**
-         * The variables to read.
-         */
-        private static final String[] VARIABLES = {
-            "u_velocity",
-            "v_velocity"
-        };
-
-        /**
          * U or V component as an array of dimension (MT, Layer, Y, X).
          * The length of MT and Layer dimensions are 1.
          */
@@ -93,15 +84,13 @@ abstract class VelocityComponent {
         private final double[] position;
 
         /**
-         * Creates a new speed component for the given dimension.
+         * Creates a new speed component for the given variable.
          *
-         * @param ds         the dataset to read.
-         * @param dimension  0 for U or 1 for V.
+         * @param  ds            the dataset to read.
+         * @param  variableName  name of the variable to read in the dataset.
          */
-        HYCOM(final NetcdfDataset ds, final int dimension, final VelocityComponent.HYCOM share)
-                throws IOException, FactoryException, TransformException, ClassNotFoundException
-        {
-            final VariableDS v = (VariableDS) ds.findVariable(VARIABLES[dimension]);
+        HYCOM(final NetcdfDataset ds, final String variableName, final HYCOM share) throws Exception {
+            final VariableDS v = (VariableDS) ds.findVariable(variableName);
             if (share != null) {
                 width  = share.width;
                 height = share.height;
@@ -127,7 +116,7 @@ abstract class VelocityComponent {
                 }
                 coordToGrid = builder.create(null).inverse();
             }
-            values = (ArrayFloat.D4) v.read();
+            values = (ArrayFloat.D4) v.read(new int[4], new int[] {1, 1, height, width});
             fillValue = v.findAttribute("_FillValue").getNumericValue().floatValue();
             position = new double[2];
         }

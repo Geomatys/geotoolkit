@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -48,6 +47,11 @@ public class DriftPredictor extends AbstractProcess {
     private static final boolean LOG_SCALE = false;
 
     /**
+     * Data directory, vector weights and other information needed by the process.
+     */
+    private Configuration configuration;
+
+    /**
      * Output grid size. Hard-coded for now but could become a parameter in a future version
      * (we do not use the upper-case convention for that reason).
      */
@@ -63,7 +67,7 @@ public class DriftPredictor extends AbstractProcess {
      * Time elapsed between two steps, in seconds. Hard-coded for now but could become a parameter
      * in a future version (we do not use the upper-case convention for that reason).
      */
-    private static final long timeStep = 3*60*60;
+    private static final long timeStep = 6*60*60;
 
     /**
      * East-West (u) and North-South (v) component of the velocity vectors, in metres per second.
@@ -97,16 +101,11 @@ public class DriftPredictor extends AbstractProcess {
         }
     }
 
-    private final Weight[] weights = new Weight[] {
-        new Weight(1, 0.2, 1),
-        new Weight(1, 0.1, 0.5),
-        new Weight(1, 0.3, 0.5)
-    };
-
     /**
-     * Stop tracking position having a lower probability than this threshold.
+     * Stop tracking position having a probability equals or lower than this threshold.
+     * This is initially zero, then incremented as the number of trajectories increase.
      */
-    private double threshold;
+    private double probabilityThreshold;
 
     /**
      * Length of each tuple in the {@link #positions} array.
@@ -189,9 +188,8 @@ public class DriftPredictor extends AbstractProcess {
         final DirectPosition startPoint = geographic(input.getValue(DriftPredictionDescriptor.START_POINT));
         currentTime  = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.START_TIMESTAMP));
         endTime      = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.END_TIMESTAMP));
-        threshold    = 0.005;
         modelCRS     = CommonCRS.WGS84.universal(startPoint.getOrdinate(1), startPoint.getOrdinate(0));
-        positions    = new float[10_000_000 * TUPLE_LENGTH];
+        positions    = new float[configuration.maximumTrajectoryCount * TUPLE_LENGTH];
         positions[0] = (float) startPoint.getOrdinate(1);
         positions[1] = (float) startPoint.getOrdinate(0);
         positions[WEIGHT_OFFSET] = 1;
@@ -210,7 +208,7 @@ public class DriftPredictor extends AbstractProcess {
         coordToGrid.scale(1./gridResolution, 1./gridResolution);
         coordToGrid.translate(-positions[0], -positions[1]);
 
-        current = new DataSource.Archive(null);     // TODO: specift directory
+        current = new DataSource.HYCOM(configuration.directory.resolve("HYCOM"));
         try {
             while (!currentTime.isAfter(endTime)) {
                 if (!advance()) {
@@ -234,13 +232,7 @@ public class DriftPredictor extends AbstractProcess {
      */
     private boolean advance() throws Exception {
         if (!current.load(currentTime)) {
-            if (current instanceof DataSource.RTOFS) {
-                return false;
-            }
-            current = new DataSource.RTOFS(current.directory);
-            if (!current.load(currentTime)) {
-                return false;
-            }
+            return false;
         }
         /*
          * At this point data have been loaded. Start computation.
@@ -270,9 +262,9 @@ public class DriftPredictor extends AbstractProcess {
                  * At this point (easting, northing) is the projected coordinates in metres and (xStart, yStart)
                  * is the same position in grid coordinates. Now compute different possible drift speeds.
                  */
-                for (final Weight w : weights) {
+                for (final Weight w : configuration.weights) {
                     final double pw = weight * w.probability;
-                    if (pw < threshold) {
+                    if (pw <= probabilityThreshold) {
                         continue;
                     }
                     tmp.x = easting  + (u * w.current + uWind * w.wind) * timeStep;
@@ -282,9 +274,27 @@ public class DriftPredictor extends AbstractProcess {
                         positions[numOrdinates++] = (float) tmp.y;
                         positions[numOrdinates++] = (float) pw;
                     } else {
-                        if (newPosIndex + TUPLE_LENGTH >= positions.length) {
-                            throw new TooManyPositionsException(String.format("Reached the limit of %d positions to track.",
-                                    positions.length / TUPLE_LENGTH), this);
+                        if (newPosIndex >= positions.length) {
+                            double tr = Double.MAX_VALUE;
+                            for (int j=numLastRun + WEIGHT_OFFSET; j < newPosIndex; j += TUPLE_LENGTH) {
+                                final double p = positions[j];
+                                if (p < tr) tr = p;
+                            }
+                            for (int j=newPosIndex + (WEIGHT_OFFSET - TUPLE_LENGTH); j >= numLastRun;) {
+                                if (positions[j] == tr) {
+                                    final int upper = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
+                                    while ((j -= TUPLE_LENGTH) >= numLastRun) {
+                                        if (positions[j] != tr) break;
+                                    }
+                                    final int lower = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
+                                    final int length = upper - lower;
+                                    newPosIndex -= length;
+                                    System.arraycopy(positions, lower, positions, upper, length);
+                                } else {
+                                    j -= TUPLE_LENGTH;
+                                }
+                            }
+                            probabilityThreshold = tr;
                         }
                         positions[newPosIndex++] = (float) tmp.x;
                         positions[newPosIndex++] = (float) tmp.y;
@@ -412,6 +422,6 @@ public class DriftPredictor extends AbstractProcess {
                 }
             }
         }
-        ImageIO.write(img, "png", new File(filename));
+        ImageIO.write(img, "png", configuration.directory.resolve(filename).toFile());
     }
 }
