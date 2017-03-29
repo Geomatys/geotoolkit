@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.parameter.Parameters;
@@ -74,7 +76,12 @@ public class DriftPredictor extends AbstractProcess {
      */
     private DataSource current;
 
-    public static final class Weight {
+    /**
+     * Speed and direction component of the wind speed, in metres per second.
+     */
+    private DataSource wind;
+
+    public static final class Weight implements Comparable<Weight> {
         /**
          * Multiplication factor to apply on oceanic current and to wind speed when computing the drift speed.
          * Note that the {@code current} + {@code wind} sum does not need to be 1.
@@ -98,6 +105,16 @@ public class DriftPredictor extends AbstractProcess {
             this.current     = current;
             this.wind        = wind;
             this.probability = probability;
+        }
+
+        /**
+         * Sorts largest weights first.
+         */
+        @Override
+        public int compareTo(final Weight o) {
+            if (probability < o.probability) return +1;
+            if (probability > o.probability) return -1;
+            return 0;
         }
     }
 
@@ -209,6 +226,7 @@ public class DriftPredictor extends AbstractProcess {
         coordToGrid.translate(-positions[0], -positions[1]);
 
         current = new DataSource.HYCOM(configuration.directory.resolve("HYCOM"));
+        wind = new DataSource.WindSat(configuration.directory.resolve("WindSat"));
         try {
             while (!currentTime.isAfter(endTime)) {
                 if (!advance()) {
@@ -231,13 +249,15 @@ public class DriftPredictor extends AbstractProcess {
      * @return {@code true} on success, or {@code false} if there is no data for this step.
      */
     private boolean advance() throws Exception {
-        if (!current.load(currentTime)) {
+        final OffsetDateTime date = OffsetDateTime.ofInstant(currentTime, ZoneOffset.UTC);
+        if (!current.load(date) || !wind.load(date)) {
             return false;
         }
         /*
          * At this point data have been loaded. Start computation.
          */
-        final int numLastRun = numOrdinates;
+        double storageThreshold = probabilityThreshold;
+        int numLastRun = numOrdinates;
         int newPosIndex = numLastRun;
         numOrdinates = 0;
         int numOnGrid = 0;
@@ -247,128 +267,139 @@ public class DriftPredictor extends AbstractProcess {
             final double northing = tmp.y = positions[posIndex++];
             final double weight           = positions[posIndex++];
             modelToUV.transform(tmp, tmp);
-            final double u = current.u.valueAt(tmp.y, tmp.x);
-            final double v = current.v.valueAt(tmp.y, tmp.x);
-            final double uWind = u * (1 + Math.random());           // TODO
-            final double vWind = v * (1 + Math.random());
-            if (!Double.isNaN(u) && !Double.isNaN(v)) {
-                tmp.setLocation(easting, northing);
-                coordToGrid.transform(tmp, tmp);
-                final double xStart = tmp.x;
-                final double yStart = tmp.y;
-                double Δxi = Double.NaN;
-                double Δyi = Double.NaN;
-                /*
-                 * At this point (easting, northing) is the projected coordinates in metres and (xStart, yStart)
-                 * is the same position in grid coordinates. Now compute different possible drift speeds.
-                 */
-                for (final Weight w : configuration.weights) {
-                    final double pw = weight * w.probability;
-                    if (pw <= probabilityThreshold) {
-                        continue;
-                    }
-                    tmp.x = easting  + (u * w.current + uWind * w.wind) * timeStep;
-                    tmp.y = northing + (v * w.current + vWind * w.wind) * timeStep;
+            double u = current.u.valueAt(tmp.y, tmp.x);
+            double v = current.v.valueAt(tmp.y, tmp.x);
+            if (Double.isNaN(u)) u = (Math.random() - 0.5) / 100;      // Small random noise (TODO: do something better).
+            if (Double.isNaN(v)) v = (Math.random() - 0.5) / 100;
+            final double windSpeed = wind.u.valueAt(tmp.y, tmp.x);
+            final double windDir = -Math.toRadians(wind.v.valueAt(tmp.y, tmp.x));
+            double uWind = windSpeed * Math.cos(windDir);
+            double vWind = windSpeed * Math.sin(windDir);
+            if (Double.isNaN(uWind)) uWind = Math.random() - 0.5;      // Small random noise (TODO: do something better).
+            if (Double.isNaN(vWind)) vWind = Math.random() - 0.5;
+            tmp.setLocation(easting, northing);
+            coordToGrid.transform(tmp, tmp);
+            final double xStart = tmp.x;
+            final double yStart = tmp.y;
+            double Δxi = Double.NaN;
+            double Δyi = Double.NaN;
+            /*
+             * At this point (easting, northing) is the projected coordinates in metres and (xStart, yStart)
+             * is the same position in grid coordinates. Now compute different possible drift speeds.
+             */
+            for (final Weight w : configuration.weights) {
+                final double pw = weight * w.probability;
+                if (pw <= probabilityThreshold) {
+                    continue;
+                }
+                tmp.x = easting  + (u * w.current + uWind * w.wind) * timeStep;
+                tmp.y = northing + (v * w.current + vWind * w.wind) * timeStep;
+                if (pw > storageThreshold) {
                     if (numOrdinates + TUPLE_LENGTH <= posIndex) {
                         positions[numOrdinates++] = (float) tmp.x;
                         positions[numOrdinates++] = (float) tmp.y;
                         positions[numOrdinates++] = (float) pw;
                     } else {
+                        /*
+                         * New coordinates. If there is not enough room, forget all trajectories having the lowest
+                         * probability and set the threshold to that probability, so we do not track them anymore.
+                         * This operation is not executed very often, so its cost should not be very high.
+                         */
                         if (newPosIndex >= positions.length) {
-                            double tr = Double.MAX_VALUE;
+                            float threshold = Float.MAX_VALUE;
+                            for (int j=WEIGHT_OFFSET; j < numOrdinates; j += TUPLE_LENGTH) {
+                                final float p = positions[j];
+                                if (p < threshold) threshold = p;
+                            }
                             for (int j=numLastRun + WEIGHT_OFFSET; j < newPosIndex; j += TUPLE_LENGTH) {
-                                final double p = positions[j];
-                                if (p < tr) tr = p;
+                                final float p = positions[j];
+                                if (p < threshold) threshold = p;
                             }
-                            for (int j=newPosIndex + (WEIGHT_OFFSET - TUPLE_LENGTH); j >= numLastRun;) {
-                                if (positions[j] == tr) {
-                                    final int upper = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
-                                    while ((j -= TUPLE_LENGTH) >= numLastRun) {
-                                        if (positions[j] != tr) break;
-                                    }
-                                    final int lower = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
-                                    final int length = upper - lower;
-                                    newPosIndex -= length;
-                                    System.arraycopy(positions, lower, positions, upper, length);
-                                } else {
-                                    j -= TUPLE_LENGTH;
-                                }
+                            newPosIndex = discardLowProbability(numLastRun, newPosIndex, threshold);
+                            final int n = discardLowProbability(0, numOrdinates, threshold);
+                            final int d = numOrdinates - n;
+                            if (d != 0) {
+                                System.arraycopy(positions, numOrdinates, positions, n, newPosIndex - numOrdinates);
+                                numOrdinates = n;
+                                numLastRun  -= d;
+                                newPosIndex -= d;
                             }
-                            probabilityThreshold = tr;
+                            storageThreshold = threshold;
                         }
                         positions[newPosIndex++] = (float) tmp.x;
                         positions[newPosIndex++] = (float) tmp.y;
                         positions[newPosIndex++] = (float) pw;
                     }
-                    coordToGrid.transform(tmp, tmp);
-                    final double x1 = tmp.x;
-                    final double y1 = tmp.y;
-                    final double length = Math.hypot(x1 - xStart, y1 - yStart);
-                    double xi = xStart;
-                    double yi = yStart;
-                    boolean isValid;        // is (xi,yi) on (x₀,y₀)-(x₁,y₁) line and inside (x₀, y₀, x₀+1, y₀+1) cell?
-                    do {
-                        int gx = (int) xi;
-                        int gy = (int) yi;
-                        final double x0 = xi;
-                        final double y0 = yi;
-                        final double Δx = x1 - x0;
-                        final double Δy = y1 - y0;
-                        isValid = (Δx > 0) ?  ((xi = Math.floor(x0) + 1) <  x1)
-                                : (Δx < 0) && ((xi = Math.ceil (x0) - 1) >= x1);
-                        if (isValid) {
-                            Δxi = xi - x0;
-                            Δyi = Δy * (Δxi / Δx);
-                            yi  = Δyi + y0;
-                            final double f = Math.floor(y0);
-                            final double e = yi - f;
-                            if (f != y0) {
-                                isValid = (e >= 0 && e <= 1);
-                            } else {
-                                isValid = (e >= -1 && e <= 1);
-                                if (isValid && e < 0) gy--;
-                            }
-                            if (isValid && Δxi == -1) gx--;
+                }
+                coordToGrid.transform(tmp, tmp);
+                final double x1 = tmp.x;
+                final double y1 = tmp.y;
+                final double length = Math.hypot(x1 - xStart, y1 - yStart);
+                double xi = xStart;
+                double yi = yStart;
+                boolean isValid;        // is (xi,yi) on (x₀,y₀)-(x₁,y₁) line and inside (x₀, y₀, x₀+1, y₀+1) cell?
+                do {
+                    int gx = (int) xi;
+                    int gy = (int) yi;
+                    final double x0 = xi;
+                    final double y0 = yi;
+                    final double Δx = x1 - x0;
+                    final double Δy = y1 - y0;
+                    isValid = (Δx > 0) ?  ((xi = Math.floor(x0) + 1) <  x1)
+                            : (Δx < 0) && ((xi = Math.ceil (x0) - 1) >= x1);
+                    if (isValid) {
+                        Δxi = xi - x0;
+                        Δyi = Δy * (Δxi / Δx);
+                        yi  = Δyi + y0;
+                        final double f = Math.floor(y0);
+                        final double e = yi - f;
+                        if (f != y0) {
+                            isValid = (e >= 0 && e <= 1);
+                        } else {
+                            isValid = (e >= -1 && e <= 1);
+                            if (isValid && e < 0) gy--;
                         }
-                        if (!isValid) {     // if we do not intersect vertical grid line, maybe we intersect horizontal one.
-                            isValid = (Δy > 0) ?  ((yi = Math.floor(y0) + 1) <  y1)
-                                    : (Δy < 0) && ((yi = Math.ceil (y0) - 1) >= y1);
-                            if (isValid) {
-                                Δyi = yi - y0;
-                                Δxi = Δx * (Δyi / Δy);
-                                xi  = Δxi + x0;
-                                final double f = Math.floor(x0);
-                                final double e = xi - f;
-                                if (f != x0) {
-                                    assert (e >= 0 && e <= 1) : e;
-                                } else {
-                                    assert (e >= -1 && e <= 1) : e;
-                                    if (e < 0) gx--;
-                                }
-                                if (Δyi == -1) gy--;
-                            }
-                        }
-                        if (!isValid) {     // if no intersection with horizontal or vertical line, line is fully inside cell.
-                            Δxi = Δx;
-                            Δyi = Δy;
-                            gx = (int) x1;
-                            gy = (int) y1;
-                        }
-                        final double p = ((length != 0) ? Math.hypot(Δxi, Δyi) / length : 1) * pw;
-                        if (OUT != null) {
-                            OUT.printf("x=%3d y=%3d  Δx=%7.3f  Δy=%7.3f  p=%4.3f%n", gx, gy, Δxi, Δyi, p);
-                        }
-                        if (gx >= 0 && gx < numColumns && gy >= 0 && gy < numRows) {
-                            probabilityChanges[((numRows - 1) - gy) * numColumns + gx] += p;
-                            numOnGrid++;
-                        }
-                    } while (isValid);
-                    if (OUT != null) {
-                        OUT.println();
+                        if (isValid && Δxi == -1) gx--;
                     }
+                    if (!isValid) {     // if we do not intersect vertical grid line, maybe we intersect horizontal one.
+                        isValid = (Δy > 0) ?  ((yi = Math.floor(y0) + 1) <  y1)
+                                : (Δy < 0) && ((yi = Math.ceil (y0) - 1) >= y1);
+                        if (isValid) {
+                            Δyi = yi - y0;
+                            Δxi = Δx * (Δyi / Δy);
+                            xi  = Δxi + x0;
+                            final double f = Math.floor(x0);
+                            final double e = xi - f;
+                            if (f != x0) {
+                                assert (e >= 0 && e <= 1) : e;
+                            } else {
+                                assert (e >= -1 && e <= 1) : e;
+                                if (e < 0) gx--;
+                            }
+                            if (Δyi == -1) gy--;
+                        }
+                    }
+                    if (!isValid) {     // if no intersection with horizontal or vertical line, line is fully inside cell.
+                        Δxi = Δx;
+                        Δyi = Δy;
+                        gx = (int) x1;
+                        gy = (int) y1;
+                    }
+                    final double p = ((length != 0) ? Math.hypot(Δxi, Δyi) / length : 1) * pw;
+                    if (OUT != null) {
+                        OUT.printf("x=%3d y=%3d  Δx=%7.3f  Δy=%7.3f  p=%4.3f%n", gx, gy, Δxi, Δyi, p);
+                    }
+                    if (gx >= 0 && gx < numColumns && gy >= 0 && gy < numRows) {
+                        probabilityChanges[((numRows - 1) - gy) * numColumns + gx] += p;
+                        numOnGrid++;
+                    }
+                } while (isValid);
+                if (OUT != null) {
+                    OUT.println();
                 }
             }
         }
+        probabilityThreshold = storageThreshold;
         for (int i=0; i < probabilities.length; i++) {
             final double change = probabilityChanges[i] / numOnGrid;
             probabilities[i] += change;
@@ -385,6 +416,23 @@ public class DriftPredictor extends AbstractProcess {
         numOrdinates = newPosIndex;
         currentTime = currentTime.plusSeconds(timeStep);
         return true;
+    }
+
+    private int discardLowProbability(final int fromIndex, int toIndex, final float probability) {
+        for (int j=toIndex + (WEIGHT_OFFSET - TUPLE_LENGTH); j >= fromIndex;) {
+            if (positions[j] <= probability) {
+                final int upper = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
+                while ((j -= TUPLE_LENGTH) >= fromIndex) {
+                    if (positions[j] > probability) break;
+                }
+                final int lower = j + (TUPLE_LENGTH - WEIGHT_OFFSET);
+                System.arraycopy(positions, upper, positions, lower, toIndex - upper);
+                toIndex -= (upper - lower);
+            } else {
+                j -= TUPLE_LENGTH;
+            }
+        }
+        return toIndex;
     }
 
     private void snapshot(final String filename) throws IOException {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.process.ProcessException;
@@ -60,5 +61,6 @@ final class Configuration {
         }
         weights = wg.toArray(new DriftPredictor.Weight[wg.size()]);
         maximumTrajectoryCount = count;
+        Arrays.sort(weights);
     }
 }
