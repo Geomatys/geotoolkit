@@ -2,22 +2,21 @@ package org.geotoolkit.processing.vector.drift;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
-import javax.imageio.ImageIO;
+import java.util.List;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -42,11 +41,6 @@ public class DriftPredictor extends AbstractProcess {
      * otherwise it become difficult to follow the trajectory.
      */
     private static final PrintStream OUT = null;
-
-    /**
-     * Whether the output probability should use a logarithmic scale.
-     */
-    private static final boolean LOG_SCALE = false;
 
     /**
      * Data directory, vector weights and other information needed by the process.
@@ -136,6 +130,11 @@ public class DriftPredictor extends AbstractProcess {
     private static final int WEIGHT_OFFSET = 2;
 
     /**
+     * Instant when the simulation start.
+     */
+    private Instant startTime;
+
+    /**
      * Current time.
      */
     private Instant currentTime;
@@ -183,10 +182,16 @@ public class DriftPredictor extends AbstractProcess {
      */
     private final Point2D.Double tmp;
 
+    /**
+     * Images to write, one per day. The last item in the list shall be the overall trajectory.
+     */
+    private final List<Output> outputs;
+
 
     public DriftPredictor(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
         tmp = new Point2D.Double();
+        outputs = new ArrayList<>();
     }
 
     private DirectPosition geographic(DirectPosition pos) throws ProcessException {
@@ -202,9 +207,15 @@ public class DriftPredictor extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final Parameters input = Parameters.castOrWrap(inputParameters);
+        try {
+            configuration = new Configuration(input.getValue(DriftPredictionDescriptor.DATA_DIRECTORY));
+        } catch (IOException e) {
+            throw new ProcessException(null, this, e);
+        }
         final DirectPosition startPoint = geographic(input.getValue(DriftPredictionDescriptor.START_POINT));
-        currentTime  = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.START_TIMESTAMP));
+        startTime    = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.START_TIMESTAMP));
         endTime      = Instant.ofEpochMilli(input.getValue(DriftPredictionDescriptor.END_TIMESTAMP));
+        currentTime  = startTime;
         modelCRS     = CommonCRS.WGS84.universal(startPoint.getOrdinate(1), startPoint.getOrdinate(0));
         positions    = new float[configuration.maximumTrajectoryCount * TUPLE_LENGTH];
         positions[0] = (float) startPoint.getOrdinate(1);
@@ -227,18 +238,29 @@ public class DriftPredictor extends AbstractProcess {
 
         current = new DataSource.HYCOM(configuration.directory.resolve("HYCOM"));
         wind = new DataSource.WindSat(configuration.directory.resolve("WindSat"));
+        final Path outputPath;
         try {
+            boolean newDay = false;
+            long day = currentTime.getEpochSecond() / (24*60*60);
             while (!currentTime.isAfter(endTime)) {
                 if (!advance()) {
                     throw new ProcessException("No data at " + currentTime, this);
                 }
+                final long d = currentTime.getEpochSecond() / (24*60*60);
+                newDay = (d != day);
+                if (newDay) {
+                    day = d;
+                    snapshot();
+                }
             }
+            if (!newDay) {
+                snapshot();
+            }
+            trajectory();
+            outputPath = writeNetcdf();
         } catch (Exception e) {
             throw new ProcessException(null, this, e);
         }
-        // TODO : Put the processing
-
-        final Path outputPath = null; // TODO : replace with real result
         final CoverageReference result = new DefaultCoverageReference(outputPath, Names.createLocalName(null, ":", "drift"));
         Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(result);
     }
@@ -435,41 +457,22 @@ public class DriftPredictor extends AbstractProcess {
         return toIndex;
     }
 
-    private void snapshot(final String filename) throws IOException {
-        save(filename, probabilities);
+    private void snapshot() {
+        outputs.add(new Output(probabilities, numRows, numColumns));
         Arrays.fill(probabilities, 0);
     }
 
-    private void trajectory(final String filename) throws IOException {
-        save(filename, trajectoryPropabilities);
+    private void trajectory() {
+        outputs.add(new Output(trajectoryPropabilities, numRows, numColumns));
     }
 
-    private void save(final String filename, final double[] data) throws IOException {
-        double scale  = 0;
-        double offset = Double.POSITIVE_INFINITY;
-        for (final double v : data) {
-            if (v != 0) {
-                if (v > scale)  scale = v;
-                if (v < offset) offset = v;
-            }
-        }
-        if (LOG_SCALE) {
-            offset = Math.log(offset);
-            scale  = Math.log(scale);
-        }
-        scale = 255 / (scale - offset);
-        final BufferedImage img = new BufferedImage(numColumns, numRows, BufferedImage.TYPE_BYTE_INDEXED, (IndexColorModel)
-                PaletteFactory.getDefault().getPalettePadValueFirst("yellow-green-blue", 256).getColorModel());
-        final WritableRaster raster = img.getRaster();
-        for (int i=0,y=0; y<numRows; y++) {
-            for (int x=0; x<numColumns; x++) {
-                double v = data[i++];
-                if (v != 0) {
-                    if (LOG_SCALE) v = Math.log(v);
-                    raster.setSample(x, y, 0, 1 + (int) Math.round((v - offset) * scale));
-                }
-            }
-        }
-        ImageIO.write(img, "png", configuration.directory.resolve(filename).toFile());
+    final Path writeNetcdf() throws Exception {
+        final Path outputFile = Files.createTempFile("drift", ".nc");
+        final AffineTransform gridToCoord = coordToGrid.createInverse();
+        Output.write(outputs, IdentifiedObjects.lookupEPSG(modelCRS), startTime.toEpochMilli(),
+                gridToCoord.getTranslateX(), gridToCoord.getTranslateY(),
+                gridToCoord.getScaleX(),     gridToCoord.getScaleY(),
+                outputFile.toString());
+        return outputFile;
     }
 }

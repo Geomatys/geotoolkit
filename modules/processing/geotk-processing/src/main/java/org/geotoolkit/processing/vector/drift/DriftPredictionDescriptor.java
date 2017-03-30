@@ -1,5 +1,6 @@
 package org.geotoolkit.processing.vector.drift;
 
+import java.nio.file.Path;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.process.Process;
@@ -25,6 +26,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<DirectPosition> START_POINT;
     public static final ParameterDescriptor<Long> START_TIMESTAMP;
     public static final ParameterDescriptor<Long> END_TIMESTAMP;
+    public static final ParameterDescriptor<Path> DATA_DIRECTORY;
 
     public static final ParameterDescriptorGroup OUTPUT;
     public static final ParameterDescriptor<CoverageReference> OUTPUT_DATA;
@@ -50,7 +52,13 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
                 .setRequired(true)
                 .create(Long.class, null);
 
-        INPUT = builder.addName("input").createGroup(START_POINT, START_TIMESTAMP, END_TIMESTAMP);
+        DATA_DIRECTORY = builder
+                .addName("dataDirectory")
+                .setRemarks("Root directory of HYCOM and WindSat data.")
+                .setRequired(true)
+                .create(Path.class, null);
+
+        INPUT = builder.addName("input").createGroup(START_POINT, START_TIMESTAMP, END_TIMESTAMP, DATA_DIRECTORY);
 
         // Define output
         OUTPUT_DATA = builder
