@@ -111,9 +111,9 @@ final class Output {
         float max = 0;
         for (final Output o : outputs) {
             if (o.x            < xmin) xmin = o.x;
-            if (o.y            < ymin) ymin = o.x;
+            if (o.y            < ymin) ymin = o.y;
             if (o.x + o.width  > xmax) xmax = o.x + o.width;
-            if (o.y + o.height > ymax) ymax = o.x + o.height;
+            if (o.y + o.height > ymax) ymax = o.y + o.height;
             if (o.min          <  min)  min = o.min;
             if (o.max          >  max)  max = o.max;
         }
@@ -136,31 +136,37 @@ final class Output {
         file.addVariableAttribute(tvar, new Attribute("_CoordinateAxisType", "Time"));
 
         final Variable perDay = file.addVariable(null, "prob_per_day", DataType.FLOAT, Arrays.asList(tdim, ydim, xdim));
-        file.addVariableAttribute(perDay, new Attribute("valid_min", min));
-        file.addVariableAttribute(perDay, new Attribute("valid_max", max));
+        file.addVariableAttribute(perDay, new Attribute("valid_min",  min / max));
+        file.addVariableAttribute(perDay, new Attribute("valid_max",  1f));         // max / max
         file.addVariableAttribute(perDay, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(perDay, new Attribute("EPSG_code", epsgCode));
+        file.addVariableAttribute(perDay, new Attribute("EPSG_code",  epsgCode));
 
         final Variable overall = file.addVariable(null, "prob_overall", DataType.FLOAT, Arrays.asList(ydim, xdim));
-        file.addVariableAttribute(overall, new Attribute("valid_min", min));
-        file.addVariableAttribute(overall, new Attribute("valid_max", max));
+        file.addVariableAttribute(overall, new Attribute("valid_min",  min / max));
+        file.addVariableAttribute(overall, new Attribute("valid_max",  1f));
         file.addVariableAttribute(overall, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(overall, new Attribute("EPSG_code", epsgCode));
+        file.addVariableAttribute(overall, new Attribute("EPSG_code",  epsgCode));
         file.create();
 
         file.write(tvar, Array.makeArray(DataType.DOUBLE, nt, startTime / (24*60*60*1000L), 1));
         file.write(yvar, Array.makeArray(DataType.DOUBLE, height, prjY + ymin * resolutionY, resolutionY));
         file.write(xvar, Array.makeArray(DataType.DOUBLE, width,  prjX + xmin * resolutionX, resolutionX));
-        final float[] data = new float[nt * height * width];
-        for (int dest=0, i=0; i<nt; i++) {
+        final int lengthOneDay = height * width;
+        float[] data = new float[(nt+1) * lengthOneDay];
+        for (int i=0; i<=nt; i++) {
             final Output o = outputs.get(i);
-            for (int y = o.y; y < o.y; y++) {
-                System.arraycopy(o.prob, y * o.width, data, dest, o.width);
-                dest += width;
+            int src = 0;
+            int dst = i * lengthOneDay + width * (o.y - ymin) + (o.x - xmin);
+            for (int y=0; y < o.height; y++) {
+                for (int x=0; x < o.width; x++) {
+                    data[dst + x] = o.prob[src++] / max;
+                }
+                dst += width;
             }
         }
-        file.write(perDay,  Array.factory(DataType.FLOAT, new int[] {nt, height, width}, data));
-        file.write(overall, Array.factory(DataType.FLOAT, new int[] {    height, width}, outputs.get(nt).prob));
+        final Array array = Array.factory(DataType.FLOAT, new int[] {nt+1, height, width}, data);
+        file.write(perDay,  array.section(new int[] { 0, 0, 0}, new int[] {nt, height, width}));
+        file.write(overall, array.section(new int[] {nt, 0, 0}, new int[] { 1, height, width}));
         file.close();
     }
 }
