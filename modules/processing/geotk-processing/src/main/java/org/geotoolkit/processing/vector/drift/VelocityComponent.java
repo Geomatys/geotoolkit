@@ -1,6 +1,14 @@
 package org.geotoolkit.processing.vector.drift;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.opengis.referencing.operation.MathTransform;
@@ -58,6 +66,12 @@ abstract class VelocityComponent {
      */
     static final class HYCOM extends VelocityComponent {
         /**
+         * Temporary file where to cache the {@link #coordToGrid} transform for next execution.
+         * Set to {@code null} for disabling the cache.
+         */
+        private static final String CACHE = "../cache/HYCOM_grid.serialized";
+
+        /**
          * U or V component as an array of dimension (MT, Layer, Y, X).
          * The length of MT and Layer dimensions are 1.
          */
@@ -84,13 +98,14 @@ abstract class VelocityComponent {
          * @param  ds            the dataset to read.
          * @param  variableName  name of the variable to read in the dataset.
          */
-        HYCOM(final NetcdfDataset ds, final String variableName, final HYCOM share) throws Exception {
+        HYCOM(final NetcdfDataset ds, final String variableName, final HYCOM share, final Path directory) throws Exception {
             final VariableDS v = (VariableDS) ds.findVariable(variableName);
+            Path cache = null;
             if (share != null) {
                 width  = share.width;
                 height = share.height;
                 coordToGrid = share.coordToGrid;
-            } else {
+            } else if (CACHE == null || !Files.exists(cache = directory.resolve(CACHE))) {
                 final CoordinateSystem cs = v.getCoordinateSystems().get(0);
                 final ArrayFloat.D2 lonValues = (ArrayFloat.D2) cs.getLonAxis().read();
                 final ArrayFloat.D2 latValues = (ArrayFloat.D2) cs.getLatAxis().read();
@@ -111,6 +126,17 @@ abstract class VelocityComponent {
                 }
                 builder.setDesiredPrecision(1E-5);
                 coordToGrid = builder.create(null).inverse();
+                if (cache != null) {
+                    try (final ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(cache.toFile())))) {
+                        out.writeInt(width);
+                        out.writeInt(height);
+                        out.writeObject(coordToGrid);
+                    }
+                }
+            } else try (final ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cache.toFile())))) {
+                width  = in.readInt();
+                height = in.readInt();
+                coordToGrid = (MathTransform) in.readObject();
             }
             values = (ArrayFloat.D4) v.read(new int[4], new int[] {1, 1, height, width});
             position = new double[2];

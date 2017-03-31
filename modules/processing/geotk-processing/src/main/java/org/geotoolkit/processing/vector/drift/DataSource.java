@@ -86,13 +86,13 @@ abstract class DataSource {
                 }
                 NetcdfDataset nc = NetcdfDataset.openDataset(uFile.toString());
                 try {
-                    u = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u);
+                    u = new VelocityComponent.HYCOM(nc, "u", (VelocityComponent.HYCOM) u, directory);
                 } finally {
                     nc.close();
                 }
                 nc = NetcdfDataset.openDataset(vFile.toString());
                 try {
-                    v = new VelocityComponent.HYCOM(nc, "v", (VelocityComponent.HYCOM) u);  // Really 'u', not 'v'.
+                    v = new VelocityComponent.HYCOM(nc, "v", (VelocityComponent.HYCOM) u, directory);  // Really 'u', not 'v'.
                 } finally {
                     nc.close();
                 }
