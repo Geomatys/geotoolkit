@@ -218,7 +218,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                         final String wkt = getStringValue(mapping, "spatial_ref");
                         final String gtr = getStringValue(mapping, "GeoTransform");
                         if (wkt != null || gtr != null) {
-                            gdal = new GDALGridMapping(this, wkt, gtr);
+                            gdal = new GDALGridMapping(this, null, wkt, gtr);
                             gridMapping.put(name, gdal);
                         }
                     }
@@ -232,7 +232,16 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (gdal == null) {
                 final String wkt = getStringValue(variable, "ESRI_pe_string");
                 if (wkt != null) {
-                    gdal = new GDALGridMapping(this, wkt, null);
+                    gdal = new GDALGridMapping(this, null, wkt, null);
+                }
+            }
+            /*
+             * Another convention.
+             */
+            if (gdal == null) {
+                final String epsg = getStringValue(variable, "EPSG_code");
+                if (epsg != null) {
+                    gdal = new GDALGridMapping(this, epsg, null, null);
                 }
             }
             /*
@@ -279,7 +288,12 @@ final class NetcdfMetadata extends SpatialMetadata {
         if (variable != null) {
             final Attribute attribute = variable.findAttributeIgnoreCase(attributeName);
             if (attribute != null) {
-                return attribute.getStringValue();
+                String value = attribute.getStringValue();
+                if (value == null) {
+                    Number n = attribute.getNumericValue();
+                    if (n != null) value = n.toString();
+                }
+                return value;
             }
         }
         return null;
