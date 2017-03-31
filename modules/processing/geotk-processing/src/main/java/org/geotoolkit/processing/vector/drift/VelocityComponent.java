@@ -109,6 +109,7 @@ abstract class VelocityComponent {
                         builder.setControlPoint(x, y, coord);
                     }
                 }
+                builder.setDesiredPrecision(1E-5);
                 coordToGrid = builder.create(null).inverse();
             }
             values = (ArrayFloat.D4) v.read(new int[4], new int[] {1, 1, height, width});
