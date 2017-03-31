@@ -188,7 +188,7 @@ abstract class VelocityComponent {
             final int[] shape = v.getShape();
             width  = shape[2];
             height = shape[1];
-            values = (ArrayFloat.D3) v.read(new int[3], new int[] {1, height, width});
+            values = (ArrayFloat.D3) v.read();
         }
 
         /**
