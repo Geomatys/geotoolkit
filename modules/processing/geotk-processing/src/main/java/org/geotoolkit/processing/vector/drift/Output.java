@@ -164,9 +164,10 @@ final class Output {
                 dst += width;
             }
         }
-        final Array array = Array.factory(DataType.FLOAT, new int[] {nt+1, height, width}, data);
-        file.write(perDay,  array.section(new int[] { 0, 0, 0}, new int[] {nt, height, width}));
-        file.write(overall, array.section(new int[] {nt, 0, 0}, new int[] { 1, height, width}));
+        final float[] d1 = Arrays.copyOf(data, nt * lengthOneDay);
+        final float[] d2 = Arrays.copyOfRange(data, nt * lengthOneDay, (nt+1) * lengthOneDay);
+        file.write(perDay,  Array.factory(DataType.FLOAT, new int[] {nt, height, width}, d1));
+        file.write(overall, Array.factory(DataType.FLOAT, new int[] {    height, width}, d2));
         file.close();
     }
 }
