@@ -98,7 +98,7 @@ final class Output {
      * @param outputs    list of data per day, except the last element which must be the overall data.
      * @param startTime  start time in milliseconds since Java epoch.
      */
-    static void write(final List<Output> outputs, final int epsgCode, final long startTime,
+    static void write(final List<Output> outputs, final String wkt, final long startTime,
             final double prjX, final double prjY, final double resolutionX, final double resolutionY,
             final String outputPath)
             throws IOException, InvalidRangeException
@@ -139,13 +139,13 @@ final class Output {
         file.addVariableAttribute(perDay, new Attribute("valid_min",  min / max));
         file.addVariableAttribute(perDay, new Attribute("valid_max",  1f));         // max / max
         file.addVariableAttribute(perDay, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(perDay, new Attribute("EPSG_code",  epsgCode));
+        file.addVariableAttribute(perDay, new Attribute("ESRI_pe_string", wkt));
 
         final Variable overall = file.addVariable(null, "prob_overall", DataType.FLOAT, Arrays.asList(ydim, xdim));
         file.addVariableAttribute(overall, new Attribute("valid_min",  min / max));
         file.addVariableAttribute(overall, new Attribute("valid_max",  1f));
         file.addVariableAttribute(overall, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(overall, new Attribute("EPSG_code",  epsgCode));
+        file.addVariableAttribute(overall, new Attribute("ESRI_pe_string", wkt));
         file.create();
 
         file.write(tvar, Array.makeArray(DataType.DOUBLE, nt, startTime / (24*60*60*1000L), 1));

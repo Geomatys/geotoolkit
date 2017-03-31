@@ -12,11 +12,12 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.iso.Names;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -469,7 +470,10 @@ public class DriftPredictor extends AbstractProcess {
     final Path writeNetcdf() throws Exception {
         final Path outputFile = Files.createTempFile("drift", ".nc");
         final AffineTransform gridToCoord = coordToGrid.createInverse();
-        Output.write(outputs, IdentifiedObjects.lookupEPSG(modelCRS), startTime.toEpochMilli(),
+        final WKTFormat f = new WKTFormat(null, null);
+        f.setIndentation(WKTFormat.SINGLE_LINE);
+        f.setConvention(Convention.WKT1);
+        Output.write(outputs, f.format(modelCRS), startTime.toEpochMilli(),
                 gridToCoord.getTranslateX(), gridToCoord.getTranslateY(),
                 gridToCoord.getScaleX(),     gridToCoord.getScaleY(),
                 outputFile.toString());
