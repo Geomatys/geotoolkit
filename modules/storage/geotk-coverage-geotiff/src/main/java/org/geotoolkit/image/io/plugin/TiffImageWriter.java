@@ -1326,6 +1326,19 @@ public class TiffImageWriter extends SpatialImageWriter {
         final short photoInter = getPhotometricInterpretation(colorMod);
         addProperty(PhotometricInterpretation, TYPE_USHORT, 1, new short[]{ photoInter}, properties);
 
+        //-- extraSamples
+        //-- nbre of minimum sample for the color define by photometric interpretation.
+        final int photoBand     = (photoInter == 2) ? 3 : 1;//--3 : RGB color model, 1 : gray or palette color model.
+        final int nbExtraSample = samplePerPixel - photoBand; //-- nbre of extra sample
+        if (nbExtraSample > 0) {
+            final short[] extraSampl = new short[nbExtraSample];
+            //-- if colorModel has alpha channel affect appropriate is preMultiplied value
+            //-- else leave the value at 0.
+            if (colorMod.hasAlpha())
+                extraSampl[0] = (short) ((colorMod.isAlphaPremultiplied()) ? 1 : 2);
+            addProperty(ExtraSamples, TYPE_SHORT, extraSampl.length, extraSampl, properties);
+        }
+
         // color map
         if (photoInter == 3) {
             // on construit un color map adequate

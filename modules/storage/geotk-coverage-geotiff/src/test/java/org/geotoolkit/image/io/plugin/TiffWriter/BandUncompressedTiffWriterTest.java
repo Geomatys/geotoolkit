@@ -53,7 +53,10 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
     protected ImageTypeSpecifier buildImageTypeSpecifier(final SampleType sampleType, final int numBand,
                                                          final PhotometricInterpretation photometricInterpretation)
             throws UnsupportedImageFormatException {
-        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand, photometricInterpretation, PlanarConfiguration.BANDED, buildColorMapArray(sampleType));
+        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand,
+                                                    photometricInterpretation, PlanarConfiguration.BANDED,
+                                                    false, false,
+                                                    buildColorMapArray(sampleType));
     }
 
     /**

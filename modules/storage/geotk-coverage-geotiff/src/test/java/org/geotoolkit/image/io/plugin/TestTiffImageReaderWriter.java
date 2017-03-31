@@ -664,7 +664,10 @@ public strictfp abstract class TestTiffImageReaderWriter {
     protected ImageTypeSpecifier buildImageTypeSpecifier(final SampleType sampleType, final int numBand,
                                                          final PhotometricInterpretation photometricInterpretation)
             throws UnsupportedImageFormatException {
-        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand, photometricInterpretation, PlanarConfiguration.INTERLEAVED, buildColorMapArray(sampleType));
+        return ImageUtils.buildImageTypeSpecifier(sampleType, numBand,
+                                                    photometricInterpretation, PlanarConfiguration.INTERLEAVED,
+                                                    false, false,
+                                                    buildColorMapArray(sampleType));
     }
 
     /**

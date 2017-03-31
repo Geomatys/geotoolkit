@@ -103,7 +103,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
     @Test
     public void noDataTest() throws IOException {
 
-        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
+        final RenderedImage testedImg    = ImageUtils.createGreyScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
         final IIOMetadataNode root       = new IIOMetadataNode(TAG_GEOTIFF_IFD);
         final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(root);
         stack.setMinSampleValue(1, 1, 1);
@@ -165,7 +165,7 @@ public class GeotiffTest extends org.geotoolkit.test.TestBase {
     @Test
     public void temporalTest() throws IOException, FactoryException {
 
-        final RenderedImage testedImg    = ImageUtils.createScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
+        final RenderedImage testedImg    = ImageUtils.createGreyScaledInterleavedImage(2, 2, SampleType.BYTE, 3);
 
         //-- temporal CRS
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, "TemporalReferenceSystem");
