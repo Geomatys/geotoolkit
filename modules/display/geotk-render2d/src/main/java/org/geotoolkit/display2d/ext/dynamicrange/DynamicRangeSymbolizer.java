@@ -39,6 +39,8 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  *
@@ -60,6 +62,9 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
 
     @XmlElement(name = "Channel",namespace="http://geotoolkit.org")
     private List<DRChannel> channels;
+    @XmlElement(name = "Geometry")
+    protected String geometry;
+    
 
     public List<DRChannel> getChannels() {
         if(channels==null){
@@ -72,14 +77,13 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         this.channels = channels;
     }
 
-    @Override
-    public String getGeometryPropertyName() {
-        return null;
+    public void setGeometry(final String value) {
+        this.geometry = value;
     }
 
     @Override
     public Expression getGeometry() {
-        return null;
+        return geometry==null ? null : GO2Utilities.FILTER_FACTORY.property(geometry);
     }
 
     @Override
@@ -100,6 +104,11 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     @Override
     public Object accept(StyleVisitor sv, Object o) {
         return sv.visit(this, o);
+    }
+
+    @Override
+    public String getGeometryPropertyName() {
+        return geometry;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)

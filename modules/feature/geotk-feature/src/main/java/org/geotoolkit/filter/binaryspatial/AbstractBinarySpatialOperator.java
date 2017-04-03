@@ -49,6 +49,10 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -116,6 +120,17 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //use the coverage envelope
             final Coverage coverage = (Coverage) value;
             candidate = JTS.toGeometry(coverage.getEnvelope());
+        }else if(value instanceof GridCoverageReader){
+            //use the coverage envelope
+            final GridCoverageReader reader = (GridCoverageReader) value;
+            try{
+                GeneralGridGeometry gg = reader.getGridGeometry(0);
+                candidate = JTS.toGeometry(gg.getEnvelope());
+                candidate.setUserData(gg.getCoordinateReferenceSystem());
+            }catch(CoverageStoreException ex){
+                LOGGER.log(Level.INFO, "Could not convert expression : "+exp+" to geometry for object : "+object+"\n"+ex.getMessage(), ex);
+                candidate = null;
+            }
         }else if(value instanceof org.opengis.geometry.Geometry){
             final org.opengis.geometry.Geometry geo = (org.opengis.geometry.Geometry) value;
             if(geo instanceof AbstractJTSGeometry) {
