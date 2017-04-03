@@ -1,4 +1,4 @@
-package org.geotoolkit.processing.vector.drift;
+package org.geotoolkit.processing.science.drift;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -12,17 +12,12 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.iso.Names;
-import org.apache.sis.io.wkt.WKTFormat;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.storage.coverage.DefaultCoverageReference;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -262,8 +257,8 @@ public class DriftPredictor extends AbstractProcess {
         } catch (Exception e) {
             throw new ProcessException(null, this, e);
         }
-        final CoverageReference result = new DefaultCoverageReference(outputPath, Names.createLocalName(null, ":", "drift"));
-        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(result);
+
+        Parameters.castOrWrap(outputParameters).getOrCreate(DriftPredictionDescriptor.OUTPUT_DATA).setValue(outputPath);
     }
 
     /**
@@ -470,10 +465,7 @@ public class DriftPredictor extends AbstractProcess {
     final Path writeNetcdf() throws Exception {
         final Path outputFile = Files.createTempFile("drift", ".nc");
         final AffineTransform gridToCoord = coordToGrid.createInverse();
-        final WKTFormat f = new WKTFormat(null, null);
-        f.setIndentation(WKTFormat.SINGLE_LINE);
-        f.setConvention(Convention.WKT1);
-        Output.write(outputs, f.format(modelCRS), startTime.toEpochMilli(),
+        Output.write(outputs, modelCRS, startTime.toEpochMilli(),
                 gridToCoord.getTranslateX(), gridToCoord.getTranslateY(),
                 gridToCoord.getScaleX(),     gridToCoord.getScaleY(),
                 outputFile.toString());

@@ -1,4 +1,4 @@
-package org.geotoolkit.processing.vector.drift;
+package org.geotoolkit.processing.science.drift;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,7 +52,7 @@ abstract class DataSource {
         /**
          * Pattern of RTOFS filename with three parameters, which are the year, the day of year and the variable name.
          */
-        private static final String FILENAME_PATTERN = "archv.%04d_%03d_00_3z%c.nc";
+        private static final String FILENAME_PATTERN = "archv.%04d_%03d_00_%01dz%c.nc";
 
         /**
          * An encoded value for the current day. Used for checking if we need to load new data.
@@ -79,8 +79,14 @@ abstract class DataSource {
             final int code = (year << 7) | day;
             if (code != currentDay) {
                 currentDay = code;
-                final Path uFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 'u'));
-                final Path vFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 'v'));
+                Path uFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 2, 'u'));
+                Path vFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 2, 'v'));
+                // If 2d data (surface) is not available, we try to use 3d data.
+                if (!Files.isReadable(uFile))
+                    uFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 3, 'u'));
+                if (!Files.isReadable(vFile))
+                    vFile = directory.resolve(String.format(FILENAME_PATTERN, year, day, 3, 'v'));
+
                 if (!Files.exists(uFile) || !Files.exists(vFile)) {
                     return false;
                 }

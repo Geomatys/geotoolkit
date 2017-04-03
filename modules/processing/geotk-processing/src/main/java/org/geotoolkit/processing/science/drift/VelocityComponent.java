@@ -1,4 +1,4 @@
-package org.geotoolkit.processing.vector.drift;
+package org.geotoolkit.processing.science.drift;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -124,7 +124,7 @@ abstract class VelocityComponent {
                         builder.setControlPoint(x, y, coord);
                     }
                 }
-                builder.setDesiredPrecision(1E-5);
+                builder.setDesiredPrecision(1E-3);
                 coordToGrid = builder.create(null).inverse();
                 if (cache != null) {
                     try (final ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(cache.toFile())))) {

@@ -1,11 +1,10 @@
-package org.geotoolkit.processing.vector.drift;
+package org.geotoolkit.processing.science.drift;
 
 import java.nio.file.Path;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -29,7 +28,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<Path> DATA_DIRECTORY;
 
     public static final ParameterDescriptorGroup OUTPUT;
-    public static final ParameterDescriptor<CoverageReference> OUTPUT_DATA;
+    public static final ParameterDescriptor<Path> OUTPUT_DATA;
 
     static {
         final ParameterBuilder builder = new ParameterBuilder();
@@ -65,7 +64,7 @@ public class DriftPredictionDescriptor extends AbstractProcessDescriptor {
                 .addName("driftMap")
                 .setRemarks("Probability map for drift trajectory")
                 .setRequired(true)
-                .create(CoverageReference.class, null);
+                .create(Path.class, null);
 
         OUTPUT = builder.addName("output").createGroup(OUTPUT_DATA);
     }

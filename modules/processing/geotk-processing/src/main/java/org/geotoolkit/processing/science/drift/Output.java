@@ -1,4 +1,4 @@
-package org.geotoolkit.processing.vector.drift;
+package org.geotoolkit.processing.science.drift;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -9,7 +9,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -98,7 +104,7 @@ final class Output {
      * @param outputs    list of data per day, except the last element which must be the overall data.
      * @param startTime  start time in milliseconds since Java epoch.
      */
-    static void write(final List<Output> outputs, final String wkt, final long startTime,
+    static void write(final List<Output> outputs, final CoordinateReferenceSystem dataCRS, final long startTime,
             final double prjX, final double prjY, final double resolutionX, final double resolutionY,
             final String outputPath)
             throws IOException, InvalidRangeException
@@ -135,17 +141,21 @@ final class Output {
         file.addVariableAttribute(yvar, new Attribute("_CoordinateAxisType", "GeoY"));
         file.addVariableAttribute(tvar, new Attribute("_CoordinateAxisType", "Time"));
 
+        final WKTFormat f = new WKTFormat(null, null);
+        f.setIndentation(WKTFormat.SINGLE_LINE);
+        f.setConvention(Convention.WKT2);
+
         final Variable perDay = file.addVariable(null, "prob_per_day", DataType.FLOAT, Arrays.asList(tdim, ydim, xdim));
         file.addVariableAttribute(perDay, new Attribute("valid_min",  min / max));
         file.addVariableAttribute(perDay, new Attribute("valid_max",  1f));         // max / max
         file.addVariableAttribute(perDay, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(perDay, new Attribute("ESRI_pe_string", wkt));
+        file.addVariableAttribute(perDay, new Attribute("ESRI_pe_string", f.format(addTime(dataCRS))));
 
         final Variable overall = file.addVariable(null, "prob_overall", DataType.FLOAT, Arrays.asList(ydim, xdim));
         file.addVariableAttribute(overall, new Attribute("valid_min",  min / max));
         file.addVariableAttribute(overall, new Attribute("valid_max",  1f));
         file.addVariableAttribute(overall, new Attribute("_FillValue", 0f));
-        file.addVariableAttribute(overall, new Attribute("ESRI_pe_string", wkt));
+        file.addVariableAttribute(overall, new Attribute("ESRI_pe_string", f.format(dataCRS)));
         file.create();
 
         file.write(tvar, Array.makeArray(DataType.DOUBLE, nt, startTime / (24*60*60*1000L), 1));
@@ -169,5 +179,14 @@ final class Output {
         file.write(perDay,  Array.factory(DataType.FLOAT, new int[] {nt, height, width}, d1));
         file.write(overall, Array.factory(DataType.FLOAT, new int[] {    height, width}, d2));
         file.close();
+    }
+
+    private static CoordinateReferenceSystem addTime(final CoordinateReferenceSystem horizontalComponent) {
+        final DefaultTemporalCRS timeCRS = new DefaultTemporalCRS(
+                Collections.singletonMap("name", "days"),
+                CommonCRS.Temporal.JAVA.datum(),
+                CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem()
+        );
+        return new DefaultCompoundCRS(Collections.singletonMap("name", "perDayCRS"), horizontalComponent, timeCRS);
     }
 }
