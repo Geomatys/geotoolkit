@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureNaming;
 import org.apache.sis.storage.IllegalNameException;
 import org.opengis.util.GenericName;
@@ -47,26 +48,36 @@ public class GenericNameIndex<T> extends FeatureNaming<T> {
         return new ArrayList<>(names.values());
     }
 
-    public final T get(String name) throws IllegalNameException {
-        return get(null, name);
-    }
-
     public boolean contains(String name) {
         try {
-            get(name);
+            get(null, name);
             return true;
         } catch (IllegalNameException ex) {
             return false;
         }
     }
 
-    public synchronized void add(GenericName name, T value) throws IllegalNameException {
-        super.add(null, name, value);
+    public T get(String name) throws IllegalNameException {
+        return super.get(null, name);
+    }
+
+    public void add(GenericName name, final T value) throws IllegalNameException {
+        add(null,name,value);
+    }
+
+    public boolean remove(GenericName name) throws IllegalNameException {
+        return remove(null,name);
+    }
+
+    @Override
+    public synchronized void add(DataStore store, GenericName name, T value) throws IllegalNameException {
+        super.add(store, name, value);
         names.put(name,value);
     }
 
-    public synchronized boolean remove(GenericName name) throws IllegalNameException {
-        final boolean res = super.remove(null, name);
+    @Override
+    public synchronized boolean remove(DataStore store, GenericName name) throws IllegalNameException {
+        final boolean res = super.remove(store, name);
         if (res) names.remove(name);
         return res;
     }
@@ -77,7 +88,7 @@ public class GenericNameIndex<T> extends FeatureNaming<T> {
 
     public void clear() throws IllegalNameException {
         for (GenericName name : new ArrayList<>(names.keySet())) {
-            remove(name);
+            remove(null, name);
         }
     }
 }

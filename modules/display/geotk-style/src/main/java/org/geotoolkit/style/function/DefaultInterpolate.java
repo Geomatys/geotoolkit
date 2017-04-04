@@ -205,6 +205,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     @Override
     public Object evaluate(final Object object, final Class c) {
+        if (object instanceof RenderedImage && RenderedImage.class.isAssignableFrom(c))
+            return evaluateImage((RenderedImage) object);
 
         final Number value;
         if(object instanceof Feature){

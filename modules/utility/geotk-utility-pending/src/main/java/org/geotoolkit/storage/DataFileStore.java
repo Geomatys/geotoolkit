@@ -31,7 +31,6 @@ public interface DataFileStore {
      * Get all files pointed by this {@linkplain org.apache.sis.storage.DataStore data store}.
      *
      * @return Files used by this store. Should never be {@code null}.
-     * @throws org.apache.sis.storage.DataStoreException
      */
     Path[] getDataFiles() throws DataStoreException;
 }

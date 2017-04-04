@@ -34,7 +34,7 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  */
 public class OMFeatureTypes {
-    
+
     public static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
     //protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
 
@@ -46,7 +46,7 @@ public class OMFeatureTypes {
 
     public static GenericNameIndex<FeatureType> getFeatureTypes(final String name) {
         final GenericNameIndex<FeatureType> types = new GenericNameIndex<>();
-        
+
         final GenericName OM_TN_SAMPLINGPOINT = NamesExt.create(OM_NAMESPACE, name);
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
         featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
@@ -57,12 +57,12 @@ public class OMFeatureTypes {
                 .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(GMLConvention.NILLABLE_CHARACTERISTIC);
         featureTypeBuilder.addAttribute(Geometry.class).setName(ATT_POSITION).addRole(AttributeRole.DEFAULT_GEOMETRY);
         try {
-            types.add(OM_TN_SAMPLINGPOINT, featureTypeBuilder.build());
+            types.add(null, OM_TN_SAMPLINGPOINT, featureTypeBuilder.build());
         } catch (IllegalNameException ex) {
             //won't happen
             throw new FeatureStoreRuntimeException(ex);
         }
-        
+
         return types;
     }
 }

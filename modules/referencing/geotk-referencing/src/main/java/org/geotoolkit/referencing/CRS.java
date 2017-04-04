@@ -38,9 +38,9 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.io.JNDI;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
+import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
@@ -363,7 +363,40 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @since 3.16
      */
     public static Datum getDatum(final CoordinateReferenceSystem crs) {
-        return CRSUtilities.getDatum(crs);
+        Datum datum = null;
+        if (crs instanceof SingleCRS) {
+            datum = ((SingleCRS) crs).getDatum();
+        } else if (crs instanceof CompoundCRS) {
+            for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getComponents()) {
+                final Datum candidate = getDatum(component);
+                if (datum != null && !datum.equals(candidate)) {
+                    if (isGeodetic3D(datum, candidate)) {
+                        continue;                               // Keep the current datum unchanged.
+                    }
+                    if (isGeodetic3D(candidate, datum)) {
+                        continue;
+                    }
+                    return null;                                // Can't build a 3D geodetic datum.
+                }
+                datum = candidate;
+            }
+        }
+        return datum;
+    }
+
+    /**
+     * Returns {@code true} if the given datum can form a three-dimensional geodetic datum.
+     *
+     * @param  geodetic The presumed geodetic datum.
+     * @param  vertical The presumed vertical datum.
+     * @return If the given datum can form a 3D geodetic datum.
+     *
+     * @deprecated This is not right: we can not said that we have a match if we do not known
+     *             on which geodetic datum the ellipsoidal height is.
+     */
+    private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
+        return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&
+                VerticalDatumTypes.ELLIPSOIDAL.equals(((VerticalDatum) vertical).getVerticalDatumType());
     }
 
     /**

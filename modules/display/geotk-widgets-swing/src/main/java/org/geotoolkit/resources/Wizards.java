@@ -26,10 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
  * Locale-dependent resources for wizard messages.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
- *
- * @since 3.03
- * @module
  */
 public final class Wizards extends IndexedResourceBundle {
     /**
@@ -39,9 +35,6 @@ public final class Wizards extends IndexedResourceBundle {
      * pools of compiled classes.
      *
      * @author Cédric Briançon (Geomatys)
-     * @version 3.03
-     *
-     * @since 3.03
      */
     public static final class Keys {
         private Keys() {

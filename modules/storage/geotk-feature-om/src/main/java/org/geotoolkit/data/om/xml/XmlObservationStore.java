@@ -100,7 +100,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
         xmlFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
     }
-    
+
     public XmlObservationStore(final Path xmlFile) {
         super(null);
         this.xmlFile = xmlFile;
@@ -131,7 +131,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         typeCheck(typeName);
-        return types.get(typeName);
+        return types.get(this, typeName);
     }
 
     /**
@@ -244,7 +244,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
                 final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
                 names.add(NamesExt.create(process.getHref()));
             }
-            
+
         } else if (obj instanceof Observation) {
             final Observation obs = (Observation)obj;
             final Process process = (Process)obs.getProcedure();
@@ -257,13 +257,13 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
     public ExtractionResult getResults() {
         return getResults(null);
     }
-    
+
     @Override
     public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) {
         getLogger().warning("XMLObservation store does not allow to override sensor ID");
         return getResults(sensorIDs);
     }
-    
+
     @Override
     public ExtractionResult getResults(final List<String> sensorIDs) {
         final ExtractionResult result = new ExtractionResult();
@@ -296,7 +296,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
                     result.observations.add(o);
                 }
             }
-            
+
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
@@ -311,11 +311,11 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
                 appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
                 appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             }
-            
+
         }
         return result;
     }
-    
+
     @Override
     public List<ProcedureTree> getProcedures() throws DataStoreException {
         final List<ProcedureTree> result = new ArrayList<>();
@@ -325,7 +325,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
                 final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
-                
+
                 if (!result.contains(procedure)) {
                     result.add(procedure);
                 }
@@ -339,11 +339,11 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
                 appendTime(obs.getSamplingTime(), procedure.spatialBound);
                 appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             }
-            
+
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
-            
+
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             result.add(procedure);
@@ -352,7 +352,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
         }
         return result;
     }
-    
+
     private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {
         if (time instanceof Instant) {
             final Instant i = (Instant) time;
@@ -363,7 +363,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
             spatialBound.addDate(p.getEnding().getDate());
         }
     }
-    
+
     private void appendGeometry(final AnyFeature feature, final GeoSpatialBound spatialBound){
         if (feature instanceof SamplingFeature) {
             final SamplingFeature sf = (SamplingFeature) feature;
@@ -382,7 +382,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
             extractBoundary(ageom, spatialBound);
         }
     }
-    
+
     private void extractBoundary(final AbstractGeometry geom, final GeoSpatialBound spatialBound) {
         if (geom instanceof Point) {
             final Point p = (Point) geom;
@@ -420,7 +420,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
         }
         return null;
     }
-    
+
     @Override
     public void close() throws DataStoreException {
         // do nothing
@@ -437,7 +437,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
                 final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
                 phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             }
-            
+
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
@@ -445,7 +445,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
         }
         return phenomenons;
     }
-    
+
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() {
         final ExtractionResult result = new ExtractionResult();
@@ -456,14 +456,14 @@ public class XmlObservationStore extends AbstractFeatureStore implements DataFil
             for (Observation obs : collection.getMember()) {
                 appendTime(obs.getSamplingTime(), result.spatialBound);
             }
-            
+
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             appendTime(obs.getSamplingTime(), result.spatialBound);
         }
         return result.spatialBound.getTimeObject("2.0.0");
     }
-    
+
     /**
      * {@inheritDoc }
      */

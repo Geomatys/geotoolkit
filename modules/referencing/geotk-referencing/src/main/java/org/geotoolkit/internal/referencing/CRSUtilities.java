@@ -39,7 +39,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.internal.metadata.VerticalDatumTypes;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;
@@ -183,53 +182,6 @@ public final class CRSUtilities extends Static {
             }
         }
         return unit;
-    }
-
-    /**
-     * Implementation of {@link CRS#getDatum(CoordinateReferenceSystem)}, defined here in order
-     * to avoid a dependency of {@link org.geotoolkit.referencing.crs.AbstractDerivedCRS} to the
-     * {@link CRS} class.
-     *
-     * @param  crs The coordinate reference system for which to get the datum. May be {@code null}.
-     * @return The datum in the given CRS, or {@code null} if none.
-     *
-     * @see CRS#getEllipsoid(CoordinateReferenceSystem)
-     */
-    public static Datum getDatum(final CoordinateReferenceSystem crs) {
-        Datum datum = null;
-        if (crs instanceof SingleCRS) {
-            datum = ((SingleCRS) crs).getDatum();
-        } else if (crs instanceof CompoundCRS) {
-            for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getComponents()) {
-                final Datum candidate = getDatum(component);
-                if (datum != null && !datum.equals(candidate)) {
-                    if (isGeodetic3D(datum, candidate)) {
-                        continue; // Keep the current datum unchanged.
-                    }
-                    if (isGeodetic3D(candidate, datum)) {
-                        continue;
-                    }
-                    return null; // Can't build a 3D geodetic datum.
-                }
-                datum = candidate;
-            }
-        }
-        return datum;
-    }
-
-    /**
-     * Returns {@code true} if the given datum can form a three-dimensional geodetic datum.
-     *
-     * @param  geodetic The presumed geodetic datum.
-     * @param  vertical The presumed vertical datum.
-     * @return If the given datum can form a 3D geodetic datum.
-     *
-     * @deprecated This is not right: we can not said that we have a match if we do not known
-     *             on which geodetic datum the ellipsoidal height is.
-     */
-    private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
-        return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&
-                VerticalDatumTypes.ELLIPSOIDAL.equals(((VerticalDatum) vertical).getVerticalDatumType());
     }
 
     /**

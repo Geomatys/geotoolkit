@@ -45,7 +45,7 @@ public class CSWClientDemo {
         final Unmarshaller um = pool.acquireUnmarshaller();
         final MarshallWarnings warnings = new MarshallWarnings();
         um.setProperty(XML.CONVERTER, warnings);
-        
+
         // build a new CSW client
         final CatalogServicesClient cswServer = new CatalogServicesClient(new URL("http://catalog.data.gov/csw?"), "2.0.2");
 
@@ -78,7 +78,7 @@ public class CSWClientDemo {
         // unmarshall the response
         Object obj = um.unmarshal(is);
         GetRecordsResponseType response;
-        
+
         if (obj instanceof ExceptionReport) {
             System.out.println("Error received:" + obj);
             return;
@@ -86,7 +86,7 @@ public class CSWClientDemo {
             response = ((JAXBElement<GetRecordsResponseType>) obj).getValue();
         }
 
-        
+
         // print the number of result matching the request
         System.out.println(response.getSearchResults().getNumberOfRecordsMatched());
 
@@ -99,7 +99,7 @@ public class CSWClientDemo {
         is = getRecords.getResponseStream();
 
         obj = um.unmarshal(is);
-        
+
         // unmarshall the response
         if (obj instanceof ExceptionReport) {
             System.out.println("Error received:" + obj);
@@ -122,7 +122,7 @@ public class CSWClientDemo {
 
         // unmarshall the response
         obj = um.unmarshal(is);
-        
+
         // unmarshall the response
         if (obj instanceof ExceptionReport) {
             System.out.println("Error received:" + obj);
@@ -149,7 +149,7 @@ public class CSWClientDemo {
 
         // unmarshall the response
         obj = um.unmarshal(is);
-        
+
         // unmarshall the response
         GetRecordByIdResponse responseBi;
         if (obj instanceof ExceptionReport) {
@@ -166,7 +166,7 @@ public class CSWClientDemo {
         pool.recycle(um);
 
     }
-    
+
     private static class MarshallWarnings extends ValueConverter {
 
         // The warnings collected during (un)marshalling.

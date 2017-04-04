@@ -58,7 +58,6 @@ import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.coverage.Coverage;
@@ -161,7 +160,7 @@ public final class DataBaseModel {
         if(schemas == null){
             analyze();
         }
-        return pkIndex.get(featureTypeName);
+        return pkIndex.get(store, featureTypeName);
     }
 
     public synchronized Set<GenericName> getNames() throws DataStoreException {
@@ -170,7 +169,7 @@ public final class DataBaseModel {
             analyze();
             final Set<GenericName> names = new HashSet<>();
             for(GenericName name : typeIndex.getNames()) {
-                final FeatureType type = typeIndex.get(name.toString());
+                final FeatureType type = typeIndex.get(store, name.toString());
                 if(SUBTYPE.isAssignableFrom(type)) continue;
                 if(store.getDialect().ignoreTable(name.tip().toString())) continue;
                 names.add(name);
@@ -185,7 +184,7 @@ public final class DataBaseModel {
         if(schemas == null){
             analyze();
         }
-        return typeIndex.get(typeName);
+        return typeIndex.get(store, typeName);
     }
 
     /**
@@ -355,12 +354,12 @@ public final class DataBaseModel {
                         ft = table.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE);
                     }
                     final GenericName name = ft.getName();
-                    pkIndex.add(name, table.key);
+                    pkIndex.add(store, name, table.key);
                     if(table.isSubType()){
                         //we don't show subtype, they are part of other feature types, add a flag to identify then
                         ft.setSuperTypes(SUBTYPE);
                     }
-                    typeIndex.add(name, ft.build());
+                    typeIndex.add(store, name, ft.build());
                  }
             } else {
                 throw new DataStoreException("Specifed schema " + baseSchemaName + " does not exist.");
@@ -801,7 +800,7 @@ public final class DataBaseModel {
      * Rebuild complex feature types using foreign key relations.
      */
     private void reverseComplexFeatureTypes(){
-        
+
         final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
 
         //result map

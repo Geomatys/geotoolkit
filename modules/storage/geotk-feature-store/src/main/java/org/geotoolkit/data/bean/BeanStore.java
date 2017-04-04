@@ -18,7 +18,6 @@ package org.geotoolkit.data.bean;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,13 +43,13 @@ import org.opengis.filter.identity.FeatureId;
 /**
  * A BeanStore decorate collections of bean objects as FeatureCollections.
  * Only reading operations are supported.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class BeanStore extends AbstractFeatureStore implements StorageListener{
-        
+
     private static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
-    
+
     /**
      * A FeatureSupplier provides access to an iterable of bean objects.
      * TODO JDK8 : replace with Supplier
@@ -58,27 +57,27 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     public static interface FeatureSupplier{
         Iterable get();
     }
-    
+
     private final GenericNameIndex<BeanFeatureSupplier> types = new GenericNameIndex<>();
-    
+
     public BeanStore(BeanFeatureSupplier ... types) throws IllegalNameException {
         super(null);
         for(BeanFeatureSupplier bt : types){
-            this.types.add(bt.mapping.featureType.getName(), bt);
+            this.types.add(this, bt.mapping.featureType.getName(), bt);
             //catch events and propage them
             bt.addStorageListener(this);
         }
     }
-    
+
     public Collection<BeanFeatureSupplier> getBeanSuppliers(){
         return Collections.unmodifiableCollection(types.getValues());
     }
-    
+
     public BeanFeatureSupplier getBeanSupplier(String typeName) throws DataStoreException{
         typeCheck(typeName);
-        return types.get(typeName);
+        return types.get(this, typeName);
     }
-    
+
     @Override
     public FeatureStoreFactory getFactory() {
         return null;
@@ -92,26 +91,26 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     @Override
     public FeatureType getFeatureType(String typeName) throws DataStoreException {
         typeCheck(typeName);
-        return types.get(typeName).mapping.featureType;
+        return types.get(this, typeName).mapping.featureType;
     }
-        
+
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        
-        final BeanFeatureSupplier bt = types.get(query.getTypeName());
+
+        final BeanFeatureSupplier bt = types.get(this, query.getTypeName());
         final Iterable candidates = bt.supplier.get();
         final BeanFeature.Mapping mapping = bt.mapping;
-        
+
         final FeatureReader reader = new BeanFeatureReader(mapping, candidates);
         return handleRemaining(reader, query);
     }
-    
+
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return CAPABILITIES;
     }
-    
+
     @Override
     public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
@@ -136,11 +135,11 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     public void refreshMetaModel() {
         fireFeaturesAdded(null, null);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // BEAN SUPPLIER EVENTS ////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void structureChanged(StorageEvent event) {
         sendStructureEvent(event.copy(this));
@@ -150,11 +149,11 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     public void contentChanged(StorageEvent event) {
         sendContentEvent(event.copy(this));
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // NOT SUPPORTED ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-        
+
     @Override
     public void createFeatureType(FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
@@ -169,5 +168,5 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     public void deleteFeatureType(String typeName) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
-    
+
 }
