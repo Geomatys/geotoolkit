@@ -19,7 +19,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;

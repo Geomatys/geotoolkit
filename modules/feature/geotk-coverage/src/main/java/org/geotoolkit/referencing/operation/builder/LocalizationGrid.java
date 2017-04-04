@@ -123,7 +123,12 @@ import static org.apache.sis.util.ArgumentChecks.ensureBetween;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.operation.builder.LocalizationGridBuilder},
+ *             except for the creation of JAI polynomial warp which is not currently supported by Apache SIS.
+ *             {@link #isMonotonic(boolean)} and {@link #removeSingularities()} are not yet ported to SIS neither.
  */
+@Deprecated
 public class LocalizationGrid {
     /**
      * Number of grid's columns.

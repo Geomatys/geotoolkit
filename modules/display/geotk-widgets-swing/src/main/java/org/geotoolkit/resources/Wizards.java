@@ -26,10 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
  * Locale-dependent resources for wizard messages.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
- *
- * @since 3.03
- * @module
  */
 public final class Wizards extends IndexedResourceBundle {
     /**
@@ -39,9 +35,6 @@ public final class Wizards extends IndexedResourceBundle {
      * pools of compiled classes.
      *
      * @author Cédric Briançon (Geomatys)
-     * @version 3.03
-     *
-     * @since 3.03
      */
     public static final class Keys {
         private Keys() {
@@ -50,19 +43,19 @@ public final class Wizards extends IndexedResourceBundle {
         /**
          * Calculation in progress...
          */
-        public static final short CalculationProgessing = 0;
+        public static final short CalculationProgessing = 1;
 
         /**
          * <html><blockquote>The database has been created. Check the connection parameters in the
          * preferences menu. Make sure that the data file directory and the time zone are set to the
          * proper values.</blockquote></html>
          */
-        public static final short CoverageDatabaseCreated = 1;
+        public static final short CoverageDatabaseCreated = 2;
 
         /**
          * Creates the tables for the "coverages" schema in an initially empty database.
          */
-        public static final short CoverageDatabaseDesc = 2;
+        public static final short CoverageDatabaseDesc = 3;
 
         /**
          * <html><b>Notes:</b><ul><li>Roles shall be created only once for a given server. If a
@@ -71,78 +64,78 @@ public final class Wizards extends IndexedResourceBundle {
          * href="http://www.epsg.org">http://www.epsg.org</a>) is sufficient and can be shared by
          * different Coverages database. However having multiple copies is okay.</li></ul></html>
          */
-        public static final short CoverageDatabaseNotes_1 = 3;
+        public static final short CoverageDatabaseNotes_1 = 4;
 
         /**
          * New coverage database
          */
-        public static final short CoverageDatabaseTitle = 4;
+        public static final short CoverageDatabaseTitle = 5;
 
         /**
          * Copy the EPSG database
          */
-        public static final short CreateEpsg = 5;
+        public static final short CreateEpsg = 6;
 
         /**
          * Create the “{0}” and “{1}” roles
          */
-        public static final short CreateRoles_2 = 6;
+        public static final short CreateRoles_2 = 7;
 
         /**
          * Creating the mosaic
          */
-        public static final short CreatingMosaic = 7;
+        public static final short CreatingMosaic = 8;
 
         /**
          * Creating the {0} schema.
          */
-        public static final short CreatingSchema_1 = 8;
+        public static final short CreatingSchema_1 = 9;
 
         /**
          * A server and a database must be specified.
          */
-        public static final short DatabaseRequired = 9;
+        public static final short DatabaseRequired = 10;
 
         /**
          * Define pyramid tiling
          */
-        public static final short DefinePyramidTiling = 10;
+        public static final short DefinePyramidTiling = 11;
 
         /**
          * The wizard has now enough informations for creating the mosaic. Press "Finish" to confirm.
          */
-        public static final short EnoughInformation = 11;
+        public static final short EnoughInformation = 12;
 
         /**
          * Geotoolkit.org web site
          */
-        public static final short GeotkSite = 12;
+        public static final short GeotkSite = 13;
 
         /**
          * Geotoolkit.org wizards
          */
-        public static final short GeotkWizards = 13;
+        public static final short GeotkWizards = 14;
 
         /**
          * The selected tiles can not make a single mosaic.
          */
-        public static final short InvalidMosaicLayout = 14;
+        public static final short InvalidMosaicLayout = 15;
 
         /**
          * Read a potentially big image (which may be splitted in many tiles at the same resolution)
          * and write a set of smaller tiles of given size and using different subsamplings.
          */
-        public static final short MosaicDesc = 15;
+        public static final short MosaicDesc = 16;
 
         /**
          * Mosaic generator
          */
-        public static final short MosaicTitle = 16;
+        public static final short MosaicTitle = 17;
 
         /**
          * At least one tile must be selected.
          */
-        public static final short NoSelectedTiles = 17;
+        public static final short NoSelectedTiles = 18;
 
         /**
          * <html>Specify the directory which contain the <code>postgis.sql</code> and
@@ -150,44 +143,44 @@ public final class Wizards extends IndexedResourceBundle {
          * server, make sure that the files specified below are identical to the files on the
          * server.</html>
          */
-        public static final short PostgisDirectory = 18;
+        public static final short PostgisDirectory = 19;
 
         /**
          * Remove opaque border
          */
-        public static final short RemoveOpaqueBorder = 19;
+        public static final short RemoveOpaqueBorder = 20;
 
         /**
          * Select source tiles
          */
-        public static final short SelectSourceTiles = 20;
+        public static final short SelectSourceTiles = 21;
 
         /**
          * Set as the default {0} database
          */
-        public static final short SetAsDefault_1 = 21;
+        public static final short SetAsDefault_1 = 22;
 
         /**
          * Select directories and install the NADCON and EPSG data. This setup is optional. If
          * executed, the setting will be remembered for all subsequent Geotoolkit.org usage.
          */
-        public static final short SetupDesc = 22;
+        public static final short SetupDesc = 23;
 
         /**
          * Geotoolkit.org Setup
          */
-        public static final short SetupTitle = 23;
+        public static final short SetupTitle = 24;
 
         /**
          * <html>Use the <cite>Preferences</cite> menu for specifying an existing database,<br>or use
          * the <cite>New coverage database</cite> menu for creating a new database.</html>
          */
-        public static final short UnspecifiedCoveragesDatabase = 24;
+        public static final short UnspecifiedCoveragesDatabase = 25;
 
         /**
          * Writing the mosaic
          */
-        public static final short WritingMosaic = 25;
+        public static final short WritingMosaic = 26;
     }
 
     /**

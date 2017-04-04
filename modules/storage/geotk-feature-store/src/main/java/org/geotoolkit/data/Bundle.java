@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,8 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
      */
     public static final class Keys {
         private Keys() {
@@ -45,52 +41,52 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Empty directory
          */
-        public static final short emptyDirectory = 0;
+        public static final short emptyDirectory = 1;
 
         /**
          * Allowed to open an empty directory
          */
-        public static final short emptyDirectory_remarks = 1;
+        public static final short emptyDirectory_remarks = 2;
 
         /**
          * Source type
          */
-        public static final short paramIdentifierAlias = 2;
+        public static final short paramIdentifierAlias = 3;
 
         /**
          * Source type identifier
          */
-        public static final short paramIdentifierRemarks = 3;
+        public static final short paramIdentifierRemarks = 4;
 
         /**
          * Namespace
          */
-        public static final short paramNamespaceAlias = 4;
+        public static final short paramNamespaceAlias = 5;
 
         /**
          * Namespace used for all data names (use "no namespace" for none)
          */
-        public static final short paramNamespaceRemarks = 5;
+        public static final short paramNamespaceRemarks = 6;
 
         /**
          * URI path
          */
-        public static final short paramPathAlias = 6;
+        public static final short paramPathAlias = 7;
 
         /**
          * URI path toward data
          */
-        public static final short paramPathRemarks = 7;
+        public static final short paramPathRemarks = 8;
 
         /**
          * Recursive
          */
-        public static final short recursive = 8;
+        public static final short recursive = 9;
 
         /**
          * Explore sub folders recursively.
          */
-        public static final short recursive_remarks = 9;
+        public static final short recursive_remarks = 10;
     }
 
     /**

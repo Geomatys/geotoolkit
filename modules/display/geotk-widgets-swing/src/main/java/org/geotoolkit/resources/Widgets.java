@@ -26,10 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
  * Locale-dependent resources for widgets messages.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
- *
- * @since 3.03
- * @module
  */
 public final class Widgets extends IndexedResourceBundle {
     /**
@@ -39,9 +35,6 @@ public final class Widgets extends IndexedResourceBundle {
      * pools of compiled classes.
      *
      * @author Cédric Briançon (Geomatys)
-     * @version 3.03
-     *
-     * @since 3.03
      */
     public static final class Keys {
         private Keys() {
@@ -50,101 +43,101 @@ public final class Widgets extends IndexedResourceBundle {
         /**
          * Add all
          */
-        public static final short AddAll = 0;
+        public static final short AddAll = 1;
 
         /**
          * Add selected elements
          */
-        public static final short AddSelectedElements = 1;
+        public static final short AddSelectedElements = 2;
 
         /**
          * Confirm data addition
          */
-        public static final short ConfirmAddData = 2;
+        public static final short ConfirmAddData = 3;
 
         /**
          * Confirm delete
          */
-        public static final short ConfirmDelete = 3;
+        public static final short ConfirmDelete = 4;
 
         /**
          * <html>Are you sure you want to delete "<cite>{0}</cite>"?< <strong>This action will remove
          * all references to raster data in that layer.</strong> However, the raster files will not be
          * deleted.</html>
          */
-        public static final short ConfirmDeleteLayer_1 = 4;
+        public static final short ConfirmDeleteLayer_1 = 5;
 
         /**
          * A {0,choice,0#horizontal|1#vertical} Coordinate Reference System must be specified.
          */
-        public static final short CrsRequired_1 = 5;
+        public static final short CrsRequired_1 = 6;
 
         /**
          * Domain of entries to list
          */
-        public static final short DomainOfEntries = 6;
+        public static final short DomainOfEntries = 7;
 
         /**
          * You can restrict the amount of images to be listed by specifying a smaller geographic area
          * or time range, or a larger resolution. Leave the values unchanged for listing every images
          * available in the layer.
          */
-        public static final short ExplainDomainOfEntries = 7;
+        public static final short ExplainDomainOfEntries = 8;
 
         /**
          * Incomplete form
          */
-        public static final short IncompleteForm = 8;
+        public static final short IncompleteForm = 9;
 
         /**
          * Elements of layer {0}
          */
-        public static final short LayerElements_1 = 9;
+        public static final short LayerElements_1 = 10;
 
         /**
          * New format (editable).
          */
-        public static final short NewFormat = 10;
+        public static final short NewFormat = 11;
 
         /**
          * Raster sample values are geophysics.
          */
-        public static final short RasterIsGeophysics = 11;
+        public static final short RasterIsGeophysics = 12;
 
         /**
          * Remove all
          */
-        public static final short RemoveAll = 12;
+        public static final short RemoveAll = 13;
 
         /**
          * Remove selected elements
          */
-        public static final short RemoveSelectedElements = 13;
+        public static final short RemoveSelectedElements = 14;
 
         /**
          * Rename this format if sample dimensions need to be edited.
          */
-        public static final short RenameFormatForEdit = 14;
+        public static final short RenameFormatForEdit = 15;
 
         /**
          * Select a directory
          */
-        public static final short SelectDirectory = 15;
+        public static final short SelectDirectory = 16;
 
         /**
          * Select a file
          */
-        public static final short SelectFile = 16;
+        public static final short SelectFile = 17;
 
         /**
          * Select variables
          */
-        public static final short SelectVariables = 17;
+        public static final short SelectVariables = 18;
 
         /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>
          */
-        public static final short TimeRange_2 = 18;
+        public static final short TimeRange_2 = 19;
     }
 
     /**

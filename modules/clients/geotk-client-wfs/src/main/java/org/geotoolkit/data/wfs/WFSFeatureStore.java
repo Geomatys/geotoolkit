@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +61,6 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.storage.GenericNameMap;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
@@ -175,7 +173,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
             sft = sftb.build();
             name = sft.getName();
-            types.add(name, sft);
+            types.add(this, name, sft);
             prefixes.put(NamesExt.getNamespace(name), prefix);
             typeNames.add(name);
 
@@ -200,7 +198,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                     for(int i=0,n=dims.intValue();i<n;i++){
                         env.setRange(i, lower.get(i), upper.get(i));
                     }
-                    bounds.add(name, env);
+                    bounds.add(this, name, env);
                 } catch (FactoryException ex) {
                     getLogger().log(Level.WARNING, null, ex);
                 }
@@ -241,7 +239,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        final FeatureType ft = types.get(typeName);
+        final FeatureType ft = types.get(this, typeName);
 
         if(ft == null){
             throw new DataStoreException("Type : "+ typeName + " doesn't exist in this datastore.");
@@ -261,7 +259,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
            && query.getFilter() == Filter.INCLUDE
            && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
            && query.getStartIndex() == 0){
-            Envelope env = bounds.get(type.getName().toString());
+            Envelope env = bounds.get(this, type.getName().toString());
             if(env != null) {return env;}
         }
 
@@ -500,7 +498,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException, IllegalNameException {
         final GenericName name = NamesExt.create(typeName);
-        FeatureType type = types.get(name.toString());
+        FeatureType type = types.get(this, name.toString());
         type = FeatureTypeExt.createSubType(type, query.getPropertyNames());
 
         final GetFeatureRequest request = server.createGetFeature();

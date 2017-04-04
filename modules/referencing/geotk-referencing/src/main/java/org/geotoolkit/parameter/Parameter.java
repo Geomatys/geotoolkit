@@ -32,7 +32,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.internal.storage.io.IOUtilities;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

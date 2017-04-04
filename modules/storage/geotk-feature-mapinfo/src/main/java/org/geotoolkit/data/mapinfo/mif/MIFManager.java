@@ -166,13 +166,13 @@ public class MIFManager {
 
         for (FeatureType t : mifChildTypes) {
             if(!names.getNames().contains(t.getName())) {
-                names.add(t.getName(),t.getName());
+                names.add(null, t.getName(),t.getName());
             }
         }
 
         if(names.getNames().isEmpty()) {
             if(mifBaseType!=null) {
-                names.add(mifBaseType.getName(),mifBaseType.getName());
+                names.add(null, mifBaseType.getName(),mifBaseType.getName());
             }/* else {
                 throw new DataStoreException("No valid type can be found into this feature store.");
             }*/
@@ -296,7 +296,7 @@ public class MIFManager {
     public void deleteSchema(String typeName) throws DataStoreException {
         getTypeNames();
 
-        final GenericName fullName = names.get(typeName);
+        final GenericName fullName = names.get(null, typeName);
         if (fullName!=null) {
             if (mifBaseType.getName().equals(fullName)) {
                 mifBaseType = null;
@@ -317,7 +317,7 @@ public class MIFManager {
     public FeatureType getType(String typeName) throws DataStoreException {
         getTypeNames();
 
-        final GenericName fullName = names.get(typeName);
+        final GenericName fullName = names.get(null, typeName);
         if(mifBaseType.getName().equals(fullName)) {
             return mifBaseType;
         }

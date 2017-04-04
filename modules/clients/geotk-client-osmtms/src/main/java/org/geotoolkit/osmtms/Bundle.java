@@ -26,8 +26,6 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 
 /**
  * Locale-dependent resources for words or simple sentences.
- *
- * @author Martin Desruisseaux (Geomatys)
  */
 public final class Bundle extends IndexedResourceBundle {
     /**
@@ -35,11 +33,6 @@ public final class Bundle extends IndexedResourceBundle {
      * {@code Keys} should appear in any resulting class files. Since the Java compiler
      * inlines final integer values, using long identifiers will not bloat the constant
      * pools of compiled classes.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.2
      */
     public static final class Keys {
         private Keys() {
@@ -48,22 +41,22 @@ public final class Bundle extends IndexedResourceBundle {
         /**
          * Open Street Map, tile service
          */
-        public static final short coverageDescription = 0;
+        public static final short coverageDescription = 1;
 
         /**
          * OSM.TMS
          */
-        public static final short coverageTitle = 1;
+        public static final short coverageTitle = 2;
 
         /**
          * Max zoom level
          */
-        public static final short maxZoomLevel = 2;
+        public static final short maxZoomLevel = 3;
 
         /**
          * Maximum zoom level.
          */
-        public static final short maxZoomLevelRemarks = 3;
+        public static final short maxZoomLevelRemarks = 4;
     }
 
     /**

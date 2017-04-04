@@ -29,7 +29,6 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests.ExpectedResult;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.gpx.GPXConstants;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 
@@ -63,14 +62,14 @@ public class GPXReading extends AbstractReadingTests {
 //        names.add(GPXModelConstants.TYPE_GPX_ENTITY.getName());
 //        expecteds.add(new ExpectedResult(GPXModelConstants.TYPE_GPX_ENTITY.getName(),GPXModelConstants.TYPE_GPX_ENTITY,0,env));
 
-        names.add(GPXConstants.TYPE_GPX_ENTITY.getName());
-        names.add(GPXConstants.TYPE_WAYPOINT.getName());
-        names.add(GPXConstants.TYPE_TRACK.getName());
-        names.add(GPXConstants.TYPE_ROUTE.getName());
-        expecteds.add(new ExpectedResult(GPXConstants.TYPE_GPX_ENTITY.getName(),GPXConstants.TYPE_GPX_ENTITY,0,env));
-        expecteds.add(new ExpectedResult(GPXConstants.TYPE_WAYPOINT.getName(),GPXConstants.TYPE_WAYPOINT,0,env));
-        expecteds.add(new ExpectedResult(GPXConstants.TYPE_TRACK.getName(),GPXConstants.TYPE_TRACK,0,env));
-        expecteds.add(new ExpectedResult(GPXConstants.TYPE_ROUTE.getName(),GPXConstants.TYPE_ROUTE,0,env));
+//        names.add(GPXConstants.TYPE_GPX_ENTITY.getName());
+//        names.add(GPXConstants.TYPE_WAYPOINT.getName());
+//        names.add(GPXConstants.TYPE_TRACK.getName());
+//        names.add(GPXConstants.TYPE_ROUTE.getName());
+//        expecteds.add(new ExpectedResult(GPXConstants.TYPE_GPX_ENTITY.getName(),GPXConstants.TYPE_GPX_ENTITY,0,env));
+//        expecteds.add(new ExpectedResult(GPXConstants.TYPE_WAYPOINT.getName(),GPXConstants.TYPE_WAYPOINT,0,env));
+//        expecteds.add(new ExpectedResult(GPXConstants.TYPE_TRACK.getName(),GPXConstants.TYPE_TRACK,0,env));
+//        expecteds.add(new ExpectedResult(GPXConstants.TYPE_ROUTE.getName(),GPXConstants.TYPE_ROUTE,0,env));
 
         //Complex type not supported
 //        names.add(GPXModelConstants.TYPE_ROUTE.getName());
@@ -79,7 +78,7 @@ public class GPXReading extends AbstractReadingTests {
 //        names.add(GPXModelConstants.TYPE_TRACK.getName());
 //        expecteds.add(new ExpectedResult(GPXModelConstants.TYPE_TRACK.getName(),GPXModelConstants.TYPE_TRACK,0,env));
 
-        
+
         //@todo ------------- test way points ----------------------------------------
 //        FeatureWriter writer = store.getFeatureWriterAppend(GPXModelConstants.TYPE_WAYPOINT.getName());
 //        try{

@@ -55,69 +55,69 @@ public final class Loggings extends IndexedResourceBundle {
         /**
          * Grid geometry has been adjusted for coverage “{0}”.
          */
-        public static final short AdjustedGridGeometry_1 = 0;
+        public static final short AdjustedGridGeometry_1 = 1;
 
         /**
          * Ambiguity between inverse flattening and semi minor axis length. Using inverse flattening.
          */
-        public static final short AmbiguousEllipsoid = 1;
+        public static final short AmbiguousEllipsoid = 2;
 
         /**
          * {3,choice,0#Apply|1#Reuse} operation “{1}” on coverage “{0}” with interpolation “{2}”.
          */
-        public static final short AppliedOperation_4 = 2;
+        public static final short AppliedOperation_4 = 3;
 
         /**
          * Resampled coverage “{0}” from coordinate system “{1}” (for an image of size {2}×{3}) to
          * coordinate system “{4}” (image size {5}×{6}). JAI operation is “{7}” with “{9}”
          * interpolation on {8,choice,0#packed|1#geophysics} pixels values. Background value is ({10}).
          */
-        public static final short AppliedResample_11 = 3;
+        public static final short AppliedResample_11 = 4;
 
         /**
          * Failed to create a coordinate operation from “{0}” authority factory.
          */
-        public static final short CantCreateCoordinateOperation_1 = 4;
+        public static final short CantCreateCoordinateOperation_1 = 5;
 
         /**
          * Failed to create an object for code “{0}”. This entry will be ignored.
          */
-        public static final short CantCreateObjectFromCode_1 = 5;
+        public static final short CantCreateObjectFromCode_1 = 6;
 
         /**
          * Can’t load a service for category “{0}”. Cause is “{1}”.
          */
-        public static final short CantLoadService_2 = 6;
+        public static final short CantLoadService_2 = 7;
 
         /**
          * Can’t read “{0}”.
          */
-        public static final short CantReadFile_1 = 7;
+        public static final short CantReadFile_1 = 8;
 
         /**
          * Can’t register JAI operation “{0}”. Some grid coverage operations may not work.
          */
-        public static final short CantRegisterJaiOperation_1 = 8;
+        public static final short CantRegisterJaiOperation_1 = 9;
 
         /**
          * Closed the database connection for thread “{0}” after {1} queries.
          */
-        public static final short ClosedDatabaseForThread_2 = 9;
+        public static final short ClosedDatabaseForThread_2 = 10;
 
         /**
          * Closed the EPSG database connection.
          */
-        public static final short ClosedEpsgDatabase = 10;
+        public static final short ClosedEpsgDatabase = 11;
 
         /**
          * Connected thread “{0}” to database “{1}”.
          */
-        public static final short ConnectedDatabaseForThread_2 = 11;
+        public static final short ConnectedDatabaseForThread_2 = 12;
 
         /**
          * Connected to EPSG database “{0}” on “{1}”.
          */
-        public static final short ConnectedEpsgDatabase_2 = 12;
+        public static final short ConnectedEpsgDatabase_2 = 13;
 
         /**
          * {0,choice,0#Loading|1#Writing} of {1}:
@@ -128,155 +128,155 @@ public final class Loggings extends IndexedResourceBundle {
          * • {0,choice,0#Required transform:|1#Applied transform: } {6}
          * • Elapsed time:       {7} milliseconds.
          */
-        public static final short CoverageStore_8 = 13;
+        public static final short CoverageStore_8 = 14;
 
         /**
          * Created {0,choice,0#decoder|1#encoder} of class {1}.
          */
-        public static final short CreatedCodecOfClass_2 = 14;
+        public static final short CreatedCodecOfClass_2 = 15;
 
         /**
          * Created coordinate operation “{0}” for source CRS “{1}” and target CRS “{2}”.
          */
-        public static final short CreatedCoordinateOperation_3 = 15;
+        public static final short CreatedCoordinateOperation_3 = 16;
 
         /**
          * Created a new ‘{0}’ object.
          */
-        public static final short CreatedObject_1 = 16;
+        public static final short CreatedObject_1 = 17;
 
         /**
          * Created serializable image for coverage “{0}” using the “{1}” codec.
          */
-        public static final short CreatedSerializableImage_2 = 17;
+        public static final short CreatedSerializableImage_2 = 18;
 
         /**
          * Creating cached EPSG database version {0}. This operation may take a few minutes...
          */
-        public static final short CreatingCachedEpsgDatabase_1 = 18;
+        public static final short CreatingCachedEpsgDatabase_1 = 19;
 
         /**
          * Deferred painting for tile ({0},{1}).
          */
-        public static final short DeferredTilePainting_2 = 19;
+        public static final short DeferredTilePainting_2 = 20;
 
         /**
          * File “{0}” contains values that duplicate previously stored values.
          */
-        public static final short DuplicatedContentInFile_1 = 20;
+        public static final short DuplicatedContentInFile_1 = 21;
 
         /**
          * Tile cache capacity exceed maximum heap size ({0} Mb).
          */
-        public static final short ExcessiveTileCache_1 = 21;
+        public static final short ExcessiveTileCache_1 = 22;
 
         /**
          * Factory implementations for category {0}:
          */
-        public static final short FactoryImplementations_1 = 22;
+        public static final short FactoryImplementations_1 = 23;
 
         /**
          * {1} ({0} authority) replaces {2} for {3,choice,0#standard|1#XY} axis order.
          */
-        public static final short FactoryReplacedForAxisOrder_4 = 23;
+        public static final short FactoryReplacedForAxisOrder_4 = 24;
 
         /**
          * Failure in the primary factory: {0} Now trying the fallback factory...
          */
-        public static final short FallbackFactory_1 = 24;
+        public static final short FallbackFactory_1 = 25;
 
         /**
          * Flush the “{0}” cache.
          */
-        public static final short FlushCache_1 = 25;
+        public static final short FlushCache_1 = 26;
 
         /**
          * Found {0} reference systems in {1} elements. The most frequent appears {2} time and the less
          * frequent appears {3} times.
          */
-        public static final short FoundMismatchedCRS_4 = 42;
+        public static final short FoundMismatchedCRS_4 = 27;
 
         /**
          * Initializing transformation from {0} to {1}.
          */
-        public static final short InitializingTransformation_2 = 26;
+        public static final short InitializingTransformation_2 = 28;
 
         /**
          * {0} JDBC driver version {1}.{2}.
          */
-        public static final short JdbcDriverVersion_3 = 27;
+        public static final short JdbcDriverVersion_3 = 29;
 
         /**
          * Loading region x=[{0} … {1}], y=[{2} … {3}] in {4} milliseconds:
          * {5,choice,0#success|1#canceled|2#FAILURE}.
          */
-        public static final short LoadingRegion_6 = 28;
+        public static final short LoadingRegion_6 = 30;
 
         /**
          * No coordinate operation from “{0}” to “{1}” because of mismatched factories.
          */
-        public static final short MismatchedCoordinateOperationFactories_2 = 29;
+        public static final short MismatchedCoordinateOperationFactories_2 = 31;
 
         /**
          * The type of the requested object does not match the “{0}” URN type.
          */
-        public static final short MismatchedUrnType_1 = 30;
+        public static final short MismatchedUrnType_1 = 32;
 
         /**
          * Native acceleration {1,choice,0#disabled|1#enabled} for “{0}” operation.
          */
-        public static final short NativeAccelerationState_2 = 31;
+        public static final short NativeAccelerationState_2 = 33;
 
         /**
          * JAI codec {1,choice,0#disabled|1#enabled} for {2,choice,0#reading|1#writing} “{0}” format.
          */
-        public static final short NativeCodecState_3 = 32;
+        public static final short NativeCodecState_3 = 34;
 
         /**
          * Failed to allocate {0} Mb of memory. Trying a smaller memory allocation.
          */
-        public static final short RecoverableOutOfMemory_1 = 33;
+        public static final short RecoverableOutOfMemory_1 = 35;
 
         /**
          * Registered Geotoolkit.org extensions to JAI operations.
          */
-        public static final short RegisteredJaiOperations = 34;
+        public static final short RegisteredJaiOperations = 36;
 
         /**
          * Creates a {1,choice,0#packed|1#geophysics|2#photographic} view of grid coverage “{0}” using
          * operation “{2}”.
          */
-        public static final short SampleTranscode_3 = 35;
+        public static final short SampleTranscode_3 = 37;
 
         /**
          * No column “{0}” has been found in table “{1}”. Value “{2}” will be used instead.
          */
-        public static final short TableColumnNotFound_3 = 36;
+        public static final short TableColumnNotFound_3 = 38;
 
         /**
          * Temporary file “{0}” has been garbage-collected.
          */
-        public static final short TemporaryFileGc_1 = 37;
+        public static final short TemporaryFileGc_1 = 39;
 
         /**
          * Unavailable authority factory: {0}
          */
-        public static final short UnavailableAuthorityFactory_1 = 38;
+        public static final short UnavailableAuthorityFactory_1 = 40;
 
         /**
          * Unrecognized scale type: “{0}”. Default to linear.
          */
-        public static final short UnrecognizedScaleType_1 = 39;
+        public static final short UnrecognizedScaleType_1 = 41;
 
         /**
          * Using “{0}” as a fallback.
          */
-        public static final short UsingFallback_1 = 40;
+        public static final short UsingFallback_1 = 42;
 
         /**
          * Using “{0}” as {1} factory.
          */
-        public static final short UsingFileAsFactory_2 = 41;
+        public static final short UsingFileAsFactory_2 = 43;
     }
 
     /**

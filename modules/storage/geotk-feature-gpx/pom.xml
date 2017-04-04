@@ -49,6 +49,11 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-xmlstore</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-store</artifactId>
             <version>${project.version}</version>

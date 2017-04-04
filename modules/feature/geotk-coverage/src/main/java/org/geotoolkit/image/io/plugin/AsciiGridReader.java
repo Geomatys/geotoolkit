@@ -50,7 +50,7 @@ import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;

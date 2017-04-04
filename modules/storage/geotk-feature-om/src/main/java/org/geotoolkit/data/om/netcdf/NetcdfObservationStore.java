@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -69,14 +68,14 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
-    
+
     public NetcdfObservationStore(final ParameterValueGroup params) {
         super(params);
         dataFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
     }
-    
+
     public NetcdfObservationStore(final Path observationFile) {
         super(null);
         dataFile = observationFile;
@@ -95,7 +94,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     public Path getDataFile() {
         return dataFile;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FEATURE STORE ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -115,7 +114,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         typeCheck(typeName);
-        return types.get(typeName);
+        return types.get(this, typeName);
     }
 
     /**
@@ -132,7 +131,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     @Override
     public void refreshMetaModel() {
     }
-    
+
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
@@ -210,11 +209,11 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
         names.add(NamesExt.create(getProcedureID()));
         return names;
     }
-    
+
     private String getProcedureID() {
         return IOUtilities.filenameWithoutExtension(dataFile);
     }
-    
+
     @Override
     public ExtractionResult getResults() throws DataStoreException {
         try {
@@ -223,7 +222,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
             throw new DataStoreException(ex);
         }
     }
-    
+
     @Override
     public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
         try {
@@ -232,7 +231,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
             throw new DataStoreException(ex);
         }
     }
-    
+
     @Override
     public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
         try {
@@ -241,7 +240,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
             throw new DataStoreException(ex);
         }
     }
-    
+
     @Override
     public void close() throws DataStoreException {
         // do nothing
@@ -255,7 +254,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
         }
         return phenomenons;
     }
-    
+
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
         try {
@@ -268,7 +267,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
             throw new DataStoreException(ex);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -289,7 +288,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     public List<ExtractionResult.ProcedureTree> getProcedures() throws DataStoreException {
         try {
             return NetCDFExtractor.getProcedures(analyze, getProcedureID(), null);
-            
+
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
@@ -310,7 +309,7 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     public ObservationWriter getWriter() {
         throw new UnsupportedOperationException("Writing is not supported on this observation store.");
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -318,5 +317,5 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Data
     public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
         throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
     }
-    
+
 }

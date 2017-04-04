@@ -160,19 +160,6 @@
         </plugins>
       </build>
     </profile>
-
-    <!--disable javadoc verifications-->
-    <!-- TODO fix javadocs -->
-    <profile>
-        <id>disable-java8-doclint</id>
-        <activation>
-            <jdk>[1.8,)</jdk>
-        </activation>
-        <properties>
-            <additionalparam>-Xdoclint:none</additionalparam>
-        </properties>
-    </profile>
-
   </profiles>
 
 
@@ -181,8 +168,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M05</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.8-jdk8-MC0001</sis.version>
+    <geoapi.version>4.0-M06</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.8-jdk8-MC0006</sis.version>
     <sis.epsg.version>0.7</sis.epsg.version>
     <derby.version>10.12.1.1</derby.version>
     <netcdf.version>4.3.21</netcdf.version>

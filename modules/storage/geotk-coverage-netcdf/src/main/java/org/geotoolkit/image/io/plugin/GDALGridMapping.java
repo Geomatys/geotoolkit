@@ -55,11 +55,17 @@ final class GDALGridMapping {
     /**
      * Parses the given WKT and "grid to CRS" transform, if non-null.
      *
-     * @param  caller The caller (can not be null).
-     * @param  The CRs Well Known Text, or {@code null}.
-     * @param  geoTransform The GDAL "GeoTransform", or {@code null}.
+     * @param  caller        the caller (can not be null).
+     * @param  epsg          the EPSG code, or {@code null}.
+     * @param  wkt           the CRS Well Known Text, or {@code null}.
+     * @param  geoTransform  the GDAL "GeoTransform", or {@code null}.
      */
-    GDALGridMapping(final WarningProducer caller, final String wkt, final String geoTransform) {
+    GDALGridMapping(final WarningProducer caller, final String epsg, final String wkt, final String geoTransform) {
+        if (epsg != null) try {
+            crs = CRS.forCode("EPSG:" + epsg);
+        } catch (FactoryException e) {
+            Warnings.log(caller, Level.WARNING, caller.getClass(), "forEPSG", e);
+        }
         if (wkt != null) try {
             crs = CRS.fromWKT(wkt);
         } catch (FactoryException e) {

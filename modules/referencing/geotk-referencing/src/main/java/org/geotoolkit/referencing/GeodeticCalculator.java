@@ -48,18 +48,18 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.measure.CoordinateFormat;
+import org.apache.sis.geometry.CoordinateFormat;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.TransformedDirectPosition;
+import org.apache.sis.io.TableAppender;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.geometry.TransformedDirectPosition;
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -1312,46 +1312,45 @@ public class GeodeticCalculator {
     @Override
     public String toString() {
         final Vocabulary resources = Vocabulary.getResources(null);
-        final TableWriter buffer = new TableWriter(null, " ");
+        final TableAppender buffer = new TableAppender(null, " ");
         if (coordinateReferenceSystem != null) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.CoordinateReferenceSystem));
+            buffer.append(resources.getLabel(Vocabulary.Keys.CoordinateReferenceSystem));
             buffer.nextColumn();
-            buffer.write(coordinateReferenceSystem.getName().getCode());
+            buffer.append(coordinateReferenceSystem.getName().getCode());
             buffer.nextLine();
         }
         if (ellipsoid != null) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.Ellipsoid));
+            buffer.append(resources.getLabel(Vocabulary.Keys.Ellipsoid));
             buffer.nextColumn();
-            buffer.write(ellipsoid.getName().getCode());
+            buffer.append(ellipsoid.getName().getCode());
             buffer.nextLine();
         }
         final CoordinateFormat cf = new CoordinateFormat();
-        final Format           nf = cf.getFormat(0);
         if (true) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.SourcePoint));
+            buffer.append(resources.getLabel(Vocabulary.Keys.SourcePoint));
             buffer.nextColumn();
-            buffer.write(format(cf, long1, lat1));
+            buffer.append(format(cf, long1, lat1));
             buffer.nextLine();
         }
         if (destinationValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.TargetPoint));
+            buffer.append(resources.getLabel(Vocabulary.Keys.TargetPoint));
             buffer.nextColumn();
-            buffer.write(format(cf, long2, lat2));
+            buffer.append(format(cf, long2, lat2));
             buffer.nextLine();
         }
         if (directionValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.Azimuth));
+            buffer.append(resources.getLabel(Vocabulary.Keys.Azimuth));
             buffer.nextColumn();
-            buffer.write(nf.format(new Angle(toDegrees(azimuth))));
+            buffer.append(new Angle(toDegrees(azimuth)).toString());
             buffer.nextLine();
         }
         if (directionValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.OrthodromicDistance));
+            buffer.append(resources.getLabel(Vocabulary.Keys.OrthodromicDistance));
             buffer.nextColumn();
-            buffer.write(nf.format(distance));
+            buffer.append(String.valueOf(distance));
             if (ellipsoid != null) {
-                buffer.write(' ');
-                buffer.write(ellipsoid.getAxisUnit().toString());
+                buffer.append(' ');
+                buffer.append(ellipsoid.getAxisUnit().toString());
             }
             buffer.nextLine();
         }
