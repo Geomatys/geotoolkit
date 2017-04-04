@@ -45,17 +45,12 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.internal.jdk8.JDK8;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.w3c.dom.Node;
 
 import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultImageCRS;
-import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
@@ -280,10 +275,10 @@ public final class GeoTiffMetaDataReader {
                 }
 
                 //-- the fourth corner points found
-                assert JDK8.isFinite(lowerLeftCorner[0])  : "lowerLeftCorner  grid point not found";
-                assert JDK8.isFinite(lowerRightCorner[0]) : "lowerRightCorner grid point not found";
-                assert JDK8.isFinite(upperLeftCorner[0])  : "upperLeftCorner  grid point not found";
-                assert JDK8.isFinite(upperRightCorner[0]) : "upperRightCorner grid point not found";
+                assert Double.isFinite(lowerLeftCorner[0])  : "lowerLeftCorner  grid point not found";
+                assert Double.isFinite(lowerRightCorner[0]) : "lowerRightCorner grid point not found";
+                assert Double.isFinite(upperLeftCorner[0])  : "upperLeftCorner  grid point not found";
+                assert Double.isFinite(upperRightCorner[0]) : "upperRightCorner grid point not found";
 
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -322,8 +317,8 @@ public final class GeoTiffMetaDataReader {
 //                            System.arraycopy(tiePoint, i, preUpperCorner, 0, 6);
 //                        }
 //                    }
-//                    assert JDK8.isFinite(preLowerCorner[0]) : "preLowerCorner grid point not found";
-//                    assert JDK8.isFinite(preUpperCorner[0]) : "preUpperCorner grid point not found";
+//                    assert Double.isFinite(preLowerCorner[0]) : "preLowerCorner grid point not found";
+//                    assert Double.isFinite(preUpperCorner[0]) : "preUpperCorner grid point not found";
 //
 //                    stepX = (int) StrictMath.round(preLowerCorner[0] - lowerLeftCorner[0]);
 //                    stepY = (int) StrictMath.round(preLowerCorner[1] - lowerLeftCorner[1]);

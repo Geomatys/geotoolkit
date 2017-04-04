@@ -117,7 +117,6 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.palette.PaletteFactory;
-import org.geotoolkit.internal.jdk8.JDK8;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
@@ -472,11 +471,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 double palMin = bmin;
                 double palMax = bmax;
                 if (mean != null && std != null) {
-                    palMin = StrictMath.max(bmin, mean - 2 * std);
-                    palMax = StrictMath.min(bmax, mean + 2 * std);
+                    palMin = Math.max(bmin, mean - 2 * std);
+                    palMax = Math.min(bmax, mean + 2 * std);
                 }
-                assert JDK8.isFinite(palMin) : "Raster Style fallback : minimum value should be finite. min = "+palMin;
-                assert JDK8.isFinite(palMax) : "Raster Style fallback : maximum value should be finite. max = "+palMax;
+                assert Double.isFinite(palMin) : "Raster Style fallback : minimum value should be finite. min = "+palMin;
+                assert Double.isFinite(palMax) : "Raster Style fallback : maximum value should be finite. max = "+palMax;
                 assert palMin >= bmin;
                 assert palMax <= bmax;
 
@@ -545,11 +544,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     final Double mean = bandb.getMean();
                     final Double std = bandb.getStd();
                     if (mean != null && std != null) {
-                        min = StrictMath.max(min, mean - 2 * std);
-                        max = StrictMath.min(max, mean + 2 * std);
+                        min = Math.max(min, mean - 2 * std);
+                        max = Math.min(max, mean + 2 * std);
                     }
-                    assert JDK8.isFinite(min) : "Raster Style fallback : minimum value should be finite. min = "+min;
-                    assert JDK8.isFinite(max) : "Raster Style fallback : maximum value should be finite. max = "+max;
+                    assert Double.isFinite(min) : "Raster Style fallback : minimum value should be finite. min = "+min;
+                    assert Double.isFinite(max) : "Raster Style fallback : maximum value should be finite. max = "+max;
                     bands[b] = b;
                     ranges[b][0] = min;
                     ranges[b][1] = max;
