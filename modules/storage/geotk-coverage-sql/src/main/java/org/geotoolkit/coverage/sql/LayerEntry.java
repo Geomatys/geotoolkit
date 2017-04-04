@@ -54,7 +54,7 @@ import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.TablePool;

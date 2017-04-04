@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;

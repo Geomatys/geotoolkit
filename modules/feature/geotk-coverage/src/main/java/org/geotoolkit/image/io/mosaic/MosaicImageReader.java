@@ -50,7 +50,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;

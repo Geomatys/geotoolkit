@@ -48,7 +48,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.DeferringIterator;
-import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.nio.IOUtilities;
