@@ -49,6 +49,12 @@ import static org.apache.sis.math.MathFunctions.xorSign;
  */
 final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemAxis { // Parameterized type is impractical here.
     /**
+     * Maximal distance between axis coordinates and requested coordinates before to fail a conversion.
+     * This distance is in grid units. Threshold is arbitrary and may change in any version of this class.
+     */
+    private static final int MAXIMAL_EXTRAPOLATION = 10;
+
+    /**
      * The index of the ordinate values to fetch in a source coordinate.
      */
     final int iDim;
@@ -269,33 +275,32 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
 
     /**
      * Interpolates the ordinate values at cell center from the given grid coordinate.
+     * If the given coordinate is outside axis range, then this method will tolerate a
+     * little bit of extrapolation up to an arbitrary distance.
      */
     @Override
     public double getOrdinateValue(final double[] gridPts, final int srcOff) throws TransformException {
+        final CoordinateAxis1D axis = (CoordinateAxis1D) this.axis;
         final double x = gridPts[srcOff + iDim];
-        try {
-            /*
-             * Casting to (int) round all values between -1 and 1 toward 0, which is exactly what we
-             * need in this particular case. We want -0.5 to be rounded toward zero because envelope
-             * transformations will often apply a 0.5 shift on the pixel coordinates, thus resulting
-             * in some -0.5 values. For such cases, a small extrapolation will be applied.
-             */
-            final int i = (int) x;
-            final CoordinateAxis1D axis = (CoordinateAxis1D) this.axis;
-            double value = axis.getCoordValue(i);
-            double delta = x - i;
-            if (delta != 0 && length != 1) {
-                int i1 = i + 1;
-                if (i1 == length) {
-                    i1 -= 2;
-                    delta = -delta;
-                }
-                value += delta * (axis.getCoordValue(i1) - value);
+        int i0 = Math.max(0, (int) x);
+        int i1 = (i0 + 1);
+        if (i1 >= length) {
+            switch (length) {
+                case 0: return Double.NaN;
+                case 1: return axis.getCoordValue(0);
             }
-            return value;
-        } catch (IndexOutOfBoundsException e) {
-            throw new TransformException(Errors.format(Errors.Keys.IllegalCoordinate_1, x), e);
+            i1 = length - 1;
+            i0 = i1 - 1;
         }
+        double value = axis.getCoordValue(i0);
+        double delta = x - i0;
+        if (delta != 0) {
+            if (Math.abs(delta) > MAXIMAL_EXTRAPOLATION) {
+                throw new TransformException(Errors.format(Errors.Keys.IllegalCoordinate_1, x));
+            }
+            value += delta * (axis.getCoordValue(i1) - value);
+        }
+        return value;
     }
 
     /**

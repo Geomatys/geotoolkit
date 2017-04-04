@@ -837,7 +837,8 @@ public class NetcdfImageReader extends FileImageReader implements
          */
         if (imageIndex < 0) {
             return new NetcdfMetadata(this, dataset);
-        } else {
+        } else if (IOUtilities.isFileSystemSupported(input)) {
+
             final SpatialMetadata metadata = createMetadataFromWorldFiles(imageIndex);
             if (metadata != null) {
                 return metadata;
