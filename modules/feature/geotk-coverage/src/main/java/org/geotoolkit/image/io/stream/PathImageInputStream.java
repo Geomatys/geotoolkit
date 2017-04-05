@@ -33,7 +33,7 @@ import static java.nio.file.StandardOpenOption.*;
  *
  * @author Quentin Boileau (Geomatys)
  *
- * @see org.apache.sis.internal.storage.ChannelImageInputStream
+ * @see org.apache.sis.internal.storage.io.ChannelImageInputStream
  */
 public class PathImageInputStream extends ChannelImageInputStream {
 

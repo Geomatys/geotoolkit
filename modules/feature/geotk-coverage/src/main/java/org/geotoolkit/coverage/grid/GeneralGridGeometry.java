@@ -215,8 +215,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             extent    = other.getExtent();
             gridToCRS = other.getGridToCRS();
             if (extent != null && gridToCRS != null) {
-                env = new org.geotoolkit.geometry.GeneralEnvelope(extent, PixelInCell.CELL_CENTER, gridToCRS, null);
-                ((org.geotoolkit.geometry.GeneralEnvelope) env).roundIfAlmostInteger(360, ULP_TOLERANCE);
+                defineFromGrid(extent, gridToCRS, null);
             }
             envelope = (env != null) ? new ImmutableEnvelope(env) : null;
         }
@@ -299,8 +298,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         }
         GeneralEnvelope env = null;
         if (extent != null && gridToCRS != null) {
-            env = new org.geotoolkit.geometry.GeneralEnvelope(extent, anchor, gridToCRS, crs);
-            ((org.geotoolkit.geometry.GeneralEnvelope) env).roundIfAlmostInteger(360, ULP_TOLERANCE);
+            env = defineFromGrid(extent, this.gridToCRS, crs);
         } else if (crs != null) {
             env = new GeneralEnvelope(crs);
             env.setToNaN();
@@ -701,5 +699,39 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + extent + ", " + gridToCRS + ']';
+    }
+
+    /**
+     * Transform given extent using input transform.
+     *
+     * IMPORTANT : Given transform MUST be defined for PIXEL CENTER operations.
+     *
+     * @param source Extent to use as source coordinates.
+     * @param gridToCRS MathTransform (pixel-center) to use to project extent
+     * into wanted CRS.
+     * @param crs CRS to set for returned envelope. Can be null.
+     * @return Transformed extent
+     * @throws IllegalArgumentException If we cannot apply the transform, or given CRS is not compatible with output envelope.
+     */
+    protected static GeneralEnvelope defineFromGrid(final GridEnvelope source, final MathTransform gridToCRS, final CoordinateReferenceSystem crs) throws IllegalArgumentException {
+        final GeneralEnvelope tmpGridEnvelope = new GeneralEnvelope(source.getDimension());
+        // As input ordinates represent pixel center, we expand them to get boundaries
+        for (int i = 0; i < source.getDimension(); i++) {
+            tmpGridEnvelope.setRange(i, source.getLow(i) - 0.5, source.getHigh(i) + 0.5);
+        }
+        try {
+            final GeneralEnvelope env = Envelopes.transform(gridToCRS, tmpGridEnvelope);
+            if (crs != null)
+                env.setCoordinateReferenceSystem(crs);
+            return env;
+        } catch (TransformException ex) {
+            throw new IllegalArgumentException(
+                    Errors.format(
+                            Errors.Keys.IllegalTransformForType_1,
+                            gridToCRS.getClass()
+                    ),
+                    ex
+            );
+        }
     }
 }

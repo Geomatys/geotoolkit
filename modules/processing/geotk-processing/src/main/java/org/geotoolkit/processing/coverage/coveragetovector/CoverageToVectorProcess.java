@@ -85,8 +85,8 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private static ParameterValueGroup asParameters(GridCoverage2D coverage, NumberRange[] ranges, int band){
         final ParameterValueGroup params = CoverageToVectorDescriptor.INPUT_DESC.createValue();
         ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
-        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(coverage);
-        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(coverage);
+        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(ranges);
+        ParametersExt.getOrCreateValue(params, CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(band);
         return params;
     }
 
@@ -205,31 +205,30 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         //special case for NaN or null
         //todo
-
-
-        for (final NumberRange range : polygons.keySet()) {
-
-            if (range.containsAny(value)) {
-                if (block.range == range) {
-                    //last pixel was in the same range
-                    block.endX = point.x;
-                    return;
-                } else if (block.range != null) {
-                    //last pixel was in a different range, save it's geometry
-                    constructBlock();
-                }
-
-                //start a pixel serie
-                block.range = range;
-                block.startX = point.x;
-                block.endX = point.x;
-                block.y = point.y;
-
-                return;
-            }
+        final NumberRange valueRange;
+        if (value == null || Double.isNaN(value.doubleValue())) {
+            valueRange = new NaNRange();
+        } else {
+            valueRange = polygons.keySet().stream()
+                    .filter(range -> range.containsAny(value))
+                    .findAny()
+                    .orElseThrow(() -> new IllegalArgumentException("Value not in any range :" + value));
         }
 
-        throw new IllegalArgumentException("Value not in any range :" + value);
+        if (valueRange.equals(block.range)) {
+            //last pixel was in the same range
+            block.endX = point.x;
+            return;
+        } else if (block.range != null) {
+            //last pixel was in a different range, save it's geometry
+            constructBlock();
+        }
+
+        //start a pixel serie
+        block.range = valueRange;
+        block.startX = point.x;
+        block.endX = point.x;
+        block.y = point.y;
     }
 
     private void constructBlock() {

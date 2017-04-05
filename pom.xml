@@ -1092,6 +1092,11 @@
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
     </pluginRepository>
+    <pluginRepository>
+      <id>dev</id>
+      <name>Geomatys internal repository</name>
+      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+    </pluginRepository>
   </pluginRepositories>
 
 

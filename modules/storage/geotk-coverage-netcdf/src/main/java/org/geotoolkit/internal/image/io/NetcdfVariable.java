@@ -21,6 +21,7 @@ import java.awt.image.DataBuffer;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.math.MathFunctions;
 
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
@@ -264,8 +265,10 @@ scan:   for (int i=0; i<missingCount; i++) {
             if (number != null) {
                 final double value = number.doubleValue();
                 if (!Double.isNaN(value)) {
+                    // Create a delta relevant to the tested number magnitude.
+                    final double epsilon = MathFunctions.magnitude(value) * 1E-4;
                     for (int j=0; j<count; j++) {
-                        if (value == missings[j]) {
+                        if (MathFunctions.epsilonEqual(value, missings[j], epsilon)) {
                             // Current value duplicates a previous one.
                             continue scan;
                         }

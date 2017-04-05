@@ -60,7 +60,7 @@ public class GenericNameIndex<T> extends FeatureNaming<T> {
     public T get(String name) throws IllegalNameException {
         return super.get(null, name);
     }
-    
+
     public void add(GenericName name, final T value) throws IllegalNameException {
         add(null,name,value);
     }
