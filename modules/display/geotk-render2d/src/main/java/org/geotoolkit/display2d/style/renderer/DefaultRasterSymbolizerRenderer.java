@@ -78,12 +78,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
-import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
-import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.image.BufferedImages;
@@ -562,16 +559,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         //-- apply recolor function "sample to geophysic", sample interpretation.
-        if (recolor != null
-         && recolor.getFunction() != null) {
+        if (recolor != null && recolor.getFunction() != null) {
 
             //color map is applied on geophysics view
             //if there is no geophysic, the same coverage is returned
             coverage = hasQuantitativeCategory(coverage) ? coverage.view(ViewType.GEOPHYSICS) : coverage;
-            resultImage = coverage.getRenderedImage();
-
-            final Function fct = recolor.getFunction();
-            resultImage        = recolor(resultImage, fct);
+            resultImage        = recolor.getFunction().evaluate(coverage.getRenderedImage(), RenderedImage.class);
         } else {
             //no color map, used the default image rendered view
             // coverage = coverage.view(ViewType.RENDERED);
@@ -1060,26 +1053,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             builder.setSampleDimensions();
             return builder.getGridCoverage2D();
         }
-    }
-
-    private static RenderedImage recolor(final RenderedImage image, final Function function){
-
-        RenderedImage recolorImage = image;
-        if (function instanceof Categorize) {
-            final Categorize categorize = (Categorize) function;
-            recolorImage = (RenderedImage) categorize.evaluate(image);
-
-        } else if(function instanceof Interpolate) {
-            final Interpolate interpolate = (Interpolate) function;
-            recolorImage = (RenderedImage) interpolate.evaluate(image);
-
-        } else if(function instanceof Jenks) {
-            final Jenks jenks = (Jenks) function;
-            recolorImage = (RenderedImage) jenks.evaluate(image);
-        }
-
-        return recolorImage;
-
     }
 
     /**

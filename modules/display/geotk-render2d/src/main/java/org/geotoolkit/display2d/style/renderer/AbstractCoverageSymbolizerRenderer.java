@@ -77,6 +77,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.opengis.feature.PropertyNotFoundException;
 
 /**
@@ -110,6 +111,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             }
             if(obj instanceof GridCoverage2D){
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                params.update(renderingContext);
+                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
+                portray(pc);
+            }else  if(obj instanceof CoverageReference){
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((CoverageReference)obj);
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                params.update(renderingContext);
+                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
+                portray(pc);
+            }else  if(obj instanceof GridCoverageReader){
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
