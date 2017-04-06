@@ -325,19 +325,60 @@ public class Statistics extends AbstractProcess {
             }
 
         } else {
-            //standard image
-            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+            //-- this code replace more global case define after this code block.
+            //-- an error from JAI is occured when PixelIterator request getTile of JAI RenderedOP.
+            //-- To avoid exception we perform statistic after tile request and tile per tile.
+            //-- Moreover if tile request fail pass to the next tile.
 
-            //get min/max
-            analyseRange(pix, stats, bands, excludeNoData);
-            fireProgressing("Start histogram computing", 55f, true);
+            {
+                final int tileGridXOffset = image.getTileGridXOffset();
+                final int tileGridYOffset = image.getTileGridYOffset();
+                final int numXTiles       = image.getNumXTiles();
+                final int numYTiles       = image.getNumYTiles();
+                final int indexXmax       = tileGridXOffset + numXTiles;
+                final int indexYmax       = tileGridYOffset + numYTiles;
+                int step = 0;
+                final int totalTiles = numXTiles * numYTiles;
+                for (int y = tileGridYOffset; y < indexYmax; y++) {
+                    for (int x = tileGridXOffset; x < indexXmax; x++) {
+                        ++step;
+                        try {
+                            final Raster tile       = image.getTile(x, y);
+                            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(tile);
+                            analyseRange(pix, stats, bands, excludeNoData);
+                            pix.rewind();
 
-            //reset iterator
-            pix.rewind();
+                            mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
 
-            //compute histogram
-            histo = analyseHistogram(pix, bands, stats, excludeNoData);
-            updateBands(bands, histo);
+                            updateBands(bands, histo);
+                            fireProgressing("Start histogram computing", (step/totalTiles)*0.9f, true);
+                        } catch (ArrayIndexOutOfBoundsException ex) {
+                            // when error is occured from JAI RenderedOP pass to the next tile
+                            continue;
+                        }
+                    }
+                }
+            }
+
+
+            //-- code in comment to avoid JAI tiles problems.
+            //-- when JAI problems will be resolved or JAI not used
+            //-- this code will be decommented and precedently code block should be deleted.
+            {
+    //            //standard image
+    //            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+    //
+    //            //get min/max
+    //            analyseRange(pix, stats, bands, excludeNoData);
+    //            fireProgressing("Start histogram computing", 55f, true);
+    //
+    //            //reset iterator
+    //            pix.rewind();
+
+                //compute histogram
+    //            histo = analyseHistogram(pix, bands, stats, excludeNoData);
+    //            updateBands(bands, histo);
+            }
         }
 
         //copy statistics in band container
