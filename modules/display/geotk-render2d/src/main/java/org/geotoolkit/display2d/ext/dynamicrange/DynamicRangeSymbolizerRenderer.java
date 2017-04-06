@@ -63,12 +63,12 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
     @Override
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
-        
+
         try{
             final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
-            
+
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
-            
+
             final int[] bands = new int[]{-1,-1,-1,-1};
             final double[][] ranges = new double[][]{{-1,-1},{-1,-1},{-1,-1},{-1,-1}};
 
@@ -82,7 +82,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 allLiteral &= channel.getUpper().getValue() instanceof Literal;
             }
             final CoverageDescription covdesc = allLiteral ? null : covref.getMetadata();
-            
+
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
                 final Integer bandIdx;
                 try{
@@ -101,7 +101,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                     //no mapping
                     continue;
                 }
-                
+
                 bands[idx] = bandIdx;
 
                 //search for band statistics
@@ -133,8 +133,8 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 ranges[idx][0] = evaluate(channel.getLower(), stats);
                 ranges[idx][1] = evaluate(channel.getUpper(), stats);
             }
-            
-            
+
+
             //read only requested coverage bands
             int[] toRead = new int[0];
             final int[] mapping = new int[4];
@@ -148,16 +148,16 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                     }
                     mapping[i] = index;
                 }
-            }            
-            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage, 
+            }
+            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage,
                     renderingContext.getCanvasObjectiveBounds(),
-                    renderingContext.getResolution(), 
-                    renderingContext.getObjectiveToDisplay(), 
+                    renderingContext.getResolution(),
+                    renderingContext.getObjectiveToDisplay(),
                     false,toRead);
             if(dataCoverage == null){
                 return;
-            }            
-            
+            }
+
             //check if the reader honored the band request
             final GridSampleDimension[] readDimensions = dataCoverage.getSampleDimensions();
             final List<GridSampleDimension> sampleDimensions = covref.acquireReader().getSampleDimensions(covref.getImageIndex());
@@ -165,26 +165,26 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             for (int i=0;bandReadHonored && i<toRead.length;i++) {
                 bandReadHonored &= Objects.equals(readDimensions[i].getDescription(), sampleDimensions.get(toRead[i]).getDescription());
             }
-            
+
             //swap new band indexes
             if (bandReadHonored) {
                 for (int i=0;i<4;i++) {
                     if (bands[i]!=-1) bands[i] = mapping[i];
                 }
             }
-            
+
             if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) {
                 dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
             }
             final RenderedImage ri = dataCoverage.getRenderedImage();
-            
+
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
             RenderedImage img = p.executeNow();
             if (img instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)img);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-            
+
             renderCoverage(img, trs2D);
-        
+
         } catch (CoverageStoreException e) {
             if(e.getCause() instanceof ProjectionException) {
                 //out of domain exception
@@ -195,20 +195,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         } catch (Exception e) {
             monitor.exceptionOccured(e, Level.WARNING);
         }
-        
+
     }
-    
-    /**
-     * {@inheritDoc }
-     * <br>
-     * Note : do nothing only return coverageSource.
-     * In attempt to particulary comportement if exist.
-     */
-    @Override
-    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedDynamicRangeSymbolizer symbolizer) {
-        return coverageSource;
-    }
-    
+
     private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException{
         final String mode = bound.getMode();
         if(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)){
@@ -235,8 +224,8 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             throw new PortrayalException("Unknwoned mode "+mode);
         }
     }
-    
-    
+
+
     private void renderCoverage(RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
         renderingContext.switchToObjectiveCRS();
         if (trs2D instanceof AffineTransform) {

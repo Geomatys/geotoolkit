@@ -435,15 +435,4 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
     private static int length(final Point2D delta) {
         return Math.max(1, (int) Math.ceil(Math.hypot(delta.getX(), delta.getY())));
     }
-
-    /**
-     * {@inheritDoc }
-     * <br>
-     * Note : do nothing only return coverageSource.
-     * In attempt to particulary comportement if exist.
-     */
-    @Override
-    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedCellSymbolizer symbolizer) {
-        return coverageSource;
-    }
 }
