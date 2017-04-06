@@ -1040,5 +1040,10 @@ public class ImageUtils extends Static {
             }
             return (raster.getTransferType() == transferType);
         }
+
+        @Override
+        public int getNumComponents() {
+            return numbands;
+        }
     }
 }
