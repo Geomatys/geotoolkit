@@ -393,8 +393,18 @@ public strictfp class ThirdPartyMetaDataReader {
             }
 
             final List<Category> categories = buildCategories(minSV[b], maxSV[b], sampleToGeoScale, sampleToGeoOffset, typeClass, noDatas);
-            final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
-            accessor.setDimension(dim, Locale.ENGLISH);
+
+            /*
+             * If categories list is empty means image is only photographic and doesn't
+             * represent any GEOPHISIC context.
+             *
+             * We create gridsampleDimension only if image as a Coverage.GEOPHISIC view.
+             * GEOPHISIC means exist at least, one of, scale, offset or noData values.
+             */
+            if (!categories.isEmpty()) {
+                final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
+                accessor.setDimension(dim, Locale.ENGLISH);
+            }
         }
     }
 
@@ -504,5 +514,5 @@ public strictfp class ThirdPartyMetaDataReader {
         return new NumberRange(type, Numbers.cast(min, type), isMinIncluded,
                                      Numbers.cast(max, type), isMaxIncluded);
     }
-    
+
 }

@@ -160,6 +160,21 @@
         </plugins>
       </build>
     </profile>
+    
+    <!--
+        disable javadoc verifications. Required even with javadoc plugin
+        configuration, to ensure it's used in all cases (javadoc:jar, site, etc.)
+    -->
+    <!-- TODO fix javadocs -->
+    <profile>
+        <id>disable-java8-doclint</id>
+        <activation>
+            <jdk>[1.8,)</jdk>
+        </activation>
+        <properties>
+            <additionalparam>-Xdoclint:none</additionalparam>
+        </properties>
+    </profile>
   </profiles>
 
 
@@ -939,7 +954,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
+        <version>2.10.4</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -1091,6 +1106,11 @@
       <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>dev</id>
+      <name>Geomatys internal repository</name>
+      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
     </pluginRepository>
   </pluginRepositories>
 

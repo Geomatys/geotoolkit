@@ -1,0 +1,38 @@
+#
+# This is the configuration file for the Drift experiment. The model expects oceanic current and wind speed data
+# in the "HYCOM" and "WindSat" directories respectively. Current implementation does not yet take arbitrary data;
+# the model is currently designed for data of the following sources:
+#
+# HYCOM:
+#    ftp://ftp.hycom.org/datasets/GLBa0.08/expt_91.1/2015/uvel/archv.2015_<day of year>_00_3zu.nc
+#
+# WindSat:
+#    ftp://podaac-ftp.jpl.nasa.gov/OceanWinds/windsat/L3/rss/v7/2015/<day of month>/windsat_remss_ovw_l3_<date>_v7.0.1.nc.gz
+#
+# The HYCOM data are three-dimensional but the model will use only the surface layer with Mercator-curvilinear
+# horizontal grid.  At each time step in the model, the drifting object displacement is computed as the vector
+# sum of the oceanic current and the wind velocity, weighted by the values in the following table. For example
+# if "Weight of current vector" = 0.8 and "Weight of wind vector" = 0.2, then the displacement vector will be:
+#
+#     displacement =  0.8 * current  +  0.2 * wind
+#
+# Note that the weight sum does not need to be 1. For example it is okay to alway give to current a weight of 1.
+# Note also that the speed of Kuroshio current is around 0.4 - 1.3 m/s while the average wind speed over Pacific
+# ocean is around 6 m/s. The difference in magnitude needs to be taken in account in the weight values.
+#
+# On each (current, wind) weights row, the last number is a pseudo-probability that this particular combination of
+# weights occurs.  This number is used for applying colors in output images and for deciding when to stop tracking
+# a trajectory. At least two sets of weights should be specified. The pseudo-probability sum does not need to be 1.
+#
+#
+#   Current,  Wind,  Pseudo-probability
+
+weights = 1,  0.01,  0.5
+weights = 1,  0.03,  1.0
+weights = 1,  0.05,  0.5
+
+
+# Maximal number of trajectories to track. If there is more trajectories than this amount, the trajectories with
+# the lowest pseudo-probability will be discarded.
+
+maximum_trajectory_count = 1000000

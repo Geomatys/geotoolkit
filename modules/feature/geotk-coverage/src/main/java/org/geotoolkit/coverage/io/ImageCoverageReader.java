@@ -754,7 +754,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          * and didn't found any. This is not the same than a coverage having no bands, which
          * should not be valid.
          */
-        if (sd.isEmpty()) {
+        if (sd == null || sd.isEmpty()) {
             return null;
         }
         return sd;
