@@ -359,4 +359,28 @@ public class WebProcessingClient extends AbstractClient {
         }
         return request;
     }
+    
+    /**
+     * Create a Dismiss request
+     *
+     * @return GetResultRequest.
+     */
+    public DismissRequest createDismiss() {
+
+        final DismissRequest request = new DismissRequest(serverURL.toString(), getClientSecurity());
+
+        switch (getVersion()) {
+            case v100:
+                throw new IllegalArgumentException("Dismiss requests are not available in WPS 1.0.0");
+            case v200: {
+                final org.geotoolkit.wps.xml.v200.Dismiss content = new org.geotoolkit.wps.xml.v200.Dismiss();
+                content.setService("WPS");
+                content.setVersion("2.0.0");
+                } break;
+            default:
+                throw new IllegalArgumentException("Version was not defined or unsupported.");
+        }
+        return request;
+    }
+    
 }
