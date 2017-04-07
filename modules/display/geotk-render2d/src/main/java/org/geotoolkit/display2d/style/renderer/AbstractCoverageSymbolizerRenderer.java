@@ -183,16 +183,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
 
     /**
-     * Effectuate some operations on source {@link GridCoverage2D} in relation with its internally symbolizer type.
-     *
-     * @param coverageSource source coverage which will be adapted to resampling.
-     * @param symbolizer
-     * @return coverage prepared to resampling.
-     * @see DefaultRasterSymbolizerRenderer#prepareCoverageToResampling(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.display2d.style.CachedSymbolizer)
-     */
-    protected abstract GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, C symbolizer);
-
-    /**
      * Returns expected {@link GridCoverage2D} from given {@link ProjectedCoverage},
      * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
      *
@@ -254,7 +244,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         return getObjectiveCoverage(projectedCoverage, renderingBound, resolution, objToDisp, isElevation, null);
     }
-    
+
     /**
      * Returns expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
      * from given {@link ProjectedCoverage}.
@@ -294,14 +284,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
         final Envelope dataBBox                = gridGeometry.getEnvelope();
         ref.recycle(reader);
-        
+
         final CoordinateReferenceSystem coverageMapLayerCRS = dataBBox.getCoordinateReferenceSystem();
 
         final Map<String, Double> queryValues = extractQuery(projectedCoverage.getLayer());
         if (queryValues != null && !queryValues.isEmpty()) {
             renderingBound = fixEnvelopeWithQuery(queryValues, renderingBound, coverageMapLayerCRS);
         }
-        
+
         /*
         * Study rendering context envelope and internal coverage envelope.
         * We try to define if the two geographic part from the two respectively
@@ -338,7 +328,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             normalizedEnvelope.normalize();
             coverageIntoRender2DCRS = GeneralEnvelope.castOrCopy(Envelopes.transform(normalizedEnvelope,renderingContextObjectiveCRS2D));
         }
-        
+
         final GeneralEnvelope intersectionIntoRender2D = GeneralEnvelope.castOrCopy(coverageIntoRender2DCRS);
         intersectionIntoRender2D.intersect(renderingBound2D);
         /*
@@ -467,10 +457,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             case BICUBIC2 : expand(paramEnvelope, 2, gridGeometry); break;
             case LANCZOS : expand(paramEnvelope, 4, gridGeometry); break;
         }
-
-        //-- Use into DefaultRasterSymbolizerRenderer
-        //-- force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
-        dataCoverage = prepareCoverageToResampling(dataCoverage, symbol);
 
         /*
          * NODATA

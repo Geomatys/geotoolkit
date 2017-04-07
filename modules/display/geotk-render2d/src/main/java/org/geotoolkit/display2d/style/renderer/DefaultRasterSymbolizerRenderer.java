@@ -972,54 +972,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     // RenderedImage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-
-
-    /**
-     * {@inheritDoc }
-     *
-     * Prepare coverage for Raster rendering.
-     */
-    @Override
-    protected GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, final CachedRasterSymbolizer symbolizer) {
-        return getReadyToResampleCoverage(coverageSource, symbolizer.getSource());
-    }
-
-    /**
-     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
-     * coverage case, in order for the resample to deliver a ready to style image.
-     *
-     * @param source The coverage to analyse.
-     * @param style Style to apply on coverage data.
-     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
-     * computed from source data.
-     */
-    private static GridCoverage2D getReadyToResampleCoverage(final GridCoverage2D source, final RasterSymbolizer style) {
-        final GridSampleDimension[] dims = source.getSampleDimensions();
-        final ColorMap cMap = style.getColorMap();
-        if ((cMap != null && cMap.getFunction() != null) ||
-            (dims != null && dims.length != 0 && dims[0].getNoDataValues() != null) ||
-            !source.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
-            return source;
-
-        } else {
-            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
-            RenderedImage img = photoCvg.getRenderedImage();
-            final int datatype = img.getSampleModel().getDataType();
-            if (datatype != DataBuffer.TYPE_BYTE && datatype != DataBuffer.TYPE_USHORT) return source;
-            RenderedImage imga = GO2Utilities.forceAlpha(img);
-
-            if (imga != img) {
-                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                gcb.setName("temp");
-                gcb.setGridGeometry(source.getGridGeometry());
-                gcb.setRenderedImage(imga);
-                return gcb.getGridCoverage2D();
-            } else {
-                return source;
-            }
-        }
-    }
-
     /**
      * Returns a {@link GridCoverage2D} which contain band extracted from sourceCoverage
      * at band indices given by indice array parameter.<br><br>
