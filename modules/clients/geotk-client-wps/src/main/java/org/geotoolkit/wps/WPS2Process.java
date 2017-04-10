@@ -31,7 +31,6 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.ExceptionResponse;
-import org.geotoolkit.ows.xml.ExceptionType;
 import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -44,7 +43,7 @@ import org.geotoolkit.wps.xml.v200.ComplexDataType;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInputType;
 import org.geotoolkit.wps.xml.v200.DataOutputType;
-import org.geotoolkit.wps.xml.v200.DataTransmissionModeType;
+import org.geotoolkit.wps.xml.v200.Dismiss;
 import org.geotoolkit.wps.xml.v200.LiteralValue;
 import org.geotoolkit.wps.xml.v200.OutputDefinitionType;
 import org.geotoolkit.wps.xml.v200.Result;
@@ -57,7 +56,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- *
+ * WPS 2 process.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -74,10 +74,97 @@ public class WPS2Process extends AbstractProcess {
     private String lastMessage;
     private String jobId;
 
+    /**
+     * Create a new WPS process.
+     * 
+     * @param registry WPS registry
+     * @param desc process description
+     * @param params input parameters
+     */
     public WPS2Process(WPSProcessingRegistry registry, WPS2ProcessDescriptor desc, ParameterValueGroup params) {
         super(desc, params);
         this.desc = desc;
         this.registry = registry;
+    }
+
+    /**
+     * Open a process which is already running on a WPS server.
+     * 
+     * @param registry WPS registry
+     * @param desc process description
+     * @param jobId process running task identifier
+     */
+    public WPS2Process(WPSProcessingRegistry registry, WPS2ProcessDescriptor desc, String jobId) {
+        super(desc);
+        this.desc = desc;
+        this.registry = registry;
+        this.jobId = jobId;
+    }
+    
+    /**
+     * Returns the process execution identifier, called jobId.<br>
+     * This value is available only after the process execution has started.
+     * 
+     * @return job identifier, null before execution
+     */
+    public String getJobId() {
+        return jobId;
+    }
+    
+    /**
+     * Get current task status.<br>
+     * 
+     * This method should not be called if process is not running.
+     * 
+     * @return StatusInfo
+     * @throws org.geotoolkit.process.ProcessException
+     * @throws javax.xml.bind.UnmarshalException
+     * @throws java.io.IOException
+     */
+    public StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
+        if (jobId==null) throw new ProcessException("Process is not started.", this);
+        
+        final GetStatusRequest req = registry.getClient().createGetStatus();
+        req.getContent().setJobID(jobId);
+        final Object response = req.getResponse();
+        
+        if (response instanceof ExceptionResponse) {
+            final ExceptionResponse report = (ExceptionResponse) response;
+            throw new ProcessException("Exception when executing the process.", this, report.toException());
+
+        } else if (response instanceof StatusInfo) {
+            return (StatusInfo) response;
+        
+        } else {
+            throw new ProcessException("Unexpected response "+response.getClass().getName(), this);
+        }
+    }
+
+    /**
+     * Request to stop the process.<br>
+     * This request has no effect if the process has not start or is already finished or canceled.
+     */
+    @Override
+    public void cancelProcess() {
+        if(isCanceled() || jobId==null) return;
+        super.cancelProcess();
+        
+        //send a stop request
+        final DismissRequest request = registry.getClient().createDismiss();
+        final Dismiss dismiss = request.getContent();
+        dismiss.setJobID(jobId);
+        
+        try {
+            checkResult(request.getResponse());
+        } catch (JAXBException ex) {
+            registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (IOException ex) {
+            registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (InterruptedException ex) {
+            registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (ProcessException ex) {
+            registry.getClient().getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -147,9 +234,7 @@ public class WPS2Process extends AbstractProcess {
                 }
 
                 try{
-                    final GetStatusRequest req = registry.getClient().createGetStatus();
-                    req.getContent().setJobID(jobId);
-                    tmpResponse = req.getResponse();
+                    tmpResponse = getStatus();
                     failCount = 0;
                 }catch(UnmarshalException | IOException ex){
                     if(failCount<5){

@@ -47,6 +47,11 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
 
     volatile boolean isPaused = false;
 
+    /**
+     * 
+     * @param desc process description, not null
+     * @param input process inpu parameters, not null
+     */
     public AbstractProcess(final ProcessDescriptor desc, final ParameterValueGroup input) {
         ensureNonNull("descriptor", desc);
         ensureNonNull("input", input);
@@ -58,6 +63,20 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
         if (!res.pass()) {
             throw new IllegalArgumentException("Input parameters are invalid:" + res.getExplanation());
         }
+    }
+    
+    /**
+     * For subclasses only.<br>
+     * Current use case is for WPS2, to reattach to an already running process.
+     * 
+     * @param desc process description, not null
+     */
+    protected AbstractProcess(final ProcessDescriptor desc) {
+        ensureNonNull("descriptor", desc);
+        this.descriptor = desc;
+        this.outputParameters = descriptor==null? null : descriptor.getOutputDescriptor().createValue();
+        this.inputParameters = null;
+        
     }
 
     @Override
