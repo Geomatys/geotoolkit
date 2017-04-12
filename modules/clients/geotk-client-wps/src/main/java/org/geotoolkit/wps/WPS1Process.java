@@ -47,6 +47,7 @@ import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ExecuteResponse;
+import org.geotoolkit.wps.xml.v100.InputType;
 import org.geotoolkit.wps.xml.v100.LiteralDataType;
 import org.geotoolkit.wps.xml.v100.OutputDataType;
 import org.geotoolkit.wps.xml.v100.ProcessFailedType;
@@ -343,7 +344,7 @@ public class WPS1Process extends AbstractProcess {
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-            final List<AbstractWPSInput> wpsIN = new ArrayList<>();
+            final List<InputType> wpsIN = new ArrayList<>();
             final List<WPSOutput> wpsOUT = new ArrayList<>();
 
             final String processId = descriptor.getIdentifier().getCode();
@@ -363,22 +364,15 @@ public class WPS1Process extends AbstractProcess {
                     final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
 
                     if ("literal".equals(type)) {
-                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value),
-                                WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz), unit));
+                        wpsIN.add(InputType.createLiteral(
+                                inputIdentifier,
+                                String.valueOf(value),
+                                WPSConvertersUtils.getDataTypeString(registry.getClient().getVersion().getCode(), inputClazz),
+                                unit));
 
                     } else if ("bbox".equals(type)) {
                         final Envelope envelop = (Envelope) value;
-                        final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
-                        final int dim = envelop.getDimension();
-
-                        final List<Double> lower = new ArrayList<>();
-                        final List<Double> upper = new ArrayList<>();
-                        for (int i = 0; i < dim; i++) {
-                            lower.add(envelop.getLowerCorner().getOrdinate(i));
-                            upper.add(envelop.getUpperCorner().getOrdinate(i));
-                        }
-
-                        wpsIN.add(new WPSInputBoundingBox(inputIdentifier, lower, upper, crs, dim));
+                        wpsIN.add(InputType.createBoundingBox(inputIdentifier, envelop));
 
                     } else if ("complex".equals(type)) {
                         String mime     = null;
@@ -394,7 +388,7 @@ public class WPS1Process extends AbstractProcess {
                             }
                         }
 
-                        wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
+                        InputType.createComplex(inputIdentifier, encoding, mime, schema, value, null, null);
                     }
                 }
             }

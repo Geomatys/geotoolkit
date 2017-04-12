@@ -27,20 +27,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.Execute;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataInputsType;
-import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.DocumentOutputDefinitionType;
-import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.InputType;
-import org.geotoolkit.wps.xml.v100.LiteralDataType;
 import org.geotoolkit.wps.xml.v100.OutputDefinitionType;
 import org.geotoolkit.wps.xml.v100.ResponseDocumentType;
 import org.geotoolkit.wps.xml.v100.ResponseFormType;
@@ -60,7 +54,7 @@ public class ExecuteRequest extends AbstractRequest {
     protected boolean storage;
     protected boolean status;
     protected List<WPSOutput> outputs;
-    protected List<AbstractWPSInput> inputs;
+    protected List<InputType> inputs;
 
     protected String storageDirectory;
     protected String storageURL;
@@ -159,7 +153,7 @@ public class ExecuteRequest extends AbstractRequest {
      * Returns Inputs, can be {@code null}.
      * @return
      */
-    public List<AbstractWPSInput> getInputs() {
+    public List<InputType> getInputs() {
         return inputs;
     }
 
@@ -167,7 +161,7 @@ public class ExecuteRequest extends AbstractRequest {
      * Sets Input to a process.
      * @param inputs
      */
-    public void setInputs(List<AbstractWPSInput> inputs) {
+    public void setInputs(List<InputType> inputs) {
         this.inputs = inputs;
         if (content instanceof org.geotoolkit.wps.xml.v100.Execute) {
             ((org.geotoolkit.wps.xml.v100.Execute)content).setDataInputs(getDataInputs());
@@ -227,7 +221,8 @@ public class ExecuteRequest extends AbstractRequest {
         } catch (JAXBException ex) {
             throw new IOException(ex);
         }
-        return security.decrypt(conec.getInputStream());
+
+        return openRichException(conec);
     }
 
     /**
@@ -337,112 +332,8 @@ public class ExecuteRequest extends AbstractRequest {
     DataInputsType getDataInputs() throws UnconvertibleObjectException {
 
         final DataInputsType input = new DataInputsType();
-
-        for (AbstractWPSInput in : inputs) {
-            if (in instanceof WPSInputBoundingBox) {
-                input.getInput().add(getInputBbox((WPSInputBoundingBox) in));
-            } else if (in instanceof WPSInputComplex) {
-                input.getInput().add(getInputComplex((WPSInputComplex) in));
-            } else if (in instanceof WPSInputLiteral) {
-                input.getInput().add(getInputLiteral((WPSInputLiteral) in));
-            } else if (in instanceof WPSInputReference) {
-                input.getInput().add(getInputReference((WPSInputReference) in));
-            }
-        }
+        input.getInput().addAll(inputs);
         return input;
     }
 
-    /**
-     * Get an Input of type bounding box
-     *
-     * @param in
-     * @return
-     */
-    private InputType getInputBbox(final WPSInputBoundingBox in) {
-        final InputType inputType = new InputType();
-
-        final DataType data = new DataType();
-        final BoundingBoxType bbox = new BoundingBoxType(in.getCrs(),
-                in.getLowerCorner().get(0), in.getLowerCorner().get(1),
-                in.getUpperCorner().get(0), in.getUpperCorner().get(1));
-
-        data.setBoundingBoxData(bbox);
-        inputType.setData(data);
-        inputType.setIdentifier(new CodeType(in.getIdentifier()));
-
-        return inputType;
-    }
-
-    /**
-     * Get an Input of type complex
-     *
-     * @param in
-     * @return
-     */
-    private InputType getInputComplex(final WPSInputComplex in) throws UnconvertibleObjectException {
-
-        final InputType inputType = new InputType();
-
-        final DataType datatype = new DataType();
-        final String echoding  = in.getEncoding();
-        final String mime      = in.getMime();
-        final String schema    = in.getSchema();
-        final Object inputData = in.getData();
-
-        final Map<String,Object> parameters = new HashMap<>();
-        parameters.put(WPSConvertersUtils.OUT_STORAGE_URL, storageURL);
-        parameters.put(WPSConvertersUtils.OUT_STORAGE_DIR, storageDirectory);
-        //Try to convert the complex input.
-        final ComplexDataType complex = (ComplexDataType) WPSConvertersUtils.convertToComplex("1.0.0", inputData, mime, echoding, schema, parameters);
-
-        datatype.setComplexData(complex);
-        inputType.setData(datatype);
-        inputType.setIdentifier(new CodeType(in.getIdentifier()));
-
-        return inputType;
-    }
-
-    /**
-     * Get an Input of type literal
-     *
-     * @param in
-     * @return
-     */
-    private InputType getInputLiteral(final WPSInputLiteral in) {
-        final InputType inputType = new InputType();
-
-        final DataType datatype = new DataType();
-        final LiteralDataType literal = new LiteralDataType();
-        literal.setDataType(in.getDataType());
-        literal.setUom(in.getUom());
-        literal.setValue(in.getData());
-
-        datatype.setLiteralData(literal);
-        inputType.setData(datatype);
-        inputType.setIdentifier(new CodeType(in.getIdentifier()));
-
-        return inputType;
-    }
-
-    /**
-     * Get an Input of type reference
-     *
-     * @param in
-     * @return
-     */
-    private InputType getInputReference(final WPSInputReference in) {
-        final InputType inputType = new InputType();
-
-        final InputReferenceType ref = new InputReferenceType();
-        ref.setHref(in.getHref());
-        ref.setEncoding(in.getEncoding());
-        ref.setMethod(in.getMethod());
-        ref.setMimeType(in.getMime());
-        ref.setSchema(in.getSchema());
-
-        inputType.setReference(ref);
-        inputType.setIdentifier(new CodeType(in.getIdentifier()));
-
-        return inputType;
-    }
 }

@@ -40,7 +40,7 @@ public class UrlConnectionToReferenceConverterTest extends AbstractWPSConverterT
         final URL url = new URL("https://toto.titi/tata");
         URLConnection conn = url.openConnection();
 
-        Reference ref = converter.convert(conn, Collections.singletonMap(AbstractReferenceInputConverter.IOTYPE, (Object) WPSIO.IOType.OUTPUT));
+        Reference ref = converter.convert(conn, Collections.singletonMap(WPSObjectConverter.IOTYPE, (Object) WPSIO.IOType.OUTPUT.name()));
         Assert.assertEquals("Href differs !", url.toExternalForm(), ref.getHref());
     }
 }

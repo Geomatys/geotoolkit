@@ -16,33 +16,11 @@
  */
 package org.geotoolkit.wps.converters;
 
-import org.geotoolkit.wps.WPSConverterTestSuit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
 public abstract class AbstractWPSConverterTest extends org.geotoolkit.test.TestBase {
-
-    private static boolean inSuit = true;
-    /**
-     * Only when test case is executed alone.
-     */
-    @BeforeClass
-    public static void init() {
-        if (!WPSConverterTestSuit.isImageIOInitialized()) {
-            WPSConverterTestSuit.initImageIO();
-            inSuit = false;
-        }
-    }
-
-    @AfterClass
-    public static void release() {
-        if (!inSuit) {
-            WPSConverterTestSuit.releaseImageIO();
-        }
-    }
 
 }

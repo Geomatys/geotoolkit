@@ -16,14 +16,21 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.Input;
+import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -265,4 +272,102 @@ public class InputType implements Input{
         hash = 97 * hash + Objects.hashCode(this.data);
         return hash;
     }
+
+    public static InputType createLiteral(final String identifier, final String data, String dataype, String uom) {
+
+        final LiteralDataType literal = new LiteralDataType();
+        literal.setValue(data);
+        literal.setDataType(dataype);
+        literal.setUom(uom);
+
+        final DataType datatype = new DataType();
+        datatype.setLiteralData(literal);
+
+        final InputType inputType = new InputType();
+        inputType.setIdentifier(new CodeType(identifier));
+        inputType.setData(datatype);
+
+        return inputType;
+    }
+
+    public static InputType createBoundingBox(String identifier, Envelope envelope) {
+
+        String crs;
+        try {
+            crs = "EPSG:"+IdentifiedObjects.lookupEPSG(envelope.getCoordinateReferenceSystem());
+        } catch (FactoryException ex) {
+            crs = envelope.getCoordinateReferenceSystem().getName().getCode();
+        }
+
+        final DataType data = new DataType();
+        final BoundingBoxType bbox = new BoundingBoxType(crs,
+                envelope.getMinimum(0), envelope.getMinimum(1),
+                envelope.getMaximum(0), envelope.getMaximum(1));
+
+        data.setBoundingBoxData(bbox);
+
+        final InputType inputType = new InputType();
+        inputType.setIdentifier(new CodeType(identifier));
+        inputType.setData(data);
+
+        return inputType;
+    }
+    /**
+     * Get an Input of type complex
+     *
+     * @param identifier
+     * @param encoding
+     * @param mime
+     * @param schema
+     * @param inputData
+     * @param storageURL
+     * @param storageDirectory
+     * @return
+     */
+    public static InputType createComplex(String identifier, String encoding, String mime, String schema, Object inputData, String storageURL, String storageDirectory) {
+
+
+        final Map<String,Object> parameters = new HashMap<>();
+        parameters.put(WPSConvertersUtils.OUT_STORAGE_URL, storageURL);
+        parameters.put(WPSConvertersUtils.OUT_STORAGE_DIR, storageDirectory);
+        //Try to convert the complex input.
+        final ComplexDataType complex = (ComplexDataType) WPSConvertersUtils.convertToComplex("1.0.0", inputData, mime, encoding, schema, parameters);
+
+        final DataType datatype = new DataType();
+        datatype.setComplexData(complex);
+
+        final InputType inputType = new InputType();
+        inputType.setIdentifier(new CodeType(identifier));
+        inputType.setData(datatype);
+
+        return inputType;
+    }
+
+    /**
+     * Get an Input of type reference
+     *
+     * @param identifier
+     * @param href
+     * @param method
+     * @param encoding
+     * @param mime
+     * @param schema
+     * @return
+     */
+    public static InputType createReference(String identifier, String href, String method, String encoding, String mime, String schema) {
+
+        final InputReferenceType ref = new InputReferenceType();
+        ref.setHref(href);
+        ref.setMethod(method);
+        ref.setEncoding(encoding);
+        ref.setMimeType(mime);
+        ref.setSchema(schema);
+
+        final InputType inputType = new InputType();
+        inputType.setIdentifier(new CodeType(identifier));
+        inputType.setReference(ref);
+
+        return inputType;
+    }
+
 }
