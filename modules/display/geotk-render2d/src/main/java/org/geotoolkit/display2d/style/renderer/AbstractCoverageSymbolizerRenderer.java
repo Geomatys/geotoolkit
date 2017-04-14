@@ -16,24 +16,38 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.geom.Area;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.Area;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Level;
+import java.util.Map;
+
+import org.opengis.coverage.Coverage;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Symbolizer;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Utilities;
+
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -41,6 +55,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -52,39 +67,31 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.opengis.coverage.Coverage;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.utility.parameter.ParametersExt;
+
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
+
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.projection.ProjectionException;
+
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Symbolizer;
-import org.opengis.util.FactoryException;
-import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.opengis.feature.PropertyNotFoundException;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.utility.parameter.ParametersExt;
+
+import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
+import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
 
 /**
  * Abstract renderer for symbolizer which only apply on coverages data.
  * This class will take care to implement the coverage hit method.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel  (Geomatys)
+ * @author Remi Marechal (Geomatys)
  * @module
  */
 public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> extends AbstractSymbolizerRenderer<C>{
@@ -267,29 +274,35 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             Envelope renderingBound, double[] resolution, AffineTransform2D objToDisp, final boolean isElevation, int[] sourceBands)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
-        //-- ArgumentChecks.ensureNonNull("CanvasType", displayOrObjective);
 
-        ////////////////////////////////////////////////////////////////////
-        // 1 - Get data
-        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        // 1 - Get informations data                                          //
+        ////////////////////////////////////////////////////////////////////////
 
         //-- resolution of horizontal Part of CRS
         assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only defined in 2D.";
 
         resolution = checkResolution(resolution, renderingBound);
 
-        final CoverageMapLayer coverageLayer   = projectedCoverage.getLayer();
-        final CoverageReference ref            = coverageLayer.getCoverageReference();
-        final GridCoverageReader reader        = ref.acquireReader();
-        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
-        final Envelope dataBBox                = gridGeometry.getEnvelope();
+        final CoverageMapLayer coverageLayer               = projectedCoverage.getLayer();
+        final CoverageReference ref                        = coverageLayer.getCoverageReference();
+        final GridCoverageReader reader                    = ref.acquireReader();
+        final GeneralGridGeometry gridGeometry             = reader.getGridGeometry(ref.getImageIndex());
+        final Envelope inputCoverageEnvelope               = gridGeometry.getEnvelope();
+        final CoordinateReferenceSystem inputCoverageCRS   = inputCoverageEnvelope.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem inputCoverageCRS2D = CRSUtilities.getCRS2D(inputCoverageCRS);
         ref.recycle(reader);
+                            //--------------------------------------------------
 
-        final CoordinateReferenceSystem coverageMapLayerCRS = dataBBox.getCoordinateReferenceSystem();
+
+        ////////////////////////////////////////////////////////////////////////
+        // 2 - Study Envelope rendering context to define                     //
+        //     CoverageReader Param Envelope and resolutions                  //
+        ////////////////////////////////////////////////////////////////////////
 
         final Map<String, Double> queryValues = extractQuery(projectedCoverage.getLayer());
         if (queryValues != null && !queryValues.isEmpty()) {
-            renderingBound = fixEnvelopeWithQuery(queryValues, renderingBound, coverageMapLayerCRS);
+            renderingBound = fixEnvelopeWithQuery(queryValues, renderingBound, inputCoverageCRS);
         }
 
         /*
@@ -299,8 +312,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         */
         final CoordinateReferenceSystem renderingContextObjectiveCRS2D = CRSUtilities.getCRS2D(renderingBound.getCoordinateReferenceSystem());
         final GeneralEnvelope renderingBound2D                         = GeneralEnvelope.castOrCopy(Envelopes.transform(renderingBound, renderingContextObjectiveCRS2D));
-        GeneralEnvelope coverageIntoRender2DCRS                        = GeneralEnvelope.castOrCopy(Envelopes.transform(dataBBox, renderingContextObjectiveCRS2D));
-
+        GeneralEnvelope coverageIntoRender2DCRS                        = GeneralEnvelope.castOrCopy(Envelopes.transform(inputCoverageEnvelope, renderingContextObjectiveCRS2D));
 
         if (!org.geotoolkit.geometry.Envelopes.containNAN(renderingBound2D)
          && !org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)
@@ -320,14 +332,17 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- else
         //-- Note : in the case of NAN values we try later to clip requested envelope with coverage boundary.
 
-        if(org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)){
+        if (org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)) {
             /*
              * Envelope might contains NaN when for some reason the envelope is larger then the validity area.
              */
-            final GeneralEnvelope normalizedEnvelope = new GeneralEnvelope(dataBBox);
+            final GeneralEnvelope normalizedEnvelope = new GeneralEnvelope(inputCoverageEnvelope);
             normalizedEnvelope.normalize();
             coverageIntoRender2DCRS = GeneralEnvelope.castOrCopy(Envelopes.transform(normalizedEnvelope,renderingContextObjectiveCRS2D));
         }
+
+        //-- before try to read coverage in relation with rendering view boundary
+        assert !renderingBound2D.isEmpty() : "2D rendering boundary should not be empty.";
 
         final GeneralEnvelope intersectionIntoRender2D = GeneralEnvelope.castOrCopy(coverageIntoRender2DCRS);
         intersectionIntoRender2D.intersect(renderingBound2D);
@@ -339,7 +354,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          */
         GeneralEnvelope paramEnvelope;
         try {
-            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
+            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(inputCoverageEnvelope, renderingBound);
         } catch(ProjectionException ex) {
            /*
             * Recently a new kind of exception is thrown when envelope is out of validity domain of target CRS.
@@ -347,9 +362,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             */
             //-- 1: get intersection between dataBBox and renderBBox into render space
             //-- 2: projection into dataBBox space
-            paramEnvelope = GeneralEnvelope.castOrCopy(Envelopes.transform(intersectionIntoRender2D, CRSUtilities.getCRS2D(dataBBox.getCoordinateReferenceSystem())));
+            paramEnvelope = GeneralEnvelope.castOrCopy(Envelopes.transform(intersectionIntoRender2D, inputCoverageCRS2D));
             //-- 3: add others dataBBox dimensions
-            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, paramEnvelope);
+            paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(inputCoverageEnvelope, paramEnvelope);
         }
 
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
@@ -362,61 +377,55 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //-- We know we don't have NAN values on other dimension than geographic
         //-- We clip envelope with coverage boundary
-        clipAndReplaceNANEnvelope(paramEnvelope, dataBBox, paramEnvelope);
+        clipAndReplaceNANEnvelope(paramEnvelope, inputCoverageEnvelope, paramEnvelope);
 
         assert !org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope) : "paramEnvelope can't contain NAN values";
+        //-- paramEnveloppe is into CoverageCRS
+        assert Utilities.equalsIgnoreMetadata(paramEnvelope.getCoordinateReferenceSystem(), inputCoverageCRS);
 
+        GeneralEnvelope paramEnvelope2D = GeneralEnvelope.castOrCopy(Envelopes.transform(paramEnvelope, inputCoverageCRS2D));
+        assert !paramEnvelope2D.isEmpty() : "2D coverage boundary should not be empty.";
+                            //--------------------------------------------------
+
+        //--- Param Resolution
         //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
-        final double[] paramRes = ReferencingUtilities.convertResolution(org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(renderingBound, intersectionIntoRender2D), resolution, paramEnvelope.getCoordinateReferenceSystem());
+        final double[] paramRes = ReferencingUtilities.convertResolution(
+                org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(renderingBound, intersectionIntoRender2D),
+                resolution, inputCoverageCRS);
+                            //--------------------------------------------------
 
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(paramEnvelope);
-        param.setResolution(paramRes);
-        if (sourceBands!=null) param.setSourceBands(sourceBands);
 
-        GridCoverage2D dataCoverage = (isElevation) ? projectedCoverage.getElevationCoverage(param) : projectedCoverage.getCoverage(param);
-
-        if (dataCoverage == null) {
-            //-- in future jdk8 version return an Optional<Coverage>
-            final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
-            strB.append(" : \n impossible to read");
-            strB.append((isElevation) ? " Elevation ":" Image ");
-            strB.append("Coverage with internally projected coverage boundary : ");
-            strB.append(dataBBox);
-            strB.append("\nwith the following renderer requested Envelope.");
-            strB.append(paramEnvelope);
-            LOGGER.log(Level.FINE, strB.toString());
-            return null;
-        }
-
-        ////////////////////////////////////////////////////////////////////
-        // 3 - Reproject data                                             //
-        ////////////////////////////////////////////////////////////////////
-
-        final CoordinateReferenceSystem coverageCRS   = dataCoverage.getCoordinateReferenceSystem();
-        assert Utilities.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
-
-        final CoordinateReferenceSystem coverageCRS2D = CRSUtilities.getCRS2D(coverageCRS);
+        /////////////////////////////////////////////////////////////////////////
+        // 3 - CoverageReader Param founded, study CRS and Coordinate operation//
+        //     to know if necessary to do reprojection                         //
+        //     (CoverageCRS --> rendering Context Objective)                   //
+        /////////////////////////////////////////////////////////////////////////
 
         /* It appears EqualsIgnoreMetadata can return false sometimes, even if the two CRS are equivalent.
          * But mathematics don't lie, so if they really describe the same transformation, conversion from
          * one to another will give us an identity matrix.
          */
-        final MathTransform coverageToObjective = CRS.findOperation(coverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
+        final MathTransform coverageToObjective2D = CRS.findOperation(inputCoverageCRS2D, renderingContextObjectiveCRS2D, null).getMathTransform();
 
-        if (coverageToObjective.isIdentity())
-            return dataCoverage;
+        //-- In this case reprojection is not required read and return Coverage directly
+        if (Utilities.equalsApproximatively(inputCoverageCRS2D, renderingContextObjectiveCRS2D)
+                                            || coverageToObjective2D.isIdentity())
+            return readCoverage(projectedCoverage, isElevation,
+                                paramEnvelope, paramRes, sourceBands,
+                                inputCoverageEnvelope);
+                            //--------------------------------------------------
 
-        //-- before try to read coverage in relation with rendering view boundary
-        assert !renderingBound2D.isEmpty() : "2D rendering boundary should not be empty.";
-        final GeneralEnvelope coverageEnv2D = new GeneralEnvelope(dataCoverage.getEnvelope2D());
-        assert !coverageEnv2D.isEmpty() : "2D coverage boundary should not be empty.";
+
+        ////////////////////////////////////////////////////////////////////////
+        // 4 - Reprojection is required, study needed interpolation           //
+        //     and expand ParamEnvelope if necessary                          //
+        ////////////////////////////////////////////////////////////////////////
 
         /*
         * In case where coverage2D envelope into rendering CRS is not empty,
         * try to reproject a coverage which have already been clipped with the objective rendering context boundary.
         */
-        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(coverageToObjective, coverageEnv2D));
+        GeneralEnvelope outputRenderingCoverageEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(coverageToObjective2D, paramEnvelope2D));
         outputRenderingCoverageEnv2D.setCoordinateReferenceSystem(renderingContextObjectiveCRS2D);
         if (!outputRenderingCoverageEnv2D.isEmpty()) {
             outputRenderingCoverageEnv2D.intersect(renderingBound2D);
@@ -435,10 +444,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             LOGGER.log(Level.FINE, "Coverage is out of rendering window.");
             return null;
         }
-        //-----------------------------------------------------------------------
 
         //-- find most appropriate interpolation
-        final List<GridSampleDimension> sampleDimensions = Arrays.asList(dataCoverage.getSampleDimensions());
+        List<GridSampleDimension> sampleDimensions= null;
+        try {
+            sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+        } catch(Exception ex) {
+            //-- do nothing
+            //-- bilinear interpolation default choosen comportement if null sampleDimension.
+        }
+
         InterpolationCase interpolation;
         if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))
         || (!(gridGeometry instanceof GridGeometry2D))
@@ -450,21 +465,52 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             interpolation = findInterpolationCase(sampleDimensions);
         }
 
-        //-- expand param envelope if we use an interpolation
-        switch(interpolation){
-            case BILINEAR : expand(paramEnvelope, 1, gridGeometry); break;
-            case BICUBIC :
-            case BICUBIC2 : expand(paramEnvelope, 2, gridGeometry); break;
-            case LANCZOS : expand(paramEnvelope, 4, gridGeometry); break;
+       /*
+        * Expand envelope by 1 or more pixel in function of choosen interpolation
+        * and also multiply this value by the subsampling between origin coverage extent
+        * and output rendering image size into pixel coordinates.
+        */
+        int coeffExpand = 1;
+        if (!interpolation.equals(InterpolationCase.NEIGHBOR)) {
+            final int horizontalAxis = CRSUtilities.firstHorizontalAxis(inputCoverageCRS);
+            final double[] gridRes = gridGeometry.getResolution();
+            int coeffx  = (int) Math.ceil(paramEnvelope2D.getSpan(0) / (gridRes[horizontalAxis]     * width));
+            int coeffy  = (int) Math.ceil(paramEnvelope2D.getSpan(1) / (gridRes[horizontalAxis + 1] * height));
+            coeffExpand = Math.max(coeffExpand, Math.max(coeffx, coeffy));
         }
 
+        //-- expand param envelope if we use an interpolation
+        switch(interpolation){
+            case BILINEAR : expand(paramEnvelope, 1 * coeffExpand, gridGeometry); break;
+            case BICUBIC  :
+            case BICUBIC2 : expand(paramEnvelope, 2 * coeffExpand, gridGeometry); break;
+            case LANCZOS  : expand(paramEnvelope, 4 * coeffExpand, gridGeometry); break;
+        }
+                    //--------------------------------------------------
+
+
+        ////////////////////////////////////////////////////////////////////////
+        // 5 - Read Coverage from computed Params.                            //
+        ////////////////////////////////////////////////////////////////////////
+        GridCoverage2D dataCoverage = readCoverage(projectedCoverage, isElevation,
+                                                   paramEnvelope, paramRes, sourceBands,
+                                                   inputCoverageEnvelope);
+        if (dataCoverage == null) return null;
+                    //--------------------------------------------------
+
+
+        ////////////////////////////////////////////////////////////////////////
+        // 6 - Reproject data                                                 //
+        ////////////////////////////////////////////////////////////////////////
         /*
          * NODATA
          *
          * 1 : Normally all NODATA for all gridSampleDimension for a same coverage are equals.
          * 2 : Normally all NODATA for each coverage internally samples are equals.
          */
-        final double[] nodata = dataCoverage.getSampleDimension(0).getNoDataValues();
+        double[] nodata = null;
+        if (sampleDimensions != null && !sampleDimensions.isEmpty())
+            nodata = sampleDimensions.get(0).getNoDataValues();
 
         /*
          * If nodata is not know.
@@ -501,6 +547,44 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return dataCoverage;
     }
 
+    /**
+     * Returns read Coverage from {@link ProjectedCoverage} and given initialized parameters.
+     *
+     * @param projectedCoverage Coverage where {@link GridCoverage2D} is read.
+     * @param isElevation define if internaly method {@link ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) }
+     * or {@link ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) } will be call.
+     * @param paramEnvelope Requested envelope to read GridCoverage.
+     * @param paramResolution Requested read resolution.
+     * @param sourceBands Requested Read source bands. May be {@code null}.
+     * @param inputCoverageEnvelope Envelope only use if problem during reading for log message.
+     * @return read Coverage.
+     * @throws CoverageStoreException if problem during reading action.
+     */
+    private static GridCoverage2D readCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation,
+                                               final Envelope paramEnvelope, final double[] paramResolution, final int[] sourceBands,
+                                               final Envelope inputCoverageEnvelope)
+            throws CoverageStoreException {
+
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(paramEnvelope);
+        param.setResolution(paramResolution);
+        if (sourceBands!=null) param.setSourceBands(sourceBands);
+
+        GridCoverage2D dataCoverage = (isElevation) ? projectedCoverage.getElevationCoverage(param) : projectedCoverage.getCoverage(param);
+
+        if (dataCoverage == null) {
+            //-- in future jdk8 version return an Optional<Coverage>
+            final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
+            strB.append(" : \n impossible to read");
+            strB.append((isElevation) ? " Elevation ":" Image ");
+            strB.append("Coverage with internally projected coverage boundary : ");
+            strB.append(inputCoverageEnvelope);
+            strB.append("\nwith the following renderer requested Envelope.");
+            strB.append(paramEnvelope);
+            LOGGER.log(Level.FINE, strB.toString());
+        }
+        return dataCoverage;
+    }
 
     /**
      * Clip requested envelope with internally {@link ProjectedCoverage} boundary.
@@ -603,5 +687,4 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         env.setRange(horizontalAxis,     geoEnv2D.getMinimum(0), geoEnv2D.getMaximum(0));
         env.setRange(horizontalAxis + 1, geoEnv2D.getMinimum(1), geoEnv2D.getMaximum(1));
     }
-
 }
