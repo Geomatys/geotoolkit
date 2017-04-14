@@ -219,7 +219,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 final String propNs = NamesExt.getNamespace(prop);
                 if(typeName != null && propNs != null
                    && propNs.equals(typeName.getNamespaceURI())){
-                    sb.append(typeName.getPrefix()).append(':').append(prop.tip().toString()).append(',');
+                    sb.append(typeName.getPrefix()).append(':').append(prop.tip()).append(',');
                 }else{
                     sb.append(NamesExt.toExtendedForm(prop)).append(',');
                 }
@@ -264,7 +264,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             xmlFilter = null;
         }
 
-        final List<String> propName = new ArrayList<String>();
+        final List<String> propName = new ArrayList<>();
         if(propertyNames != null){
             // TODO handle prefix/namespace
             for(final GenericName prop : propertyNames){

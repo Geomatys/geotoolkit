@@ -123,7 +123,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 4.0),
                     new Coordinate(6.0, 3.0)
                 });
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         myFeature1.setPropertyValue("name", "Building1");
         myFeature1.setPropertyValue("height", 12);
         myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -138,7 +138,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(8.0, 7.0),
                     new Coordinate(8.0, 4.0)
                 });
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -153,7 +153,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 1.0),
                     new Coordinate(6.0, -2.0)
                 });
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -168,7 +168,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(0.0, 9.0),
                     new Coordinate(0.0, 6.0)
                 });
-        myFeature4.setPropertyValue("@identifier", "id-04");
+        myFeature4.setPropertyValue("sis:identifier", "id-04");
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -183,7 +183,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        myFeature5.setPropertyValue("@identifier", "id-05");
+        myFeature5.setPropertyValue("sis:identifier", "id-05");
         myFeature5.setPropertyValue("name", "Building5");
         myFeature5.setPropertyValue("height", 12);
         myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -210,7 +210,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(0.0, 3.0),
                     new Coordinate(0.0, 1.0)
                 });
-        myFeature1.setPropertyValue("@identifier", "id-11");
+        myFeature1.setPropertyValue("sis:identifier", "id-11");
         myFeature1.setPropertyValue("name", "Building11");
         myFeature1.setPropertyValue("height", 12);
         myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -225,7 +225,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0),
                     new Coordinate(3.0, 5.0)
                 });
-        myFeature2.setPropertyValue("@identifier", "id-12");
+        myFeature2.setPropertyValue("sis:identifier", "id-12");
         myFeature2.setPropertyValue("name", "Building11");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -240,7 +240,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(6.0, 3.0)
                 });
-        myFeature3.setPropertyValue("@identifier", "id-13");
+        myFeature3.setPropertyValue("sis:identifier", "id-13");
         myFeature3.setPropertyValue("name", "Building13");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -255,7 +255,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(10.0, 0.0)
                 });
-        myFeature4.setPropertyValue("@identifier", "id-14");
+        myFeature4.setPropertyValue("sis:identifier", "id-14");
         myFeature4.setPropertyValue("name", "Building14");
         myFeature4.setPropertyValue("height", 12);
         myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
@@ -281,7 +281,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(7.0, 4.0),
                     new Coordinate(7.0, 3.0)
                 });
-        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("sis:identifier", "id-01");
         Polygon poly = geometryFactory.createPolygon(ring, null);
         myFeature1.setPropertyValue("name", "Building1");
         myFeature1.setPropertyValue("height", 12);
@@ -303,7 +303,7 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(11.0, 4.0)
                 });
-        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("sis:identifier", "id-02");
         myFeature2.setPropertyValue("name", "Building2");
         myFeature2.setPropertyValue("height", 12);
         myFeature2.setPropertyValue("position", geometryFactory.createGeometryCollection(new Geometry[]{poly, lineString}));
@@ -319,14 +319,14 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 1.0)
                 });
         poly = geometryFactory.createPolygon(ring, null);
-        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("sis:identifier", "id-03");
         myFeature3.setPropertyValue("name", "Building3");
         myFeature3.setPropertyValue("height", 12);
         myFeature3.setPropertyValue("position", poly);
         featureList.add(myFeature3);
 
         Feature myFeature4 = type.newInstance();
-        myFeature4.setPropertyValue("@identifier", "id-04");
+        myFeature4.setPropertyValue("sis:identifier", "id-04");
         Point pt = geometryFactory.createPoint(new Coordinate(3.0, 6.0));
         myFeature4.setPropertyValue("name", "Building4");
         myFeature4.setPropertyValue("height", 12);

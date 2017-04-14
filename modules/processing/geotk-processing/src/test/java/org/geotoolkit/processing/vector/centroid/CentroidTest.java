@@ -107,7 +107,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         for (int i = 0; i < 5; i++) {
             Feature myFeature = type.newInstance();
-            myFeature.setPropertyValue("@identifier", "id-0" + i);
+            myFeature.setPropertyValue("sis:identifier", "id-0" + i);
             myFeature.setPropertyValue("name", "Building" + i);
             myFeature.setPropertyValue("height", 12);
             myFeature.setPropertyValue("position", geometryFactory.createLinearRing(
@@ -139,7 +139,7 @@ public class CentroidTest extends AbstractProcessTest {
                         new Coordinate(10.0, 26.0),
                         new Coordinate(5.0, 18.0)
                     });
-            myFeature.setPropertyValue("@identifier", "id-0" + i);
+            myFeature.setPropertyValue("sis:identifier", "id-0" + i);
             myFeature.setPropertyValue("name", "Building" + i);
             myFeature.setPropertyValue("height", 12);
             myFeature.setPropertyValue("position", ring.getCentroid());

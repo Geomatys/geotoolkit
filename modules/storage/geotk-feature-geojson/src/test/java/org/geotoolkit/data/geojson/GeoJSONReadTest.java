@@ -362,7 +362,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
         for(PropertyType desc : expected.getProperties(true)){
-            PropertyType td = result.getProperty(desc.getName().tip().toString());
+            PropertyType td = result.getProperty(desc.getName().toString());
             assertNotNull(td);
             if(td instanceof AttributeType){
                 assertEquals(((AttributeType) td).getValueClass(), ((AttributeType)desc).getValueClass());

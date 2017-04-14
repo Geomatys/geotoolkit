@@ -64,16 +64,16 @@ import org.opengis.filter.identity.Identifier;
  * require header information which can only be obtained by reading the entire
  * series of Features, the headers are updated after the initial write
  * completes.
- * 
+ *
  * @author Jesse Eichar
  * @module
  */
 public class ShapefileFeatureWriter implements FeatureWriter {
 
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     protected final ShapefileFeatureStore parent;
-    
+
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
     protected FeatureReader featureReader;
 
@@ -82,10 +82,10 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     // the current Feature
     protected Feature currentFeature;
-    
+
     /** Initial value for current feature */
     protected Feature originalFeature;
-    
+
     // the FeatureType we are representing
     protected final FeatureType featureType;
 
@@ -121,12 +121,12 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     protected final ShpFiles shpFiles;
     private final FileChannel dbfChannel;
     private final Charset dbfCharset;
-    
+
     //Runnable used after closing shapefile, to rebuild indexes for example
     protected Runnable postClose = null;
-    
 
-    public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
+
+    public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,
             final FeatureReader featureReader, final Charset charset) throws IOException,DataStoreException {
         this.parent = parent;
         this.shpFiles = shpFiles;
@@ -185,10 +185,10 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     public final AccessManager getLocker(){
         return attReader.getLocker();
     }
-    
+
     /**
      * Go back and update the headers with the required info.
-     * 
+     *
      * @throws IOException DOCUMENT ME!
      */
     protected void flush() throws IOException {
@@ -216,7 +216,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     /**
      * In case someone doesn't close me.
-     * 
+     *
      * @throws Throwable DOCUMENT ME!
      */
     @Override
@@ -232,7 +232,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     /**
      * Clean up our temporary write if there was one
-     * 
+     *
      * @throws IOException DOCUMENT ME!
      */
     protected void clean() throws IOException {
@@ -242,7 +242,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     /**
      * Release resources and flush the header information.
-     * 
+     *
      * @throws IOException DOCUMENT ME!
      */
     @Override
@@ -297,7 +297,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-        
+
         fireDataChangeEvents();
     }
 
@@ -317,7 +317,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
             parent.forwardContentEvent(event);
         }
     }
-    
+
     protected void doClose() throws FeatureStoreRuntimeException {
         // close reader, flush headers, and copy temp files, if any
         try {
@@ -391,7 +391,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getName().tip().toString()+"."+(records+1);
+            final String featureID = getFeatureType().getName().tip() + "." + (records+1);
             originalFeature = null;
             currentFeature = getFeatureType().newInstance();
             currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
@@ -403,11 +403,11 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     /**
      * Called when a new feature is being created and a new fid is required
-     * 
+     *
      * @return a fid for the new feature
      */
     protected String nextFeatureId() {
-        return getFeatureType().getName().tip().toString()+"."+(records+1);
+        return getFeatureType().getName().tip() + "." + (records+1);
     }
 
     /**
@@ -444,7 +444,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
         // writing of Geometry
         Geometry g = (Geometry) currentFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        
+
         // if this is the first Geometry, find the shapeType and handler
         if (shapeType == null) {
             int dims = 2;

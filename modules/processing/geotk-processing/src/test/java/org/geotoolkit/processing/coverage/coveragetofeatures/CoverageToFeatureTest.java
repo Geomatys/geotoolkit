@@ -69,7 +69,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
 
 
 /**
@@ -251,7 +250,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
                         });
 
                 Feature myfeature = type.newInstance();
-                myfeature.setPropertyValue("@identifier", "id-" + x + "-" + y);
+                myfeature.setPropertyValue("sis:identifier", "id-" + x + "-" + y);
                 myfeature.setPropertyValue("cellgeom",geometryFactory.createPolygon(line, null));
                 myfeature.setPropertyValue("position",pos);
                 myfeature.setPropertyValue("orientation",PixelInCell.CELL_CENTER.name());
@@ -287,7 +286,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
                         });
 
                 Feature myfeature = type.newInstance();
-                myfeature.setPropertyValue("@identifier", "id-" + x + "-" + y);
+                myfeature.setPropertyValue("sis:identifier", "id-" + x + "-" + y);
                 myfeature.setPropertyValue("cellgeom",geometryFactory.createPolygon(line, null));
                 myfeature.setPropertyValue("position",pos);
                 myfeature.setPropertyValue("orientation",PixelInCell.CELL_CENTER.name());

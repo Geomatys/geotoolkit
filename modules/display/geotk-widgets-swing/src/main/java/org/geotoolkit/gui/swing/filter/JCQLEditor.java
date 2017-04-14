@@ -53,7 +53,7 @@ import org.opengis.util.InternationalString;
 public class JCQLEditor extends javax.swing.JPanel{
 
     public static volatile boolean DEFAULT_SIMPLE = true;
-    
+
     private static final ImageIcon ICON_FILTER = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private MapLayer layer;
@@ -62,7 +62,7 @@ public class JCQLEditor extends javax.swing.JPanel{
     /** Creates new form JCQLPropertyPanel */
     public JCQLEditor() {
         initComponents();
-        
+
         guiProperties.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -77,7 +77,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         guiProperties.setCellRenderer(new PropertyRenderer());
 
         guiPropertiesPane.setVisible(false);
-        
+
         guiCQL.addPropertyChangeListener("content", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -85,23 +85,23 @@ public class JCQLEditor extends javax.swing.JPanel{
                     final Expression exp = guiCQL.getExpression();
                     final BufferedImage img = MathMLVisitor.toImage(MathMLVisitor.toMathML(exp));
                     lblFormula.setIcon(new ImageIcon(img));
-                    
+
                 } catch (Exception ex) {
                     //happens very often
                     lblFormula.setIcon(null);
                 }
             }
         });
-        
+
         guiShortcuts.addPropertyChangeListener(JCQLShortcutPanel.KEY_SELECTION, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 guiCQL.insertText(""+evt.getNewValue());
             }
         });
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -265,7 +265,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if(value instanceof PropertyType){
                 final PropertyType desc = (PropertyType) value;
-                String text = desc.getName().tip().toString().toString();
+                String text = desc.getName().tip().toString();
 
                 final InternationalString is = desc.getDescription();
                 if(is!=null && !is.toString().isEmpty()){

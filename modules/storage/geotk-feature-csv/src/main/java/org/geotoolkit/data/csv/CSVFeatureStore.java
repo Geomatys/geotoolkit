@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.data.*;
@@ -286,7 +285,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 sb.append(separator);
             }
 
-            sb.append(desc.getName().tip().toString());
+            sb.append(desc.getName().tip());
             sb.append('(');
             final Class clazz = ((AttributeType)desc).getValueClass();
             if(Number.class.isAssignableFrom(clazz) || float.class.equals(clazz)

@@ -134,8 +134,6 @@ public class ElementFeatureWriter {
      * Write the feature into the stream.
      *
      * @param feature The feature
-     * @param root
-     * @throws XMLStreamException
      */
     public Element writeFeature(final Feature feature,final Document rootDocument, boolean fragment) throws ParserConfigurationException {
 
@@ -151,7 +149,6 @@ public class ElementFeatureWriter {
         } else {
             document = rootDocument;
         }
-
 
         //the root element of the xml document (type of the feature)
         final FeatureType type = feature.getType();
@@ -182,22 +179,20 @@ public class ElementFeatureWriter {
         if (rootDocument == null) {
             document.appendChild(rootElement);
         }
-        //write properties in the type order
-        for(final PropertyType desc : type.getProperties(true)){
-            if(AttributeConvention.contains(desc.getName())) continue;
+        // write properties in the type order
+        for (final PropertyType desc : type.getProperties(true)) {
+            if (AttributeConvention.contains(desc.getName())) continue;
             if (desc.getName().tip().toString().startsWith("@")) {
                 //skip attributes
                continue;
             }
-            
-            final Collection values = Utils.propertyValueAsList(feature, desc.getName().toString());
-            for (Object valueA : values) {
+            for (final Object valueA : Utils.propertyValueAsList(feature, desc.getName().toString())) {
                 final PropertyType typeA = desc;
                 final GenericName nameA = desc.getName();
                 final String nameProperty = nameA.tip().toString();
                 String namespaceProperty = NamesExt.getNamespace(nameA);
-                if (valueA instanceof Collection && !(AttributeConvention.isGeometryAttribute(typeA))) {
-                    for (Object value : (Collection)valueA) {
+                if (valueA instanceof Collection<?> && !(AttributeConvention.isGeometryAttribute(typeA))) {
+                    for (final Object value : (Collection<?>) valueA) {
                         final Element element;
                         if (namespaceProperty != null) {
                             element = document.createElementNS(namespaceProperty, nameProperty);

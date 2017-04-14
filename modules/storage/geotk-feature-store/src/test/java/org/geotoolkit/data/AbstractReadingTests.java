@@ -35,8 +35,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.opengis.util.GenericName;
@@ -64,7 +62,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractReadingTests{
+public abstract class AbstractReadingTests {
 
     protected static final double DELTA = 0.000000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -82,14 +80,6 @@ public abstract class AbstractReadingTests{
         public FeatureType type;
         public int size;
         public Envelope env;
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     protected abstract FeatureStore getDataStore();

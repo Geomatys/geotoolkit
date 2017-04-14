@@ -99,7 +99,7 @@ public class CSVDataStoreTest extends org.geotoolkit.test.TestBase {
         for(GenericName n : ds.getNames()){
             FeatureType ft = ds.getFeatureType(n.toString());
             for(PropertyType desc : sft.getProperties(true)){
-                PropertyType td = ft.getProperty(desc.getName().tip().toString());
+                PropertyType td = ft.getProperty(desc.getName().toString());
                 assertNotNull(td);
                 assertEquals( ((AttributeType)td).getValueClass(), ((AttributeType)desc).getValueClass());
             }

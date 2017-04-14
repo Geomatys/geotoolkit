@@ -33,7 +33,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.feature.FeatureExt;
-import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.xml.AbstractConfigurable;
@@ -264,9 +264,10 @@ public class JAXBFeatureTypeWriterOld extends AbstractConfigurable {
             } else {
                 maxOcc = Integer.toString(maxOccurs);
             }
-            if (name.startsWith("@")) {
+            final boolean isAttribute = name.startsWith("@");
+            if (isAttribute || AttributeConvention.contains(attType.getName())) {
                 Attribute att = new Attribute();
-                att.setName(name.substring(1));
+                att.setName(name.substring(isAttribute ? 1 : 0));
                 att.setType(type);
                 if (minOccurs == 0) {
                     att.setUse("optional");

@@ -44,22 +44,22 @@ import org.opengis.util.GenericName;
 
 /**
  * JDBC Feature reader, both simple and complexe features.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class JDBCFeatureReader implements FeatureReader {
-    
+
     protected final FeatureType type;
     protected final DefaultJDBCFeatureStore store;
     protected final PrimaryKey pkey;
     protected final String sql;
     protected final Hints hints;
-    
+
     //array of properties for faster access when simple type
     protected final PropertyType[] properties;
     protected final Object[] values;
-    
+
     /**
      * statement,result set that is being worked from.
      */
@@ -70,21 +70,20 @@ public class JDBCFeatureReader implements FeatureReader {
     /** the next feature */
     private Feature feature = null;
     protected boolean closed = false;
-    
-    public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
+
+    public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql,
             final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
         ArgumentChecks.ensureNonNull("Connection", cnx);
         final GenericName typeName = type.getName();
-        final String name = typeName.tip().toString();
-        
+
         this.type = type;
         this.store = store;
         PrimaryKey pk = store.getDatabaseModel().getPrimaryKey(typeName.toString());
         this.pkey = (pk==null)? new PrimaryKey("qom") : pk;
         this.properties = this.type.getProperties(true).toArray(new PropertyType[0]);
         this.values = new Object[this.properties.length];
-        
-        this.sql = sql;        
+
+        this.sql = sql;
         this.cx = cnx;
         this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         this.st.setFetchSize(store.getFetchSize());
@@ -96,7 +95,7 @@ public class JDBCFeatureReader implements FeatureReader {
         this.hints = hints;
         this.release = release;
     }
-    
+
     public JDBCFeatureReader(final JDBCFeatureReader other) throws SQLException {
         this.type = other.type;
         this.store = other.store;
@@ -110,7 +109,7 @@ public class JDBCFeatureReader implements FeatureReader {
         this.properties = other.properties;
         this.values = new Object[this.properties.length];
     }
-    
+
     @Override
     public FeatureType getFeatureType() {
         return type;
@@ -132,7 +131,7 @@ public class JDBCFeatureReader implements FeatureReader {
 
     private void findNext(){
         if(feature!=null) return;
-        
+
         try {
             if(rs.next()){
                 feature = toFeature(rs);
@@ -143,10 +142,10 @@ public class JDBCFeatureReader implements FeatureReader {
             throw new FeatureStoreRuntimeException(e);
         }
     }
-    
+
     protected Feature toFeature(ResultSet rs) throws SQLException, DataStoreException{
         final Feature feature = type.newInstance();
-        
+
         int k=0;
         for(final PropertyType ptype : type.getProperties(true)){
             if(ptype instanceof Operation){
@@ -161,7 +160,7 @@ public class JDBCFeatureReader implements FeatureReader {
 
         return feature;
     }
-    
+
     @Override
     public void close() {
         closed = true;
@@ -181,7 +180,7 @@ public class JDBCFeatureReader implements FeatureReader {
         }
         super.finalize();
     }
-    
+
 
     public static Object readSimpleValue(final SQLDialect dialect, final ResultSet rs, int index, PropertyType desc) throws SQLException{
         if(AttributeConvention.isGeometryAttribute(desc)){
@@ -216,5 +215,5 @@ public class JDBCFeatureReader implements FeatureReader {
             return dialect.decodeAttributeValue((AttributeType)desc, rs, index);
         }
     }
-    
+
 }

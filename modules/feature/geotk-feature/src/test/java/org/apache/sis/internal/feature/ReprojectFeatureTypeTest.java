@@ -20,20 +20,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collection;
-import java.util.Collections;
-import org.apache.sis.feature.FeatureOperations;
 import org.apache.sis.feature.ReprojectFeatureType;
-import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
 /**
@@ -46,7 +41,6 @@ public class ReprojectFeatureTypeTest {
 
     @Test
     public void reprojectAttributeTest(){
-
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.addAttribute(Point.class).setName("attGeom").setCRS(CommonCRS.WGS84.geographic());
@@ -63,7 +57,6 @@ public class ReprojectFeatureTypeTest {
 
         final Feature reprojFeature = reprojType.newInstance(baseFeature);
         assertEquals(GF.createPoint(new Coordinate(20, 10)), reprojFeature.getPropertyValue("attGeom"));
-
     }
 
     @Test
@@ -79,7 +72,7 @@ public class ReprojectFeatureTypeTest {
         final Collection<? extends PropertyType> properties = viewType.getProperties(true);
         assertEquals(3,properties.size());
         assertTrue(viewType.getProperty("attGeom") instanceof Operation);
-        assertTrue(viewType.getProperty("@geometry") instanceof Operation);
+        assertTrue(viewType.getProperty("sis:geometry") instanceof Operation);
 
         //test feature
         final Feature baseFeature = baseType.newInstance();
@@ -87,8 +80,6 @@ public class ReprojectFeatureTypeTest {
 
         final Feature viewFeature = viewType.newInstance(baseFeature);
         assertEquals(GF.createPoint(new Coordinate(20, 10)), viewFeature.getPropertyValue("attGeom"));
-        assertEquals(GF.createPoint(new Coordinate(20, 10)), viewFeature.getPropertyValue("@geometry"));
-
+        assertEquals(GF.createPoint(new Coordinate(20, 10)), viewFeature.getPropertyValue("sis:geometry"));
     }
-
 }

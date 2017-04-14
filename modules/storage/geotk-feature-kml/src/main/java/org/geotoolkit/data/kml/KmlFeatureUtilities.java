@@ -421,7 +421,7 @@ public class KmlFeatureUtilities {
         //Transform geometry
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
         final Feature placemark = kmlFactory.createPlacemark();
-        final String geoColumn = AttributeConvention.GEOMETRY_PROPERTY.tip().toString();
+        final String geoColumn = AttributeConvention.GEOMETRY_PROPERTY.toString();
         final AbstractGeometry ag = buildKMLGeometry((Geometry) noKmlFeature.getPropertyValue(geoColumn));
         placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, ag);
 
@@ -439,7 +439,7 @@ public class KmlFeatureUtilities {
             final Object value = property.getValue();
             if (localPartName.equalsIgnoreCase(KmlConstants.TAG_NAME)) {
                 placemark.setPropertyValue(KmlConstants.TAG_NAME, value);
-            } else if (!(localPartName.equalsIgnoreCase(geoColumn) || localPartName.equalsIgnoreCase("fid"))) {
+            } else if (!(property.getName().toString().equalsIgnoreCase(geoColumn) || localPartName.equalsIgnoreCase("fid"))) {
                 if (value != null) {
                     Data simpleData = kmlFactory.createData();
                     simpleData.setName(localPartName);

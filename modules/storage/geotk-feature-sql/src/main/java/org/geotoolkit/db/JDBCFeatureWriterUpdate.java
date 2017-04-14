@@ -42,13 +42,13 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 
 public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements FeatureWriter {
-    
+
     //we keep the reference a bit longer
     private Feature last;
-    
-    public JDBCFeatureWriterUpdate(final DefaultJDBCFeatureStore store, final String sql, 
+
+    public JDBCFeatureWriterUpdate(final DefaultJDBCFeatureStore store, final String sql,
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
-            throws SQLException, IOException,DataStoreException {        
+            throws SQLException, IOException,DataStoreException {
         super(store, sql, type, cnx, release, hints);
     }
 
@@ -57,13 +57,13 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
         last = super.toFeature(rs);
         return last;
     }
-    
+
     @Override
     public void remove() throws FeatureStoreRuntimeException {
         if(last==null){
             throw new FeatureStoreRuntimeException("Cursor is not on a record.");
         }
-        
+
         final Filter filter = store.getFilterFactory().id(
                 Collections.singleton(FeatureExt.getId(last)));
         try {
@@ -80,7 +80,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
         if(last==null){
             throw new FeatureStoreRuntimeException("Cursor is not on a record.");
         }
-        
+
         try {
             //figure out what the fid is
             final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(type.getName().toString());
@@ -98,7 +98,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
                     //not a writable property
                     continue;
                 }
-                
+
                 changes.put(att.getName().tip().toString(), last.getPropertyValue(att.getName().toString()));
             }
 
@@ -108,5 +108,4 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
             throw new FeatureStoreRuntimeException(e);
         }
     }
-
 }

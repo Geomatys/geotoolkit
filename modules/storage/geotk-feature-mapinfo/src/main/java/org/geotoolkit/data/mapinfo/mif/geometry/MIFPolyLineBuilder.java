@@ -166,7 +166,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
         final Object smooth = MIFUtils.getPropertySafe(geometry, SMOOTH_NAME.toString());
         if (Boolean.TRUE.equals(smooth)) {
-            builder.append(SMOOTH_NAME.tip().toString()).append('\n');
+            builder.append(SMOOTH_NAME.tip()).append('\n');
         }
 
         return builder.toString();

@@ -33,7 +33,6 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
@@ -41,7 +40,7 @@ import org.opengis.feature.PropertyType;
 
 /**
  * Manage versioning for a given feature type.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresVersionControl extends AbstractVersionControl{
@@ -50,8 +49,8 @@ public class PostgresVersionControl extends AbstractVersionControl{
     private final FeatureType featureType;
     private final SQLDialect dialect;
     private Boolean isVersioned = null;
-    
-    
+
+
     public PostgresVersionControl(PostgresFeatureStore featureStore, FeatureType featureType) {
         this.featureStore = featureStore;
         this.featureType = featureType;
@@ -69,33 +68,33 @@ public class PostgresVersionControl extends AbstractVersionControl{
             //versioning already active, do nothing
             return;
         }
-        
+
         //install history functions, won't do anything if already present
         featureStore.installHSFunctions();
-        
+
         final String schemaName = featureStore.getDatabaseSchema();
         final Set<FeatureType> visited = new HashSet<>();
         createVersioningTable(schemaName, featureType, visited);
-                
+
         //clear cache
         isVersioned = null;
     }
 
     /**
      * Create versioning table for given table.
-     * 
+     *
      * @param schemaName
-     * @param tableName 
-     * @param visited set of already visited types, there might be recursion 
-     *                or multiple properties with the same type. 
+     * @param tableName
+     * @param visited set of already visited types, there might be recursion
+     *                or multiple properties with the same type.
      */
     private void createVersioningTable(final String schemaName, final FeatureType type, final Set<FeatureType> visited) throws VersioningException{
-        
+
         if(visited.contains(type)) return;
         visited.add(type);
-        
+
         final String tableName = type.getName().tip().toString();
-        
+
         final StringBuilder sb = new StringBuilder("SELECT \"HS_CreateHistory\"(");
         sb.append('\'');
         if(schemaName!=null && !schemaName.isEmpty()){
@@ -113,55 +112,55 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 FeatureAssociationRole far = (FeatureAssociationRole) desc;
                 createVersioningTable(schemaName, far.getValueType(), visited);
             }else if(desc instanceof AttributeType) {
-                hsColumnNames.add("'"+desc.getName().tip().toString()+"'");
+                hsColumnNames.add("'" + desc.getName().tip() + '\'');
             }
         }
-        
+
         Connection cnx = null;
         Statement stmt = null;
         try{
             cnx = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
-            
+            stmt = cnx.createStatement();
+
             sb.append("array[");
             for(int i=0,n=hsColumnNames.size();i<n;i++){
                 if(i!=0) sb.append(',');
                 sb.append(hsColumnNames.get(i));
             }
-            
+
             sb.append("]);");
             stmt.executeQuery(sb.toString());
-            
+
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
     }
-    
+
     @Override
     public synchronized void dropVersioning() throws VersioningException {
         if(!isVersioned()){
             //versioning not active, do nothing
             return;
         }
-        
+
         //install history functions, won't do anything if already present
         featureStore.installHSFunctions();
         final String schemaName = featureStore.getDatabaseSchema();
         final Set<FeatureType> visited = new HashSet<>();
         dropVersioning(schemaName, featureType, visited);
-        
+
         //clear cache
         isVersioned = null;
     }
-    
+
     private void dropVersioning(final String schemaName, final FeatureType type, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
-        
+
         final String tableName = type.getName().tip().toString();
-        
+
         //drop complex properties versioning
         for(PropertyType desc : type.getProperties(true)){
             if(desc instanceof FeatureAssociationRole){
@@ -170,8 +169,8 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 dropVersioning(schemaName, far.getValueType(),visited);
             }
         }
-        
-        final StringBuilder sb = new StringBuilder("SELECT \"HS_DropHistory\"(");          
+
+        final StringBuilder sb = new StringBuilder("SELECT \"HS_DropHistory\"(");
         sb.append('\'');
         if(schemaName!=null && !schemaName.isEmpty()){
             sb.append(schemaName).append('.');
@@ -179,21 +178,21 @@ public class PostgresVersionControl extends AbstractVersionControl{
         sb.append(tableName);
         sb.append('\'');
         sb.append(");");
-        
+
         Connection cnx = null;
         Statement stmt = null;
-        try{       
+        try{
             cnx = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
+            stmt = cnx.createStatement();
             stmt.executeQuery(sb.toString());
-            
+
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
     }
-    
+
     @Override
     public synchronized void trim(Version version) throws VersioningException {
         trim(version.getDate());
@@ -204,18 +203,18 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(!isVersioned()){
             return ;
         }
-        
+
         final String schemaName = featureStore.getDatabaseSchema();
         final Set<FeatureType> visited = new HashSet<>();
         trim(schemaName, featureType, date, visited);
     }
-    
+
     private void trim(final String schemaName, final FeatureType type, final Date date, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
-        
+
         final String tableName  = type.getName().tip().toString();
-        
+
         //trim complex properties versioning
         for(PropertyType desc : type.getProperties(true)){
             if(desc instanceof FeatureAssociationRole){
@@ -224,14 +223,14 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 trim(schemaName, far.getValueType(), date, visited);
             }
         }
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs   = null;
         try{
             cnx  = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
-            
+            stmt = cnx.createStatement();
+
             final StringBuilder sb = new StringBuilder("SELECT \"HSX_TrimHistory\"(");
             sb.append('\'');
             if(schemaName != null && !schemaName.isEmpty()){
@@ -243,14 +242,14 @@ public class PostgresVersionControl extends AbstractVersionControl{
             sb.append(new Timestamp(date.getTime()).toString());
             sb.append("');");
             rs = stmt.executeQuery(sb.toString());
-            
+
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
     }
-    
+
     @Override
     public synchronized void revert(Version version) throws VersioningException {
         revert(version.getDate());
@@ -261,18 +260,18 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(!isVersioned()){
             return ;
         }
-        
+
         final String schemaName = featureStore.getDatabaseSchema();
         final Set<FeatureType> visited = new HashSet<>();
         revert(schemaName, featureType, date, visited);
     }
-    
+
     private void revert(final String schemaName, final FeatureType type, final Date date, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
-        
+
         final String tableName  = type.getName().tip().toString();
-        
+
         //revert complex properties versioning
         for(PropertyType desc : type.getProperties(true)){
             if(desc instanceof FeatureAssociationRole){
@@ -281,14 +280,14 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 revert(schemaName, far.getValueType(), date, visited);
             }
         }
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs   = null;
         try{
             cnx  = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
-            
+            stmt = cnx.createStatement();
+
             final StringBuilder sb = new StringBuilder("SELECT \"HSX_RevertHistory\"(");
             sb.append('\'');
             if(schemaName != null && !schemaName.isEmpty()){
@@ -300,32 +299,32 @@ public class PostgresVersionControl extends AbstractVersionControl{
             sb.append(new Timestamp(date.getTime()).toString());
             sb.append("');");
             rs = stmt.executeQuery(sb.toString());
-            
+
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
     }
-    
+
     @Override
     public synchronized List<Version> list() throws VersioningException {
         if(!isVersioned()){
             return Collections.EMPTY_LIST;
         }
-        
+
         final List<Version> versions = new ArrayList<Version>();
-        
+
         final String schemaName = featureStore.getDatabaseSchema();
         final String tableName = getHSTableName();
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try{
             cnx = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
-            
+            stmt = cnx.createStatement();
+
             final StringBuilder sb = new StringBuilder("SELECT distinct(sub.date) as date FROM (");
             sb.append("SELECT \"HS_Begin\" AS date from ");
             dialect.encodeSchemaAndTableName(sb, schemaName, tableName);
@@ -334,19 +333,18 @@ public class PostgresVersionControl extends AbstractVersionControl{
             dialect.encodeSchemaAndTableName(sb, schemaName, tableName);
             sb.append(" WHERE \"HS_End\" IS NOT NULL");
             sb.append(") AS sub ORDER BY date ASC");
-            
+
             rs = stmt.executeQuery(sb.toString());
             while(rs.next()){
                 final Timestamp ts = rs.getTimestamp(1);
                 final Version v = new Version(this, ts.toString(), ts);
                 versions.add(v);
-            }            
+            }
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
-        
         return versions;
     }
 
@@ -354,20 +352,20 @@ public class PostgresVersionControl extends AbstractVersionControl{
     public synchronized boolean isVersioned() throws VersioningException {
         boolean hasHS = featureStore.hasHSFunctions();
         if(!hasHS) return false;
-        
+
         if(isVersioned!=null) return isVersioned;
-        
+
         //search for the versioning table
         final String schemaName = featureStore.getDatabaseSchema();
         final String tableName = getHSTableName();
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try{
             cnx = featureStore.getDataSource().getConnection();
-            stmt = cnx.createStatement();  
-            
+            stmt = cnx.createStatement();
+
             final StringBuilder sb = new StringBuilder("SELECT count(*) from \"information_schema\".\"tables\" WHERE ");
             sb.append("\"table_schema\"=");
             dialect.encodeValue(sb, schemaName, String.class);
@@ -377,22 +375,20 @@ public class PostgresVersionControl extends AbstractVersionControl{
             rs.next();
             final int nb = rs.getInt(1);
             isVersioned = nb>0;
-            
+
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
         }
-        
         return isVersioned;
     }
-    
+
     /**
      * Get the history derivated table name.
      * @return String
      */
     public String getHSTableName(){
-        return "HS_TBL_"+featureType.getName().tip().toString();
+        return "HS_TBL_" + featureType.getName().tip();
     }
-    
 }

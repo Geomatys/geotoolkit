@@ -103,8 +103,8 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
 
         final DefaultPyramid pyramid = new DefaultPyramid(this, GOOGLE_MERCATOR);
 
-        final int tileWidth = (int) BASE_TILE_SIZE;
-        final int tileHeight = (int) BASE_TILE_SIZE;
+        final int tileWidth = BASE_TILE_SIZE;
+        final int tileHeight = BASE_TILE_SIZE;
         final Envelope extent = MERCATOR_EXTEND;
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(GOOGLE_MERCATOR);
         upperLeft.setOrdinate(0, extent.getMinimum(0));

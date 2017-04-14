@@ -43,7 +43,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @module
@@ -52,45 +52,45 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = { "shapes/statepop.shp", "shapes/polygontest.shp",
             "shapes/pointtest.shp", "shapes/holeTouchEdge.shp",
             "shapes/stream.shp", "shapes/chinese_poly.shp" };
-    
+
     @Test
     public void testReadWriteStatePop() throws Exception {
         test("shapes/statepop.shp");
     }
-    
+
     @Test
     public void testReadWritePolygonTest() throws Exception {
         test("shapes/polygontest.shp");
     }
-    
+
     @Test
     public void testReadWritePointTest() throws Exception {
         test("shapes/pointtest.shp");
     }
-    
+
     @Test
     public void testReadWriteHoleTouchEdge() throws Exception {
         test("shapes/holeTouchEdge.shp");
     }
-    
+
     @Test
     public void testReadWriteChinese() throws Exception {
         test("shapes/chinese_poly.shp", Charset.forName("GB18030"));
     }
-    
+
     @Test
     public void testReadDanishPoint() throws Exception {
         test("shapes/danish_point.shp");
     }
-    
-    
+
+
 
 //    public void testAll() {
 //        StringBuffer errors = new StringBuffer();
 //        Exception bad = null;
 //        for (int i = 0, ii = files.length; i < ii; i++) {
 //            try {
-//                
+//
 //            } catch (Exception e) {
 //                System.out.println("File failed:" + files[i] + " " + e);
 //                e.printStackTrace();
@@ -175,7 +175,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         fail.initCause(cause);
         throw fail;
     }
-    
+
     private void test(final String f) throws Exception {
         test(f, null);
     }
@@ -218,7 +218,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         assertFalse(session.hasPendingChanges());
-        
+
         FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         compare(original, copy);
 
@@ -273,7 +273,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         }
 
         for(PropertyType desc : descs){
-            final String name = desc.getName().tip().toString();
+            final String name = desc.getName().toString();
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);
             if (att1 instanceof Geometry && att2 instanceof Geometry) {

@@ -104,7 +104,7 @@ public class UnionProcess extends AbstractProcess {
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(inputProperty)) {
-                final String name = inputProperty.getName().tip().toString();
+                final String name = inputProperty.getName().toString();
                 if (name.equals(inputGeomName)) {
                     inputGeometry = (Geometry) inputFeature.getPropertyValue(name);
                 }
@@ -284,7 +284,7 @@ public class UnionProcess extends AbstractProcess {
         // Copy all properties from the type2 without duplicate
         for (final PropertyType targetDesc : type2.getProperties(true)) {
             if(AttributeConvention.contains(targetDesc.getName())) continue;
-            
+
             if (!AttributeConvention.isGeometryAttribute(targetDesc)) {
                 boolean isExistDesc = false;
                 //search if target descriptor name already exist into source descriptors
