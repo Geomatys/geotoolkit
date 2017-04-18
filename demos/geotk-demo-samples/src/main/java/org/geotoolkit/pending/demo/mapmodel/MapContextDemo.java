@@ -11,7 +11,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -27,6 +26,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.DataStores;
 
 
@@ -61,7 +61,7 @@ public class MapContextDemo {
         context.layers().add(featureLayer);
 
         //quickly test if it works
-        JMap2DFrame.show(context);
+        FXMapFrame.show(context);
 
 
         //Build the context in a tree structure
