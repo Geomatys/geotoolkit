@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.wmts;
 
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Abstract implementation of {@link GetTileRequest}, which defines the parameters for
@@ -204,6 +206,13 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         if (layer == null) {
             throw new IllegalArgumentException("Layer is not defined");
         }
+        
+        
+        String format = this.format;
+        if(resourceUrl!=null) {
+            //replace mime type by extension only if we use a Rest resource URL
+            format = findExtension(this.format);
+        }
 
         requestParameters.put("SERVICE",    "WMTS");
         requestParameters.put("REQUEST",    "GetTile");
@@ -224,4 +233,43 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         requestParameters.putAll(dimensions());
     }
 
+    /**
+     * Generate mimetype file extension
+     * 
+     * @param mimeType
+     * @return 
+     */
+    private static String findExtension(String mimeType) {
+        if (mimeType==null) return null;
+        mimeType = mimeType.toLowerCase();
+        
+        //known wmts cases
+        switch (mimeType) {
+            case "image/png" :
+            case "image/png8" : return "png";
+            case "image/jpeg" : return "jpeg";
+            case "image/gif" : return "gif";
+            case "image/bmp" : return "bmp";
+        }
+        
+        //unknown case, try to split it based on usuel patterns
+        //common case application/xml
+        final int slashIdx = mimeType.indexOf('/');
+        if (slashIdx>=0) {
+            mimeType = mimeType.substring(slashIdx+1);
+        }
+        //case image/dicom+json
+        final int plusIdx= mimeType.indexOf('+');
+        if (plusIdx>=0) {
+            mimeType = mimeType.substring(0,plusIdx);
+        }
+        //case image/dicom, format:gzip
+        final int partIdx= mimeType.indexOf(',');
+        if (partIdx>=0) {
+            mimeType = mimeType.substring(0,partIdx);
+        }
+        
+        return mimeType.trim();
+    }
+    
 }
