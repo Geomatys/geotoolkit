@@ -198,7 +198,12 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         int unnamed = 0;
         final String[] fields = line.split("" + separator, -1);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(getDefaultNamespace(), name);
+        final String ns = getDefaultNamespace();
+        if (ns != null) {
+            ftb.setName(ns, name);
+        } else {
+            ftb.setName(name);
+        }
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
 
         GenericName defaultGeometryFieldName = null;
@@ -220,7 +225,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             AttributeTypeBuilder atb = ftb.addAttribute(Object.class);
             // Check non-empty parenthesis
             if (dep > 0 && fin > dep + 1) {
-                fieldName = NamesExt.create(getDefaultNamespace(), field.substring(0, dep));
+                fieldName = NamesExt.create(ns, field.substring(0, dep));
                 //there is a defined type
                 final String name = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
