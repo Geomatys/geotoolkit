@@ -248,7 +248,7 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
-     * Returns all image reader providers used by the tiles. The set will typically contains
+     * Returns all image reader providers used by the tiles. The set will typically contain
      * only one element, but more are allowed. In the later case, the entries in the set are
      * sorted from the most frequently used provider to the less frequently used.
      *

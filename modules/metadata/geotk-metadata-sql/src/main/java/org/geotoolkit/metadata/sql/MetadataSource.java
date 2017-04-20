@@ -446,6 +446,8 @@ public class MetadataSource implements AutoCloseable {
      *         to be created. This is usually the primary key of the record to search for.
      * @return An implementation of the required interface, or the code list element.
      * @throws SQLException if a SQL query failed.
+     *
+     * @todo renamed as "lookup" in Apache SIS.
      */
     public <T> T getEntry(final Class<T> type, final String identifier) throws SQLException {
         ensureNonNull("type", type);

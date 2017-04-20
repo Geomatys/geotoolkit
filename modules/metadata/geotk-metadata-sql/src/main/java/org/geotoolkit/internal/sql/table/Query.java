@@ -708,8 +708,8 @@ scan:       while (!tables.isEmpty()) {
     }
 
     /**
-     * Appends the {@linkplain #table table name} to the specified buffer. The catalog and
-     * schema name are prefixed if needed.
+     * Appends the {@linkplain #table table name} to the specified buffer.
+     * The catalog and schema name are prefixed if needed.
      */
     private void appendTable(final StringBuilder buffer, final String quote) {
         if (database.catalog != null) {
