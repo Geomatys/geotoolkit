@@ -49,6 +49,7 @@ import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.coverage.CollectionCoverageReference;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -146,6 +147,9 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
              && Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) { //-- if view tile by tile is activate.
                 //-- pyramidal model, we can improve rendering
                 g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
+            } else if (ref != null && ref instanceof CollectionCoverageReference) {
+                //-- collection model, we can improve rendering
+                g2d = new StatelessCollectionCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
             } else {
                 //-- normal coverage
                 g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
