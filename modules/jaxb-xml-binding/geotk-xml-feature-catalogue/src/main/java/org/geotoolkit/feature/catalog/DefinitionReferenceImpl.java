@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.DefinitionSource;
 
@@ -57,7 +60,7 @@ import org.opengis.feature.catalog.DefinitionSource;
     "definitionSource"
 })
 @XmlRootElement(name = "FC_DefinitionReference")
-public class DefinitionReferenceImpl implements DefinitionReference {
+public class DefinitionReferenceImpl extends AbstractMetadata implements DefinitionReference {
 
     private String sourceIdentifier;
     @XmlElement(required = true)
@@ -137,7 +140,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -156,6 +159,11 @@ public class DefinitionReferenceImpl implements DefinitionReference {
         hash = 79 * hash + (this.sourceIdentifier != null ? this.sourceIdentifier.hashCode() : 0);
         hash = 79 * hash + (this.definitionSource != null ? this.definitionSource.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

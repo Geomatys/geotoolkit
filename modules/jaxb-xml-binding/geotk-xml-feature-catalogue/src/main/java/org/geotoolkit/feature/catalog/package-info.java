@@ -32,7 +32,6 @@ xmlns = {
     //CodeList handling
     @XmlJavaTypeAdapter(RoleTypeAdapter.class),
     // Primitive type handling
-    @XmlJavaTypeAdapter(UnlimitedIntegerAdapter.class),
     @XmlJavaTypeAdapter(MultiplicityAdapter.class),
     @XmlJavaTypeAdapter(MultiplicityRangeAdapter.class),
     @XmlJavaTypeAdapter(StringAdapter.class),

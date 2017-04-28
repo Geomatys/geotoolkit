@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Constraint;
 
 
@@ -53,7 +56,7 @@ import org.opengis.feature.catalog.Constraint;
     "description"
 })
 @XmlRootElement(name = "FC_Constraint")
-public class ConstraintImpl implements Constraint {
+public class ConstraintImpl extends AbstractMetadata implements Constraint {
 
     @XmlElement(required = true)
     private String description;
@@ -107,7 +110,7 @@ public class ConstraintImpl implements Constraint {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -124,6 +127,11 @@ public class ConstraintImpl implements Constraint {
         int hash = 3;
         hash = 73 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

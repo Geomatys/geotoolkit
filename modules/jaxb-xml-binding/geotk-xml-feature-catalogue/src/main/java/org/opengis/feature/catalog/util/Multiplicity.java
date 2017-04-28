@@ -14,22 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.opengis.feature.catalog.util;
 
-package org.geotoolkit.feature.catalog;
+import java.util.List;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
-public interface Referenceable {
+public interface Multiplicity {
     
-    public void setReference(boolean isReference);
-    
-    public boolean isReference();
-    
-    public Referenceable getReferenceableObject();
-    
-    public String getId();
-
+    List<MultiplicityRange> getRange();
 }

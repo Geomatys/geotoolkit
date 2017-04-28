@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gfc:FC_FeatureOperation id="operation-1" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <gfc:memberName>
+        <gco:LocalName>Raise dam</gco:LocalName>
+    </gfc:memberName>
+    <gfc:definition>
+        <gco:CharacterString>The action of raising the dam causes changes in the discharge from the dam....</gco:CharacterString>
+    </gfc:definition>
+    <gfc:cardinality>
+        <gco:Multiplicity>
+            <gco:range>
+                <gco:MultiplicityRange>
+                    <gco:lower>
+                        <gco:Integer>1</gco:Integer>
+                    </gco:lower>
+                    <gco:upper>
+                        <gco:UnlimitedInteger isInfinite="false">1</gco:UnlimitedInteger>
+                    </gco:upper>
+                </gco:MultiplicityRange>
+            </gco:range>
+        </gco:Multiplicity>
+    </gfc:cardinality>
+    <gfc:featureType>
+        <gfc:FC_FeatureType id="lh-1">
+            <gfc:typeName>
+                <gco:LocalName>Lighthouse</gco:LocalName>
+            </gfc:typeName>
+            <gfc:definition>
+                <gco:CharacterString>A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.</gco:CharacterString>
+            </gfc:definition>
+            <gfc:code>
+                <gco:CharacterString>BC050</gco:CharacterString>
+            </gfc:code>
+            <gfc:isAbstract>
+                <gco:Boolean>false</gco:Boolean>
+            </gfc:isAbstract>
+            <gfc:inheritsFrom xlink:href="inherits-1"/>
+            <gfc:featureCatalogue xlink:href="cat-1"/>
+        </gfc:FC_FeatureType>
+    </gfc:featureType>
+    <gfc:signature>
+        <gco:CharacterString>damRaise((Dam) dam, (Real) newHeight) : Dam</gco:CharacterString>
+    </gfc:signature>
+    <gfc:formalDefinition>
+        <gco:CharacterString>damRaise(ConstructDam(d), h) = error   'cannot raise height of a damunder construction' damRaise(Operate (d,i,j), h)   | (h &gt;i)    &amp;&amp; (h &lt; maxHeight(d)) = Operate(d,h,j)   | otherwise = error 'illegal new height for dam'</gco:CharacterString>
+    </gfc:formalDefinition>
+    <gfc:observesValuesOf>
+        <gfc:FC_BoundFeature id="boundatt-1">
+            <gfc:featureType xlink:href="lh-1"/>
+            <gfc:attribute xlink:href="attribute-2"/>
+        </gfc:FC_BoundFeature>
+    </gfc:observesValuesOf>
+</gfc:FC_FeatureOperation>

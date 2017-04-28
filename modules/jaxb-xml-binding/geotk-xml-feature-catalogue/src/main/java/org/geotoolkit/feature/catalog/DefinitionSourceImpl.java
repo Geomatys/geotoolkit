@@ -30,11 +30,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.Responsibility;
-import org.opengis.metadata.citation.ResponsibleParty;
 
 
 
@@ -65,7 +67,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
     "source"
 })
 @XmlRootElement(name = "FC_DefinitionSource")
-public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
+public class DefinitionSourceImpl extends AbstractMetadata implements DefinitionSource, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -108,6 +110,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
     /**
      * Gets the value of the source property.
     */
+    @Override
     public Citation getSource() {
         return source;
     }
@@ -120,20 +123,24 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
         this.source = value;
     }
 
+    @Override
     public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
 
+    @Override
     public boolean isReference() {
         return isReference;
     }
 
-    public DefinitionSourceImpl getReference() {
+    @Override
+    public DefinitionSourceImpl getReferenceableObject() {
         DefinitionSourceImpl result = new DefinitionSourceImpl(this);
         result.setReference(true);
         return result;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -151,7 +158,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -208,6 +215,11 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
         hash = 31 * hash + (this.id     != null ? this.id.hashCode()     : 0);
         hash = 31 * hash + (this.source != null ? this.source.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

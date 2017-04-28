@@ -84,7 +84,7 @@ import org.geotoolkit.metadata.Citations;
     "definitionSource"
 })
 @XmlRootElement( name = "FC_FeatureCatalogue")
-public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCatalogue, Referenceable {
+public class FeatureCatalogueImpl extends AbstractMetadata implements FeatureCatalogue, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -189,14 +189,14 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     @Override
     public List<String> getScope() {
         if (scope == null) {
-            scope = new ArrayList<String>();
+            scope = new ArrayList<>();
         }
         return this.scope;
     }
 
     public void setScope(final String scope) {
         if (this.scope == null) {
-            this.scope = new ArrayList<String>();
+            this.scope = new ArrayList<>();
         }
         this.scope.add(scope);
     }
@@ -212,14 +212,14 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     @Override
     public List<String> getFieldOfApplication() {
         if (fieldOfApplication == null) {
-            fieldOfApplication = new ArrayList<String>();
+            fieldOfApplication = new ArrayList<>();
         }
         return this.fieldOfApplication;
     }
 
     public void setFieldOfApplication(final String fieldOfApplication) {
         if (this.fieldOfApplication == null) {
-            this.fieldOfApplication = new ArrayList<String>();
+            this.fieldOfApplication = new ArrayList<>();
         }
         this.fieldOfApplication.add(fieldOfApplication);
     }
@@ -300,7 +300,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     @Override
     public List<FeatureType> getFeatureType() {
         if (featureType == null) {
-            featureType = new ArrayList<FeatureType>();
+            featureType = new ArrayList<>();
         }
         return this.featureType;
     }
@@ -308,7 +308,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     public void setFeatureType(final FeatureType featureType) {
         if (this.featureType == null) {
-            this.featureType = new ArrayList<FeatureType>();
+            this.featureType = new ArrayList<>();
         }
         this.featureType.add(featureType);
     }
@@ -324,14 +324,14 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     @Override
     public List<DefinitionSource> getDefinitionSource() {
         if (definitionSource == null) {
-            definitionSource = new ArrayList<DefinitionSource>();
+            definitionSource = new ArrayList<>();
         }
         return this.definitionSource;
     }
 
     public void setDefinitionSource(final DefinitionSource definitionSource) {
         if (this.definitionSource == null) {
-            this.definitionSource = new ArrayList<DefinitionSource>();
+            this.definitionSource = new ArrayList<>();
         }
         this.definitionSource.add(definitionSource);
     }
@@ -351,7 +351,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     }
 
     @Override
-    public FeatureCatalogueImpl getReference() {
+    public FeatureCatalogueImpl getReferenceableObject() {
         FeatureCatalogueImpl result = new FeatureCatalogueImpl(this);
         result.setReference(true);
         return result;
@@ -360,7 +360,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
-            beforeMarshal(new HashMap<String, Referenceable>());
+            beforeMarshal(new HashMap<>());
         }
     }
 
@@ -370,12 +370,12 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         rootElement = false;
 
-        List<FeatureType> replacement = new ArrayList<FeatureType>();
+        List<FeatureType> replacement = new ArrayList<>();
         for (FeatureType f: getFeatureType()) {
             FeatureTypeImpl fi = (FeatureTypeImpl) f;
 
             if (alreadySee.get(fi.getId()) != null) {
-                replacement.add(fi.getReference());
+                replacement.add(fi.getReferenceableObject());
             } else {
                 alreadySee = fi.beforeMarshal(alreadySee);
                 replacement.add(fi);
@@ -482,6 +482,6 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     @Override
     public MetadataStandard getStandard() {
-        return new MetadataStandard(Citations.ISO, Package.getPackage("org.opengis.feature.catalog"));
+        return FeatureCatalogueStandard.ISO_19110;
     }
 }

@@ -17,8 +17,6 @@
 
 package org.geotoolkit.feature.catalog.util;
 
-import org.geotoolkit.util.UnlimitedInteger;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -54,22 +51,15 @@ public class XmlUnlimitedInteger {
     public XmlUnlimitedInteger() {
     }
 
-    public XmlUnlimitedInteger(final int value) {
-        this.value = value;
-    }
-
-    public XmlUnlimitedInteger(final UnlimitedInteger multiplicity) {
-        this.isInfinite = false;
+    public XmlUnlimitedInteger(final Integer multiplicity) {
         if (multiplicity != null) {
-            this.isInfinite =  multiplicity.isInfinite();
-        }
-        if (!isInfinite && multiplicity != null) {
-            this.value  = multiplicity.intValue();
-            this.nil    = null;
+            this.isInfinite =  (Integer.MAX_VALUE == multiplicity);
+            if (!isInfinite) {
+                this.value = multiplicity;
+            }
         } else {
-            this.value  = null;
-            this.nil    = true;
-
+            this.nil = true;
+            this.isInfinite = false;
         }
     }
 

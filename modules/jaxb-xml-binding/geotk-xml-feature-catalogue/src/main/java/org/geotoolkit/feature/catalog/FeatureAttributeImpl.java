@@ -28,12 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.ListedValue;
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 import org.opengis.util.TypeName;
 
 
@@ -102,7 +103,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Build a new Feature Attribute
      */
-    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, final FeatureType featureType, 
+    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, final FeatureType featureType, 
             final List<Constraint> constrainedBy, final String code, final List<ListedValue> listedValue, final TypeName valueType) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, null);
         this.code        = code;
@@ -112,6 +113,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Gets the value of the code property.
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -142,9 +144,10 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Gets the value of the listedValue property.
      */
+    @Override
     public List<ListedValue> getListedValue() {
         if (listedValue == null) {
-            listedValue = new ArrayList<ListedValue>();
+            listedValue = new ArrayList<>();
         }
         return this.listedValue;
     }
@@ -161,7 +164,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      */
     public void setListedValue(final ListedValue listedValue) {
         if (this.listedValue == null) {
-            this.listedValue = new ArrayList<ListedValue>();
+            this.listedValue = new ArrayList<>();
         }
         this.listedValue.add(listedValue);
     }
@@ -170,6 +173,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      * Gets the value of the valueType property.
      * 
      */
+    @Override
     public TypeName getValueType() {
         return valueType;
     }
@@ -182,7 +186,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     }
     
     @Override
-    public FeatureAttributeImpl getReference() {
+    public FeatureAttributeImpl getReferenceableObject() {
         FeatureAttributeImpl result = new FeatureAttributeImpl(this);
         result.setReference(true);
         return result;
@@ -208,7 +212,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

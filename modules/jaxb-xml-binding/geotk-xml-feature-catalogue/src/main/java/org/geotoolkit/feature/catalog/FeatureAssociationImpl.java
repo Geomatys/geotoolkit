@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.FeatureAssociation;
 import org.opengis.feature.catalog.FeatureCatalogue;
@@ -63,7 +64,7 @@ import org.opengis.util.LocalName;
     "role"
 })
 @XmlRootElement( name = "FC_FeatureAssociation")        
-public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAssociation, Referenceable {
+public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAssociation {
 
     @XmlElement(required = true)
     private List<AssociationRole> role;
@@ -103,6 +104,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     /**
      * Gets the value of the roleName property.
      */
+    @Override
     public List<AssociationRole> getRole() {
         if (role == null) {
             role = new ArrayList<>();
@@ -121,7 +123,8 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         this.role.add(role);
     }
     
-    public FeatureAssociationImpl getReference() {
+    @Override
+    public FeatureAssociationImpl getReferenceableObject() {
         FeatureAssociationImpl reference = new FeatureAssociationImpl(this);
         reference.setReference(true);
         return reference;
@@ -134,10 +137,11 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
      */
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
-            beforeMarshal(new HashMap<String, Referenceable>());
+            beforeMarshal(new HashMap<>());
         }
     }
     
+    @Override
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         alreadySee = super.beforeMarshal(alreadySee);
         rootElement = false;
@@ -146,7 +150,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
             AssociationRoleImpl ri = (AssociationRoleImpl) r;
             
             if (alreadySee.get(ri.getId()) != null) {
-                replacement.add(ri.getReference());
+                replacement.add(ri.getReferenceableObject());
             } else {
                 alreadySee = ri.beforeMarshal(alreadySee);
                 replacement.add(ri);    
@@ -178,7 +182,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
