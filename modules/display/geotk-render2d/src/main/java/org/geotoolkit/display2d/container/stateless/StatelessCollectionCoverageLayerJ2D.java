@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreListener;
@@ -40,13 +42,18 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.ItemListener;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.storage.coverage.CollectionCoverageReference;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.Description;
 
 /**
  *
@@ -127,8 +134,9 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
 
         final CollectionCoverageReference ref = (CollectionCoverageReference) item.getCoverageReference();
         final Collection<CoverageReference> references = ref.getCoverages(null);
+        final LoopLayer layer = new LoopLayer();
         for (CoverageReference cref : references) {
-            final LoopLayer layer = new LoopLayer(cref, item.getStyle());
+            layer.ref = cref;
             paintRaster(layer, rules, renderingContext);
         }
     }
@@ -247,12 +255,162 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
         super.dispose();
     }
 
-    private class LoopLayer extends DefaultCoverageMapLayer {
+    /**
+     * Fake coverage layer to avoid the expensive instanciation.
+     */
+    private class LoopLayer implements CoverageMapLayer {
+
+        private CoverageReference ref;
         
-        private LoopLayer(CoverageReference ref, MutableStyle style) {
-            super(ref,style);
+        @Override
+        public CoverageReference getCoverageReference() {
+            return ref;
         }
-        
+
+        @Override
+        public boolean isWellKnownedType() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public MutableStyle getStyle() {
+            return item.getStyle();
+        }
+
+        @Override
+        public void setStyle(MutableStyle style) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public double getOpacity() {
+            return item.getOpacity();
+        }
+
+        @Override
+        public void setOpacity(double opacity) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public boolean isSelectable() {
+            return item.isSelectable();
+        }
+
+        @Override
+        public void setSelectable(boolean selectable) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public MutableStyle getSelectionStyle() {
+            return item.getSelectionStyle();
+        }
+
+        @Override
+        public void setSelectionStyle(MutableStyle style) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Envelope getBounds() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public ElevationModel getElevationModel() {
+            return item.getElevationModel();
+        }
+
+        @Override
+        public void setElevationModel(ElevationModel model) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public List<GraphicBuilder> graphicBuilders() {
+            return item.graphicBuilders();
+        }
+
+        @Override
+        public <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder(Class<T> type) {
+            return item.getGraphicBuilder(type);
+        }
+
+        @Override
+        public void addLayerListener(LayerListener listener) {
+        }
+
+        @Override
+        public void removeLayerListener(LayerListener listener) {
+        }
+
+        @Override
+        public void setName(String name) {
+        }
+
+        @Override
+        public String getName() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void setDescription(Description desc) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Description getDescription() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public boolean isVisible() {
+            return item.isVisible();
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public List<MapItem> items() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void setUserProperty(String key, Object value) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Object getUserProperty(String key) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Map<String, Object> getUserProperties() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void addItemListener(ItemListener listener) {
+        }
+
+        @Override
+        public void removeItemListener(ItemListener listener) {
+        }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+        }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+        }
+
+
     }
     
 }

@@ -23,6 +23,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -93,8 +94,20 @@ public abstract class AbstractGridCoverageReader extends GridCoverageReader {
                 //clip to coverage envelope
                 genv.intersect(gridGeometry.getEnvelope());
                 coverageEnv = genv;
+                
+                //check for disjoint envelopes
+                int dimension = 0;
+                for (int i=genv.getDimension(); --i>=0;) {
+                    if (genv.getSpan(i) > 0) {
+                        dimension++;
+                    }
+                }
+                if (dimension < 2) {
+                    throw new DisjointCoverageDomainException("No coverage matched parameters");
+                }
             }
-
+            
+            
             final GridCoverageReadParam cparam = new GridCoverageReadParam();
             cparam.setCoordinateReferenceSystem(coverageEnv.getCoordinateReferenceSystem());
             cparam.setEnvelope(coverageEnv);

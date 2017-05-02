@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
@@ -143,16 +144,20 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
         } else if (child instanceof CoverageMapLayer) {
             final CoverageMapLayer layer = (CoverageMapLayer) child;
             final CoverageReference ref  = layer.getCoverageReference();
-            if (ref != null && ref instanceof PyramidalCoverageReference 
-             && Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) { //-- if view tile by tile is activate.
-                //-- pyramidal model, we can improve rendering
-                g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
-            } else if (ref != null && ref instanceof CollectionCoverageReference) {
-                //-- collection model, we can improve rendering
-                g2d = new StatelessCollectionCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
+            
+            if (Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) {
+                 //-- if view tile by tile is activate.
+                if (ref != null && ref instanceof PyramidalCoverageReference) {
+                    //-- pyramidal model, we can improve rendering
+                    g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), layer);
+                } else if (ref != null && ref instanceof CollectionCoverageReference) {
+                    //-- collection model, we can improve rendering
+                    g2d = new StatelessCollectionCoverageLayerJ2D(getCanvas(), layer);
+                } else {
+                    g2d = new StatelessCoverageLayerJ2D(getCanvas(), layer);
+                }
             } else {
-                //-- normal coverage
-                g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer) child);
+                g2d = new StatelessCoverageLayerJ2D(getCanvas(), layer);
             }
         } else if (child instanceof MapLayer) {
             g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child, false);
