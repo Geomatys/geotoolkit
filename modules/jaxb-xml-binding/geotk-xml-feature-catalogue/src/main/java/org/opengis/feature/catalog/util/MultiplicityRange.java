@@ -14,22 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.opengis.feature.catalog.util;
 
-package org.geotoolkit.feature.catalog;
+import org.geotoolkit.util.UnlimitedInteger;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
-public interface Referenceable {
+public interface MultiplicityRange {
     
-    public void setReference(boolean isReference);
+    Integer getLower();
     
-    public boolean isReference();
-    
-    public Referenceable getReferenceableObject();
-    
-    public String getId();
-
+    Integer getUpper();
 }

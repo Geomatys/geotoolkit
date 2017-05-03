@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_Integer;
-import org.geotoolkit.util.UnlimitedInteger;
+import org.opengis.feature.catalog.util.MultiplicityRange;
 
 
 /**
@@ -56,7 +56,7 @@ import org.geotoolkit.util.UnlimitedInteger;
     "lower",
     "upper"
 })
-public class MultiplicityRange {
+public class MultiplicityRangeImpl implements MultiplicityRange {
 
     @XmlJavaTypeAdapter(GO_Integer.class)
     @XmlElement(required = true)
@@ -64,19 +64,26 @@ public class MultiplicityRange {
 
     @XmlJavaTypeAdapter(UnlimitedIntegerAdapter.class)
     @XmlElement(required = true)
-    private UnlimitedInteger upper;
+    private Integer upper;
 
     /**
      * An empty constructor used by JAXB
      */
-    public MultiplicityRange() {
+    public MultiplicityRangeImpl() {
 
     }
 
+    public MultiplicityRangeImpl(final MultiplicityRange range) {
+        if (range != null) {
+            this.lower = range.getLower();
+            this.upper = range.getUpper();
+        }
+    }
+    
     /**
      * An empty constructor used by JAXB
      */
-    public MultiplicityRange(final int lower, final UnlimitedInteger upper) {
+    public MultiplicityRangeImpl(final int lower, final Integer upper) {
         this.lower = lower;
         this.upper = upper;
     }
@@ -84,6 +91,7 @@ public class MultiplicityRange {
     /**
      * Gets the value of the lower property.
      */
+    @Override
     public Integer getLower() {
         return lower;
     }
@@ -99,7 +107,8 @@ public class MultiplicityRange {
     /**
      * Gets the value of the upper property.
      */
-    public UnlimitedInteger getUpper() {
+    @Override
+    public Integer getUpper() {
         return upper;
     }
 
@@ -107,7 +116,7 @@ public class MultiplicityRange {
      * Sets the value of the upper property.
      *
      */
-    public void setUpper(final UnlimitedInteger value) {
+    public void setUpper(final Integer value) {
         this.upper = value;
     }
 
@@ -129,8 +138,8 @@ public class MultiplicityRange {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiplicityRange) {
-            final MultiplicityRange that = (MultiplicityRange) object;
+        if (object instanceof MultiplicityRangeImpl) {
+            final MultiplicityRangeImpl that = (MultiplicityRangeImpl) object;
             return Objects.equals(this.lower, that.lower);
                 //&& Objects.equals(this.upper, that.upper);
             // temporary patch TODO fix it  && Objects.equals(this.upper, that.upper);

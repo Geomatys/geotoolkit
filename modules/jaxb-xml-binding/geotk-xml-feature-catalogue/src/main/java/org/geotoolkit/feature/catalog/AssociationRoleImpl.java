@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -32,7 +33,7 @@ import org.opengis.feature.catalog.FeatureAssociation;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.RoleType;
 import org.opengis.util.LocalName;
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 
 /**
@@ -71,7 +72,7 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
     "valueType"
 })
 @XmlRootElement(name="FC_AssociationRole")
-public class AssociationRoleImpl extends PropertyTypeImpl implements AssociationRole, Referenceable {
+public class AssociationRoleImpl extends PropertyTypeImpl implements AssociationRole {
 
     @XmlElement(required = true)
     private RoleType type;
@@ -94,7 +95,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     /**
      * Clone a AssociationRole
      */
-    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, 
+    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, 
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference,
             final RoleType type, final Boolean isOrdered, final Boolean isNavigable, final FeatureAssociation relation, final FeatureType rolePlayer) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, definitionReference);
@@ -123,6 +124,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Gets the value of the type property.
      * 
      */
+    @Override
     public RoleType getType() {
         return type;
     }
@@ -139,6 +141,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Gets the value of the isOrdered property.
      * 
      */
+    @Override
     public Boolean getIsOrdered() {
         return isOrdered;
     }
@@ -155,6 +158,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Gets the value of the isNavigable property.
      * 
      */
+    @Override
     public Boolean getIsNavigable() {
         return isNavigable;
     }
@@ -170,6 +174,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Gets the value of the relation property.
      * 
      */
+    @Override
     public FeatureAssociation getRelation() {
         return relation;
     }
@@ -185,6 +190,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Gets the value of the rolePlayer property.
      *     
      */
+    @Override
     public FeatureType getValueType() {
         return valueType;
     }
@@ -197,7 +203,8 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         this.valueType = value;
     }
     
-    public AssociationRoleImpl getReference() {
+    @Override
+    public AssociationRoleImpl getReferenceableObject() {
         AssociationRoleImpl result = new AssociationRoleImpl(this);
         result.setReference(true);
         //ensure that relation is reference
@@ -213,7 +220,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         
         if (valueType != null) {
             if (alreadySee.get(valueType.getId()) != null) {
-                valueType = ((FeatureTypeImpl)valueType).getReference();
+                valueType = ((FeatureTypeImpl)valueType).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)valueType).beforeMarshal(alreadySee);
             }
@@ -221,7 +228,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         
         if (relation != null) {
             if (alreadySee.get(relation.getId()) != null) {
-                relation = ((FeatureAssociationImpl)relation).getReference();
+                relation = ((FeatureAssociationImpl)relation).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureAssociationImpl)relation).beforeMarshal(alreadySee);
             }
@@ -254,7 +261,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

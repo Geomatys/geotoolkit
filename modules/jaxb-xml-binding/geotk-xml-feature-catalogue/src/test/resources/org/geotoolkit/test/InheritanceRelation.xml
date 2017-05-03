@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gfc:FC_InheritanceRelation id="inherits-1" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <gfc:name>
+        <gco:CharacterString>is a</gco:CharacterString>
+    </gfc:name>
+    <gfc:description>
+        <gco:CharacterString>An object is classified as a specialization of another object</gco:CharacterString>
+    </gfc:description>
+    <gfc:uniqueInstance>
+        <gco:Boolean>false</gco:Boolean>
+    </gfc:uniqueInstance>
+    <gfc:subtype>
+        <gfc:FC_FeatureType id="lh-1">
+            <gfc:typeName>
+                <gco:LocalName>Lighthouse</gco:LocalName>
+            </gfc:typeName>
+            <gfc:definition>
+                <gco:CharacterString>A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.</gco:CharacterString>
+            </gfc:definition>
+            <gfc:code>
+                <gco:CharacterString>BC050</gco:CharacterString>
+            </gfc:code>
+            <gfc:isAbstract>
+                <gco:Boolean>false</gco:Boolean>
+            </gfc:isAbstract>
+            <gfc:inheritsFrom xlink:href="inherits-1"/>
+            <gfc:featureCatalogue>
+                <gfc:FC_FeatureCatalogue id="cat-1">
+                    <gfc:name>
+                        <gco:CharacterString>Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)</gco:CharacterString>
+                    </gfc:name>
+                    <gfc:scope>
+                        <gco:CharacterString>Hydrography</gco:CharacterString>
+                    </gfc:scope>
+                    <gfc:scope>
+                        <gco:CharacterString>Ports and Harbours</gco:CharacterString>
+                    </gfc:scope>
+                    <gfc:scope>
+                        <gco:CharacterString>Transportation Networks</gco:CharacterString>
+                    </gfc:scope>
+                    <gfc:fieldOfApplication>
+                        <gco:CharacterString>Military Engineering</gco:CharacterString>
+                    </gfc:fieldOfApplication>
+                    <gfc:fieldOfApplication>
+                        <gco:CharacterString>Marine Navigation</gco:CharacterString>
+                    </gfc:fieldOfApplication>
+                    <gfc:versionNumber>
+                        <gco:CharacterString>2.1</gco:CharacterString>
+                    </gfc:versionNumber>
+                    <gfc:versionDate>
+                        <gco:Date>3900-10-30</gco:Date>
+                    </gfc:versionDate>
+                    <gfc:producer>
+                        <gmd:CI_ResponsibleParty>
+                            <gmd:individualName>
+                                <gco:CharacterString>John Q.Public</gco:CharacterString>
+                            </gmd:individualName>
+                            <gmd:organisationName>
+                                <gco:CharacterString>US National Geospatial-Intelligence Agency (NGA)</gco:CharacterString>
+                            </gmd:organisationName>
+                            <gmd:contactInfo>
+                                <gmd:CI_Contact>
+                                    <gmd:phone>
+                                        <gmd:CI_Telephone>
+                                            <gmd:voice>
+                                                <gco:CharacterString>1 703 XXX XXX</gco:CharacterString>
+                                            </gmd:voice>
+                                            <gmd:facsimile>
+                                                <gco:CharacterString>1 703 XXX XXX</gco:CharacterString>
+                                            </gmd:facsimile>
+                                        </gmd:CI_Telephone>
+                                    </gmd:phone>
+                                    <gmd:address>
+                                        <gmd:CI_Address>
+                                            <gmd:deliveryPoint>
+                                                <gco:CharacterString>12310 Sunrise Valley Drive</gco:CharacterString>
+                                            </gmd:deliveryPoint>
+                                            <gmd:city>
+                                                <gco:CharacterString>Reston</gco:CharacterString>
+                                            </gmd:city>
+                                            <gmd:administrativeArea>
+                                                <gco:CharacterString>Virginia</gco:CharacterString>
+                                            </gmd:administrativeArea>
+                                            <gmd:postalCode>
+                                                <gco:CharacterString>2091-3449</gco:CharacterString>
+                                            </gmd:postalCode>
+                                            <gmd:electronicMailAddress>
+                                                <gco:CharacterString>PublicJQ@nga.mil</gco:CharacterString>
+                                            </gmd:electronicMailAddress>
+                                        </gmd:CI_Address>
+                                    </gmd:address>
+                                </gmd:CI_Contact>
+                            </gmd:contactInfo>
+                            <gmd:role>
+                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact">Point of contact</gmd:CI_RoleCode>
+                            </gmd:role>
+                        </gmd:CI_ResponsibleParty>
+                    </gfc:producer>
+                    <gfc:functionalLanguage>
+                        <gco:CharacterString>Gofer</gco:CharacterString>
+                    </gfc:functionalLanguage>
+                    <gfc:featureType>
+                        <gfc:FC_FeatureType id="mine-1">
+                            <gfc:typeName>
+                                <gco:LocalName>Mine</gco:LocalName>
+                            </gfc:typeName>
+                            <gfc:definition>
+                                <gco:CharacterString>An excavation made in the earth for the purpose of extracting natural deposit. (see also AQ090)</gco:CharacterString>
+                            </gfc:definition>
+                            <gfc:code>
+                                <gco:CharacterString>AA010</gco:CharacterString>
+                            </gfc:code>
+                            <gfc:isAbstract>
+                                <gco:Boolean>false</gco:Boolean>
+                            </gfc:isAbstract>
+                            <gfc:aliases>
+                                <gco:LocalName>Extraction Mine</gco:LocalName>
+                            </gfc:aliases>
+                            <gfc:featureCatalogue xlink:href="cat-1"/>
+                            <gfc:carrierOfCharacteristics>
+                                <gfc:FC_FeatureAttribute id="attribute-1">
+                                    <gfc:memberName>
+                                        <gco:LocalName>Depth</gco:LocalName>
+                                    </gfc:memberName>
+                                    <gfc:definition>
+                                        <gco:CharacterString>Distance measured from the highest</gco:CharacterString>
+                                    </gfc:definition>
+                                    <gfc:cardinality>
+                                        <gco:Multiplicity>
+                                            <gco:range>
+                                                <gco:MultiplicityRange>
+                                                    <gco:lower>
+                                                        <gco:Integer>1</gco:Integer>
+                                                    </gco:lower>
+                                                    <gco:upper>
+                                                        <gco:UnlimitedInteger isInfinite="false">1</gco:UnlimitedInteger>
+                                                    </gco:upper>
+                                                </gco:MultiplicityRange>
+                                            </gco:range>
+                                        </gco:Multiplicity>
+                                    </gfc:cardinality>
+                                    <gfc:featureType xlink:href="mine-1"/>
+                                    <gfc:constrainedBy>
+                                        <gfc:FC_Constraint>
+                                            <gfc:description>
+                                                <gco:CharacterString>Positive values represent distance below the refernce point from wixh the measurement is made</gco:CharacterString>
+                                            </gfc:description>
+                                        </gfc:FC_Constraint>
+                                    </gfc:constrainedBy>
+                                    <gfc:code>
+                                        <gco:CharacterString>DEP</gco:CharacterString>
+                                    </gfc:code>
+                                    <gfc:valueType>
+                                        <gco:TypeName>
+                                            <gco:aName>
+                                                <gco:CharacterString>Real</gco:CharacterString>
+                                            </gco:aName>
+                                        </gco:TypeName>
+                                    </gfc:valueType>
+                                </gfc:FC_FeatureAttribute>
+                            </gfc:carrierOfCharacteristics>
+                            <gfc:carrierOfCharacteristics>
+                                <gfc:FC_FeatureAttribute id="attribute-2">
+                                    <gfc:memberName>
+                                        <gco:LocalName>Pier/Wharf/Quay classification</gco:LocalName>
+                                    </gfc:memberName>
+                                    <gfc:definition>
+                                        <gco:CharacterString>Classification of decked berthing structure, based on configuration and structure</gco:CharacterString>
+                                    </gfc:definition>
+                                    <gfc:cardinality>
+                                        <gco:Multiplicity>
+                                            <gco:range>
+                                                <gco:MultiplicityRange>
+                                                    <gco:lower>
+                                                        <gco:Integer>1</gco:Integer>
+                                                    </gco:lower>
+                                                    <gco:upper>
+                                                        <gco:UnlimitedInteger isInfinite="false">1</gco:UnlimitedInteger>
+                                                    </gco:upper>
+                                                </gco:MultiplicityRange>
+                                            </gco:range>
+                                        </gco:Multiplicity>
+                                    </gfc:cardinality>
+                                    <gfc:featureType/>
+                                    <gfc:code>
+                                        <gco:CharacterString>DEP</gco:CharacterString>
+                                    </gfc:code>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Unknown</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>0</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definition>
+                                                <gco:CharacterString>The attribute value is missing</gco:CharacterString>
+                                            </gfc:definition>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Pier</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>1</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definitionReference>
+                                                <gfc:FC_DefinitionReference>
+                                                    <gfc:sourceIdentifier>
+                                                        <gco:CharacterString>3833, pier</gco:CharacterString>
+                                                    </gfc:sourceIdentifier>
+                                                    <gfc:definitionSource>
+                                                        <gfc:FC_DefinitionSource id="ds-IHO">
+                                                            <gfc:source>
+                                                                <gmd:CI_Citation>
+                                                                    <gmd:title>
+                                                                        <gco:CharacterString>International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English</gco:CharacterString>
+                                                                    </gmd:title>
+                                                                    <gmd:date>
+                                                                        <gmd:CI_Date>
+                                                                            <gmd:date>
+                                                                                <gco:Date>3894-02-01</gco:Date>
+                                                                            </gmd:date>
+                                                                            <gmd:dateType>
+                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                            </gmd:dateType>
+                                                                        </gmd:CI_Date>
+                                                                    </gmd:date>
+                                                                    <gmd:edition>
+                                                                        <gco:CharacterString>Fifth</gco:CharacterString>
+                                                                    </gmd:edition>
+                                                                    <gmd:citedResponsibleParty>
+                                                                        <gmd:CI_ResponsibleParty>
+                                                                            <gmd:organisationName>
+                                                                                <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
+                                                                            </gmd:organisationName>
+                                                                            <gmd:role>
+                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                            </gmd:role>
+                                                                        </gmd:CI_ResponsibleParty>
+                                                                    </gmd:citedResponsibleParty>
+                                                                    <gmd:otherCitationDetails>
+                                                                        <gco:CharacterString>Special publication n°32</gco:CharacterString>
+                                                                    </gmd:otherCitationDetails>
+                                                                </gmd:CI_Citation>
+                                                            </gfc:source>
+                                                        </gfc:FC_DefinitionSource>
+                                                    </gfc:definitionSource>
+                                                </gfc:FC_DefinitionReference>
+                                            </gfc:definitionReference>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Wharf</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>2</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definitionReference>
+                                                <gfc:FC_DefinitionReference>
+                                                    <gfc:sourceIdentifier>
+                                                        <gco:CharacterString>5985, wharf</gco:CharacterString>
+                                                    </gfc:sourceIdentifier>
+                                                    <gfc:definitionSource>
+                                                        <gfc:FC_DefinitionSource id="ds-IHO">
+                                                            <gfc:source>
+                                                                <gmd:CI_Citation>
+                                                                    <gmd:title>
+                                                                        <gco:CharacterString>International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English</gco:CharacterString>
+                                                                    </gmd:title>
+                                                                    <gmd:date>
+                                                                        <gmd:CI_Date>
+                                                                            <gmd:date>
+                                                                                <gco:Date>3894-02-01</gco:Date>
+                                                                            </gmd:date>
+                                                                            <gmd:dateType>
+                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                            </gmd:dateType>
+                                                                        </gmd:CI_Date>
+                                                                    </gmd:date>
+                                                                    <gmd:edition>
+                                                                        <gco:CharacterString>Fifth</gco:CharacterString>
+                                                                    </gmd:edition>
+                                                                    <gmd:citedResponsibleParty>
+                                                                        <gmd:CI_ResponsibleParty>
+                                                                            <gmd:organisationName>
+                                                                                <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
+                                                                            </gmd:organisationName>
+                                                                            <gmd:role>
+                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                            </gmd:role>
+                                                                        </gmd:CI_ResponsibleParty>
+                                                                    </gmd:citedResponsibleParty>
+                                                                    <gmd:otherCitationDetails>
+                                                                        <gco:CharacterString>Special publication n°32</gco:CharacterString>
+                                                                    </gmd:otherCitationDetails>
+                                                                </gmd:CI_Citation>
+                                                            </gfc:source>
+                                                        </gfc:FC_DefinitionSource>
+                                                    </gfc:definitionSource>
+                                                </gfc:FC_DefinitionReference>
+                                            </gfc:definitionReference>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Quay</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>3</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definitionReference>
+                                                <gfc:FC_DefinitionReference>
+                                                    <gfc:sourceIdentifier>
+                                                        <gco:CharacterString>4125, quay</gco:CharacterString>
+                                                    </gfc:sourceIdentifier>
+                                                    <gfc:definitionSource>
+                                                        <gfc:FC_DefinitionSource id="ds-IHO">
+                                                            <gfc:source>
+                                                                <gmd:CI_Citation>
+                                                                    <gmd:title>
+                                                                        <gco:CharacterString>International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English</gco:CharacterString>
+                                                                    </gmd:title>
+                                                                    <gmd:date>
+                                                                        <gmd:CI_Date>
+                                                                            <gmd:date>
+                                                                                <gco:Date>3894-02-01</gco:Date>
+                                                                            </gmd:date>
+                                                                            <gmd:dateType>
+                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                            </gmd:dateType>
+                                                                        </gmd:CI_Date>
+                                                                    </gmd:date>
+                                                                    <gmd:edition>
+                                                                        <gco:CharacterString>Fifth</gco:CharacterString>
+                                                                    </gmd:edition>
+                                                                    <gmd:citedResponsibleParty>
+                                                                        <gmd:CI_ResponsibleParty>
+                                                                            <gmd:organisationName>
+                                                                                <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
+                                                                            </gmd:organisationName>
+                                                                            <gmd:role>
+                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                            </gmd:role>
+                                                                        </gmd:CI_ResponsibleParty>
+                                                                    </gmd:citedResponsibleParty>
+                                                                    <gmd:otherCitationDetails>
+                                                                        <gco:CharacterString>Special publication n°32</gco:CharacterString>
+                                                                    </gmd:otherCitationDetails>
+                                                                </gmd:CI_Citation>
+                                                            </gfc:source>
+                                                        </gfc:FC_DefinitionSource>
+                                                    </gfc:definitionSource>
+                                                </gfc:FC_DefinitionReference>
+                                            </gfc:definitionReference>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Unpopulated</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>997</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definition>
+                                                <gco:CharacterString>The attribute value exist, but due to the policy considerations it cannot be given</gco:CharacterString>
+                                            </gfc:definition>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Not applicable</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>998</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definition>
+                                                <gco:CharacterString>No attribute value in the range of possible attribute values is applicable</gco:CharacterString>
+                                            </gfc:definition>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:listedValue>
+                                        <gfc:FC_ListedValue>
+                                            <gfc:label>
+                                                <gco:CharacterString>Other</gco:CharacterString>
+                                            </gfc:label>
+                                            <gfc:code>
+                                                <gco:CharacterString>999</gco:CharacterString>
+                                            </gfc:code>
+                                            <gfc:definition>
+                                                <gco:CharacterString>The attribute value cannot be given for some reason other than it is 'Multiple', 'Not applicable', 'Unknown', or 'Unpopulated'</gco:CharacterString>
+                                            </gfc:definition>
+                                        </gfc:FC_ListedValue>
+                                    </gfc:listedValue>
+                                    <gfc:valueType>
+                                        <gco:TypeName>
+                                            <gco:aName>
+                                                <gco:CharacterString>Real</gco:CharacterString>
+                                            </gco:aName>
+                                        </gco:TypeName>
+                                    </gfc:valueType>
+                                </gfc:FC_FeatureAttribute>
+                            </gfc:carrierOfCharacteristics>
+                        </gfc:FC_FeatureType>
+                    </gfc:featureType>
+                    <gfc:definitionSource>
+                        <gfc:FC_DefinitionSource id="ds-IHO">
+                            <gfc:source>
+                                <gmd:CI_Citation>
+                                    <gmd:title>
+                                        <gco:CharacterString>International Hydrographic Organization (IHO) Hydrographic Dictionnary, Part I, Volume I English</gco:CharacterString>
+                                    </gmd:title>
+                                    <gmd:date>
+                                        <gmd:CI_Date>
+                                            <gmd:date>
+                                                <gco:Date>3894-02-01</gco:Date>
+                                            </gmd:date>
+                                            <gmd:dateType>
+                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                            </gmd:dateType>
+                                        </gmd:CI_Date>
+                                    </gmd:date>
+                                    <gmd:edition>
+                                        <gco:CharacterString>Fifth</gco:CharacterString>
+                                    </gmd:edition>
+                                    <gmd:citedResponsibleParty>
+                                        <gmd:CI_ResponsibleParty>
+                                            <gmd:organisationName>
+                                                <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
+                                            </gmd:organisationName>
+                                            <gmd:role>
+                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                            </gmd:role>
+                                        </gmd:CI_ResponsibleParty>
+                                    </gmd:citedResponsibleParty>
+                                    <gmd:otherCitationDetails>
+                                        <gco:CharacterString>Special publication n°32</gco:CharacterString>
+                                    </gmd:otherCitationDetails>
+                                </gmd:CI_Citation>
+                            </gfc:source>
+                        </gfc:FC_DefinitionSource>
+                    </gfc:definitionSource>
+                </gfc:FC_FeatureCatalogue>
+            </gfc:featureCatalogue>
+        </gfc:FC_FeatureType>
+    </gfc:subtype>
+    <gfc:supertype>
+        <gfc:FC_FeatureType id="building-1">
+            <gfc:typeName>
+                <gco:LocalName>Building</gco:LocalName>
+            </gfc:typeName>
+            <gfc:definition>
+                <gco:CharacterString>A relatively permanent structure, roofed and usually walled and designed for some particular use.</gco:CharacterString>
+            </gfc:definition>
+            <gfc:code>
+                <gco:CharacterString>AL015</gco:CharacterString>
+            </gfc:code>
+            <gfc:isAbstract>
+                <gco:Boolean>false</gco:Boolean>
+            </gfc:isAbstract>
+            <gfc:inheritsTo xlink:href="inherits-1"/>
+            <gfc:featureCatalogue xlink:href="cat-1"/>
+        </gfc:FC_FeatureType>
+    </gfc:supertype>
+</gfc:FC_InheritanceRelation>

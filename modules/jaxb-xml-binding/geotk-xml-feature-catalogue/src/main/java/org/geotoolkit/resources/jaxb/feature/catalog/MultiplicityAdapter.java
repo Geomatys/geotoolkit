@@ -19,7 +19,8 @@ package org.geotoolkit.resources.jaxb.feature.catalog;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
+import org.opengis.feature.catalog.util.Multiplicity;
 
 /**
  * JAXB adapter in order to map implementing class with the Types Multiplicity. See
@@ -63,15 +64,18 @@ public class MultiplicityAdapter extends XmlAdapter<MultiplicityAdapter, Multipl
      * This method is systematically called at marshalling-time by JAXB.
      */
     @XmlElement(name = "Multiplicity", namespace = "http://www.isotc211.org/2005/gco")
-    public Multiplicity getMultiplicity() {
-        return multiplicity;
+    public MultiplicityImpl getMultiplicity() {
+        if (multiplicity == null)
+            return null;
+        return (multiplicity instanceof MultiplicityImpl) ?
+            (MultiplicityImpl)multiplicity : new MultiplicityImpl(multiplicity);
     }
 
     /**
      * Sets the value for the {@link MultiplicityImpl}. This method is systematically
      * called at unmarshalling-time by JAXB.
      */
-    public void setMultiplicity(final Multiplicity multiplicity) {
+    public void setMultiplicity(final MultiplicityImpl multiplicity) {
         this.multiplicity = multiplicity;
     }
 

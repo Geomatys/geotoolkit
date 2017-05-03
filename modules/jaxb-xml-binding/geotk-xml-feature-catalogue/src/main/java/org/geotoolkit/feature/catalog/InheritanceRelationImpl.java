@@ -33,6 +33,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.InheritanceRelation;
 
@@ -73,7 +76,7 @@ import org.opengis.feature.catalog.InheritanceRelation;
     "supertype"
 })
 @XmlRootElement(name = "FC_InheritanceRelation")        
-public class InheritanceRelationImpl implements InheritanceRelation, Referenceable {
+public class InheritanceRelationImpl extends AbstractMetadata implements InheritanceRelation, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -133,6 +136,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Gets the value of the name property.
      * 
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -149,6 +153,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Gets the value of the description property.
      * 
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -165,6 +170,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Gets the value of the uniqueInstance property.
      * 
      */
+    @Override
     public Boolean getUniqueInstance() {
         return uniqueInstance;
     }
@@ -180,6 +186,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Gets the value of the subtype property.
      */
+    @Override
     public FeatureType getSubtype() {
         return subtype;
     }
@@ -195,6 +202,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Gets the value of the supertype property.
      * 
      */
+    @Override
     public FeatureType getSupertype() {
         return supertype;
     }
@@ -210,6 +218,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Return the identifier of the relation
      */
+    @Override
     public String getId() {
         return this.id;
     }
@@ -221,6 +230,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * set the feature in reference mode
      */
+    @Override
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
@@ -228,11 +238,13 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      /**
      * get the current feature in reference mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
     
-    public InheritanceRelationImpl getReference() {
+    @Override
+    public InheritanceRelationImpl getReferenceableObject() {
         InheritanceRelationImpl result = new InheritanceRelationImpl(this);
         result.setReference(true);
         return result;
@@ -240,7 +252,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
-            beforeMarshal(new HashMap<String, Referenceable>());
+            beforeMarshal(new HashMap<>());
         }
     }
     
@@ -252,7 +264,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         
         if (subtype != null) {
             if (alreadySee.get(subtype.getId()) != null) {
-                subtype = ((FeatureTypeImpl)subtype).getReference();
+                subtype = ((FeatureTypeImpl)subtype).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)subtype).beforeMarshal(alreadySee);
             }
@@ -260,7 +272,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         
         if (supertype != null) {
             if (alreadySee.get(supertype.getId()) != null) {
-                supertype = ((FeatureTypeImpl)supertype).getReference();
+                supertype = ((FeatureTypeImpl)supertype).getReferenceableObject();
             } else {
                alreadySee = ((FeatureTypeImpl)supertype).beforeMarshal(alreadySee);
             }
@@ -301,7 +313,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -324,5 +336,10 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         hash = 79 * hash + (this.id   != null ? this.id.hashCode()   : 0);
         hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 }

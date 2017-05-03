@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.ListedValue;
 
@@ -60,7 +63,7 @@ import org.opengis.feature.catalog.ListedValue;
     "definitionReference"
 })
 @XmlRootElement(name = "FC_ListedValue")
-public class ListedValueImpl implements ListedValue {
+public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     @XmlElement(required = true)
     private String label;
@@ -184,7 +187,7 @@ public class ListedValueImpl implements ListedValue {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -204,6 +207,11 @@ public class ListedValueImpl implements ListedValue {
         int hash = 3;
         hash = 97 * hash + (this.code != null ? this.code.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

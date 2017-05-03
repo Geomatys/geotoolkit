@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.Binding;
 
 /**
@@ -32,7 +35,7 @@ import org.opengis.feature.catalog.Binding;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_Binding_Type")
 @XmlRootElement(name = "FC_Binding")
-public class BindingImpl implements Binding {
+public class BindingImpl extends AbstractMetadata implements Binding {
 
     private String description;
     
@@ -68,7 +71,7 @@ public class BindingImpl implements Binding {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -85,6 +88,11 @@ public class BindingImpl implements Binding {
         int hash = 7;
         hash = 97 * hash + (this.description != null ? this.description.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
     }
 
 }

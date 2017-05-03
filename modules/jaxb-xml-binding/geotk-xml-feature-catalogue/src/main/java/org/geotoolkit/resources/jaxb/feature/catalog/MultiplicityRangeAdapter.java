@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import org.geotoolkit.feature.catalog.util.MultiplicityRange;
+import org.geotoolkit.feature.catalog.util.MultiplicityRangeImpl;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.opengis.feature.catalog.util.MultiplicityRange;
 
 /**
  * JAXB adapter in order to map implementing class with the Types MultiplicityRange. See
@@ -63,15 +64,18 @@ public class MultiplicityRangeAdapter extends XmlAdapter<MultiplicityRangeAdapte
      * This method is systematically called at marshalling-time by JAXB.
      */
     @XmlElement(name = "MultiplicityRange", namespace = "http://www.isotc211.org/2005/gco")
-    public MultiplicityRange getMultiplicityRange() {
-        return multiplicityRange;
+    public MultiplicityRangeImpl getMultiplicityRange() {
+        if (multiplicityRange == null)
+            return null;
+        return (multiplicityRange instanceof MultiplicityRangeImpl) ?
+            (MultiplicityRangeImpl)multiplicityRange : new MultiplicityRangeImpl(multiplicityRange);
     }
 
     /**
      * Sets the value for the {@link MultiplicityRangeImpl}. This method is systematically
      * called at unmarshalling-time by JAXB.
      */
-    public void setMultiplicityRange(final MultiplicityRange multiplicityRange) {
+    public void setMultiplicityRange(final MultiplicityRangeImpl multiplicityRange) {
         this.multiplicityRange = multiplicityRange;
     }
 

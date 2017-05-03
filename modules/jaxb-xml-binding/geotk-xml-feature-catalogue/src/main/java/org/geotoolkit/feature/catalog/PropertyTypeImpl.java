@@ -35,12 +35,15 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.PropertyType;
-import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 /**
  * Abstract class for feature properties.
@@ -84,7 +87,7 @@ import org.geotoolkit.feature.catalog.util.Multiplicity;
     AssociationRoleImpl.class
 })
 @XmlRootElement(name= "FC_PropertyType")        
-public class PropertyTypeImpl implements PropertyType, Referenceable {
+public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, Referenceable {
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -97,7 +100,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     private LocalName memberName;
     private String definition;
     @XmlElement(required = true)
-    private Multiplicity cardinality;
+    private MultiplicityImpl cardinality;
     @XmlElement(required = true)
     private FeatureType featureType;
     private List<Constraint> constrainedBy;
@@ -133,7 +136,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * Build a new PropertyTypeImpl
      */
-    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, 
+    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, 
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference) {
         this.id                  = id;
         this.cardinality         = cardinality;
@@ -147,6 +150,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Gets the value of the memberName property.
      * 
      */
+    @Override
     public LocalName getMemberName() {
         return memberName;
     }
@@ -163,6 +167,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Gets the value of the definition property.
      * 
     */
+    @Override
     public String getDefinition() {
         return definition;
     }
@@ -179,7 +184,8 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Gets the value of the cardinality property.
      * 
      */
-    public Multiplicity getCardinality() {
+    @Override
+    public MultiplicityImpl getCardinality() {
         return cardinality;
     }
 
@@ -187,7 +193,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the cardinality property.
      * 
     */
-    public void setCardinality(final Multiplicity value) {
+    public void setCardinality(final MultiplicityImpl value) {
         this.cardinality = value;
     }
 
@@ -195,6 +201,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Gets the value of the featureType property.
      * 
      */
+    @Override
     public FeatureType getFeatureType() {
         return featureType;
     }
@@ -210,16 +217,17 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * Gets the value of the constrainedBy property.
      */
+    @Override
     public List<Constraint> getConstrainedBy() {
         if (constrainedBy == null) {
-            constrainedBy = new ArrayList<Constraint>();
+            constrainedBy = new ArrayList<>();
         }
         return this.constrainedBy;
     }
     
     public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
-            this.constrainedBy = new ArrayList<Constraint>();
+            this.constrainedBy = new ArrayList<>();
         }
         this.constrainedBy.add(constrainedBy);
     }
@@ -232,6 +240,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Gets the value of the definitionReference property.
      * 
     */
+    @Override
     public DefinitionReference getDefinitionReference() {
         return definitionReference;
     }
@@ -247,6 +256,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * set the catalogue in href mode
      */
+    @Override
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
@@ -254,16 +264,19 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      /**
      * get the current catalogue href mode
      */
+    @Override
     public boolean isReference() {
         return isReference;
     }
     
-    public PropertyTypeImpl getReference() {
+    @Override
+    public PropertyTypeImpl getReferenceableObject() {
         PropertyTypeImpl result = new PropertyTypeImpl(this);
         result.setReference(true);
         return result;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -280,7 +293,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
-                featureType = ((FeatureTypeImpl)featureType).getReference();
+                featureType = ((FeatureTypeImpl)featureType).getReferenceableObject();
             } else {
                 alreadySee = ((FeatureTypeImpl)featureType).beforeMarshal(alreadySee);
             }
@@ -320,7 +333,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -346,4 +359,8 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         return hash;
     }
 
+    @Override
+    public MetadataStandard getStandard() {
+        return FeatureCatalogueStandard.ISO_19110;
+    }
 }
