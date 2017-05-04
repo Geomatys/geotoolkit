@@ -31,9 +31,9 @@ import org.opengis.style.Fill;
  */
 public class FXFill extends FXStyleElementController<Fill> {
 
-    @FXML private FXColorExpression uiColor;    
+    @FXML private FXColorExpression uiColor;
     @FXML private FXNumberExpression uiOpacity;
-            
+
     @Override
     public Class<Fill> getEditedClass() {
         return Fill.class;
@@ -43,13 +43,13 @@ public class FXFill extends FXStyleElementController<Fill> {
     public Fill newValue() {
         return StyleConstants.DEFAULT_FILL;
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();   
+        super.initialize();
 
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final Fill fill;
@@ -57,18 +57,18 @@ public class FXFill extends FXStyleElementController<Fill> {
             fill = getStyleFactory().fill(uiColor.valueProperty().get(), uiOpacity.valueProperty().get());
             value.set(fill);
         };
-        
+
         uiColor.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiColor.setLayer(layer);
         uiOpacity.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Fill styleElement) {
         uiColor.valueProperty().setValue(styleElement.getColor());

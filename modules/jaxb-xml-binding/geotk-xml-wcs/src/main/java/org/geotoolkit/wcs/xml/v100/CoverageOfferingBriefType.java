@@ -25,14 +25,14 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
 
 
 /**
- * Brief description of one coverage avaialble from a WCS. 
- * 
+ * Brief description of one coverage avaialble from a WCS.
+ *
  * WCS version 1.0.0
- * 
+ *
  * <p>Java class for CoverageOfferingBriefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageOfferingBriefType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,30 +55,30 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
     CoverageOfferingType.class
 })
 public class CoverageOfferingBriefType extends AbstractDescriptionType implements CoverageInfo{
-    
+
     private LonLatEnvelopeType lonLatEnvelope;
-    
+
     private Keywords keywords;
-    
+
     /**
      * An Empty constructor
      */
     public CoverageOfferingBriefType(){
     }
-    
+
     public CoverageOfferingBriefType(final String name, final String label, final String description,
             final LonLatEnvelopeType lonLatEnvelope) {
         super(null, name, label, description);
         this.lonLatEnvelope = lonLatEnvelope;
     }
-    
+
     public CoverageOfferingBriefType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
             final LonLatEnvelopeType lonLatEnvelope, final Keywords keywords) {
         super(metadataLink, name, label, description);
         this.lonLatEnvelope = lonLatEnvelope;
         this.keywords       = keywords;
     }
-    
+
     public CoverageOfferingBriefType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
             final LonLatEnvelopeType lonLatEnvelope, final List<String> keywords) {
         super(metadataLink, name, label, description);
@@ -87,16 +87,16 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
             this.keywords = new Keywords(keywords);
         }
     }
-    
+
     @Override
     public LonLatEnvelopeType getLonLatEnvelope() {
         return this.lonLatEnvelope;
     }
-    
+
     public void setLonLatEnvelope(final LonLatEnvelopeType lonLatEnvelope) {
         this.lonLatEnvelope = lonLatEnvelope;
-    } 
-    
+    }
+
     public Keywords getKeywords() {
         return this.keywords;
     }
@@ -104,7 +104,7 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
     public void setKeywords(final Keywords keywords) {
         this.keywords = keywords;
     }
-    
+
     @Override
     public void setKeywordValues(final List<String> keywords) {
         this.keywords = new Keywords(keywords);

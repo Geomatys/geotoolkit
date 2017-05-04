@@ -27,7 +27,7 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
 
 /**
  *  The class 'NamedValue' provides for a generic soft-typed parameter
- * 				value. NamedValue shall support two attributes.
+ *              value. NamedValue shall support two attributes.
  *
  * <p>Java class for NamedValueType complex type.
  *

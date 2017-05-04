@@ -25,7 +25,7 @@ import org.geotoolkit.referencing.crs.PredefinedCRS;
  * @author Remi Marechal (Geomatys)
  */
 public final class EmptyReadeableStarRTree2D extends ReadeableStarRTreeTest {
-    public EmptyReadeableStarRTree2D() throws Exception { 
+    public EmptyReadeableStarRTree2D() throws Exception {
         super(PredefinedCRS.CARTESIAN_2D, false);
     }
 }

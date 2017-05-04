@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.w3._2005.atom package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.w3._2005.atom package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -47,14 +47,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2005.atom
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link AtomPersonConstruct }
-     * 
+     *
      */
     public AtomPersonConstruct createAtomPersonConstruct() {
         return new AtomPersonConstruct();
@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Link }
-     * 
+     *
      */
     public Link createLink() {
         return new Link();
@@ -70,7 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AtomPersonConstruct }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/Atom", name = "author")
     public JAXBElement<AtomPersonConstruct> createAuthor(final AtomPersonConstruct value) {
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/Atom", name = "name")
     public JAXBElement<String> createName(final String value) {
@@ -88,7 +88,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/Atom", name = "email")
     public JAXBElement<String> createEmail(final String value) {
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2005/Atom", name = "uri")
     public JAXBElement<String> createUri(final String value) {

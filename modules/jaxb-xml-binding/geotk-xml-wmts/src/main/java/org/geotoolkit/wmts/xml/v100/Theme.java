@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,11 +69,11 @@ public class Theme extends DescriptionType {
 
     /**
      * Name of the theme
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -81,11 +81,11 @@ public class Theme extends DescriptionType {
 
     /**
      * Name of the theme
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -104,7 +104,7 @@ public class Theme extends DescriptionType {
 
     /**
      * Gets the value of the layerRef property.
-     * 
+     *
      */
     public List<String> getLayerRef() {
         if (layerRef == null) {

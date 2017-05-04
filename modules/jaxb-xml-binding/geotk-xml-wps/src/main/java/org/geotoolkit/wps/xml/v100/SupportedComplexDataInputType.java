@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SupportedComplexDataInputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedComplexDataInputType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,25 +47,25 @@ import javax.xml.bind.annotation.XmlType;
 public class SupportedComplexDataInputType extends SupportedComplexDataType {
 
     public SupportedComplexDataInputType() {
-        
+
     }
-    
+
     public SupportedComplexDataInputType(ComplexDataDescriptionType defaultFormat, List<ComplexDataDescriptionType> supported, Integer maximumMegabytes) {
         super(defaultFormat, supported);
         this.maximumMegabytes = maximumMegabytes;
-        
+
     }
-    
+
     @XmlAttribute
     protected Integer maximumMegabytes;
 
     /**
      * Gets the value of the maximumMegabytes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaximumMegabytes() {
         return maximumMegabytes;
@@ -73,11 +73,11 @@ public class SupportedComplexDataInputType extends SupportedComplexDataType {
 
     /**
      * Sets the value of the maximumMegabytes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaximumMegabytes(final Integer value) {
         this.maximumMegabytes = value;
@@ -91,7 +91,7 @@ public class SupportedComplexDataInputType extends SupportedComplexDataType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

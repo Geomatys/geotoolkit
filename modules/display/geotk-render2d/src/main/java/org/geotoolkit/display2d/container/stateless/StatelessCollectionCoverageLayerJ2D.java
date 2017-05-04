@@ -261,7 +261,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
     private class LoopLayer implements CoverageMapLayer {
 
         private CoverageReference ref;
-        
+
         @Override
         public CoverageReference getCoverageReference() {
             return ref;
@@ -412,5 +412,5 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Co
 
 
     }
-    
+
 }

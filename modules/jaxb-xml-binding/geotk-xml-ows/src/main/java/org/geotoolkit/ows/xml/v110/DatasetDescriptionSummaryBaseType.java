@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Typical dataset metadata in typical Contents section of an OWS service metadata (Capabilities) document. This type shall be extended and/or restricted if needed for specific OWS use, to include the specific Dataset  description metadata needed. 
- * 
+ * Typical dataset metadata in typical Contents section of an OWS service metadata (Capabilities) document. This type shall be extended and/or restricted if needed for specific OWS use, to include the specific Dataset  description metadata needed.
+ *
  * <p>Java class for DatasetDescriptionSummaryBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DatasetDescriptionSummaryBaseType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,7 +85,7 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     /**
      * Unordered list of zero or more minimum bounding rectangles surrounding coverage data, using the WGS 84 CRS with decimal degrees and longitude before latitude. If no WGS 84 bounding box is recorded for a coverage, any such bounding boxes recorded for a higher level in a hierarchy of datasets shall apply to this coverage. If WGS 84 bounding box(es) are recorded for a coverage, any such bounding boxes recorded for a higher level in a hierarchy of datasets shall be ignored. For each lowest-level coverage in a hierarchy, at least one applicable WGS84BoundingBox shall be either recorded or inherited, to simplify searching for datasets that might overlap a specified region. If multiple WGS 84 bounding boxes are included, this shall be interpreted as the union of the areas of these bounding boxes. Gets the value of the wgs84BoundingBox property.
-     * 
+     *
      */
     public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
         if (wgs84BoundingBox == null) {
@@ -96,11 +96,11 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     /**
      * Gets the value of the identifier property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -108,11 +108,11 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;

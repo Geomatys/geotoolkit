@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 
 /**
  * A generic iterator for a single object.
- * 
+ *
  * Iterator ite = SingletonIterator.wrap(object);
  *
  * @author Johann Sorel (Geomatys)

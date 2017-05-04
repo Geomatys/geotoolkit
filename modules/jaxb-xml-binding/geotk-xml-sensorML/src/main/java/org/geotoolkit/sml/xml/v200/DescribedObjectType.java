@@ -36,9 +36,9 @@ import org.opengis.metadata.constraint.LegalConstraints;
 
 /**
  * <p>Java class for DescribedObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribedObjectType">
  *   &lt;complexContent>
@@ -88,8 +88,8 @@ import org.opengis.metadata.constraint.LegalConstraints;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribedObjectType", propOrder = {
@@ -131,25 +131,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the extension property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExtension().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getExtension() {
         if (extension == null) {
@@ -160,25 +160,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the keywords property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getKeywords().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link KeywordListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<KeywordListPropertyType> getKeywords() {
         if (keywords == null) {
@@ -189,25 +189,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the identification property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the identification property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIdentification().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IdentifierListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<IdentifierListPropertyType> getIdentification() {
         if (identification == null) {
@@ -218,25 +218,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the classification property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the classification property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClassification().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ClassifierListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ClassifierListPropertyType> getClassification() {
         if (classification == null) {
@@ -247,25 +247,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the validTime property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getValidTime().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescribedObjectType.ValidTime }
-     * 
-     * 
+     *
+     *
      */
     public List<DescribedObjectType.ValidTime> getValidTime() {
         if (validTime == null) {
@@ -276,25 +276,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the securityConstraints property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the securityConstraints property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSecurityConstraints().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getSecurityConstraints() {
         if (securityConstraints == null) {
@@ -305,25 +305,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the legalConstraints property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the legalConstraints property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLegalConstraints().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MDLegalConstraintsPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<LegalConstraints> getLegalConstraints() {
         if (legalConstraints == null) {
@@ -334,25 +334,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the characteristics property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the characteristics property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCharacteristics().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescribedObjectType.Characteristics }
-     * 
-     * 
+     *
+     *
      */
     public List<DescribedObjectType.Characteristics> getCharacteristics() {
         if (characteristics == null) {
@@ -363,25 +363,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the capabilities property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the capabilities property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCapabilities().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DescribedObjectType.Capabilities }
-     * 
-     * 
+     *
+     *
      */
     public List<DescribedObjectType.Capabilities> getCapabilities() {
         if (capabilities == null) {
@@ -392,25 +392,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the contacts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the contacts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContacts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ContactListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ContactListPropertyType> getContacts() {
         if (contacts == null) {
@@ -421,25 +421,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the documentation property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the documentation property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDocumentation().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DocumentListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentListPropertyType> getDocumentation() {
         if (documentation == null) {
@@ -450,25 +450,25 @@ public abstract class DescribedObjectType
 
     /**
      * Gets the value of the history property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the history property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHistory().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link EventListPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<EventListPropertyType> getHistory() {
         if (history == null) {
@@ -479,11 +479,11 @@ public abstract class DescribedObjectType
 
     /**
      * A tag that identifies the language (e.g. english, french, etc.) for the overall document using a two-letters code as defined by ISO 639-1.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -491,11 +491,11 @@ public abstract class DescribedObjectType
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;
@@ -504,9 +504,9 @@ public abstract class DescribedObjectType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -516,8 +516,8 @@ public abstract class DescribedObjectType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -532,11 +532,11 @@ public abstract class DescribedObjectType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -544,11 +544,11 @@ public abstract class DescribedObjectType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;
@@ -559,9 +559,9 @@ public abstract class DescribedObjectType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -571,8 +571,8 @@ public abstract class DescribedObjectType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -587,11 +587,11 @@ public abstract class DescribedObjectType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -599,11 +599,11 @@ public abstract class DescribedObjectType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;
@@ -614,9 +614,9 @@ public abstract class DescribedObjectType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -628,8 +628,8 @@ public abstract class DescribedObjectType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -645,11 +645,11 @@ public abstract class DescribedObjectType
 
         /**
          * Gets the value of the timePeriod property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public TimePeriodType getTimePeriod() {
             return timePeriod;
@@ -657,11 +657,11 @@ public abstract class DescribedObjectType
 
         /**
          * Sets the value of the timePeriod property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimePeriodType }
-         *     
+         *
          */
         public void setTimePeriod(TimePeriodType value) {
             this.timePeriod = value;
@@ -669,11 +669,11 @@ public abstract class DescribedObjectType
 
         /**
          * Gets the value of the timeInstant property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimeInstantType }
-         *     
+         *
          */
         public TimeInstantType getTimeInstant() {
             return timeInstant;
@@ -681,11 +681,11 @@ public abstract class DescribedObjectType
 
         /**
          * Sets the value of the timeInstant property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimeInstantType }
-         *     
+         *
          */
         public void setTimeInstant(TimeInstantType value) {
             this.timeInstant = value;

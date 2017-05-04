@@ -32,12 +32,12 @@ import static org.opengis.filter.expression.Expression.*;
 public class DefaultDisplacement implements Displacement{
 
     private final Expression dispX;
-    
+
     private final Expression dispY;
-    
+
     /**
      * Create a default immutable displacement.
-     * 
+     *
      * @param dispX : if null or Expression.NIL will be replaced by default value.
      * @param dispY : if null or Expression.NIL will be replaced by default value.
      */
@@ -45,7 +45,7 @@ public class DefaultDisplacement implements Displacement{
         this.dispX = (dispX == null || dispX == NIL) ? DEFAULT_DISPLACEMENT_X : dispX;
         this.dispY = (dispY == null || dispY == NIL) ? DEFAULT_DISPLACEMENT_Y : dispY;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -112,5 +112,5 @@ public class DefaultDisplacement implements Displacement{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

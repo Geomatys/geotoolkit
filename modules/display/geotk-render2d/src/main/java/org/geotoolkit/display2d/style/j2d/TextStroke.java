@@ -30,7 +30,7 @@ import java.awt.geom.Point2D;
 
 /**
  * Text Stroke special for OGC Symbology encoding.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -70,17 +70,17 @@ public class TextStroke implements Stroke {
 
         //no label to paint
         if (labelLength == 0) return result;
-        
+
         final float totalLabelLenght = (float) glyphVector.getVisualBounds().getWidth();
         float remainingPathLength = measurePathLength(shape);
-                
+
         //path is to short to paint label
         if( (initialGap+totalLabelLenght) > remainingPathLength){
             return result;
         }
 
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
-        
+
         float moveX = 0, moveY = 0;
         float lastX = 0, lastY = 0;
         float thisX = 0, thisY = 0;
@@ -95,7 +95,7 @@ public class TextStroke implements Stroke {
         float gapToConsume = gap;
 
         next = glyphVector.getGlyphMetrics(currentChar).getAdvance();
-        
+
         mainLoop :
         while(!it.isDone()){
             //while we havent reach the end of the path iterator
@@ -186,7 +186,7 @@ public class TextStroke implements Stroke {
                                         t.translate(-px, -py);
                                         t.translate(0, -offset);
                                         result.append(t.createTransformedShape(charGlyph), false);
-                                    }                                    
+                                    }
 
                                     segmentToConsume -= next;
                                     currentChar++;
@@ -231,7 +231,7 @@ public class TextStroke implements Stroke {
         return result;
     }
 
-    
+
     public float measurePathLength(final Shape shape) {
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
         final float[] points = new float[6];
@@ -269,6 +269,6 @@ public class TextStroke implements Stroke {
 
         return total;
     }
-    
+
 
 }

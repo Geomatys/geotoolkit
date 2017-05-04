@@ -54,20 +54,20 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
      * Value is a String.
      */
     public static final String KEY_SELECTION = "selectionText";
-    
+
     public static volatile boolean DEFAULT_SIMPLE = true;
-    
+
     private static final ImageIcon ICON_FUNCTION = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, Color.GRAY);
     private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER, 16, Color.GRAY);
-    
+
     private boolean filter = true;
-    
+
     /**
      * Creates new form JCQLShortcutPanel
      */
     public JCQLShortcutPanel() {
         initComponents();
-        
+
         guiFunctions.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("-")));
         guiFunctions.setRootVisible(false);
         guiFunctions.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -113,8 +113,8 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
             }
 
         });
-        
-        
+
+
         final ActionListener actListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         jButton41.addActionListener(actListener);
         jButton42.addActionListener(actListener);
         jButton43.addActionListener(actListener);
-        
+
         guiSimple.setSelected(DEFAULT_SIMPLE);
         updateSimpleAdvanced();
     }
@@ -200,7 +200,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
 
         guiFunctions.setModel(new DefaultTreeModel(root));
         guiFunctions.setRootVisible(false);
-        
+
         if(guiSimple.isSelected()){
             guiFilterOps.setVisible(false);
             guiFilterOps.setSize(1,1);
@@ -208,13 +208,13 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
             guiFilterOps.setVisible(true);
             guiFilterOps.setSize(guiFilterOps.getPreferredSize());
         }
-        
+
     }
-    
+
     private void fireShortCutText(String text){
         firePropertyChange(KEY_SELECTION, null, text);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

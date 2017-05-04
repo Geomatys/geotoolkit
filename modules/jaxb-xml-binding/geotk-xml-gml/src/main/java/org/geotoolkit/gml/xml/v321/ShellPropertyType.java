@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A property with the content model of gml:ShellPropertyType encapsulates a shell to represent a component of a solid boundary.
- * 
+ *
  * <p>Java class for ShellPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ShellPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ShellPropertyType", propOrder = {
@@ -56,11 +56,11 @@ public class ShellPropertyType {
 
     /**
      * Gets the value of the shell property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShellType }
-     *     
+     *
      */
     public ShellType getShell() {
         return shell;
@@ -68,11 +68,11 @@ public class ShellPropertyType {
 
     /**
      * Sets the value of the shell property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShellType }
-     *     
+     *
      */
     public void setShell(ShellType value) {
         this.shell = value;

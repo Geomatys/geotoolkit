@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for RequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ public class RequestType {
 
    /**
     * Gets the value of the subject property.
-    * 
+    *
     */
    public List<SubjectType> getSubject() {
       if (subject == null) {
@@ -86,7 +86,7 @@ public class RequestType {
 
    /**
     * Gets the value of the action property.
-    * 
+    *
     */
    public ActionType getAction() {
       return action;
@@ -94,7 +94,7 @@ public class RequestType {
 
    /**
     * Sets the value of the action property.
-    * 
+    *
     */
    public void setAction(final ActionType value) {
       this.action = value;
@@ -102,7 +102,7 @@ public class RequestType {
 
    /**
     * Gets the value of the environment property.
-    * 
+    *
     */
    public EnvironmentType getEnvironment() {
       return environment;
@@ -110,7 +110,7 @@ public class RequestType {
 
    /**
     * Sets the value of the environment property.
-    * 
+    *
     */
    public void setEnvironment(final EnvironmentType value) {
       this.environment = value;

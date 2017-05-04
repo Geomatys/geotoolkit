@@ -58,7 +58,7 @@ import org.opengis.sld.Source;
 
 /**
  * Transform a SLD v1.1.0 in GT classes.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -90,7 +90,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         geoSLD.layers().addAll( visitLayers(sld.getNamedLayerOrUserLayer()));
         return geoSLD;
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD UseSLDLibrary in a GT SLD library objects.
      */
@@ -102,12 +102,12 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             for(final UseSLDLibrary use : libs){
                 final OnlineResource online = visitOnlineResource(use.getOnlineResource());
                 if(online != null) sldLibs.add(sldFactory.createSLDLibrary(online));
-                
+
             }
             return sldLibs;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD layers in a GT layers Objects
      */
@@ -116,7 +116,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         } else {
             final Collection<MutableLayer> sldLayers = new ArrayList<MutableLayer>();
-            
+
             for(final Object obj : layers){
                 if(obj instanceof NamedLayer){
                     final NamedLayer nl = (NamedLayer) obj;
@@ -132,7 +132,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
                     mul.setName(ul.getName());
                     mul.setDescription(visitDescription(ul.getDescription()));
                     mul.styles().addAll( visitUserStyles(ul.getUserStyle()) );
-                    
+
                     if(ul.getLayerCoverageConstraints() != null){
                         final MutableLayerCoverageConstraints consts = sldFactory.createLayerCoverageConstraints();
                         consts.constraints().addAll(visitCoverageConstraints(ul.getLayerCoverageConstraints()));
@@ -142,23 +142,23 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
                         consts.constraints().addAll(visitFeatureConstraints(ul.getLayerFeatureConstraints()));
                         mul.setConstraints(consts);
                     }
-                    
+
                     if(ul.getInlineFeature() != null){
-                        mul.setSource(visitInlineFeature(ul.getInlineFeature()));                        
+                        mul.setSource(visitInlineFeature(ul.getInlineFeature()));
                     }else if(ul.getRemoteOWS() != null){
                         mul.setSource(visiteRemoteOWS(ul.getRemoteOWS()));
                     }
-                    
+
                     sldLayers.add(mul);
                 }
             }
-            
+
             return sldLayers;
         }
-        
-        
+
+
     }
-       
+
     /**
      * Transform a jaxb v1.1.0 SLD constraints in a GT constraints class.
      */
@@ -167,7 +167,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
-            
+
             for(final org.geotoolkit.sld.xml.v110.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
                 final GenericName name = visitQName(aftc.getFeatureTypeName());
                 final Filter filter = visitFilter(aftc.getFilter());
@@ -175,11 +175,11 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
                 final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);
                 constraints.add(cons);
             }
-            
+
             return constraints;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD constraints in a GT constraints class.
      */
@@ -188,18 +188,18 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<CoverageConstraint> constraints = new ArrayList<CoverageConstraint>();
-            
+
             for(final org.geotoolkit.sld.xml.v110.CoverageConstraint aftc : ftc.getCoverageConstraint()){
                 final String name = aftc.getCoverageName();
                 final CoverageExtent extent = visitCoverageExtent(aftc.getCoverageExtent());
                 final CoverageConstraint cons = sldFactory.createCoverageConstraint(name, extent);
                 constraints.add(cons);
             }
-            
+
             return constraints;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD extents in a GT extents class.
      */
@@ -208,15 +208,15 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final List<Extent> extents = new ArrayList<Extent>();
-            
+
             for(final org.geotoolkit.sld.xml.v110.Extent ex : exts){
                 extents.add(sldFactory.createExtent(ex.getName(), ex.getValue()));
             }
-            
+
             return extents;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD extent in a GT extent class.
      */
@@ -224,7 +224,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         if(coverageExtent == null){
             return null;
         }else{
-            
+
             if(coverageExtent.getTimePeriod() != null){
                 return sldFactory.createCoverageExtent(coverageExtent.getTimePeriod());
             }else if(coverageExtent.getRangeAxis() != null){
@@ -232,11 +232,11 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             }else{
                 return null;
             }
-            
-            
+
+
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD RangeAxis in a GT RangeAxis class.
      */
@@ -245,15 +245,15 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final List<RangeAxis> axis = new ArrayList<RangeAxis>();
-            
+
             for(final org.geotoolkit.sld.xml.v110.RangeAxis axe : ranges){
                 axis.add( sldFactory.createRangeAxis(axe.getName(), axe.getValue()) );
             }
-            
+
             return axis;
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD remoteOWS in a GT remoteOWS class.
      */
@@ -269,7 +269,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             }
         }
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD inlineFeature in a GT inlineFeature class.
      */
@@ -277,7 +277,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         //TODO : fix this when GML works.
         return null;
     }
-    
+
     /**
      * Transform a jaxb v1.1.0 SLD layer style in a GT style class.
      */
@@ -286,7 +286,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<MutableLayerStyle> mStyles = new ArrayList<MutableLayerStyle>();
-            
+
             for(final Object obj : styles){
                 if(obj instanceof org.geotoolkit.sld.xml.v110.NamedStyle){
                     final org.geotoolkit.sld.xml.v110.NamedStyle ns = (org.geotoolkit.sld.xml.v110.NamedStyle) obj;
@@ -300,12 +300,12 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
                     mStyles.add(visitUserStyle(us));
                 }
             }
-            
+
             return mStyles;
         }
     }
 
-    
+
     /**
      * Transform a jaxb v1.1.0 layer style in a GT layer style class.
      */
@@ -314,14 +314,14 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
             return Collections.emptyList();
         }else{
             final Collection<MutableStyle> mStyles = new ArrayList<MutableStyle>();
-            
+
             for(final org.geotoolkit.sld.xml.v110.UserStyle us : styles){
                 //we call SE transformer for this part
                 mStyles.add(visitUserStyle(us));
             }
-            
+
             return mStyles;
         }
     }
-    
+
 }

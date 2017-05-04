@@ -27,14 +27,14 @@ import org.geotoolkit.wps.xml.DataOutput;
 
 
 /**
- * Value of one output from a process. 
- * 
- * In this use, the DescriptionType shall describe this process output. 
- * 
+ * Value of one output from a process.
+ *
+ * In this use, the DescriptionType shall describe this process output.
+ *
  * <p>Java class for OutputDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDataType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.wps.xml.DataOutput;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,26 +61,26 @@ public class OutputDataType extends DescriptionType implements DataOutput {
     protected DataType data;
 
     public OutputDataType() {
-        
+
     }
-    
+
     public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, OutputReferenceType reference) {
         super(identifier, title, _abstract);
         this.reference = reference;
     }
-    
+
     public OutputDataType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract, DataType data) {
         super(identifier, title, _abstract);
         this.data = data;
     }
-    
+
     /**
      * Gets the value of the reference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputReferenceType }
-     *     
+     *
      */
     public OutputReferenceType getReference() {
         return reference;
@@ -88,11 +88,11 @@ public class OutputDataType extends DescriptionType implements DataOutput {
 
     /**
      * Sets the value of the reference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputReferenceType }
-     *     
+     *
      */
     public void setReference(final OutputReferenceType value) {
         this.reference = value;
@@ -100,11 +100,11 @@ public class OutputDataType extends DescriptionType implements DataOutput {
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataType }
-     *     
+     *
      */
     public DataType getData() {
         return data;
@@ -112,16 +112,16 @@ public class OutputDataType extends DescriptionType implements DataOutput {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataType }
-     *     
+     *
      */
     public void setData(final DataType value) {
         this.data = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -133,7 +133,7 @@ public class OutputDataType extends DescriptionType implements DataOutput {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

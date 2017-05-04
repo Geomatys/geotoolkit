@@ -532,5 +532,5 @@ public final class FontAwesomeIcons extends Static {
     public static final String ICON_YOUTUBE = "\uf167";
     public static final String ICON_YOUTUBE_PLAY = "\uf16a";
     public static final String ICON_YOUTUBE_SQUARE = "\uf166";
-    
+
 }

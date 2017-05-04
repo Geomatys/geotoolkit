@@ -33,9 +33,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for AbstractDatumType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDatumType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -79,11 +79,11 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the domainOfValidity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainOfValidity }
-     *     
+     *
      */
     public DomainOfValidity getDomainOfValidity() {
         return domainOfValidity;
@@ -91,11 +91,11 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the domainOfValidity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainOfValidity }
-     *     
+     *
      */
     public void setDomainOfValidity(DomainOfValidity value) {
         this.domainOfValidity = value;
@@ -103,25 +103,25 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the scope property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the scope property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getScope().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getScope() {
         if (scope == null) {
@@ -132,12 +132,12 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the anchorDefinition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CodeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CodeType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CodeType> getAnchorDefinition() {
         return anchorDefinition;
@@ -145,12 +145,12 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the anchorDefinition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CodeType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CodeType }{@code >}
-     *     
+     *
      */
     public void setAnchorDefinition(JAXBElement<CodeType> value) {
         this.anchorDefinition = ((JAXBElement<CodeType> ) value);
@@ -158,11 +158,11 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the realizationEpoch property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRealizationEpoch() {
         return realizationEpoch;
@@ -170,11 +170,11 @@ public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     /**
      * Sets the value of the realizationEpoch property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRealizationEpoch(XMLGregorianCalendar value) {
         this.realizationEpoch = value;

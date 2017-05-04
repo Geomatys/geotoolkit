@@ -30,7 +30,7 @@ import org.opengis.feature.FeatureType;
 /**
  * Edition tool displaying a dialog to simplify the geometry using
  * using DouglasPeuker or TopologyPreservingSimplifier Jts classes.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -38,7 +38,7 @@ public class GeometrySimplificationTool extends AbstractEditionTool {
 
     public GeometrySimplificationTool() {
         super(150,"geometrySimplification", MessageBundle.formatInternational(MessageBundle.Keys.simplification),
-             new SimpleInternationalString("Tool to simplify geometries."), 
+             new SimpleInternationalString("Tool to simplify geometries."),
              IconBundle.getIcon("16_goto"), FeatureMapLayer.class);
     }
 
@@ -52,12 +52,12 @@ public class GeometrySimplificationTool extends AbstractEditionTool {
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
         final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
-        
+
         if(desc == null || Point.class.isAssignableFrom(desc.getValueClass())){
             //Point simplification is impossible
             return false;
         }
-        
+
         return Geometry.class.isAssignableFrom(desc.getValueClass());
     }
 

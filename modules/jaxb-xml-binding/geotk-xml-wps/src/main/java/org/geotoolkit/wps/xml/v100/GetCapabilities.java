@@ -36,9 +36,9 @@ import org.geotoolkit.ows.xml.Sections;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.Sections;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,24 +73,24 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
     private String updateSequence;
 
     public GetCapabilities() {
-        
+
     }
-    
+
     public GetCapabilities(String service, String language, String updateSequence, AcceptVersionsType versions) {
         this.acceptVersions = versions;
         this.language = language;
         this.service = service;
         this.updateSequence = updateSequence;
     }
-    
-    
+
+
     /**
      * Gets the value of the acceptVersions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AcceptVersionsType }
-     *     
+     *
      */
     @Override
     public AcceptVersionsType getAcceptVersions() {
@@ -99,11 +99,11 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
 
     /**
      * Sets the value of the acceptVersions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AcceptVersionsType }
-     *     
+     *
      */
     public void setAcceptVersions(final AcceptVersionsType value) {
         this.acceptVersions = value;
@@ -111,11 +111,11 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -128,11 +128,11 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(final String value) {
@@ -141,11 +141,11 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -158,14 +158,14 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
         }
         return new ArrayList<>();
     }
-    
+
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(final String value) {
         this.language = value;
@@ -201,7 +201,7 @@ public class GetCapabilities implements org.geotoolkit.wps.xml.GetCapabilities {
     public Version getVersion() {
         if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
             return new Version(acceptVersions.getVersion().get(0));
-        } 
+        }
         return null;
     }
 

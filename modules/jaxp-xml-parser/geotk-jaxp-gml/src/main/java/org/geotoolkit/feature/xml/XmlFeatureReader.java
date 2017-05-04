@@ -46,7 +46,7 @@ public interface XmlFeatureReader extends Configurable {
      *
      * @return FeatureReader
      * @throws IOException
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     public FeatureReader readAsStream(Object xml) throws IOException, XMLStreamException;
 

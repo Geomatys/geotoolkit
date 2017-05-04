@@ -21,7 +21,7 @@ import org.geotoolkit.util.Exceptions;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
@@ -31,7 +31,7 @@ public class TreeException extends IOException {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param message
      */
     public TreeException(final String message) {
@@ -41,7 +41,7 @@ public class TreeException extends IOException {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param message
      * @param cause
      */
@@ -53,7 +53,7 @@ public class TreeException extends IOException {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @param cause
      */
     public TreeException(final Throwable cause) {

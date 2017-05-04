@@ -159,7 +159,7 @@ public interface AdministrativeArea {
     String getUsageType();
 
     /**
-     * 
+     *
      * @param usageType
      */
     void setUsageType(String usageType);

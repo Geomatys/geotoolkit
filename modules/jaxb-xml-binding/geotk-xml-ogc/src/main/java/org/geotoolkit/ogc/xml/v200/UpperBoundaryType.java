@@ -30,9 +30,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for UpperBoundaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpperBoundaryType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpperBoundaryType", propOrder = {
@@ -57,9 +57,9 @@ public class UpperBoundaryType implements Expression {
     private JAXBElement<?> expression;
 
     public UpperBoundaryType() {
-        
+
     }
-    
+
     public UpperBoundaryType(final UpperBoundaryType that) {
         if (that != null && that.expression != null) {
             final ObjectFactory factory = new ObjectFactory();
@@ -77,17 +77,17 @@ public class UpperBoundaryType implements Expression {
             }
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -95,14 +95,14 @@ public class UpperBoundaryType implements Expression {
 
     /**
      * Sets the value of the expression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *     
+     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -122,7 +122,7 @@ public class UpperBoundaryType implements Expression {
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return extraData;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -144,7 +144,7 @@ public class UpperBoundaryType implements Expression {
         hash = 17 * hash + Objects.hashCode(this.expression);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[UpperBoundaryType]\n");

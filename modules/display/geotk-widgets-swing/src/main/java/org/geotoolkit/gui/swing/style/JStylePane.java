@@ -38,16 +38,16 @@ import org.jdesktop.swingx.JXTitledPanel;
  * @module
  */
 public class JStylePane extends StyleElementEditor<MutableStyle>{
-    
+
     private MapLayer layer = null;
     private MutableStyle style = null;
-    
+
     /** Creates new form JRulePanel */
     public JStylePane() {
         super(MutableStyle.class);
         initComponents();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -145,8 +145,8 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
             .addComponent(jXTitledPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JLabel guiAbstract;
     private JLabel guiLabelDefault;
@@ -185,23 +185,23 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
         if(style == null){
             style = getStyleFactory().style();
         }
-        
+
         style.setName(jtf_name.getText());
         style.setDescription(getStyleFactory().description(
-                jtf_title.getText(), 
+                jtf_title.getText(),
                 jtf_abstract.getText()));
         style.setDefault(jck_default.isSelected());
         return style;
     }
-    
+
     @Override
     public void apply() {
         create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiTitle,guiName,guiAbstract,guiLabelDefault};
     }
-    
+
 }

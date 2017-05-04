@@ -39,7 +39,7 @@ import org.opengis.style.LineSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXLineSymbolizer extends Group {
-    
+
     private final FXFeature feature;
     private final CachedLineSymbolizer symbolizer;
 
@@ -50,11 +50,11 @@ public class FXLineSymbolizer extends Group {
         this.feature.context.objToDisp.addListener(this::changed);
         updateGraphic();
     }
-    
+
     private void changed(ObservableValue observable, Object oldValue, Object newValue){
         updateGraphic();
     }
-    
+
     private Geometry transform(Geometry geom){
         try{
             return JTS.transform(geom, feature.context.objToDisp.get());
@@ -63,16 +63,16 @@ public class FXLineSymbolizer extends Group {
             return null;
         }
     }
-    
+
     private void updateGraphic(){
-        
+
         final LineSymbolizer base = symbolizer.getSource();
         final Geometry geom = transform((Geometry)FeatureExt.getDefaultGeometryAttributeValue(feature.feature));
         if(geom==null){
             getChildren().clear();
             return;
         }
-        
+
         final CachedStroke cstroke = symbolizer.getCachedStroke();
         if(cstroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple css = (CachedStrokeSimple) cstroke;
@@ -84,12 +84,12 @@ public class FXLineSymbolizer extends Group {
                 fxgeom.setStroke(FXUtilities.toFxColor((Color)paint));
                 getChildren().setAll(fxgeom);
             }
-            
+
         }else if(cstroke instanceof CachedStrokeGraphic){
-            
+
         }
-        
+
     }
-    
-    
+
+
 }

@@ -28,7 +28,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
  * @author Rémi Maréchal (Geomatys).
  */
 public abstract class Interpolation {
-    
+
     /**
      * Current {@code PixelIterator} which is interpolate.
      */
@@ -78,37 +78,37 @@ public abstract class Interpolation {
      * Interpolation results table.
      */
     protected final double[] result;
-    
+
     /**
      * Contains value use when pixel transformation is out of source image boundary.
      */
-    protected final double[] fillValue; 
-    
+    protected final double[] fillValue;
+
     /**
-     * Define comportement of the destination image border. 
+     * Define comportement of the destination image border.
      */
     protected final ResampleBorderComportement borderChoice;
-    
+
     /**
      * Define boundary which accept extrapolation.
      */
     protected final double bminX, bminY, bmaxX, bmaxY;
-    
+
     /**
      * Define boundary which don't accept extrapolation.
      */
     protected final int boundMinX, boundMinY, boundMaxX, boundMaxY;
-    
+
     /**
      * Build an Interpolation object initialize by the given parameter.
-     * 
+     *
      * @param pixelIterator {@link PixelIterator} which travel source image use to interpolate.
-     * @param windowSize define width and height from needed area to interpolate value in function of interpolation instance. 
-     * @param borderChoice define comportement of the destination image border. 
+     * @param windowSize define width and height from needed area to interpolate value in function of interpolation instance.
+     * @param borderChoice define comportement of the destination image border.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @see BilinearInterpolation#BilinearInterpolation(org.geotoolkit.image.iterator.PixelIterator) 
-     * @see BiCubicInterpolation#BiCubicInterpolation(org.geotoolkit.image.iterator.PixelIterator) 
-     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int) 
+     * @see BilinearInterpolation#BilinearInterpolation(org.geotoolkit.image.iterator.PixelIterator)
+     * @see BiCubicInterpolation#BiCubicInterpolation(org.geotoolkit.image.iterator.PixelIterator)
+     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
      */
     public Interpolation(PixelIterator pixelIterator, int windowSize, ResampleBorderComportement borderChoice, double[] fillValue) {
         this.pixelIterator = pixelIterator;
@@ -118,17 +118,17 @@ public abstract class Interpolation {
             throw new IllegalArgumentException("windowSide argument is more "
                     + "larger than iterate object boundary side. boundary = "
                     +boundary+" windowSide = "+windowSize);
-        
-        bminX = boundary.x - 0.5; 
+
+        bminX = boundary.x - 0.5;
         bminY = boundary.y - 0.5;
         bmaxX = boundary.x + boundary.width - 0.5;
         bmaxY = boundary.y + boundary.height - 0.5;
-        
-        boundMinX = boundary.x; 
+
+        boundMinX = boundary.x;
         boundMinY = boundary.y;
         boundMaxX = boundary.x + boundary.width  - 1;
         boundMaxY = boundary.y + boundary.height - 1;
-        
+
         this.minMax     = null;
         this.windowSide = windowSize;
         this.data       = new double[windowSize * windowSize * numBands];
@@ -146,15 +146,15 @@ public abstract class Interpolation {
         this.pixelIterator = source.pixelIterator;
         this.numBands   = source.getNumBands();
         this.boundary   = source.getBoundary();
-        bminX = boundary.x - 0.5; 
+        bminX = boundary.x - 0.5;
         bminY = boundary.y - 0.5;
         bmaxX = boundary.x + boundary.width - 0.5;
         bmaxY = boundary.y + boundary.height - 0.5;
-        boundMinX = boundary.x; 
+        boundMinX = boundary.x;
         boundMinY = boundary.y;
         boundMaxX = boundary.x + boundary.width  - 1;
         boundMaxY = boundary.y + boundary.height - 1;
-        
+
         this.minMax     = source.minMax;
         this.windowSide = source.windowSide;
         this.data       = new double[windowSide * windowSide * numBands];
@@ -174,13 +174,13 @@ public abstract class Interpolation {
     public abstract double interpolate(double x, double y, int band);
 
     /**
-     * Returns all pixel samples from interpolation at (x, y) sources coordinates. 
+     * Returns all pixel samples from interpolation at (x, y) sources coordinates.
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
      * @return interpolate value from x, y pixel coordinate.
      */
     public abstract double[] interpolate(double x, double y);
-    
+
     /**
      * <p>Find minimum and maximum pixels values for each band.<br/>
      * Moreover double table result has length equal to 6 * band number.<br/><br/>
@@ -217,11 +217,11 @@ public abstract class Interpolation {
             if ((area == null && precMinMax.equals(boundary))
               || area.equals(precMinMax)) return minMax;
         }
-        
+
         //-- compute minMax values
         minMax = new double[6 * numBands];
-        
-        //-- initialize min and max value for each band 
+
+        //-- initialize min and max value for each band
         for (int band = 0;band<numBands; band++) {
             final int minBandOrdinate = 6 * band;
             //-- min value, x, y coordinates
@@ -229,7 +229,7 @@ public abstract class Interpolation {
             //-- max value, x, y coordinates
             minMax[minBandOrdinate + 3] = Double.NEGATIVE_INFINITY;
         }
-        
+
         /*
          * If area is null iterate on all image area.
          */
@@ -291,7 +291,7 @@ public abstract class Interpolation {
         precMinMax = (area == null) ? boundary : area;
         return minMax;
     }
-    
+
     /**
      * Verify coordinates are within iterate area boundary.
      *
@@ -303,7 +303,7 @@ public abstract class Interpolation {
      protected boolean checkInterpolate(double x, double y) {
         //-- accept extrapolation
         if (borderChoice.equals(ResampleBorderComportement.EXTRAPOLATION)) return true;
-        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return false; //-- no interpolation available 
+        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return false; //-- no interpolation available
 //        if (borderChoice.equals(ResampleBorderComportement.EXTRAPOLATION)) return true;
         return (!(x < boundMinX || x > boundMaxX
                || y < boundMinY || y > boundMaxY));
@@ -378,7 +378,7 @@ public abstract class Interpolation {
     public static Interpolation create(PixelIterator pixelIterator, InterpolationCase interpolationCase, int lanczosWindow) {
         return create(pixelIterator, interpolationCase, lanczosWindow, ResampleBorderComportement.FILL_VALUE, null);
     }
-    
+
     /**
      * <p>Return Interpolation object.<br/><br/>
      *
@@ -387,12 +387,12 @@ public abstract class Interpolation {
      * @param pixelIterator Iterator which iterate to compute interpolation.
      * @param interpolationCase case of interpolation.
      * @param lanczosWindow only use about Lanczos interpolation.
-     * @param rbc comportement of the destination image border. 
+     * @param rbc comportement of the destination image border.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @return interpolation asked by caller.
      * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
      */
-    public static Interpolation create(PixelIterator pixelIterator, InterpolationCase interpolationCase, int lanczosWindow, 
+    public static Interpolation create(PixelIterator pixelIterator, InterpolationCase interpolationCase, int lanczosWindow,
                                        ResampleBorderComportement rbc, double[] fillValue) {
         switch (interpolationCase) {
             case NEIGHBOR : return new NeighborInterpolation(pixelIterator, fillValue);

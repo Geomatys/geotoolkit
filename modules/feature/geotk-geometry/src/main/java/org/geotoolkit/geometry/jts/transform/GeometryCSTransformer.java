@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
@@ -35,7 +35,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
 
     private final CoordinateSequenceTransformer csTransformer;
     private CoordinateReferenceSystem crs;
-    
+
     public GeometryCSTransformer(final CoordinateSequenceTransformer transformer) {
         csTransformer = transformer;
     }
@@ -55,7 +55,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
-    
+
     /**
      * Applies the transform to the provided geometry, given
      * @param g
@@ -65,7 +65,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     public Geometry transform(final Geometry g) throws TransformException {
         final GeometryFactory factory = g.getFactory();
         final Geometry transformed;
-        
+
         if (g instanceof Point) {
             transformed = transformPoint((Point) g, factory);
         } else if (g instanceof MultiPoint) {
@@ -111,7 +111,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
         } else {
             throw new IllegalArgumentException("Unsupported geometry type " + g.getClass());
         }
-        
+
         //copy over user data, do a special check for coordinate reference systeme
         transformed.setUserData(g.getUserData());
 
@@ -119,7 +119,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
         if (crs != null) {
             JTS.setCRS(transformed, crs);
         }
-        
+
         return transformed;
     }
 
@@ -131,14 +131,14 @@ public class GeometryCSTransformer implements GeometryTransformer{
         throws TransformException {
         CoordinateSequence cs = projectCoordinateSequence(ls.getCoordinateSequence());
         final LineString transformed;
-        
+
         if (ls instanceof LinearRing) {
             cs = ensureClosed(cs);
             transformed = gf.createLinearRing(cs);
         } else {
             transformed = gf.createLineString(cs);
         }
-        
+
         transformed.setUserData( ls.getUserData() );
         return transformed;
     }
@@ -153,7 +153,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
         final CoordinateSequence cs = projectCoordinateSequence(point.getCoordinateSequence());
         final Point transformed = gf.createPoint(cs);
         transformed.setUserData( point.getUserData() );
-        return transformed; 
+        return transformed;
     }
 
     /**
@@ -188,7 +188,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints) throws TransformException {
         return csTransformer.transform(sequence,minpoints);
     }
-    
+
     public static CoordinateSequence ensureClosed(final CoordinateSequence sequence){
         final Coordinate first = sequence.getCoordinate(0);
         final int lastIndex = sequence.size()-1;
@@ -201,5 +201,5 @@ public class GeometryCSTransformer implements GeometryTransformer{
         }
         return sequence;
     }
-    
+
 }

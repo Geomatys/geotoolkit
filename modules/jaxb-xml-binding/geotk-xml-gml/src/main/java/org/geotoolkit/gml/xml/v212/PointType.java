@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *         A Point is defined by a single coordinate tuple.
- *       
- * 
+ *
+ *
  * <p>Java class for PointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,17 +59,17 @@ public class PointType extends AbstractGeometryType {
     private CoordinatesType coordinates;
 
     public PointType() {
-        
+
     }
-    
+
     public PointType(final CoordType coord) {
         this.coord = coord;
     }
-    
+
     public PointType(final CoordinatesType coord) {
         this.coordinates = coord;
     }
-    
+
     public PointType(final PointType that) {
         super(that);
         if (that != null) {
@@ -81,14 +81,14 @@ public class PointType extends AbstractGeometryType {
             }
         }
     }
-    
+
     /**
      * Gets the value of the coord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordType }
-     *     
+     *
      */
     public CoordType getCoord() {
         return coord;
@@ -96,11 +96,11 @@ public class PointType extends AbstractGeometryType {
 
     /**
      * Sets the value of the coord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordType }
-     *     
+     *
      */
     public void setCoord(final CoordType value) {
         this.coord = value;
@@ -108,11 +108,11 @@ public class PointType extends AbstractGeometryType {
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -120,11 +120,11 @@ public class PointType extends AbstractGeometryType {
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;

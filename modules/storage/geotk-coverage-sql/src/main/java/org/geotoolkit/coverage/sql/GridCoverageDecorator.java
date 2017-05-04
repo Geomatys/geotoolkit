@@ -145,7 +145,7 @@ class GridCoverageDecorator implements GridCoverageReference, Serializable {
             return NaN;
         }
     }
-    
+
     /**
      * Forwards the call to the wrapped {@linkplain #reference}.
      */

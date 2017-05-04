@@ -32,7 +32,7 @@ import org.opengis.geometry.Envelope;
 public interface Delta {
 
     /**
-     * 
+     *
      * @return the type affected by this delta
      */
     String getType();
@@ -47,7 +47,7 @@ public interface Delta {
     Query modify(Query query);
 
     FeatureIterator modify(Query query, FeatureIterator iterator) throws DataStoreException;
-    
+
     long modify(Query query, long count) throws DataStoreException;
 
     Envelope modify(Query query, Envelope env) throws DataStoreException;

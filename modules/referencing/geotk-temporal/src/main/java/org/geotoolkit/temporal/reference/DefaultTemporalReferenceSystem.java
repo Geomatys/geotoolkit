@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -45,7 +45,7 @@ import org.opengis.util.InternationalString;
 })
 @XmlRootElement(name = "TimeReferenceSystem", namespace = Namespaces.GML)
 public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem implements TemporalReferenceSystem {
-    
+
     /**
      * Creates a default {@link TemporalReferenceSystem} implementation from the given properties, datum and coordinate system.
      * The properties given in argument follow the same rules than for the
@@ -76,14 +76,14 @@ public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem impl
     public DefaultTemporalReferenceSystem(Map<String, ?> properties) {
         super(properties);
     }
-    
+
     /**
      * Empty constructor only use for XML marshalling.
      */
     protected DefaultTemporalReferenceSystem() {
-        super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE); 
+        super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE);
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -121,10 +121,10 @@ public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem impl
         }
         return new DefaultTemporalReferenceSystem(object);
     }
-    
+
     /**
      * Method use for xml.
-     * 
+     *
      * @return {@linkplain Extent#getDescription() extend description} from
      * {@linkplain #getDomainOfValidity() super class domaine of validity}
      */

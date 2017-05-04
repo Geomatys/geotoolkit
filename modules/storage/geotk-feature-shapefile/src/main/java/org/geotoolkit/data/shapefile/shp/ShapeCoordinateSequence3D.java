@@ -71,7 +71,7 @@ class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
             default:
                 throw new IllegalArgumentException("Unvalid ordinate : " + ordinate);
         }
-        
+
     }
 
     @Override

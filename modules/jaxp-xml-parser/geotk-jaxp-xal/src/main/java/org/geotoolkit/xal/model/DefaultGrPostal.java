@@ -26,7 +26,7 @@ public class DefaultGrPostal implements GrPostal{
     private final String code;
 
     /**
-     * 
+     *
      * @param code
      */
     public DefaultGrPostal(String code){

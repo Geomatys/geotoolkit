@@ -144,7 +144,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
         } else if (child instanceof CoverageMapLayer) {
             final CoverageMapLayer layer = (CoverageMapLayer) child;
             final CoverageReference ref  = layer.getCoverageReference();
-            
+
             if (Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_VIEW_TILE))) {
                  //-- if view tile by tile is activate.
                 if (ref != null && ref instanceof PyramidalCoverageReference) {

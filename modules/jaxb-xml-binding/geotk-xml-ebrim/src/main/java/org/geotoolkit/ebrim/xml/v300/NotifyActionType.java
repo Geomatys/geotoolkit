@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Abstract Base type for all types of Notify Actions
- * 
+ *
  * <p>Java class for NotifyActionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NotifyActionType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

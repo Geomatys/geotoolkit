@@ -103,24 +103,24 @@ public class Search1D extends Table1D {
      *  de part et d'autres de la donnée manquante (NaN).
      *</li></ol>
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN
-     *					pour l'interpoler. Spécifiez 0 si vous ne voulez pas imposer de minimum.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN
+     *                  pour l'interpoler. Spécifiez 0 si vous ne voulez pas imposer de minimum.
      *
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles
-     *					puissent être interpolées. Spécifiez <code>Float.POSITIVE_INFINITY</code> pour
-     *					ne pas imposer de taille maximale (déconseillé!).
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles
+     *                  puissent être interpolées. Spécifiez <code>Float.POSITIVE_INFINITY</code> pour
+     *                  ne pas imposer de taille maximale (déconseillé!).
      *
-     * @param yi		Tableau dans lequel copier tout les <var>y</var> en remplaçant les NaN par
-     *					les valeurs interpolés. Ce tableau ne doit pas être plus long que les tableaux
-     *					<var>x</var> et <var>y</var> spécifiés lors de la construction de la table. Il
-     *					peut toutefois être plus court. Dans ce cas les interpolations ne se feront
-     *					que sur les <code>yi.length</code> premières données. Si vous spécifiez
-     *					<code>null</code>, un tableau sera créé automatiquement avec la longueur
-     *					nécessaire pour contenir toutes les données.
+     * @param yi        Tableau dans lequel copier tout les <var>y</var> en remplaçant les NaN par
+     *                  les valeurs interpolés. Ce tableau ne doit pas être plus long que les tableaux
+     *                  <var>x</var> et <var>y</var> spécifiés lors de la construction de la table. Il
+     *                  peut toutefois être plus court. Dans ce cas les interpolations ne se feront
+     *                  que sur les <code>yi.length</code> premières données. Si vous spécifiez
+     *                  <code>null</code>, un tableau sera créé automatiquement avec la longueur
+     *                  nécessaire pour contenir toutes les données.
      *
-     * @return			Le tableau <var>yi</var>. Si <var>yi</var> était nul, alors le résultat
-     *					sera soit un tableau nouvellement construit si des données ont été interpolées,
-     *					ou soit le vecteur des <var>y</var> original si aucune interpolation n'a été faite.
+     * @return          Le tableau <var>yi</var>. Si <var>yi</var> était nul, alors le résultat
+     *                  sera soit un tableau nouvellement construit si des données ont été interpolées,
+     *                  ou soit le vecteur des <var>y</var> original si aucune interpolation n'a été faite.
      *
      * @see #interpolateNaN(double,double)
      */
@@ -143,10 +143,10 @@ public class Search1D extends Table1D {
                 if (!Double.isNaN(y[index]) && !Double.isNaN(x[index])) {
                     while (true) {
                         /*
-                         *	Si on entre dans ce bloc, c'est qu'on a ignoré tous les NaN qui se trouvaient
-                         *	au début du vecteur (ou d'un segment) et qu'on vient de trouver une donnée
-                         *	valide. Il faut maintenant vérifier s'il y a suffisament de données valides
-                         *	consécutives pour accepter de reprendre les interpolations.
+                         *  Si on entre dans ce bloc, c'est qu'on a ignoré tous les NaN qui se trouvaient
+                         *  au début du vecteur (ou d'un segment) et qu'on vient de trouver une donnée
+                         *  valide. Il faut maintenant vérifier s'il y a suffisament de données valides
+                         *  consécutives pour accepter de reprendre les interpolations.
                          */
                         int begin = index;
                         do {
@@ -158,10 +158,10 @@ public class Search1D extends Table1D {
                             continue loop;
                         }
                         /*
-                         *	Un nombre suffisant de données valides ayant été trouvées, on
-                         *	comptera maintenant le nombre de NaN consécutifs qui apparaissent.
-                         *	S'il n'y en a trop, l'instruction "break" fera recommencer les 4
-                         *	lignes précédentes.
+                         *  Un nombre suffisant de données valides ayant été trouvées, on
+                         *  comptera maintenant le nombre de NaN consécutifs qui apparaissent.
+                         *  S'il n'y en a trop, l'instruction "break" fera recommencer les 4
+                         *  lignes précédentes.
                          */
                         while (true) {
                             int beginNaN = index;
@@ -175,8 +175,8 @@ public class Search1D extends Table1D {
                             }
                             int endNaN = index;
                             /*
-                             *	Sachant qu'il n'y a pas trop de données manquantes, on vérifie
-                             *	maintenant s'il y a suffisament de données après le trou.
+                             *  Sachant qu'il n'y a pas trop de données manquantes, on vérifie
+                             *  maintenant s'il y a suffisament de données après le trou.
                              */
                             begin = index;
                             while (++index < yi.length && !Double.isNaN(y[index]) && !Double.isNaN(x[index]));
@@ -184,8 +184,8 @@ public class Search1D extends Table1D {
                                 continue loop;
                             }
                             /*
-                             *	Maintenant que l'on est tout-à-fait rassuré quant au nombre de
-                             *	données disponibles, on peut enfin procéder aux interpolations.
+                             *  Maintenant que l'on est tout-à-fait rassuré quant au nombre de
+                             *  données disponibles, on peut enfin procéder aux interpolations.
                              */
                             locateAt((beginNaN + endNaN) >> 1);
                             boolean reUseIndex = false;
@@ -232,9 +232,9 @@ public class Search1D extends Table1D {
      * un vecteur temporaire (c'est l'implémentation par défaut), ou <code>return interpolateNaN(dxStart,
      * dxStop, y)</code> si ce n'est pas nécessaire.
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
-     * @return			Le tableau des <var>y</var>.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
+     * @return          Le tableau des <var>y</var>.
      *
      * @see #interpolateNaN(double, double, double[])
      * @see #interpolateInPlaceNaN(double, double)
@@ -269,9 +269,9 @@ public class Search1D extends Table1D {
      * n'est pas trop critique, il vaut mieux utiliser la méthode {@link #interpolateNaN(double,double)},
      * qui décidera elle-même s'il vaux mieux créer un vecteur temporaire ou non.
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
-     * @return			Le tableau des <var>y</var>.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
+     * @return          Le tableau des <var>y</var>.
      */
     public final double[] interpolateInPlaceNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, y);
@@ -299,11 +299,11 @@ public class Search1D extends Table1D {
      * interpolation ne se base sur des données interpolées lorsque l'on interpole
      * plusieurs données consécutives.
      *
-     * @param xi			valeur de <var>x</var> pour laquelle on désire une
-     *						valeur <var>y</var> interpolée.
-     * @param reuseIndex	<var>true</var> s'il faut réutiliser les même
-     *						index que ceux de la dernière interpolation.
-     * @return				Valeur <var>y</var> interpolée.
+     * @param xi            valeur de <var>x</var> pour laquelle on désire une
+     *                      valeur <var>y</var> interpolée.
+     * @param reuseIndex    <var>true</var> s'il faut réutiliser les même
+     *                      index que ceux de la dernière interpolation.
+     * @return              Valeur <var>y</var> interpolée.
      */
     protected double interpolate(final double xi, final boolean reuseIndex) throws ExtrapolationException {
         if (ignoreYNaN && !reuseIndex) {
@@ -328,7 +328,7 @@ public class Search1D extends Table1D {
      * supposons que cet objet représente la table suivante:
      *
      * <blockquote><pre>&nbsp;index: 0 1 2 3 4  5   6  7
-     *					&nbsp;  X = [2 4 5 7 8 NaN 12 14];
+     *                  &nbsp;  X = [2 4 5 7 8 NaN 12 14];
      *                  &nbsp;  Y = [4 7 2 1 6  1  NaN 5];</pre></blockquote>
      *
      * Alors, si <code>index</code> est un tableau de 4 éléments, <code>locate(10, index)</code>
@@ -375,10 +375,10 @@ public class Search1D extends Table1D {
      * <strong>Exemples:</strong> Supposons que le vecteur des x contient les données suivantes:
      *
      * <blockquote><code>
-     *				[4 9 12 NaN NaN 34 56 76 89]
+     *              [4 9 12 NaN NaN 34 56 76 89]
      * </code></blockquote>
      *
-     *	Alors,
+     *  Alors,
      *
      * <blockquote>
      * <pre>locate(9) </pre>   donnera  <code>klo=1</code>  et  <code>khi=1</code>.<br>
@@ -427,11 +427,11 @@ public class Search1D extends Table1D {
                         break loop;
                     }
                     /*
-                     *	Le code suivant ne sera exécuté que si l'on vient de tomber sur un NaN.
-                     *	Le "+1" de la ligne suivante n'existe que pour forcer un arrondissement
-                     *	vers le haut dans la division par 2. Exemple: avec klo=1 et khi=5, on a
-                     *	k=3 et kmax=2. Le code précédent avait examiné x[3], et le code suivant
-                     *	examinera x[2] et x[4].
+                     *  Le code suivant ne sera exécuté que si l'on vient de tomber sur un NaN.
+                     *  Le "+1" de la ligne suivante n'existe que pour forcer un arrondissement
+                     *  vers le haut dans la division par 2. Exemple: avec klo=1 et khi=5, on a
+                     *  k=3 et kmax=2. Le code précédent avait examiné x[3], et le code suivant
+                     *  examinera x[2] et x[4].
                      */
                     int kmax = (khi - klo + 1) >> 1;
                     for (int i = 1; i < kmax; i++) {
@@ -490,11 +490,11 @@ public class Search1D extends Table1D {
                         break loop;
                     }
                     /*
-                     *	Le code suivant ne sera exécuté que si l'on vient de tomber sur un NaN.
-                     *	Le "+1" de la ligne suivante n'existe que pour forcer un arrondissement
-                     *	vers le haut dans la division par 2. Exemple: avec klo=0 et khi=5, on a
-                     *	k=2 et kmax=3. Le code précédent avait examiné x[2], et le code suivant
-                     *	examinera x[0],x[1] ainsi que x[3],x[4].
+                     *  Le code suivant ne sera exécuté que si l'on vient de tomber sur un NaN.
+                     *  Le "+1" de la ligne suivante n'existe que pour forcer un arrondissement
+                     *  vers le haut dans la division par 2. Exemple: avec klo=0 et khi=5, on a
+                     *  k=2 et kmax=3. Le code précédent avait examiné x[2], et le code suivant
+                     *  examinera x[0],x[1] ainsi que x[3],x[4].
                      */
                     int kmax = (khi - klo + 1) >> 1;
                     for (int i = 1; i < kmax; i++) {
@@ -613,8 +613,8 @@ public class Search1D extends Table1D {
      * pouvez ensuite écrire:
      *
      * <blockquote><code>
-     *			int index[]=new int[4];<br>
-     *			copyIndexInto(index);
+     *          int index[]=new int[4];<br>
+     *          copyIndexInto(index);
      * </code></blockquote>
      *
      * Le tableau <code>index</code> contiendra alors [1 3 5 6].<p>
@@ -637,10 +637,10 @@ public class Search1D extends Table1D {
             center >>= 1;
             int i = center;
             /*
-             *	Si khi et klo sont identiques, on n'écrira pas klo afin de ne
-             *	pas répéter deux fois le même index. On écrira seulement khi.
-             *	La boucle 'loop' copie au début du tableau 'index' les index
-             *	qui précèdent klo.
+             *  Si khi et klo sont identiques, on n'écrira pas klo afin de ne
+             *  pas répéter deux fois le même index. On écrira seulement khi.
+             *  La boucle 'loop' copie au début du tableau 'index' les index
+             *  qui précèdent klo.
              */
             if (khi != klo) {
                 index[--i] = klo;
@@ -657,11 +657,11 @@ public class Search1D extends Table1D {
                 index[--i] = klo;
             }
             /*
-             *	La boucle suivante copie khi et les index qui le suivent dans
-             *	le tableau 'index'. Si on a atteint la fin des données sans
-             *	avoir réussi à copier tous les index, on décalera vers la droite
-             *	les index qui ont été copié et on tentera de combler le trou créé
-             *	à gauche en copiant d'autres index qui précédaient klo.
+             *  La boucle suivante copie khi et les index qui le suivent dans
+             *  le tableau 'index'. Si on a atteint la fin des données sans
+             *  avoir réussi à copier tous les index, on décalera vers la droite
+             *  les index qui ont été copié et on tentera de combler le trou créé
+             *  à gauche en copiant d'autres index qui précédaient klo.
              */
             i = center;
             index[i++] = khi;
@@ -743,10 +743,10 @@ public class Search1D extends Table1D {
      * vous évitez d'appeller trois fois <code>locate</code> et y gagnez ainsi un peu en vitesse d'éxecution.
      *
      * @param index A l'entrée, tableau d'index à vérifier. A la sortie, tableau d'index modifiés.
-     *				Cette méthode s'efforce autant que possible de ne pas modifier les index se
-     *				trouvant au centre de ce tableau.
-     * @param y		Vecteur des données <var>y</var> servant à la vérification.
-     * @return		<code>true</code> si des changements ont été fait, <code>false</code> sinon.
+     *              Cette méthode s'efforce autant que possible de ne pas modifier les index se
+     *              trouvant au centre de ce tableau.
+     * @param y     Vecteur des données <var>y</var> servant à la vérification.
+     * @return      <code>true</code> si des changements ont été fait, <code>false</code> sinon.
      * @throws ArrayIndexOutOfBoundsException s'il n'y a pas suffisament de données valides.
      *
      * @see #locate(double)
@@ -760,11 +760,11 @@ public class Search1D extends Table1D {
         for (int i = center; --i >= 0;) {
             if (Double.isNaN(y[index[i]])) {
                 /*
-                 *	Ce bloc ne sera exécuté que si un NaN a été trouvé (sinon cette méthode sera
-                 *	exécutée rapidement car elle n'aurait pratiquement rien à faire). La prochaine
-                 *	boucle décale les index qui avaient déjà été trouvés (par 'copyIndexInto') de
-                 *	façon à exclure les NaN. L'autre boucle va chercher d'autre index, de la même
-                 *	façon que 'copyIndexInto' s'y prenait.
+                 *  Ce bloc ne sera exécuté que si un NaN a été trouvé (sinon cette méthode sera
+                 *  exécutée rapidement car elle n'aurait pratiquement rien à faire). La prochaine
+                 *  boucle décale les index qui avaient déjà été trouvés (par 'copyIndexInto') de
+                 *  façon à exclure les NaN. L'autre boucle va chercher d'autre index, de la même
+                 *  façon que 'copyIndexInto' s'y prenait.
                  */
                 hasChanged = true;
                 for (int j = i; --j >= 0;) {
@@ -787,8 +787,8 @@ public class Search1D extends Table1D {
             }
         }
         /*
-         *	Le code suivant fait la même opération que le code précédent,
-         *	mais pour la deuxième moitié des index.
+         *  Le code suivant fait la même opération que le code précédent,
+         *  mais pour la deuxième moitié des index.
          */
         loop:
         for (int i = center; i < index.length; i++) {
@@ -888,16 +888,16 @@ public class Search1D extends Table1D {
      * &npsp;          ^------plage------^
      * </pre></blockquote>
      *
-     *	Les exemples suivants supposent que vos données sont échantillonées aux heures:
+     *  Les exemples suivants supposent que vos données sont échantillonées aux heures:
      *
      * <blockquote>
-     *		<code>getInterval(20,20)</code>		retournerait 1 heure.<br>
-     *		<code>getInterval(17,18)</code>		retournerait 2 heures.<br>
-     *		<code>getInterval(30,34)</code>		retournerait 5 heures.
+     *      <code>getInterval(20,20)</code>     retournerait 1 heure.<br>
+     *      <code>getInterval(17,18)</code>     retournerait 2 heures.<br>
+     *      <code>getInterval(30,34)</code>     retournerait 5 heures.
      * </blockquote>
      *
-     *	Il n'est pas obligatoire que l'intervalle d'échantillonnage soit constant.
-     *	Cette méthode utilisera une interpolation linéaire lorsqu'il y a des NaN.
+     *  Il n'est pas obligatoire que l'intervalle d'échantillonnage soit constant.
+     *  Cette méthode utilisera une interpolation linéaire lorsqu'il y a des NaN.
      *
      * @param lower index de la première donnée de la plage.
      * @param upper index de la dernière donnée de la plage.
@@ -906,20 +906,20 @@ public class Search1D extends Table1D {
     private double getInterval(final int lower, final int upper) {
         int k0, k1;
         /*
-         *	Repère les index pointant vers les données à utiliser pour le calcul
-         *	de l'intervalle. En l'absence de NaN on obtient:
+         *  Repère les index pointant vers les données à utiliser pour le calcul
+         *  de l'intervalle. En l'absence de NaN on obtient:
          *
-         *		klo0 = lower			khi0 = upper
-         *		klo1 = klo0-1			khi1 = upper+1
+         *      klo0 = lower            khi0 = upper
+         *      klo1 = klo0-1           khi1 = upper+1
          *
-         *	Le schema ci-dessous donne un exemple de la façon dont se comporte
-         *	le code en la présence de NaN pour des "lower" et "upper" donnés.
+         *  Le schema ci-dessous donne un exemple de la façon dont se comporte
+         *  le code en la présence de NaN pour des "lower" et "upper" donnés.
          *
-         *		                   lower          upper
-         *		                     |              |
-         *		140  145  150  NaN  160  165  170  NaN  180  185  190
-         *		           ^         ^         ^         ^
-         *		          k1        k0         k0        k1
+         *                         lower          upper
+         *                           |              |
+         *      140  145  150  NaN  160  165  170  NaN  180  185  190
+         *                 ^         ^         ^         ^
+         *                k1        k0         k0        k1
          */
         k0 = k1 = lower;
         final int xlength = x.length;

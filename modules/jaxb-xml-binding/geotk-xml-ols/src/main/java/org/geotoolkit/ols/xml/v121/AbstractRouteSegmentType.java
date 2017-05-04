@@ -29,11 +29,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * Defines the characteristics of a segment along a route.
- * 
+ *
  * <p>Java class for AbstractRouteSegmentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRouteSegmentType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRouteSegmentType", propOrder = {
@@ -73,11 +73,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Distance along the segment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -85,11 +85,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;
@@ -97,11 +97,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Gets the value of the travelTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Duration }
-     *     
+     *
      */
     public Duration getTravelTime() {
         return travelTime;
@@ -109,11 +109,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Sets the value of the travelTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *     
+     *
      */
     public void setTravelTime(Duration value) {
         this.travelTime = value;
@@ -121,11 +121,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Rectangular area bounding the segment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBoundingBox() {
         return boundingBox;
@@ -133,11 +133,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBoundingBox(EnvelopeType value) {
         this.boundingBox = value;
@@ -145,11 +145,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -157,11 +157,11 @@ public abstract class AbstractRouteSegmentType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;

@@ -76,7 +76,7 @@ public class FXLineJoinExpression extends FXExpression {
             }
         });
     }
-    
+
     @Override
     public Expression newValue() {
         return StyleConstants.STROKE_JOIN_BEVEL;
@@ -89,7 +89,7 @@ public class FXLineJoinExpression extends FXExpression {
 
     @Override
     protected boolean canHandle(Expression styleElement) {
-        
+
         final Toggle selected = group.getSelectedToggle();
         if(StyleConstants.STROKE_JOIN_BEVEL.equals(styleElement)){
             if(selected!=uiBevel) group.selectToggle(uiBevel);
@@ -104,5 +104,5 @@ public class FXLineJoinExpression extends FXExpression {
 
         return false;
     }
-    
+
 }

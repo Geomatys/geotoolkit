@@ -158,7 +158,7 @@ public class ChainSceneIntermediate extends ChainSceneBasic {
         validate();
         repaint();
     }
-    
+
     /**
      * {@inheritDoc }
      */

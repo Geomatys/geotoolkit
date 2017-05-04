@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AllowedTimesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedTimesType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTimesType", propOrder = {
@@ -63,10 +63,10 @@ public class AllowedTimesType extends AbstractSWEType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
-     * 
+     *
      */
     public List<JAXBElement<List<String>>> getValue() {
         if (value == null) {
@@ -77,10 +77,10 @@ public class AllowedTimesType extends AbstractSWEType {
 
     /**
      * Gets the value of the interval property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
-     * 
+     *
      */
     public List<JAXBElement<List<String>>> getInterval() {
         if (interval == null) {
@@ -91,11 +91,11 @@ public class AllowedTimesType extends AbstractSWEType {
 
     /**
      * Gets the value of the significantFigures property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSignificantFigures() {
         return significantFigures;
@@ -103,11 +103,11 @@ public class AllowedTimesType extends AbstractSWEType {
 
     /**
      * Sets the value of the significantFigures property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSignificantFigures(Integer value) {
         this.significantFigures = value;

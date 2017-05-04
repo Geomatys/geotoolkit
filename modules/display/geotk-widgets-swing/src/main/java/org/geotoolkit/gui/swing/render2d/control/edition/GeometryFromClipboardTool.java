@@ -29,17 +29,17 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool displaying a dialog to edit the geometry extracting geometry from the clipboard.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class GeometryFromClipboardTool extends AbstractEditionTool {
 
     private static final ImageIcon ICON_PASTE = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLIPBOARD, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    
+
     public GeometryFromClipboardTool() {
         super(120,"geometryFromClipboard", MessageBundle.formatInternational(MessageBundle.Keys.clipboard),
-             new SimpleInternationalString("Tool to paste geometries from clipboard."), 
+             new SimpleInternationalString("Tool to paste geometries from clipboard."),
              ICON_PASTE,FeatureMapLayer.class);
     }
 

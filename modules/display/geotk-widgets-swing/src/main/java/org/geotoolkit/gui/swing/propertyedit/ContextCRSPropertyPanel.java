@@ -50,7 +50,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * ContextCRS property panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
@@ -60,8 +60,8 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
     private JCRSList liste = null;
     private CoordinateReferenceSystem crs = null;
 
-    /** 
-     * Creates new form DefaultMapContextCRSEditPanel 
+    /**
+     * Creates new form DefaultMapContextCRSEditPanel
      */
     public ContextCRSPropertyPanel() {
         super("CRS",null,null,"Projection");
@@ -234,7 +234,7 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
     public boolean canHandle(Object target) {
         return target instanceof MapContext;
     }
-    
+
     @Override
     public void apply() {
         if(liste!=null)context.setCoordinateReferenceSystem(liste.getCRS());
@@ -249,15 +249,15 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
         }else{
             this.crs = context.getCoordinateReferenceSystem();
         }
-        
+
         setIdentifiedObject(context.getCoordinateReferenceSystem());
     }
-    
+
     @Override
     public void reset() {
         init();
     }
-    
+
     private void setIdentifiedObject(final IdentifiedObject item) {
         String text;
         try {
@@ -286,5 +286,5 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
     private void setErrorMessage(final String message) {
         wktArea.setText(Vocabulary.format(Vocabulary.Keys.Error_1, message));
     }
-    
+
 }

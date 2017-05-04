@@ -20,86 +20,86 @@ import java.util.Date;
 
 /**
  * Extends the version history, adding management methods.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface VersionControl extends VersionHistory {
-    
+
     /**
      * Test if the object versioning mechanic is present.
      * If false modifications of the object won't be historized.
-     * Use methods install and uninstall to respectivly start versioning and 
+     * Use methods install and uninstall to respectivly start versioning and
      * drop the all history.
-     * 
+     *
      * @return true if the versioning is enable.
      */
     boolean isVersioned() throws VersioningException;
-    
+
     /**
      * Install versioning mechanism if not installed.
-     * 
-     * @throws VersioningException 
+     *
+     * @throws VersioningException
      */
     void startVersioning() throws VersioningException;
-    
+
     /**
      * Uninstall versioning mechanism, drops history.
-     * 
-     * @throws VersioningException 
+     *
+     * @throws VersioningException
      */
     void dropVersioning() throws VersioningException;
-    
+
     /**
      * If versioning is not automatic then it is the user work to properly
      * call create/drop version to add or remove versions.
-     * 
+     *
      * If versioning is automatic then create/drop version methods will raise a
      * VersioningException
-     * 
+     *
      * @return true if versioning is automatic.
      */
     boolean isAutomatic();
-    
+
     /**
      * Check if this history allows version modifications (trim and rollback).
      * Versions should be created automaticaly through storage writers.
      * @return true if history clipping is supported.
      */
     boolean isEditable();
-    
+
     /**
      * Create a new version for given date.
      * @param date new version date
      * @return Version
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     Version createVersion(Date date) throws VersioningException;
-    
+
     /**
      * Drop given version.
      * @param version version to delete
-     * @throws VersioningException 
+     * @throws VersioningException
      */
     void dropVersion(Version version) throws VersioningException;
-    
+
     /**
      * Remove oldest history until given date exclusive.
      * @param version not null
      */
     void trim(Date date) throws VersioningException;
-    
+
     /**
      * Remove oldest version history until given version exclusive.
      * @param version not null
      */
     void trim(Version version) throws VersioningException;
-    
+
     /**
      * Rollback datas until given date exclusive.
      * @param version not null
      */
     void revert(Date date) throws VersioningException;
-    
+
     /**
      * Rollback datas until given version exclusive.
      * @param version not null

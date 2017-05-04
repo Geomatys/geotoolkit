@@ -66,7 +66,7 @@ public class ElementCount implements AbstractElementCount {
     ElementCount() {
     }
 
-    
+
     public ElementCount(final AbstractElementCount value) {
         if (value != null) {
             if (value.getCount() != null) {

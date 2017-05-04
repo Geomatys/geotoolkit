@@ -51,7 +51,7 @@ public interface ExtendedData {
     List<SchemaData> getSchemaData();
 
     /**
-     * 
+     *
      * @return
      */
     List<Object> getAnyOtherElements();

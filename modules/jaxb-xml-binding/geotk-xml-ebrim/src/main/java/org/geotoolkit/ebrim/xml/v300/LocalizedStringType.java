@@ -27,9 +27,9 @@ import org.geotoolkit.ebrim.xml.LocalizedString;
 
 /**
  * <p>Java class for LocalizedStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LocalizedStringType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.ebrim.xml.LocalizedString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

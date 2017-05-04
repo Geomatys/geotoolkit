@@ -30,9 +30,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for ExtendedDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtendedDescriptionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtendedDescriptionType", propOrder = {
@@ -58,7 +58,7 @@ public class ExtendedDescriptionType {
 
     /**
      * Gets the value of the element property.
-     * 
+     *
      */
     public List<ElementType> getElement() {
         if (element == null) {
@@ -66,7 +66,7 @@ public class ExtendedDescriptionType {
         }
         return this.element;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -90,7 +90,7 @@ public class ExtendedDescriptionType {
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

@@ -24,57 +24,57 @@ import org.geotoolkit.client.Request;
  * @author Olivier Terral (Geomatys)
  * @module
  */
-public interface NcGetVerticalProfileRequest extends Request {    
-    
+public interface NcGetVerticalProfileRequest extends Request {
+
     /**
      * Returns the layer name.
      */
     String getLayer();
-    
+
     /**
      * Sets the layer name.
      */
     void setLayer(final String name);
-    
+
     /**
      * Returns the CRS code.
      */
     String getCrs();
 
     /**
-     * Sets the CRS code.         
+     * Sets the CRS code.
      */
     void setCrs(final String crsCode);
-    
+
     /**
      * Returns the coordinate of a point: x%y.
      */
     String getPoint();
-    
+
     /**
      * Sets he coordinate of a point: x%y.
      */
-    void setPoint(final String point);    
-    
+    void setPoint(final String point);
+
     /**
      * Returns the mimetype of the output format.
      */
     String getFormat();
-    
+
     /**
      * Sets the mimetype of the output format.
      */
     void setFormat(final String format);
-    
+
     /**
      * Returns the Time in ISO8601 format.
      */
     String getTime();
-    
+
     /**
      * Sets the Time in ISO8601 format.
      */
     void setTime(final String time);
-    
+
 
 }

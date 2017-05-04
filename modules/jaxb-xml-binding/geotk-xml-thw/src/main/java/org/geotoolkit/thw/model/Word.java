@@ -25,12 +25,12 @@ import java.util.Objects;
  * @author Mehdi Sidhoum
  */
 public class Word {
-    
+
     /**
      * The label of this word.
      */
     private String label;
-    
+
     /**
      * The thesaurus that contains this word.
      */
@@ -45,7 +45,7 @@ public class Word {
 
     }
 
-    /** 
+    /**
      * Creates a new instance of Word
      */
     public Word(final String label, final String thesaurus, final String uriConcept) {
@@ -102,7 +102,7 @@ public class Word {
         final StringBuilder s = new StringBuilder("[Word]\n");
         if (this.label != null) {
             s.append("label: ").append(label).append('\n');
-        } 
+        }
         if (thesaurus != null) {
              s.append("thesaurus:").append(thesaurus).append('\n');
         }
@@ -125,5 +125,5 @@ public class Word {
     public void setUriConcept(final String uriConcept) {
         this.uriConcept = uriConcept;
     }
-    
+
 }

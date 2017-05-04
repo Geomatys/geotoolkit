@@ -57,12 +57,12 @@ public class JGeomPane extends StyleElementEditor<Expression> {
     public Expression create() {
         return guiBox.create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabel};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

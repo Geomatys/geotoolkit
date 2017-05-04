@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.render2d.decoration;
 
 /**
  * Information decoration
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -31,24 +31,24 @@ public interface InformationDecoration extends MapDecoration{
         WARNING,
         ERROR
     }
-    
+
     public static int DEFAULT_TIME = 10000;
-    
+
     public void setPaintingIconVisible(boolean b);
-    
+
     public boolean isPaintingIconVisible();
-    
+
     public void displayLowLevelMessages(boolean display);
-    
+
     public boolean isDisplayingLowLevelMessages();
-    
+
     /**
-     * 
+     *
      * @param text
      * @param time : time cant be inferior to 3000 (3seconds)
      * @param level
      */
     public void displayMessage(String text, int time, LEVEL level);
-    
-    
+
+
 }

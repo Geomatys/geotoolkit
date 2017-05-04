@@ -29,10 +29,10 @@ public interface MetadataWriter {
 
     /**
      * Record an object in the metadata datasource.
-     * 
+     *
      * @param obj The object to store in the datasource.
      * @return true if the storage succeed, false else.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     boolean storeMetadata(final Node obj) throws MetadataIoException;
@@ -41,7 +41,7 @@ public interface MetadataWriter {
      * Delete an object in the metadata database.
      * @param metadataID The identifier of the metadata to delete.
      * @return true if the delete succeed, false else.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     boolean deleteMetadata(final String metadataID) throws MetadataIoException;
@@ -50,7 +50,7 @@ public interface MetadataWriter {
      * Return true if the specified id is already used in the database.
      * @param metadataID
      * @return
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     boolean isAlreadyUsedIdentifier(final String metadataID) throws MetadataIoException;
@@ -61,7 +61,7 @@ public interface MetadataWriter {
      * @param metadataID The identifier of the metadata to Replace.
      * @param any The object to replace the matching metadata.
      * @return
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
      boolean replaceMetadata(String metadataID, Node any) throws MetadataIoException;
@@ -99,6 +99,6 @@ public interface MetadataWriter {
      * @param logLevel
      */
     void setLogLevel(Level logLevel);
-    
+
     boolean canImportInternalData();
 }

@@ -39,7 +39,7 @@ public class DefaultPremiseNumberRangeTo implements PremiseNumberRangeTo {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param premiseNumberPrefixes
      * @param premiseNumbers

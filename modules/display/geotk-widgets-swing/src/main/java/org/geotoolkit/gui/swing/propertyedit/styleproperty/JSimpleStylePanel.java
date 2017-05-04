@@ -106,14 +106,14 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 }
             }
         };
-    
+
     private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
     //current visible editor
     private StyleElementEditor currentEditor = null;
 
     //keep track of where the rule was to avoid rewriting the complete style
     private MutableRule parentRule = null;
-    
+
     /**
      * Creates new form jStylePane
      */
@@ -191,7 +191,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 final int selectetRow = guiTable.getSelectedRow();
                 if (selectetRow >= 0 && model.rule.symbolizers().size() > selectetRow) {
                     final Object item = model.rule.symbolizers().get(selectetRow);
-                    
+
                     if (item != null) {
                         currentEditor = StyleElementEditor.findEditor(item);
 
@@ -365,7 +365,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             if(parentRule==null){
                 layer.setStyle(getStyleFactory().style(model.rule.symbolizers().toArray(new Symbolizer[0])));
             }
-            
+
         }
     }
 
@@ -405,7 +405,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
         if(this.layer!=null){
             layerListener.unregisterSource(this.layer);
-        }        
+        }
         this.layer = layer;
         if(this.layer!=null){
             layerListener.registerSource(this.layer);
@@ -421,7 +421,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     public void parse(final Object obj) {
         model.setRule(getStyleFactory().rule());
 
-        parentRule = null;        
+        parentRule = null;
         if(layer != null){
             for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                 for(final Rule rule : fts.rules()){
@@ -432,7 +432,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         }
 
     }
-    
+
     private void parse(final MutableRule rule) {
 
         //listen to rule change from other syle editors
@@ -451,7 +451,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     private void jAddButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jAddButtonActionPerformed
 
         final List<Class> clazz = new ArrayList<Class>();
@@ -467,7 +467,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         final int result = JOptionDialog.show(this, bankController,JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
-            if (bankController.getSelectedSymbol() != null) {                
+            if (bankController.getSelectedSymbol() != null) {
                 model.rule.symbolizers().add( (Symbolizer)bankController.getSelectedSymbol());
                 final int index = model.rule.symbolizers().size()-1;
                 guiTable.getSelectionModel().setSelectionInterval(index, index);
@@ -491,7 +491,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 
-    //style events    
+    //style events
     @Override
     public void styleChange(MapLayer source, EventObject event) {
         //check if the first rule changed
@@ -521,9 +521,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             parse(this.layer.getStyle());
         }
     }
-    
+
     private static final class SymbolizerModel extends AbstractTableModel implements RuleListener{
-        
+
         private MutableRule rule;
         private final Weak ruleListener = new Weak(this);
 
@@ -534,13 +534,13 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         public void setRule(MutableRule rule) {
             ArgumentChecks.ensureNonNull("rule", rule);
             if(this.rule==rule) return;
-                        
+
             if(this.rule!=null){
                 this.ruleListener.unregisterSource(this.rule);
             }
             this.rule = rule;
             this.ruleListener.registerSource(rule);
-            
+
             fireTableDataChanged();
         }
 
@@ -551,7 +551,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 rule.symbolizers().add(index - 1, s);
             }
         }
-        
+
         public void moveDown(final Symbolizer s) {
             int index = rule.symbolizers().indexOf(s);
             if (index != rule.symbolizers().size() - 1) {
@@ -559,7 +559,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 rule.symbolizers().add(index + 1, s);
             }
         }
-        
+
         @Override
         public int getRowCount() {
             return rule.symbolizers().size();
@@ -595,9 +595,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
         }
-        
+
     }
-    
+
     private static class SymbolizerRenderer extends DefaultTableCellRenderer {
 
         private final JPreview preview = new JPreview();

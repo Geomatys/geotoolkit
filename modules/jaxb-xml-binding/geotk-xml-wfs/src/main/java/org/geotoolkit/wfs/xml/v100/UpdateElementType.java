@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.UpdateElement;
 
 /**
  * <p>Java class for UpdateElementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateElementType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.wfs.xml.UpdateElement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateElementType", propOrder = {
@@ -75,10 +75,10 @@ public class UpdateElementType implements UpdateElement {
         this.filter   = filter;
         this.typeName = typeName;
     }
-    
+
     /**
      * Gets the value of the property property.
-     * 
+     *
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
@@ -88,7 +88,7 @@ public class UpdateElementType implements UpdateElement {
     }
 
     /**
-     * 
+     *
      *                   The Filter element is used to constrain the scope
      *                   of the update operation to those features identified
      *                   by the filter.  Feature instances can be specified
@@ -96,14 +96,14 @@ public class UpdateElementType implements UpdateElement {
      *                   each feature instance OR a set of features to be
      *                   operated on can be identified by specifying spatial
      *                   and non-spatial constraints in the filter.
-     *                   If no filter is specified, then the update operation 
+     *                   If no filter is specified, then the update operation
      *                   applies to all feature instances.
-     *                
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -111,11 +111,11 @@ public class UpdateElementType implements UpdateElement {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(FilterType value) {
         this.filter = value;
@@ -123,11 +123,11 @@ public class UpdateElementType implements UpdateElement {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -135,11 +135,11 @@ public class UpdateElementType implements UpdateElement {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -147,11 +147,11 @@ public class UpdateElementType implements UpdateElement {
 
     /**
      * Gets the value of the typeName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getTypeName() {
         return typeName;
@@ -159,11 +159,11 @@ public class UpdateElementType implements UpdateElement {
 
     /**
      * Sets the value of the typeName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setTypeName(QName value) {
         this.typeName = value;
@@ -172,7 +172,7 @@ public class UpdateElementType implements UpdateElement {
     public String getInputFormat() {
         return null; // not implementd in 1.0.0
     }
-    
+
     public String getSrsName() {
         return null; // not implementd in 1.0.0
     }

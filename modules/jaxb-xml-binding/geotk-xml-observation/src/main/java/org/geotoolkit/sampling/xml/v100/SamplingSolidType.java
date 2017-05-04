@@ -27,11 +27,11 @@ import org.opengis.geometry.Geometry;
 
 /**
  * A "SamplingSolid" is an identified 3-D spatial feature used in sampling.
- * 
+ *
  * <p>Java class for SamplingSolidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingSolidType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.geometry.Geometry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,11 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the shape property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SolidPropertyType }
-     *     
+     *
      */
     public SolidPropertyType getShape() {
         return shape;
@@ -73,11 +73,11 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the shape property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SolidPropertyType }
-     *     
+     *
      */
     public void setShape(final SolidPropertyType value) {
         this.shape = value;
@@ -85,11 +85,11 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the volume property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getVolume() {
         return volume;
@@ -97,11 +97,11 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the volume property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setVolume(final MeasureType value) {
         this.volume = value;

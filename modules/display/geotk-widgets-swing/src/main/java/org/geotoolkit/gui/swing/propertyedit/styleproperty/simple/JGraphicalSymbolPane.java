@@ -40,7 +40,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
     private final JBankView<Mark> guiMarkPane = new JBankView<>(Mark.class);
     private final JExternalGraphicPane guiExternalGraphicPane = new JExternalGraphicPane();;
     private final JTabbedPane guiTabs = new JTabbedPane();
-    
+
     private MapLayer layer = null;
     private GraphicalSymbol oldGraphicalSymbol = null;
     private Mark currentMark = null;
@@ -53,7 +53,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
         super(new BorderLayout(), GraphicalSymbol.class);
 
         guiMarkPane.setCandidates(StyleBank.getInstance().getCandidates(new StyleBank.ByClassComparator(Mark.class)));
-        
+
         guiTabs.addTab(MessageBundle.format("wellknownedform"), guiMarkPane);
         guiTabs.addTab(MessageBundle.format("external"), guiExternalGraphicPane);
         guiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -131,7 +131,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
 
         return symbol;
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};

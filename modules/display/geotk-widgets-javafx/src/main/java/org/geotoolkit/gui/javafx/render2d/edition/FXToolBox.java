@@ -115,7 +115,7 @@ public class FXToolBox extends BorderPane {
 
     /**
      * Create toolbox for a single layer.
-     * 
+     *
      * @param map source map widget
      * @param layer edited layer
      */
@@ -233,7 +233,7 @@ public class FXToolBox extends BorderPane {
     private void updateGrid(){
         grid.getChildren().clear();
         grid.getColumnConstraints().clear();
-        
+
         final ColumnConstraints colFirst = new ColumnConstraints(1, 1, Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true);
         final ColumnConstraints colLast = new ColumnConstraints(1, 1, Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true);
 

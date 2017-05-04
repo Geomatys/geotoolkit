@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeCalendarType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeCalendarType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeCalendarType", propOrder = {
@@ -59,25 +59,25 @@ public class TimeCalendarType
 
     /**
      * Gets the value of the referenceFrame property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the referenceFrame property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getReferenceFrame().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeCalendarEraPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeCalendarEraPropertyType> getReferenceFrame() {
         if (referenceFrame == null) {

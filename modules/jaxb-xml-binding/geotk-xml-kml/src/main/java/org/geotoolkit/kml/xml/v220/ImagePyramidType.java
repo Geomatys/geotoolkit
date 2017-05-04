@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ImagePyramidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImagePyramidType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,11 +77,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the tileSize property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileSize() {
         return tileSize;
@@ -89,11 +89,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Sets the value of the tileSize property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileSize(final Integer value) {
         this.tileSize = value;
@@ -101,11 +101,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the maxWidth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxWidth() {
         return maxWidth;
@@ -113,11 +113,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Sets the value of the maxWidth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxWidth(final Integer value) {
         this.maxWidth = value;
@@ -125,11 +125,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the maxHeight property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxHeight() {
         return maxHeight;
@@ -137,11 +137,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Sets the value of the maxHeight property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxHeight(final Integer value) {
         this.maxHeight = value;
@@ -149,11 +149,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the gridOrigin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GridOriginEnumType }
-     *     
+     *
      */
     public GridOriginEnumType getGridOrigin() {
         return gridOrigin;
@@ -161,11 +161,11 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Sets the value of the gridOrigin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GridOriginEnumType }
-     *     
+     *
      */
     public void setGridOrigin(final GridOriginEnumType value) {
         this.gridOrigin = value;
@@ -173,25 +173,25 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the imagePyramidSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the imagePyramidSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getImagePyramidSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getImagePyramidSimpleExtensionGroup() {
         if (imagePyramidSimpleExtensionGroup == null) {
@@ -202,25 +202,25 @@ public class ImagePyramidType extends AbstractObjectType {
 
     /**
      * Gets the value of the imagePyramidObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the imagePyramidObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getImagePyramidObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getImagePyramidObjectExtensionGroup() {
         if (imagePyramidObjectExtensionGroup == null) {

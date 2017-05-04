@@ -22,7 +22,7 @@ import org.opengis.style.PointPlacement;
 
 /**
  * Cached Point placement.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -32,13 +32,13 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     private final CachedAnchorPoint cachedAnchor;
     private final CachedDisplacement cachedDisplacement;
     private float rotation = Float.NaN;
-    
+
     private CachedPointPlacement(final PointPlacement placement){
         super(placement);
         this.cachedAnchor = CachedAnchorPoint.cache(placement.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(placement.getDisplacement());
     }
-    
+
     /**
      * return an Array of 2 floats always in display unit.
      */
@@ -52,10 +52,10 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     public float[] getAnchor(final Object candidate, final float[] buffer){
         return cachedAnchor.getValues(candidate, buffer);
     }
-    
+
     public float getRotation(final Object candidate){
         evaluate();
-        
+
         if(Float.isNaN(rotation)){
             //value is feature dynamic
             final Expression exp = styleElement.getRotation();
@@ -64,26 +64,26 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
             return rotation;
         }
     }
-    
+
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
         final Expression expRotation = styleElement.getRotation();
-        
+
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
-        
+
         cachedAnchor.getRequieredAttributsName(requieredAttributs);
         cachedDisplacement.getRequieredAttributsName(requieredAttributs);
-        
+
         if(GO2Utilities.isStatic(expRotation)){
             rotation = GO2Utilities.evaluate(expRotation, null, Float.class, 0f);
         }else{
             GO2Utilities.getRequieredAttributsName(expRotation,requieredAttributs);
             isStatic = false;
         }
-        
+
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
             isStatic = true;
@@ -91,7 +91,7 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
         }else{
             isStatic = false;
         }
-        
+
         isNotEvaluated = false;
     }
 

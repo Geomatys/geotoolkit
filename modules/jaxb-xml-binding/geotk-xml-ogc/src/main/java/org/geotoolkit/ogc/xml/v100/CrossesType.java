@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Crosses")
 public class CrossesType extends BinarySpatialOpType {
-    
+
     public CrossesType() {
-        
+
     }
-    
+
     public CrossesType(final CrossesType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new CrossesType(this);

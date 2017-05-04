@@ -27,9 +27,9 @@ import org.geotoolkit.client.Request;
 public interface GetTileRequest extends Request {
 
     int getScaleLevel();
-    
+
     void setScaleLevel(int level);
-    
+
     int getTileRow();
 
     void setTileRow(int tr);
@@ -37,9 +37,9 @@ public interface GetTileRequest extends Request {
     int getTileCol();
 
     void setTileCol(int tr);
-    
+
     String getExtension();
-    
+
     void setExtension(String ext);
 
 }

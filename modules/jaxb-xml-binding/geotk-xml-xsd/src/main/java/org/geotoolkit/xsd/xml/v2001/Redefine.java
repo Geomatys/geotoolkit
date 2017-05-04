@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,8 +88,8 @@ public class Redefine
      * {@link Annotation }
      * {@link NamedGroup }
      * {@link NamedAttributeGroup }
-     * 
-     * 
+     *
+     *
      */
     public List<OpenAttrs> getAnnotationOrSimpleTypeOrComplexType() {
         if (annotationOrSimpleTypeOrComplexType == null) {
@@ -100,11 +100,11 @@ public class Redefine
 
     /**
      * Gets the value of the schemaLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSchemaLocation() {
         return schemaLocation;
@@ -112,11 +112,11 @@ public class Redefine
 
     /**
      * Sets the value of the schemaLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSchemaLocation(final String value) {
         this.schemaLocation = value;
@@ -124,11 +124,11 @@ public class Redefine
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -136,11 +136,11 @@ public class Redefine
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

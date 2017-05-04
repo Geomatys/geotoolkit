@@ -23,12 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Identifier of a spatial interpolation method applicable to continuous grid coverages, plus the optional "null Resistance" parameter. 
- * 
+ * Identifier of a spatial interpolation method applicable to continuous grid coverages, plus the optional "null Resistance" parameter.
+ *
  * <p>Java class for InterpolationMethodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InterpolationMethodType">
  *   &lt;simpleContent>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -54,7 +54,7 @@ public class InterpolationMethodType extends InterpolationMethodBaseType {
      */
      InterpolationMethodType() {
      }
-     
+
     /**
      * build a new Interpolation Method.
      */
@@ -62,7 +62,7 @@ public class InterpolationMethodType extends InterpolationMethodBaseType {
          super(methodName);
          this.nullResistance = nullResistance;
      }
-     
+
     /**
      * Gets the value of the nullResistance property.
      */

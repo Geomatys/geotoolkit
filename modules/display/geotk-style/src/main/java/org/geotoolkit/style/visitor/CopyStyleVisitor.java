@@ -32,16 +32,16 @@ import org.opengis.style.Symbolizer;
  * Make a copy of a style object.
  * Only Style,FeatureTypeStyle and Rule are copies, symbolizers and expressions
  * are considered immutable.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CopyStyleVisitor extends DefaultStyleVisitor{
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    
+
     public static final CopyStyleVisitor INSTANCE = new CopyStyleVisitor();
-    
+
     @Override
     public MutableStyle visit(Style style, Object data) {
         final MutableStyle copy = SF.style();
@@ -90,5 +90,5 @@ public class CopyStyleVisitor extends DefaultStyleVisitor{
         }
         return copy;
     }
-    
+
 }

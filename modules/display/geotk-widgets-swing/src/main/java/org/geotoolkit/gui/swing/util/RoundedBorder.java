@@ -37,7 +37,7 @@ public class RoundedBorder extends AbstractBorder {
         g.setColor(c.getForeground());
         g.drawRoundRect(x, y, width-1, height-1, 26, 26);
     }
-    
+
     @Override
     public Insets getBorderInsets(final Component comp) {
         return new Insets(0, 4, 0, 4);

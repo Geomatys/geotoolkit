@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OrientationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OrientationType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class OrientationType
 
     /**
      * Gets the value of the heading property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getHeading() {
         return heading;
@@ -87,11 +87,11 @@ public class OrientationType
 
     /**
      * Sets the value of the heading property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setHeading(final Double value) {
         this.heading = value;
@@ -99,11 +99,11 @@ public class OrientationType
 
     /**
      * Gets the value of the tilt property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getTilt() {
         return tilt;
@@ -111,11 +111,11 @@ public class OrientationType
 
     /**
      * Sets the value of the tilt property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setTilt(final Double value) {
         this.tilt = value;
@@ -123,11 +123,11 @@ public class OrientationType
 
     /**
      * Gets the value of the roll property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRoll() {
         return roll;
@@ -135,11 +135,11 @@ public class OrientationType
 
     /**
      * Sets the value of the roll property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRoll(final Double value) {
         this.roll = value;
@@ -147,25 +147,25 @@ public class OrientationType
 
     /**
      * Gets the value of the orientationSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the orientationSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOrientationSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getOrientationSimpleExtensionGroup() {
         if (orientationSimpleExtensionGroup == null) {
@@ -176,25 +176,25 @@ public class OrientationType
 
     /**
      * Gets the value of the orientationObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the orientationObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOrientationObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getOrientationObjectExtensionGroup() {
         if (orientationObjectExtensionGroup == null) {

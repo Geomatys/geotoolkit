@@ -90,7 +90,7 @@ public final class TilingProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
-        
+
         final Object input;
         final ImageReader imgReader = value(IN_SOURCE_READER, inputParameters);
         if (imgReader != null) {

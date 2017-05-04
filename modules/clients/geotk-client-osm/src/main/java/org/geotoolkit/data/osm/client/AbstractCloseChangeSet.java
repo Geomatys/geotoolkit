@@ -56,5 +56,5 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
         ht.setRequestMethod("PUT");
         return openRichException(conec);
     }
-    
+
 }

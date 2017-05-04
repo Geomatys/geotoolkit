@@ -36,17 +36,17 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 
 
 /**
- * 
- * The principal means of searching the catalogue. 
- * The matching catalogue entries may be included with the response. 
- * The client may assign a requestId (absolute URI). 
- * A distributed search is performed if the DistributedSearch element is present and the catalogue is a member of a federation. 
+ *
+ * The principal means of searching the catalogue.
+ * The matching catalogue entries may be included with the response.
+ * The client may assign a requestId (absolute URI).
+ * A distributed search is performed if the DistributedSearch element is present and the catalogue is a member of a federation.
  * Profiles may allow alternative query expressions.
- * 
+ *
  * <p>Java class for GetRecordsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordsType">
  *   &lt;complexContent>
@@ -66,8 +66,8 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -108,7 +108,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
     private Integer maxRecords;
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -195,12 +195,12 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Sets the value of the abstractQuery property.
-     * 
+     *
      */
     public void setAbstractQuery(final AbstractQueryType value) {
         this.abstractQuery = value;
     }
-    
+
     /**
      * Gets the value of the any property.
      */
@@ -221,7 +221,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Sets the value of the requestId property.
-     * 
+     *
      */
     public void setRequestId(final String value) {
         this.requestId = value;
@@ -237,7 +237,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
             return resultType;
         }
     }
-    
+
     /**
      * Sets the value of the resultType property.
      */
@@ -251,7 +251,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     public void setResultType(final String resultType) {
         this.resultType = ResultType.fromValue(resultType);
     }
-    
+
     /**
      * Gets the value of the outputFormat property.
      */
@@ -261,7 +261,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      */
     public void setOutputFormat(final String value) {
         this.outputFormat = value;
@@ -276,7 +276,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Sets the value of the outputSchema property.
-     * 
+     *
      */
     public void setOutputSchema(final String value) {
         this.outputSchema = value;
@@ -284,8 +284,8 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Initialize the start position.
-     * 
-     * @param startPosition 
+     *
+     * @param startPosition
      */
     public void setStartPosition(final Integer startPosition) {
         this.startPosition = startPosition;
@@ -315,7 +315,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Sets the value of the maxRecords property.
-     * 
+     *
      */
     public void setMaxRecords(final Integer value) {
         this.maxRecords = value;
@@ -332,7 +332,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     public void setCQLConstraint(final String CQLQuery) {
         abstractQuery.setConstraint(new QueryConstraintType(CQLQuery, "1.1.0"));
     }
-    
+
     /**
      * This method set a query constraint by a filter.
      * @param filter FilterType
@@ -340,7 +340,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     public void setFilterConstraint(final FilterType filter) {
         abstractQuery.setConstraint(new QueryConstraintType(filter, "1.1.0"));
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -380,11 +380,11 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         hash = 79 * hash + (this.maxRecords != null ? this.maxRecords.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        
+
         if (distributedSearch != null) {
             s.append("distributedSearch: ").append(distributedSearch).append('\n');
         }

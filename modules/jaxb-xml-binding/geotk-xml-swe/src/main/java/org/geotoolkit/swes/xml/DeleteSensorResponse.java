@@ -21,5 +21,5 @@ package org.geotoolkit.swes.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DeleteSensorResponse {
-    
+
 }

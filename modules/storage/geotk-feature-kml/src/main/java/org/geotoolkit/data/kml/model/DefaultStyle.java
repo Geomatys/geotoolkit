@@ -34,13 +34,13 @@ public class DefaultStyle extends DefaultAbstractStyleSelector implements Style 
     private ListStyle listStyle;
 
     /**
-     * 
+     *
      */
     public DefaultStyle() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractStyleSelectorSimpleExtensions

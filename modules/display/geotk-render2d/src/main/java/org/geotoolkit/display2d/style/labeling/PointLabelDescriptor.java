@@ -23,30 +23,30 @@ package org.geotoolkit.display2d.style.labeling;
  * @module
  */
 public interface PointLabelDescriptor extends LabelDescriptor {
-        
+
     /**
      * @return anchor X value. Within the label.
      */
     float getAnchorX();
-    
+
     /**
      * @return anchor Y value. Within the label.
      */
     float getAnchorY();
-    
+
     /**
      * @return displacement X value. in Pixel unit.
      */
     float getDisplacementX();
-    
+
     /**
      * @return displacement Y value. in Pixel unit.
      */
     float getDisplacementY();
-    
+
     /**
      * @return rotation. in degree.
      */
     float getRotation();
-    
+
 }

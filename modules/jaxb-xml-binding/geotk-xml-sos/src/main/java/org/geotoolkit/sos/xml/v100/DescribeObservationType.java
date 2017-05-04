@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -55,7 +55,7 @@ public class DescribeObservationType extends RequestBaseType {
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String observedProperty;
-    
+
     /**
      * An empty constructor used by jaxB
      */
@@ -88,7 +88,7 @@ public class DescribeObservationType extends RequestBaseType {
         if (object instanceof DescribeObservationType && super.equals(object)) {
             final DescribeObservationType that = (DescribeObservationType) object;
             return Objects.equals(this.observedProperty, that.observedProperty);
-        } 
+        }
         return false;
     }
 

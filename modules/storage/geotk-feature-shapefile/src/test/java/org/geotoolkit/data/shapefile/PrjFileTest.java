@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill

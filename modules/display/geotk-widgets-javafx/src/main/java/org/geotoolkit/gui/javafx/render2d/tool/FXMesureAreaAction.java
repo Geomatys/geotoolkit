@@ -32,19 +32,19 @@ import org.geotoolkit.internal.GeotkFX;
  * @author Johann Sorel (Geomatys)
  */
 public class FXMesureAreaAction extends FXMapAction {
-    
+
     public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("mesure_area", new Dimension(16, 16)), null);
-    
+
     public FXMesureAreaAction(FXMap map) {
         super(map,GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),ICON);
-        
+
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
                 selectedProperty().set(newValue instanceof FXMesureAreaHandler);
             }
         });
-        
+
     }
 
     @Override
@@ -53,5 +53,5 @@ public class FXMesureAreaAction extends FXMapAction {
             map.setHandler(new FXMesureAreaHandler());
         }
     }
-    
+
 }

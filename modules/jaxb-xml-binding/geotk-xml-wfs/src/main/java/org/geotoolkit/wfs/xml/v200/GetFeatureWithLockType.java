@@ -28,9 +28,9 @@ import org.geotoolkit.wfs.xml.AllSomeType;
 
 /**
  * <p>Java class for GetFeatureWithLockType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureWithLockType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.wfs.xml.AllSomeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureWithLockType")
@@ -56,11 +56,11 @@ public class GetFeatureWithLockType extends GetFeatureType {
 
     /**
      * Gets the value of the expiry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getExpiry() {
         return expiry;
@@ -68,11 +68,11 @@ public class GetFeatureWithLockType extends GetFeatureType {
 
     /**
      * Sets the value of the expiry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setExpiry(int value) {
         this.expiry = value;
@@ -80,11 +80,11 @@ public class GetFeatureWithLockType extends GetFeatureType {
 
     /**
      * Gets the value of the lockAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public AllSomeType getLockAction() {
         if (lockAction == null) {
@@ -96,11 +96,11 @@ public class GetFeatureWithLockType extends GetFeatureType {
 
     /**
      * Sets the value of the lockAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllSomeType }
-     *     
+     *
      */
     public void setLockAction(AllSomeType value) {
         this.lockAction = value;

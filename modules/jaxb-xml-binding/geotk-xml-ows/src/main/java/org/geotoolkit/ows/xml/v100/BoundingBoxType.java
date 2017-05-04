@@ -31,12 +31,12 @@ import org.geotoolkit.ows.xml.BoundingBox;
 
 
 /**
- * This type is adapted from the EnvelopeType of GML 3.1, with modified contents and documentation for encoding a MINIMUM size box SURROUNDING all associated data. 
- * 
+ * This type is adapted from the EnvelopeType of GML 3.1, with modified contents and documentation for encoding a MINIMUM size box SURROUNDING all associated data.
+ *
  * <p>Java class for BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingBoxType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.ows.xml.BoundingBox;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,10 +80,10 @@ public class BoundingBoxType implements BoundingBox {
 
     public BoundingBoxType(){
     }
-    
+
     /**
      * Build a 2 dimension boundingBox.
-     * 
+     *
      * @param crs
      * @param maxx
      * @param maxy
@@ -98,7 +98,7 @@ public class BoundingBoxType implements BoundingBox {
         this.upperCorner.add(maxy);
         this.crs = crs;
     }
-    
+
     /**
      * Gets the value of the lowerCorner property.
      * (unmodifiable)
@@ -107,35 +107,35 @@ public class BoundingBoxType implements BoundingBox {
     public List<Double> getLowerCorner() {
        return lowerCorner;
     }
-    
+
     /**
      * Set the lower corner list.
      */
     public void setLowerCorner(final List<Double> lowerCorner) {
         this.lowerCorner = lowerCorner;
     }
-    
+
     /**
      * Set the upper corner list.
      */
     public void setUpperCorner(final List<Double> upperCorner) {
         this.upperCorner = upperCorner;
     }
-    
+
     /**
      * add a point to the lower corner list.
      */
     public void setLowerCorner(final Double point) {
         this.lowerCorner.add(point);
     }
-    
+
     /**
      * add a point to the upper corner list.
      */
     public void setUpperCorner(final Double point) {
         this.upperCorner.add(point);
     }
-    
+
     /**
      * Gets the value of the upperCorner property.
      * (unmodifiable)
@@ -147,13 +147,13 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the crs property.
-     * 
+     *
      */
     @Override
     public String getCrs() {
         return crs;
     }
-    
+
     /**
      * set the crs value
      */
@@ -168,7 +168,7 @@ public class BoundingBoxType implements BoundingBox {
     public Integer getDimensions() {
         return dimensions;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -195,7 +195,7 @@ public class BoundingBoxType implements BoundingBox {
         hash = 43 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');

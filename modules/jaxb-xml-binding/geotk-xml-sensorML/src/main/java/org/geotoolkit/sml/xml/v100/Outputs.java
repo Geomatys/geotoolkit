@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractOutputs;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.sml.xml.AbstractOutputs;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -195,7 +195,7 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the role property.
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -203,7 +203,7 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the role property.
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;

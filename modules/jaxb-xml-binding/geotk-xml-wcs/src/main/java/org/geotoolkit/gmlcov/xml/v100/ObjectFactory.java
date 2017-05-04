@@ -27,18 +27,18 @@ import org.geotoolkit.swe.xml.v200.DataRecordPropertyType;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.gmlcov._1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.gmlcov._1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -64,14 +64,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gmlcov._1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link SimpleMultiPointType }
-     * 
+     *
      */
     public SimpleMultiPointType createSimpleMultiPointType() {
         return new SimpleMultiPointType();
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractDiscreteCoverageType }
-     * 
+     *
      */
     public AbstractDiscreteCoverageType createAbstractDiscreteCoverageType() {
         return new AbstractDiscreteCoverageType();
@@ -87,7 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParameterValueType }
-     * 
+     *
      */
     public ParameterValueType createParameterValueType() {
         return new ParameterValueType();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceableGridPropertyType }
-     * 
+     *
      */
     public ReferenceableGridPropertyType createReferenceableGridPropertyType() {
         return new ReferenceableGridPropertyType();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractCoverageType }
-     * 
+     *
      */
     public AbstractCoverageType createAbstractCoverageType() {
         return new AbstractCoverageType();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensionType }
-     * 
+     *
      */
     public ExtensionType createExtensionType() {
         return new ExtensionType();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Metadata }
-     * 
+     *
      */
     public Metadata createMetadata() {
         return new Metadata();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "MultiSurfaceCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractDiscreteCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createMultiSurfaceCoverage(AbstractDiscreteCoverageType value) {
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "MultiPointCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractDiscreteCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createMultiPointCoverage(AbstractDiscreteCoverageType value) {
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "MultiCurveCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractDiscreteCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createMultiCurveCoverage(AbstractDiscreteCoverageType value) {
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtensionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "Extension")
     public JAXBElement<ExtensionType> createExtension(ExtensionType value) {
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractReferenceableGridType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "AbstractReferenceableGrid", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "Grid")
     public JAXBElement<AbstractReferenceableGridType> createAbstractReferenceableGrid(AbstractReferenceableGridType value) {
@@ -172,7 +172,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "AbstractDiscreteCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createAbstractDiscreteCoverage(AbstractDiscreteCoverageType value) {
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataRecordPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "rangeType")
     public JAXBElement<DataRecordPropertyType> createRangeType(DataRecordPropertyType value) {
@@ -190,7 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractContinuousCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "AbstractContinuousCoverage", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCoverage")
     public JAXBElement<AbstractContinuousCoverageType> createAbstractContinuousCoverage(AbstractContinuousCoverageType value) {
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "ReferenceableGridCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createReferenceableGridCoverage(AbstractDiscreteCoverageType value) {
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "RectifiedGridCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createRectifiedGridCoverage(AbstractDiscreteCoverageType value) {
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "ParameterValue", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGeneralParameterValue")
     public JAXBElement<ParameterValueType> createParameterValue(ParameterValueType value) {
@@ -226,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleMultiPointType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "SimpleMultiPoint", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGeometricAggregate")
     public JAXBElement<SimpleMultiPointType> createSimpleMultiPoint(SimpleMultiPointType value) {
@@ -235,7 +235,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "GridCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createGridCoverage(AbstractDiscreteCoverageType value) {
@@ -244,7 +244,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDiscreteCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "MultiSolidCoverage", substitutionHeadNamespace = "http://www.opengis.net/gmlcov/1.0", substitutionHeadName = "AbstractDiscreteCoverage")
     public JAXBElement<AbstractDiscreteCoverageType> createMultiSolidCoverage(AbstractDiscreteCoverageType value) {
@@ -253,7 +253,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeometryPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "geometryValue")
     public JAXBElement<GeometryPropertyType> createGeometryValue(GeometryPropertyType value) {
@@ -262,7 +262,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ReferenceableGridPropertyType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "referenceableGridProperty")
     public JAXBElement<ReferenceableGridPropertyType> createReferenceableGridProperty(ReferenceableGridPropertyType value) {
@@ -271,7 +271,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link VectorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "vectorValue")
     public JAXBElement<VectorType> createVectorValue(VectorType value) {
@@ -280,7 +280,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gmlcov/1.0", name = "AbstractCoverage", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractFeature")
     public JAXBElement<AbstractCoverageType> createAbstractCoverage(AbstractCoverageType value) {

@@ -35,7 +35,7 @@ import org.geotoolkit.wms.xml.AbstractBoundingBox;
 @XmlRootElement(name = "BoundingBox")
 public class BoundingBox implements AbstractBoundingBox{
 
-   
+
     @XmlAttribute(name = "SRS")
     private String srs;
     @XmlAttribute(required = true)
@@ -60,9 +60,9 @@ public class BoundingBox implements AbstractBoundingBox{
     /**
      * Build a new bounding box version 1.1.1
      *
-     * @param crs 
-     * @param minx 
-     * @param miny 
+     * @param crs
+     * @param minx
+     * @param miny
      * @param maxx
      * @param maxy
      * @param resx
@@ -78,7 +78,7 @@ public class BoundingBox implements AbstractBoundingBox{
         this.resx = resx;
         this.resy = resy;
     }
-    
+
     /**
      * Gets the value of the srs property.
      */
@@ -153,7 +153,7 @@ public class BoundingBox implements AbstractBoundingBox{
         if (object instanceof BoundingBox) {
             final BoundingBox that = (BoundingBox) object;
 
-            
+
             return Objects.equals(this.maxx, that.maxx) &&
                    Objects.equals(this.maxy,     that.maxy)     &&
                    Objects.equals(this.minx,   that.minx)   &&
@@ -177,12 +177,12 @@ public class BoundingBox implements AbstractBoundingBox{
         hash = 97 * hash + (this.resy != null ? this.resy.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[BoundingBox]\n");
         s.append("minx=").append(minx).append(" maxx=").append(maxx).append(" miny=").append(miny).append(" maxy=").append(maxy);
-        
+
         if (srs != null) {
             s.append("srs:").append(srs).append('\n');
         }

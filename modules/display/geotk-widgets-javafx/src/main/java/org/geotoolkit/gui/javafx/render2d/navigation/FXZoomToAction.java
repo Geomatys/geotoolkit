@@ -53,20 +53,20 @@ import org.opengis.util.InternationalString;
  */
 public final class FXZoomToAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_THUMB_TACK, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
-    
+
     public FXZoomToAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomToAction.class,"zoom_at"),GeotkFX.getString(FXZoomToAction.class,"zoom_at"),ICON);
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            
+
             final Alert alert = new Alert(Alert.AlertType.NONE);
-            
+
             final FXCRSButton crsButton = new FXCRSButton();
             crsButton.crsProperty().set(CommonCRS.WGS84.normalizedGeographic());
-            
+
             final GridPane grid = new GridPane();
             grid.setMaxHeight(Double.MAX_VALUE);
             grid.setMaxWidth(Double.MAX_VALUE);
@@ -77,13 +77,13 @@ public final class FXZoomToAction extends FXMapAction {
             final ColumnConstraints rc = new ColumnConstraints();
             grid.setHgap(10);
             grid.setVgap(10);
-            
+
             final Label lblx = new Label();
             final Label lbly = new Label();
             final Label lcrs = new Label(GeotkFX.getString(this, "crs"));
             fillLabel(lblx, crsButton.crsProperty().get().getCoordinateSystem().getAxis(0));
             fillLabel(lbly, crsButton.crsProperty().get().getCoordinateSystem().getAxis(1));
-            
+
             crsButton.crsProperty().addListener(new ChangeListener<CoordinateReferenceSystem>() {
                 @Override
                 public void changed(ObservableValue<? extends CoordinateReferenceSystem> observable, CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) {
@@ -91,17 +91,17 @@ public final class FXZoomToAction extends FXMapAction {
                     fillLabel(lbly, newValue.getCoordinateSystem().getAxis(1));
                 }
             });
-            
+
             final TextField fieldx = new TextField("0");
             final TextField fieldy = new TextField("0");
-                        
+
             grid.add(lblx, 0, 0);
             grid.add(fieldx, 1, 0);
             grid.add(lbly, 0, 1);
             grid.add(fieldy, 1, 1);
             grid.add(lcrs, 0, 2);
             grid.add(crsButton, 1, 2);
-            
+
             final DialogPane pane = new DialogPane();
             pane.setContent(grid);
             pane.setMaxHeight(Double.MAX_VALUE);
@@ -109,7 +109,7 @@ public final class FXZoomToAction extends FXMapAction {
             pane.getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
             alert.setDialogPane(pane);
             alert.setTitle(GeotkFX.getString(FXZoomToAction.class,"zoom_at"));
-            
+
             final Optional<ButtonType> res = alert.showAndWait();
             if(ButtonType.OK.equals(res.get())){
                 try {
@@ -122,7 +122,7 @@ public final class FXZoomToAction extends FXMapAction {
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
-            
+
         }
     }
 

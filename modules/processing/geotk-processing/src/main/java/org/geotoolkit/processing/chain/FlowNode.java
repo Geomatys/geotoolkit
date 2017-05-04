@@ -25,7 +25,7 @@ import org.geotoolkit.processing.chain.model.FlowLink;
  * @author Johann Sorel (Geomatys)
  */
 final class FlowNode {
-    
+
     final Object object;
     final List<FlowNode> children = new ArrayList<FlowNode>();
     final List<FlowLink> links = new ArrayList<FlowLink>();
@@ -57,5 +57,5 @@ final class FlowNode {
     public boolean isOutput() {
         return isOutput;
     }
-    
+
 }

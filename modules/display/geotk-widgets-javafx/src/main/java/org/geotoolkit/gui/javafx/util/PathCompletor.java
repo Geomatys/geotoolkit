@@ -31,14 +31,14 @@ import org.geotoolkit.internal.Loggers;
  * @author Alexis Manin (Geomatys)
  */
 public class PathCompletor extends TextFieldCompletion {
-    
+
     /**
      * A path which will be used as root when we will search paths available for
      * input text. If set, all choices returned by {@link #getChoices(java.lang.String) }
      * will be relative paths from specified root path.
      */
     public Path root;
-    
+
     public PathCompletor(final TextInputControl source) {
         super(source);
     }
@@ -62,7 +62,7 @@ public class PathCompletor extends TextFieldCompletion {
                     origin = root.resolve(text);
                 }
             }
-            
+
             if (Files.isRegularFile(origin)) {
                 result.add(toString(origin));
             } else if (Files.isDirectory(origin)) {
@@ -80,7 +80,7 @@ public class PathCompletor extends TextFieldCompletion {
         }
         return FXCollections.observableList(result);
     }
-    
+
     protected String toString(Path p) {
         if (p == null) return "";
         return (root != null)? root.relativize(p).toString() : p.toString();

@@ -25,10 +25,10 @@ import org.opengis.display.primitive.Graphic;
 /**
  * A graphic builder is a convenient way to build the same datas in a different
  * collection of graphic object, with different rendering and behavior.
- * 
+ *
  * For example a maplayer may provide a graphic builder for Java2D graphics
  * and another one for 3D rendering.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,13 +36,13 @@ public interface GraphicBuilder<T extends Graphic> {
 
     /**
      * Build a collection of graphics from the provided layer and canvas.
-     * 
+     *
      * @param layer : Maplayer data source
      * @param canvas : Rendering canvas
      * @return Collection<Graphic> may not be null but can be empty.
      */
     Collection<T> createGraphics(MapLayer layer, Canvas canvas);
-    
+
     /**
      * Returns the graphic type of this builder.
      * return class extends Graphic.

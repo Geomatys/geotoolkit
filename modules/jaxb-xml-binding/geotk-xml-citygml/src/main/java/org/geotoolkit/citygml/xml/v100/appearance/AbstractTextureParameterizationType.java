@@ -30,12 +30,12 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 /**
  * Base class for augmenting a link "texture->surface" with texture parameterization. Subclasses of
  *                 this class define concrete parameterizations. Currently, texture coordinates and texture coordinate generation
- *                 using a transformation matrix are available. 
- * 
+ *                 using a transformation matrix are available.
+ *
  * <p>Java class for AbstractTextureParameterizationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTextureParameterizationType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTextureParameterizationType", propOrder = {
@@ -65,7 +65,7 @@ public abstract class AbstractTextureParameterizationType extends AbstractGMLTyp
 
     /**
      * Gets the value of the genericApplicationPropertyOfTextureParameterization property.
-     * 
+     *
      */
     public List<Object> getGenericApplicationPropertyOfTextureParameterization() {
         if (genericApplicationPropertyOfTextureParameterization == null) {
@@ -73,7 +73,7 @@ public abstract class AbstractTextureParameterizationType extends AbstractGMLTyp
         }
         return this.genericApplicationPropertyOfTextureParameterization;
     }
-    
+
      @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());

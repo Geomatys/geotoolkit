@@ -51,21 +51,21 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
      * Sets to {@code true} after {@link #close()} has been invoked.
      */
     private boolean isClosed;
-    
+
     /**
      * Creates a channel which will store all written data in a byte array which have length initialized at 1 mb.<br><br>
-     * 
+     *
      * <strong>Usually use this constructor in writing mode.</strong>
      */
     public SeekableByteArrayChannel() {
         this(new byte[1000000], 0);//-- set limit at zero to simulate empty channel.
     }
-    
+
     /**
      * Creates a channel which will store all written data in the given array.<br>
-     * Moreover the length of this internal stored data array may be increase 
+     * Moreover the length of this internal stored data array may be increase
      * in case where you try to write more data than this array length, and also initialize channel limit at data array size.<br><br>
-     * 
+     *
      * <strong>Usually use this constructor in reading mode.</strong>
      *
      * @param data Bytes array where to write the data.
@@ -73,12 +73,12 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
     public SeekableByteArrayChannel(final byte[] data) {
         this(data, data.length);
     }
-    
+
     /**
      * Creates a channel which will store all written data in the given array.<br>
-     * Moreover the length of this internal stored data array may be increase 
+     * Moreover the length of this internal stored data array may be increase
      * in case where you try to write more data than this array length.
-     * 
+     *
      * @param data empty or already filled Tree informations.
      * @param limit size of this channel. Usually, 0 for writting treeAccess mode and data.size or lesser for reading treeAccess mode.
      */
@@ -88,12 +88,12 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
         this.data  = data;
         this.limit = limit;
     }
-    
+
     /**
      * Reads a sequence of bytes from this channel into the given buffer.
-     * 
+     *
      * @param dst {@link ByteBuffer} which will be filled by reading action.
-     * 
+     *
      * @return number of reading byte.
      * @throws java.io.IOException if this {@link Channel} is closed.
      */
@@ -111,7 +111,7 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Writes a sequence of bytes to this channel from the given buffer.
-     * 
+     *
      * @param src {@link ByteBuffer} which will be written.
      * @return number of written byte.
      * @throws java.io.IOException if this {@link Channel} is closed.
@@ -129,7 +129,7 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Returns this channel position.
-     * 
+     *
      * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
@@ -140,8 +140,8 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Sets this channel position.
-     * 
-     * @param newPosition the new position 
+     *
+     * @param newPosition the new position
      * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
@@ -154,7 +154,7 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Returns the current size
-     * 
+     *
      * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
@@ -165,7 +165,7 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Truncates the data to the given size.
-     * 
+     *
      * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
@@ -186,37 +186,37 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Closes this channel.
-     * 
+     *
      * @throws java.io.IOException if problem to close this {@link Channel}.
      */
     @Override
     public void close() throws IOException {
         isClosed = true;
     }
-    
+
     /**
      * Verifies that the channel is open.
      */
     private void ensureOpen() throws IOException {
-        if (isClosed) 
+        if (isClosed)
             throw new ClosedChannelException();
     }
-    
+
     /**
      * Verify that internal byte data array own enough space to store length byte.
      * If it has already enough space, do nothing, else multiply current data array size by 2.
-     * 
+     *
      * @param length byte number which will be written.
      */
     private void ensureDataContain(final int length) {
         ArgumentChecks.ensurePositive("ensure data contain : length", length);
-        if (length > data.length - limit) 
+        if (length > data.length - limit)
             data = Arrays.copyOf(data, StrictMath.max(1000000, data.length << 1));
     }
-    
+
     /**
-     * Returns internal stored datas array truncated at {@link #limit} size.  
-     * 
+     * Returns internal stored datas array truncated at {@link #limit} size.
+     *
      * @return datas array truncated at {@link #limit} size.
      */
     public byte[] getData() {

@@ -23,15 +23,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         This abstract base type for geometry collections just makes the 
+ *
+ *         This abstract base type for geometry collections just makes the
  *         srsName attribute mandatory.
- *       
- * 
+ *
+ *
  * <p>Java class for AbstractGeometryCollectionBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometryCollectionBaseType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,9 +54,9 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class AbstractGeometryCollectionBaseType extends AbstractGeometryType {
 
     public AbstractGeometryCollectionBaseType() {
-        
+
     }
-    
+
     public AbstractGeometryCollectionBaseType(final AbstractGeometryCollectionBaseType that) {
         super(that);
     }

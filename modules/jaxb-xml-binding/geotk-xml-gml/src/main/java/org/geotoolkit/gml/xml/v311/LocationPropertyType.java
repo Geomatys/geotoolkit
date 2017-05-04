@@ -35,11 +35,11 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * Deprecated in GML 3.1.0
- * 
+ *
  * <p>Java class for LocationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LocationPropertyType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -111,10 +111,10 @@ public class LocationPropertyType implements LocationProperty {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the abstractGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
@@ -144,7 +144,7 @@ public class LocationPropertyType implements LocationProperty {
      *     {@link JAXBElement }{@code <}{@link AbstractGeometricPrimitiveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeometryType> getjbAbstractGeometry() {
         return abstractGeometry;
@@ -152,7 +152,7 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the abstractGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
@@ -182,7 +182,7 @@ public class LocationPropertyType implements LocationProperty {
      *     {@link JAXBElement }{@code <}{@link AbstractGeometricPrimitiveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -190,11 +190,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the locationKeyWord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getLocationKeyWord() {
@@ -203,11 +203,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the locationKeyWord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setLocationKeyWord(final CodeType value) {
         this.locationKeyWord = value;
@@ -215,11 +215,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the locationString property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getLocationString() {
         return locationString;
@@ -227,11 +227,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the locationString property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setLocationString(final StringOrRefType value) {
         this.locationString = value;
@@ -250,11 +250,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the null property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNull() {
         if (_null == null) {
@@ -265,11 +265,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRemoteSchema() {
@@ -278,11 +278,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -290,11 +290,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -307,11 +307,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -319,11 +319,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -332,11 +332,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -344,11 +344,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -357,11 +357,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -369,11 +369,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -382,11 +382,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -394,11 +394,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -407,11 +407,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -419,11 +419,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -432,11 +432,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -444,11 +444,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -457,11 +457,11 @@ public class LocationPropertyType implements LocationProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

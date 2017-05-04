@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a list of waypoints along a route.
- * 
+ *
  * <p>Java class for WayPointListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WayPointListType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WayPointListType", propOrder = {
@@ -65,11 +65,11 @@ public class WayPointListType {
 
     /**
      * Gets the value of the startPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WayPointType }
-     *     
+     *
      */
     public WayPointType getStartPoint() {
         return startPoint;
@@ -77,11 +77,11 @@ public class WayPointListType {
 
     /**
      * Sets the value of the startPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WayPointType }
-     *     
+     *
      */
     public void setStartPoint(WayPointType value) {
         this.startPoint = value;
@@ -89,25 +89,25 @@ public class WayPointListType {
 
     /**
      * Gets the value of the viaPoint property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the viaPoint property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getViaPoint().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link WayPointType }
-     * 
-     * 
+     *
+     *
      */
     public List<WayPointType> getViaPoint() {
         if (viaPoint == null) {
@@ -118,11 +118,11 @@ public class WayPointListType {
 
     /**
      * Gets the value of the endPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WayPointType }
-     *     
+     *
      */
     public WayPointType getEndPoint() {
         return endPoint;
@@ -130,11 +130,11 @@ public class WayPointListType {
 
     /**
      * Sets the value of the endPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WayPointType }
-     *     
+     *
      */
     public void setEndPoint(WayPointType value) {
         this.endPoint = value;

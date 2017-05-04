@@ -22,11 +22,11 @@ import org.apache.sis.util.ArgumentChecks;
 /**
  * A version, used by data management apis.
  * Composed of a date an a unique label within it's VersionHistory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class Version {
-    
+
     protected final VersionHistory history;
     protected final String label;
     protected final Date date;
@@ -45,7 +45,7 @@ public class Version {
         this.label = label;
         this.date = date;
     }
-    
+
     /**
      * Get the history containing this version.
      * @return VersionHistory
@@ -74,5 +74,5 @@ public class Version {
     public String toString() {
         return label+" : "+date;
     }
-    
+
 }

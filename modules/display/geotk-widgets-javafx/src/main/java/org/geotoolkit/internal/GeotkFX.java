@@ -44,12 +44,12 @@ import org.opengis.util.InternationalString;
 
 /**
  * Internalization, IconBundle, JavaFX utilities for geotoolkit javafx widgets.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class GeotkFX {
 
-    
+
     public static final Image ICON_STYLE     = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_BOOK,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_FTS       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_RULE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR),null);
@@ -75,17 +75,17 @@ public final class GeotkFX {
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH,Locale.getDefault(),GeotkFX.class.getClassLoader());
     private static FilterFactory2 FF;
     private static MutableStyleFactory SF;
-    
+
     public synchronized static FilterFactory2 getFilterFactory(){
         if(FF==null)FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
         return FF;
     }
-    
+
     public synchronized static MutableStyleFactory getStyleFactory(){
         if(SF==null)SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
         return SF;
     }
-        
+
     /**
      * Get the local string for the given class and key.
      * The object class name will be pre-concatenate with the key.
@@ -97,7 +97,7 @@ public final class GeotkFX {
     public static String getString(Object base, final String key){
         return getString(base.getClass(), key);
     }
-    
+
     /**
      * Get the local string for the given class and key.
      * The class name will be pre-concatenate with the key.
@@ -113,7 +113,7 @@ public final class GeotkFX {
             return "Missing key : "+key;
         }
     }
-    
+
     /**
      * Get the local string for the given key.
      *
@@ -160,7 +160,7 @@ public final class GeotkFX {
 
     /**
      * Get I18N String.
-     * 
+     *
      * @param key Bundle key
      * @return I18N String
      */
@@ -197,39 +197,39 @@ public final class GeotkFX {
             return null;
         }
     }
-    
+
     public static BufferedImage getBufferedImage(final String key, Dimension resize) {
         try {
             final BufferedImage img = ImageIO.read(GeotkFX.class.getResourceAsStream("/org/geotoolkit/gui/javafx/icon/"+key+".png"));
-            
+
             final BufferedImage resized = new BufferedImage(resize.width, resize.height, BufferedImage.TYPE_INT_ARGB);
             final Graphics2D g = resized.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(img, 0, 0, resize.width, resize.height, null);
             g.dispose();
-            
+
             return resized;
-            
+
         } catch (IOException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
     }
-    
+
     public static Image getImage(final String key) throws IOException{
        return SwingFXUtils.toFXImage(getBufferedImage(key), null);
     }
 
     /**
      * Load and initialize geotk bundle,css,loader for given object.
-     * 
+     *
      * @param candidate widget to load JRXML in
      * @param cdtClass class as base for resource classloader
      */
     public static void loadJRXML(Parent candidate, Class cdtClass) {
         loadJRXML(candidate, cdtClass, true);
     }
-    
+
     public static void loadJRXML(Parent candidate, Class cdtClass, boolean loadDefaultCSS) {
         loadJRXML(candidate, cdtClass, loadDefaultCSS, null);
     }
@@ -253,7 +253,7 @@ public final class GeotkFX {
             candidate.getStylesheets().add(GeotkFX.CSS_PATH);
         }
     }
-    
+
     public static ExceptionDialog newExceptionDialog(final String headerText, final Throwable t) {
         ArgumentChecks.ensureNonNull("Exception to display", t);
         ExceptionDialog d = new ExceptionDialog(t);
@@ -265,7 +265,7 @@ public final class GeotkFX {
         d.setHeight(500);
         return d;
     }
-        
+
     private GeotkFX(){}
 
     /**

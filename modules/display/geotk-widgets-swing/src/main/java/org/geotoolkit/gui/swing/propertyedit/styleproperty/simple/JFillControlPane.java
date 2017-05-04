@@ -48,15 +48,15 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
             JFillControlPane.this.firePropertyChange(PROPERTY_UPDATED, null, created);
         }
     };
-            
+
     private final JButton guiColorButton = new JButton(colorChange);
     private final JPreview guiColorLabel = new JPreview();
     private final JFillPane paneFillChooser = new JFillPane();
-    
-    private MapLayer layer = null;   
 
-    /** 
-     * Creates new form JFillControlPanel 
+    private MapLayer layer = null;
+
+    /**
+     * Creates new form JFillControlPanel
      */
     public JFillControlPane() {
         super(Fill.class);
@@ -69,19 +69,19 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
                 colorChange.actionPerformed(new ActionEvent(JFillControlPane.this, evt.getID(), null));
             }
         });
-        
+
         add(guiColorButton, java.awt.BorderLayout.EAST);
         add(guiColorLabel, java.awt.BorderLayout.WEST);
-        
-        
+
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void setLayer(final MapLayer layer) {
-        this.layer = layer;        
+        this.layer = layer;
     }
 
     /**
@@ -91,15 +91,15 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final Fill fill) {
         if (fill != null) {
-            guiColorLabel.parse(fill);     
-            paneFillChooser.parse(fill);           
+            guiColorLabel.parse(fill);
+            paneFillChooser.parse(fill);
         }
     }
 
@@ -109,16 +109,16 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
     @Override
     public Fill create() {
         return paneFillChooser.create();
-    }  
-    
-    public void setActive(boolean bool) {       
+    }
+
+    public void setActive(boolean bool) {
         guiColorButton.setEnabled(bool);
         guiColorLabel.setVisible(bool);
     }
-   
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

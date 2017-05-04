@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PointSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PointSymbolizerType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,11 +60,11 @@ public class PointSymbolizerType
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public ParameterValueType getGeometry() {
         return geometry;
@@ -72,11 +72,11 @@ public class PointSymbolizerType
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
@@ -84,11 +84,11 @@ public class PointSymbolizerType
 
     /**
      * Gets the value of the graphic property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GraphicType }
-     *     
+     *
      */
     public GraphicType getGraphic() {
         return graphic;
@@ -96,11 +96,11 @@ public class PointSymbolizerType
 
     /**
      * Sets the value of the graphic property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GraphicType }
-     *     
+     *
      */
     public void setGraphic(final GraphicType value) {
         this.graphic = value;

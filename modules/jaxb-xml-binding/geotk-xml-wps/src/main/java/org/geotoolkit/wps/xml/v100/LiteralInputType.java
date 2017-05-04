@@ -28,12 +28,12 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 
 /**
- * Description of a process input that consists of a simple literal value (e.g., "2.1"). (Informative: This type is a subset of the ows:UnNamedDomainType defined in owsDomaintype.xsd.) 
- * 
+ * Description of a process input that consists of a simple literal value (e.g., "2.1"). (Informative: This type is a subset of the ows:UnNamedDomainType defined in owsDomaintype.xsd.)
+ *
  * <p>Java class for LiteralInputType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralInputType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,10 +69,10 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
     protected String defaultValue;
 
     public LiteralInputType() {
-        
+
     }
-    
-    public LiteralInputType(DomainMetadataType dataType, SupportedUOMsType uoMs, AllowedValues allowedValues, 
+
+    public LiteralInputType(DomainMetadataType dataType, SupportedUOMsType uoMs, AllowedValues allowedValues,
             AnyValue anyValue, ValuesReferenceType valuesReference, String defaultValue) {
         super(dataType, uoMs);
         this.allowedValues = allowedValues;
@@ -80,54 +80,54 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
         this.defaultValue = defaultValue;
         this.valuesReference = valuesReference;
     }
-    
+
     /**
-     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. 
-     * Notice that these values and ranges can be displayed to a human client. 
-     * 
+     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values.
+     * Notice that these values and ranges can be displayed to a human client.
+     *
      * @return
      *     possible object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public AllowedValues getAllowedValues() {
         return allowedValues;
     }
 
     /**
-     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values. 
-     * Notice that these values and ranges can be displayed to a human client. 
-     * 
+     * Indicates that there are a finite set of values and ranges allowed for this input, and contains list of all the valid values and/or ranges of values.
+     * Notice that these values and ranges can be displayed to a human client.
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public void setAllowedValues(final AllowedValues value) {
         this.allowedValues = value;
     }
 
     /**
-     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, 
-     * except for data type, on the allowable value of this input. 
-     * 
+     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions,
+     * except for data type, on the allowable value of this input.
+     *
      * @return
      *     possible object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public AnyValue getAnyValue() {
         return anyValue;
     }
 
     /**
-     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions, 
-     * except for data type, on the allowable value of this input. 
-     * 
+     * Indicates that any value is allowed for this input. This element shall be included when there are no restrictions,
+     * except for data type, on the allowable value of this input.
+     *
      * @param value
      *     allowed object is
      *     {@link AnyValue }
-     *     
+     *
      */
     public void setAnyValue(final AnyValue value) {
         this.anyValue = value;
@@ -135,11 +135,11 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
 
     /**
      * Gets the value of the valuesReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValuesReferenceType }
-     *     
+     *
      */
     public ValuesReferenceType getValuesReference() {
         return valuesReference;
@@ -147,11 +147,11 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
 
     /**
      * Sets the value of the valuesReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValuesReferenceType }
-     *     
+     *
      */
     public void setValuesReference(final ValuesReferenceType value) {
         this.valuesReference = value;
@@ -159,11 +159,11 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
 
     /**
      * Gets the value of the defaultValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefaultValue() {
         return defaultValue;
@@ -171,11 +171,11 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
 
     /**
      * Sets the value of the defaultValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefaultValue(final String value) {
         this.defaultValue = value;
@@ -198,7 +198,7 @@ public class LiteralInputType extends LiteralOutputType implements LiteralDataDe
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

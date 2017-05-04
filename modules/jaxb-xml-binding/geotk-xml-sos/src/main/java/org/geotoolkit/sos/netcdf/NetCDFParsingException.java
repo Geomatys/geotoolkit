@@ -22,19 +22,19 @@ package org.geotoolkit.sos.netcdf;
  * @author Guilhem Legal (Geomatys)
  */
 public class NetCDFParsingException extends Exception {
- 
+
     public NetCDFParsingException() {
         super();
     }
-    
+
     public NetCDFParsingException(final String message) {
         super(message);
     }
-    
+
     public NetCDFParsingException(final Throwable cause) {
         super(cause);
     }
-    
+
     public NetCDFParsingException(final String message, final Throwable cause) {
         super(message, cause);
     }

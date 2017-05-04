@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for NetworkLinkControlType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NetworkLinkControlType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,11 +97,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the minRefreshPeriod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinRefreshPeriod() {
         return minRefreshPeriod;
@@ -109,11 +109,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the minRefreshPeriod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinRefreshPeriod(final Double value) {
         this.minRefreshPeriod = value;
@@ -121,11 +121,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the maxSessionLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxSessionLength() {
         return maxSessionLength;
@@ -133,11 +133,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the maxSessionLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxSessionLength(final Double value) {
         this.maxSessionLength = value;
@@ -145,11 +145,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the cookie property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCookie() {
         return cookie;
@@ -157,11 +157,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the cookie property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCookie(final String value) {
         this.cookie = value;
@@ -169,11 +169,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessage() {
         return message;
@@ -181,11 +181,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the message property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessage(final String value) {
         this.message = value;
@@ -193,11 +193,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the linkName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinkName() {
         return linkName;
@@ -205,11 +205,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the linkName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinkName(final String value) {
         this.linkName = value;
@@ -217,11 +217,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the linkDescription property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLinkDescription() {
         return linkDescription;
@@ -229,11 +229,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the linkDescription property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLinkDescription(final String value) {
         this.linkDescription = value;
@@ -241,11 +241,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the linkSnippet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SnippetType }
-     *     
+     *
      */
     public SnippetType getLinkSnippet() {
         return linkSnippet;
@@ -253,11 +253,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the linkSnippet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SnippetType }
-     *     
+     *
      */
     public void setLinkSnippet(final SnippetType value) {
         this.linkSnippet = value;
@@ -265,11 +265,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the expires property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getExpires() {
         return expires;
@@ -277,11 +277,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the expires property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setExpires(final String value) {
         this.expires = value;
@@ -289,11 +289,11 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the update property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UpdateType }
-     *     
+     *
      */
     public UpdateType getUpdate() {
         return update;
@@ -301,11 +301,11 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the update property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UpdateType }
-     *     
+     *
      */
     public void setUpdate(final UpdateType value) {
         this.update = value;
@@ -313,13 +313,13 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the abstractViewGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LookAtType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CameraType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractViewType> getAbstractViewGroup() {
         return abstractViewGroup;
@@ -327,13 +327,13 @@ public class NetworkLinkControlType {
 
     /**
      * Sets the value of the abstractViewGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LookAtType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CameraType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
-     *     
+     *
      */
     public void setAbstractViewGroup(final JAXBElement<? extends AbstractViewType> value) {
         this.abstractViewGroup = ((JAXBElement<? extends AbstractViewType> ) value);
@@ -341,25 +341,25 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the networkLinkControlSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the networkLinkControlSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNetworkLinkControlSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getNetworkLinkControlSimpleExtensionGroup() {
         if (networkLinkControlSimpleExtensionGroup == null) {
@@ -370,25 +370,25 @@ public class NetworkLinkControlType {
 
     /**
      * Gets the value of the networkLinkControlObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the networkLinkControlObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNetworkLinkControlObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getNetworkLinkControlObjectExtensionGroup() {
         if (networkLinkControlObjectExtensionGroup == null) {

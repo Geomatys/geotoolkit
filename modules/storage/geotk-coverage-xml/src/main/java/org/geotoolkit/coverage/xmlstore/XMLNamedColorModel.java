@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLNamedColorModel {
-    
+
     @XmlElement(name="Name")
     private String name;
 
@@ -23,5 +23,5 @@ public class XMLNamedColorModel {
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }

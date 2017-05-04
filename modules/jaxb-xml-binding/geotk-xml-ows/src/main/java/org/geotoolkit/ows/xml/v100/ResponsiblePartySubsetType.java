@@ -25,12 +25,12 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
 
 
 /**
- * For OWS use in the ServiceProvider section of a service metadata document, the optional organizationName element was removed, since this type is always used with the ProviderName element which provides that information. The mandatory "role" element was changed to optional, since no clear use of this information is known in the ServiceProvider section. 
- * 
+ * For OWS use in the ServiceProvider section of a service metadata document, the optional organizationName element was removed, since this type is always used with the ProviderName element which provides that information. The mandatory "role" element was changed to optional, since no clear use of this information is known in the ServiceProvider section.
+ *
  * <p>Java class for ResponsiblePartySubsetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponsiblePartySubsetType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,7 +72,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
      */
     ResponsiblePartySubsetType(){
     }
-    
+
     /**
      *Build a new Responsible party subset.
      */
@@ -83,8 +83,8 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
         this.positionName   = positionName;
         this.role           = role;
     }
-    
-    
+
+
     /**
      * Gets the value of the individualName property.
      */
@@ -95,7 +95,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the positionName property.
-     * 
+     *
      */
     @Override
     public String getPositionName() {
@@ -104,7 +104,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the contactInfo property.
-     * 
+     *
      */
     @Override
     public ContactType getContactInfo() {
@@ -113,7 +113,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     @Override
     public CodeType getRole() {
@@ -147,7 +147,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
         hash = 67 * hash + (this.role != null ? this.role.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

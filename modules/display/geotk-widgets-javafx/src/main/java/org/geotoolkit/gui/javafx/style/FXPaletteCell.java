@@ -40,7 +40,7 @@ public class FXPaletteCell extends ListCell{
         setAlignment(Pos.CENTER);
         this.interpolate = interpolate;
     }
-    
+
     @Override
     protected void updateItem(Object item, boolean empty) {
         super.updateItem(item, empty);
@@ -49,9 +49,9 @@ public class FXPaletteCell extends ListCell{
             setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension(200,20),interpolate)));
         }else{
             setGraphic(null);
-        }         
+        }
     }
-    
+
 }
-    
+
 

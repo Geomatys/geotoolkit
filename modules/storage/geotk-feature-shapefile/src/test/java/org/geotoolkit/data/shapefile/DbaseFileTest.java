@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
@@ -94,7 +94,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
             final DbaseFileReader.Row r1 = dbf.next();
             final DbaseFileReader.Row r2 = dbf2.next();
             r1.readAll(attrs);
-            
+
             for (int i = 0, ii = attrs.length; i < ii; i++) {
                 assertNotNull(attrs[i]);
                 assertNotNull(r2.read(i));

@@ -22,12 +22,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Specification of the way an image grid is associated with the image data attributes. 
- * 
+ * Specification of the way an image grid is associated with the image data attributes.
+ *
  * <p>Java class for PixelInCellType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PixelInCellType">
  *   &lt;simpleContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

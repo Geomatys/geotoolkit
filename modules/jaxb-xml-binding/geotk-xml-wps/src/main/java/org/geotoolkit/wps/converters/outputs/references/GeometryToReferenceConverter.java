@@ -102,7 +102,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             wpsVersion = "1.0.0";
         }
         Reference reference = WPSXmlFactory.buildInOutReference(wpsVersion, ioType);
-        
+
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
@@ -128,14 +128,14 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             geometryStream = Files.newOutputStream(geometryPath);
             if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
                 WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
-                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType()) || 
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType()) ||
                 reference.getMimeType() == null) { // default to XML
-                
+
                 final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
                 m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
                 reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomPathName);
                 WPSMarshallerPool.getInstance().recycle(m);
-            
+
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
                 GeoJSONStreamWriter.writeSingleGeometry(geometryStream, source, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
                 reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomPathName);

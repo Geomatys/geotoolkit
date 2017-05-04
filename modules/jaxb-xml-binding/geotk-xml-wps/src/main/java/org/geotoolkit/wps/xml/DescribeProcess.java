@@ -25,7 +25,7 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author guilhem
  */
 public interface DescribeProcess extends RequestBase {
-    
+
     /**
      * Returns identifiers, never {@code null}.
      * List can be modified.

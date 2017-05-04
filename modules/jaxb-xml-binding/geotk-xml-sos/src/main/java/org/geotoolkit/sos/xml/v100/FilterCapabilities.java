@@ -30,9 +30,9 @@ import org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -74,9 +74,9 @@ public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabili
      * An empty constructor used by JAXB
      */
     public FilterCapabilities(){
-        
+
     }
-    
+
     /**
      * Gets the value of the spatialCapabilities property.
      */
@@ -104,7 +104,7 @@ public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabili
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
     }
-    
+
     /**
      * @param spatialCapabilities the spatialCapabilities to set
      */
@@ -150,7 +150,7 @@ public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabili
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

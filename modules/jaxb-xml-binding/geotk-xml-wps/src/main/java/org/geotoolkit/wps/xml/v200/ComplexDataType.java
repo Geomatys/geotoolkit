@@ -35,9 +35,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for ComplexDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComplexDataType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComplexDataType", propOrder = {
@@ -69,20 +69,20 @@ public class ComplexDataType extends DataDescriptionType implements org.geotoolk
     protected List<Object> any;
 
     public ComplexDataType() {
-        
+
     }
-    
+
     public ComplexDataType(List<Format> format) {
         super(format);
     }
-    
+
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link Element }
-     * 
+     *
      */
     @Override
     public List<Object> getContent() {
@@ -103,7 +103,7 @@ public class ComplexDataType extends DataDescriptionType implements org.geotoolk
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

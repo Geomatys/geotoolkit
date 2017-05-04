@@ -42,9 +42,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for WPSCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WPSCapabilitiesType">
  *   &lt;complexContent>
@@ -68,8 +68,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WPSCapabilitiesType", propOrder = {
@@ -88,9 +88,9 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
     protected String service;
 
     public WPSCapabilitiesType() {
-        
+
     }
-    
+
     public WPSCapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents,
             final CapabilitiesBaseType.Languages languages) {
@@ -98,7 +98,7 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         this.contents = contents;
         this.service = "WPS";
     }
-    
+
      public WPSCapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents,
             final CapabilitiesBaseType.Languages languages, final Extension ext) {
@@ -107,19 +107,19 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         this.service = "WPS";
         this.extension = extension;
     }
-    
+
     public WPSCapabilitiesType(final String version, final String updateSequence) {
         super(version, updateSequence);
         this.service = "WPS";
     }
-    
+
     /**
      * Gets the value of the contents property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Contents }
-     *     
+     *
      */
     public Contents getContents() {
         return contents;
@@ -129,14 +129,14 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
     public ProcessOfferings getProcessOfferings() {
         return contents;
     }
-    
+
     /**
      * Sets the value of the contents property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Contents }
-     *     
+     *
      */
     public void setContents(Contents value) {
         this.contents = value;
@@ -144,11 +144,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WPSCapabilitiesType.Extension }
-     *     
+     *
      */
     public WPSCapabilitiesType.Extension getExtension() {
         return extension;
@@ -156,11 +156,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WPSCapabilitiesType.Extension }
-     *     
+     *
      */
     public void setExtension(WPSCapabilitiesType.Extension value) {
         this.extension = value;
@@ -168,11 +168,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -184,11 +184,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(String value) {
         this.service = value;
@@ -203,7 +203,7 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
         ServiceProvider       sp = null;
         OperationsMetadata    om = null;
         Contents              po = null;
-        
+
         //we enter the information for service identification.
         if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
             si = getServiceIdentification();
@@ -226,9 +226,9 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -240,8 +240,8 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -254,12 +254,12 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapa
 
         /**
          * Gets the value of the any property.
-         * 
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link Object }
          * {@link Element }
-         * 
-         * 
+         *
+         *
          */
         public List<Object> getAny() {
             if (any == null) {

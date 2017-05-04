@@ -31,7 +31,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
- * This class implements the classic lucene StandardTokenizer up until 3.0 
+ * This class implements the classic lucene StandardTokenizer up until 3.0
  */
 
 class ClassicTokenizerImpl {
@@ -51,14 +51,14 @@ class ClassicTokenizerImpl {
    *                  at the beginning of a line
    * l is of the form l = 2*k, k a non negative integer
    */
-  private static final int ZZ_LEXSTATE[] = { 
+  private static final int ZZ_LEXSTATE[] = {
      0, 0
   };
 
-  /** 
+  /**
    * Translates characters to character classes
    */
-  private static final String ZZ_CMAP_PACKED = 
+  private static final String ZZ_CMAP_PACKED =
     "\46\0\1\7\1\5\3\0\1\1\1\11\1\4\1\6\1\11\12\2"+
     "\6\0\1\10\32\12\4\0\1\3\1\0\32\12\57\0\1\12\12\0"+
     "\1\12\4\0\1\12\5\0\27\12\1\0\37\12\1\0\u0128\12\2\0"+
@@ -117,12 +117,12 @@ class ClassicTokenizerImpl {
     "\207\12\23\0\12\2\7\0\32\12\6\0\32\12\12\0\1\13\72\13"+
     "\37\12\3\0\6\12\2\0\6\12\2\0\6\12\2\0\3\12\43\0";
 
-  /** 
+  /**
    * Translates characters to character classes
    */
   private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
 
-  /** 
+  /**
    * Translates DFA states to action switch labels.
    */
   private static final int [] ZZ_ACTION = zzUnpackAction();
@@ -152,7 +152,7 @@ class ClassicTokenizerImpl {
   }
 
 
-  /** 
+  /**
    * Translates a state to a row index in the transition table
    */
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
@@ -183,7 +183,7 @@ class ClassicTokenizerImpl {
     return j;
   }
 
-  /** 
+  /**
    * The transition table of the DFA
    */
   private static final int [] ZZ_TRANS = zzUnpackTrans();
@@ -317,12 +317,12 @@ class ClassicTokenizerImpl {
   private int yychar;
 
   /**
-   * the number of characters from the last newline up to the start of the 
+   * the number of characters from the last newline up to the start of the
    * matched text
    */
   private int yycolumn;
 
-  /** 
+  /**
    * zzAtBOL == true <=> the scanner is currently at the beginning of a line
    */
   private boolean zzAtBOL = true;
@@ -374,7 +374,7 @@ public final void getText(CharTermAttribute t) {
   }
 
 
-  /** 
+  /**
    * Unpacks the compressed character translation table.
    *
    * @param packed   the packed character translation table
@@ -397,7 +397,7 @@ public final void getText(CharTermAttribute t) {
    * Refills the input buffer.
    *
    * @return      <code>false</code>, iff there was new input.
-   * 
+   *
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
   private boolean zzRefill() throws java.io.IOException {
@@ -431,7 +431,7 @@ public final void getText(CharTermAttribute t) {
       zzEndRead+= numRead;
       return false;
     }
-    // unlikely but not impossible: read 0 characters, but not at end of stream    
+    // unlikely but not impossible: read 0 characters, but not at end of stream
     if (numRead == 0) {
       int c = zzReader.read();
       if (c == -1) {
@@ -439,14 +439,14 @@ public final void getText(CharTermAttribute t) {
       } else {
         zzBuffer[zzEndRead++] = (char) c;
         return false;
-      }     
+      }
     }
 
     // numRead < 0
     return true;
   }
 
-    
+
   /**
    * Closes the input stream.
    */
@@ -463,13 +463,13 @@ public final void getText(CharTermAttribute t) {
    * Resets the scanner to read from a new input stream.
    * Does not close the old reader.
    *
-   * All internal variables are reset, the old input stream 
+   * All internal variables are reset, the old input stream
    * <b>cannot</b> be reused (internal buffer is discarded and lost).
    * Lexical state is set to <tt>ZZ_INITIAL</tt>.
    *
    * Internal scan buffer is resized down to its initial length, if it has grown.
    *
-   * @param reader   the new input stream 
+   * @param reader   the new input stream
    */
   public final void yyreset(java.io.Reader reader) {
     zzReader = reader;
@@ -512,12 +512,12 @@ public final void getText(CharTermAttribute t) {
 
 
   /**
-   * Returns the character at position <tt>pos</tt> from the 
-   * matched text. 
-   * 
+   * Returns the character at position <tt>pos</tt> from the
+   * matched text.
+   *
    * It is equivalent to yytext().charAt(pos), but faster
    *
-   * @param pos the position of the character to fetch. 
+   * @param pos the position of the character to fetch.
    *            A value from 0 to yylength()-1.
    *
    * @return the character at position pos
@@ -538,8 +538,8 @@ public final void getText(CharTermAttribute t) {
   /**
    * Reports an error that occured while scanning.
    *
-   * In a wellformed scanner (no or only correct usage of 
-   * yypushback(int) and a match-all fallback rule) this method 
+   * In a wellformed scanner (no or only correct usage of
+   * yypushback(int) and a match-all fallback rule) this method
    * will only be called with things that "Can't Possibly Happen".
    * If this method is called, something is seriously wrong
    * (e.g. a JFlex bug producing a faulty scanner etc.).
@@ -559,7 +559,7 @@ public final void getText(CharTermAttribute t) {
     }
 
     throw new Error(message);
-  } 
+  }
 
 
   /**
@@ -608,7 +608,7 @@ public final void getText(CharTermAttribute t) {
       zzAction = -1;
 
       zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
-  
+
       zzState = ZZ_LEXSTATE[zzLexicalState];
 
       // set up zzAction for empty match case:
@@ -620,7 +620,7 @@ public final void getText(CharTermAttribute t) {
 
       zzForAction: {
         while (true) {
-    
+
           if (zzCurrentPosL < zzEndReadL)
             zzInput = zzBufferL[zzCurrentPosL++];
           else if (zzAtEOF) {
@@ -663,51 +663,51 @@ public final void getText(CharTermAttribute t) {
       zzMarkedPos = zzMarkedPosL;
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
-        case 1: 
+        case 1:
           { /* Break so we don't hit fall-through warning: */ break;/* ignore */
           }
         case 11: break;
-        case 2: 
+        case 2:
           { return ALPHANUM;
           }
         case 12: break;
-        case 3: 
+        case 3:
           { return CJ;
           }
         case 13: break;
-        case 4: 
+        case 4:
           { return HOST;
           }
         case 14: break;
-        case 5: 
+        case 5:
           { return NUM;
           }
         case 15: break;
-        case 6: 
+        case 6:
           { return APOSTROPHE;
           }
         case 16: break;
-        case 7: 
+        case 7:
           { return COMPANY;
           }
         case 17: break;
-        case 8: 
+        case 8:
           { return ACRONYM_DEP;
           }
         case 18: break;
-        case 9: 
+        case 9:
           { return ACRONYM;
           }
         case 19: break;
-        case 10: 
+        case 10:
           { return EMAIL;
           }
         case 20: break;
-        default: 
+        default:
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;
             return YYEOF;
-          } 
+          }
           else {
             zzScanError(ZZ_NO_MATCH);
           }

@@ -38,9 +38,9 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
     private List<Ring> interior;
 
     public JTSSurfaceBoundary() {
-        
+
     }
-    
+
     public JTSSurfaceBoundary(final CoordinateReferenceSystem crs, final Ring exterior, final List<Ring> interior) {
         super(crs);
         this.exterior = exterior;

@@ -31,9 +31,9 @@ import org.opengis.filter.capability.Operator;
 
 /**
  * <p>Java class for Comparison_OperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Comparison_OperatorsType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Comparison_OperatorsType", propOrder = {
@@ -78,14 +78,14 @@ public class ComparisonOperatorsType implements ComparisonOperators {
 
     /**
      * Gets the value of the simpleComparisonsOrLikeOrBetween property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NullCheck }
      * {@link SimpleComparisons }
      * {@link Between }
      * {@link Like }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getSimpleComparisonsOrLikeOrBetween() {
         if (simpleComparisonsOrLikeOrBetween == null) {

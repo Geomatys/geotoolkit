@@ -29,9 +29,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for PropertyIsBetweenType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsBetweenType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 
@@ -71,7 +71,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      * An empty constructor used by JAXB
      */
     public PropertyIsBetweenType() {
-        
+
     }
 
     /**
@@ -91,7 +91,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
         this.lowerBoundary = lowerBoundary;
         this.upperBoundary = upperBoundary;
     }
-    
+
     public PropertyIsBetweenType(final PropertyIsBetweenType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -109,7 +109,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-            
+
             if (that.lowerBoundary != null) {
                 this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
             }

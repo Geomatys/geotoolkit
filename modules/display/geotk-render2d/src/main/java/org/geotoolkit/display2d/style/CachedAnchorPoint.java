@@ -131,12 +131,12 @@ public abstract class CachedAnchorPoint{
                 return buffer;
             }
         }
-        
+
         @Override
         public float getMarginRatio(Object candidate, float coeff) {
             return Math.max(cachedX, cachedY);
         }
-        
+
     }
 
     private static final class DynamicAnchorPoint extends CachedAnchorPoint{
@@ -169,7 +169,7 @@ public abstract class CachedAnchorPoint{
                 return cachedX;
             }
         }
-        
+
         private float evalY(Object candidate){
             if(Float.isNaN(cachedY)){
                 //if Y is null it means it is dynamic
@@ -179,13 +179,13 @@ public abstract class CachedAnchorPoint{
                 return cachedY;
             }
         }
-        
+
         @Override
         public float getMarginRatio(Object candidate, float coeff) {
             if(candidate==null) return Float.NaN;
             return Math.max(evalX(candidate), evalY(candidate));
         }
-        
+
     }
 
 }

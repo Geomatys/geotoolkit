@@ -34,9 +34,9 @@ import org.geotoolkit.wms.xml.AbstractRequest;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,7 +51,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -182,7 +182,7 @@ public class Capability implements AbstractCapability {
     public Layer getLayer() {
         return layer;
     }
-    
+
     /**
      * Gets the value of the layer property.
      */

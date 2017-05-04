@@ -34,10 +34,10 @@ public enum SOSVersion {
     public String getCode() {
         return code;
     }
-    
+
     /**
      * Returns {@link SOSVersion} that matches from the code.
-     * 
+     *
      * @param v code value to resolve.
      * @return {@link SOSVersion} from code value.
      * @throws IllegalArgumentException if the code does not correspond to any existing code in this enum
@@ -48,11 +48,11 @@ public enum SOSVersion {
                 return candidat;
             }
         }
-        
+
         try{
             return SOSVersion.valueOf(v);
         }catch(IllegalArgumentException ex){/*we tryed*/}
-        
+
         throw new IllegalArgumentException(v);
     }
 

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ValueArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValueArrayType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueArrayType")
@@ -56,11 +56,11 @@ public class ValueArrayType
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCodeSpace() {
         return codeSpace;
@@ -68,11 +68,11 @@ public class ValueArrayType
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCodeSpace(String value) {
         this.codeSpace = value;
@@ -80,11 +80,11 @@ public class ValueArrayType
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUom() {
         return uom;
@@ -92,11 +92,11 @@ public class ValueArrayType
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUom(String value) {
         this.uom = value;

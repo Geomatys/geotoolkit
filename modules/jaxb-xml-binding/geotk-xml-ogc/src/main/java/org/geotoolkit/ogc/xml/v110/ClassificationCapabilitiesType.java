@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for Classification_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Classification_CapabilitiesType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ public class ClassificationCapabilitiesType {
     public ClassificationOperatorsType getClassificationOperators() {
         return classificationOperators;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[ClassificationCapabilitiesType]").append("\n");
@@ -79,7 +79,7 @@ public class ClassificationCapabilitiesType {
 
        if (object instanceof ClassificationCapabilitiesType) {
            final ClassificationCapabilitiesType that = (ClassificationCapabilitiesType) object;
-       
+
             return Objects.equals(this.classificationOperators, that.classificationOperators);
         }
         return false;

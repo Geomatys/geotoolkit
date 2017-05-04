@@ -35,7 +35,7 @@ import org.opengis.geometry.DirectPosition;
 public class GoogleMapsMosaic extends AbstractGridMosaic{
 
     private final int scaleLevel;
-    
+
     public GoogleMapsMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
@@ -50,10 +50,10 @@ public class GoogleMapsMosaic extends AbstractGridMosaic{
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
-    
+
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
-    
+
 }

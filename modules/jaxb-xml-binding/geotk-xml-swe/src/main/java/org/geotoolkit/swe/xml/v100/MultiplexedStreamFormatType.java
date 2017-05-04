@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
 
 /**
  * <p>Java class for MultiplexedStreamFormatType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiplexedStreamFormatType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,14 +63,14 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
             this.version = ms.getVersion();
         }
     }
-    
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -78,11 +78,11 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -90,11 +90,11 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -102,11 +102,11 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

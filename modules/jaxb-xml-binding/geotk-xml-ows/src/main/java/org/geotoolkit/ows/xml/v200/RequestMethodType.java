@@ -33,11 +33,11 @@ import org.geotoolkit.ows.xml.AbstractRequestMethod;
  *       the xlink:href attribute in the xlink:simpleAttrs attribute group shall
  *       be used to contain this URL. The other attributes in the
  *       xlink:simpleAttrs attribute group should not be used.
- * 
+ *
  * <p>Java class for RequestMethodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestMethodType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ows.xml.AbstractRequestMethod;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestMethodType", propOrder = {
@@ -86,7 +86,7 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
         super(href);
         this.constraint = constraints;
     }
-    
+
     /**
      * Build a new Request method.
      */
@@ -100,14 +100,14 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
     public RequestMethodType(final List<DomainType> constraint){
         this.constraint = constraint;
     }
-    
+
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DomainType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<DomainType> getConstraint() {

@@ -28,12 +28,12 @@ import org.geotoolkit.ows.xml.AcceptFormats;
 
 
 /**
- * Prioritized sequence of zero or more GetCapabilities operation response formats desired by client, with preferred formats listed first. Each response format shall be identified by its MIME type. See AcceptFormats parameter use subclause for more information. 
- * 
+ * Prioritized sequence of zero or more GetCapabilities operation response formats desired by client, with preferred formats listed first. Each response format shall be identified by its MIME type. See AcceptFormats parameter use subclause for more information.
+ *
  * <p>Java class for AcceptFormatsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcceptFormatsType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.AcceptFormats;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,14 +63,14 @@ public class AcceptFormatsType implements AcceptFormats {
      */
     AcceptFormatsType() {
     }
-    
+
     /**
      * Build a new Accepted format.
      */
     public AcceptFormatsType(final List<String> outputFormat) {
         this.outputFormat = outputFormat;
     }
-    
+
     /**
      * Build a new Accepted format.
      */
@@ -81,7 +81,7 @@ public class AcceptFormatsType implements AcceptFormats {
                 this.outputFormat.add(element);
         }
     }
-    
+
     /**
      * Gets the value of the outputFormat property.
      * (unmodifable)
@@ -93,16 +93,16 @@ public class AcceptFormatsType implements AcceptFormats {
         }
         return Collections.unmodifiableList(outputFormat);
     }
-    
+
     /**
      * Add a new accepted format to the list.
-     * 
+     *
      * @param format a new Accepted format.
      */
     public void add(final String format) {
         outputFormat.add(format);
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -124,7 +124,7 @@ public class AcceptFormatsType implements AcceptFormats {
         hash = 89 * hash + (this.outputFormat != null ? this.outputFormat.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString(){
        StringBuilder s = new StringBuilder();

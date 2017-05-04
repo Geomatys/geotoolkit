@@ -27,9 +27,9 @@ import org.opengis.metadata.citation.Responsibility;
 
 /**
  * <p>Java class for ContactListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactListType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.metadata.citation.Responsibility;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContactListType", propOrder = {
@@ -57,25 +57,25 @@ public class ContactListType
 
     /**
      * Gets the value of the contact property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the contact property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContact().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CIResponsiblePartyPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<Responsibility> getContact() {
         if (contact == null) {

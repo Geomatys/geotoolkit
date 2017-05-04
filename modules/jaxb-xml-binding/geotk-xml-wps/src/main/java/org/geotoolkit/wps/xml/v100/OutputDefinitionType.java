@@ -30,12 +30,12 @@ import org.geotoolkit.wps.xml.OutputDefinition;
 
 
 /**
- * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process. 
- * 
+ * Definition of a format, encoding,  schema, and unit-of-measure for an output to be returned from a process.
+ *
  * <p>Java class for OutputDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OutputDefinitionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wps.xml.OutputDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,13 +77,13 @@ public class OutputDefinitionType implements OutputDefinition {
     protected String schema;
 
     public OutputDefinitionType() {
-        
+
     }
-    
+
     public OutputDefinitionType(CodeType identifier) {
         this.identifier = identifier;
     }
-    
+
     public OutputDefinitionType(CodeType identifier, String uom, String mimeType, String encoding, String schema) {
         this.identifier = identifier;
         this.encoding = encoding;
@@ -91,14 +91,14 @@ public class OutputDefinitionType implements OutputDefinition {
         this.schema = schema;
         this.uom = uom;
     }
-    
+
     /**
-     * Unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * Unambiguous identifier or name of an output, unique for this process.
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     @Override
     public CodeType getIdentifier() {
@@ -106,12 +106,12 @@ public class OutputDefinitionType implements OutputDefinition {
     }
 
     /**
-     * Unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * Unambiguous identifier or name of an output, unique for this process.
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -119,11 +119,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getUom() {
@@ -132,11 +132,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setUom(final String value) {
@@ -145,11 +145,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -158,11 +158,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(final String value) {
@@ -171,11 +171,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -184,11 +184,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(final String value) {
@@ -197,11 +197,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -210,11 +210,11 @@ public class OutputDefinitionType implements OutputDefinition {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(final String value) {
@@ -251,7 +251,7 @@ public class OutputDefinitionType implements OutputDefinition {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

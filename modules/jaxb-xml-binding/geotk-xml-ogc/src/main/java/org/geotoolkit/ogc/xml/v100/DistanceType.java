@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for DistanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistanceType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,17 +53,17 @@ public class DistanceType {
     private String units;
 
     public DistanceType() {
-        
+
     }
-    
+
     public DistanceType(final String content, final String units) {
         this.content = content;
         this.units   = units;
     }
-    
+
     /**
      * Gets the value of the content property.
-     * 
+     *
      */
     public String getContent() {
         return content;
@@ -71,7 +71,7 @@ public class DistanceType {
 
     /**
      * Sets the value of the content property.
-     * 
+     *
      */
     public void setContent(final String value) {
         this.content = value;
@@ -79,7 +79,7 @@ public class DistanceType {
 
     /**
      * Gets the value of the units property.
-     *     
+     *
      */
     public String getUnits() {
         return units;
@@ -87,7 +87,7 @@ public class DistanceType {
 
     /**
      * Sets the value of the units property.
-     * 
+     *
      */
     public void setUnits(final String value) {
         this.units = value;

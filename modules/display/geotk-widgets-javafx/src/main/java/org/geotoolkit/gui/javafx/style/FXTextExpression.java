@@ -41,5 +41,5 @@ public class FXTextExpression extends FXExpression {
         return null;
     }
 
-    
+
 }

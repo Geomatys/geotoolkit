@@ -27,11 +27,11 @@ import org.opengis.coverage.grid.RectifiedGrid;
 
 /**
  * A rectified grid has an origin and vectors that define its post locations.
- * 
+ *
  * <p>Java class for RectifiedGridType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RectifiedGridType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.coverage.grid.RectifiedGrid;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class RectifiedGridType extends GridType {
        if (grid != null) {
            origin       = new PointType(grid.getOrigin(), false);
            offsetVector = new ArrayList<>();
-           
+
            final List<double[]> vectors = grid.getOffsetVectors();
            for (double[] vector : vectors) {
                 offsetVector.add(new VectorType(vector));

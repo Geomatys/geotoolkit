@@ -21,5 +21,5 @@ package org.geotoolkit.ows.xml;
  * @author guilhem
  */
 public interface AnyValue {
-    
+
 }

@@ -23,10 +23,10 @@ import org.geotoolkit.ows.xml.BoundingBox;
  * @author guilhem
  */
 public interface DataType {
-    
+
     ComplexDataType getComplexData();
-    
+
     LiteralDataType getLiteralData();
-    
+
     BoundingBox getBoundingBoxData();
 }

@@ -31,24 +31,24 @@ public interface AbstractOperationsMetadata {
      * @param url The url of the web application.
      */
     void updateURL(String url);
-    
+
     void addConstraint(final AbstractDomain domain);
 
     List<? extends AbstractOperation> getOperation();
 
     AbstractOperation getOperation(final String operationName);
-    
+
     void removeOperation(final String operationName);
-    
+
     AbstractDomain getConstraint(final String name);
 
     AbstractDomain getParameter(final String name);
-    
+
     void removeConstraint(final String name);
-    
+
     Object getExtendedCapabilities();
-    
+
     void setExtendedCapabilities(final Object extendedCapabilities);
-    
+
     AbstractOperationsMetadata clone();
 }

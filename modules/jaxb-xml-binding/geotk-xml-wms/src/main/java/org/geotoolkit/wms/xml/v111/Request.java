@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wms.xml.AbstractRequest;
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ public class Request implements AbstractRequest {
     public Request() {
 
     }
-    
+
     public Request(final Request that) {
         if (that != null) {
             if (that.getCapabilities != null) {
@@ -123,13 +123,13 @@ public class Request implements AbstractRequest {
 
     /**
      * Gets the value of the describeLayer property.
-     * 
+     *
      */
     public DescribeLayer getDescribeLayer() {
         return describeLayer;
     }
 
-    
+
 
     /**
      * Gets the value of the getLegendGraphic property.
@@ -138,17 +138,17 @@ public class Request implements AbstractRequest {
         return getLegendGraphic;
     }
 
-    
+
 
     /**
      * Gets the value of the getStyles property.
-     * 
+     *
      */
     public GetStyles getGetStyles() {
         return getStyles;
     }
 
-    
+
 
     /**
      * Gets the value of the putStyles property.
@@ -184,7 +184,7 @@ public class Request implements AbstractRequest {
             putStyles.updateURL(url);
         }
     }
-    
+
     @Override
     public Request clone() {
         return new Request(this);

@@ -29,16 +29,16 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
+ *
  *        This type is extended by almost all schema types
  *        to allow attributes from other namespaces to be
  *        added to user schemas.
- *      
- * 
+ *
+ *
  * <p>Java class for openAttrs complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="openAttrs">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

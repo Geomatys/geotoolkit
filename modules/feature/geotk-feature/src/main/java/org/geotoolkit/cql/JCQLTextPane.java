@@ -38,14 +38,14 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Swing CQL text pane. highlights syntax.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JCQLTextPane extends JPanel implements KeyListener{
 
     private final JTextPane guiText = new JTextPane();
     private final JLabel guiError = new JLabel();
-    
+
     final Style styleDefault;
     final Style styleComment;
     final Style styleFunction;
@@ -55,64 +55,64 @@ public class JCQLTextPane extends JPanel implements KeyListener{
     final Style styleBinary;
     final Style stylePropertyName;
     final Style styleError;
-    
+
     public JCQLTextPane() {
         super(new BorderLayout(0,0));
-        
+
         guiText.setBackground(Color.WHITE);
-        
+
         final JScrollPane scroll = new JScrollPane(guiText);
         scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
         guiText.setBorder(new EmptyBorder(0, 0, 0, 0));
         scroll.getInsets().set(0,0,0,0);
         scroll.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
         scroll.getViewport().getInsets().set(0,0,0,0);
-        
+
         add(BorderLayout.CENTER,scroll);
         add(BorderLayout.SOUTH,guiError);
         guiText.addKeyListener(this);
-        
+
         styleDefault = guiText.addStyle("default", null);
-        StyleConstants.setForeground(styleDefault, Color.BLACK); 
-        
+        StyleConstants.setForeground(styleDefault, Color.BLACK);
+
         styleComment = guiText.addStyle("comment", null);
         StyleConstants.setForeground(styleComment, Color.GRAY);
-        
+
         styleLiteral = guiText.addStyle("literal", null);
         StyleConstants.setForeground(styleLiteral, new Color(0, 150, 0));
-        
+
         styleFunction = guiText.addStyle("function", null);
         StyleConstants.setForeground(styleFunction, Color.MAGENTA);
-        
+
         styleParenthese = guiText.addStyle("parenthese", null);
         StyleConstants.setForeground(styleParenthese, new Color(0, 0, 0));
-        
+
         styleOperator = guiText.addStyle("operator", null);
         StyleConstants.setForeground(styleOperator, Color.BLACK);
         StyleConstants.setBold(styleOperator, true);
-        
+
         styleBinary = guiText.addStyle("binary", null);
         StyleConstants.setForeground(styleBinary, Color.BLACK);
         StyleConstants.setBold(styleBinary, true);
-        
+
         stylePropertyName = guiText.addStyle("property", null);
         StyleConstants.setForeground(stylePropertyName, Color.BLUE);
         StyleConstants.setBold(stylePropertyName, true);
-        
+
         styleError = guiText.addStyle("error", null);
         StyleConstants.setForeground(styleError, Color.RED);
         StyleConstants.setBold(styleError, true);
-        
+
     }
-    
+
     public void setText(String cql){
         guiText.setText(cql);
         updateHightLight();
     }
-    
+
     /**
      * Insert text at current caret position
-     * @param text 
+     * @param text
      */
     public void insertText(String text){
         final int position = guiText.getCaretPosition();
@@ -121,37 +121,37 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         sb.append(cql.substring(0,position));
         sb.append(text);
         sb.append(cql.substring(position));
-        
+
         guiText.setText(sb.toString());
         guiText.setCaretPosition(position+text.length());
         updateHightLight();
     }
-    
+
     public void addText(String text){
         guiText.setText(guiText.getText()+text);
         updateHightLight();
     }
-    
+
     public String getText(){
         return guiText.getText();
     }
-    
+
     public void setFilter(Filter filter){
         setText(CQL.write(filter));
     }
-    
+
     public void setExpression(Expression exp){
         setText(CQL.write(exp));
     }
-    
+
     public Filter getFilter() throws CQLException{
         return CQL.parseFilter(guiText.getText());
     }
-    
+
     public Expression getExpression() throws CQLException{
         return CQL.parseExpression(guiText.getText());
     }
-    
+
     @Override
     public void keyTyped(KeyEvent e) {
     }
@@ -164,7 +164,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
     public void keyReleased(KeyEvent e) {
         updateHightLight();
     }
-    
+
     private void updateHightLight(){
         final StyledDocument doc = (StyledDocument) guiText.getDocument();
         final String txt = guiText.getText();
@@ -174,9 +174,9 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         syntaxHighLight(tree, doc, new AtomicInteger());
         firePropertyChange("content", null, txt);
     }
-    
+
     private void syntaxHighLight(ParseTree tree, StyledDocument doc, AtomicInteger position){
-        
+
         if(tree instanceof ParserRuleContext){
             final ParserRuleContext prc = (ParserRuleContext) tree;
             if(prc.exception!=null){
@@ -189,12 +189,12 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 doc.setCharacterAttributes(offset, length, styleError, true);
                 return;
             }
-            
+
             //special case for functions
             if(prc instanceof CQLParser.ExpressionTermContext){
                 final CQLParser.ExpressionTermContext ctx = (CQLParser.ExpressionTermContext) prc;
                 if(ctx.NAME()!=null && ctx.LPAREN()!=null){
-                    final int nbChild = tree.getChildCount();        
+                    final int nbChild = tree.getChildCount();
                     for(int i=0;i<nbChild;i++){
                         final ParseTree pt = tree.getChild(i);
                         if(pt instanceof TerminalNode && ((TerminalNode)pt).getSymbol().getType() == CQLLexer.NAME){
@@ -212,9 +212,9 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                     return;
                 }
             }
-            
+
         }
-        
+
         if(tree instanceof TerminalNode){
             final TerminalNode tn = (TerminalNode) tree;
             // if index<0 = missing token
@@ -222,28 +222,28 @@ public class JCQLTextPane extends JPanel implements KeyListener{
             final int offset = token.getStartIndex();
             final int length = token.getStopIndex()-token.getStartIndex() +1;
             position.addAndGet(length);
-            
+
             switch(token.getType()){
-                
-                case CQLLexer.COMMA : 
-                case CQLLexer.UNARY : 
-                case CQLLexer.MULT : 
+
+                case CQLLexer.COMMA :
+                case CQLLexer.UNARY :
+                case CQLLexer.MULT :
                     doc.setCharacterAttributes(offset, length, styleDefault, true);
                     break;
-                    
+
                 // EXpressions -------------------------------------------------
-                case CQLLexer.TEXT : 
-                case CQLLexer.INT : 
-                case CQLLexer.FLOAT : 
-                case CQLLexer.DATE : 
-                case CQLLexer.DURATION_P : 
-                case CQLLexer.DURATION_T : 
-                case CQLLexer.POINT : 
-                case CQLLexer.LINESTRING : 
-                case CQLLexer.POLYGON : 
-                case CQLLexer.MPOINT : 
-                case CQLLexer.MLINESTRING : 
-                case CQLLexer.MPOLYGON : 
+                case CQLLexer.TEXT :
+                case CQLLexer.INT :
+                case CQLLexer.FLOAT :
+                case CQLLexer.DATE :
+                case CQLLexer.DURATION_P :
+                case CQLLexer.DURATION_T :
+                case CQLLexer.POINT :
+                case CQLLexer.LINESTRING :
+                case CQLLexer.POLYGON :
+                case CQLLexer.MPOINT :
+                case CQLLexer.MLINESTRING :
+                case CQLLexer.MPOLYGON :
                     doc.setCharacterAttributes(offset, length, styleLiteral, true);
                     break;
                 case CQLLexer.PROPERTY_NAME :
@@ -258,11 +258,11 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                         doc.setCharacterAttributes(offset, length, styleFunction, true);
                     }
                     break;
-                case CQLLexer.RPAREN : 
-                case CQLLexer.LPAREN : 
+                case CQLLexer.RPAREN :
+                case CQLLexer.LPAREN :
                     doc.setCharacterAttributes(offset, length, styleParenthese, true);
-                    break;                    
-                    
+                    break;
+
                 case CQLLexer.COMPARE :
                 case CQLLexer.LIKE :
                 case CQLLexer.IS :
@@ -288,16 +288,16 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 case CQLLexer.WITHIN :
                     doc.setCharacterAttributes(offset, length, styleBinary, true);
                     break;
-                default : 
+                default :
                     doc.setCharacterAttributes(offset, length, styleError, true);
                     break;
             }
         }
-        
-        final int nbChild = tree.getChildCount();        
+
+        final int nbChild = tree.getChildCount();
         for(int i=0;i<nbChild;i++){
             syntaxHighLight(tree.getChild(i), doc, position);
         }
     }
-    
+
 }

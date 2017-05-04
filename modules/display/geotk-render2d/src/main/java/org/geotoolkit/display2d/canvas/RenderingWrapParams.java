@@ -22,11 +22,11 @@ import org.opengis.geometry.DirectPosition;
 
 /**
  * World wrap repetition informations.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class RenderingWrapParams {
-    
+
     /**
      * Number of repetition on the decreasing direction.
      */
@@ -35,7 +35,7 @@ public final class RenderingWrapParams {
      * Number of repetition on the increasing direction.
      */
     public int wrapIncNb;
-    
+
     /**
      * The wrap points in objective CRS.
      * for example in CRS:84 , those points would be :
@@ -61,7 +61,7 @@ public final class RenderingWrapParams {
      * Display to Objective transform.
      */
     public com.vividsolutions.jts.geom.Envelope objectiveJTSEnvelope = null;
-    
+
     /**
      * Normal objective to display transform.
      */
@@ -70,34 +70,34 @@ public final class RenderingWrapParams {
      * Normal Objective transform.
      */
     public AffineTransform2D wrapObj = null;
-    
+
     /**
      * Objective to display transforms on the decreasing side of the wrap area.
-     * Size : wrapDecNb + 1 
-     * The +1 is to additional transform in case a geometry 
+     * Size : wrapDecNb + 1
+     * The +1 is to additional transform in case a geometry
      * overlaps a meridian which cause an additional repetition
      */
     public AffineTransform2D[] wrapDecObjToDisp = null;
     /**
      * Objective to display transforms on the increasing side of the wrap area.
-     * Size : wrapIncNb + 1 
-     * The +1 is to additional transform in case a geometry 
+     * Size : wrapIncNb + 1
+     * The +1 is to additional transform in case a geometry
      * overlaps a meridian which cause an additional repetition
      */
     public AffineTransform2D[] wrapIncObjToDisp = null;
     /**
      * Objective transforms on the decreasing side of the wrap area.
-     * Size : wrapDecNb + 1 
-     * The +1 is to additional transform in case a geometry 
+     * Size : wrapDecNb + 1
+     * The +1 is to additional transform in case a geometry
      * overlaps a meridian which cause an additional repetition
      */
     public AffineTransform2D[] wrapDecObj = null;
     /**
      * Objective transforms on the increasing side of the wrap area.
-     * Size : wrapIncNb + 1 
-     * The +1 is to additional transform in case a geometry 
+     * Size : wrapIncNb + 1
+     * The +1 is to additional transform in case a geometry
      * overlaps a meridian which cause an additional repetition
      */
     public AffineTransform2D[] wrapIncObj = null;
-    
+
 }

@@ -31,14 +31,14 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
     private String href;
 
     /**
-     * 
+     *
      */
     public DefaultItemIcon() {
         this.states = EMPTY_LIST;
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param states

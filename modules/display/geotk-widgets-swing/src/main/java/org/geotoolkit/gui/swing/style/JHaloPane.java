@@ -29,7 +29,7 @@ import org.opengis.style.Halo;
 
 /**
  * Halo panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -76,7 +76,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     @Override
     public void apply() {
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelWidth,guiFill};
@@ -133,7 +133,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

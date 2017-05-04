@@ -28,16 +28,16 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
 
 
 /**
- * 
+ *
  *       Connect point URLs for the HTTP Distributed Computing Platform (DCP).
- *       Normally, only one Get and/or one Post is included in this element. 
- *       More than one Get and/or Post is allowed to support including alternative URLs for uses such as load balancing or backup. 
- *     
- * 
+ *       Normally, only one Get and/or one Post is included in this element.
+ *       More than one Get and/or Post is allowed to support including alternative URLs for uses such as load balancing or backup.
+ *
+ *
  * <p>Java class for DCPTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DCPTypeType">
  *   &lt;complexContent>
@@ -80,8 +80,8 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,7 +102,7 @@ public class DCPTypeType implements AbstractDCP {
             this.http = new HTTP(that.http);
         }
     }
-    
+
     public DCPTypeType(final HTTP http) {
         this.http = http;
     }
@@ -123,9 +123,9 @@ public class DCPTypeType implements AbstractDCP {
 
    /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -158,8 +158,8 @@ public class DCPTypeType implements AbstractDCP {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -176,7 +176,7 @@ public class DCPTypeType implements AbstractDCP {
         public HTTP() {
 
         }
-        
+
         public HTTP(final HTTP that) {
             if (that != null && that.getOrPost != null) {
                 this.getOrPost = new ArrayList<Object>();
@@ -205,7 +205,7 @@ public class DCPTypeType implements AbstractDCP {
 
         /**
          * Gets the value of the getOrPost property.
-         * 
+         *
          */
         public List<Object> getRealGetOrPost() {
             if (getOrPost == null) {
@@ -213,7 +213,7 @@ public class DCPTypeType implements AbstractDCP {
             }
             return this.getOrPost;
         }
-        
+
         @Override
         public List<OnlineResourceType> getGetOrPost() {
             final List<OnlineResourceType> result = new ArrayList<OnlineResourceType>();
@@ -246,9 +246,9 @@ public class DCPTypeType implements AbstractDCP {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -260,8 +260,8 @@ public class DCPTypeType implements AbstractDCP {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -280,7 +280,7 @@ public class DCPTypeType implements AbstractDCP {
                 if (that != null && that.onlineResource != null)
                 this.onlineResource = new OnlineResourceType(that.onlineResource);
             }
-            
+
             public Get(final OnlineResourceType or) {
                 this.onlineResource = or;
             }
@@ -296,9 +296,9 @@ public class DCPTypeType implements AbstractDCP {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -310,8 +310,8 @@ public class DCPTypeType implements AbstractDCP {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -322,7 +322,7 @@ public class DCPTypeType implements AbstractDCP {
             public Post() {
 
             }
-            
+
             public Post(final Post that) {
                 if (that != null && that.onlineResource != null) {
                     this.onlineResource = new OnlineResourceType(that.onlineResource);

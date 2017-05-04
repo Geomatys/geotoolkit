@@ -27,28 +27,28 @@ import org.geotoolkit.skos.xml.RDF;
  * @author Guilhem Legal (Geomatys)
  */
 public interface WriteableThesaurus extends Thesaurus {
-    
+
     void updateThesaurusProperties() throws SQLException;
-    
+
     void store() throws SQLException, IOException;
-    
+
     void delete() throws SQLException;
-    
+
     void delete(final ISOLanguageCode language) throws SQLException;
-    
+
     void writeRdf(final RDF rdf) throws SQLException;
-    
+
     String writeConcept(final Concept concept) throws SQLException;
-    
+
     void deleteConcept(final Concept concept) throws SQLException;
-    
+
     void deleteConcept(String conceptUri) throws SQLException;
-    
+
     void deleteConceptCascad(final Concept concept) throws SQLException;
-    
+
     void deleteConceptCascade(String conceptUri) throws SQLException;
- 
+
     void addLanguage(final ISOLanguageCode currentLanguage) throws SQLException;
-    
+
     void computeTopMostConcept() throws SQLException;
 }

@@ -34,10 +34,10 @@ import org.geotoolkit.se.xml.v110.FunctionType;
     "noData"
 })
 public class JenksType extends FunctionType {
-    
+
     @XmlElement(name = "ClassNumber", required = true, namespace="http://www.opengis.net/se")
     protected Integer classNumber;
-    
+
     @XmlElement(name = "Palette", namespace="http://www.opengis.net/se")
     protected String palette;
 

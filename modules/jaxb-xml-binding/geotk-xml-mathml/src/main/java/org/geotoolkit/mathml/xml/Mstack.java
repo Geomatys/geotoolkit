@@ -36,9 +36,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Classe Java pour anonymous complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -163,20 +163,20 @@ public class Mstack {
 
     /**
      * Gets the value of the mstackExpression property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mstackExpression property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMstackExpression().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Neq }{@code >}
@@ -358,8 +358,8 @@ public class Mstack {
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
      * {@link JAXBElement }{@code <}{@link Mo }{@code >}
      * {@link JAXBElement }{@code <}{@link UnaryFunctionalClass }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<Object> getMstackExpression() {
         if (mstackExpression == null) {
@@ -370,11 +370,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété align.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAlign() {
         return align;
@@ -382,11 +382,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété align.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAlign(String value) {
         this.align = value;
@@ -394,11 +394,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété stackalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStackalign() {
         return stackalign;
@@ -406,11 +406,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété stackalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStackalign(String value) {
         this.stackalign = value;
@@ -418,11 +418,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété charalign.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCharalign() {
         return charalign;
@@ -430,11 +430,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété charalign.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCharalign(String value) {
         this.charalign = value;
@@ -442,11 +442,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété charspacing.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCharspacing() {
         return charspacing;
@@ -454,11 +454,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété charspacing.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCharspacing(String value) {
         this.charspacing = value;
@@ -466,11 +466,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -478,11 +478,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -490,11 +490,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété xref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getXref() {
         return xref;
@@ -502,11 +502,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété xref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setXref(String value) {
         this.xref = value;
@@ -514,25 +514,25 @@ public class Mstack {
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the clazz property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getClazz().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public java.util.List<String> getClazz() {
         if (clazz == null) {
@@ -543,11 +543,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété style.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -555,11 +555,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété style.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(String value) {
         this.style = value;
@@ -567,11 +567,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété href.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -579,11 +579,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété href.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -591,11 +591,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété other.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOther() {
         return other;
@@ -603,11 +603,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété other.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOther(String value) {
         this.other = value;
@@ -615,11 +615,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété mathcolor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathcolor() {
         return mathcolor;
@@ -627,11 +627,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété mathcolor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathcolor(String value) {
         this.mathcolor = value;
@@ -639,11 +639,11 @@ public class Mstack {
 
     /**
      * Obtient la valeur de la propriété mathbackground.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMathbackground() {
         return mathbackground;
@@ -651,11 +651,11 @@ public class Mstack {
 
     /**
      * Définit la valeur de la propriété mathbackground.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMathbackground(String value) {
         this.mathbackground = value;
@@ -663,15 +663,15 @@ public class Mstack {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

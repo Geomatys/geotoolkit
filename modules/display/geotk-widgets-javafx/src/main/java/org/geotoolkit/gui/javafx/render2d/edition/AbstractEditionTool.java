@@ -56,7 +56,7 @@ public abstract class AbstractEditionTool extends AbstractNavigationHandler impl
             final Line v = new Line(c.x, c.y-CROSS_SIZE, c.x, c.y+CROSS_SIZE);
             h.setStroke(Color.RED);
             v.setStroke(Color.RED);
-            
+
             if(selected){
                 h.setStrokeWidth(3);
                 v.setStrokeWidth(3);

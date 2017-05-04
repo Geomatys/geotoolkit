@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.FeatureTypeList;
 
 /**
  * <p>Java class for FeatureTypeListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureTypeListType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wfs.xml.FeatureTypeList;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureTypeListType", propOrder = {
@@ -68,14 +68,14 @@ public class FeatureTypeListType implements FeatureTypeList {
         this.featureType = featureType;
         this.operations  = operations;
     }
-    
+
     /**
      * Gets the value of the operations property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public OperationsType getOperations() {
         return operations;
@@ -83,11 +83,11 @@ public class FeatureTypeListType implements FeatureTypeList {
 
     /**
      * Sets the value of the operations property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OperationsType }
-     *     
+     *
      */
     public void setOperations(OperationsType value) {
         this.operations = value;
@@ -95,7 +95,7 @@ public class FeatureTypeListType implements FeatureTypeList {
 
     /**
      * Gets the value of the featureType property.
-     * 
+     *
      */
     @Override
     public List<FeatureTypeType> getFeatureType() {
@@ -104,7 +104,7 @@ public class FeatureTypeListType implements FeatureTypeList {
         }
         return this.featureType;
     }
-    
+
     @Override
     public void addFeatureType(final FeatureType ft) {
         if (ft instanceof FeatureTypeType) {
@@ -113,7 +113,7 @@ public class FeatureTypeListType implements FeatureTypeList {
             throw new IllegalArgumentException("unexpected version of the featureType object");
         }
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

@@ -30,7 +30,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -123,7 +123,7 @@ public class Capability implements AbstractCapability {
     public Layer getLayer() {
         return layer;
     }
-    
+
      /**
      * Gets the value of the layer property.
      */
@@ -139,7 +139,7 @@ public class Capability implements AbstractCapability {
     public VendorSpecificCapabilities getVendorSpecificCapabilities() {
         return vendorSpecificCapabilities;
     }
-    
+
     public void setVendorSpecificCapabilities(VendorSpecificCapabilities vc) {
         this.vendorSpecificCapabilities = vc;
     }
@@ -147,7 +147,7 @@ public class Capability implements AbstractCapability {
     public UserDefinedSymbolization getUserDefinedSymbolization() {
         return userDefinedSymbolization;
     }
-    
+
     /**
      * Verifie si cette entree est identique a l'objet specifie.
      */

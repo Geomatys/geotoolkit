@@ -32,15 +32,15 @@ import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 
 /**
  * Panoramic handler
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXPanHandler extends AbstractNavigationHandler {
 
     //we could use this cursor, but java do not handle translucent cursor correctly on every platform
     private static final Cursor CUR_ZOOM_PAN = Cursor.MOVE;
-    private final FXPanMouseListen mouseInputListener = new FXPanMouseListen(this);    
-    
+    private final FXPanMouseListen mouseInputListener = new FXPanMouseListen(this);
+
     public FXPanHandler(boolean infoOnRightClick) {
         super();
     }
@@ -66,8 +66,8 @@ public class FXPanHandler extends AbstractNavigationHandler {
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
 //        map.setCursor(null);
         return true;
-    }    
-    
+    }
+
     private static class InformationVisitor implements GraphicVisitor {
 
         private final List<org.opengis.display.primitive.Graphic> graphics = new ArrayList<>();
@@ -94,6 +94,6 @@ public class FXPanHandler extends AbstractNavigationHandler {
             this.area = (SearchAreaJ2D) area;
         }
     }
-    
-    
+
+
 }

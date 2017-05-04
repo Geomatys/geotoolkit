@@ -30,9 +30,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for ActionResultsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ActionResultsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ActionResultsType", propOrder = {
@@ -57,16 +57,16 @@ public class ActionResultsType {
     private List<CreatedOrModifiedFeatureType> feature;
 
     public ActionResultsType() {
-        
+
     }
-    
+
     public ActionResultsType(final List<CreatedOrModifiedFeatureType> feature) {
         this.feature = feature;
     }
-    
+
     /**
      * Gets the value of the feature property.
-     * 
+     *
      */
     public List<CreatedOrModifiedFeatureType> getFeature() {
         if (feature == null) {
@@ -74,7 +74,7 @@ public class ActionResultsType {
         }
         return this.feature;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[ActionResultsType]\n");

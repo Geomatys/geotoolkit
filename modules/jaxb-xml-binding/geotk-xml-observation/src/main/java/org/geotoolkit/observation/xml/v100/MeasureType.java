@@ -44,20 +44,20 @@ import org.opengis.observation.Measure;
 @XmlType(name = "MeasureType")
 @XmlRootElement(name = "Measure")
 public class MeasureType implements Measure {
-    
+
     /**
      * L'unite de la mesure
      */
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
     private String uom;
-    
+
     /**
      * La valeur de la mesure
      */
     @XmlValue
     private float value;
-    
+
     private static final Map<String, String> idMap = new HashMap<>();
     static {
         idMap.put("°C", "degrees");
@@ -67,8 +67,8 @@ public class MeasureType implements Measure {
      * constructeur vide utilisé par jaxB
      */
     protected MeasureType(){}
-    
-    /** 
+
+    /**
      * crée un nouveau resultat de mesure.
      *
      * @param uom   L'unité de mesure.
@@ -80,12 +80,12 @@ public class MeasureType implements Measure {
         if (uom != null) {
             this.uom   = uom.getUnitsSystem();
         }
-        this.value = value;        
+        this.value = value;
     }
-    
+
     public MeasureType(final String uom, final float value) {
         this.uom = uom;
-        this.value = value;        
+        this.value = value;
     }
 
     /**
@@ -109,11 +109,11 @@ public class MeasureType implements Measure {
     public float getValue() {
         return value;
     }
-    
+
     public void setValue(final float value) {
         this.value = value;
     }
-    
+
      /**
      * Retourne un code représentant ce resultat de mesure.
      */
@@ -133,7 +133,7 @@ public class MeasureType implements Measure {
         if (object == this) {
             return true;
         }
-        
+
         if (object instanceof MeasureType) {
             final MeasureType that = (MeasureType) object;
             return Objects.equals(this.uom,   that.uom) &&
@@ -142,7 +142,7 @@ public class MeasureType implements Measure {
         return false;
     }
 
-    
+
     /**
      * Retourne une description de l'objet (debug).
      */
@@ -152,10 +152,10 @@ public class MeasureType implements Measure {
         if (uom != null) {
             s.append("uom =").append(uom).append('\n');
         }
-        
+
         s.append(" value=").append(value).append('\n');
-        
+
         return  s.toString();
     }
-    
+
 }

@@ -31,14 +31,14 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Cell Editor for Color objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ColorCellRenderer extends JComponent implements TableCellRenderer {
-    
+
     private Color[] colors = null;
-    
+
     public ColorCellRenderer() {
         setOpaque(true);
     }
@@ -47,7 +47,7 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
     protected void paintComponent(Graphics g) {
         final Graphics2D g2d = (Graphics2D) g;
         paintComp(g2d, this, colors);
-        
+
     }
 
     @Override
@@ -59,13 +59,13 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
         }
         return this;
     }
-    
+
     public static void paintComp(Graphics2D g2d, JComponent comp, Color[] colors){
         final Dimension dim = comp.getSize();
         final int SQR_SIZE = dim.height/2;
-        
+
         final Color LIGHT_GRAY = new Color(0.8f, 0.8f, 0.8f);
-        
+
         final Shape oldClip = g2d.getClip();
         g2d.setClip(0,0,dim.width,dim.height);
         g2d.setColor(Color.WHITE);
@@ -76,10 +76,10 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
         for(int y=0;y<dim.height;y+=SQR_SIZE){
             for(int x=swap?0:SQR_SIZE; x<dim.width; x+=SQR_SIZE*2){
                 g2d.fillRect(x, y,SQR_SIZE, SQR_SIZE);
-            }            
+            }
             swap = !swap;
         }
-        
+
         //paint color above
         if(colors.length==1){
             g2d.setColor(colors[0]);
@@ -89,18 +89,18 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
             for (int i=0; i<colors.length; i++) {
                 fractions[i] = (float) i / (colors.length - 1);
             }
-        
+
             g2d.setPaint(new LinearGradientPaint(
-                    new Point(0,0), 
-                    new Point(0,(int)dim.getHeight()), 
-                    fractions, 
+                    new Point(0,0),
+                    new Point(0,(int)dim.getHeight()),
+                    fractions,
                     colors
                 ));
         }
         g2d.fillRect(0, 0, dim.width, dim.height);
-        
+
         g2d.setClip(oldClip);
     }
-    
-    
+
+
 }

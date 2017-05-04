@@ -22,7 +22,7 @@ import java.awt.geom.PathIterator;
 
 /**
  * Simple abstract path iterator for JTS Geometry.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  * @since 2.9

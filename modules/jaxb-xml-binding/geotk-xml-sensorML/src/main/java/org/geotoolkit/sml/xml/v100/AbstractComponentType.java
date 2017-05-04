@@ -30,11 +30,11 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * Complex Type for all generic components (soft typed inputs/outputs/parameters)
- * 
+ *
  * <p>Java class for AbstractComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractComponentType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +79,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
             }
         }
     }
-    
+
     /**
      * @return the inputs
      */

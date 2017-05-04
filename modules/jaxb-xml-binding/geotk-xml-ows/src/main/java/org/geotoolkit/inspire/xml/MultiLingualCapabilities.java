@@ -46,7 +46,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
             this.multiLingualCapabilities = new InspireCapabilitiesType(that.multiLingualCapabilities);
         }
     }
-    
+
     public MultiLingualCapabilities(final InspireCapabilitiesType multiLingualCapabilities) {
         this.multiLingualCapabilities = multiLingualCapabilities;
     }
@@ -87,7 +87,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
         return hash;
     }
 
-    
+
 
     @Override
     public String toString() {

@@ -30,7 +30,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool to create polygon holes.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -38,7 +38,7 @@ public class PolygonHoleCreationTool extends AbstractEditionTool {
 
     public PolygonHoleCreationTool() {
         super(1270,"polygonHoleCreation", MessageBundle.formatInternational(MessageBundle.Keys.createHole),
-             new SimpleInternationalString("Tool to create holes in a Polygon."), 
+             new SimpleInternationalString("Tool to create holes in a Polygon."),
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 

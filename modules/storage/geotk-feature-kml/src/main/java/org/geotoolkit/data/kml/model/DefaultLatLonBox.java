@@ -31,14 +31,14 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
     private double rotation;
 
     /**
-     * 
+     *
      */
     public DefaultLatLonBox() {
         this.rotation = DEF_ROTATION;
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north

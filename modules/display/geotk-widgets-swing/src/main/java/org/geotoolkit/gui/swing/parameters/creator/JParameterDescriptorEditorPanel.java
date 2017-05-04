@@ -48,34 +48,34 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
     // Last value for class
     private Class oldType = null;
     private boolean editable = true;
-    
+
     public JParameterDescriptorEditorPanel(final List<PropertyValueEditor> availableEditors) {
         initComponents();
-        
+
         guiGroupRemarkTA.setLineWrap(true);
         guiRemarkTA.setLineWrap(true);
-        
+
         guiTypeCB.setModel(new ListComboBoxModel(ChainDataTypes.VALID_TYPES));
         guiTypeCB.setSelectedItem(String.class);
         guiTypeCB.setRenderer(new JClassCellRenderer());
-        
+
         //if avaibleEditors is defined and not empty, use them.
         if (availableEditors != null && !availableEditors.isEmpty()) {
             defaultValueEditor.getEditors().clear();
             defaultValueEditor.getEditors().addAll(availableEditors);
         }
-        
+
         guiMinOccursSp.setModel(new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1));
         guiMaxOccursSp.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
-        
+
         setEditableParameter(editable);
         addListeners();
     }
 
     /**
      * Enable/disable fields.
-     * 
-     * @param editable 
+     *
+     * @param editable
      */
     private final void setEditableParameter(boolean editable) {
         this.editable = editable;
@@ -89,7 +89,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         guiMaxOccursSp.setEnabled(editable);
         guiMinOccursSp.setEnabled(editable);
     }
-    
+
     /**
      * Remove change listeners from all fields
      */
@@ -98,13 +98,13 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         guiRemarkTA.getDocument().removeDocumentListener(this);
         guiMandatory.removeChangeListener(this);
         defaultValueEditor.removePropertyChangeListener(this);
-        
+
         guiGroupCodeTF.getDocument().removeDocumentListener(this);
         guiGroupRemarkTA.getDocument().removeDocumentListener(this);
         guiMaxOccursSp.removeChangeListener(this);
         guiMinOccursSp.removeChangeListener(this);
     }
-    
+
     /**
      * Add change listeners to all fields
      */
@@ -124,7 +124,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         guiMaxOccursSp.addChangeListener(this);
         guiMinOccursSp.addChangeListener(this);
     }
-    
+
     public void editParameter(final GeneralParameterDescriptorPanel parameterPanel, boolean editable) {
         this.parameterPanel = parameterPanel;
         this.type = (parameterPanel instanceof JParameterDescriptorGroupPanel) ? ParameterType.GROUP : ParameterType.SIMPLE;
@@ -133,9 +133,9 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         setEditableParameter(editable);
         addListeners();
     }
-    
+
     private void updateCreatorForm() {
-        
+
         contentPanel.removeAll();
 
         if (type.equals(ParameterType.SIMPLE)) {
@@ -162,7 +162,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         }
         revalidate();
         repaint();
-        
+
     }
 
     /**
@@ -421,10 +421,10 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
     public void changedUpdate(DocumentEvent e) {
         textFieldValueChange(e);
     }
-    
+
     /**
      * Event attached to code/remarks TextField and TextArea.
-     * @param event 
+     * @param event
      */
     private void textFieldValueChange(DocumentEvent event) {
         final String eventSource = (String)event.getDocument().getProperty("source");
@@ -440,7 +440,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
             } else if ("guiRemarkTA".equals(eventSource)) {
                 parameterPanel.setRemarks(guiRemarkTA.getText().trim());
             } else if ("guiGroupCodeTF".equals(eventSource)) {
-                
+
                 if (parameterPanel.getParentPanel() != null) {
                     //validate parameter code
                     if (parameterPanel.getParentPanel().isValidCode(guiGroupCodeTF.getText().trim(), parameterPanel)) {
@@ -455,7 +455,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
                 }
             } else if ("guiGroupRemarkTA".equals(eventSource)) {
                 parameterPanel.setRemarks(guiGroupRemarkTA.getText().trim());
-            } 
+            }
 
             parameterPanel.updateContent();
             firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, parameterPanel);
@@ -464,11 +464,11 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
 
     /**
      * Event attached to mandatory checkbox, min/max occurs spinners.
-     * @param e 
+     * @param e
      */
     @Override
     public void stateChanged(ChangeEvent e) {
-        
+
         if (editable) {
             if (type.equals(ParameterType.SIMPLE)) {
                 if (e.getSource().equals(guiMandatory)) {
@@ -478,15 +478,15 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
                 final JParameterDescriptorGroupPanel group = (JParameterDescriptorGroupPanel)parameterPanel;
                 if (e.getSource().equals(guiMaxOccursSp)) {
                     group.setMaxOccurs((Integer)guiMaxOccursSp.getValue());
-                    
+
                     //maximum can't be lower than minimum occurences.
                     if (group.getMinOccurs() > group.getMaxOccurs()) {
                         guiMaxOccursSp.setValue(group.getMinOccurs());
                     }
-                    
+
                 } else if (e.getSource().equals(guiMinOccursSp)) {
                     group.setMinOccurs((Integer)guiMinOccursSp.getValue());
-                    
+
                     //maximum can't be lower than minimum occurences.
                     if (group.getMinOccurs() > group.getMaxOccurs()) {
                         guiMaxOccursSp.setValue(group.getMinOccurs());
@@ -501,7 +501,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
         if (editable) {
             //devault value editor changed
             if (JAttributeEditor.VALUE_CHANGE_EVENT.equals(evt.getPropertyName())) {
@@ -512,5 +512,5 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
             firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, parameterPanel);
         }
     }
-    
+
 }

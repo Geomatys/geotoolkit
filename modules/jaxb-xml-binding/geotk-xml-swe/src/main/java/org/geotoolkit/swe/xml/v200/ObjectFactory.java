@@ -25,18 +25,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.swe._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.swe._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -76,14 +76,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.swe._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link QuantityPropertyType }
-     * 
+     *
      */
     public QuantityPropertyType createQuantityPropertyType() {
         return new QuantityPropertyType();
@@ -91,7 +91,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTokensPropertyType }
-     * 
+     *
      */
     public AllowedTokensPropertyType createAllowedTokensPropertyType() {
         return new AllowedTokensPropertyType();
@@ -99,7 +99,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataChoiceType }
-     * 
+     *
      */
     public DataChoiceType createDataChoiceType() {
         return new DataChoiceType();
@@ -107,7 +107,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BooleanPropertyType }
-     * 
+     *
      */
     public BooleanPropertyType createBooleanPropertyType() {
         return new BooleanPropertyType();
@@ -115,7 +115,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimePropertyType }
-     * 
+     *
      */
     public TimePropertyType createTimePropertyType() {
         return new TimePropertyType();
@@ -123,7 +123,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NilValuesPropertyType }
-     * 
+     *
      */
     public NilValuesPropertyType createNilValuesPropertyType() {
         return new NilValuesPropertyType();
@@ -131,7 +131,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Reference }
-     * 
+     *
      */
     public Reference createReference() {
         return new Reference();
@@ -139,7 +139,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CountPropertyType }
-     * 
+     *
      */
     public CountPropertyType createCountPropertyType() {
         return new CountPropertyType();
@@ -147,7 +147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnyRangePropertyType }
-     * 
+     *
      */
     public AnyRangePropertyType createAnyRangePropertyType() {
         return new AnyRangePropertyType();
@@ -155,7 +155,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextPropertyType }
-     * 
+     *
      */
     public TextPropertyType createTextPropertyType() {
         return new TextPropertyType();
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CountType }
-     * 
+     *
      */
     public CountType createCountType() {
         return new CountType();
@@ -171,7 +171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QuantityType }
-     * 
+     *
      */
     public QuantityType createQuantityType() {
         return new QuantityType();
@@ -179,7 +179,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamType.ElementCount }
-     * 
+     *
      */
     public DataStreamType.ElementCount createDataStreamTypeElementCount() {
         return new DataStreamType.ElementCount();
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeRangeType }
-     * 
+     *
      */
     public TimeRangeType createTimeRangeType() {
         return new TimeRangeType();
@@ -195,7 +195,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MatrixType }
-     * 
+     *
      */
     public MatrixType createMatrixType() {
         return new MatrixType();
@@ -203,7 +203,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextEncodingType }
-     * 
+     *
      */
     public TextEncodingType createTextEncodingType() {
         return new TextEncodingType();
@@ -211,7 +211,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedValuesPropertyByValueType }
-     * 
+     *
      */
     public AllowedValuesPropertyByValueType createAllowedValuesPropertyByValueType() {
         return new AllowedValuesPropertyByValueType();
@@ -219,7 +219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataRecordType.Field }
-     * 
+     *
      */
     public Field createDataRecordTypeField() {
         return new Field();
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedValuesPropertyType }
-     * 
+     *
      */
     public AllowedValuesPropertyType createAllowedValuesPropertyType() {
         return new AllowedValuesPropertyType();
@@ -235,7 +235,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CategoryRangePropertyType }
-     * 
+     *
      */
     public CategoryRangePropertyType createCategoryRangePropertyType() {
         return new CategoryRangePropertyType();
@@ -243,7 +243,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextEncodingPropertyType }
-     * 
+     *
      */
     public TextEncodingPropertyType createTextEncodingPropertyType() {
         return new TextEncodingPropertyType();
@@ -251,7 +251,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataArrayType.ElementType }
-     * 
+     *
      */
     public DataArrayType.ElementType createDataArrayTypeElementType() {
         return new DataArrayType.ElementType();
@@ -259,7 +259,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CountRangePropertyType }
-     * 
+     *
      */
     public CountRangePropertyType createCountRangePropertyType() {
         return new CountRangePropertyType();
@@ -267,7 +267,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QualityPropertyType }
-     * 
+     *
      */
     public QualityPropertyType createQualityPropertyType() {
         return new QualityPropertyType();
@@ -275,7 +275,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QuantityRangeType }
-     * 
+     *
      */
     public QuantityRangeType createQuantityRangeType() {
         return new QuantityRangeType();
@@ -283,7 +283,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamType.Encoding }
-     * 
+     *
      */
     public DataStreamType.Encoding createDataStreamTypeEncoding() {
         return new DataStreamType.Encoding();
@@ -291,7 +291,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeRangePropertyType }
-     * 
+     *
      */
     public TimeRangePropertyType createTimeRangePropertyType() {
         return new TimeRangePropertyType();
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryEncodingType.Member }
-     * 
+     *
      */
     public BinaryEncodingType.Member createBinaryEncodingTypeMember() {
         return new BinaryEncodingType.Member();
@@ -307,7 +307,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataChoiceType.Item }
-     * 
+     *
      */
     public DataChoiceType.Item createDataChoiceTypeItem() {
         return new DataChoiceType.Item();
@@ -315,7 +315,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EncodedValuesPropertyType }
-     * 
+     *
      */
     public EncodedValuesPropertyType createEncodedValuesPropertyType() {
         return new EncodedValuesPropertyType();
@@ -323,7 +323,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataChoicePropertyByValueType }
-     * 
+     *
      */
     public DataChoicePropertyByValueType createDataChoicePropertyByValueType() {
         return new DataChoicePropertyByValueType();
@@ -331,7 +331,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryEncodingPropertyType }
-     * 
+     *
      */
     public BinaryEncodingPropertyType createBinaryEncodingPropertyType() {
         return new BinaryEncodingPropertyType();
@@ -339,7 +339,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSimpleComponentPropertyType }
-     * 
+     *
      */
     public AbstractSimpleComponentPropertyType createAbstractSimpleComponentPropertyType() {
         return new AbstractSimpleComponentPropertyType();
@@ -347,7 +347,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTokensType }
-     * 
+     *
      */
     public AllowedTokensType createAllowedTokensType() {
         return new AllowedTokensType();
@@ -355,7 +355,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CountRangeType }
-     * 
+     *
      */
     public CountRangeType createCountRangeType() {
         return new CountRangeType();
@@ -363,7 +363,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentType }
-     * 
+     *
      */
     public ComponentType createComponentType() {
         return new ComponentType();
@@ -371,7 +371,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedValuesType }
-     * 
+     *
      */
     public AllowedValuesType createAllowedValuesType() {
         return new AllowedValuesType();
@@ -379,7 +379,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataArrayPropertyType }
-     * 
+     *
      */
     public DataArrayPropertyType createDataArrayPropertyType() {
         return new DataArrayPropertyType();
@@ -387,7 +387,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VectorPropertyByValueType }
-     * 
+     *
      */
     public VectorPropertyByValueType createVectorPropertyByValueType() {
         return new VectorPropertyByValueType();
@@ -395,7 +395,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BooleanType }
-     * 
+     *
      */
     public BooleanType createBooleanType() {
         return new BooleanType();
@@ -403,7 +403,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QuantityRangePropertyType }
-     * 
+     *
      */
     public QuantityRangePropertyType createQuantityRangePropertyType() {
         return new QuantityRangePropertyType();
@@ -411,7 +411,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataArrayType.Encoding }
-     * 
+     *
      */
     public DataArrayType.Encoding createDataArrayTypeEncoding() {
         return new DataArrayType.Encoding();
@@ -419,7 +419,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CategoryRangeType }
-     * 
+     *
      */
     public CategoryRangeType createCategoryRangeType() {
         return new CategoryRangeType();
@@ -427,7 +427,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentOrBlockPropertyType }
-     * 
+     *
      */
     public ComponentOrBlockPropertyType createComponentOrBlockPropertyType() {
         return new ComponentOrBlockPropertyType();
@@ -435,7 +435,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XMLEncodingType }
-     * 
+     *
      */
     public XMLEncodingType createXMLEncodingType() {
         return new XMLEncodingType();
@@ -443,7 +443,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractDataComponentPropertyType }
-     * 
+     *
      */
     public AbstractDataComponentPropertyType createAbstractDataComponentPropertyType() {
         return new AbstractDataComponentPropertyType();
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataArrayPropertyByValueType }
-     * 
+     *
      */
     public DataArrayPropertyByValueType createDataArrayPropertyByValueType() {
         return new DataArrayPropertyByValueType();
@@ -459,7 +459,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VectorPropertyType }
-     * 
+     *
      */
     public VectorPropertyType createVectorPropertyType() {
         return new VectorPropertyType();
@@ -467,7 +467,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnyScalarPropertyType }
-     * 
+     *
      */
     public AnyScalarPropertyType createAnyScalarPropertyType() {
         return new AnyScalarPropertyType();
@@ -475,7 +475,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamPropertyByValueType }
-     * 
+     *
      */
     public DataStreamPropertyByValueType createDataStreamPropertyByValueType() {
         return new DataStreamPropertyByValueType();
@@ -483,7 +483,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CategoryType }
-     * 
+     *
      */
     public CategoryType createCategoryType() {
         return new CategoryType();
@@ -491,7 +491,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataRecordType }
-     * 
+     *
      */
     public DataRecordType createDataRecordType() {
         return new DataRecordType();
@@ -499,7 +499,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTimesPropertyByValueType }
-     * 
+     *
      */
     public AllowedTimesPropertyByValueType createAllowedTimesPropertyByValueType() {
         return new AllowedTimesPropertyByValueType();
@@ -507,7 +507,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BlockType }
-     * 
+     *
      */
     public BlockType createBlockType() {
         return new BlockType();
@@ -515,7 +515,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractEncodingPropertyType }
-     * 
+     *
      */
     public AbstractEncodingPropertyType createAbstractEncodingPropertyType() {
         return new AbstractEncodingPropertyType();
@@ -523,7 +523,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTimesType }
-     * 
+     *
      */
     public AllowedTimesType createAllowedTimesType() {
         return new AllowedTimesType();
@@ -531,7 +531,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentPropertyByValueType }
-     * 
+     *
      */
     public ComponentPropertyByValueType createComponentPropertyByValueType() {
         return new ComponentPropertyByValueType();
@@ -539,7 +539,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnitReference }
-     * 
+     *
      */
     public UnitReference createUnitReference() {
         return new UnitReference();
@@ -547,7 +547,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NilValue }
-     * 
+     *
      */
     public NilValue createNilValue() {
         return new NilValue();
@@ -555,7 +555,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MatrixPropertyType }
-     * 
+     *
      */
     public MatrixPropertyType createMatrixPropertyType() {
         return new MatrixPropertyType();
@@ -563,7 +563,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSWEIdentifiableType }
-     * 
+     *
      */
     public AbstractSWEIdentifiableType createAbstractSWEIdentifiableType() {
         return new AbstractSWEIdentifiableType();
@@ -571,7 +571,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VectorType.Coordinate }
-     * 
+     *
      */
     public VectorType.Coordinate createVectorTypeCoordinate() {
         return new VectorType.Coordinate();
@@ -579,7 +579,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryEncodingType }
-     * 
+     *
      */
     public BinaryEncodingType createBinaryEncodingType() {
         return new BinaryEncodingType();
@@ -587,7 +587,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTimesPropertyType }
-     * 
+     *
      */
     public AllowedTimesPropertyType createAllowedTimesPropertyType() {
         return new AllowedTimesPropertyType();
@@ -595,7 +595,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedTokensPropertyByValueType }
-     * 
+     *
      */
     public AllowedTokensPropertyByValueType createAllowedTokensPropertyByValueType() {
         return new AllowedTokensPropertyByValueType();
@@ -603,7 +603,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BlockPropertyType }
-     * 
+     *
      */
     public BlockPropertyType createBlockPropertyType() {
         return new BlockPropertyType();
@@ -611,7 +611,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataRecordPropertyType }
-     * 
+     *
      */
     public DataRecordPropertyType createDataRecordPropertyType() {
         return new DataRecordPropertyType();
@@ -619,7 +619,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamType }
-     * 
+     *
      */
     public DataStreamType createDataStreamType() {
         return new DataStreamType();
@@ -627,7 +627,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TimeType }
-     * 
+     *
      */
     public TimeType createTimeType() {
         return new TimeType();
@@ -635,7 +635,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataArrayType }
-     * 
+     *
      */
     public DataArrayType createDataArrayType() {
         return new DataArrayType();
@@ -643,7 +643,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MatrixPropertyByValueType }
-     * 
+     *
      */
     public MatrixPropertyByValueType createMatrixPropertyByValueType() {
         return new MatrixPropertyByValueType();
@@ -651,7 +651,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CategoryPropertyType }
-     * 
+     *
      */
     public CategoryPropertyType createCategoryPropertyType() {
         return new CategoryPropertyType();
@@ -659,7 +659,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComponentPropertyType }
-     * 
+     *
      */
     public ComponentPropertyType createComponentPropertyType() {
         return new ComponentPropertyType();
@@ -667,7 +667,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XMLEncodingPropertyByValueType }
-     * 
+     *
      */
     public XMLEncodingPropertyByValueType createXMLEncodingPropertyByValueType() {
         return new XMLEncodingPropertyByValueType();
@@ -675,7 +675,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NilValuesType }
-     * 
+     *
      */
     public NilValuesType createNilValuesType() {
         return new NilValuesType();
@@ -683,7 +683,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextType }
-     * 
+     *
      */
     public TextType createTextType() {
         return new TextType();
@@ -691,7 +691,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextEncodingPropertyByValueType }
-     * 
+     *
      */
     public TextEncodingPropertyByValueType createTextEncodingPropertyByValueType() {
         return new TextEncodingPropertyByValueType();
@@ -699,7 +699,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamType.ElementType }
-     * 
+     *
      */
     public DataStreamType.ElementType createDataStreamTypeElementType() {
         return new DataStreamType.ElementType();
@@ -707,7 +707,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AnyNumericalPropertyType }
-     * 
+     *
      */
     public AnyNumericalPropertyType createAnyNumericalPropertyType() {
         return new AnyNumericalPropertyType();
@@ -715,7 +715,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BlockPropertyByValueType }
-     * 
+     *
      */
     public BlockPropertyByValueType createBlockPropertyByValueType() {
         return new BlockPropertyByValueType();
@@ -723,7 +723,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryEncodingPropertyByValueType }
-     * 
+     *
      */
     public BinaryEncodingPropertyByValueType createBinaryEncodingPropertyByValueType() {
         return new BinaryEncodingPropertyByValueType();
@@ -731,7 +731,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AbstractSWEType }
-     * 
+     *
      */
     public AbstractSWEType createAbstractSWEType() {
         return new AbstractSWEType();
@@ -739,7 +739,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataChoiceType.ChoiceValue }
-     * 
+     *
      */
     public DataChoiceType.ChoiceValue createDataChoiceTypeChoiceValue() {
         return new DataChoiceType.ChoiceValue();
@@ -747,7 +747,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link XMLEncodingPropertyType }
-     * 
+     *
      */
     public XMLEncodingPropertyType createXMLEncodingPropertyType() {
         return new XMLEncodingPropertyType();
@@ -755,7 +755,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataRecordPropertyByValueType }
-     * 
+     *
      */
     public DataRecordPropertyByValueType createDataRecordPropertyByValueType() {
         return new DataRecordPropertyByValueType();
@@ -763,7 +763,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataChoicePropertyType }
-     * 
+     *
      */
     public DataChoicePropertyType createDataChoicePropertyType() {
         return new DataChoicePropertyType();
@@ -771,7 +771,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VectorType }
-     * 
+     *
      */
     public VectorType createVectorType() {
         return new VectorType();
@@ -779,7 +779,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataStreamPropertyType }
-     * 
+     *
      */
     public DataStreamPropertyType createDataStreamPropertyType() {
         return new DataStreamPropertyType();
@@ -787,7 +787,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AbstractEncoding", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AbstractEncodingType> createAbstractEncoding(AbstractEncodingType value) {
@@ -796,7 +796,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractDataComponentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AbstractDataComponent", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<AbstractDataComponentType> createAbstractDataComponent(AbstractDataComponentType value) {
@@ -805,7 +805,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "BinaryEncoding", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractEncoding")
     public JAXBElement<BinaryEncodingType> createBinaryEncoding(BinaryEncodingType value) {
@@ -814,7 +814,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSWEIdentifiableType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AbstractSWEIdentifiable", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AbstractSWEIdentifiableType> createAbstractSWEIdentifiable(AbstractSWEIdentifiableType value) {
@@ -823,7 +823,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CountType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Count", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<CountType> createCount(CountType value) {
@@ -832,7 +832,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "CategoryRange", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<CategoryRangeType> createCategoryRange(CategoryRangeType value) {
@@ -841,7 +841,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSWEType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AbstractSWE")
     public JAXBElement<AbstractSWEType> createAbstractSWE(AbstractSWEType value) {
@@ -850,7 +850,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CategoryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Category", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<CategoryType> createCategory(CategoryType value) {
@@ -859,7 +859,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "TextEncoding", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractEncoding")
     public JAXBElement<TextEncodingType> createTextEncoding(TextEncodingType value) {
@@ -868,7 +868,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link VectorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Vector", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractDataComponent")
     public JAXBElement<VectorType> createVector(VectorType value) {
@@ -877,7 +877,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QuantityRangeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "QuantityRange", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<QuantityRangeType> createQuantityRange(QuantityRangeType value) {
@@ -886,7 +886,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link NilValuesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "NilValues", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<NilValuesType> createNilValues(NilValuesType value) {
@@ -895,7 +895,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "DataArray", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractDataComponent")
     public JAXBElement<DataArrayType> createDataArray(DataArrayType value) {
@@ -904,7 +904,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MatrixType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Matrix", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "DataArray")
     public JAXBElement<MatrixType> createMatrix(MatrixType value) {
@@ -913,7 +913,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataStreamType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "DataStream", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWEIdentifiable")
     public JAXBElement<DataStreamType> createDataStream(DataStreamType value) {
@@ -922,7 +922,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AllowedTokensType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AllowedTokens", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AllowedTokensType> createAllowedTokens(AllowedTokensType value) {
@@ -931,7 +931,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CountRangeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "CountRange", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<CountRangeType> createCountRange(CountRangeType value) {
@@ -940,7 +940,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BooleanType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Boolean", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<BooleanType> createBoolean(BooleanType value) {
@@ -949,7 +949,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeRangeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "TimeRange", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<TimeRangeType> createTimeRange(TimeRangeType value) {
@@ -958,7 +958,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Time", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<TimeType> createTime(TimeType value) {
@@ -967,7 +967,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ComponentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Component", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<ComponentType> createComponent(ComponentType value) {
@@ -976,7 +976,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TextType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Text", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<TextType> createText(TextType value) {
@@ -985,7 +985,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QuantityType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Quantity", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSimpleComponent")
     public JAXBElement<QuantityType> createQuantity(QuantityType value) {
@@ -994,7 +994,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BlockType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "Block", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<BlockType> createBlock(BlockType value) {
@@ -1003,7 +1003,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataChoiceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "DataChoice", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractDataComponent")
     public JAXBElement<DataChoiceType> createDataChoice(DataChoiceType value) {
@@ -1012,7 +1012,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AllowedValuesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AllowedValues", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AllowedValuesType> createAllowedValues(AllowedValuesType value) {
@@ -1021,7 +1021,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "DataRecord", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractDataComponent")
     public JAXBElement<DataRecordType> createDataRecord(DataRecordType value) {
@@ -1030,7 +1030,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractSimpleComponentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AbstractSimpleComponent", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractDataComponent")
     public JAXBElement<AbstractSimpleComponentType> createAbstractSimpleComponent(AbstractSimpleComponentType value) {
@@ -1039,7 +1039,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AllowedTimesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "AllowedTimes", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractSWE")
     public JAXBElement<AllowedTimesType> createAllowedTimes(AllowedTimesType value) {
@@ -1048,7 +1048,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "XMLEncoding", substitutionHeadNamespace = "http://www.opengis.net/swe/2.0", substitutionHeadName = "AbstractEncoding")
     public JAXBElement<XMLEncodingType> createXMLEncoding(XMLEncodingType value) {
@@ -1057,7 +1057,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "value", scope = AllowedTimesType.class)
     public JAXBElement<List<String>> createAllowedTimesTypeValue(List<String> value) {
@@ -1066,7 +1066,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "interval", scope = AllowedTimesType.class)
     public JAXBElement<List<String>> createAllowedTimesTypeInterval(List<String> value) {
@@ -1075,7 +1075,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link Double }{@code >}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/2.0", name = "interval", scope = AllowedValuesType.class)
     public JAXBElement<List<Double>> createAllowedValuesTypeInterval(List<Double> value) {

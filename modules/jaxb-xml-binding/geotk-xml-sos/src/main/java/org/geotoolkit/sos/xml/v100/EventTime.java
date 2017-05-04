@@ -97,7 +97,7 @@ public class EventTime {
      public EventTime() {
 
      }
-     
+
      public EventTime(final BinaryTemporalOpType tempOp) {
 
         if (tempOp instanceof TimeOverlapsType) {
@@ -131,7 +131,7 @@ public class EventTime {
         }
 
     }
-     
+
     /**
      * Gets the value of the temporalOps property.
      */
@@ -307,7 +307,7 @@ public class EventTime {
             temporalOps = (TemporalOpsType) filter;
         }
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -355,7 +355,7 @@ public class EventTime {
         hash = 53 * hash + (this.tDuring != null ? this.tDuring.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

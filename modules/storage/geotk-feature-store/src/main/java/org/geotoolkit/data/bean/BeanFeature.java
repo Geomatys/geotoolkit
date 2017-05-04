@@ -57,7 +57,7 @@ public class BeanFeature extends AbstractFeature{
         this.bean = bean;
         this.mapping = mapping;
     }
-    
+
     public Object getBean(){
         return bean;
     }
@@ -86,7 +86,7 @@ public class BeanFeature extends AbstractFeature{
         }else{
             throw new IllegalArgumentException("Property "+string+" can not be set.");
         }
-        
+
     }
 
     public static class Mapping {
@@ -185,7 +185,7 @@ public class BeanFeature extends AbstractFeature{
         public GenericName getName() {
             return getType().getName();
         }
-        
+
         @Override
         public AttributeType getType() {
             return desc;

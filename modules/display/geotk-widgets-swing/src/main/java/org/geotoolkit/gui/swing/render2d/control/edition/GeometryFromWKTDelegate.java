@@ -39,14 +39,14 @@ import org.opengis.feature.Feature;
 
 /**
  * Geometry wkt edition tool delegate.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
 
     private final DialogDecoration dialogDecoration = new DialogDecoration();
-    
+
     private Feature feature = null;
 
 
@@ -59,16 +59,16 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
         decoration.setGeometries(null);
         dialogDecoration.wktPanel.setGeometry(null);
     }
-    
+
     @Override
     public MapDecoration getDecoration() {
         final MapDecoration parentDeco = super.getDecoration();
         return MapDecorationStack.wrap(dialogDecoration,parentDeco);
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
-        if(feature != null){            
+        if(feature != null){
             final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
             dialogDecoration.wktPanel.setGeometry(geom);
@@ -101,13 +101,13 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
         private final JLayeredPane desktop;
         private final JInternalFrame frame;
         private final JWKTPanel wktPanel;
-        
+
         public DialogDecoration() {
             setLayout(new BorderLayout());
-            
+
             wktPanel = new JWKTPanel();
             wktPanel.addPropertyChangeListener(DialogDecoration.this);
-            
+
             frame = new JInternalFrame("WKT");
             frame.setContentPane(wktPanel);
             frame.setResizable(true);
@@ -125,7 +125,7 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
-            
+
             if(JWKTPanel.GEOMETRY_PROPERTY.equals(evt.getPropertyName())){
                 final Geometry geom = dialogDecoration.wktPanel.getGeometry();
                 if(geom == null){
@@ -134,8 +134,8 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
                     decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
                 }
             }
-            
+
         }
-        
+
     }
 }

@@ -68,7 +68,7 @@ public interface AtomLink {
     String getTitle();
 
     /**
-     * 
+     *
      * @return
      */
     String getLength();

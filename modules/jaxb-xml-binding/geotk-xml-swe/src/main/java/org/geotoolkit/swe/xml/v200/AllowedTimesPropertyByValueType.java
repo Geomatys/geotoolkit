@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AllowedTimesPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedTimesPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTimesPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class AllowedTimesPropertyByValueType {
 
     /**
      * Gets the value of the allowedTimes property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTimesType }
-     *     
+     *
      */
     public AllowedTimesType getAllowedTimes() {
         return allowedTimes;
@@ -65,11 +65,11 @@ public class AllowedTimesPropertyByValueType {
 
     /**
      * Sets the value of the allowedTimes property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTimesType }
-     *     
+     *
      */
     public void setAllowedTimes(AllowedTimesType value) {
         this.allowedTimes = value;

@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OperationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OperationPropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OperationPropertyType", propOrder = {
@@ -82,7 +82,7 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the abstractOperation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralTransformationType }{@code >}
@@ -90,7 +90,7 @@ public class OperationPropertyType {
      *     {@link JAXBElement }{@code <}{@link TransformationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ConversionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralConversionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractCoordinateOperationType> getAbstractOperation() {
         return abstractOperation;
@@ -98,7 +98,7 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the abstractOperation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralTransformationType }{@code >}
@@ -106,7 +106,7 @@ public class OperationPropertyType {
      *     {@link JAXBElement }{@code <}{@link TransformationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ConversionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralConversionType }{@code >}
-     *     
+     *
      */
     public void setAbstractOperation(JAXBElement<? extends AbstractCoordinateOperationType> value) {
         this.abstractOperation = ((JAXBElement<? extends AbstractCoordinateOperationType> ) value);
@@ -114,25 +114,25 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -143,11 +143,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -155,11 +155,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -167,11 +167,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -183,11 +183,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -195,11 +195,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -207,11 +207,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -219,11 +219,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -231,11 +231,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -243,11 +243,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -255,11 +255,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -267,11 +267,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -279,11 +279,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -291,11 +291,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -303,11 +303,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -315,11 +315,11 @@ public class OperationPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -327,11 +327,11 @@ public class OperationPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

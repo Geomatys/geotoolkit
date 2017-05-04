@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractDerivableProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDerivableProcessType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the inputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputsPropertyType }
-     *     
+     *
      */
     public InputsPropertyType getInputs() {
         return inputs;
@@ -85,11 +85,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the inputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputsPropertyType }
-     *     
+     *
      */
     public void setInputs(final InputsPropertyType value) {
         this.inputs = value;
@@ -97,11 +97,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the outputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputsPropertyType }
-     *     
+     *
      */
     public OutputsPropertyType getOutputs() {
         return outputs;
@@ -109,11 +109,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the outputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputsPropertyType }
-     *     
+     *
      */
     public void setOutputs(final OutputsPropertyType value) {
         this.outputs = value;
@@ -121,11 +121,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the parameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParametersPropertyType }
-     *     
+     *
      */
     public ParametersPropertyType getParameters() {
         return parameters;
@@ -133,11 +133,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the parameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParametersPropertyType }
-     *     
+     *
      */
     public void setParameters(final ParametersPropertyType value) {
         this.parameters = value;
@@ -145,11 +145,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MethodPropertyType }
-     *     
+     *
      */
     public MethodPropertyType getMethod() {
         return method;
@@ -157,11 +157,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MethodPropertyType }
-     *     
+     *
      */
     public void setMethod(final MethodPropertyType value) {
         this.method = value;
@@ -169,11 +169,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the components property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComponentsPropertyType }
-     *     
+     *
      */
     public ComponentsPropertyType getComponents() {
         return components;
@@ -181,11 +181,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the components property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComponentsPropertyType }
-     *     
+     *
      */
     public void setComponents(final ComponentsPropertyType value) {
         this.components = value;
@@ -193,11 +193,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the dataSources property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataSourcesPropertyType }
-     *     
+     *
      */
     public DataSourcesPropertyType getDataSources() {
         return dataSources;
@@ -205,11 +205,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the dataSources property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataSourcesPropertyType }
-     *     
+     *
      */
     public void setDataSources(final DataSourcesPropertyType value) {
         this.dataSources = value;
@@ -217,11 +217,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Gets the value of the connections property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConnectionsPropertyType }
-     *     
+     *
      */
     public ConnectionsPropertyType getConnections() {
         return connections;
@@ -229,11 +229,11 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
 
     /**
      * Sets the value of the connections property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConnectionsPropertyType }
-     *     
+     *
      */
     public void setConnections(final ConnectionsPropertyType value) {
         this.connections = value;

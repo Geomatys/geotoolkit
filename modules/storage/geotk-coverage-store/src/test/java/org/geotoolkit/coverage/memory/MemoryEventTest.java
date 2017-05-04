@@ -30,5 +30,5 @@ public class MemoryEventTest extends AbstractCoverageStoreEventTest {
     protected CoverageStore createStore() throws Exception {
         return new MPCoverageStore();
     }
-    
+
 }

@@ -27,7 +27,7 @@ public class DefaultPostalRouteNumber implements PostalRouteNumber {
     private final String content;
 
     /**
-     * 
+     *
      * @param grPostal
      * @param content
      */

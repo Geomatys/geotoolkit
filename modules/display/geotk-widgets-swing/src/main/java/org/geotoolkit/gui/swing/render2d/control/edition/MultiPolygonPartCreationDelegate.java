@@ -35,7 +35,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Edition tool to create multi polygon parts.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -59,17 +59,17 @@ public class MultiPolygonPartCreationDelegate extends AbstractFeatureEditionDele
         subGeometries.clear();
         decoration.setGeometries(null);
     }
-    
+
     private void resetCurrentCreation(){
         justCreated = false;
         coords.clear();
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         this.geometry = null;
         this.subGeometries.clear();
-        
+
         if(feature != null){
             this.geometry = (MultiPolygon) helper.toObjectiveCRS(feature);
             if(geometry != null){
@@ -156,5 +156,5 @@ public class MultiPolygonPartCreationDelegate extends AbstractFeatureEditionDele
         }
         super.mouseMoved(e);
     }
-    
+
 }

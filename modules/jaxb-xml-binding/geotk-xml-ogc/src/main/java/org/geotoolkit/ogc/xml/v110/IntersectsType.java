@@ -25,22 +25,22 @@ import org.opengis.filter.spatial.Intersects;
  * @module
  */
 public class IntersectsType extends BinarySpatialOpType implements Intersects {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public IntersectsType() {
-        
+
     }
-    
+
     /**
      * Build a new Intersects Type
      */
     public IntersectsType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
-    
+
+
     /**
      * Build a new Intersects Type
      */
@@ -51,7 +51,7 @@ public class IntersectsType extends BinarySpatialOpType implements Intersects {
     public IntersectsType(final IntersectsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);

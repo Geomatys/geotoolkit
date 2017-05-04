@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AggregateProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AggregateProcessType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AggregateProcessType", propOrder = {
@@ -56,11 +56,11 @@ public class AggregateProcessType
 
     /**
      * Gets the value of the components property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComponentListPropertyType }
-     *     
+     *
      */
     public ComponentListPropertyType getComponents() {
         return components;
@@ -68,11 +68,11 @@ public class AggregateProcessType
 
     /**
      * Sets the value of the components property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComponentListPropertyType }
-     *     
+     *
      */
     public void setComponents(ComponentListPropertyType value) {
         this.components = value;
@@ -80,11 +80,11 @@ public class AggregateProcessType
 
     /**
      * Gets the value of the connections property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConnectionListPropertyType }
-     *     
+     *
      */
     public ConnectionListPropertyType getConnections() {
         return connections;
@@ -92,11 +92,11 @@ public class AggregateProcessType
 
     /**
      * Sets the value of the connections property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConnectionListPropertyType }
-     *     
+     *
      */
     public void setConnections(ConnectionListPropertyType value) {
         this.connections = value;

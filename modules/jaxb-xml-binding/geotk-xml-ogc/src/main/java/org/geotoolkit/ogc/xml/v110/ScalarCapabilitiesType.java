@@ -28,9 +28,9 @@ import org.opengis.filter.capability.ScalarCapabilities;
 
 /**
  * <p>Java class for Scalar_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Scalar_CapabilitiesType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.capability.ScalarCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
      */
     public ScalarCapabilitiesType() {
     }
-    
+
      /**
      *Build a new Scalar Capabilities
      */
@@ -79,7 +79,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
         this.comparisonOperators = (ComparisonOperatorsType) comparison;
         this.arithmeticOperators = (ArithmeticOperatorsType) arithmetic;
     }
-    
+
     /**
      * Gets the value of the logicalOperators property.
      */
@@ -107,7 +107,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
     public boolean hasLogicalOperators() {
         return logicalOperators != null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[ScalarCapabilitiesType]").append("\n");
@@ -134,7 +134,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
 
        if (object instanceof ScalarCapabilitiesType) {
            final ScalarCapabilitiesType that = (ScalarCapabilitiesType) object;
-       
+
             return Objects.equals(this.logicalOperators, that.logicalOperators) &&
                    Objects.equals(this.arithmeticOperators, that.arithmeticOperators) &&
                    Objects.equals(this.comparisonOperators, that.comparisonOperators);

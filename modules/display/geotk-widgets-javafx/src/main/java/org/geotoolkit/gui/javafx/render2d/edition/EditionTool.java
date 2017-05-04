@@ -32,7 +32,7 @@ public interface EditionTool extends FXCanvasHandler {
 
     /**
      * Get original spi.
-     * 
+     *
      * @return Spi
      */
     Spi getSpi();

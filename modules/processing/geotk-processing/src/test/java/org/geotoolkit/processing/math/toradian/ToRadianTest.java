@@ -55,8 +55,8 @@ public class ToRadianTest extends AbstractProcessTest {
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(0.4300, result.doubleValue(), 0.0001);
     }
-    
+
 }

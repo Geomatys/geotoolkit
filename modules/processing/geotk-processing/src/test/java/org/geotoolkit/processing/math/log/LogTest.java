@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public class LogTest extends AbstractProcessTest {
 
-   
+
     public LogTest() {
         super("math:log");
     }
@@ -58,5 +58,5 @@ public class LogTest extends AbstractProcessTest {
 
         assertEquals(2.6837, result.doubleValue(), 0.0001);
     }
-    
+
 }

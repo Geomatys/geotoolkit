@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Abstract FeatureStoreFactory for databases.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -59,7 +59,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             .setRemarks(Bundle.formatInternational(Bundle.Keys.port_remarks))
             .setRequired(true)
             .create(Integer.class, null);
-    
+
     /** parameter for database instance */
     public static final ParameterDescriptor<String> DATABASE = new ParameterBuilder()
             .addName("database")
@@ -67,7 +67,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             .setRemarks(Bundle.formatInternational(Bundle.Keys.database_remarks))
             .setRequired(false)
             .create(String.class, null);
-    
+
     /** parameter for database schema */
     public static final ParameterDescriptor<String> SCHEMA = new ParameterBuilder()
             .addName("schema")
@@ -100,7 +100,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             .setRequired(false)
             .create(DataSource.class, null);
 
-    /** Set to true to have only simple feature types. 
+    /** Set to true to have only simple feature types.
      * relations won't be rebuilded as complexe features.
      * Default is true.
      */
@@ -142,7 +142,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             .setRemarks(Bundle.formatInternational(Bundle.Keys.fetch_size_remarks))
             .setRequired(false)
             .create(Integer.class, 1000);
-    
+
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
     public static final ParameterDescriptor<Integer> MAXWAIT = new ParameterBuilder()
             .addName("Connection timeout")
@@ -150,7 +150,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             .setRemarks(Bundle.formatInternational(Bundle.Keys.timeout_remarks))
             .setRequired(false)
             .create(Integer.class, 20);
-    
+
     /** parameter for table to load **/
     public static final ParameterDescriptor<String> TABLE = new ParameterBuilder()
             .addName("Table Name")
@@ -175,7 +175,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
         final boolean valid = super.canProcess(params);
-        
+
         if(!valid){
             //check if the datasource is set
             try{
@@ -188,29 +188,29 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
                 return false;
             }
         }
-        
+
         return valid;
     }
 
     @Override
     public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        
+
         final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
                 getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
         prepareStore(featureStore, params);
         return featureStore;
     }
-    
+
     /**
      * Configure feature store datasource and dialect.
-     * 
+     *
      * @param featureStore
      * @param params
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     public void prepareStore(DefaultJDBCFeatureStore featureStore, final ParameterValueGroup params) throws DataStoreException{
-        
+
         // datasource
         final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().getCode()).getValue();
         try {
@@ -218,7 +218,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-        
+
         // dialect
         final SQLDialect dialect = createSQLDialect(featureStore);
         featureStore.setDialect(dialect);
@@ -231,14 +231,14 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
     /**
      * Create a JDBC database : this will not create a database but just
      * create the schema if possible.
-     * 
+     *
      * @param params
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
-        
+
         JDBCFeatureStore store = null;
         Connection cnx = null;
         Statement stmt = null;
@@ -285,7 +285,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
     public ConformanceResult availability() {
         final DefaultConformanceResult result = (DefaultConformanceResult)super.availability();
         if(Boolean.FALSE.equals(result.pass())) return result;
-        
+
         try {
             //check jdbc driver
             Class.forName(getDriverClassName());

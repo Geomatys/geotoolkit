@@ -32,9 +32,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for AttributeValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AttributeValueType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class AttributeValueType {
 
    /**
     * Gets the value of the content property.
-    * 
+    *
     */
    public List<Object> getContent() {
       if (content == null) {
@@ -94,7 +94,7 @@ public class AttributeValueType {
 
    /**
     * Gets a map that contains attributes that aren't bound to any typed property on this class.
-    * 
+    *
     */
    public Map<QName, String> getOtherAttributes() {
       return otherAttributes;

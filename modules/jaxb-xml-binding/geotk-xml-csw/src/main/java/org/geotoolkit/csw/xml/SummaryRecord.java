@@ -34,7 +34,7 @@ public interface SummaryRecord extends AbstractRecord {
     public List<? extends AbstractSimpleLiteral> getIdentifier();
 
     String getIdentifierStringValue();
-    
+
     /**
      * Gets the value of the title property.
      * (unmodifiable)
@@ -42,22 +42,22 @@ public interface SummaryRecord extends AbstractRecord {
     public List<? extends AbstractSimpleLiteral> getTitle();
 
     String getTitleStringValue();
-    
+
     /**
      * Gets the value of the type property.
      */
     public AbstractSimpleLiteral getType();
 
     String getTypeStringValue();
-    
+
     /**
      * Gets the value of the subject property.
-     * (unmodifiable) 
+     * (unmodifiable)
      */
     public List<? extends AbstractSimpleLiteral> getSubject();
 
     List<String> getSubjectStringValues();
-    
+
     /**
      * Gets the value of the format property.
      * (unmodifiable)
@@ -77,7 +77,7 @@ public interface SummaryRecord extends AbstractRecord {
     public List<? extends AbstractSimpleLiteral> getModified();
 
     String getModifiedStringValue();
-    
+
     /**
      * Gets the value of the abstract property.
      * (unmodifiable)
@@ -85,7 +85,7 @@ public interface SummaryRecord extends AbstractRecord {
     public List<? extends AbstractSimpleLiteral> getAbstract();
 
     String getAbstractStringValue();
-    
+
     /**
      * Gets the value of the spatial property.
      * (unmodifiable)

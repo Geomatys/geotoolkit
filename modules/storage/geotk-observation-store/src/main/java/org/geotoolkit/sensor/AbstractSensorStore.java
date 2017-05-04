@@ -37,9 +37,9 @@ import org.opengis.parameter.ParameterValueGroup;
 public abstract class AbstractSensorStore extends DataStore implements SensorStore {
 
     protected final ParameterValueGroup config;
-    protected SensorReader reader;    
+    protected SensorReader reader;
     protected SensorWriter writer;
-    
+
     public AbstractSensorStore(ParameterValueGroup source) {
         this.config = source;
     }
@@ -48,7 +48,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
     public ParameterValueGroup getConfiguration() {
         return config;
     }
-    
+
     @Override
     public Map<String, List<String>> getAcceptedSensorMLFormats() {
         if (reader != null) {
@@ -56,7 +56,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return new HashMap<>();
     }
-    
+
     @Override
     public Collection<String> getSensorNames() throws DataStoreException {
         if (reader != null) {
@@ -64,7 +64,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return new ArrayList<>();
     }
-    
+
     @Override
     public int getSensorCount() throws DataStoreException {
         if (reader != null) {
@@ -72,7 +72,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return -1;
     }
-    
+
     @Override
     public AbstractSensorML getSensorML(final String sensorID) throws DataStoreException {
         if (reader != null) {
@@ -80,7 +80,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return null;
     }
-    
+
     @Override
     public boolean deleteSensor(String id) throws DataStoreException {
         if (writer != null) {
@@ -92,12 +92,12 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return false;
     }
-    
+
     @Override
     public String getNewSensorId() throws DataStoreException {
         return writer.getNewSensorId();
     }
-    
+
     @Override
     public boolean writeSensor(String id, Object sensor) throws DataStoreException {
         if (writer != null) {
@@ -105,8 +105,8 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return false;
     }
-    
-    
+
+
     @Override
     public int replaceSensor(String id, Object sensor) throws DataStoreException {
         if (writer != null) {
@@ -114,7 +114,7 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return -1;
     }
-    
+
     @Override
     public String getInfos() {
         final StringBuilder infos = new StringBuilder();
@@ -130,13 +130,13 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
         }
         return infos.toString();
     }
-    
+
     @Override
     public void close() {
         if (reader != null) {reader.destroy();}
         if (writer != null) {writer.destroy();}
     }
-    
+
     protected String marshallSensor(AbstractSensorML sml) throws JAXBException {
         final Marshaller m = SensorMLMarshallerPool.getInstance().acquireMarshaller();
         final StringWriter sw = new StringWriter();

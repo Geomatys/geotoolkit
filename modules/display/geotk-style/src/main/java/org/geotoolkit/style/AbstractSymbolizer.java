@@ -28,23 +28,23 @@ import org.opengis.filter.expression.PropertyName;
 
 /**
  * Abstract implementation of Types symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public abstract class AbstractSymbolizer implements Symbolizer{
-    
+
     protected final Unit uom;
-    
+
     protected final Expression geom;
-    
+
     protected final String name;
-    
+
     protected final Description desc;
-    
+
     /**
      * Create an abstract symbolizer.
-     * 
+     *
      * @param uom : if null will be replaced by default value.
      * @param geom : can be null
      * @param name : can be null
@@ -56,7 +56,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
         this.name = name;
         this.desc = (desc == null) ? StyleConstants.DEFAULT_DESCRIPTION : desc;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -84,7 +84,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
     public Expression getGeometry(){
         return geom;
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Deprecated in GML 3.1.0
- * 
+ *
  * <p>Java class for PriorityLocationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PriorityLocationPropertyType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,11 +53,11 @@ public class PriorityLocationPropertyType
 
     /**
      * Gets the value of the priority property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPriority() {
         return priority;
@@ -65,11 +65,11 @@ public class PriorityLocationPropertyType
 
     /**
      * Sets the value of the priority property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPriority(final String value) {
         this.priority = value;

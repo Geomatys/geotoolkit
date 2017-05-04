@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,8 +49,8 @@ public class UserDefinedSymbolization {
 
     /**
      * Gets the value of the supportSLD property.
-     * 
-     *     
+     *
+     *
      */
     public String getSupportSLD() {
         if (supportSLD == null) {

@@ -55,7 +55,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
             this.csf = csf;
             this.gf = new GeometryFactory(csf);
         }
-        
+
     }
 
     public AbstractGeometryTransformer(final GeometryFactory gf){

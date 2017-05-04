@@ -363,7 +363,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     private Feature readFeature(final FeatureType featureType, final GenericName tagName) throws XMLStreamException {
 
         final Feature feature = featureType.newInstance();
-        
+
         /*
          * We create a map and a collection because we can encounter two cases :
          * - The case featureType defines a property with max occur > 1.
@@ -647,7 +647,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                 }
             }
-            
+
         } else if (propertyType instanceof AttributeType) {
             final String content = reader.getElementText();
             final Class typeBinding = ((AttributeType)propertyType).getValueClass();

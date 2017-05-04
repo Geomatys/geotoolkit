@@ -31,9 +31,9 @@ import org.geotoolkit.ows.xml.v100.IdentificationType;
 
 /**
  * <p>Java class for AbstractResourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractResourceType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.ows.xml.v100.IdentificationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -103,25 +103,25 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the server property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the server property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServer().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ServerType }
-     * 
-     * 
+     *
+     *
      */
     public List<ServerType> getServer() {
         if (server == null) {
@@ -132,11 +132,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the dataURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getDataURL() {
         return dataURL;
@@ -144,11 +144,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the dataURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setDataURL(final URLType value) {
         this.dataURL = value;
@@ -156,11 +156,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the metadataURL property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link URLType }
-     *     
+     *
      */
     public URLType getMetadataURL() {
         return metadataURL;
@@ -168,11 +168,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the metadataURL property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link URLType }
-     *     
+     *
      */
     public void setMetadataURL(final URLType value) {
         this.metadataURL = value;
@@ -180,11 +180,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the minScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinScaleDenominator() {
         return minScaleDenominator;
@@ -192,11 +192,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the minScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
@@ -204,11 +204,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the maxScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxScaleDenominator() {
         return maxScaleDenominator;
@@ -216,11 +216,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the maxScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
@@ -228,11 +228,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the styleList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StyleListType }
-     *     
+     *
      */
     public StyleListType getStyleList() {
         return styleList;
@@ -240,11 +240,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the styleList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StyleListType }
-     *     
+     *
      */
     public void setStyleList(final StyleListType value) {
         this.styleList = value;
@@ -252,11 +252,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -264,11 +264,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -276,11 +276,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -288,11 +288,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -300,11 +300,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGroup() {
         return group;
@@ -312,11 +312,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGroup(final String value) {
         this.group = value;
@@ -324,11 +324,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the hidden property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isHidden() {
         if (hidden == null) {
@@ -340,11 +340,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the hidden property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setHidden(final Boolean value) {
         this.hidden = value;
@@ -352,11 +352,11 @@ public abstract class AbstractResourceType
 
     /**
      * Gets the value of the opacity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getOpacity() {
         if (opacity == null) {
@@ -368,11 +368,11 @@ public abstract class AbstractResourceType
 
     /**
      * Sets the value of the opacity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setOpacity(final BigDecimal value) {
         this.opacity = value;

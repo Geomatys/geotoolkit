@@ -33,7 +33,7 @@ public class FilterDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final FeatureCollection collection = createSampleCollection();
         System.out.println(collection);
 

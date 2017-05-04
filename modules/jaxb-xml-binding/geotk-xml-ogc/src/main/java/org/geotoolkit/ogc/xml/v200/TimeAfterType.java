@@ -39,7 +39,7 @@ public class TimeAfterType extends BinaryTemporalOpType implements After {
     public TimeAfterType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
-    
+
     public TimeAfterType(final TimeAfterType that) {
         super(that);
     }
@@ -48,7 +48,7 @@ public class TimeAfterType extends BinaryTemporalOpType implements After {
     public TemporalOpsType getClone() {
         return new TimeAfterType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

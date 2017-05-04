@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCRSType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -70,25 +70,25 @@ public abstract class AbstractCRSType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the domainOfValidity property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the domainOfValidity property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDomainOfValidity().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DomainOfValidity }
-     * 
-     * 
+     *
+     *
      */
     public List<DomainOfValidity> getDomainOfValidity() {
         if (domainOfValidity == null) {
@@ -99,25 +99,25 @@ public abstract class AbstractCRSType extends IdentifiedObjectType {
 
     /**
      * Gets the value of the scope property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the scope property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getScope().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getScope() {
         if (scope == null) {

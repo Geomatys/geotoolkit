@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAggregatedConceptsMatchingKeyword", propOrder = {
@@ -58,8 +58,8 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     }
 
-    public GetAggregatedConceptsMatchingKeyword(final String keyword, final List<String> csw, final String language, 
-            final String outputFormat, final List<String> ignoreCsw, final List<String> theme, final List<String> thesaurusList, 
+    public GetAggregatedConceptsMatchingKeyword(final String keyword, final List<String> csw, final String language,
+            final String outputFormat, final List<String> ignoreCsw, final List<String> theme, final List<String> thesaurusList,
             final Boolean showDeactivated, final int searchMode) {
         this.keyword         = keyword;
         this.language        = language;
@@ -74,11 +74,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Gets the value of the keyword property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getKeyword() {
         return keyword;
@@ -86,11 +86,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Sets the value of the keyword property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setKeyword(final String value) {
         this.keyword = value;
@@ -98,11 +98,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Gets the value of the thesaurus property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public List<String> getCsw() {
         return csw;
@@ -110,11 +110,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Sets the value of the thesaurus property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCsw(final List<String> value) {
         this.csw = value;
@@ -122,11 +122,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -134,11 +134,11 @@ public class GetAggregatedConceptsMatchingKeyword {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(final String value) {
         this.language = value;

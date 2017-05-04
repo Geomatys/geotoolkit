@@ -30,12 +30,12 @@ import org.geotoolkit.wps.xml.Reference;
 
 
 /**
- * Reference to an input or output value that is a web accessible resource. 
- * 
+ * Reference to an input or output value that is a web accessible resource.
+ *
  * <p>Java class for InputReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InputReferenceType">
  *   &lt;complexContent>
@@ -78,8 +78,8 @@ import org.geotoolkit.wps.xml.Reference;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -111,22 +111,22 @@ public class InputReferenceType implements Reference {
     protected String schema;
 
     public InputReferenceType() {
-        
+
     }
-    
+
     public InputReferenceType(String href, String mimeType, String encoding) {
         this.href = href;
         this.mimeType = mimeType;
         this.encoding = encoding;
     }
-    
+
     /**
      * Gets the value of the header property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InputReferenceType.Header }
-     * 
-     * 
+     *
+     *
      */
     public List<InputReferenceType.Header> getHeader() {
         if (header == null) {
@@ -137,11 +137,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the body property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public Object getBody() {
@@ -153,11 +153,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the body property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setBody(final Object value) {
         if (value != null) {
@@ -169,11 +169,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the bodyReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InputReferenceType.BodyReference }
-     *     
+     *
      */
     public InputReferenceType.BodyReference getBodyReference() {
         return bodyReference;
@@ -181,24 +181,24 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the bodyReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InputReferenceType.BodyReference }
-     *     
+     *
      */
     public void setBodyReference(final InputReferenceType.BodyReference value) {
         this.bodyReference = value;
     }
 
     /**
-     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. 
-     * This attribute shall contain a URL from which this input/output can be electronically retrieved. 
-     * 
+     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output.
+     * This attribute shall contain a URL from which this input/output can be electronically retrieved.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -206,13 +206,13 @@ public class InputReferenceType implements Reference {
     }
 
     /**
-     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output. 
-     * This attribute shall contain a URL from which this input/output can be electronically retrieved. 
-     * 
+     * Reference to a web-accessible resource that can be used as input, or is provided by the process as output.
+     * This attribute shall contain a URL from which this input/output can be electronically retrieved.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(final String value) {
@@ -221,11 +221,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMethod() {
         if (method == null) {
@@ -237,11 +237,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMethod(final String value) {
         this.method = value;
@@ -249,11 +249,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getMimeType() {
@@ -262,11 +262,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setMimeType(final String value) {
@@ -275,11 +275,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getEncoding() {
@@ -288,11 +288,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setEncoding(final String value) {
@@ -301,11 +301,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Gets the value of the schema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSchema() {
@@ -314,11 +314,11 @@ public class InputReferenceType implements Reference {
 
     /**
      * Sets the value of the schema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSchema(final String value) {
@@ -357,7 +357,7 @@ public class InputReferenceType implements Reference {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -397,9 +397,9 @@ public class InputReferenceType implements Reference {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -409,8 +409,8 @@ public class InputReferenceType implements Reference {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -421,13 +421,13 @@ public class InputReferenceType implements Reference {
         protected String href;
 
         /**
-         * Reference to a remote document to be used as the body of the an HTTP POST request message. 
-         * This attribute shall contain a URL from which this input can be electronically retrieved. 
-         * 
+         * Reference to a remote document to be used as the body of the an HTTP POST request message.
+         * This attribute shall contain a URL from which this input can be electronically retrieved.
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -435,17 +435,17 @@ public class InputReferenceType implements Reference {
 
         /**
          * Reference to a remote document to be used as the body of the an HTTP POST request message.
-         * This attribute shall contain a URL from which this input can be electronically retrieved. 
-         * 
+         * This attribute shall contain a URL from which this input can be electronically retrieved.
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -454,7 +454,7 @@ public class InputReferenceType implements Reference {
             }
             return sb.toString();
         }
-    
+
         /**
          * Verify that this entry is identical to the specified object.
          * @param object Object to compare
@@ -479,21 +479,21 @@ public class InputReferenceType implements Reference {
         }
 
     }
-    
+
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Body {
 
         @XmlAnyElement(lax = true)
         private Object content;
-        
+
         public Body() {
-            
+
         }
-        
+
         public Body(Object content) {
             this.content = content;
         }
-        
+
         public Object getContent() {
             return content;
         }
@@ -501,7 +501,7 @@ public class InputReferenceType implements Reference {
         public void setContent(final Object value) {
             this.content = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -510,7 +510,7 @@ public class InputReferenceType implements Reference {
             }
             return sb.toString();
         }
-    
+
         /**
          * Verify that this entry is identical to the specified object.
          * @param object Object to compare
@@ -537,9 +537,9 @@ public class InputReferenceType implements Reference {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -550,8 +550,8 @@ public class InputReferenceType implements Reference {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -564,11 +564,11 @@ public class InputReferenceType implements Reference {
 
         /**
          * Gets the value of the key property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getKey() {
             return key;
@@ -576,11 +576,11 @@ public class InputReferenceType implements Reference {
 
         /**
          * Sets the value of the key property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setKey(final String value) {
             this.key = value;
@@ -588,11 +588,11 @@ public class InputReferenceType implements Reference {
 
         /**
          * Gets the value of the value property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getValue() {
             return value;
@@ -600,16 +600,16 @@ public class InputReferenceType implements Reference {
 
         /**
          * Sets the value of the value property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setValue(final String value) {
             this.value = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -621,7 +621,7 @@ public class InputReferenceType implements Reference {
             }
             return sb.toString();
         }
-    
+
         /**
          * Verify that this entry is identical to the specified object.
          * @param object Object to compare

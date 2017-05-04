@@ -27,9 +27,9 @@ import org.geotoolkit.wfs.xml.ListStoredQueries;
 
 /**
  * <p>Java class for ListStoredQueriesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ListStoredQueriesType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.geotoolkit.wfs.xml.ListStoredQueries;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListStoredQueriesType")
@@ -47,9 +47,9 @@ import org.geotoolkit.wfs.xml.ListStoredQueries;
 public class ListStoredQueriesType extends BaseRequestType implements ListStoredQueries {
 
     public ListStoredQueriesType() {
-        
+
     }
-    
+
     public ListStoredQueriesType(final String service, final String version, final String handle) {
         super(service, version, handle);
     }

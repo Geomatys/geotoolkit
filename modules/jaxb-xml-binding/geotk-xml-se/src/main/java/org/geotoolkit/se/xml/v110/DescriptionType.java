@@ -31,9 +31,9 @@ import org.opengis.util.InternationalString;
 
 /**
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.util.InternationalString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,11 +66,11 @@ public class DescriptionType implements Description {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public InternationalString getTitle() {
@@ -79,11 +79,11 @@ public class DescriptionType implements Description {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = new SimpleInternationalString(value);
@@ -91,11 +91,11 @@ public class DescriptionType implements Description {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public InternationalString getAbstract() {
@@ -104,11 +104,11 @@ public class DescriptionType implements Description {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(final String value) {
         this._abstract = new SimpleInternationalString(value);

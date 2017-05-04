@@ -46,7 +46,7 @@ public class FXCoverageDecoratorPane extends GridPane {
     private static final StringConverter CVT =new StringConverter<Double>() {
         private final DecimalFormat df = new DecimalFormat("#.#########");
 
-        @Override 
+        @Override
         public synchronized String toString(Double value) {
             if (value == null) {
                 return "";
@@ -54,7 +54,7 @@ public class FXCoverageDecoratorPane extends GridPane {
             return df.format(value);
         }
 
-        @Override 
+        @Override
         public synchronized Double fromString(String value) {
             try {
                 if (value == null) {

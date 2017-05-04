@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for MappingRuleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MappingRuleType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MappingRuleType", propOrder = {
@@ -55,11 +55,11 @@ public class MappingRuleType {
 
     /**
      * Gets the value of the ruleDefinition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRuleDefinition() {
         return ruleDefinition;
@@ -67,11 +67,11 @@ public class MappingRuleType {
 
     /**
      * Sets the value of the ruleDefinition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRuleDefinition(String value) {
         this.ruleDefinition = value;
@@ -79,11 +79,11 @@ public class MappingRuleType {
 
     /**
      * Gets the value of the ruleReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getRuleReference() {
         return ruleReference;
@@ -91,11 +91,11 @@ public class MappingRuleType {
 
     /**
      * Sets the value of the ruleReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setRuleReference(ReferenceType value) {
         this.ruleReference = value;

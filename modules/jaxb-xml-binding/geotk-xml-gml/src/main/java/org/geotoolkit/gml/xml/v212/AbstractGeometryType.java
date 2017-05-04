@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *         All geometry elements are derived from this abstract supertype; 
- *         a geometry element may have an identifying attribute (gid). 
+ *
+ *         All geometry elements are derived from this abstract supertype;
+ *         a geometry element may have an identifying attribute (gid).
  *         It may be associated with a spatial reference system.
- *       
- * 
+ *
+ *
  * <p>Java class for AbstractGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometryType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,27 +75,27 @@ public abstract class AbstractGeometryType {
     private String srsName;
 
     public AbstractGeometryType() {
-        
+
     }
-    
+
     public AbstractGeometryType(final String srsName) {
         this.srsName = srsName;
     }
-    
+
     public AbstractGeometryType(final AbstractGeometryType that) {
         if (that != null) {
             this.gid     = that.gid;
             this.srsName = that.srsName;
         }
     }
-    
+
     /**
      * Gets the value of the gid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGid() {
         return gid;
@@ -103,11 +103,11 @@ public abstract class AbstractGeometryType {
 
     /**
      * Sets the value of the gid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGid(final String value) {
         this.gid = value;
@@ -115,11 +115,11 @@ public abstract class AbstractGeometryType {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -127,11 +127,11 @@ public abstract class AbstractGeometryType {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(final String value) {
         this.srsName = value;
@@ -157,6 +157,6 @@ public abstract class AbstractGeometryType {
             throw new IllegalArgumentException("unexpected geometry type:" + this);
         }
     }
-    
+
     public abstract AbstractGeometryType getClone();
 }

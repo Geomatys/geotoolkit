@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class PolygonSymbolizer
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Geometry }
-     *     
+     *
      */
     public Geometry getGeometry() {
         return geometry;
@@ -75,11 +75,11 @@ public class PolygonSymbolizer
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Geometry }
-     *     
+     *
      */
     public void setGeometry(final Geometry value) {
         this.geometry = value;
@@ -87,11 +87,11 @@ public class PolygonSymbolizer
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Fill }
-     *     
+     *
      */
     public Fill getFill() {
         return fill;
@@ -99,11 +99,11 @@ public class PolygonSymbolizer
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Fill }
-     *     
+     *
      */
     public void setFill(final Fill value) {
         this.fill = value;
@@ -111,11 +111,11 @@ public class PolygonSymbolizer
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Stroke }
-     *     
+     *
      */
     public Stroke getStroke() {
         return stroke;
@@ -123,11 +123,11 @@ public class PolygonSymbolizer
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Stroke }
-     *     
+     *
      */
     public void setStroke(final Stroke value) {
         this.stroke = value;

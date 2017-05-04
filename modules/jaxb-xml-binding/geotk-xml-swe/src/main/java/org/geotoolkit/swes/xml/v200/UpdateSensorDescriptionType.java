@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for UpdateSensorDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UpdateSensorDescriptionType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpdateSensorDescriptionType", propOrder = {
@@ -76,11 +76,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcedure() {
         return procedure;
@@ -88,11 +88,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * Sets the value of the procedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedure(String value) {
         this.procedure = value;
@@ -100,11 +100,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * Gets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcedureDescriptionFormat() {
         return procedureDescriptionFormat;
@@ -112,11 +112,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * Sets the value of the procedureDescriptionFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedureDescriptionFormat(String value) {
         this.procedureDescriptionFormat = value;
@@ -124,10 +124,10 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link UpdateSensorDescriptionType.Description }
-     * 
+     *
      */
     public List<UpdateSensorDescriptionType.Description> getDescription() {
         if (description == null) {
@@ -139,9 +139,9 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -153,8 +153,8 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -167,11 +167,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
         /**
          * Gets the value of the sensorDescription property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link SensorDescriptionType }
-         *     
+         *
          */
         public SensorDescriptionType getSensorDescription() {
             return sensorDescription;
@@ -179,11 +179,11 @@ public class UpdateSensorDescriptionType extends ExtensibleRequestType {
 
         /**
          * Sets the value of the sensorDescription property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link SensorDescriptionType }
-         *     
+         *
          */
         public void setSensorDescription(SensorDescriptionType value) {
             this.sensorDescription = value;

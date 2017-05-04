@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GeographicCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeographicCRSType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeographicCRSType", propOrder = {
@@ -60,11 +60,11 @@ public class GeographicCRSType
 
     /**
      * Gets the value of the usesEllipsoidalCS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EllipsoidalCSPropertyType }
-     *     
+     *
      */
     public EllipsoidalCSPropertyType getUsesEllipsoidalCS() {
         return usesEllipsoidalCS;
@@ -72,11 +72,11 @@ public class GeographicCRSType
 
     /**
      * Sets the value of the usesEllipsoidalCS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EllipsoidalCSPropertyType }
-     *     
+     *
      */
     public void setUsesEllipsoidalCS(EllipsoidalCSPropertyType value) {
         this.usesEllipsoidalCS = value;
@@ -84,11 +84,11 @@ public class GeographicCRSType
 
     /**
      * Gets the value of the usesGeodeticDatum property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeodeticDatumPropertyType }
-     *     
+     *
      */
     public GeodeticDatumPropertyType getUsesGeodeticDatum() {
         return usesGeodeticDatum;
@@ -96,11 +96,11 @@ public class GeographicCRSType
 
     /**
      * Sets the value of the usesGeodeticDatum property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeodeticDatumPropertyType }
-     *     
+     *
      */
     public void setUsesGeodeticDatum(GeodeticDatumPropertyType value) {
         this.usesGeodeticDatum = value;

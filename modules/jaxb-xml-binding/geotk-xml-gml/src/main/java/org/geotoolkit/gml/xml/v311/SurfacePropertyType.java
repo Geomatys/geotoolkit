@@ -29,11 +29,11 @@ import org.geotoolkit.gml.xml.SurfaceProperty;
 
 /**
  * A property that has a surface as its value domain can either be an appropriate geometry element encapsulated in an element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). Either the reference or the contained element must be given, but neither both nor none.
- * 
+ *
  * <p>Java class for SurfacePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfacePropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.gml.xml.SurfaceProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -101,10 +101,10 @@ public class SurfacePropertyType implements SurfaceProperty {
             this.abstractSurface = factory.createAbstractSurface((AbstractSurfaceType)surface);
         }
     }
-    
+
     /**
      * Gets the value of the abstractSurface property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
@@ -114,7 +114,7 @@ public class SurfacePropertyType implements SurfaceProperty {
      *     {@link JAXBElement }{@code <}{@link PolyhedralSurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TinType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractSurfaceType> getJbAbstractSurface() {
         return abstractSurface;
@@ -122,7 +122,7 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the abstractSurface property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
@@ -132,7 +132,7 @@ public class SurfacePropertyType implements SurfaceProperty {
      *     {@link JAXBElement }{@code <}{@link PolyhedralSurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TinType }{@code >}
-     *     
+     *
      */
     public void setJbAbstractSurface(final JAXBElement<? extends AbstractSurfaceType> value) {
         this.abstractSurface = ((JAXBElement<? extends AbstractSurfaceType> ) value);
@@ -199,11 +199,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -211,11 +211,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -223,11 +223,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -235,11 +235,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -247,11 +247,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -259,11 +259,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -271,11 +271,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -283,11 +283,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -295,11 +295,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -307,11 +307,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -319,11 +319,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -331,11 +331,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -343,11 +343,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -355,11 +355,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -367,11 +367,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -379,11 +379,11 @@ public class SurfacePropertyType implements SurfaceProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

@@ -32,9 +32,9 @@ import org.opengis.observation.ObservationCollection;
 
 /**
  * <p>Java class for GetObservationResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetObservationResponseType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.opengis.observation.ObservationCollection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetObservationResponseType", propOrder = {
@@ -69,9 +69,9 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
     private List<GetObservationResponseType.ObservationData> observationData;
 
     public GetObservationResponseType() {
-        
+
     }
-    
+
     public GetObservationResponseType(final List<OMObservationType> observations) {
         if (observations != null) {
             this.observationData = new ArrayList<ObservationData>();
@@ -80,13 +80,13 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
             }
         }
     }
-    
+
     /**
      * Gets the value of the observationData property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link GetObservationResponseType.ObservationData }
-     * 
+     *
      */
     public List<GetObservationResponseType.ObservationData> getObservationData() {
         if (observationData == null) {
@@ -102,16 +102,16 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
             for (ObservationData data : observationData) {
                 observations.add(data.omObservation);
             }
-        } 
+        }
         return observations;
     }
 
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -123,8 +123,8 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -136,20 +136,20 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
         private OMObservationType omObservation;
 
         public ObservationData() {
-            
+
         }
-        
+
         public ObservationData(final OMObservationType omObservation) {
             this.omObservation = omObservation;
         }
-        
+
         /**
          * Gets the value of the omObservation property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public OMObservationType getOMObservation() {
             return omObservation;
@@ -157,11 +157,11 @@ public class GetObservationResponseType extends ExtensibleResponseType implement
 
         /**
          * Sets the value of the omObservation property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public void setOMObservation(OMObservationType value) {
             this.omObservation = value;

@@ -23,12 +23,12 @@ import org.geotoolkit.ows.xml.AbstractContact;
 
 
 /**
- * Information required to enable contact with the responsible person and/or organization. 
- * 
+ * Information required to enable contact with the responsible person and/or organization.
+ *
  * <p>Java class for ContactType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.ows.xml.AbstractContact;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,11 +62,11 @@ public class ContactType implements AbstractContact {
      * Empty constructor used by JAXB
      */
      ContactType() {
-         
+
      }
-     
+
      /**
-      * Build a new Contact 
+      * Build a new Contact
       */
      public ContactType(final TelephoneType phone, final AddressType address, final OnlineResourceType onlineResource) {
          this.address        = address;
@@ -80,7 +80,7 @@ public class ContactType implements AbstractContact {
         this.address             = new AddressType(address, city, state, zipCode, country, email);
         this.phone               = new TelephoneType(phone, fax);
     }
-    
+
     /**
      * Gets the value of the phone property.
      */

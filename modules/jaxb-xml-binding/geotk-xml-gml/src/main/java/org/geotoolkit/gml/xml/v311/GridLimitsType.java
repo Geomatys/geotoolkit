@@ -26,9 +26,9 @@ import org.opengis.coverage.grid.GridEnvelope;
 
 /**
  * <p>Java class for GridLimitsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridLimitsType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.opengis.coverage.grid.GridEnvelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,13 +52,13 @@ public class GridLimitsType {
 
     @XmlElement(name = "GridEnvelope", required = true)
     private GridEnvelopeType gridEnvelope;
-    
+
     /**
      * An empty constructor used by JAXB.
      */
     GridLimitsType(){
     }
-    
+
     /**
      * Build a new Grid limits
      */
@@ -69,14 +69,14 @@ public class GridLimitsType {
             this.gridEnvelope = new GridEnvelopeType(gridEnvelope);
         }
     }
-    
+
     /**
      * Build a new Grid limits
      */
     public GridLimitsType(final int[] low, final int[] high){
         this.gridEnvelope = new GridEnvelopeType(low, high);
     }
-    
+
     /**
      * Gets the value of the gridEnvelope property.
      */

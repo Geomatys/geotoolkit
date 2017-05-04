@@ -32,10 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : MFFilterToOGCFilter */
     public static final String NAME = "MFFilterToOGCFilter";
-    
+
     /**
      * Input parameters
      */
@@ -49,10 +49,10 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
             .setRemarks("Expression might be linked to another value.")
             .setRequired(false)
             .create(Expression.class, null);
-  
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(IN_TEXT,IN_REFERENCE);
-    
+
     /**
      * OutputParameters
      */
@@ -61,7 +61,7 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
             .setRemarks("Result OGC filter or expression")
             .setRequired(false)
             .create(Object.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(OUT_OGC);
 
@@ -78,5 +78,5 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
     public Process createProcess(final ParameterValueGroup input) {
         return new MapfileFilterToOGCFilterProcess(input);
     }
-    
+
 }

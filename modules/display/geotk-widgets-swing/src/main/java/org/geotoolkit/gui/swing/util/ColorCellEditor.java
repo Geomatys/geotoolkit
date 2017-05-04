@@ -31,14 +31,14 @@ import static org.geotoolkit.gui.swing.util.ColorCellRenderer.paintComp;
 
 /**
  * Cell Renderer for Color objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ColorCellEditor extends AbstractCellEditor implements TableCellEditor,ActionListener {
 
     private Color[] colors = null;
-    
+
     private final JButton button = new JButton(){
 
         @Override
@@ -46,7 +46,7 @@ public class ColorCellEditor extends AbstractCellEditor implements TableCellEdit
             final Graphics2D g2d = (Graphics2D) g;
             paintComp(g2d, ColorCellEditor.this.button, colors);
         }
-        
+
     };
     private Object value;
 

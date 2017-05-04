@@ -26,12 +26,12 @@ import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
- * WPS operation response base, for all WPS operations except GetCapabilities. 
- * 
+ * WPS operation response base, for all WPS operations except GetCapabilities.
+ *
  * <p>Java class for ResponseBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponseBaseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.wps.xml.WPSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,22 +63,22 @@ public class ResponseBaseType implements WPSResponse {
     protected String lang;
 
     public ResponseBaseType() {
-        
+
     }
-    
+
     public ResponseBaseType(String service, String version, String lang) {
         this.service = service;
         this.version = version;
         this.lang    = lang;
     }
-    
+
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getService() {
         if (service == null) {
@@ -90,11 +90,11 @@ public class ResponseBaseType implements WPSResponse {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -102,11 +102,11 @@ public class ResponseBaseType implements WPSResponse {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
@@ -118,11 +118,11 @@ public class ResponseBaseType implements WPSResponse {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -130,11 +130,11 @@ public class ResponseBaseType implements WPSResponse {
 
     /**
      * RFC 4646 language code of the human-readable text (e.g. "en-CA").
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -142,11 +142,11 @@ public class ResponseBaseType implements WPSResponse {
 
     /**
      * RFC 4646 language code of the human-readable text (e.g. "en-CA").
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(final String value) {
         this.lang = value;
@@ -166,7 +166,7 @@ public class ResponseBaseType implements WPSResponse {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

@@ -26,8 +26,8 @@ import javax.vecmath.MismatchedSizeException;
  *      x1       y1
  *      x2       y2
  *      x3       y2
- *		(...etc...)
- *	</pre></blockquote>
+ *      (...etc...)
+ *  </pre></blockquote>
  *
  * Les données du vecteur des <var>x</var> doivent obligatoirement être en ordre croissant ou
  * décroissant. Celles du vecteur <var>y</var> peuvent être quelconque. Les NaN sont acceptés

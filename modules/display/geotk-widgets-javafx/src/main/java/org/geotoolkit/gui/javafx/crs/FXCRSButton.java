@@ -31,10 +31,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class FXCRSButton extends Button{
 
     private final ObjectProperty<CoordinateReferenceSystem> crsProperty = new SimpleObjectProperty<>();
-    
+
     public FXCRSButton() {
         setText("-");
-        
+
         setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -42,9 +42,9 @@ public class FXCRSButton extends Button{
                 crsProperty.set(crs);
             }
         });
-        
+
         //update button text when needed
-        crsProperty.addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
+        crsProperty.addListener((ObservableValue<? extends CoordinateReferenceSystem> observable,
                 CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
             if(newValue!=null){
                 setText(newValue.getName().toString());
@@ -53,9 +53,9 @@ public class FXCRSButton extends Button{
             }
         });
     }
-    
+
     public ObjectProperty<CoordinateReferenceSystem> crsProperty(){
         return crsProperty;
     }
-    
+
 }

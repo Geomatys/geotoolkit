@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GeodeticDatumType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeodeticDatumType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -59,12 +59,12 @@ public class GeodeticDatumType extends AbstractDatumType {
 
     /**
      * Gets the value of the primeMeridianProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link PrimeMeridianPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PrimeMeridianPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<PrimeMeridianPropertyType> getPrimeMeridianProperty() {
         return primeMeridianProperty;
@@ -72,12 +72,12 @@ public class GeodeticDatumType extends AbstractDatumType {
 
     /**
      * Sets the value of the primeMeridianProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link PrimeMeridianPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PrimeMeridianPropertyType }{@code >}
-     *     
+     *
      */
     public void setPrimeMeridianProperty(JAXBElement<PrimeMeridianPropertyType> value) {
         this.primeMeridianProperty = ((JAXBElement<PrimeMeridianPropertyType> ) value);
@@ -85,12 +85,12 @@ public class GeodeticDatumType extends AbstractDatumType {
 
     /**
      * Gets the value of the ellipsoidProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link EllipsoidPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EllipsoidPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<EllipsoidPropertyType> getEllipsoidProperty() {
         return ellipsoidProperty;
@@ -98,12 +98,12 @@ public class GeodeticDatumType extends AbstractDatumType {
 
     /**
      * Sets the value of the ellipsoidProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link EllipsoidPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EllipsoidPropertyType }{@code >}
-     *     
+     *
      */
     public void setEllipsoidProperty(JAXBElement<EllipsoidPropertyType> value) {
         this.ellipsoidProperty = ((JAXBElement<EllipsoidPropertyType> ) value);

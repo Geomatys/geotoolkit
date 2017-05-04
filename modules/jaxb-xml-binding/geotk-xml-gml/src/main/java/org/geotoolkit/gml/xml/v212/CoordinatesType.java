@@ -24,18 +24,18 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
- *         Coordinates can be included in a single string, but there is no 
- *         facility for validating string content. The value of the 'cs' attribute 
- *         is the separator for coordinate values, and the value of the 'ts' 
- *         attribute gives the tuple separator (a single space by default); the 
+ *
+ *         Coordinates can be included in a single string, but there is no
+ *         facility for validating string content. The value of the 'cs' attribute
+ *         is the separator for coordinate values, and the value of the 'ts'
+ *         attribute gives the tuple separator (a single space by default); the
  *         default values may be changed to reflect local usage.
- *       
- * 
+ *
+ *
  * <p>Java class for CoordinatesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinatesType">
  *   &lt;simpleContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,9 +67,9 @@ public class CoordinatesType {
     private String ts;
 
     public CoordinatesType() {
-        
+
     }
-    
+
     public CoordinatesType(final CoordinatesType that) {
         if (that != null) {
             this.cs      = that.cs;
@@ -78,14 +78,14 @@ public class CoordinatesType {
             this.value   = that.value;
         }
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -93,11 +93,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -105,11 +105,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the decimal property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDecimal() {
         if (decimal == null) {
@@ -121,11 +121,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the decimal property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimal(final String value) {
         this.decimal = value;
@@ -133,11 +133,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the cs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCs() {
         if (cs == null) {
@@ -149,11 +149,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the cs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCs(final String value) {
         this.cs = value;
@@ -161,11 +161,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the ts property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTs() {
         if (ts == null) {
@@ -177,11 +177,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the ts property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTs(final String value) {
         this.ts = value;

@@ -30,9 +30,9 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
 
 /**
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
@@ -56,7 +56,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
     public GetCapabilitiesType() {
         super("WFS");
     }
-    
+
     /**
      * Build a new getCapabilities request with the specified service
      */

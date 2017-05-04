@@ -33,7 +33,7 @@ import org.opengis.util.NameSpace;
  * @author Johann Sorel (Geomatys)
  */
 public class GMLConvention {
-    
+
     public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     public static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
     public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";

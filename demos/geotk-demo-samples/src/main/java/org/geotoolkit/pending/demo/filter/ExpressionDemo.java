@@ -24,7 +24,7 @@ public class ExpressionDemo {
 
     public static void main(String[] args) {
         Demos.init();
-        
+
         final FeatureCollection collection = FilterDemo.createSampleCollection();
 
         testExpression(collection, mathExpression());

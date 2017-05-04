@@ -30,7 +30,7 @@ public class DefaultAtomPersonConstruct implements AtomPersonConstruct {
     private List<Object> params;
 
     /**
-     * 
+     *
      */
     public DefaultAtomPersonConstruct() {
         this.params = EMPTY_LIST;

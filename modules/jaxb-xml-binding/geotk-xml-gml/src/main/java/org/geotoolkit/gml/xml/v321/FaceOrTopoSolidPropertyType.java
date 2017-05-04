@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for FaceOrTopoSolidPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FaceOrTopoSolidPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FaceOrTopoSolidPropertyType", propOrder = {
@@ -88,11 +88,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the face property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FaceType }
-     *     
+     *
      */
     public FaceType getFace() {
         return face;
@@ -100,11 +100,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the face property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FaceType }
-     *     
+     *
      */
     public void setFace(FaceType value) {
         this.face = value;
@@ -112,11 +112,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the topoSolid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TopoSolidType }
-     *     
+     *
      */
     public TopoSolidType getTopoSolid() {
         return topoSolid;
@@ -124,11 +124,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the topoSolid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TopoSolidType }
-     *     
+     *
      */
     public void setTopoSolid(TopoSolidType value) {
         this.topoSolid = value;
@@ -136,11 +136,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -152,11 +152,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;
@@ -164,25 +164,25 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -193,11 +193,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -205,11 +205,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -217,11 +217,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -233,11 +233,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -245,11 +245,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -257,11 +257,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -269,11 +269,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -281,11 +281,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -293,11 +293,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -305,11 +305,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -317,11 +317,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -329,11 +329,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -341,11 +341,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -353,11 +353,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -365,11 +365,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -377,11 +377,11 @@ public class FaceOrTopoSolidPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

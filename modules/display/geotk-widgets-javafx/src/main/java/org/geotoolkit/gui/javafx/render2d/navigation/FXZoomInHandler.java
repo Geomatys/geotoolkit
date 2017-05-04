@@ -27,7 +27,7 @@ import javafx.scene.input.ScrollEvent;
 
 /**
  * Zoom in Handler for GoMap2D.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FXZoomInHandler extends AbstractNavigationHandler {
@@ -39,7 +39,7 @@ public class FXZoomInHandler extends AbstractNavigationHandler {
     public FXZoomInHandler() {
         super();
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -89,7 +89,7 @@ public class FXZoomInHandler extends AbstractNavigationHandler {
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            
+
             startX = getMouseX(e);
             startY = getMouseY(e);
             lastX = 0;
@@ -126,7 +126,7 @@ public class FXZoomInHandler extends AbstractNavigationHandler {
 
             } //right mouse button : pan action
             else if (mousebutton == MouseButton.SECONDARY) {
-                
+
                 if(!isStateFull()){
                     decorationPane.setBuffer(null);
                     decorationPane.setFill(false);
@@ -149,7 +149,7 @@ public class FXZoomInHandler extends AbstractNavigationHandler {
         @Override
         public void mouseMoved(final MouseEvent e){
         }
-        
+
         @Override
         public void mouseDragged(final MouseEvent e) {
             double x = getMouseX(e);
@@ -172,7 +172,7 @@ public class FXZoomInHandler extends AbstractNavigationHandler {
                 if ((lastX > 0) && (lastY > 0)) {
                     double dx = lastX - startX;
                     double dy = lastY - startY;
-                    
+
                     if(isStateFull()){
                         processDrag(lastX, lastY, x, y);
                     }else{

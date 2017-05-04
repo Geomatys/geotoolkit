@@ -19,15 +19,15 @@ package org.geotoolkit.data.osm.model;
 
 /**
  * The different relation members types from the OSM model.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public enum MemberType {
-	BOUND('B',"bound"),
-	NODE('N',"node"),
-	WAY('W',"way"),
-	RELATION('R',"relation");
+    BOUND('B',"bound"),
+    NODE('N',"node"),
+    WAY('W',"way"),
+    RELATION('R',"relation");
 
     final char c;
     final String att;

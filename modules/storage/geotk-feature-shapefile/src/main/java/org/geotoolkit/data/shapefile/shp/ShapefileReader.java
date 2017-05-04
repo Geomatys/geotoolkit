@@ -30,23 +30,23 @@ import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * The general use of this class is: <CODE><PRE>
- * 
+ *
  * FileChannel in = new FileInputStream(&quot;thefile.dbf&quot;).getChannel();
  * ShapefileReader r = new ShapefileReader( in ) while (r.hasNext()) { Geometry
  * shape = (Geometry) r.nextRecord().shape() // do stuff } r.close();
- * 
+ *
  * </PRE></CODE> You don't have to immediately ask for the shape from the record. The
  * record will contain the bounds of the shape and will only read the shape when
  * the shape() method is called. This ShapefileReader.Record is the same object
  * every time, so if you need data from the Record, be sure to copy it.
- * 
+ *
  * @author jamesm
  * @author aaime
  * @author Ian Schneider
  * @module
  */
 public final class ShapefileReader implements Closeable{
-    
+
     /**
      *  Used to mark the current shape is not known, either because someone moved the reader
      *  to a specific byte offset manually, or because the .shx could not be opened
@@ -119,8 +119,8 @@ public final class ShapefileReader implements Closeable{
     private final boolean randomAccessEnabled;
     private final boolean useMemoryMappedBuffer;
 
-    private long currentOffset = 0L;    
-    private int currentShape = 0;    
+    private long currentOffset = 0L;
+    private int currentShape = 0;
     private ShxReader shxReader;
     private ReadableByteChannel channel;
     ByteBuffer buffer;
@@ -140,8 +140,8 @@ public final class ShapefileReader implements Closeable{
      * @throws ShapefileException
      *                 If for some reason the file contains invalid records.
      */
-    public ShapefileReader(final ReadableByteChannel shpChannel, final ReadableByteChannel shxChannel, 
-            final boolean strict,final boolean useMemoryMapped, final boolean read3D, 
+    public ShapefileReader(final ReadableByteChannel shpChannel, final ReadableByteChannel shxChannel,
+            final boolean strict,final boolean useMemoryMapped, final boolean read3D,
             final double[] resample) throws IOException, DataStoreException {
         this.channel = shpChannel;
         this.randomAccessEnabled = channel instanceof FileChannel;
@@ -153,7 +153,7 @@ public final class ShapefileReader implements Closeable{
         }else{
             currentShape = UNKNOWN;
         }
-        
+
         fileShapeType = header.getShapeType();
         handler = fileShapeType.getShapeHandler(read3D,resample);
 
@@ -185,7 +185,7 @@ public final class ShapefileReader implements Closeable{
     }
 
     /**
-     * Disables .shx file usage. By doing so you drop support for sparse shapefiles, the 
+     * Disables .shx file usage. By doing so you drop support for sparse shapefiles, the
      * .shp will have to be without holes, all the valid shapefile records will have to
      * be contiguous.
      * @throws IOException
@@ -201,7 +201,7 @@ public final class ShapefileReader implements Closeable{
     // convenience to peak at a header
     /**
      * A short cut for reading the header from the given channel.
-     * 
+     *
      * @param channel
      *                The channel to read from.
      * @param strict
@@ -266,7 +266,7 @@ public final class ShapefileReader implements Closeable{
 
     /**
      * Get the header. Its parsed in the constructor.
-     * 
+     *
      * @return The header that is associated with this file.
      */
     public ShapefileHeader getHeader() {
@@ -277,7 +277,7 @@ public final class ShapefileReader implements Closeable{
     // Closes channel !
     /**
      * Clean up any resources. Closes the channel.
-     * 
+     *
      * @throws IOException
      *                 If errors occur while closing the channel.
      */
@@ -292,15 +292,15 @@ public final class ShapefileReader implements Closeable{
         shxReader = null;
         channel = null;
     }
-    
+
     @Override
     public boolean isClosed() {
         if(channel != null){
             return !channel.isOpen();
-        }        
+        }
         return true;
     }
-    
+
     public boolean supportsRandomAccess() {
         return randomAccessEnabled;
     }
@@ -310,7 +310,7 @@ public final class ShapefileReader implements Closeable{
      * presence of 8 more bytes, the length of a record. If this is true and the
      * record indicates the next logical record number, there exists more
      * records.
-     * 
+     *
      * @throws IOException
      * @return True if has next record, false otherwise.
      */
@@ -323,7 +323,7 @@ public final class ShapefileReader implements Closeable{
      * presence of 8 more bytes, the length of a record. If this is true and the
      * record indicates the next logical record number (if checkRecord == true),
      * there exists more records.
-     * 
+     *
      * @param checkRecno
      *                If true then record number is checked
      * @throws IOException
@@ -334,7 +334,7 @@ public final class ShapefileReader implements Closeable{
         // represents the current position)
         if(currentShape > UNKNOWN && currentShape > shxReader.getRecordCount() - 1)
             return false;
-        
+
         // mark current position
         final int position = buffer.position();
 
@@ -359,7 +359,7 @@ public final class ShapefileReader implements Closeable{
 
         return hasNext;
     }
-    
+
     private int getNextOffset() throws IOException {
         if(currentShape >= 0) {
             return this.toBufferOffset(shxReader.getOffsetInBytes(currentShape));
@@ -371,12 +371,12 @@ public final class ShapefileReader implements Closeable{
     /**
      * Transfer (by bytes) the data at the current record to the
      * ShapefileWriter.
-     * 
+     *
      * @param bounds double array of length four for transfering the bounds into
      * @return The length of the record transfered in bytes
      */
     public int transferTo(final ShapefileWriter writer, final int recordNum, final double[] bounds) throws IOException {
-        
+
         buffer.position(this.toBufferOffset(record.end));
         buffer.order(ByteOrder.BIG_ENDIAN);
 
@@ -406,10 +406,10 @@ public final class ShapefileReader implements Closeable{
                 buffer.position(0);
             }
         }
-        
+
         final int mark = buffer.position();
-                
-        
+
+
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ShapeType recordType = ShapeType.forID(buffer.getInt());
 
@@ -443,7 +443,7 @@ public final class ShapefileReader implements Closeable{
 
     /**
      * Fetch the next record information.
-     * 
+     *
      * @throws IOException
      * @return The record instance associated with this reader.
      */
@@ -538,7 +538,7 @@ public final class ShapefileReader implements Closeable{
      * <li>once you call this, reading with hasNext/next on sparse shapefiles
      * will be broken (we don't know anymore at which shape we are)</li>
      * </ul>
-     * 
+     *
      * @param offset
      * @throws IOException
      * @throws UnsupportedOperationException
@@ -587,8 +587,8 @@ public final class ShapefileReader implements Closeable{
      * <li>once you call this, reading with hasNext/next on sparse shapefiles
      * will be broken (we don't know anymore at which shape we are)</li>
      * </ul>
-     * 
-     * 
+     *
+     *
      * @param offset
      * @throws IOException
      * @throws UnsupportedOperationException
@@ -611,9 +611,9 @@ public final class ShapefileReader implements Closeable{
      * <li>once you call this, reading with hasNext/next on sparse shapefiles
      * will be broken (we don't know anymore at which shape we are)</li>
      * </ul>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param offset
      *            If using an shx file the offset would be: 2 *
      *            (index.getOffset(i))
@@ -633,7 +633,7 @@ public final class ShapefileReader implements Closeable{
 
     /**
      * Converts file offset to buffer offset
-     * 
+     *
      * @param offset The offset relative to the whole file
      * @return The offset relative to the current loaded portion of the file
      */
@@ -643,7 +643,7 @@ public final class ShapefileReader implements Closeable{
 
     /**
      * Converts buffer offset to file offset
-     * 
+     *
      * @param offset The offset relative to the buffer
      * @return The offset relative to the whole file
      */
@@ -653,7 +653,7 @@ public final class ShapefileReader implements Closeable{
 
     /**
      * Parses the shpfile counting the records.
-     * 
+     *
      * @return the number of non-null records in the shapefile
      */
     public int getCount() throws DataStoreException {
@@ -682,7 +682,7 @@ public final class ShapefileReader implements Closeable{
             // What now? This seems arbitrarily appropriate !
             throw new DataStoreException("Problem reading shapefile record",ioe);
         }
-        
+
         return count;
     }
 

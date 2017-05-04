@@ -27,9 +27,9 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * <p>Java class for MapType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MapType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MapType", propOrder = {
@@ -70,11 +70,11 @@ public class MapType
 
     /**
      * Gets the value of the content property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContentType }
-     *     
+     *
      */
     public ContentType getContent() {
         return content;
@@ -82,11 +82,11 @@ public class MapType
 
     /**
      * Sets the value of the content property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContentType }
-     *     
+     *
      */
     public void setContent(ContentType value) {
         this.content = value;
@@ -94,11 +94,11 @@ public class MapType
 
     /**
      * Gets the value of the bBoxContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBBoxContext() {
         return bBoxContext;
@@ -106,11 +106,11 @@ public class MapType
 
     /**
      * Sets the value of the bBoxContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBBoxContext(EnvelopeType value) {
         this.bBoxContext = value;
@@ -118,11 +118,11 @@ public class MapType
 
     /**
      * Gets the value of the centerContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CenterContextType }
-     *     
+     *
      */
     public CenterContextType getCenterContext() {
         return centerContext;
@@ -130,11 +130,11 @@ public class MapType
 
     /**
      * Sets the value of the centerContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CenterContextType }
-     *     
+     *
      */
     public void setCenterContext(CenterContextType value) {
         this.centerContext = value;

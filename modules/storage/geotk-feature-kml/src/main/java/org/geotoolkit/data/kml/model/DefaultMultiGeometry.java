@@ -42,7 +42,7 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
     protected List<AbstractGeometry> geometries;
 
     /**
-     * 
+     *
      */
     public DefaultMultiGeometry() {
         this.geometries = EMPTY_LIST;

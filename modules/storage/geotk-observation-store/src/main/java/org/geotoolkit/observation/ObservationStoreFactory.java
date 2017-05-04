@@ -29,9 +29,9 @@ import org.geotoolkit.storage.DataStoreFactory;
  * <code>META-INF/services/org.geotoolkit.data.ObservationStoreFactory</code>
  * And contain a single line :<br/>
  * <code>x.y.XYObservationStoreFactory</code>
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public interface ObservationStoreFactory extends DataStoreFactory {
-    
+
 }

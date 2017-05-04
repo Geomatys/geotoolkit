@@ -27,12 +27,12 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
 
 
 /**
- * Association to an engineering datum, either referencing or containing the definition of that datum. 
- * 
+ * Association to an engineering datum, either referencing or containing the definition of that datum.
+ *
  * <p>Java class for EngineeringDatumRefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EngineeringDatumRefType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,7 +100,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the engineeringDatum property.
-     * 
+     *
     */
     public void setEngineeringDatum(final EngineeringDatumType value) {
         this.engineeringDatum = value;
@@ -108,7 +108,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -116,7 +116,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
     */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -124,7 +124,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         return type;
@@ -132,7 +132,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -140,7 +140,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     public String getHref() {
         return href;
@@ -148,7 +148,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -156,7 +156,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -164,7 +164,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -172,7 +172,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -180,7 +180,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -188,7 +188,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public String getTitle() {
         return title;
@@ -196,7 +196,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -204,7 +204,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      */
     public String getShow() {
         return show;
@@ -212,7 +212,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -220,7 +220,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
     */
     public String getActuate() {
         return actuate;
@@ -228,7 +228,7 @@ public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

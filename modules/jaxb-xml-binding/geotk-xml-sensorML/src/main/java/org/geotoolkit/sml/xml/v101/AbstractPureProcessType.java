@@ -25,11 +25,11 @@ import org.geotoolkit.sml.xml.AbstractPureProcess;
 
 /**
  * Complex Type for all soft-typed processes
- * 
+ *
  * <p>Java class for AbstractPureProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractPureProcessType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.sml.xml.AbstractPureProcess;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +84,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Gets the value of the inputs property.
-     * 
+     *
      */
     public Inputs getInputs() {
         return inputs;
@@ -92,7 +92,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Sets the value of the inputs property.
-     * 
+     *
      */
     public void setInputs(final Inputs value) {
         this.inputs = value;
@@ -100,7 +100,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Gets the value of the outputs property.
-     * 
+     *
      */
     public Outputs getOutputs() {
         return outputs;
@@ -108,7 +108,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Sets the value of the outputs property.
-     * 
+     *
      */
     public void setOutputs(final Outputs value) {
         this.outputs = value;
@@ -116,7 +116,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Gets the value of the parameters property.
-     * 
+     *
      */
     public Parameters getParameters() {
         return parameters;
@@ -124,7 +124,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     /**
      * Sets the value of the parameters property.
-     * 
+     *
      */
     public void setParameters(final Parameters value) {
         this.parameters = value;

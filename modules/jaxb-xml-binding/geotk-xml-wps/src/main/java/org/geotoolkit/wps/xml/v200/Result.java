@@ -33,9 +33,9 @@ import org.geotoolkit.wps.xml.WPSResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.wps.xml.WPSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -70,24 +70,24 @@ public class Result implements ExecuteResponse, WPSResponse {
     protected List<DataOutputType> output;
 
     public Result() {
-        
+
     }
-    
+
     public Result(List<DataOutputType> output, String jobID) {
         this.output = output;
         this.jobID = jobID;
     }
     /**
-     * 
+     *
      * Include if required. A JobId is usually required for
      * a) asynchronous execution
      * b) the Dismiss operation extension, where the client is allowed to actively free server-side resources
-     * 						
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getJobID() {
         return jobID;
@@ -95,26 +95,26 @@ public class Result implements ExecuteResponse, WPSResponse {
 
     /**
      * Sets the value of the jobID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setJobID(String value) {
         this.jobID = value;
     }
 
     /**
-     * 
+     *
      * Identifier of the Process that was executed.
      * This Process identifier shall be as listed in the ProcessOfferings
-     * section of the WPS Capabilities document. 
-     * 
+     * section of the WPS Capabilities document.
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getExpirationDate() {
         return expirationDate;
@@ -122,11 +122,11 @@ public class Result implements ExecuteResponse, WPSResponse {
 
     /**
      * Sets the value of the expirationDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setExpirationDate(XMLGregorianCalendar value) {
         this.expirationDate = value;
@@ -134,10 +134,10 @@ public class Result implements ExecuteResponse, WPSResponse {
 
     /**
      * Gets the value of the output property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list {@link DataOutputType }
-     * 
-     * 
+     *
+     *
      */
     public List<DataOutputType> getOutput() {
         if (output == null) {
@@ -154,7 +154,7 @@ public class Result implements ExecuteResponse, WPSResponse {
     public void setStatusLocation(String location) {
         // do nothing in this implementation
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -172,7 +172,7 @@ public class Result implements ExecuteResponse, WPSResponse {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

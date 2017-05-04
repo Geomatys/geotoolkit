@@ -30,12 +30,12 @@ import org.geotoolkit.ows.xml.AbstractDescription;
 /**
  * Human-readable descriptive information for the object it is included within.
  * This type shall be extended if needed for specific OWS use to include additional metadata for each type of information. This type shall not be restricted for a specific OWS to change the multiplicity (or optionality) of some elements.
- * 			If the xml:lang attribute is not included in a Title, Abstract or Keyword element, then no language is specified for that element unless specified by another means.  All Title, Abstract and Keyword elements in the same Description that share the same xml:lang attribute value represent the description of the parent object in that language. Multiple Title or Abstract elements shall not exist in the same Description with the same xml:lang attribute value unless otherwise specified. 
- * 
+ *          If the xml:lang attribute is not included in a Title, Abstract or Keyword element, then no language is specified for that element unless specified by another means.  All Title, Abstract and Keyword elements in the same Description that share the same xml:lang attribute value represent the description of the parent object in that language. Multiple Title or Abstract elements shall not exist in the same Description with the same xml:lang attribute value unless otherwise specified.
+ *
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ows.xml.AbstractDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ public class DescriptionType implements AbstractDescription {
      */
     protected DescriptionType() {
     }
-    
+
     public DescriptionType(final String title,  final String _abstract,
             final List<String> keywords) {
         if (title != null) {
@@ -97,7 +97,7 @@ public class DescriptionType implements AbstractDescription {
             this.keywords.add(new KeywordsType(keywords));
         }
     }
-    
+
     /**
      * Build a new DescriptionType (full version).
      */
@@ -107,7 +107,7 @@ public class DescriptionType implements AbstractDescription {
         this.keywords  = keywords;
         this.title     = title;
     }
-    
+
      /**
      * Build a new DescriptionType (full version).
      */
@@ -119,7 +119,7 @@ public class DescriptionType implements AbstractDescription {
         this.title     = new ArrayList<LanguageStringType>();
         this.title.add(title);
     }
-    
+
     /**
      * Gets the value of the title property.
      */
@@ -217,14 +217,14 @@ public class DescriptionType implements AbstractDescription {
     public void setKeywords(final List<KeywordsType> keywords) {
         this.keywords = keywords;
     }
-    
+
     public void setKeywordValues(final List<String> keywords) {
         if (keywords != null) {
             this.keywords = new ArrayList<KeywordsType>();
             this.keywords.add(new KeywordsType(keywords));
         }
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -251,7 +251,7 @@ public class DescriptionType implements AbstractDescription {
         hash = 59 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

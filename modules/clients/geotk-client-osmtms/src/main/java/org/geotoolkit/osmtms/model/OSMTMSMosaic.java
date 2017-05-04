@@ -35,7 +35,7 @@ import org.opengis.geometry.DirectPosition;
 public class OSMTMSMosaic extends AbstractGridMosaic{
 
     private final int scaleLevel;
-    
+
     public OSMTMSMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
@@ -55,5 +55,5 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
-    
+
 }

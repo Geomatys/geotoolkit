@@ -34,9 +34,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for TopicType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopicType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopicType", propOrder = {
@@ -89,11 +89,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the messagePattern property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QueryExpressionType }
-     *     
+     *
      */
     public QueryExpressionType getMessagePattern() {
         return messagePattern;
@@ -101,11 +101,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the messagePattern property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QueryExpressionType }
-     *     
+     *
      */
     public void setMessagePattern(QueryExpressionType value) {
         this.messagePattern = value;
@@ -113,11 +113,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the topic property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TopicType }
-     * 
-     * 
+     *
+     *
      */
     public List<TopicType> getTopic() {
         if (topic == null) {
@@ -131,8 +131,8 @@ public class TopicType extends ExtensibleDocumented {
      *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -143,11 +143,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -155,11 +155,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -167,10 +167,10 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the messageTypes property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
+     *
      */
     public List<QName> getMessageTypes() {
         if (messageTypes == null) {
@@ -181,11 +181,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the final property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isFinal() {
         if (_final == null) {
@@ -197,11 +197,11 @@ public class TopicType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the final property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setFinal(Boolean value) {
         this._final = value;

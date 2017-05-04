@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A dynamic feature collection may possess a history and/or a timestamp.
- * 
+ *
  * <p>Java class for DynamicFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DynamicFeatureCollectionType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,11 +58,11 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public TimePrimitivePropertyType getValidTime() {
         return validTime;
@@ -70,11 +70,11 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePrimitivePropertyType }
-     *     
+     *
      */
     public void setValidTime(final TimePrimitivePropertyType value) {
         this.validTime = value;
@@ -82,12 +82,12 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Gets the value of the history property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TrackType }{@code >}
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends HistoryPropertyType> getHistory() {
         return history;
@@ -95,12 +95,12 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Sets the value of the history property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TrackType }{@code >}
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
-     *     
+     *
      */
     public void setHistory(final JAXBElement<? extends HistoryPropertyType> value) {
         this.history = ((JAXBElement<? extends HistoryPropertyType> ) value);
@@ -108,11 +108,11 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Gets the value of the dataSource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDataSource() {
         return dataSource;
@@ -120,11 +120,11 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
 
     /**
      * Sets the value of the dataSource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDataSource(final StringOrRefType value) {
         this.dataSource = value;

@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,7 +93,7 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
     protected String statusLocation;
 
     public ExecuteResponse() {}
-    
+
     public ExecuteResponse(final String version, final String service, final String lang, final String serviceInstance, final ProcessBriefType process,
             DataInputsType dataInputs, OutputDefinitionsType outputDefinitions, List<OutputDataType> output, StatusType status) {
         super(service, version, lang);
@@ -122,11 +122,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the process property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessBriefType }
-     *     
+     *
      */
     public ProcessBriefType getProcess() {
         return process;
@@ -134,11 +134,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the process property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessBriefType }
-     *     
+     *
      */
     public void setProcess(final ProcessBriefType value) {
         this.process = value;
@@ -146,11 +146,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusType }
-     *     
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -158,11 +158,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusType }
-     *     
+     *
      */
     public void setStatus(final StatusType value) {
         this.status = value;
@@ -170,11 +170,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the dataInputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataInputsType }
-     *     
+     *
      */
     public DataInputsType getDataInputs() {
         return dataInputs;
@@ -182,11 +182,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the dataInputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataInputsType }
-     *     
+     *
      */
     public void setDataInputs(final DataInputsType value) {
         this.dataInputs = value;
@@ -194,11 +194,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the outputDefinitions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputDefinitionsType }
-     *     
+     *
      */
     public OutputDefinitionsType getOutputDefinitions() {
         return outputDefinitions;
@@ -206,11 +206,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the outputDefinitions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputDefinitionsType }
-     *     
+     *
      */
     public void setOutputDefinitions(final OutputDefinitionsType value) {
         this.outputDefinitions = value;
@@ -218,11 +218,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the processOutputs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExecuteResponse.ProcessOutputs }
-     *     
+     *
      */
     public ExecuteResponse.ProcessOutputs getProcessOutputs() {
         return processOutputs;
@@ -230,11 +230,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the processOutputs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExecuteResponse.ProcessOutputs }
-     *     
+     *
      */
     public void setProcessOutputs(final ExecuteResponse.ProcessOutputs value) {
         this.processOutputs = value;
@@ -242,11 +242,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the serviceInstance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getServiceInstance() {
         return serviceInstance;
@@ -254,11 +254,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the serviceInstance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setServiceInstance(final String value) {
         this.serviceInstance = value;
@@ -266,11 +266,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Gets the value of the statusLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStatusLocation() {
         return statusLocation;
@@ -278,11 +278,11 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
     /**
      * Sets the value of the statusLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setStatusLocation(final String value) {
@@ -316,7 +316,7 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -351,12 +351,12 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
         hash = 89 * hash + Objects.hashCode(this.statusLocation);
         return hash;
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -368,8 +368,8 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -381,7 +381,7 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
         protected List<OutputDataType> output;
 
         public ProcessOutputs() {
-            
+
         }
         public ProcessOutputs(List<OutputDataType> output) {
             this.output = output;
@@ -389,12 +389,12 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
 
         /**
          * Gets the value of the output property.
-         * 
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link OutputDataType }
-         * 
-         * 
-         * @return 
+         *
+         *
+         * @return
          */
         public List<OutputDataType> getOutput() {
             if (output == null) {
@@ -402,7 +402,7 @@ public class ExecuteResponse extends ResponseBaseType implements org.geotoolkit.
             }
             return this.output;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[ProcessOutputs]\n");

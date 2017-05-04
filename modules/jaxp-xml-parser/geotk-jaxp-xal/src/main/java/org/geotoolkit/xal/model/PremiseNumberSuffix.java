@@ -41,13 +41,13 @@ public interface PremiseNumberSuffix
 
     /**
      * <p>12-A where 12 is number and A is suffix and "-" is the separator.</p>
-     * 
+     *
      * @return
      */
     String getNumberSuffixSeparator();
 
     /**
-     * 
+     *
      * @param numberSuffixSeparator
      */
     void setNumberSuffixSeparator(String numberSuffixSeparator);

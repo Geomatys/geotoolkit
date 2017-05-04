@@ -28,11 +28,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * Defines the criteria upon which a route is determined.
- * 
+ *
  * <p>Java class for RoutePlanType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RoutePlanType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RoutePlanType", propOrder = {
@@ -77,11 +77,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the routePreference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RoutePreferenceType }
-     *     
+     *
      */
     public RoutePreferenceType getRoutePreference() {
         return routePreference;
@@ -89,11 +89,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the routePreference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RoutePreferenceType }
-     *     
+     *
      */
     public void setRoutePreference(RoutePreferenceType value) {
         this.routePreference = value;
@@ -101,11 +101,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the wayPointList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WayPointListType }
-     *     
+     *
      */
     public WayPointListType getWayPointList() {
         return wayPointList;
@@ -113,11 +113,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the wayPointList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WayPointListType }
-     *     
+     *
      */
     public void setWayPointList(WayPointListType value) {
         this.wayPointList = value;
@@ -125,11 +125,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the avoidList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvoidListType }
-     *     
+     *
      */
     public AvoidListType getAvoidList() {
         return avoidList;
@@ -137,11 +137,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the avoidList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvoidListType }
-     *     
+     *
      */
     public void setAvoidList(AvoidListType value) {
         this.avoidList = value;
@@ -149,11 +149,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the useRealTimeTraffic property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isUseRealTimeTraffic() {
         if (useRealTimeTraffic == null) {
@@ -165,11 +165,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the useRealTimeTraffic property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setUseRealTimeTraffic(Boolean value) {
         this.useRealTimeTraffic = value;
@@ -177,11 +177,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the expectedStartTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getExpectedStartTime() {
         return expectedStartTime;
@@ -189,11 +189,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the expectedStartTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setExpectedStartTime(XMLGregorianCalendar value) {
         this.expectedStartTime = value;
@@ -201,11 +201,11 @@ public class RoutePlanType {
 
     /**
      * Gets the value of the expectedEndTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getExpectedEndTime() {
         return expectedEndTime;
@@ -213,11 +213,11 @@ public class RoutePlanType {
 
     /**
      * Sets the value of the expectedEndTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setExpectedEndTime(XMLGregorianCalendar value) {
         this.expectedEndTime = value;

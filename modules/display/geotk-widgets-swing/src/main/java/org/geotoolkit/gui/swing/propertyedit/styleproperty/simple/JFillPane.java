@@ -64,10 +64,10 @@ public class JFillPane extends StyleElementEditor<Fill> {
 
         guiColorChooser.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
         guiColorChooser.setColor(color);
-        
+
         guiMarkPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
         guiExternalGraphicPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
-        
+
         guiTabbedPane.addTab(MessageBundle.format("plainColor"), guiColorChooser);
         guiTabbedPane.addTab(MessageBundle.format("predefinedShape"), guiMarkPane);
         guiTabbedPane.addTab(MessageBundle.format("image"), guiExternalGraphicPane);
@@ -179,10 +179,10 @@ public class JFillPane extends StyleElementEditor<Fill> {
             return getStyleFactory().fill();
         }
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
 }

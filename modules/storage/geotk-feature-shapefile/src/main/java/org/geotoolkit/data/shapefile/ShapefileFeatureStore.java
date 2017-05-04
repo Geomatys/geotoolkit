@@ -565,7 +565,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }catch(IOException ex){
             throw new DataStoreException(ex);
         }
-        
+
         //force reading it again since the file type may be a little different
         name = null;
         schema = null;
@@ -577,7 +577,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             gtb.setValueClass(shapeType.bestJTSClass());
         }
         gtb.setName(desc.getName());
-        
+
         for (PropertyType pt : featureType.getProperties(true)) {
             if (pt instanceof AttributeType) {
                 final AttributeType at = (AttributeType) pt;
@@ -776,9 +776,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
     @Override
     public void refreshMetaModel() {
-		name = null;
-		schema = null;
+        name = null;
+        schema = null;
 
-	}
+    }
 
 }

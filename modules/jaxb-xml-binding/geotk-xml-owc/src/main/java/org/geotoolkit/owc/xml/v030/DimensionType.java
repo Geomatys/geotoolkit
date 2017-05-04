@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for DimensionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DimensionType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -87,11 +87,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -99,11 +99,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -111,11 +111,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -123,11 +123,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the units property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUnits() {
         return units;
@@ -135,11 +135,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the units property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUnits(final String value) {
         this.units = value;
@@ -147,11 +147,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the unitSymbol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUnitSymbol() {
         return unitSymbol;
@@ -159,11 +159,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the unitSymbol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUnitSymbol(final String value) {
         this.unitSymbol = value;
@@ -171,11 +171,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the userValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUserValue() {
         return userValue;
@@ -183,11 +183,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the userValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUserValue(final String value) {
         this.userValue = value;
@@ -195,11 +195,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefault() {
         return _default;
@@ -207,11 +207,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefault(final String value) {
         this._default = value;
@@ -219,11 +219,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the multipleValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isMultipleValues() {
         return multipleValues;
@@ -231,11 +231,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the multipleValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setMultipleValues(final Boolean value) {
         this.multipleValues = value;
@@ -243,11 +243,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the nearestValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isNearestValue() {
         return nearestValue;
@@ -255,11 +255,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the nearestValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setNearestValue(final Boolean value) {
         this.nearestValue = value;
@@ -267,11 +267,11 @@ public class DimensionType {
 
     /**
      * Gets the value of the current property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isCurrent() {
         return current;
@@ -279,11 +279,11 @@ public class DimensionType {
 
     /**
      * Sets the value of the current property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setCurrent(final Boolean value) {
         this.current = value;

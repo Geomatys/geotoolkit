@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ComponentPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComponentPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class ComponentPropertyByValueType {
 
     /**
      * Gets the value of the component property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComponentType }
-     *     
+     *
      */
     public ComponentType getComponent() {
         return component;
@@ -65,11 +65,11 @@ public class ComponentPropertyByValueType {
 
     /**
      * Sets the value of the component property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComponentType }
-     *     
+     *
      */
     public void setComponent(ComponentType value) {
         this.component = value;

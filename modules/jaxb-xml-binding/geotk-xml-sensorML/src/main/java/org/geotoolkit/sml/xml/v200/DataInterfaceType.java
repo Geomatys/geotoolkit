@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.v200.DataStreamPropertyType;
 
 /**
  * <p>Java class for DataInterfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataInterfaceType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.v200.DataStreamPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataInterfaceType", propOrder = {
@@ -61,11 +61,11 @@ public class DataInterfaceType
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamPropertyType }
-     *     
+     *
      */
     public DataStreamPropertyType getData() {
         return data;
@@ -73,11 +73,11 @@ public class DataInterfaceType
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamPropertyType }
-     *     
+     *
      */
     public void setData(DataStreamPropertyType value) {
         this.data = value;
@@ -85,11 +85,11 @@ public class DataInterfaceType
 
     /**
      * Gets the value of the interfaceParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public DataRecordPropertyType getInterfaceParameters() {
         return interfaceParameters;
@@ -97,11 +97,11 @@ public class DataInterfaceType
 
     /**
      * Sets the value of the interfaceParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataRecordPropertyType }
-     *     
+     *
      */
     public void setInterfaceParameters(DataRecordPropertyType value) {
         this.interfaceParameters = value;

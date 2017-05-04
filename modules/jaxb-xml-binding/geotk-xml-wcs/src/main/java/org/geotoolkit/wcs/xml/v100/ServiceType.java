@@ -30,15 +30,15 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 
 
 /**
- * 
+ *
  * A minimal, human readable rescription of the service.
- *       
+ *
  * WCS version 1.0.0
- * 
+ *
  * <p>Java class for ServiceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceType">
  *   &lt;complexContent>
@@ -55,7 +55,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -67,16 +67,16 @@ public class ServiceType extends AbstractDescriptionType implements AbstractServ
     private String version;
     @XmlAttribute
     private String updateSequence;
-    
+
     private Keywords keywords;
-    
+
     private ResponsiblePartyType responsibleParty;
-    
+
     private CodeListType fees;
-    
+
     private CodeListType accessConstraints;
 
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -107,19 +107,19 @@ public class ServiceType extends AbstractDescriptionType implements AbstractServ
         this.fees              = fees;
         this.accessConstraints = accessConstraints;
         this.updateSequence    = updateSequence;
-        
+
     }
-    
+
     /**
      * Gets the value of the version property.
      */
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      */
     @Override
     public List<Keywords> getKeywords() {
@@ -131,28 +131,28 @@ public class ServiceType extends AbstractDescriptionType implements AbstractServ
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      */
     public String getUpdateSequence() {
         return updateSequence;
     }
-    
+
     /**
      * Gets the value of the responsibleParty property.
-     * 
+     *
      */
     public ResponsiblePartyType getResponsibleParty() {
         return responsibleParty;
     }
-    
+
     /**
      * Gets the value of the fees property.
-     * 
+     *
      */
     public CodeListType getFullFees() {
         return fees;
     }
-    
+
     @Override
     public String getFees() {
         if (fees != null && !fees.getValue().isEmpty()) {
@@ -160,15 +160,15 @@ public class ServiceType extends AbstractDescriptionType implements AbstractServ
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the acces constraint property.
-     * 
+     *
      */
     public CodeListType getFullAccessConstraints() {
         return accessConstraints;
     }
-    
+
     @Override
     public List<String> getAccessConstraints() {
         if (accessConstraints != null) {

@@ -103,5 +103,5 @@ public final class ServiceExceptionReport implements ExceptionResponse {
     public List<? extends ExceptionType> getException() {
         return getServiceExceptions();
     }
-    
+
 }

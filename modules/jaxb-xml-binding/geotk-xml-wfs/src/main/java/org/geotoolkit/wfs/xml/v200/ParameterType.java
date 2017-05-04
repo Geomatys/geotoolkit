@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for ParameterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ParameterType", propOrder = {
@@ -63,14 +63,14 @@ public class ParameterType implements Parameter {
     private String name;
 
     public ParameterType() {
-        
+
     }
-    
+
     public ParameterType(final String name, final List<Object> content) {
         this.name = name;
         this.content = content;
     }
-    
+
     public ParameterType(final String name, final Object content) {
         this.name = name;
         if (content != null) {
@@ -78,15 +78,15 @@ public class ParameterType implements Parameter {
             this.content.add(content);
         }
     }
-    
+
     /**
      * Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<Object> getContent() {

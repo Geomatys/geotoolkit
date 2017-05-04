@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -70,7 +70,7 @@ public class FeatureListURL {
         this.format         = format;
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the format property.
      */
@@ -80,7 +80,7 @@ public class FeatureListURL {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      */
     public OnlineResource getOnlineResource() {
         return onlineResource;

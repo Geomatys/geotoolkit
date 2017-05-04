@@ -33,7 +33,7 @@ public interface Metadata {
     List<Object> getContent();
 
     /*
-     * 
+     *
      */
     void setContent(List<Object> content);
 }

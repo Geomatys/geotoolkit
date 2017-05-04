@@ -44,14 +44,14 @@ import org.opengis.feature.Feature;
  * <p>
  * Note: a nearly identical copy of this file exists in the {@code ext/shape}
  * module.
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @author Martin Desruisseaux
  * @module
  */
 public abstract class AbstractTestCaseSupport {
-    
+
     /**
      * Stores all temporary files here - delete on tear down.
      */
@@ -63,7 +63,7 @@ public abstract class AbstractTestCaseSupport {
      */
     @After
     public void tearDown() throws Exception {
-        
+
         Runtime.getRuntime().runFinalization();
         // it seems that not all files marked as temp will get erased, perhaps
         // this is because they have been rewritten? Don't know, don't _really_
@@ -119,7 +119,7 @@ public abstract class AbstractTestCaseSupport {
 
     /**
      * Read a geometry of the given name.
-     * 
+     *
      * @param wktResource
      *                The resource name to load, without its {@code .wkt}
      *                extension.
@@ -214,7 +214,7 @@ public abstract class AbstractTestCaseSupport {
         }
         File copy = ShapeTestData.copy(AbstractTestCaseSupport.class, name);
         markTempFile(copy);
-        
+
         return copy;
     }
 

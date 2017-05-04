@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  * Identification of, and means of communication with,
  *       person responsible for the server. At least one of IndividualName,
  *       OrganisationName, or PositionName shall be included.
- * 
+ *
  * <p>Java class for ResponsiblePartyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponsiblePartyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponsiblePartyType", propOrder = {
@@ -73,11 +73,11 @@ public class ResponsiblePartyType {
 
     /**
      * Gets the value of the individualName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndividualName() {
         return individualName;
@@ -85,11 +85,11 @@ public class ResponsiblePartyType {
 
     /**
      * Sets the value of the individualName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndividualName(String value) {
         this.individualName = value;
@@ -97,11 +97,11 @@ public class ResponsiblePartyType {
 
     /**
      * Gets the value of the organisationName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrganisationName() {
         return organisationName;
@@ -109,11 +109,11 @@ public class ResponsiblePartyType {
 
     /**
      * Sets the value of the organisationName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrganisationName(String value) {
         this.organisationName = value;
@@ -121,11 +121,11 @@ public class ResponsiblePartyType {
 
     /**
      * Gets the value of the positionName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPositionName() {
         return positionName;
@@ -133,11 +133,11 @@ public class ResponsiblePartyType {
 
     /**
      * Sets the value of the positionName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPositionName(String value) {
         this.positionName = value;
@@ -145,11 +145,11 @@ public class ResponsiblePartyType {
 
     /**
      * Gets the value of the contactInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactType }
-     *     
+     *
      */
     public ContactType getContactInfo() {
         return contactInfo;
@@ -157,11 +157,11 @@ public class ResponsiblePartyType {
 
     /**
      * Sets the value of the contactInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactType }
-     *     
+     *
      */
     public void setContactInfo(ContactType value) {
         this.contactInfo = value;
@@ -169,11 +169,11 @@ public class ResponsiblePartyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getRole() {
         return role;
@@ -181,11 +181,11 @@ public class ResponsiblePartyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setRole(CodeType value) {
         this.role = value;

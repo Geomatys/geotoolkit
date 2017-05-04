@@ -27,6 +27,6 @@ import javax.xml.namespace.QName;
 public interface AbstractQuery {
 
     void setTypeNames(final List<QName> typeNames);
-    
+
     void setConstraint(final QueryConstraint value);
 }

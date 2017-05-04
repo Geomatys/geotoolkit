@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for AbstractOverlayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractOverlayType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Gets the value of the color property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public byte[] getColor() {
         return color;
@@ -96,11 +96,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Sets the value of the color property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
@@ -108,11 +108,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Gets the value of the drawOrder property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getDrawOrder() {
         return drawOrder;
@@ -120,11 +120,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Sets the value of the drawOrder property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setDrawOrder(final Integer value) {
         this.drawOrder = value;
@@ -132,11 +132,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Gets the value of the icon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinkType }
-     *     
+     *
      */
     public LinkType getIcon() {
         return icon;
@@ -144,11 +144,11 @@ public abstract class AbstractOverlayType
 
     /**
      * Sets the value of the icon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinkType }
-     *     
+     *
      */
     public void setIcon(final LinkType value) {
         this.icon = value;
@@ -156,25 +156,25 @@ public abstract class AbstractOverlayType
 
     /**
      * Gets the value of the abstractOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractOverlaySimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractOverlaySimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAbstractOverlaySimpleExtensionGroup() {
         if (abstractOverlaySimpleExtensionGroup == null) {
@@ -185,25 +185,25 @@ public abstract class AbstractOverlayType
 
     /**
      * Gets the value of the abstractOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractOverlayObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractOverlayObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getAbstractOverlayObjectExtensionGroup() {
         if (abstractOverlayObjectExtensionGroup == null) {

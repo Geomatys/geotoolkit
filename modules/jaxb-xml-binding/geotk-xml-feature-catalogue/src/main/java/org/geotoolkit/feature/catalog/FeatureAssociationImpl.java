@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -39,11 +39,11 @@ import org.opengis.util.LocalName;
 
 /**
  * Relationship that links instances of this feature type with instances of the same or of a different feature type.  - The memberOf-linkBetween association in the General Feature Model is not directly implemented here since it can be easily derived from combining the Role and MemberOf associations.
- * 
+ *
  * <p>Java class for FC_FeatureAssociation_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_FeatureAssociation_Type">
  *   &lt;complexContent>
@@ -55,31 +55,31 @@ import org.opengis.util.LocalName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "role"
 })
-@XmlRootElement( name = "FC_FeatureAssociation")        
+@XmlRootElement( name = "FC_FeatureAssociation")
 public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAssociation {
 
     @XmlElement(required = true)
     private List<AssociationRole> role;
-    
+
     @XmlTransient
     protected boolean rootElement = true;
-    
-    
+
+
     /**
      * An empty constructor used by JAXB
      */
     public FeatureAssociationImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureAssociation
      */
@@ -90,17 +90,17 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
             this.setId("fassoc-" + feature.getCode());
         }
     }
-    
+
     /**
      * Build a new FeatureAssociation
      */
     public FeatureAssociationImpl(final String id, final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
             final FeatureCatalogue catalogue, final List<PropertyType> carrierOfCharacteristics, final List<AssociationRole> roleName) {
        super(id, typeName, definition, code, isAbstract, aliases, catalogue, carrierOfCharacteristics);
-       this.role = roleName; 
+       this.role = roleName;
        this.setId("fassoc-" + code);
     }
-    
+
     /**
      * Gets the value of the roleName property.
      */
@@ -111,25 +111,25 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         }
         return this.role;
     }
-    
+
     public void setRole(final List<AssociationRole> role) {
          this.role = role;
     }
-    
+
     public void setRole(final AssociationRole role) {
         if (this.role == null) {
             this.role = new ArrayList<>();
         }
         this.role.add(role);
     }
-    
+
     @Override
     public FeatureAssociationImpl getReferenceableObject() {
         FeatureAssociationImpl reference = new FeatureAssociationImpl(this);
         reference.setReference(true);
         return reference;
     }
-    
+
     /**
      * This java object contains cycle. this cycle cannot be handle by JAXB.
      * We must create reference mark in the xml.
@@ -140,7 +140,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
             beforeMarshal(new HashMap<>());
         }
     }
-    
+
     @Override
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         alreadySee = super.beforeMarshal(alreadySee);
@@ -148,19 +148,19 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         List<AssociationRole> replacement = new ArrayList<>();
         for (AssociationRole r: getRole()) {
             AssociationRoleImpl ri = (AssociationRoleImpl) r;
-            
+
             if (alreadySee.get(ri.getId()) != null) {
                 replacement.add(ri.getReferenceableObject());
             } else {
                 alreadySee = ri.beforeMarshal(alreadySee);
-                replacement.add(ri);    
+                replacement.add(ri);
             }
         }
         role = replacement;
         return alreadySee;
     }
-    
-     
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -176,8 +176,8 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         }
         return s.toString();
     }
-    
-    
+
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -188,9 +188,9 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         }
         if (super.equals(object) && object instanceof FeatureAssociationImpl) {
             final FeatureAssociationImpl that = (FeatureAssociationImpl) object;
-            
+
             return Objects.equals(this.role, that.role);
-        } 
+        }
         return false;
     }
 

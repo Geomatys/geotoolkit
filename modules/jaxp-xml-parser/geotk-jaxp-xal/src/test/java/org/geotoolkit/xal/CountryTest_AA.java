@@ -116,7 +116,7 @@ public class CountryTest_AA {
         assertEquals("Seconde ligne", addressLine1.getContent());
 
         assertEquals(2,country.getCountryNameCodes().size());
-        
+
         final CountryNameCode countryNameCode0 = country.getCountryNameCodes().get(0);
         assertEquals("scheme1", countryNameCode0.getScheme());
         assertEquals("code1", countryNameCode0.getGrPostal().getCode());
@@ -252,7 +252,7 @@ public class CountryTest_AA {
         assertEquals("mailStopNumberCode", subAdminPostOfficePostBoxFirmDepartmentMailStopNumber.getGrPostal().getCode());
         assertEquals("mail stop number", subAdminPostOfficePostBoxFirmDepartmentMailStopNumber.getContent());
 
-        
+
         final PostalCode subAdminPostOfficePostBoxFirmDepartmentPostalCode = subAdminPostOfficePostBoxFirmDepartment.getPostalCode();
         assertEquals("postalCodeType", subAdminPostOfficePostBoxFirmDepartmentPostalCode.getType());
 

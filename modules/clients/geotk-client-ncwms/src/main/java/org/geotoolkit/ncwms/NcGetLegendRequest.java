@@ -21,22 +21,22 @@ import org.geotoolkit.wms.GetLegendRequest;
 
 /**
  * Interface for GetLegendGraphic requests
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module
  */
 public interface NcGetLegendRequest extends NcWMSCommonRequest, GetLegendRequest  {
-    
+
      /**
      * Gets the name of the palette.
-     * 
+     *
      * @return the name of the palette.
      */
     String getPalette();
 
     /**
      * Sets the name of the palette.
-     * 
+     *
      * @param palette The name of the palette to set.
      */
     void setPalette(final String palette);

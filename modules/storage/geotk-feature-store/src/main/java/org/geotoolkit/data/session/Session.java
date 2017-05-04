@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  *
  * If we had follow the WFS specification this class would have been named transaction
  * but we choose to use the name Session given by JSR-170 and JSR-283 (Java Content Repository).
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -53,20 +53,20 @@ public interface Session {
      * Check if the session is asynchrone.
      * If it is asynchrone then a call to commit is necessary to push all
      * changes to the feature store.
-     * 
+     *
      * @return true if this session is asynchrone
      */
     boolean isAsynchrone();
 
     /**
-     * Get session version. 
+     * Get session version.
      * This version will be used on all queries passing through this session.
      * If a session is set, writing operations will systematicaly raise an exception.
-     * 
+     *
      * @return Version, can be null
      */
     Version getVersion();
-    
+
     /**
      * Request a collection of features that match the given query.
      *
@@ -114,7 +114,7 @@ public interface Session {
     void removeFeatures(String groupName, Filter filter) throws DataStoreException;
 
     /**
-     * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false. 
+     * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false.
      * @return
      */
     boolean hasPendingChanges();

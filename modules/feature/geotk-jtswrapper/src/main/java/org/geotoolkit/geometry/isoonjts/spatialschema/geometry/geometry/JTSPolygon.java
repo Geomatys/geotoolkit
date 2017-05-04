@@ -124,9 +124,9 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     }
 
     public boolean isValid() {
-    	com.vividsolutions.jts.geom.Polygon poly = (com.vividsolutions.jts.geom.Polygon)
-			this.getJTSGeometry();
-    	return poly.isValid();
+        com.vividsolutions.jts.geom.Polygon poly = (com.vividsolutions.jts.geom.Polygon)
+            this.getJTSGeometry();
+        return poly.isValid();
     }
 
     @Override

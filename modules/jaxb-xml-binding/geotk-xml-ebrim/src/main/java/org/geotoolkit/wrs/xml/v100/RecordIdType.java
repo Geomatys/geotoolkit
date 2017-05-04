@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for RecordIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RecordIdType">
  *   &lt;complexContent>
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

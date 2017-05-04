@@ -31,7 +31,7 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRangeSymbolizer> {
-    
+
     @FXML
     private FXDRChannel uiChannelR;
     @FXML
@@ -40,7 +40,7 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
     private FXDRChannel uiChannelB;
     @FXML
     private FXDRChannel uiChannelA;
-    
+
     @Override
     public Class<DynamicRangeSymbolizer> getEditedClass() {
         return DynamicRangeSymbolizer.class;
@@ -54,12 +54,12 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiChannelR.lock(DynamicRangeSymbolizer.DRChannel.BAND_RED);
         uiChannelG.lock(DynamicRangeSymbolizer.DRChannel.BAND_GREEN);
         uiChannelB.lock(DynamicRangeSymbolizer.DRChannel.BAND_BLUE);
         uiChannelA.lock(DynamicRangeSymbolizer.DRChannel.BAND_ALPHA);
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final DynamicRangeSymbolizer element = new DynamicRangeSymbolizer();
@@ -76,7 +76,7 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
         uiChannelB.valueProperty().addListener(changeListener);
         uiChannelA.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     protected void updateEditor(DynamicRangeSymbolizer styleElement) {
         if(styleElement!=null){
@@ -103,7 +103,7 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
         uiChannelB.setLayer(layer);
         uiChannelA.setLayer(layer);
     }
-    
+
     @FXML
     public void fitToData(ActionEvent event){
         uiChannelR.fitToData();
@@ -111,5 +111,5 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
         uiChannelB.fitToData();
         uiChannelA.fitToData();
     }
-    
+
 }

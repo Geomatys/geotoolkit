@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Identifies the default Format, Encoding, and Schema supported for this input or output. The process shall expect input in or produce output in this combination of Format/Encoding/Schema unless the Execute request specifies otherwise.. 
- * 
+ * Identifies the default Format, Encoding, and Schema supported for this input or output. The process shall expect input in or produce output in this combination of Format/Encoding/Schema unless the Execute request specifies otherwise..
+ *
  * <p>Java class for ComplexDataCombinationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComplexDataCombinationType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,20 +55,20 @@ public class ComplexDataCombinationType {
     protected ComplexDataDescriptionType format;
 
     public ComplexDataCombinationType() {
-        
+
     }
-    
+
     public ComplexDataCombinationType(ComplexDataDescriptionType format) {
         this.format = format;
     }
-    
+
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComplexDataDescriptionType }
-     *     
+     *
      */
     public ComplexDataDescriptionType getFormat() {
         return format;
@@ -76,11 +76,11 @@ public class ComplexDataCombinationType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComplexDataDescriptionType }
-     *     
+     *
      */
     public void setFormat(final ComplexDataDescriptionType value) {
         this.format = value;
@@ -94,7 +94,7 @@ public class ComplexDataCombinationType {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

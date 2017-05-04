@@ -23,6 +23,6 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DeleteSensor extends RequestBase {
-    
+
     String getProcedure();
 }

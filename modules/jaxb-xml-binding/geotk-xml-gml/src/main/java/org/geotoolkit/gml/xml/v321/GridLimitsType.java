@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GridLimitsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridLimitsType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridLimitsType", propOrder = {
@@ -51,22 +51,22 @@ public class GridLimitsType {
 
     @XmlElement(name = "GridEnvelope", required = true)
     private GridEnvelopeType gridEnvelope;
-    
+
     public GridLimitsType() {
-        
+
     }
-    
+
     public GridLimitsType(GridEnvelopeType gridEnvelope) {
         this.gridEnvelope = gridEnvelope;
     }
 
     /**
      * Gets the value of the gridEnvelope property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GridEnvelopeType }
-     *     
+     *
      */
     public GridEnvelopeType getGridEnvelope() {
         return gridEnvelope;
@@ -74,11 +74,11 @@ public class GridLimitsType {
 
     /**
      * Sets the value of the gridEnvelope property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GridEnvelopeType }
-     *     
+     *
      */
     public void setGridEnvelope(GridEnvelopeType value) {
         this.gridEnvelope = value;

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the response type of the WPS, either raw data or XML document
- * 
+ *
  * <p>Java class for ResponseFormType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponseFormType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,24 +58,24 @@ public class ResponseFormType {
     protected OutputDefinitionType rawDataOutput;
 
     public ResponseFormType() {
-        
+
     }
-    
+
     public ResponseFormType(ResponseDocumentType responseDocument) {
         this.responseDocument = responseDocument;
     }
-    
+
     public ResponseFormType(OutputDefinitionType rawDataOutput) {
         this.rawDataOutput = rawDataOutput;
     }
-    
+
     /**
      * Gets the value of the responseDocument property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResponseDocumentType }
-     *     
+     *
      */
     public ResponseDocumentType getResponseDocument() {
         return responseDocument;
@@ -83,11 +83,11 @@ public class ResponseFormType {
 
     /**
      * Sets the value of the responseDocument property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResponseDocumentType }
-     *     
+     *
      */
     public void setResponseDocument(final ResponseDocumentType value) {
         this.responseDocument = value;
@@ -95,11 +95,11 @@ public class ResponseFormType {
 
     /**
      * Gets the value of the rawDataOutput property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OutputDefinitionType }
-     *     
+     *
      */
     public OutputDefinitionType getRawDataOutput() {
         return rawDataOutput;
@@ -107,11 +107,11 @@ public class ResponseFormType {
 
     /**
      * Sets the value of the rawDataOutput property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OutputDefinitionType }
-     *     
+     *
      */
     public void setRawDataOutput(final OutputDefinitionType value) {
         this.rawDataOutput = value;

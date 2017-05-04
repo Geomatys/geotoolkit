@@ -113,7 +113,7 @@ public interface PostalRoute {
     String getType();
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

@@ -30,11 +30,11 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  * A search constraint that adheres to one of the following syntaxes:
  *          Filter   - OGC filter expression
  *          CqlText  - OGC CQL predicate
- * 
+ *
  * <p>Java class for QueryConstraintType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryConstraintType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,9 +70,9 @@ public class QueryConstraintType implements QueryConstraint {
      * Empty constructor used by JAXB
      */
     public QueryConstraintType(){
-        
+
     }
-    
+
     /**
      * Build a new Query constraint with a filter.
      */
@@ -80,7 +80,7 @@ public class QueryConstraintType implements QueryConstraint {
         this.filter  = filter;
         this.version = version;
     }
-    
+
     /**
      * Build a new Query constraint with a CQL text.
      */
@@ -98,7 +98,7 @@ public class QueryConstraintType implements QueryConstraint {
             }
         }
     }
-    
+
     /**
      * Gets the value of the filter property.
      */
@@ -124,7 +124,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
@@ -132,7 +132,7 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the cqlText property.
-     * 
+     *
      */
     public void setCqlText(final String value) {
         this.cqlText = value;
@@ -140,12 +140,12 @@ public class QueryConstraintType implements QueryConstraint {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -171,11 +171,11 @@ public class QueryConstraintType implements QueryConstraint {
         hash = 61 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }
-    
+
      @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[QueryConstraintType]").append('\n');
-        
+
         if (filter != null) {
             s.append("filter: ").append(filter).append('\n');
         }

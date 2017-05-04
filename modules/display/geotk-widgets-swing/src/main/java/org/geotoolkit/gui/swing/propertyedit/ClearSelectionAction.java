@@ -46,8 +46,8 @@ public class ClearSelectionAction extends AbstractAction {
             if (target != null && target instanceof LayerFeaturePropertyPanel) {
                 target = ((LayerFeaturePropertyPanel)target).getTarget();
             }
-        }       
-        
+        }
+
         if (target instanceof FeatureMapLayer) {
             ((FeatureMapLayer)target).setSelectionFilter(null);
         }

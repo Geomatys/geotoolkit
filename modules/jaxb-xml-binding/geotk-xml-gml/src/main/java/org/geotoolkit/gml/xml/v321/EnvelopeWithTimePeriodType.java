@@ -29,9 +29,9 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 /**
  * <p>Java class for EnvelopeWithTimePeriodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnvelopeWithTimePeriodType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeWithTimePeriodType", propOrder = {
@@ -64,9 +64,9 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
     private String frame;
 
     public EnvelopeWithTimePeriodType() {
-        
+
     }
-    
+
     public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriod that) {
         super(that);
         if (that != null) {
@@ -81,11 +81,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
     }
     /**
      * Gets the value of the beginPosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     @Override
     public TimePositionType getBeginPosition() {
@@ -94,11 +94,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Sets the value of the beginPosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public void setBeginPosition(TimePositionType value) {
         this.beginPosition = value;
@@ -106,11 +106,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Gets the value of the endPosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     @Override
     public TimePositionType getEndPosition() {
@@ -119,11 +119,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Sets the value of the endPosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public void setEndPosition(TimePositionType value) {
         this.endPosition = value;
@@ -131,11 +131,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Gets the value of the frame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getFrame() {
@@ -148,11 +148,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Sets the value of the frame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrame(String value) {
         this.frame = value;

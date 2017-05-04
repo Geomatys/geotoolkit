@@ -32,12 +32,12 @@ import org.geotoolkit.ows.xml.v110.UnNamedDomainType;
 
 
 /**
- * Description of an individual field in a coverage range record. 
- * 
+ * Description of an individual field in a coverage range record.
+ *
  * <p>Java class for FieldType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FieldType">
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import org.geotoolkit.ows.xml.v110.UnNamedDomainType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -84,10 +84,10 @@ public class FieldType extends DescriptionType {
     FieldType() {
         super();
     }
-    
+
     /**
      * Build a full Field.
-     * 
+     *
      * @param title
      * @param _abstract
      * @param keywords
@@ -107,10 +107,10 @@ public class FieldType extends DescriptionType {
         this.nullValue            = nullValue;
         this.definition           = definition;
     }
-    
+
      /**
      * Build a Light Field.
-     * 
+     *
      * @param identifier
      * @param definition
      * @param nullValue
@@ -130,9 +130,9 @@ public class FieldType extends DescriptionType {
             this. definition = new UnNamedDomainType(new AnyValue());
         }
     }
-    
+
     /**
-     * Identifier of this Field. These field identifiers shall be unique in one CoverageDescription. 
+     * Identifier of this Field. These field identifiers shall be unique in one CoverageDescription.
      */
     public String getIdentifier() {
         return identifier;
@@ -147,15 +147,15 @@ public class FieldType extends DescriptionType {
 
     /**
      * Gets the value of the nullValue property.
-     * 
+     *
      */
     public List<CodeType> getNullValue() {
         return Collections.unmodifiableList(nullValue);
     }
 
     /**
-     * Spatial interpolation method(s) that server can apply to this field. One of these interpolation methods shall be used when a GetCoverage operation request requires resampling. When the only interpolation method listed is �none�, clients may only retrieve coverages from this coverage in its native CRS at its native resolution. 
-     * 
+     * Spatial interpolation method(s) that server can apply to this field. One of these interpolation methods shall be used when a GetCoverage operation request requires resampling. When the only interpolation method listed is �none�, clients may only retrieve coverages from this coverage in its native CRS at its native resolution.
+     *
      */
     public InterpolationMethods getInterpolationMethods() {
         return interpolationMethods;

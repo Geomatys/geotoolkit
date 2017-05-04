@@ -28,18 +28,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *     Intended for use as the type of user-declared elements to make them
  *     extended links.
  *     Note that the elements referenced in the content model are all abstract.
  *     The intention is that by simply declaring elements with these as their
  *     substitutionGroup, all the right things will happen.
- *    
- * 
+ *
+ *
  * <p>Java class for extended complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="extended">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "extended", propOrder = {
@@ -75,14 +75,14 @@ public class Extended {
 
     /**
      * Gets the value of the extendedModel property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ArcType }
      * {@link ResourceType }
      * {@link TitleEltType }
      * {@link LocatorType }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getExtendedModel() {
         if (extendedModel == null) {
@@ -93,11 +93,11 @@ public class Extended {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     public TypeType getType() {
         if (type == null) {
@@ -109,11 +109,11 @@ public class Extended {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -121,11 +121,11 @@ public class Extended {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -133,11 +133,11 @@ public class Extended {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -145,11 +145,11 @@ public class Extended {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitleTemp() {
         return titleTemp;
@@ -157,11 +157,11 @@ public class Extended {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitleTemp(String value) {
         this.titleTemp = value;

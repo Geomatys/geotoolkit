@@ -90,7 +90,7 @@ public class StringEditor extends PropertyValueEditor implements DocumentListene
     }
 
     @Override
-    public boolean isEnabled() { 
+    public boolean isEnabled() {
         return current.isEnabled();
     }
 

@@ -30,9 +30,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for ExtensionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtensionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensionType", propOrder = {
@@ -57,25 +57,25 @@ public class ExtensionType {
     private List<Object> any;
 
     public ExtensionType() {
-        
+
     }
-    
+
     public ExtensionType(Object any) {
         this.any = new ArrayList<>();
         this.any.add(any);
     }
-    
+
     public ExtensionType(List<Object> any) {
         this.any = any;
     }
-    
+
     /**
      * Gets the value of the any property.
      *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -83,7 +83,7 @@ public class ExtensionType {
         }
         return this.any;
     }
-    
+
     public <T> T getForClass(Class<T> c) {
         if (any != null) {
             for (Object o : any) {
@@ -97,7 +97,7 @@ public class ExtensionType {
         }
         return null;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

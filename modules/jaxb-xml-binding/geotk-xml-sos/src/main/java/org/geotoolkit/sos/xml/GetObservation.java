@@ -27,26 +27,26 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface GetObservation extends RequestBase {
-    
+
     List<String> getProcedure();
-    
+
     List<String> getObservedProperty();
-    
+
     List<String> getOfferings();
-    
+
     String getResponseFormat();
-    
+
     QName getResultModel();
-    
+
     String getResponseMode();
-    
+
     String getSrsName();
-    
+
     List<String> getFeatureIds();
-    
+
     Filter getSpatialFilter();
-    
+
     Filter getComparisonFilter();
-    
+
     List<Filter> getTemporalFilter();
 }

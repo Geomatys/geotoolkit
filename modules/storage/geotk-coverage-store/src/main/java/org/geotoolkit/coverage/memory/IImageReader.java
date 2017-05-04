@@ -32,16 +32,16 @@ import javax.imageio.spi.ImageReaderSpi;
 /**
  * Image reader for BufferedImage.
  * Just a wrapper class.
- * 
+ *
  * @author Johann sorel (Geomatys)
  */
 public class IImageReader extends ImageReader{
 
-    
+
     public IImageReader(ImageReaderSpi spi){
         super(spi);
     }
-    
+
     private BufferedImage getImage() throws IOException{
         if(input instanceof BufferedImage){
             return (BufferedImage)input;
@@ -49,7 +49,7 @@ public class IImageReader extends ImageReader{
             throw new IOException("Input is not a BufferedImage : " + input);
         }
     }
-    
+
     @Override
     public int getNumImages(boolean allowSearch) throws IOException {
         return 1;
@@ -89,14 +89,14 @@ public class IImageReader extends ImageReader{
         final BufferedImage copy = new BufferedImage(image.getColorModel(), rastercp, image.isAlphaPremultiplied(),new Hashtable<Object, Object>());
         return copy;
     }
-    
+
     public static final class IISpi extends ImageReaderSpi{
         public static final IISpi INSTANCE = new IISpi();
 
         public IISpi() {
             inputTypes = new Class[]{BufferedImage.class};
         }
-        
+
         @Override
         public boolean canDecodeInput(Object source) throws IOException {
             return source instanceof BufferedImage;
@@ -111,7 +111,7 @@ public class IImageReader extends ImageReader{
         public String getDescription(Locale locale) {
             return "Java Image Reader";
         }
-        
+
     }
-    
+
 }

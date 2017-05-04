@@ -29,9 +29,9 @@ import org.geotoolkit.gml.xml.FeatureCollection;
 
 /**
  * <p>Java class for AbstractFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureCollectionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.FeatureCollection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureCollectionType", propOrder = {
@@ -63,7 +63,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
     public AbstractFeatureCollectionType() {
 
     }
-    
+
     public AbstractFeatureCollectionType(final String id) {
         super(id, null, null);
     }
@@ -72,14 +72,14 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         super(id, name, description);
         this.featureMember = featureMember;
     }
-    
+
     /**
      * Gets the value of the featureMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FeaturePropertyType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<FeaturePropertyType> getFeatureMember() {
@@ -91,11 +91,11 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
 
     /**
      * Gets the value of the featureMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeatureArrayPropertyType }
-     *     
+     *
      */
     public FeatureArrayPropertyType getFeatureMembers() {
         return featureMembers;
@@ -103,11 +103,11 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
 
     /**
      * Sets the value of the featureMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeatureArrayPropertyType }
-     *     
+     *
      */
     public void setFeatureMembers(FeatureArrayPropertyType value) {
         this.featureMembers = value;
@@ -119,7 +119,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         double miny = Double.MAX_VALUE;
         double maxx = -Double.MAX_VALUE;
         double maxy = -Double.MAX_VALUE;
-        
+
         for (FeaturePropertyType memberProp : featureMember) {
             final AbstractFeatureType member = memberProp.getAbstractFeature();
             if (member != null) {
@@ -152,7 +152,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
                 }
             }
         }
-        
+
         if (minx == Double.MAX_VALUE) {
             minx = -180.0;
         }

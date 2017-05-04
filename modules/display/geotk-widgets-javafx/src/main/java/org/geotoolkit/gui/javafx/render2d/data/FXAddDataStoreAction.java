@@ -33,15 +33,15 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXAddDataStoreAction extends FXMapAction {
-    
+
     public FXAddDataStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddDataStoreAction.class,"label"),
                 GeotkFX.getString(FXAddDataStoreAction.class,"label"),GeotkFX.ICON_ADD);
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
-        
+
         try {
             final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,null);
 
@@ -53,7 +53,7 @@ public class FXAddDataStoreAction extends FXMapAction {
         } catch (DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }
-        
+
     }
-    
+
 }

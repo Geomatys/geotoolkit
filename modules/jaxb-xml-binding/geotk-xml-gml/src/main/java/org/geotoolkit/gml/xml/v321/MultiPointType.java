@@ -32,9 +32,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for MultiPointType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPointType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPointType", propOrder = {
@@ -72,7 +72,7 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Gets the value of the pointMember property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PointPropertyType }
      */
@@ -102,14 +102,14 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
             this.pointMember.add(pointMember);
         }
     }
-    
+
     /**
      * Gets the value of the pointMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointArrayPropertyType }
-     *     
+     *
      */
     public PointArrayPropertyType getPointMembers() {
         return pointMembers;
@@ -117,11 +117,11 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
 
     /**
      * Sets the value of the pointMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointArrayPropertyType }
-     *     
+     *
      */
     public void setPointMembers(PointArrayPropertyType value) {
         this.pointMembers = value;

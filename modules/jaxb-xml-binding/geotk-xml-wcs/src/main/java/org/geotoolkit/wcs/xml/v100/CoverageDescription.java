@@ -29,11 +29,11 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * WCS version 1.0.0
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -69,9 +69,9 @@ public class CoverageDescription implements DescribeCoverageResponse {
      * Empty constructor used by JAXB.
      */
     CoverageDescription() {
-        
+
     }
-    
+
     /**
      * Build a new response for a DescribeCoverage request.
      */
@@ -79,7 +79,7 @@ public class CoverageDescription implements DescribeCoverageResponse {
         this.coverageOffering = coverageOffering;
         this.version           = version;
     }
-    
+
     /**
      * Gets the value of the coverageOffering property.
      */
@@ -89,7 +89,7 @@ public class CoverageDescription implements DescribeCoverageResponse {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      */
     public String getVersion() {
         if (version == null) {

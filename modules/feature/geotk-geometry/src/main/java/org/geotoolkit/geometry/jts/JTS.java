@@ -679,12 +679,12 @@ public final class JTS {
 
     /**
      * Create an empty geometry of given type.
-     * 
+     *
      * @param <T>
      * @param geomClass
      * @param crs
      * @param factory
-     * @return 
+     * @return
      */
     public static <T extends Geometry> T emptyGeometry(Class<T> geomClass, CoordinateReferenceSystem crs, GeometryFactory factory) {
         ArgumentChecks.ensureNonNull("geometry class", geomClass);

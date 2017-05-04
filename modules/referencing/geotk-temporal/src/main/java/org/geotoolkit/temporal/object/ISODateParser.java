@@ -50,7 +50,7 @@ import org.geotoolkit.util.collection.UnSynchronizedCache;
  * <li>yyyyMMddZ</li>
  * <li>yyyyMMdd'Z'</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Olivier Terral (Geomatys)
  * @module
@@ -94,10 +94,10 @@ public class ISODateParser {
 
         //skip the first character in case we have a negative year
         if((index1 = date.indexOf('-',1)) < 0){
-            
+
             //start at 1, avoid potential -yyyy
-            index1 = searchTimeZone(date, 1, bufferTZ); 
-            
+            index1 = searchTimeZone(date, 1, bufferTZ);
+
             if (index1 <= 5) {
                 //date is like :
                 // -yyyy
@@ -105,14 +105,14 @@ public class ISODateParser {
                 // yyyyZ
                 // yyyy'Z'
                 year = XInteger.parseIntSigned(date, 0, index1);
-            
+
                 month = 1; // a -1 occures at the end.
                 day = 1;
                 hour = 0;
                 min = 0;
                 sec = 0;
                 mil = 0;
-            
+
             } else {
                 //date is like :
                 // -yyyyMM
@@ -122,45 +122,45 @@ public class ISODateParser {
                 int idxNegative = 0;
                 if (date.indexOf('-') == 0)
                     idxNegative = 1;
-                
-                year = XInteger.parseIntSigned(date, 0, idxNegative + 4);      
-                
+
+                year = XInteger.parseIntSigned(date, 0, idxNegative + 4);
+
                 if (index1 <= 7) {
                     month = XInteger.parseIntSigned(date, idxNegative + 4, index1);
-                    
+
                     day = 1;
                     hour = 0;
                     min = 0;
                     sec = 0;
                     mil = 0;
-                    
+
                 } else {
                     //date is like :
                     // yyyyMMdd
                     // yyyyMMddZ
                     // yyyyMMdd'Z'
-                    month = XInteger.parseIntSigned(date, idxNegative + 4, idxNegative + 6);     
-                    
+                    month = XInteger.parseIntSigned(date, idxNegative + 4, idxNegative + 6);
+
                     if (index1 <= 9) {
                         day = XInteger.parseIntSigned(date, idxNegative + 6, index1);
-                        
-                    } else {                  
+
+                    } else {
                         //date is like :
                         // yyyyMMdd
                         // yyyyMMddZ
-                        // yyyyMMdd'Z'    
-                        day = XInteger.parseIntSigned(date, idxNegative + 6, idxNegative + 8); 
-                        
+                        // yyyyMMdd'Z'
+                        day = XInteger.parseIntSigned(date, idxNegative + 6, idxNegative + 8);
+
                         //@TODO Manage hour,min,sec,mill cases
                     }
-                    
+
                     hour = 0;
                     min = 0;
                     sec = 0;
-                    mil = 0;       
-                }                
+                    mil = 0;
+                }
             }
-            
+
         }else{
             year = XInteger.parseIntSigned(date, 0, index1);
             index1++;
@@ -179,7 +179,7 @@ public class ISODateParser {
                 min = 0;
                 sec = 0;
                 mil = 0;
-                
+
             }else{
                 month = XInteger.parseIntUnsigned(date, index1, index2);
                 index2++;
@@ -226,9 +226,9 @@ public class ISODateParser {
                 }
             }
         }
-        
+
         //build the date
-        
+
         if(year > 0){
             calendar.set(Calendar.ERA, GregorianCalendar.AD);
             calendar.set(Calendar.YEAR, year);
@@ -248,7 +248,7 @@ public class ISODateParser {
 
     /**
      * Set the
-     * First object is the time zone, second is start index of the 
+     * First object is the time zone, second is start index of the
      * time zone or the end of the string.
      */
     private int searchTimeZone(final String date, final int index2, final TimeZone[] buffer){
@@ -271,7 +271,7 @@ public class ISODateParser {
     }
 
     /**
-     * 
+     *
      * @param str : String to parse
      * @return the calendar used by this parser : this calendar
      * will be reused if another parser call is done.

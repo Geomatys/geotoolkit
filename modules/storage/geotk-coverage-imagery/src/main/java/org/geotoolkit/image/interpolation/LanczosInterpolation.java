@@ -86,13 +86,13 @@ public class LanczosInterpolation extends Interpolation {
             }
         }
     }
-    
+
     /**
      * Create a Lanczos interpolation.<br/><br/>
-     * 
-     * Define border comportement at {@link ResampleBorderComportement#FILL_VALUE} 
+     *
+     * Define border comportement at {@link ResampleBorderComportement#FILL_VALUE}
      * and fillValue is an arrays of the same length than band number from source image and filled by {@link Double#NaN} value.<br/><br/>
-     * 
+     *
      * The Lanczos window is the central lobe of a horizontally-stretched sinc,<br/>
      * sinc(x/a) for |x| ≤ lanczos window.<br/>
      * The normalized sinc function is commonly defined by sinc(x) = sin(PIx)/(PIx).<br/>
@@ -122,10 +122,10 @@ public class LanczosInterpolation extends Interpolation {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * <p> In other words, interpolate result is compute from bounding box centered
      * from pixel coordinates with side length equal to 2 * lanczos window.</p>
-     * 
+     *
      */
     @Override
     public double interpolate(double x, double y, int b) {
@@ -149,7 +149,7 @@ public class LanczosInterpolation extends Interpolation {
         return interpol;
     }
 
-    
+
     /**
      * {@inheritDoc }.
      */

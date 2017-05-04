@@ -32,11 +32,11 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * Container for a feature - follow gml:AssociationType pattern.
- * 
+ *
  * <p>Java class for FeaturePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeaturePropertyType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ public class FeaturePropertyType implements FeatureProperty {
 
     @XmlAnyElement(lax = true)
     private Object unknowFeature;
-            
+
     /**
      * Allow to record the feature when its in href mode
      */
@@ -128,13 +128,13 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the abstractFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
-     *     
+     *
      */
     @Override
     public AbstractFeatureType getAbstractFeature() {
@@ -148,13 +148,13 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the abstractFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
-     *     
+     *
      */
     public void setAbstractFeature(final JAXBElement<? extends AbstractFeatureType> value) {
         this.abstractFeature = ((JAXBElement<? extends AbstractFeatureType> ) value);
@@ -162,11 +162,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -174,11 +174,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -186,11 +186,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -202,11 +202,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -214,11 +214,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -227,11 +227,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -239,11 +239,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -251,11 +251,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -263,11 +263,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -275,11 +275,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -287,11 +287,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -299,11 +299,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -311,11 +311,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -323,11 +323,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -335,11 +335,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -347,11 +347,11 @@ public class FeaturePropertyType implements FeatureProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

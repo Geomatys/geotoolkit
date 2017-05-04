@@ -25,12 +25,12 @@ import javax.imageio.spi.ImageReaderSpi;
  * Expose informations on how to access a tile.
  * <p>
  * TODO : should be a parent of {@link org.geotoolkit.image.io.mosaic.Tile}.
- *  
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface TileReference {
-    
+
     /**
      * Returns a new reader created by the {@linkplain #getImageReaderSpi provider} and setup for
      * reading the image from the {@linkplain #getInput input}. This method returns a new reader
@@ -43,7 +43,7 @@ public interface TileReference {
      * @throws IOException if the image reader can't be initialized.
      */
     ImageReader getImageReader() throws IOException;
-    
+
     /**
      * Returns the image reader provider (never {@code null}). This is the provider used for
      * creating the {@linkplain ImageReader image reader} to be used for reading this tile.
@@ -53,7 +53,7 @@ public interface TileReference {
      * @see ImageReaderSpi#createReaderInstance()
      */
     ImageReaderSpi getImageReaderSpi();
-    
+
     /**
      * Returns the input to be given to the image reader for reading this tile.
      *
@@ -62,7 +62,7 @@ public interface TileReference {
      * @see ImageReader#setInput
      */
     Object getInput();
-    
+
     /**
      * Returns the image index to be given to the image reader for reading this tile.
      *
@@ -71,13 +71,13 @@ public interface TileReference {
      * @see ImageReader#read(int)
      */
     int getImageIndex();
-    
+
     /**
      * Returns the position of the tile in the grid. x/y coordinate are columns and
      * rows.
-     * 
+     *
      * @return position of the tile in the grid mosaic.
      */
     Point getPosition();
-    
+
 }

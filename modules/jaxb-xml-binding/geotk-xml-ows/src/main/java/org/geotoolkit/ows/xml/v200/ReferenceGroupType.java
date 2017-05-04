@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  *       local resources, allowing including metadata about that group. A Group
  *       can be used instead of a Manifest that can only contain one
  *       group.
- * 
+ *
  * <p>Java class for ReferenceGroupType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceGroupType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceGroupType", propOrder = {
@@ -61,13 +61,13 @@ public class ReferenceGroupType extends BasicIdentificationType {
 
     /**
      * Gets the value of the abstractReferenceBase property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractReferenceBaseType }{@code >}
      * {@link JAXBElement }{@code <}{@link ServiceReferenceType }{@code >}
      * {@link JAXBElement }{@code <}{@link ReferenceType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractReferenceBaseType>> getAbstractReferenceBase() {
         if (abstractReferenceBase == null) {

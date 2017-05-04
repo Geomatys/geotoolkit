@@ -27,7 +27,7 @@ import org.junit.Test;
  * @author Rémi Maréchal (Geomatys).
  */
 public class NeighborTest extends InterpolationTest {
-    
+
     public NeighborTest() {
         super();
         super.interpol = new NeighborInterpolation(pixIterator, null);
@@ -76,7 +76,7 @@ public class NeighborTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(-0.1, -0.3, 0);
         assertEquals("lowRCornerTest : at coordinate : (-0.1, -0.3)", 4, resulTest, TOLERANCE);
-        
+
         // Pixel interpolation
         resulTest = interpol.interpolate(0.2, -1.1)[0];
         assertEquals("lowRCornerTest : at coordinate : (0.2, -1.1)", 1, resulTest, TOLERANCE);

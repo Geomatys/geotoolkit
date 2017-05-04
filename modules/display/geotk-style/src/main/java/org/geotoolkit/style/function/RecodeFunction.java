@@ -45,22 +45,22 @@ import org.opengis.filter.expression.Literal;
  * <li>Literal: MapItem : value 2
  * </ol>
  * In reality any expression will do.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class RecodeFunction extends AbstractExpression implements Recode {
-    
+
     /**
      * Use as a PropertyName when defining a color map.
      * The "Raterdata" is expected to apply to only a single band;
      */
     public static final String RASTER_DATA = "Rasterdata";
-    
+
     private final List<MapItem> items;
     private final Literal fallback;
     private final Expression lookup;
-    
+
     /**
      * Make the instance of FunctionName available in
      * a consistent spot.
@@ -139,5 +139,5 @@ public class RecodeFunction extends AbstractExpression implements Recode {
     public Literal getFallbackValue() {
         return fallback;
     }
-    
+
 }

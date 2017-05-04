@@ -13,7 +13,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 
@@ -105,26 +105,26 @@ public class GeometryTestOperation {
         }
 
         protected boolean compareTransfiniteSetResult(final TransfiniteSet result) {
-        	if (expectedResult == null && result == null) {
-        		return true;
-        	}
+            if (expectedResult == null && result == null) {
+                return true;
+            }
             if (expectedResult instanceof TransfiniteSet) {
-            	TransfiniteSet expect = (TransfiniteSet)expectedResult;
+                TransfiniteSet expect = (TransfiniteSet)expectedResult;
                 return result.equals(expect);
             } else {
                 return false;
             }
         }
-        
-    	protected boolean compareDirectPositionResult(final DirectPosition result) {
+
+        protected boolean compareDirectPositionResult(final DirectPosition result) {
             if (expectedResult instanceof DirectPosition) {
-            	DirectPosition expect = (DirectPosition)expectedResult;
+                DirectPosition expect = (DirectPosition)expectedResult;
                 return result.equals(expect);
             } else {
                 return false;
             }
-    	}
-        
+        }
+
     }
 
     /**
@@ -192,7 +192,7 @@ public class GeometryTestOperation {
         }
     }
 
-    
+
 
     /**
      * Class defining the "intersects" operation
@@ -227,7 +227,7 @@ public class GeometryTestOperation {
             TransfiniteSet result = geom1.getBoundary();
             return compareTransfiniteSetResult(result);
         }
-    }    
+    }
 
     /**
      * Class defining the centroid operation
@@ -244,8 +244,8 @@ public class GeometryTestOperation {
             DirectPosition result = geom1.getCentroid();
             return compareDirectPositionResult(result);
         }
-    }    
-    
+    }
+
     /**
      * Class defining the centroid operation
      */
@@ -261,10 +261,10 @@ public class GeometryTestOperation {
             DirectPosition result = geom1.getRepresentativePoint();
             return compareDirectPositionResult(result);
         }
-    }    
-    
-        
-    
+    }
+
+
+
     /**
      * Class defining the boundary operation
      */
@@ -280,7 +280,7 @@ public class GeometryTestOperation {
             TransfiniteSet result = geom1.getConvexHull();
             return compareTransfiniteSetResult(result);
         }
-    }    
+    }
 
     /**
      * Class defining the boundary operation
@@ -298,7 +298,7 @@ public class GeometryTestOperation {
             TransfiniteSet result = geom1.difference(geom2);
             return compareTransfiniteSetResult(result);
         }
-    }    
+    }
 
     /**
      * Class defining the boundary operation
@@ -317,7 +317,7 @@ public class GeometryTestOperation {
             return compareTransfiniteSetResult(result);
         }
     }
-        
+
     /**
      * Class defining the boundary operation
      */
@@ -335,15 +335,15 @@ public class GeometryTestOperation {
             return compareTransfiniteSetResult(result);
         }
     }
-        
-    
-    
+
+
+
     /**
      * Returns a string describing the operation for logging
      * @return a formatted string
      */
     public String toString() {
-        return operation + " arg1=" + arg1 + " arg2=" + arg2 + " arg3=" + arg3;  
+        return operation + " arg1=" + arg1 + " arg2=" + arg2 + " arg3=" + arg3;
     }
 
 }

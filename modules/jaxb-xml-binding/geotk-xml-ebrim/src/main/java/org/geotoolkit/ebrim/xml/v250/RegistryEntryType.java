@@ -30,9 +30,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for RegistryEntryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryEntryType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     RegistryType.class,
     FederationType.class
 })
-@XmlRootElement(name = "RegistryEntry")        
+@XmlRootElement(name = "RegistryEntry")
 public class RegistryEntryType extends RegistryObjectType {
 
     @XmlAttribute

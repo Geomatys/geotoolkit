@@ -51,9 +51,9 @@ public class JSLDImportExportPanel extends AbstractPropertyPane{
 
     /** Creates new form JSLDExportPanel */
     public JSLDImportExportPanel() {
-        super(MessageBundle.format("import_export"), 
-              IconBundle.getIcon("16_advanced_style"), 
-              null, 
+        super(MessageBundle.format("import_export"),
+              IconBundle.getIcon("16_advanced_style"),
+              null,
               null);
         initComponents();
         guiVersion.setModel(new EnumComboBoxModel(StyledLayerDescriptor.class));

@@ -36,7 +36,7 @@ import org.geotoolkit.display2d.style.labeling.decimate.PointLabelCandidateRende
 /**
  * Label renderer that apply a simple decimation on labels to remove all
  * overlaping labels and try do displace them to achieve good results.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -47,7 +47,7 @@ public class DisplacementLabelRenderer extends DefaultLabelRenderer{
     private RenderingContext2D context;
     private PointLabelCandidateRenderer pointRenderer;
     private LinearLabelCandidateRenderer LinearRenderer;
-    
+
     public DisplacementLabelRenderer() {
     }
 
@@ -63,23 +63,23 @@ public class DisplacementLabelRenderer extends DefaultLabelRenderer{
 
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public RenderingContext2D getRenderingContext() {
         return context;
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void append(final LabelLayer layer) {
         layers.add(layer);
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void portrayLabels(){
         final Graphics2D g2 = context.getGraphics();

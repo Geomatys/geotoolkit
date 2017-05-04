@@ -28,7 +28,7 @@ import org.geotoolkit.internal.SetupService;
  * @module
  */
 public final class SetupBIL implements SetupService {
-    
+
     /**
      * Register bil reader in default registry.
      */

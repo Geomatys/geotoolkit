@@ -391,7 +391,7 @@ public class JAXBFeatureTypeReaderOld extends AbstractConfigurable {
                             uncomplete = true;
                         }
 
-                        
+
                         //if(!Utils.GML_FEATURE_TYPES.contains(parent.getName())){
                             finalType.builder.setSuperTypes(parent);
                             //erase parent properties which are not identifier
@@ -511,7 +511,7 @@ public class JAXBFeatureTypeReaderOld extends AbstractConfigurable {
                 }
                 //NOTE : a choice with max occurence ? yet we must consider the limitation
                 //of each element
-                
+
                 final PropertyType rpd;
                 if(pd instanceof Operation){
 //                    final OperationDescriptor od = (OperationDescriptor) pd;
@@ -529,7 +529,7 @@ public class JAXBFeatureTypeReaderOld extends AbstractConfigurable {
                     adb.setMaximumOccurs(maxOcc);
                     rpd = adb.build();
                 }
-                
+
                 addOrReplace(finalType.builder, rpd);
             }
         }
@@ -990,7 +990,7 @@ public class JAXBFeatureTypeReaderOld extends AbstractConfigurable {
             }else if(pd instanceof Operation){
                 throw new RuntimeException("Operation type not supported yet.");
             }
-            
+
         }
     }
 

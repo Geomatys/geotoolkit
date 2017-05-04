@@ -20,12 +20,12 @@ import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 /**
  * {@link Calculator} defined to compute multi-dimensionnal geometric operations.
- * 
+ *
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
 public class CalculatorND extends Calculator {
-    
+
     /**
      * {@inheritDoc }.
      */

@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * <p>Java class for CylindricalCSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CylindricalCSType">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CylindricalCSType extends AbstractCoordinateSystemType {

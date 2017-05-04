@@ -31,9 +31,9 @@ import org.geotoolkit.wms.xml.AbstractRequest;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -110,7 +110,7 @@ public class Request implements AbstractRequest {
     }
     /**
      * Gets the value of the getCapabilities property.
-     * 
+     *
      */
     public OperationType getGetCapabilities() {
         return getCapabilities;
@@ -118,7 +118,7 @@ public class Request implements AbstractRequest {
 
     /**
      * Gets the value of the getMap property.
-     * 
+     *
      */
     public OperationType getGetMap() {
         return getMap;
@@ -126,7 +126,7 @@ public class Request implements AbstractRequest {
 
     /**
      * Gets the value of the getFeatureInfo property.
-     * 
+     *
      */
     public OperationType getGetFeatureInfo() {
         return getFeatureInfo;
@@ -163,7 +163,7 @@ public class Request implements AbstractRequest {
     public Request clone() {
         return new Request(this);
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();

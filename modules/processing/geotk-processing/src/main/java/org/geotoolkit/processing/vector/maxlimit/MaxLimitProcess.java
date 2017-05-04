@@ -48,7 +48,7 @@ public class MaxLimitProcess extends AbstractProcess {
         final int max                                       = value(MAX_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);
-        
+
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

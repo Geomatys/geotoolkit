@@ -30,23 +30,23 @@ import org.opengis.filter.capability.FilterCapabilities;
 
 
 /**
- * 
- * XML encoded CSW GetCapabilities operation response. 
+ *
+ * XML encoded CSW GetCapabilities operation response.
  * This document provides clients with service metadata about a specific service instance,
  * including metadata about the tightly-coupled data served.
- * If the server does not implement the updateSequence parameter, 
- * the server shall always return the complete Capabilities document, 
- * without the updateSequence parameter. 
+ * If the server does not implement the updateSequence parameter,
+ * the server shall always return the complete Capabilities document,
+ * without the updateSequence parameter.
  * When the server implements the updateSequence parameter and the GetCapabilities operation request included
- * the updateSequence parameter with the current value, 
- * the server shall return this element with only the "version" and "updateSequence" attributes. 
+ * the updateSequence parameter with the current value,
+ * the server shall return this element with only the "version" and "updateSequence" attributes.
  * Otherwise, all optional elements shall be included or not depending on the actual value of the Contents parameter in the GetCapabilities operation request.
- *          
- * 
+ *
+ *
  * <p>Java class for CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilitiesType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.opengis.filter.capability.FilterCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,14 +68,14 @@ public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCa
      */
     public CapabilitiesType(){
     }
-    
+
      /**
      * Build a new Capabilities document
      */
     public CapabilitiesType(final String version, final String updateSequence){
         super(version, updateSequence);
     }
-    
+
     /**
      * Build a new Capabilities document
      */
@@ -88,13 +88,13 @@ public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCa
     public FilterCapabilities getFilterCapabilities() {
         return null;
     }
-    
+
     @Override
     public CapabilitiesType applySections(final Sections sections) {
         ServiceIdentification si = null;
         ServiceProvider       sp = null;
         OperationsMetadata    om = null;
-        
+
         //we enter the information for service identification.
         if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
             si = getServiceIdentification();

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PolygonPatchType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolygonPatchType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolygonPatchType", propOrder = {
@@ -63,11 +63,11 @@ public class PolygonPatchType
 
     /**
      * Gets the value of the exterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     public AbstractRingPropertyType getExterior() {
         return exterior;
@@ -75,11 +75,11 @@ public class PolygonPatchType
 
     /**
      * Sets the value of the exterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractRingPropertyType }
-     *     
+     *
      */
     public void setExterior(AbstractRingPropertyType value) {
         this.exterior = value;
@@ -87,25 +87,25 @@ public class PolygonPatchType
 
     /**
      * Gets the value of the interior property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInterior().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractRingPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractRingPropertyType> getInterior() {
         if (interior == null) {
@@ -116,11 +116,11 @@ public class PolygonPatchType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public SurfaceInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -132,11 +132,11 @@ public class PolygonPatchType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SurfaceInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(SurfaceInterpolationType value) {
         this.interpolation = value;

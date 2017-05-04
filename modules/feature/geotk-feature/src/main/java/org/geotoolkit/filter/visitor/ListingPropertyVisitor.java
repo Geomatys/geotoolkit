@@ -77,21 +77,21 @@ import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Expression visitor that returns a list of all Feature attributs requiered by this expression.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
-    
+
     public static final ListingPropertyVisitor VISITOR = new ListingPropertyVisitor();
-    
-    /** 
-     * visit each expression and return all requiered Attributs 
+
+    /**
+     * visit each expression and return all requiered Attributs
      */
     protected ListingPropertyVisitor() {
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -100,9 +100,9 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
-    
-    /** 
-     * visit each expression and return all requiered Attributs 
+
+    /**
+     * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
@@ -110,12 +110,12 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
-    	expression.getExpression1().accept(this, names);
+        expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -124,12 +124,12 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
-    	expression.getExpression1().accept(this, names);
+        expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -156,8 +156,8 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -166,12 +166,12 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
-    	expression.getExpression1().accept(this, names);
+        expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -186,22 +186,22 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         }
         return names;
     }
-    
-    /** 
+
+    /**
      * visit each expression and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
     public Collection<String> visit( final Subtract expression, final Object data ) {
-    	final Collection<String> names;
+        final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
-    	expression.getExpression1().accept(this, names);
+        expression.getExpression1().accept(this, names);
         expression.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -211,7 +211,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         return Collections.emptyList();
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -221,7 +221,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         return Collections.emptyList();
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -231,7 +231,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         return Collections.emptyList();
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -243,10 +243,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         for(Filter child : filter.getChildren()){
             child.accept(this, names);
         }
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -259,7 +259,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -270,10 +270,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         Filter child = filter.getFilter();
         if(child != null) child.accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -285,10 +285,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         for(Filter child : filter.getChildren()){
             child.accept(this, names);
         }
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -300,10 +300,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         filter.getExpression().accept(this, names);
         filter.getLowerBoundary().accept(this, names);
         filter.getUpperBoundary().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -314,10 +314,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -328,10 +328,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -342,10 +342,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -356,10 +356,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -370,10 +370,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -384,10 +384,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -397,10 +397,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
         filter.getExpression().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -410,7 +410,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
         filter.getExpression().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -419,10 +419,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
         filter.getExpression().accept(this, names);
-    	return names;
+        return names;
     }
-    
-    /** 
+
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -433,10 +433,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -447,10 +447,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -461,10 +461,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -475,10 +475,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -489,10 +489,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -503,10 +503,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -517,10 +517,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -531,10 +531,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -545,10 +545,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -559,10 +559,10 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
-    /** 
+    /**
      * visit each filter and return all requiered Attributs
      * @param data if is a Collection, this collection will be filled and returned.
      */
@@ -573,9 +573,9 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
- 
+
     @Override
     public Object visit(After filter, Object data) {
         final Collection<String> names;
@@ -583,7 +583,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -593,7 +593,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -603,7 +603,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -613,7 +613,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -623,7 +623,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -633,7 +633,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -643,7 +643,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -653,7 +653,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -663,7 +663,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -673,7 +673,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -683,7 +683,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -693,7 +693,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -703,7 +703,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 
     @Override
@@ -713,6 +713,6 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
         else names = new HashSet<String>();
         filter.getExpression1().accept(this, names);
         filter.getExpression2().accept(this, names);
-    	return names;
+        return names;
     }
 }

@@ -28,9 +28,9 @@ import org.geotoolkit.se.xml.v110.DescriptionType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.se.xml.v110.DescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,11 +86,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -98,11 +98,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -110,11 +110,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public DescriptionType getDescription() {
         return description;
@@ -122,11 +122,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DescriptionType }
-     *     
+     *
      */
     public void setDescription(final DescriptionType value) {
         this.description = value;
@@ -134,11 +134,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the remoteOWS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RemoteOWS }
-     *     
+     *
      */
     public RemoteOWS getRemoteOWS() {
         return remoteOWS;
@@ -146,11 +146,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the remoteOWS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RemoteOWS }
-     *     
+     *
      */
     public void setRemoteOWS(final RemoteOWS value) {
         this.remoteOWS = value;
@@ -158,11 +158,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the inlineFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InlineFeature }
-     *     
+     *
      */
     public InlineFeature getInlineFeature() {
         return inlineFeature;
@@ -170,11 +170,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the inlineFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InlineFeature }
-     *     
+     *
      */
     public void setInlineFeature(final InlineFeature value) {
         this.inlineFeature = value;
@@ -182,11 +182,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the layerFeatureConstraints property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerFeatureConstraints }
-     *     
+     *
      */
     public LayerFeatureConstraints getLayerFeatureConstraints() {
         return layerFeatureConstraints;
@@ -194,11 +194,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the layerFeatureConstraints property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerFeatureConstraints }
-     *     
+     *
      */
     public void setLayerFeatureConstraints(final LayerFeatureConstraints value) {
         this.layerFeatureConstraints = value;
@@ -206,11 +206,11 @@ public class UserLayer {
 
     /**
      * Gets the value of the layerCoverageConstraints property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerCoverageConstraints }
-     *     
+     *
      */
     public LayerCoverageConstraints getLayerCoverageConstraints() {
         return layerCoverageConstraints;
@@ -218,11 +218,11 @@ public class UserLayer {
 
     /**
      * Sets the value of the layerCoverageConstraints property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerCoverageConstraints }
-     *     
+     *
      */
     public void setLayerCoverageConstraints(final LayerCoverageConstraints value) {
         this.layerCoverageConstraints = value;
@@ -230,25 +230,25 @@ public class UserLayer {
 
     /**
      * Gets the value of the userStyle property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the userStyle property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUserStyle().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link UserStyle }
-     * 
-     * 
+     *
+     *
      */
     public List<UserStyle> getUserStyle() {
         if (userStyle == null) {

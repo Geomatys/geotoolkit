@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
  * Future extensions of CityGML like bridges and tunnels would be modelled as subclasses of _Site.
  * As subclass of _CityObject, a _Site inherits all attributes and relations,
  * in particular an id, names, external references, and generalization relations.
- *             
- * 
+ *
+ *
  * <p>Java class for AbstractSiteType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSiteType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

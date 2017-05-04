@@ -21,5 +21,5 @@ package org.geotoolkit.wps.xml;
  * @author guilhem
  */
 public interface ComplexDataTypeDescription extends DataDescription{
-    
+
 }

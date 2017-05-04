@@ -54,16 +54,16 @@ public interface DataComponentProperty {
     AbstractCategory getCategory();
 
     AbstractText getText();
-    
+
     AbstractQuantityRange getQuantityRange();
 
     AbstractCountRange getCountRange();
-    
+
     AbstractTimeRange getTimeRange();
 
     AbstractDataRecord getAbstractRecord();
 
     AbstractDataArray getAbstractArray();
-    
+
     AbstractDataComponent getValue();
 }

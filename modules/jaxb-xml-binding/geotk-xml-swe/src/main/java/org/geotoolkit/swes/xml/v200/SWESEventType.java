@@ -32,9 +32,9 @@ import org.geotoolkit.w3c.adressing.xml.v2005.EndpointReferenceType;
 
 /**
  * <p>Java class for SWESEventType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SWESEventType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.w3c.adressing.xml.v2005.EndpointReferenceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SWESEventType", propOrder = {
@@ -88,11 +88,11 @@ public class SWESEventType
 
     /**
      * Gets the value of the eventTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getEventTime() {
         return eventTime;
@@ -100,11 +100,11 @@ public class SWESEventType
 
     /**
      * Sets the value of the eventTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setEventTime(XMLGregorianCalendar value) {
         this.eventTime = value;
@@ -112,11 +112,11 @@ public class SWESEventType
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCode() {
         return code;
@@ -124,11 +124,11 @@ public class SWESEventType
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(String value) {
         this.code = value;
@@ -136,10 +136,10 @@ public class SWESEventType
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LanguageStringType }
-     * 
+     *
      */
     public List<LanguageStringType> getMessage() {
         if (message == null) {
@@ -150,11 +150,11 @@ public class SWESEventType
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SWESEventType.Service }
-     *     
+     *
      */
     public SWESEventType.Service getService() {
         return service;
@@ -162,11 +162,11 @@ public class SWESEventType
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SWESEventType.Service }
-     *     
+     *
      */
     public void setService(SWESEventType.Service value) {
         this.service = value;
@@ -175,9 +175,9 @@ public class SWESEventType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -189,8 +189,8 @@ public class SWESEventType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -203,11 +203,11 @@ public class SWESEventType
 
         /**
          * Gets the value of the endpointReference property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link EndpointReferenceType }
-         *     
+         *
          */
         public EndpointReferenceType getEndpointReference() {
             return endpointReference;
@@ -215,11 +215,11 @@ public class SWESEventType
 
         /**
          * Sets the value of the endpointReference property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link EndpointReferenceType }
-         *     
+         *
          */
         public void setEndpointReference(EndpointReferenceType value) {
             this.endpointReference = value;

@@ -113,7 +113,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
         for (JTSPolygon polygon : elements) {
             JTSRing exterior = (JTSRing) polygon.getBoundary().getExterior();
             exterior.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
-            
+
             for (Primitive p : (Collection<Primitive>) exterior.getElements()) {
                 if (p instanceof JTSCurve) {
                     JTSCurve curve = (JTSCurve) p;

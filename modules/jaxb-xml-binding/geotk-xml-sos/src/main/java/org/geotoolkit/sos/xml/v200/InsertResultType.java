@@ -29,9 +29,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 /**
  * <p>Java class for InsertResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertResultType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultType", propOrder = {
@@ -62,22 +62,22 @@ public class InsertResultType extends ExtensibleRequestType implements InsertRes
     private String resultValues;
 
     public InsertResultType() {
-        
+
     }
-    
+
     public InsertResultType(final String version, final String template, final String resultValues) {
         super(version, "SOS");
         this.template = template;
         this.resultValues = resultValues;
     }
-    
+
     /**
      * Gets the value of the template property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTemplate() {
@@ -86,11 +86,11 @@ public class InsertResultType extends ExtensibleRequestType implements InsertRes
 
     /**
      * Sets the value of the template property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTemplate(String value) {
         this.template = value;
@@ -98,11 +98,11 @@ public class InsertResultType extends ExtensibleRequestType implements InsertRes
 
     /**
      * Gets the value of the resultValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public String getResultValues() {
@@ -111,16 +111,16 @@ public class InsertResultType extends ExtensibleRequestType implements InsertRes
 
     /**
      * Sets the value of the resultValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setResultValues(String value) {
         this.resultValues = value;
     }
-    
+
     @Override
     public String getResponseFormat() {
         for (Object ext : getExtension()) {

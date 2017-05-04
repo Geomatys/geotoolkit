@@ -60,7 +60,7 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
                 if(d.getName().equalsIgnoreCase(xpath)) {
                     final Method readMethod = d.getReadMethod();
                     if (readMethod == null) return null;
-                    
+
                     Object o = readMethod.invoke(candidate);
                     if (o == null || target == null || target.isInstance(o)) {
                         return (T) o;

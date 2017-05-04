@@ -195,9 +195,9 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.GRID;
-	}
+    @Override
+    public CoverageType getType() {
+        return CoverageType.GRID;
+    }
 
 }

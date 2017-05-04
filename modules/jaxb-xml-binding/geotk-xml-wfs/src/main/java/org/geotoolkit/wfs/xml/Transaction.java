@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Transaction extends BaseRequest {
-    
+
     public List<Object> getTransactionAction();
-    
+
 }

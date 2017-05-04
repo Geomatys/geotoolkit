@@ -28,7 +28,7 @@ import org.opengis.style.StyleVisitor;
 
 /**
  * Immutable implementation of Types Graphic.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,10 +36,10 @@ public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegen
 
     /**
      * Create a default immutable Graphic legend.
-     * 
+     *
      * @param symbols : can be null, if null or empty, the default mark will be added.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
-     * @param size : if null will be replaced by Expression.NIL, 
+     * @param size : if null will be replaced by Expression.NIL,
      * if NIL the size of the graphicalSymbol is used
      * @param rotation : if null or Expression.NIL will be replaced by default value.
      * @param anchor : if null will be replaced by default value.
@@ -82,8 +82,8 @@ public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegen
                 && Objects.equals(this.disp,other.disp);
 
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */

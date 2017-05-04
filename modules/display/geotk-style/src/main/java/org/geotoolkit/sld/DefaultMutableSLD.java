@@ -445,7 +445,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         try {
             object =  (DefaultMutableSLD) super.clone();
         } catch(CloneNotSupportedException cnse) {
-		cnse.printStackTrace(System.err);
+        cnse.printStackTrace(System.err);
         }
         return object;
     }

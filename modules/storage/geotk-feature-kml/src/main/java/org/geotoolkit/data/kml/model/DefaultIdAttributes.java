@@ -27,7 +27,7 @@ public class DefaultIdAttributes implements IdAttributes {
     private String targetId;
 
     /**
-     * 
+     *
      */
     public DefaultIdAttributes() {
     }

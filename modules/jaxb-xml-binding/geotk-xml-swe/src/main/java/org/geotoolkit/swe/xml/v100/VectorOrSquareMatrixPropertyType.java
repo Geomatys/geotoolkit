@@ -26,11 +26,11 @@ import org.geotoolkit.swe.xml.AbstractVectorOrSquareMatrixProperty;
 
 /**
  * Vector/SquareMatrix is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for VectorOrSquareMatrixPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VectorOrSquareMatrixPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.AbstractVectorOrSquareMatrixProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
             }
         }
     }
-    
+
     public VectorOrSquareMatrixPropertyType(final VectorType vector) {
         this.vector = vector;
     }

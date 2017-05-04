@@ -30,12 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  * A Classification specifies references to two registry entrys.
  * The classifiedObject is id of the Object being classified.
  * The classificationNode is id of the ClassificationNode classying the object
- *       
- * 
+ *
+ *
  * <p>Java class for ClassificationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClassificationType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,11 +68,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Gets the value of the classificationScheme property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClassificationScheme() {
         return classificationScheme;
@@ -80,11 +80,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Sets the value of the classificationScheme property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClassificationScheme(final String value) {
         this.classificationScheme = value;
@@ -92,11 +92,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Gets the value of the classifiedObject property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClassifiedObject() {
         return classifiedObject;
@@ -104,11 +104,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Sets the value of the classifiedObject property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClassifiedObject(final String value) {
         this.classifiedObject = value;
@@ -116,11 +116,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Gets the value of the classificationNode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClassificationNode() {
         return classificationNode;
@@ -128,11 +128,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Sets the value of the classificationNode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClassificationNode(final String value) {
         this.classificationNode = value;
@@ -140,11 +140,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Gets the value of the nodeRepresentation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNodeRepresentation() {
         return nodeRepresentation;
@@ -152,11 +152,11 @@ public class ClassificationType extends RegistryObjectType {
 
     /**
      * Sets the value of the nodeRepresentation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNodeRepresentation(final String value) {
         this.nodeRepresentation = value;

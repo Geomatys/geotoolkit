@@ -27,13 +27,13 @@ import org.opengis.metadata.citation.Citation;
  * @author Guilhem  Legal (Geomatys)
  */
 public class FeatureCatalogueStandard extends MetadataStandard {
-    
+
     private static final String SUFFIX = "Impl";
-    
+
     private static final String IMPL_SUBPACKAGE = "org.geotoolkit.feature.catalog";
-    
+
     private static final String IMPL_UTIL_SUBPACKAGE = "org.geotoolkit.feature.catalog.util";
-    
+
     /**
      * The singleton instance.
      */
@@ -42,11 +42,11 @@ public class FeatureCatalogueStandard extends MetadataStandard {
         final Package pck = FeatureCatalogue.class.getPackage();
         ISO_19110 = new FeatureCatalogueStandard(new DefaultCitation("Feature Catalogue"), pck);
     }
-    
+
     public FeatureCatalogueStandard(Citation citation, Package interfacePackage, MetadataStandard... dependencies) {
         super(citation, interfacePackage, dependencies);
     }
-    
+
     /**
      * Returns the implementation class for the given interface, or {@code null} if none.
      *

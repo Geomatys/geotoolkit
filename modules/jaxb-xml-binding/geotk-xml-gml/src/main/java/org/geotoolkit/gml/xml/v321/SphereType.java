@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SphereType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SphereType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SphereType")
@@ -55,11 +55,11 @@ public class SphereType
 
     /**
      * Gets the value of the horizontalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getHorizontalCurveType() {
         if (horizontalCurveType == null) {
@@ -71,11 +71,11 @@ public class SphereType
 
     /**
      * Sets the value of the horizontalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setHorizontalCurveType(CurveInterpolationType value) {
         this.horizontalCurveType = value;
@@ -83,11 +83,11 @@ public class SphereType
 
     /**
      * Gets the value of the verticalCurveType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getVerticalCurveType() {
         if (verticalCurveType == null) {
@@ -99,11 +99,11 @@ public class SphereType
 
     /**
      * Sets the value of the verticalCurveType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setVerticalCurveType(CurveInterpolationType value) {
         this.verticalCurveType = value;

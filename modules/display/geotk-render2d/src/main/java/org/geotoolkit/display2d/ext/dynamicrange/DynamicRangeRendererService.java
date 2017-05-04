@@ -60,7 +60,7 @@ public class DynamicRangeRendererService extends AbstractSymbolizerRendererServi
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedDynamicRangeSymbolizer symbol, MapLayer layer) {
-        
+
         float[] fractions;
         Color[] colors;
 
@@ -80,5 +80,5 @@ public class DynamicRangeRendererService extends AbstractSymbolizerRendererServi
         g.setPaint(paint);
         g.fill(rectangle);
     }
-    
+
 }

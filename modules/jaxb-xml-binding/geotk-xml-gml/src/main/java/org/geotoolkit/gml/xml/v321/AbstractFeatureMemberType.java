@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * To create a collection of GML features, a property type shall be derived by extension from gml:AbstractFeatureMemberType.
  * By default, this abstract property type does not imply any ownership of the features in the collection. The owns attribute of gml:OwnershipAttributeGroup may be used on a property element instance to assert ownership of a feature in the collection. A collection shall not own a feature already owned by another object.
- * 
+ *
  * <p>Java class for AbstractFeatureMemberType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureMemberType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureMemberType")
@@ -59,11 +59,11 @@ public abstract class AbstractFeatureMemberType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -75,11 +75,11 @@ public abstract class AbstractFeatureMemberType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

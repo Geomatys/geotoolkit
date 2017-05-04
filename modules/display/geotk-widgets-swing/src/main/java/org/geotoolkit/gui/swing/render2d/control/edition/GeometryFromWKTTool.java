@@ -27,7 +27,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -35,7 +35,7 @@ public class GeometryFromWKTTool extends AbstractEditionTool {
 
     public GeometryFromWKTTool() {
         super(100,"geometryFromWKT", MessageBundle.formatInternational(MessageBundle.Keys.wkt),
-             new SimpleInternationalString("Tool for moving editing geometry using WKT."), 
+             new SimpleInternationalString("Tool for moving editing geometry using WKT."),
              IconBundle.getIcon("16_wkt"),FeatureMapLayer.class);
     }
 

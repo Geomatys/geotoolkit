@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
 
 /**
  * <p>Java class for AbstractSettingsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSettingsType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSettingsType")

@@ -27,7 +27,7 @@ import org.geotoolkit.client.AbstractRequest;
  * @module
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
-    
+
     /**
      * Defines the server url and the service version for this kind of request.
      *

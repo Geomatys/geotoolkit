@@ -28,15 +28,15 @@ import org.apache.sis.util.Version;
 
 
 /**
- * 
- * Base type for all request messages except GetCapabilities. 
+ *
+ * Base type for all request messages except GetCapabilities.
  * The attributes identify the relevant service type and version.
- *          
- * 
+ *
+ *
  * <p>Java class for RequestBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestBaseType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,12 +72,12 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
      * An empty constructor used by JAXB
      */
     RequestBaseType() {
-        
+
     }
-    
+
     /**
      * Super contructor used by thi child classes
-     * 
+     *
      * @param service the name of the service (fixed to "CSW")
      * @param version the version of the service
      */
@@ -92,7 +92,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
             this.version = other.version;
         }
     }
-    
+
     /**
      * Gets the value of the service property.
      */
@@ -100,7 +100,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
     public String getService() {
         return service;
     }
-    
+
     /**
      * Sets the value of the service property.
      */
@@ -118,7 +118,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the version property.
      */

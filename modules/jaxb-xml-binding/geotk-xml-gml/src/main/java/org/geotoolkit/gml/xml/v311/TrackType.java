@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * The track of a moving object is a sequence of specialized timeslices        that indicate the status of the object.
- * 
+ *
  * <p>Java class for TrackType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TrackType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -28,11 +28,11 @@ import org.geotoolkit.ows.xml.AbstractAddress;
 /**
  * Location of the responsible individual or
  *       organization.
- * 
+ *
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ows.xml.AbstractAddress;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressType", propOrder = {
@@ -113,8 +113,8 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the deliveryPoint property.
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<String> getDeliveryPoint() {
@@ -126,11 +126,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the city property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCity() {
@@ -139,11 +139,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Sets the value of the city property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCity(String value) {
         this.city = value;
@@ -151,11 +151,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the administrativeArea property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getAdministrativeArea() {
@@ -164,11 +164,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Sets the value of the administrativeArea property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAdministrativeArea(String value) {
         this.administrativeArea = value;
@@ -176,11 +176,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getPostalCode() {
@@ -189,11 +189,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPostalCode(String value) {
         this.postalCode = value;
@@ -201,11 +201,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the country property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCountry() {
@@ -214,11 +214,11 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Sets the value of the country property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCountry(String value) {
         this.country = value;
@@ -226,7 +226,7 @@ public class AddressType implements AbstractAddress{
 
     /**
      * Gets the value of the electronicMailAddress property.
-     * 
+     *
      */
     @Override
     public List<String> getElectronicMailAddress() {

@@ -57,7 +57,7 @@ public class TreeMapItem extends TreeItem implements ItemListener {
     public void itemChange(CollectionChangeEvent<MapItem> event) {
         final int type = event.getType();
         if(type != CollectionChangeEvent.ITEM_ADDED && type != CollectionChangeEvent.ITEM_REMOVED) return;
-        
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -85,5 +85,5 @@ public class TreeMapItem extends TreeItem implements ItemListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
     }
-    
+
 }

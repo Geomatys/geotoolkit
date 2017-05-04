@@ -32,12 +32,12 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
 
 
 /**
- * Description of a WPS process or output object. 
- * 
+ * Description of a WPS process or output object.
+ *
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,23 +81,23 @@ public class DescriptionType implements AbstractDescription {
     protected List<MetadataType> metadata;
 
     public DescriptionType() {
-        
+
     }
-    
+
     public DescriptionType(CodeType identifier, LanguageStringType title, LanguageStringType _abstract) {
         this._abstract = _abstract;
         this.title = title;
         this.identifier = identifier;
     }
-    
+
     /**
      * Unambiguous identifier or name of a process, unique for this server
-     * , or unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * , or unambiguous identifier or name of an output, unique for this process.
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -105,75 +105,75 @@ public class DescriptionType implements AbstractDescription {
 
     /**
      * Unambiguous identifier or name of a process, unique for this server,
-     * or unambiguous identifier or name of an output, unique for this process. 
-     * 
+     * or unambiguous identifier or name of an output, unique for this process.
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
     /**
-     * Title of a process or output, normally available for display to a human. 
-     * 
+     * Title of a process or output, normally available for display to a human.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public LanguageStringType getTitle() {
         return title;
     }
 
     /**
-     * Title of a process or output, normally available for display to a human. 
-     * 
+     * Title of a process or output, normally available for display to a human.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setTitle(final LanguageStringType value) {
         this.title = value;
     }
 
     /**
-     * Brief narrative description of a process or output, 
-     * normally available for display to a human. 
-     * 
+     * Brief narrative description of a process or output,
+     * normally available for display to a human.
+     *
      * @return
      *     possible object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public LanguageStringType getAbstract() {
         return _abstract;
     }
 
     /**
-     * Brief narrative description of a process or output, 
-     * normally available for display to a human. 
-     * 
+     * Brief narrative description of a process or output,
+     * normally available for display to a human.
+     *
      * @param value
      *     allowed object is
      *     {@link LanguageStringType }
-     *     
+     *
      */
     public void setAbstract(final LanguageStringType value) {
         this._abstract = value;
     }
 
     /**
-     * Optional unordered list of additional metadata about this process/input/output. 
-     * A list of optional and/or required metadata elements for this process/input/output could be specified in an Application Profile for this service. 
+     * Optional unordered list of additional metadata about this process/input/output.
+     * A list of optional and/or required metadata elements for this process/input/output could be specified in an Application Profile for this service.
      * Gets the value of the metadata property.
-     * 
+     *
      * @return Objects of the following type(s) are allowed in the list {@link MetadataType }
-     * 
-     * 
+     *
+     *
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
@@ -181,7 +181,7 @@ public class DescriptionType implements AbstractDescription {
         }
         return this.metadata;
     }
-    
+
     @Override
     public String getFirstTitle() {
         return title==null ? null : title.getValue();
@@ -194,13 +194,13 @@ public class DescriptionType implements AbstractDescription {
 
     /**
      * Information is not available on this version.
-     * @return 
+     * @return
      */
     @Override
     public List<? extends AbstractKeywords> getKeywords() {
         return new ArrayList<>();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
@@ -221,7 +221,7 @@ public class DescriptionType implements AbstractDescription {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare

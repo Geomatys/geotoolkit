@@ -22,11 +22,11 @@ package org.geotoolkit.wms.xml;
  *
  * @module
  */
-public interface AbstractMetadataURL extends AbstractURL {   
-    
+public interface AbstractMetadataURL extends AbstractURL {
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     String getType();
 }

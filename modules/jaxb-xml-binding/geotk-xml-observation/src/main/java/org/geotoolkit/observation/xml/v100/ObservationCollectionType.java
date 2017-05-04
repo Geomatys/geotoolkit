@@ -46,22 +46,22 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
      */
     @XmlElement(required=true)
     private List<ObservationPropertyType> member;
-    
+
     /**
-     * A JAXB constructor. 
+     * A JAXB constructor.
      */
     public ObservationCollectionType() {
         super(null, null, null);
         this.member = new ArrayList<>();
     }
-    
-    
+
+
     public ObservationCollectionType(final String title) {
         super(null, null, null);
         this.member = new ArrayList<>();
         this.member.add(new ObservationPropertyType(title));
     }
-    
+
     public ObservationCollectionType(final String id, final EnvelopeType env, final List<ObservationType> observations) {
         super(id, null, null);
         if (observations != null) {
@@ -74,9 +74,9 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
             setBoundedBy(env);
         }
     }
-    
+
     /**
-     * Add a new Observation to the collection. 
+     * Add a new Observation to the collection.
      * @param observation
      */
     public void add(final ObservationType observation) {
@@ -84,20 +84,20 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
             this.member.add(new ObservationPropertyType(observation));
         }
     }
-    
+
     /**
      * Return a collection of Observation
      */
     @Override
     public List<Observation> getMember() {
         List result = new ArrayList<>();
-        
+
         for (ObservationPropertyType obprop: member) {
             result.add(obprop.getObservation());
         }
         return result;
     }
-    
+
      /**
      * Vérifie si cette entré est identique à l'objet spécifié.
      */
@@ -119,11 +119,11 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
             for (ObservationPropertyType thisOp: this.member) {
                 if (!Objects.equals(thisOp.getObservation(), that.member.get(i).getObservation())) {
                     return false;
-                }  
-                i++;        
+                }
+                i++;
             }
             return true;
-        } 
+        }
         return false;
     }
 
@@ -133,7 +133,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
         hash = 73 * hash + (this.member != null ? this.member.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

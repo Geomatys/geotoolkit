@@ -55,7 +55,7 @@ public class DefaultPremise implements Premise {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param premiseNames
      * @param localisation

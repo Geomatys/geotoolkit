@@ -41,7 +41,7 @@ public class FXFont extends FXStyleElementController<Font>{
     @FXML protected FXFontWeigthExpression uiWeight;
     @FXML protected FXFontStyleExpression uiStyle;
     @FXML protected FXListExpression uiFamily;
-        
+
     @Override
     public Class<Font> getEditedClass() {
         return Font.class;
@@ -51,13 +51,13 @@ public class FXFont extends FXStyleElementController<Font>{
     public Font newValue() {
         return getStyleFactory().font();
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
 
         uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100, 10, 1));
-                
+
         //Initialize family font list with available font family
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final String[] fontNames = environment.getAvailableFontFamilyNames();
@@ -67,24 +67,24 @@ public class FXFont extends FXStyleElementController<Font>{
         for (int i=0; i<nbFamilies; i++) {
             fontFamilies[i] = new DefaultLiteral(fontNamesList.get(i));
         }
-        
+
         uiFamily.getEditor().setItems(FXCollections.observableArrayList(fontFamilies));
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().font(
-                    uiFamily.valueProperty().get(), 
-                    uiStyle.valueProperty().get(), 
-                    uiWeight.valueProperty().get(), 
+                    uiFamily.valueProperty().get(),
+                    uiStyle.valueProperty().get(),
+                    uiWeight.valueProperty().get(),
                     uiSize.valueProperty().get()));
         };
-        
+
         uiSize.valueProperty().addListener(changeListener);
         uiWeight.valueProperty().addListener(changeListener);
         uiStyle.valueProperty().addListener(changeListener);
         uiFamily.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -93,7 +93,7 @@ public class FXFont extends FXStyleElementController<Font>{
         uiStyle.setLayer(layer);
         uiFamily.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Font styleElement) {
         uiSize.valueProperty().setValue(styleElement.getSize());
@@ -105,7 +105,7 @@ public class FXFont extends FXStyleElementController<Font>{
         }else{
             //TODO set to default family
         }
-        
+
     }
-    
+
 }

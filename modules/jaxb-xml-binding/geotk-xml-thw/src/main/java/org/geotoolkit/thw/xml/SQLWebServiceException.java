@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SQLWebServiceException complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SQLWebServiceException">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SQLWebServiceException", propOrder = {
@@ -58,11 +58,11 @@ public class SQLWebServiceException {
 
     /**
      * Gets the value of the sqlState property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSQLState() {
         return sqlState;
@@ -70,11 +70,11 @@ public class SQLWebServiceException {
 
     /**
      * Sets the value of the sqlState property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSQLState(String value) {
         this.sqlState = value;
@@ -82,7 +82,7 @@ public class SQLWebServiceException {
 
     /**
      * Gets the value of the errorCode property.
-     * 
+     *
      */
     public int getErrorCode() {
         return errorCode;
@@ -90,7 +90,7 @@ public class SQLWebServiceException {
 
     /**
      * Sets the value of the errorCode property.
-     * 
+     *
      */
     public void setErrorCode(int value) {
         this.errorCode = value;
@@ -98,11 +98,11 @@ public class SQLWebServiceException {
 
     /**
      * Gets the value of the message property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessage() {
         return message;
@@ -110,11 +110,11 @@ public class SQLWebServiceException {
 
     /**
      * Sets the value of the message property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessage(String value) {
         this.message = value;

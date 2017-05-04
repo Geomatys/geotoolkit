@@ -30,29 +30,29 @@ abstract class SeparableInterpolation extends Interpolation {
 
     /** 2D Array storing row data of each band when an interpolation per pixel is performed. */
     private final double[] rows;
-    
+
     /** 2D Array storing row interpolated data for each band when an interpolation per pixel is performed. */
     private final double[] cols;
-    
+
     /**
      * {@link Rectangle} which represente pixel area needed to compute interpolation from projected source coordinate.
      */
     protected final Rectangle interpolArea;
-    
+
     /**
      * Array which contain all samples values needed to compute interpolation.
-     * Moreover its length equals band number 
+     * Moreover its length equals band number
      */
     protected final Object[] buffer;
-    
+
     /**
      * {@link DataBuffer} type of internal datas.
      */
     private final int sourceDataType;
-    
+
     /**
-     * Build a bi-dimensional interpolation. 
-     * 
+     * Build a bi-dimensional interpolation.
+     *
      * @param pixelIterator iterator which travel source image samples.
      * @param windowSide length of samples in X and Y direction needed from interpolation type.
      * @param rbc enum which define interpolation comportement at the source image border.
@@ -69,7 +69,7 @@ abstract class SeparableInterpolation extends Interpolation {
                 buffer = new byte[numBands][windowSide * windowSide];
                 break;
             }
-            case DataBuffer.TYPE_SHORT  : 
+            case DataBuffer.TYPE_SHORT  :
             case DataBuffer.TYPE_USHORT : {
                 buffer = new short[numBands][windowSide * windowSide];
                 break;
@@ -89,24 +89,24 @@ abstract class SeparableInterpolation extends Interpolation {
             default : throw new IllegalArgumentException("Unknow datatype");
         }
     }
-    
+
     /**
      * Returns interpolate value from x, y pixel coordinates and band index.
      *
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
      * @param b band index.
-     * @return interpolate value from x, y pixel coordinates and band index.  
+     * @return interpolate value from x, y pixel coordinates and band index.
      */
     @Override
     public double interpolate(double x, double y, int b) {
         ArgumentChecks.ensureBetween("band index", 0, getNumBands(), b);
 //        if (!checkInterpolate(x, y)) return fillValue[b];
         setInterpolateMin(x, y);
-        
+
         interpolArea.setLocation(minX, minY);
         pixelIterator.getArea(interpolArea, buffer[b], b);
-        
+
         int bufferID = 0;
         for (int dy = 0; dy < windowSide; dy++) {
             WriteInInterpolArray(buffer[b], bufferID, rows, 0, windowSide);
@@ -127,7 +127,7 @@ abstract class SeparableInterpolation extends Interpolation {
     public double[] interpolate(double x, double y) {
 //        if (!checkInterpolate(x, y)) return fillValue;
         setInterpolateMin(x, y);
-        
+
         interpolArea.setLocation(minX, minY);
         pixelIterator.getArea(interpolArea, buffer);
         int bufferID;
@@ -142,10 +142,10 @@ abstract class SeparableInterpolation extends Interpolation {
         }
         return result;
     }
-    
+
     /**
      * Fill double destination array from unknow type source array.
-     * 
+     *
      * @param src source array.
      * @param srcPos first copied source array element.
      * @param dest destination double array which will be filled.
@@ -200,7 +200,7 @@ abstract class SeparableInterpolation extends Interpolation {
             default : throw new IllegalArgumentException("Unknow datatype");
         }
     }
-    
+
     /**
      * Compute interpolation value define by interpolation type implementation.
      *

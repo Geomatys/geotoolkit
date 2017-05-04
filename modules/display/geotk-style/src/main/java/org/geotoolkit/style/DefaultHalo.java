@@ -26,19 +26,19 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types halo.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultHalo implements Halo{
 
     private final Fill fill;
-    
+
     private final Expression radius;
-    
+
     /**
      * Create a default immutable Halo.
-     * 
+     *
      * @param fill : if null will be replaced by default value.
      * @param radius : if null or Expression.NIL will be replaced by default value.
      */
@@ -46,7 +46,7 @@ public class DefaultHalo implements Halo{
         this.fill = (fill == null) ? DEFAULT_HALO_FILL : fill;
         this.radius = (radius == null || radius == NIL) ? DEFAULT_HALO_RADIUS : radius;
     }
-    
+
     /**
      * {@inheritDoc }
      */

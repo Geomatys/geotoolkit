@@ -40,11 +40,11 @@ import org.geotoolkit.citygml.xml.v100.AbstractSiteType;
  * or if the roof type of a Building is saddle roof, while its parts have an hip roof).
  * As subclass of _CityObject, an _AbstractBuilding inherits all attributes and relations,
  * in particular an id, names, external references, and generalization relations.
- * 
+ *
  * <p>Java class for AbstractBuildingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractBuildingType">
  *   &lt;complexContent>
@@ -88,8 +88,8 @@ import org.geotoolkit.citygml.xml.v100.AbstractSiteType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -140,7 +140,7 @@ public abstract class AbstractBuildingType extends AbstractSiteType {
     private List<JAXBElement<?>> rest;
 
     /**
-     * Gets the rest of the content model. 
+     * Gets the rest of the content model.
      */
     public List<JAXBElement<?>> getRest() {
         if (rest == null) {
@@ -148,7 +148,7 @@ public abstract class AbstractBuildingType extends AbstractSiteType {
         }
         return this.rest;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

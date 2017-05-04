@@ -64,19 +64,19 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  */
 public class FXFeatureTable extends FXPropertyPane{
-    
+
     protected final TableView<Feature> table = new TableView<>();
     private boolean loadAll = false;
-    
+
     protected FeatureMapLayer layer;
-    
+
     // Bundle management
     /**
      * bundles contains ResourceBundles indexed by table names.
      */
     private final Map<String, ResourceBundle> bundles = new HashMap<>();
     private String bundlePrefix;
-    
+
     public FXFeatureTable() {
         final ScrollPane scroll = new ScrollPane(table);
         scroll.setFitToHeight(true);
@@ -85,7 +85,7 @@ public class FXFeatureTable extends FXPropertyPane{
         scroll.setPrefSize(600, 400);
         scroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         setCenter(scroll);
-        
+
         //listen to table selection
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Feature>() {
@@ -101,15 +101,15 @@ public class FXFeatureTable extends FXPropertyPane{
                 if(layer!=null){
                     layer.setSelectionFilter(selection);
                 }
-                
+
             }
         });
-        
+
         final Button loadButton = new Button(GeotkFX.getString(FXFeatureTable.class, "loadData"));
         loadButton.setOnAction(this::loadData);
         table.setPlaceholder(loadButton);
     }
-    
+
     public FXFeatureTable(final Map<String, String> bundleMapping){
         this();
         for(final String key : bundleMapping.keySet()){
@@ -123,17 +123,17 @@ public class FXFeatureTable extends FXPropertyPane{
             }
         }
     }
-    
+
     public FXFeatureTable(final String bundleBaseNamePrefix){
         this();
         bundlePrefix = bundleBaseNamePrefix;
     }
-    
+
     @Override
     public String getTitle() {
         return "Feature table";
     }
-    
+
     public String getCategory(){
         return "";
     }
@@ -145,7 +145,7 @@ public class FXFeatureTable extends FXPropertyPane{
     public void setLoadAll(boolean loadAll) {
         this.loadAll = loadAll;
     }
-    
+
     public void setEditable(boolean editable){
         table.setEditable(editable);
     }
@@ -153,13 +153,13 @@ public class FXFeatureTable extends FXPropertyPane{
     public boolean isEditable(){
         return table.isEditable();
     }
-    
+
     public boolean init(Object candidate){
         if(!(candidate instanceof FeatureMapLayer)) return false;
-        
+
         layer = (FeatureMapLayer) candidate;
         final FeatureCollection features = layer.getCollection();
-        
+
         table.getColumns().clear();
         final FeatureType featureType = features.getFeatureType();
         for(PropertyType prop : featureType.getProperties(true)){
@@ -178,18 +178,18 @@ public class FXFeatureTable extends FXPropertyPane{
             column.setCellFactory(TextFieldTableCell.forTableColumn());
             table.getColumns().add(column);
         }
-        
+
         if(loadAll){
             table.setItems(FXCollections.observableArrayList((Feature[])features.toArray(new Feature[0])));
         }
-        
+
         //TODO make a caching version, this is too slow for today use.
         //final ObservableFeatureCollection obsCol = new ObservableFeatureCollection((FeatureCollection<Feature>) col);
         //table.setItems(obsCol);
-        
+
         return true;
     }
-    
+
     private String generateFinalColumnName(final PropertyType prop) {
         Map<String, Entry<String, String>> labelInfo;
         try {
@@ -259,27 +259,27 @@ public class FXFeatureTable extends FXPropertyPane{
         }
         return finalColumnName;
     }
-    
+
     private void loadData(ActionEvent event){
         final FeatureCollection col = layer.getCollection();
         table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
     }
-        
+
     private static class ObservableFeatureCollection extends AbstractSequentialList<Feature> implements ObservableList<Feature>{
 
         private final FeatureCollection features;
-        
+
         private ObservableFeatureCollection(FeatureCollection features){
             this.features = features;
         }
-        
+
         @Override
         public ListIterator<Feature> listIterator(int index) {
-            
+
             final QueryBuilder qb = new QueryBuilder(features.getFeatureType().getName().toString());
             qb.setStartIndex(index);
-            
-            final FeatureCollection subcol;            
+
+            final FeatureCollection subcol;
             try {
                 subcol = features.subCollection(qb.buildQuery());
             } catch (DataStoreException ex) {
@@ -287,7 +287,7 @@ public class FXFeatureTable extends FXPropertyPane{
                 return Collections.EMPTY_LIST.listIterator();
             }
             final Iterator ite = subcol.iterator();
-            
+
             final ListIterator lite = new ListIterator() {
 
                 @Override
@@ -335,7 +335,7 @@ public class FXFeatureTable extends FXPropertyPane{
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
-            
+
             return lite;
         }
 
@@ -359,7 +359,7 @@ public class FXFeatureTable extends FXPropertyPane{
         @Override
         public void removeListener(InvalidationListener listener) {
         }
-        
+
         @Override
         public boolean addAll(Feature... elements) {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -391,6 +391,6 @@ public class FXFeatureTable extends FXPropertyPane{
         }
 
     }
-    
-    
+
+
 }

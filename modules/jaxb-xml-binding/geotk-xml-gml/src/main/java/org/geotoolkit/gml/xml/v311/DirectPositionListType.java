@@ -30,13 +30,13 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * DirectPositionList instances hold the coordinates for a sequence of direct positions within the same coordinate 
- * 			reference system (CRS).
- * 
+ * DirectPositionList instances hold the coordinates for a sequence of direct positions within the same coordinate
+ *          reference system (CRS).
+ *
  * <p>Java class for DirectPositionListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectPositionListType">
  *   &lt;simpleContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,17 +74,17 @@ public class DirectPositionListType implements DirectPositionList {
     private List<String> uomLabels;
 
     public DirectPositionListType() {
-        
+
     }
-    
+
     public DirectPositionListType(List<Double> value) {
         this.value = value;
     }
-    
+
     /**
      * XML List based on XML Schema double type.
      * An element of this type contains a space-separated list of double values Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
      */
@@ -119,14 +119,14 @@ public class DirectPositionListType implements DirectPositionList {
         }
         this.value.add(value);
     }
-    
+
     /**
      * Gets the value of the count property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getCount() {
         return count;
@@ -134,11 +134,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the count property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setCount(final Integer value) {
         this.count = value;
@@ -146,11 +146,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -158,11 +158,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(final String value) {
         this.srsName = value;
@@ -170,11 +170,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -182,11 +182,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
@@ -194,11 +194,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -209,11 +209,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the uomLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {

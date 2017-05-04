@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * ExternalLink is the mapping of the same named interface in ebRIM.
  * It extends RegistryObject.
- *       
- * 
+ *
+ *
  * <p>Java class for ExternalLinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExternalLinkType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ public class ExternalLinkType extends RegistryObjectType {
 
     /**
      * Gets the value of the externalURI property.
-     * 
+     *
      */
     public String getExternalURI() {
         return externalURI;

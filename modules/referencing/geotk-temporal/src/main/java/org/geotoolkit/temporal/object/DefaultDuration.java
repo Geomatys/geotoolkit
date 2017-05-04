@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -28,10 +28,10 @@ import org.opengis.temporal.Duration;
  * @since   4.0
  */
 public abstract class DefaultDuration implements Duration {
-    
+
     /**
      * Return the current length {@link Duration} exprimate in milli seconds.
-     * 
+     *
      * @return the current length {@link Duration} exprimate in milli seconds.
      */
     public abstract long getTimeInMillis();

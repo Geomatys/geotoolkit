@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContactAddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContactAddressType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContactAddressType", propOrder = {
@@ -72,11 +72,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the addressType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddressType() {
         return addressType;
@@ -84,11 +84,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the addressType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddressType(String value) {
         this.addressType = value;
@@ -96,11 +96,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAddress() {
         return address;
@@ -108,11 +108,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAddress(String value) {
         this.address = value;
@@ -120,11 +120,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the city property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCity() {
         return city;
@@ -132,11 +132,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the city property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCity(String value) {
         this.city = value;
@@ -144,11 +144,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the stateOrProvince property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStateOrProvince() {
         return stateOrProvince;
@@ -156,11 +156,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the stateOrProvince property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStateOrProvince(String value) {
         this.stateOrProvince = value;
@@ -168,11 +168,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the postCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPostCode() {
         return postCode;
@@ -180,11 +180,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the postCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPostCode(String value) {
         this.postCode = value;
@@ -192,11 +192,11 @@ public class ContactAddressType {
 
     /**
      * Gets the value of the country property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCountry() {
         return country;
@@ -204,11 +204,11 @@ public class ContactAddressType {
 
     /**
      * Sets the value of the country property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCountry(String value) {
         this.country = value;

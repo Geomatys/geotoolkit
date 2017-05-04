@@ -173,16 +173,16 @@ public class OMUtils {
         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
         return sp;
     }
-    
+
     public static SamplingFeature buildSamplingCurve(final String identifier, final List<DirectPosition> positions) {
         final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
         final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
         return sp;
     }
-    
-    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf, 
+
+    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
             final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
-        
+
         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString());
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
         return OMXmlFactory.buildObservation("2.0.0",       // version

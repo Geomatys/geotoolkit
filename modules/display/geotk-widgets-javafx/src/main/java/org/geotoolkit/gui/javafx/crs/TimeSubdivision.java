@@ -23,7 +23,7 @@ import org.geotoolkit.temporal.object.TemporalConstants;
 
 /**
  * A single temporal subdivision used by DateRenderer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface TimeSubdivision {
@@ -41,7 +41,7 @@ public interface TimeSubdivision {
      *     example : 1 minute would be 60000.
      */
     public double getUnitLength();
-    
+
     /**
      * Intermediate division will not be displayed in the lower bar.
      * @return true if division is intermediate.
@@ -85,7 +85,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return false;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("99999");
@@ -141,7 +141,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return false;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("AAAAAA"); //should not be longer
@@ -198,7 +198,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return false;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("AA"); //31 day max
@@ -254,7 +254,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return false;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("AA"); //24 max
@@ -309,7 +309,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return true;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("AA"); //60 max
@@ -347,7 +347,7 @@ public interface TimeSubdivision {
         }
 
     }
-    
+
     public static class Minute implements TimeSubdivision {
 
         @Override
@@ -364,7 +364,7 @@ public interface TimeSubdivision {
         public boolean isIntermediate() {
             return true;
         }
-        
+
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.computeStringWidth("AA"); //60 max

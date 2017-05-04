@@ -29,7 +29,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * 
+ *
  * @author jamesm
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
@@ -48,7 +48,7 @@ public class ShapefileHeader {
     private final double minY;
     private final double maxY;
 
-    public ShapefileHeader(final int fileLenght, final int version, 
+    public ShapefileHeader(final int fileLenght, final int version,
             final ShapeType shapeType, final double minX, final double maxX, final double minY, final double maxY){
         this.fileLength = fileLenght;
         this.version = version;
@@ -88,12 +88,12 @@ public class ShapefileHeader {
     }
 
     /**
-     * 
+     *
      * @param namespace
      * @return AttributeDescriptor mapping this header definition
      */
     public AttributeType createDescriptor(final String namespace, final CoordinateReferenceSystem crs){
-        final SingleAttributeTypeBuilder buildAtt = new SingleAttributeTypeBuilder();        
+        final SingleAttributeTypeBuilder buildAtt = new SingleAttributeTypeBuilder();
         final Class<?> geometryClass = getShapeType().bestJTSClass();
         buildAtt.setName(namespace, Classes.getShortName(geometryClass));
         buildAtt.setCRS(crs);
@@ -101,7 +101,7 @@ public class ShapefileHeader {
         buildAtt.setName(namespace, "the_geom");
         return buildAtt.build();
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ShapeFileHeader[");

@@ -26,8 +26,8 @@ import org.geotoolkit.wms.xml.AbstractService;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
- * 
+ *
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -72,9 +72,9 @@ public class Service implements AbstractService {
      * Build a new Service object.
      */
     public Service(final String name, final String title, final String _abstract,
-            final KeywordList keywordList, final OnlineResource onlineResource, 
+            final KeywordList keywordList, final OnlineResource onlineResource,
             final ContactInformation contactInformation, final String fees, final String accessConstraints) {
-        
+
         this._abstract          = _abstract;
         this.name               = name;
         this.onlineResource     = onlineResource;
@@ -84,17 +84,17 @@ public class Service implements AbstractService {
         this.keywordList        = keywordList;
         this.title              = title;
     }
-    
-    
+
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public String getName() {
         return name;
     }
-    
+
     /**
      * @param name the name to set
      */
@@ -109,7 +109,7 @@ public class Service implements AbstractService {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * @param title the title to set
      */
@@ -120,13 +120,13 @@ public class Service implements AbstractService {
 
    /**
      * Gets the value of the abstract property.
-     * 
+     *
      */
     @Override
     public String getAbstract() {
         return _abstract;
     }
-    
+
     /**
      * @param _abstract the _abstract to set
      */
@@ -149,7 +149,7 @@ public class Service implements AbstractService {
     public void setKeywordList(KeywordList keywordList) {
         this.keywordList = keywordList;
     }
-    
+
     /**
      * Gets the value of the onlineResource property.
      */
@@ -164,16 +164,16 @@ public class Service implements AbstractService {
     public void setOnlineResource(OnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the contactInformation property.
-     * 
+     *
      */
     @Override
     public ContactInformation getContactInformation() {
         return contactInformation;
     }
-    
+
     /**
      * @param contactInformation the contactInformation to set
      */
@@ -188,7 +188,7 @@ public class Service implements AbstractService {
     public String getFees() {
         return fees;
     }
-    
+
     /**
      * @param fees the fees to set
      */
@@ -199,7 +199,7 @@ public class Service implements AbstractService {
 
    /**
     * Gets the value of the accessConstraints property.
-    * 
+    *
     */
     @Override
     public String getAccessConstraints() {

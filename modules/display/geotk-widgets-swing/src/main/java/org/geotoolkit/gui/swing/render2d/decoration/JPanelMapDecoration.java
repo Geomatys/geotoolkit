@@ -23,18 +23,18 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 /**
  * A translucent empty JPanel implementing MapDecoration.
  * This class can be used as a base decoration.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class JPanelMapDecoration extends JPanel implements MapDecoration{
 
-    protected JMap2D map = null; 
-    
+    protected JMap2D map = null;
+
     public JPanelMapDecoration(){
         setOpaque(false);
     }
-    
+
     @Override
     public void refresh() {
     }
@@ -57,5 +57,5 @@ public class JPanelMapDecoration extends JPanel implements MapDecoration{
     public JComponent getComponent() {
         return this;
     }
-    
+
 }

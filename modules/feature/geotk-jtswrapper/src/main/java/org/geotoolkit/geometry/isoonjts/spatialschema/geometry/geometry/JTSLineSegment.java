@@ -35,7 +35,7 @@ import org.opengis.geometry.coordinate.LineSegment;
  * <blockquote>
  * <var>c</var>(<var>t</var>) = <var>c</var>(0)(1-<var>t</var>) + <var>c</var>(1)<var>t</var>
  * </blockquote>
- *  
+ *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -44,5 +44,5 @@ import org.opengis.geometry.coordinate.LineSegment;
  * @module
  */
 public class JTSLineSegment extends JTSLineString implements LineSegment {
-    
+
 }

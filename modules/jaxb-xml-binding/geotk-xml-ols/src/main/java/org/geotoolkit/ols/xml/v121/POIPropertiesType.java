@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines POI selection criteria as a list of properties
- * 
+ *
  * <p>Java class for POIPropertiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="POIPropertiesType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POIPropertiesType", propOrder = {
@@ -66,7 +66,7 @@ public class POIPropertiesType extends AbstractPOISelectionCriteriaType {
 
     /**
      * Gets the value of the abstractPOIProperty property.
-     * 
+     *
      */
     public List<JAXBElement<?>> getAbstractPOIProperty() {
         if (abstractPOIProperty == null) {
@@ -77,11 +77,11 @@ public class POIPropertiesType extends AbstractPOISelectionCriteriaType {
 
     /**
      * Gets the value of the directoryType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDirectoryType() {
         return directoryType;
@@ -89,11 +89,11 @@ public class POIPropertiesType extends AbstractPOISelectionCriteriaType {
 
     /**
      * Sets the value of the directoryType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDirectoryType(String value) {
         this.directoryType = value;

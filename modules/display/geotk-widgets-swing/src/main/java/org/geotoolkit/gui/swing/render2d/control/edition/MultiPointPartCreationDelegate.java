@@ -35,7 +35,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Edition tool to create multi point parts.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -55,12 +55,12 @@ public class MultiPointPartCreationDelegate extends AbstractFeatureEditionDelega
         subGeometries.clear();
         decoration.setGeometries(null);
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         this.geometry = null;
         this.subGeometries.clear();
-        
+
         if(feature != null){
             this.geometry = (MultiPoint) helper.toObjectiveCRS(feature);
             if(geometry != null){

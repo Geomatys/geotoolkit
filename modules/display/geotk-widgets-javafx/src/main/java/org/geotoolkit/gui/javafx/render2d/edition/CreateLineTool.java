@@ -53,7 +53,7 @@ public class CreateLineTool extends AbstractEditionTool{
                 GeotkFX.getI18NString(CreateLineTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
-    
+
         @Override
         public boolean canHandle(Object candidate) {
             if(candidate instanceof FeatureMapLayer){
@@ -90,7 +90,7 @@ public class CreateLineTool extends AbstractEditionTool{
             return new Group(h,v);
         }
     };
-    
+
     private LineString geometry = null;
     private final List<Coordinate> coords = new ArrayList<>();
 

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -37,13 +37,13 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 
 /**
- * A role of the association FC_AssociationRole::relation.  
+ * A role of the association FC_AssociationRole::relation.
  * - [ocl] - roleName = FC_Member::memberName; - FC_PropertyType::cardinality realizes GF_AssociationRole::cardinality - [/ocl]
- * 
+ *
  * <p>Java class for FC_AssociationRole_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_AssociationRole_Type">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,18 +84,18 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     private FeatureAssociation relation;
     @XmlElement(required = true)
     private FeatureType valueType;
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public AssociationRoleImpl() {
-        
+
     }
-    
+
     /**
      * Clone a AssociationRole
      */
-    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, 
+    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality,
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference,
             final RoleType type, final Boolean isOrdered, final Boolean isNavigable, final FeatureAssociation relation, final FeatureType rolePlayer) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, definitionReference);
@@ -105,7 +105,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         this.valueType  = rolePlayer;
         this.type        = type;
     }
-    
+
      /**
      * Build a new AssociationRole
      */
@@ -119,10 +119,10 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
             this.type        = feature.getType();
         }
     }
-    
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     @Override
     public RoleType getType() {
@@ -131,7 +131,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final RoleType value) {
         this.type = value;
@@ -139,7 +139,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Gets the value of the isOrdered property.
-     * 
+     *
      */
     @Override
     public Boolean getIsOrdered() {
@@ -148,7 +148,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Sets the value of the isOrdered property.
-     * 
+     *
      */
     public void setIsOrdered(final Boolean value) {
         this.isOrdered = value;
@@ -156,7 +156,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Gets the value of the isNavigable property.
-     * 
+     *
      */
     @Override
     public Boolean getIsNavigable() {
@@ -172,7 +172,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Gets the value of the relation property.
-     * 
+     *
      */
     @Override
     public FeatureAssociation getRelation() {
@@ -188,7 +188,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Gets the value of the rolePlayer property.
-     *     
+     *
      */
     @Override
     public FeatureType getValueType() {
@@ -197,12 +197,12 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
 
     /**
      * Sets the value of the rolePlayer property.
-     * 
+     *
      */
     public void setValueType(final FeatureType value) {
         this.valueType = value;
     }
-    
+
     @Override
     public AssociationRoleImpl getReferenceableObject() {
         AssociationRoleImpl result = new AssociationRoleImpl(this);
@@ -213,11 +213,11 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         }
         return result;
     }
-    
+
     @Override
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         super.beforeMarshal(alreadySee);
-        
+
         if (valueType != null) {
             if (alreadySee.get(valueType.getId()) != null) {
                 valueType = ((FeatureTypeImpl)valueType).getReferenceableObject();
@@ -225,7 +225,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
                 alreadySee = ((FeatureTypeImpl)valueType).beforeMarshal(alreadySee);
             }
         }
-        
+
         if (relation != null) {
             if (alreadySee.get(relation.getId()) != null) {
                 relation = ((FeatureAssociationImpl)relation).getReferenceableObject();
@@ -233,9 +233,9 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
                 alreadySee = ((FeatureAssociationImpl)relation).beforeMarshal(alreadySee);
             }
         }
-        return alreadySee; 
+        return alreadySee;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -256,7 +256,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -267,24 +267,24 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
         }
         if (super.equals(object) && object instanceof AssociationRoleImpl) {
             final AssociationRoleImpl that = (AssociationRoleImpl) object;
-            
+
             // to avoid infinite cycle
             boolean association = false;
             if (this.relation != null && that.relation != null) {
                 association = Objects.equals(this.relation.getCode(), that.relation.getCode());
             } else if (this.relation == null && that.relation == null) {
                 association = true;
-                
+
             } else {
                 return false;
             }
-            
+
             return Objects.equals(this.isNavigable, that.isNavigable) &&
                    Objects.equals(this.isOrdered,   that.isOrdered)   &&
                    Objects.equals(this.type,        that.type)        &&
                    Objects.equals(this.valueType,   that.valueType)   &&
                    association;
-        } 
+        }
         return false;
     }
 

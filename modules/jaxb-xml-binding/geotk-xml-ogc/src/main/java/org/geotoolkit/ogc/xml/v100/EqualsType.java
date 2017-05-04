@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Equals")
 public class EqualsType extends BinarySpatialOpType {
-    
+
     public EqualsType() {
-        
+
     }
-    
+
     public EqualsType(final EqualsType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new EqualsType(this);

@@ -22,17 +22,17 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 /**
  * Subtype of coverage reference which contains a collection of coverage references.
  * All coverages are expected to be similar.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface CollectionCoverageReference extends CoverageReference {
-    
+
     /**
      * Get coverage references which may match the given read parameters.
-     * 
+     *
      * @param readParam, can be null, all references will be returned in this case
      * @return collection of coverage references. never null, can be empty
      */
     Collection<CoverageReference> getCoverages(GridCoverageReadParam readParam);
-    
+
 }

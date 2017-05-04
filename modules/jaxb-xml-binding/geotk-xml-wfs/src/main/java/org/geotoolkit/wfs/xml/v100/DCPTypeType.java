@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DCPTypeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DCPTypeType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DCPTypeType", propOrder = {
@@ -52,11 +52,11 @@ public class DCPTypeType {
 
     /**
      * Gets the value of the http property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HTTPType }
-     *     
+     *
      */
     public HTTPType getHTTP() {
         return http;
@@ -64,11 +64,11 @@ public class DCPTypeType {
 
     /**
      * Sets the value of the http property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HTTPType }
-     *     
+     *
      */
     public void setHTTP(HTTPType value) {
         this.http = value;

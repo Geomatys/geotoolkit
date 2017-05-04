@@ -31,12 +31,12 @@ import org.opengis.style.PointSymbolizer;
  */
 public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
 
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -76,16 +76,16 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
     public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, final MapLayer layer) {
         glyph(g2d,rectangle,symbol,layer,null);
     }
-    
-    public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, 
+
+    public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol,
             final MapLayer layer, final Float forcedSize) {
         g2d.setClip(rectangle);
-        
+
         final Object feature = mimicObject(layer);
         final float coeff = 1;
         final BufferedImage img = symbol.getImage(feature, forcedSize, coeff, null);
         if(img == null) return;
-        
+
         final float[] disps = new float[]{0,0};
         final float[] anchor = new float[]{0.5f,0.5f};
         disps[0] *= coeff ;

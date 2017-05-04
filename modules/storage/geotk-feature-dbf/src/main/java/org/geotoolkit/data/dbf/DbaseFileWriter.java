@@ -38,7 +38,7 @@ import java.nio.charset.Charset;
  * w.close();
  * </PRE></CODE> You must supply the <CODE>moreRecords</CODE> and
  * <CODE>getMyRecord()</CODE> logic...
- * 
+ *
  * @author Ian Schneider
  * @module
  */
@@ -49,11 +49,11 @@ public class DbaseFileWriter implements Closeable{
     WritableByteChannel channel;
     private ByteBuffer buffer;
     private Charset charset;
-    
+
     /**
      * Create a DbaseFileWriter using the specified header and writing to the
      * given channel.
-     * 
+     *
      * @param header
      *                The DbaseFileHeader to write.
      * @param out
@@ -65,12 +65,12 @@ public class DbaseFileWriter implements Closeable{
             throws IOException {
         this(header, out, null);
     }
-    
+
 
     /**
      * Create a DbaseFileWriter using the specified header and writing to the
      * given channel.
-     * 
+     *
      * @param header
      *                The DbaseFileHeader to write.
      * @param out
@@ -103,7 +103,7 @@ public class DbaseFileWriter implements Closeable{
 
     /**
      * Write a single dbase record.
-     * 
+     *
      * @param record
      *                The entries to write.
      * @throws IOException
@@ -140,7 +140,7 @@ public class DbaseFileWriter implements Closeable{
 
     /**
      * Release resources associated with this writer. <B>Highly recommended</B>
-     * 
+     *
      * @throws IOException
      *                 If errors occur.
      */

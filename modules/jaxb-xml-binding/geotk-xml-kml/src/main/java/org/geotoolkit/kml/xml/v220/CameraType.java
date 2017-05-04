@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CameraType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CameraType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,11 +93,11 @@ public class CameraType
 
     /**
      * Gets the value of the longitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getLongitude() {
         return longitude;
@@ -105,11 +105,11 @@ public class CameraType
 
     /**
      * Sets the value of the longitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setLongitude(final Double value) {
         this.longitude = value;
@@ -117,11 +117,11 @@ public class CameraType
 
     /**
      * Gets the value of the latitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getLatitude() {
         return latitude;
@@ -129,11 +129,11 @@ public class CameraType
 
     /**
      * Sets the value of the latitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setLatitude(final Double value) {
         this.latitude = value;
@@ -141,11 +141,11 @@ public class CameraType
 
     /**
      * Gets the value of the altitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getAltitude() {
         return altitude;
@@ -153,11 +153,11 @@ public class CameraType
 
     /**
      * Sets the value of the altitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setAltitude(final Double value) {
         this.altitude = value;
@@ -165,11 +165,11 @@ public class CameraType
 
     /**
      * Gets the value of the heading property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getHeading() {
         return heading;
@@ -177,11 +177,11 @@ public class CameraType
 
     /**
      * Sets the value of the heading property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setHeading(final Double value) {
         this.heading = value;
@@ -189,11 +189,11 @@ public class CameraType
 
     /**
      * Gets the value of the tilt property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getTilt() {
         return tilt;
@@ -201,11 +201,11 @@ public class CameraType
 
     /**
      * Sets the value of the tilt property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setTilt(final Double value) {
         this.tilt = value;
@@ -213,11 +213,11 @@ public class CameraType
 
     /**
      * Gets the value of the roll property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getRoll() {
         return roll;
@@ -225,11 +225,11 @@ public class CameraType
 
     /**
      * Sets the value of the roll property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setRoll(final Double value) {
         this.roll = value;
@@ -237,12 +237,12 @@ public class CameraType
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -250,12 +250,12 @@ public class CameraType
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -263,25 +263,25 @@ public class CameraType
 
     /**
      * Gets the value of the cameraSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cameraSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCameraSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getCameraSimpleExtensionGroup() {
         if (cameraSimpleExtensionGroup == null) {
@@ -292,25 +292,25 @@ public class CameraType
 
     /**
      * Gets the value of the cameraObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cameraObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCameraObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getCameraObjectExtensionGroup() {
         if (cameraObjectExtensionGroup == null) {

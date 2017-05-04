@@ -28,14 +28,14 @@ import javafx.scene.input.KeyEvent;
 
 /**
  * Auto-completion for combobox.
- * Perform text auto-completion on textfields of editable combo-box. combo-box 
+ * Perform text auto-completion on textfields of editable combo-box. combo-box
  * {@link ComboBox#items } are adapted  based on user typing.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
 public class ComboBoxCompletion {
-    
+
     private final ComboBox comboBox;
     private ObservableList baseData;
     private ObservableList filteredData;
@@ -49,18 +49,18 @@ public class ComboBoxCompletion {
 
     /**
      * Update available {@link ComboBox#items} according to typed value.
-     * @param event 
+     * @param event
      */
     private void onKeyReleased(KeyEvent event) {
         if (baseData == null || baseData.isEmpty()) {
             return;
         }
-        
+
         final KeyCode code = event.getCode();
         if (event.isControlDown() || code == KeyCode.HOME || code == KeyCode.END || code == KeyCode.TAB) {
             return;
         }
-        
+
         final TextField editor = comboBox.getEditor();
         final int caretPosition = editor.getCaretPosition();
         if (code == KeyCode.DOWN) {
@@ -68,7 +68,7 @@ public class ComboBoxCompletion {
                 comboBox.show();
                 editor.positionCaret(caretPosition);
             }
-            
+
         } else {
             final String completeText = editor.getText();
             final String currentText = editor.getText(0, caretPosition);
@@ -81,40 +81,40 @@ public class ComboBoxCompletion {
                 if (!filteredData.isEmpty()) {
                     comboBox.show();
                 }
-                // we're forced to set back editor text, because change of items 
+                // we're forced to set back editor text, because change of items
                 // also change it.
                 editor.setText(completeText);
                 editor.positionCaret(caretPosition);
             }
         }
     }
-    
+
     private void updateBaseData(ObservableValue observable, Object oldValue, Object newValue) {
         if (comboBox.getItems() != filteredData) {
             baseData = comboBox.getItems();
         }
     }
-    
+
     /**
-     * Adapt text typed in editor to build a permissive regex to search for  
+     * Adapt text typed in editor to build a permissive regex to search for
      * correspondance in combo box items.
-     * 
+     *
      * @param fieldText The text to transform in regex pattern.
      * @return created pattern
      */
     public static Pattern buildPattern(final String fieldText) {
         final String pattern = fieldText
-                // We do not need groups in this particular case, so we assume user has real parenthesis in his text. 
+                // We do not need groups in this particular case, so we assume user has real parenthesis in his text.
                 .replaceAll("(\\()|(\\))", "\\$1")
                 // In case user mistype word separation (Ex : typed "Point10" instead of "Point 10" or "type-1" instead of "type - 1").
                 .replaceAll("([a-zA-Z]+|\\d+|\\W+)\\s*", "$1\\\\s*");
-        return Pattern.compile("(?i)"+pattern);                
+        return Pattern.compile("(?i)"+pattern);
     }
-    
+
     /**
      * Build a new combobox completion but does not return it to avoid warnings
      * "new instance ignored".
-     * 
+     *
      * @param combobox to apply completion on
      */
     public static void autocomplete(final ComboBox combobox){

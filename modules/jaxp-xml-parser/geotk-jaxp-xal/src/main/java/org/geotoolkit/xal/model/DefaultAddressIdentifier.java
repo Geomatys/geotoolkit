@@ -29,7 +29,7 @@ public class DefaultAddressIdentifier implements AddressIdentifier {
     private GrPostal grPostal;
 
     public DefaultAddressIdentifier(){}
-    
+
     /**
      *
      * @param content

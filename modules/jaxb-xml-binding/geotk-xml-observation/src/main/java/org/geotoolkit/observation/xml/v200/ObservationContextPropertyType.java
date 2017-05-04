@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * ObservationContext is a dataType, without identity, so may only be used
- * 				inline
+ *              inline
  *
  * <p>Java class for ObservationContextPropertyType complex type.
  *

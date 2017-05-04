@@ -30,16 +30,16 @@ import org.geotoolkit.wcs.xml.WCSResponse;
 
 
 /**
- * 
- * Metadata for a WCS server, also known as Capabilities document. 
- * Reply from a WCS that performed the GetCapabilities operation. 
- * 
- * WCS version 1.0.0 
- * 
+ *
+ * Metadata for a WCS server, also known as Capabilities document.
+ * Reply from a WCS that performed the GetCapabilities operation.
+ *
+ * WCS version 1.0.0
+ *
  * <p>Java class for WCS_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WCS_CapabilitiesType">
  *   &lt;complexContent>
@@ -55,7 +55,7 @@ import org.geotoolkit.wcs.xml.WCSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -65,7 +65,7 @@ import org.geotoolkit.wcs.xml.WCSResponse;
     "capability",
     "contentMetadata"
 })
-@XmlRootElement(name="WCS_Capabilities")        
+@XmlRootElement(name="WCS_Capabilities")
 public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse {
 
     @XmlElement(name = "Service", required = true)
@@ -83,20 +83,20 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
      * an empty constructor used by JAXB.
      */
     WCSCapabilitiesType(){
-        
+
     }
-    
+
     /**
      * build a full new Capabilities document version 1.0.0.
      */
     public WCSCapabilitiesType(final String updateSequence) {
         this(null, null, null, updateSequence);
     }
-    
+
     /**
      * build a full new Capabilities document version 1.0.0.
      */
-    public WCSCapabilitiesType(final ServiceType service, final WCSCapabilityType capability, 
+    public WCSCapabilitiesType(final ServiceType service, final WCSCapabilityType capability,
             final ContentMetadata contentMetadata, final String updateSequence) {
         this.service         = service;
         this.capability      = capability;
@@ -104,7 +104,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         this.version         = "1.0.0";
         this.updateSequence  = updateSequence;
     }
-    
+
     /**
      * build a new Capabilities document version 1.0.0 with only the section "service".
      */
@@ -112,7 +112,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         this.service = service;
         this.version = "1.0.0";
     }
-    
+
     /**
      * build a new Capabilities document version 1.0.0 with only the section "Capability".
      */
@@ -120,7 +120,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         this.capability = capability;
         this.version    = "1.0.0";
     }
-    
+
     /**
      * build a new Capabilities document version 1.0.0 with only the section "ContentMetadata".
      */
@@ -128,31 +128,31 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         this.contentMetadata = contentMetadata;
         this.version         = "1.0.0";
     }
-    
-    
+
+
     /**
      * Gets the value of the service property.
      */
     public ServiceType getService() {
         return service;
     }
-    
+
     @Override
     public ServiceType getServiceIdentification() {
         return service;
     }
-    
+
     public void setService(final ServiceType service) {
-        this.service = service; 
+        this.service = service;
     }
     /**
      * Gets the value of the capability property.
-     * 
+     *
     */
     public WCSCapabilityType getCapability() {
         return capability;
     }
-    
+
     @Override
     public WCSCapabilityType getOperationsMetadata() {
         return capability;
@@ -179,7 +179,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         }
     }
 
-    
+
     /**
      * Gets the value of the version property.
      */
@@ -199,7 +199,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
     public String getUpdateSequence() {
         return updateSequence;
     }
-    
+
     @Override
     public void setUpdateSequence(final String updateSequence) {
         this.updateSequence = updateSequence;
@@ -218,7 +218,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         } else {
             requestedSection = "/";
         }
-        
+
         if ("/WCS_Capabilities/Capability".equals(requestedSection)) {
             return new WCSCapabilitiesType(capability);
         } else if ("/WCS_Capabilities/Service".equals(requestedSection)) {

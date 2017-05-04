@@ -27,9 +27,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for LowerBoundaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LowerBoundaryType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -86,7 +86,7 @@ public class LowerBoundaryType implements Expression {
             }
         }
     }
-    
+
     /**
      * Gets the value of the expression property.
      *

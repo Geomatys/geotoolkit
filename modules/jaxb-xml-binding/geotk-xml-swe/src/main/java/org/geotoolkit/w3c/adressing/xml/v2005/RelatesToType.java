@@ -31,9 +31,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for RelatesToType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RelatesToType">
  *   &lt;simpleContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RelatesToType", propOrder = {
@@ -63,11 +63,11 @@ public class RelatesToType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -75,11 +75,11 @@ public class RelatesToType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -87,11 +87,11 @@ public class RelatesToType {
 
     /**
      * Gets the value of the relationshipType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRelationshipType() {
         if (relationshipType == null) {
@@ -103,11 +103,11 @@ public class RelatesToType {
 
     /**
      * Sets the value of the relationshipType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRelationshipType(String value) {
         this.relationshipType = value;
@@ -115,7 +115,7 @@ public class RelatesToType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */

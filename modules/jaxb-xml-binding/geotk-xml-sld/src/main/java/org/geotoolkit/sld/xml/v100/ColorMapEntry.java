@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,11 +60,11 @@ public class ColorMapEntry {
 
     /**
      * Gets the value of the color property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getColor() {
         return color;
@@ -72,11 +72,11 @@ public class ColorMapEntry {
 
     /**
      * Sets the value of the color property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setColor(final String value) {
         this.color = value;
@@ -84,11 +84,11 @@ public class ColorMapEntry {
 
     /**
      * Gets the value of the opacity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getOpacity() {
         return opacity;
@@ -96,11 +96,11 @@ public class ColorMapEntry {
 
     /**
      * Sets the value of the opacity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setOpacity(final Double value) {
         this.opacity = value;
@@ -108,11 +108,11 @@ public class ColorMapEntry {
 
     /**
      * Gets the value of the quantity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getQuantity() {
         return quantity;
@@ -120,11 +120,11 @@ public class ColorMapEntry {
 
     /**
      * Sets the value of the quantity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setQuantity(final Double value) {
         this.quantity = value;
@@ -132,11 +132,11 @@ public class ColorMapEntry {
 
     /**
      * Gets the value of the label property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLabel() {
         return label;
@@ -144,11 +144,11 @@ public class ColorMapEntry {
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLabel(final String value) {
         this.label = value;

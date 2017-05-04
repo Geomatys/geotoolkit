@@ -57,7 +57,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         citation.setIdentifiers(Collections.singleton(id));
         FALLBACK_IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final String KEY_DISTANT_CLASS = "distanClass";
 
     private final Collection<? extends ProcessingRegistry> factories;
@@ -69,14 +69,14 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     public ChainProcessDescriptor(final Chain model){
         this(model,FALLBACK_IDENTIFICATION,null);
     }
-    
+
     /**
      * Create a process descriptor with default registry.
      */
     public ChainProcessDescriptor(final Chain model, final Identification registryId){
         this(model,registryId,null);
     }
-    
+
     /**
      * Create a process descriptor with given registry.
      */
@@ -91,7 +91,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         this.model = model;
         this.factories = factories;
     }
-    
+
     /**
      * @return Chain model used.
      */

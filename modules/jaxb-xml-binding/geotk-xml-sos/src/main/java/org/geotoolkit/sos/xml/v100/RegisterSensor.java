@@ -28,9 +28,9 @@ import org.geotoolkit.swes.xml.InsertSensor;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,7 +53,7 @@ import org.geotoolkit.swes.xml.InsertSensor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  *  @author Guilhem Legal
  * @module
  */
@@ -107,7 +107,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
         }
         return null;
     }
-    
+
     /**
      * compatibility with SOS 1.0.0
      * @return always null
@@ -125,7 +125,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
     public Object getInsertionMetadata() {
         return null;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -138,7 +138,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
             final RegisterSensor that = (RegisterSensor) object;
             return Objects.equals(this.observationTemplate, that.observationTemplate) &&
                    Objects.equals(this.sensorDescription,   that.sensorDescription);
-        } 
+        }
         return false;
     }
 
@@ -149,7 +149,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
         hash = 23 * hash + (this.observationTemplate != null ? this.observationTemplate.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("Register sensor:");
@@ -162,9 +162,9 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -176,8 +176,8 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -192,16 +192,16 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
          * An empty constructor used by JAXB.
          */
         SensorDescription(){
-            
+
         }
-        
+
         /**
          * Build a new Sensor description with an object.
          */
         public SensorDescription(final Object description){
             any = description;
         }
-        
+
         /**
          * Gets the value of the any property.
          */

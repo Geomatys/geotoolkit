@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for KmlType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KmlType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class KmlType {
 
     /**
      * Gets the value of the networkLinkControl property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NetworkLinkControlType }
-     *     
+     *
      */
     public NetworkLinkControlType getNetworkLinkControl() {
         return networkLinkControl;
@@ -87,11 +87,11 @@ public class KmlType {
 
     /**
      * Sets the value of the networkLinkControl property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NetworkLinkControlType }
-     *     
+     *
      */
     public void setNetworkLinkControl(final NetworkLinkControlType value) {
         this.networkLinkControl = value;
@@ -99,7 +99,7 @@ public class KmlType {
 
     /**
      * Gets the value of the abstractFeatureGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractContainerType }{@code >}
@@ -112,7 +112,7 @@ public class KmlType {
      *     {@link JAXBElement }{@code <}{@link AbstractOverlayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PhotoOverlayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FolderType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractFeatureType> getAbstractFeatureGroup() {
         return abstractFeatureGroup;
@@ -120,7 +120,7 @@ public class KmlType {
 
     /**
      * Sets the value of the abstractFeatureGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractContainerType }{@code >}
@@ -133,7 +133,7 @@ public class KmlType {
      *     {@link JAXBElement }{@code <}{@link AbstractOverlayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PhotoOverlayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link FolderType }{@code >}
-     *     
+     *
      */
     public void setAbstractFeatureGroup(final JAXBElement<? extends AbstractFeatureType> value) {
         this.abstractFeatureGroup = ((JAXBElement<? extends AbstractFeatureType> ) value);
@@ -141,25 +141,25 @@ public class KmlType {
 
     /**
      * Gets the value of the kmlSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the kmlSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getKmlSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getKmlSimpleExtensionGroup() {
         if (kmlSimpleExtensionGroup == null) {
@@ -170,25 +170,25 @@ public class KmlType {
 
     /**
      * Gets the value of the kmlObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the kmlObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getKmlObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getKmlObjectExtensionGroup() {
         if (kmlObjectExtensionGroup == null) {
@@ -199,11 +199,11 @@ public class KmlType {
 
     /**
      * Gets the value of the hint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHint() {
         return hint;
@@ -211,11 +211,11 @@ public class KmlType {
 
     /**
      * Sets the value of the hint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHint(final String value) {
         this.hint = value;

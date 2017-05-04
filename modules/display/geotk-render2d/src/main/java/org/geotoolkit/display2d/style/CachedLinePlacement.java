@@ -38,7 +38,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
 
     public float getGap(final Object candidate){
         evaluate();
-        
+
         if(Float.isNaN(gap)){
             //value is feature dynamic
             final Expression exp = styleElement.getGap();
@@ -50,7 +50,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
 
     public float getInitialGap(final Object candidate){
         evaluate();
-        
+
         if(Float.isNaN(initial)){
             //value is feature dynamic
             final Expression exp = styleElement.getInitialGap();
@@ -62,7 +62,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
 
     public float getOffset(final Object candidate){
         evaluate();
-        
+
         if(Float.isNaN(offset)){
             //value is feature dynamic
             final Expression exp = styleElement.getPerpendicularOffset();
@@ -91,36 +91,36 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
         final Expression expGap = styleElement.getGap();
         final Expression expInitial = styleElement.getInitialGap();
         final Expression expOffset = styleElement.getPerpendicularOffset();
-        
+
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
-        
+
         if(GO2Utilities.isStatic(expGap)){
             gap = GO2Utilities.evaluate(expGap, null, Float.class, 0.5f);
         }else{
             GO2Utilities.getRequieredAttributsName(expGap,requieredAttributs);
             isStatic = false;
         }
-        
+
         if(GO2Utilities.isStatic(expInitial)){
             initial = GO2Utilities.evaluate(expInitial, null, Float.class, 0.5f);
         }else{
             GO2Utilities.getRequieredAttributsName(expInitial,requieredAttributs);
             isStatic = false;
         }
-        
+
         if(GO2Utilities.isStatic(expOffset)){
             offset = GO2Utilities.evaluate(expOffset, null, Float.class, 0.5f);
         }else{
             GO2Utilities.getRequieredAttributsName(expOffset,requieredAttributs);
             isStatic = false;
         }
-        
+
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
             requieredAttributs = EMPTY_ATTRIBUTS;
         }
-        
+
         isNotEvaluated = false;
     }
 

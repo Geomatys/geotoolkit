@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTest {
@@ -41,26 +41,26 @@ public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTe
     @Test
     public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<ComplexDataType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, RenderedImage.class);
-        
+
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/image_base64");
         assertNotNull(expectedStream);
         final String encodedImage = IOUtilities.toString(expectedStream);
-        
+
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, "img/tiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
-        
+
         final ComplexDataType complex = new ComplexDataType();
         complex.setEncoding("base64");
         complex.setMimeType("image/tiff");
         complex.setSchema(null);
         complex.getContent().add(encodedImage);
-        
+
         final RenderedImage convertedImage = converter.convert(complex, param);
         assertNotNull(convertedImage);
-        
+
         final RenderedImage expectedImage = ConvertersTestUtils.makeRendredImage();
-        
+
         assertRasterEquals(expectedImage, convertedImage);
     }
 }

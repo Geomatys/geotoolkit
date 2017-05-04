@@ -85,7 +85,7 @@ public class SOSXmlFactory {
     public static GetCapabilities buildGetCapabilities(final String version, final String service) {
         return buildGetCapabilities(version, null, null, null, null, service);
     }
-    
+
     public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
         if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
             throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
@@ -112,7 +112,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Contents buildContents(final String version, final List<ObservationOffering> offerings) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.sos.xml.v200.ObservationOfferingType> off200 = new ArrayList<>();
@@ -138,7 +138,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Range buildRange(final String version, final String minValue, final String maxValue) {
         if ("2.0.0".equals(version) || "1.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.RangeType(minValue, maxValue);
@@ -146,7 +146,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Capabilities buildCapabilities(final String version, final String updateSequence) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.CapabilitiesType(version, updateSequence);
@@ -156,10 +156,10 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Capabilities buildCapabilities(final String version, final AbstractServiceIdentification serviceIdentification, final AbstractServiceProvider serviceProvider,
             final AbstractOperationsMetadata operationsMetadata, final String updateSequence, final FilterCapabilities filterCapabilities, final Contents contents, final List<Object> extension) {
-        
+
         if (serviceIdentification != null && !(serviceIdentification instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) {
             throw new IllegalArgumentException("unexpected object version for serviceIdentification element");
         }
@@ -169,7 +169,7 @@ public class SOSXmlFactory {
         if (operationsMetadata != null && !(operationsMetadata instanceof org.geotoolkit.ows.xml.v110.OperationsMetadata)) {
             throw new IllegalArgumentException("unexpected object version for operationsMetadata element");
         }
-        
+
         if ("2.0.0".equals(version)) {
             if (filterCapabilities != null && !(filterCapabilities instanceof org.geotoolkit.sos.xml.v200.FilterCapabilities)) {
                 throw new IllegalArgumentException("unexpected object version for filterCapabilities element");
@@ -187,12 +187,12 @@ public class SOSXmlFactory {
                     }
                 }
             }
-            
-            return new org.geotoolkit.sos.xml.v200.CapabilitiesType((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification, 
-                                                                    (org.geotoolkit.ows.xml.v110.ServiceProvider)serviceProvider, 
-                                                                    (org.geotoolkit.ows.xml.v110.OperationsMetadata)operationsMetadata, 
-                                                                    version, 
-                                                                    updateSequence, 
+
+            return new org.geotoolkit.sos.xml.v200.CapabilitiesType((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification,
+                                                                    (org.geotoolkit.ows.xml.v110.ServiceProvider)serviceProvider,
+                                                                    (org.geotoolkit.ows.xml.v110.OperationsMetadata)operationsMetadata,
+                                                                    version,
+                                                                    updateSequence,
                                                                     (org.geotoolkit.sos.xml.v200.FilterCapabilities)filterCapabilities,
                                                                     (org.geotoolkit.sos.xml.v200.ContentsType)contents,
                                                                     ext200);
@@ -203,18 +203,18 @@ public class SOSXmlFactory {
             if (contents != null && !(contents instanceof org.geotoolkit.sos.xml.v100.Contents)) {
                 throw new IllegalArgumentException("unexpected object version for contents element");
             }
-            return new org.geotoolkit.sos.xml.v100.Capabilities((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification, 
-                                                                (org.geotoolkit.ows.xml.v110.ServiceProvider)serviceProvider, 
-                                                                (org.geotoolkit.ows.xml.v110.OperationsMetadata)operationsMetadata, 
-                                                                version, 
-                                                                updateSequence, 
+            return new org.geotoolkit.sos.xml.v100.Capabilities((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification,
+                                                                (org.geotoolkit.ows.xml.v110.ServiceProvider)serviceProvider,
+                                                                (org.geotoolkit.ows.xml.v110.OperationsMetadata)operationsMetadata,
+                                                                version,
+                                                                updateSequence,
                                                                 (org.geotoolkit.sos.xml.v100.FilterCapabilities)filterCapabilities,
                                                                 (org.geotoolkit.sos.xml.v100.Contents)contents);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static InsertObservationResponse buildInsertObservationResponse(final String version, final List<String> assignedObservationIds) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.InsertObservationResponseType(assignedObservationIds);
@@ -254,7 +254,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static ObservationCollection buildGetObservationResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<>();
@@ -282,14 +282,14 @@ public class SOSXmlFactory {
             if (bounds != null && !(bounds instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
                 throw new IllegalArgumentException("unexpected object version for bounds element");
             }
-            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id, 
+            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id,
                                                                                      (org.geotoolkit.gml.xml.v311.EnvelopeType)bounds,
                                                                                      obs100);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static ObservationCollection buildGetObservationByIdResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<>();
@@ -317,14 +317,14 @@ public class SOSXmlFactory {
             if (bounds != null && !(bounds instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
                 throw new IllegalArgumentException("unexpected object version for bounds element");
             }
-            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id, 
+            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id,
                                                                                      (org.geotoolkit.gml.xml.v311.EnvelopeType)bounds,
                                                                                      obs100);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.GetObservationResponseType();
@@ -334,7 +334,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Observation cloneObservation(final String version, final Observation observation) {
         if ("2.0.0".equals(version)) {
             if (!(observation instanceof org.geotoolkit.observation.xml.v200.OMObservationType)) {
@@ -350,7 +350,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetObservationById buildGetObservationById(final String version, final String service, final List<String> observations,
             final QName resultModel, final ResponseModeType responseMode, final String srsName, final String responseFormat, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
@@ -366,7 +366,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetResultTemplate buildGetResultTemplate(final String version, final String service, final String offering,
             final String observedProperty, final List<Object> extensions) {
         if ("2.0.0".equals(version)) {
@@ -377,7 +377,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static DeleteSensor buildDeleteSensor(final String version, final String service, final String procedure) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.DeleteSensorType(version, service, procedure);
@@ -387,7 +387,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetObservation buildGetObservation(final String version, final String service, final List<String> offering,
             final List<String> observedProperties, final List<String> procedures, final List<String> foid, final String responseFormat,
             final List<Filter> temporalFilter, final Filter spatialFilter, final Filter resultFilter, final QName resultModel,
@@ -447,7 +447,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static DeleteSensorResponse buildDeleteSensorResponse(final String version, final String deletedProcedure) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.DeleteSensorResponseType(deletedProcedure);
@@ -457,7 +457,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static DescribeSensor buildDescribeSensor(final String version, final String service, final String procedure, final String outputFormat) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.DescribeSensorType(version, service, procedure, outputFormat);
@@ -467,7 +467,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, featureId);
@@ -477,8 +477,8 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
-    public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId, 
+
+    public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId,
             final List<String> observedProperties, final List<String> procedures, final Filter spatialFilter, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
             org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType result = new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, observedProperties, procedures, featureId, spatialFilter);
@@ -490,7 +490,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static InsertSensorResponse buildInsertSensorResponse(final String version, final String assignedProcedure, final String assignedOffering) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.InsertSensorResponseType(assignedProcedure, assignedOffering);
@@ -500,7 +500,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetResult buildGetResult(final String version, final String service, final String offering, final String observedProperty,
             final List<String> featureOfInterest, final Filter spatialFilter, final List<Filter> temporalFilter, final List<Object> extension) {
         if ("2.0.0".equals(version)) {
@@ -546,7 +546,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static GetResultResponse buildGetResultResponse(final String version, final Object result, final String rs) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.GetResultResponseType(result);
@@ -559,7 +559,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Envelope buildEnvelope(final String version, final String id, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.buildEnvelope("3.2.1", id, minx, miny, maxx, maxy, srs);
@@ -569,7 +569,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
@@ -579,7 +579,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
@@ -589,7 +589,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Date dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
@@ -599,7 +599,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final Date dateBegin, final TimeIndeterminateValueType value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
@@ -609,7 +609,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final AbstractTimePosition dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
@@ -619,7 +619,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final TimeIndeterminateValueType value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
@@ -629,7 +629,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Period buildTimePeriod(final String version, final AbstractTimePosition dateBegin, final AbstractTimePosition dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
@@ -639,8 +639,8 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
-    
+
+
     public static Instant buildTimeInstant(final String version, final AbstractTimePosition date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", date);
@@ -650,7 +650,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Instant buildTimeInstant(final String version, final Date date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", date);
@@ -660,7 +660,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
+
     public static Instant buildTimeInstant(final String version, final String id, final String date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
@@ -670,9 +670,9 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-    
-    public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName, 
-            final TemporalGeometricPrimitive time,  final List<String> procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200, 
+
+    public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName,
+            final TemporalGeometricPrimitive time,  final List<String> procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200,
             final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode,
             final List<String> procedureDescriptionFormat) {
         if ("2.0.0".equals(version)) {
@@ -725,7 +725,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
     }
-    
+
     /**
      * Build the correct featurePropertyType from a sampling feature
      *
@@ -735,7 +735,7 @@ public class SOSXmlFactory {
     public static FeatureProperty buildFeatureProperty(final String version, final SamplingFeature feature) {
         return OMXmlFactory.buildFeatureProperty(version, feature);
     }
-    
+
     /**
      * Build the correct featurePropertyType from a sampling feature id
      *
@@ -751,7 +751,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static PhenomenonProperty buildPhenomenonProperty(final String version, final Phenomenon phenomenon) {
         if ("2.0.0".equals(version)) {
             final String href = (phenomenon.getName() != null) ?phenomenon.getName().getCode() :"";
@@ -765,7 +765,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static Object buildMeasure(final String version, final String name, final String uom, final Double value) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.MeasureType(uom, value);
@@ -775,7 +775,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static Phenomenon buildPhenomenon(final String version, final String id, final String phenomenonName) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
@@ -785,7 +785,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static CompositePhenomenon buildCompositePhenomenon(final String version, final String id, final String phenomenonName, final List<org.opengis.observation.Phenomenon> phenomenons) {
         if ("2.0.0".equals(version)) {
             throw new IllegalArgumentException("Composite phenomenon are not supported in SOS v 2.0.0.");
@@ -802,13 +802,13 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingFeature(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
             }
-            return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(id, name, description, 
+            return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(id, name, description,
                                                                           (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature);
         } else if ("2.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
@@ -821,7 +821,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     /**
      * Build the correct featurePropertyType from a sampling feature id
      *
@@ -837,8 +837,8 @@ public class SOSXmlFactory {
             if (location != null && !(location instanceof org.geotoolkit.gml.xml.v311.PointType)) {
                 throw new IllegalArgumentException("unexpected object version for location element");
             }
-            return new org.geotoolkit.sampling.xml.v100.SamplingPointType(id, name, description, 
-                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 
+            return new org.geotoolkit.sampling.xml.v100.SamplingPointType(id, name, description,
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
                                                                           (org.geotoolkit.gml.xml.v311.PointType)location);
         } else if ("2.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
@@ -848,14 +848,14 @@ public class SOSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for location element");
             }
             return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
-                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                           (org.geotoolkit.gml.xml.v321.PointType)location,
                                                                           null);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingCurve(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
                               final LineString location, final Double lengthValue, final String uom, final Envelope env) {
         if ("1.0.0".equals(version)) {
@@ -876,8 +876,8 @@ public class SOSXmlFactory {
             } else {
                 length = null;
             }
-            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(id, name, description, 
-                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 
+            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(id, name, description,
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
                                                                           new org.geotoolkit.gml.xml.v311.CurvePropertyType((org.geotoolkit.gml.xml.v311.LineStringType)location),
                                                                           length,
                                                                           (org.geotoolkit.gml.xml.v311.EnvelopeType)env);
@@ -889,7 +889,7 @@ public class SOSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for location element");
             }
             return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve",
-                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                           (org.geotoolkit.gml.xml.v321.LineStringType)location,
                                                                           (org.geotoolkit.gml.xml.v321.EnvelopeType)env);
         } else {
@@ -935,9 +935,9 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
-    
-    public static FeatureCollection buildFeatureCollection(final String version, final String id, final String name, final String description, 
+
+
+    public static FeatureCollection buildFeatureCollection(final String version, final String id, final String name, final String description,
             final List<FeatureProperty> features) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createFeatureCollection("3.2.1", id, name, description, features);
@@ -947,7 +947,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
-    
+
     public static BBOX buildBBOX(final String version, final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
@@ -957,7 +957,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
@@ -967,7 +967,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static During buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
@@ -977,7 +977,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static Before buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
@@ -987,7 +987,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static TEquals buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
@@ -997,7 +997,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static Point buildPoint(final String currentVersion, final String id, final org.opengis.geometry.DirectPosition pos) {
         if ("2.0.0".equals(currentVersion)) {
             return GMLXmlFactory.buildPoint("3.2.1", id, pos);
@@ -1007,7 +1007,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static DirectPosition buildDirectPosition(final String version, final String srsName, final Integer srsDimension, final List<Double> value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.buildDirectPosition("3.2.1", srsName, srsDimension, value);
@@ -1017,7 +1017,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     public static LineString buildLineString(final String version, final String id, final String srsName, final List<DirectPosition> position) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.buildLineString("3.2.1", id, srsName, position);
@@ -1027,7 +1027,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     public static TextBlock buildTextBlock(final String version, final String id, final String tokenSeparator, final String blockSeparator, final String decimalSeparator) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createTextBlock("2.0.0", id, tokenSeparator, blockSeparator, decimalSeparator);
@@ -1037,7 +1037,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     public static Quantity buildQuantity(final String version,  final String definition, final UomProperty uom, final Double value) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createQuantity("2.0.0", definition, uom, value);
@@ -1047,7 +1047,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     public static UomProperty buildUomProperty(final String version, final String code, final String href) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createUomProperty("2.0.0", code, href);
@@ -1057,7 +1057,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AbstractTime buildTime(final String version, final String definition, final UomProperty uom) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createTime("2.0.0", definition, uom);
@@ -1067,7 +1067,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AbstractBoolean buildBoolean(final String version, final String definition, final Boolean value) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createBoolean("2.0.0", definition, value);
@@ -1077,7 +1077,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AbstractText buildText(final String version, final String definition, final String value) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createText("2.0.0", definition, value);
@@ -1087,7 +1087,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AnyScalar buildAnyScalar(final String version, final String id, final String name, final AbstractDataComponent compo) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.buildAnyScalar("2.0.0", id, name, compo);
@@ -1097,7 +1097,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AbstractDataRecord buildSimpleDatarecord(final String version,  final String blockid, final String id, final String definition, final boolean fixed, final List<AnyScalar> components) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.buildSimpleDataRecord("2.0.0",  blockid, id, definition, fixed, components);
@@ -1107,7 +1107,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values) {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values);
@@ -1127,7 +1127,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
        return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
     }
@@ -1135,7 +1135,7 @@ public class SOSXmlFactory {
     public static AcceptFormats buildAcceptFormats(final String currentVersion, final List<String> acceptFormat) {
        return OWSXmlFactory.buildAcceptFormat("1.1.0", acceptFormat);
     }
-    
+
     public static InsertResultTemplateResponse buildInsertResultTemplateResponse(final String version, final String templateID) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.InsertResultTemplateResponseType(templateID);
@@ -1145,7 +1145,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static InsertResultResponse buildInsertResultResponse(final String version) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v200.InsertResultResponseType();
@@ -1155,7 +1155,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static GetResultTemplateResponse buildGetResultTemplateResponse(final String version, final AbstractDataComponent resultStructure, final AbstractEncoding encoding) {
         if (resultStructure != null && !(resultStructure instanceof org.geotoolkit.swe.xml.v200.AbstractDataComponentType)) {
             throw new IllegalArgumentException("unexpected object version for resultStructure element");
@@ -1172,7 +1172,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static ObservationOffering convert(final String version, final ObservationOffering offering) {
         if (version.equals("2.0.0")) {
             if (offering instanceof org.geotoolkit.sos.xml.v100.ObservationOfferingType) {
@@ -1190,9 +1190,9 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
-    
+
     private static ObservationOffering convertTo200(final ObservationOffering off) {
-        
+
         final org.geotoolkit.gml.xml.v321.EnvelopeType env;
         if (off.getObservedArea() != null) {
             env = new org.geotoolkit.gml.xml.v321.EnvelopeType(off.getObservedArea());
@@ -1227,9 +1227,9 @@ public class SOSXmlFactory {
                                            Arrays.asList("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation"),
                                            Arrays.asList("http://www.opengis.net/sensorML/1.0.1"));
     }
-    
+
     private static ObservationOffering convertTo100(final ObservationOffering off) {
-        
+
         final org.geotoolkit.gml.xml.v311.EnvelopeType env;
         if (off.getObservedArea() != null) {
             env = new org.geotoolkit.gml.xml.v311.EnvelopeType(off.getObservedArea());
@@ -1249,7 +1249,7 @@ public class SOSXmlFactory {
         }
         final QName OBSERVATION_QNAME = new QName("http://www.opengis.net/om/1.0", "Observation", "om");
         final QName MEASUREMENT_QNAME = new QName("http://www.opengis.net/om/1.0", "Measurement", "om");
-        
+
         final String offName = (off.getName() != null) ? off.getName().getCode() : "";
         return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
                                            off.getId(),
@@ -1264,7 +1264,7 @@ public class SOSXmlFactory {
                                            Arrays.asList(OBSERVATION_QNAME, MEASUREMENT_QNAME),
                                            Arrays.asList(ResponseModeType.INLINE, ResponseModeType.RESULT_TEMPLATE));
     }
-    
+
     public static TextBlock getDefaultTextEncoding(final String version) {
         if ("2.0.0".equals(version)) {
             return org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
@@ -1293,7 +1293,7 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
     public static String getGMLVersion(final String version) {
         if ("2.0.0".equals(version)) {
             return "3.2.1";

@@ -33,9 +33,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for PropertyIsLikeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsLikeType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLikeType", propOrder = {
@@ -72,9 +72,9 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-        
+
     }
-    
+
     /**
      *Build a new Property is like operator
      */
@@ -92,7 +92,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
             this.expression.add(factory.createLiteral(new LiteralType(pattern)));
         }
     }
-    
+
     public PropertyIsLikeType(final PropertyIsLikeType that) {
         if (that != null) {
             if (that.expression != null) {
@@ -121,14 +121,14 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -136,7 +136,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         }
         return this.expression;
     }
-    
+
     public String getPropertyName() {
         if (expression != null) {
             for (JAXBElement<?> elem : expression) {
@@ -147,7 +147,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         }
         return null;
     }
-    
+
     public LiteralType getLiteral() {
         if (expression != null) {
             for (JAXBElement<?> elem : expression) {
@@ -161,11 +161,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the wildCard property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getWildCard() {
         return wildCard;
@@ -173,11 +173,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the wildCard property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setWildCard(String value) {
         this.wildCard = value;
@@ -185,11 +185,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the singleChar property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSingleChar() {
         return singleChar;
@@ -197,11 +197,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the singleChar property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSingleChar(String value) {
         this.singleChar = value;
@@ -209,11 +209,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the escapeChar property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEscapeChar() {
         return escapeChar;
@@ -221,11 +221,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the escapeChar property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEscapeChar(String value) {
         this.escapeChar = value;
@@ -240,12 +240,12 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsLikeType(this);
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -291,7 +291,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         hash = 29 * hash + (this.wildCard != null ? this.wildCard.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
@@ -301,10 +301,10 @@ public class PropertyIsLikeType extends ComparisonOpsType {
                 s.append(jb.getValue()).append("\n");
             }
         }
-        
+
         s.append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
-        
+
         return s.toString();
     }
 }

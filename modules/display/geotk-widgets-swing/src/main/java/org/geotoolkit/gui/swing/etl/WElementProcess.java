@@ -175,7 +175,7 @@ public class WElementProcess extends Widget implements WPositionable {
     public Color getBgColor() {
         return bgColor;
     }
-    
+
     public WName getExecutionWidget(){
         return execWidget;
     }
@@ -284,10 +284,10 @@ public class WElementProcess extends Widget implements WPositionable {
         descriptor.setX(getLocation().x);
         descriptor.setY(getLocation().y);
     }
-    
+
 //    private final void showEditor(final AbstractChainScene scene, final WChainElement element) {
 //        if (element.getDto().getAuthority().equals(DcnsConstants.GROOVY_REGISTRY_NAME)) {
-//        
+//
 //        } else {
 //            final JProcessConfigurePanel pane = new JProcessConfigurePanel(scene, element);
 //            pane.showDialog();

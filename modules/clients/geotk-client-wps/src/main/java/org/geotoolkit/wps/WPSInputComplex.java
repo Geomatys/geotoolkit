@@ -22,13 +22,13 @@ package org.geotoolkit.wps;
  * @module
  */
 public class WPSInputComplex extends AbstractWPSInput{
-    
+
     private Object data;
     private String encoding;
     private String schema;
     private String mime;
     private Class clazz;
-    
+
     /**
      * Minimal constructor with only identifier and href Input Complex parameters
      * @param identifier
@@ -42,7 +42,7 @@ public class WPSInputComplex extends AbstractWPSInput{
         this.mime = null;
         this.clazz = complexClass;
     }
-    
+
     /**
      * Constructor with all Input Complex parameters
      * @param identifier
@@ -51,7 +51,7 @@ public class WPSInputComplex extends AbstractWPSInput{
      * @param schema
      * @param mime
      */
-    public WPSInputComplex(final String identifier, final Object data, final Class complexClass, final String encoding, 
+    public WPSInputComplex(final String identifier, final Object data, final Class complexClass, final String encoding,
             final String schema, final String mime) {
         this(identifier, data, complexClass);
         this.data = data;
@@ -94,5 +94,5 @@ public class WPSInputComplex extends AbstractWPSInput{
     public Class getComplexClass() {
         return clazz;
     }
-    
+
 }

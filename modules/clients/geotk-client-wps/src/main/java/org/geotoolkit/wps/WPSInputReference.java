@@ -22,14 +22,14 @@ package org.geotoolkit.wps;
  * @module
  */
 public class WPSInputReference extends AbstractWPSInput{
-    
+
     private String href;
     private String encoding;
     private String schema;
     private String mime;
     private String method;
 
-    
+
     /**
      * Minimal constructor with only identifier and href Input Reference parameters
      * @param identifier
@@ -43,7 +43,7 @@ public class WPSInputReference extends AbstractWPSInput{
         this.mime = null;
         this.method = null;
     }
-    
+
     /**
      * Constructor with all Input Reference parameters
      * @param identifier
@@ -51,9 +51,9 @@ public class WPSInputReference extends AbstractWPSInput{
      * @param encoding
      * @param schema
      * @param mime
-     * @param method 
+     * @param method
      */
-    public WPSInputReference(final String identifier, final String href, final String encoding, 
+    public WPSInputReference(final String identifier, final String href, final String encoding,
             final String schema, final String mime, final String method) {
         super(identifier);
         this.href = href;
@@ -97,5 +97,5 @@ public class WPSInputReference extends AbstractWPSInput{
     public String getSchema() {
         return schema;
     }
-    
+
 }

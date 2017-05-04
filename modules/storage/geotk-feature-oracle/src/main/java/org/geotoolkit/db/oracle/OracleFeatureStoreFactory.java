@@ -103,7 +103,7 @@ public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);
     }
-    
+
     @Override
     protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         return new OracleFeatureStore(params, factoryId);

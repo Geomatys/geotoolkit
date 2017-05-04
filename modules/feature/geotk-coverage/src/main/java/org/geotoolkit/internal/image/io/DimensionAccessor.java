@@ -402,7 +402,7 @@ nextPixel:          do {
     /**
      * Temporary Method in attempt to generalize comportment with reflexivity.
      * @param i
-     * @return 
+     * @return
      */
     public GridSampleDimension getGridSampleDimension(int i) {
         selectParent();
@@ -423,16 +423,16 @@ nextPixel:          do {
         selectParent();
         final Object userObj = getUserObject();
         if (userObj != null && userObj instanceof List) return (List<GridSampleDimension>) userObj;
-        
+
         final int nbC = childCount();
-        if (nbC == 0) return null; 
+        if (nbC == 0) return null;
         final List<GridSampleDimension> gsD = new ArrayList<>(nbC);
         for (int i = 0; i < nbC; i++) {
             selectChild(i);
             final Object obj = getUserObject();
             if (obj != null) gsD.add((GridSampleDimension) obj);
         }
-        return (gsD.isEmpty()) ? null : gsD; 
+        return (gsD.isEmpty()) ? null : gsD;
     }
 }
  

@@ -40,7 +40,7 @@ public class WMSCMosaic implements GridMosaic{
     private final String id = UUID.randomUUID().toString();
     private final WMSCPyramid pyramid;
     private final double scale;
-    
+
     private final Dimension gridSize = new Dimension();
     private final double tileSpanX;
     private final double tileSpanY;
@@ -48,26 +48,26 @@ public class WMSCMosaic implements GridMosaic{
     public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
         this.pyramid = pyramid;
         this.scale = scaleLevel;
-                
+
         final int tileWidth = pyramid.getTileset().getWidth();
         final int tileHeight = pyramid.getTileset().getHeight();
-        
+
         final BoundingBox env = pyramid.getTileset().getBoundingBox();
         final double spanX = env.getMaxx() - env.getMinx();
         final double spanY = env.getMaxy() - env.getMiny();
-        
+
         gridSize.width = (int) (spanX / (scale*tileWidth));
         gridSize.height = (int) (spanY / (scale*tileHeight));
-        
+
         tileSpanX = spanX / gridSize.width ;
-        tileSpanY = spanY / gridSize.height ;   
+        tileSpanY = spanY / gridSize.height ;
     }
 
     @Override
     public String getId() {
         return id;
     }
-    
+
     @Override
     public Pyramid getPyramid() {
         return pyramid;
@@ -91,24 +91,24 @@ public class WMSCMosaic implements GridMosaic{
     @Override
     public Dimension getTileSize() {
         return new Dimension(
-                pyramid.getTileset().getWidth(), 
+                pyramid.getTileset().getWidth(),
                 pyramid.getTileset().getHeight());
     }
-    
+
     @Override
     public Envelope getEnvelope(int col, int row) {
-        
+
         final DirectPosition ul = getUpperLeftCorner();
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
         final double spanX = tileSpanX;
         final double spanY = tileSpanY;
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
         envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
         envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
-        
+
         return envelope;
     }
 
@@ -119,15 +119,15 @@ public class WMSCMosaic implements GridMosaic{
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
-        
+
         return envelope;
     }
-    
+
     @Override
     public boolean isMissing(int col, int row) {
         return false;

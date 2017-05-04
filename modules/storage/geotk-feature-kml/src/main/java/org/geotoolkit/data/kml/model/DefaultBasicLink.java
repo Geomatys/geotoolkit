@@ -31,13 +31,13 @@ public class DefaultBasicLink implements BasicLink {
     private String href;
 
     /**
-     * 
+     *
      */
     public DefaultBasicLink() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param href

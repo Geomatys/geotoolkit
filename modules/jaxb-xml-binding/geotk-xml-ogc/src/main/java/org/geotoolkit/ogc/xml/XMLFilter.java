@@ -23,10 +23,10 @@ import java.util.Map;
  * @author Guilhem Legal (Geomatys)
  */
 public interface XMLFilter {
-    
+
 
     Object getFilterObject();
-    
+
     Map<String, String> getPrefixMapping();
 
     void setPrefixMapping(final Map<String, String> prefixMapping);

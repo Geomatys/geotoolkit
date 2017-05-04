@@ -40,11 +40,11 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  *       base type shall be extended by each specific OWS to include the
  *       additional required "service" attribute, with the correct value for that
  *       OWS.
- * 
+ *
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType", propOrder = {
@@ -98,11 +98,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     @XmlAttribute(required = true)
     private String service;
-    
+
     /**
      * Empty constructor used by JAXB.
      */
-    public GetCapabilitiesType(){ 
+    public GetCapabilitiesType(){
     }
 
     /**
@@ -110,7 +110,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     public GetCapabilitiesType(final String service){
         this.service = service;
     }
-    
+
     /**
      * Build a new GetCapabilities base request.
      */
@@ -134,14 +134,14 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         this.updateSequence = null;
         this.service        = service;
     }
-    
+
     /**
      * Gets the value of the acceptVersions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AcceptVersionsType }
-     *     
+     *
      */
     @Override
     public AcceptVersionsType getAcceptVersions() {
@@ -150,16 +150,16 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Sets the value of the acceptVersions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AcceptVersionsType }
-     *     
+     *
      */
     public void setAcceptVersions(AcceptVersionsType value) {
         this.acceptVersions = value;
     }
-    
+
     /**
      * inherited method from AbstractGetCapabilties
      */
@@ -169,7 +169,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
             return new Version(acceptVersions.getVersion().get(0));
         } return null;
     }
-    
+
     @Override
     public void setVersion(final String version) {
         if (version != null) {
@@ -183,11 +183,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Gets the value of the sections property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SectionsType }
-     *     
+     *
      */
     @Override
     public SectionsType getSections() {
@@ -196,11 +196,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Sets the value of the sections property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SectionsType }
-     *     
+     *
      */
     public void setSections(SectionsType value) {
         this.sections = value;
@@ -219,14 +219,14 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         }
         return false;
     }
-    
+
     /**
      * Gets the value of the acceptFormats property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AcceptFormatsType }
-     *     
+     *
      */
     @Override
     public AcceptFormatsType getAcceptFormats() {
@@ -245,14 +245,14 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the acceptFormats property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AcceptFormatsType }
-     *     
+     *
      */
     public void setAcceptFormats(AcceptFormatsType value) {
         this.acceptFormats = value;
@@ -260,11 +260,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Gets the value of the acceptLanguages property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetCapabilitiesType.AcceptLanguages }
-     *     
+     *
      */
     public GetCapabilitiesType.AcceptLanguages getAcceptLanguages() {
         return acceptLanguages;
@@ -272,11 +272,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Sets the value of the acceptLanguages property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetCapabilitiesType.AcceptLanguages }
-     *     
+     *
      */
     public void setAcceptLanguages(GetCapabilitiesType.AcceptLanguages value) {
         this.acceptLanguages = value;
@@ -284,11 +284,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Gets the value of the updateSequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getUpdateSequence() {
@@ -297,11 +297,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Sets the value of the updateSequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUpdateSequence(String value) {
         this.updateSequence = value;
@@ -309,11 +309,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -322,11 +322,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {
@@ -335,9 +335,9 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -349,8 +349,8 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -365,7 +365,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
         /**
          * Gets the value of the language property.
-         * 
+         *
          */
         public List<String> getLanguage() {
             if (language == null) {

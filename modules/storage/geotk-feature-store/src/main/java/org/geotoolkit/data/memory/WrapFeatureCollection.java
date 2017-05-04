@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
- * Encapsulate FeatureCollection 
+ * Encapsulate FeatureCollection
  * @author Quentin Boileau
  * @module
  */

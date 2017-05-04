@@ -27,9 +27,9 @@ import org.geotoolkit.swe.xml.AbstractEnvelopeProperty;
 
 /**
  * <p>Java class for EnvelopePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnvelopePropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swe.xml.AbstractEnvelopeProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,11 +97,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the envelope property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getEnvelope() {
         return envelope;
@@ -109,11 +109,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the envelope property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setEnvelope(final EnvelopeType value) {
         this.envelope = value;
@@ -121,11 +121,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -133,11 +133,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -145,11 +145,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -157,11 +157,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -169,11 +169,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -181,11 +181,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -193,11 +193,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -205,11 +205,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -217,11 +217,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -229,11 +229,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -241,11 +241,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -253,11 +253,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -265,11 +265,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -277,11 +277,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -289,11 +289,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -301,11 +301,11 @@ public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

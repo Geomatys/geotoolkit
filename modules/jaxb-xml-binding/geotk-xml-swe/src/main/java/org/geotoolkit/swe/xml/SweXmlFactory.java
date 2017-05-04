@@ -136,7 +136,7 @@ public class SweXmlFactory {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
     }
-    
+
     /**
      * Build a Quantity object in the factory version.
      *
@@ -159,7 +159,7 @@ public class SweXmlFactory {
 
     /**
      * Build a Uom object in the factory version.
-     * 
+     *
      * @param version
      * @param code
      * @param href
@@ -176,7 +176,7 @@ public class SweXmlFactory {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
     }
-    
+
     public static AbstractBoolean createBoolean(final String version, final String definition, final Boolean value) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v100.BooleanType(definition, value);
@@ -188,7 +188,7 @@ public class SweXmlFactory {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
     }
-    
+
     public static AbstractTime createTime(final String version, final String definition, final UomProperty uom) {
         if ("1.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
@@ -317,7 +317,7 @@ public class SweXmlFactory {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
     }
-    
+
     public static AbstractDataRecord buildSimpleDataRecord(final String version, final String blockid, final String id, final String definition, final boolean fixed, final List<AnyScalar> components) {
         if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType> compos = new ArrayList<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType>();
@@ -363,7 +363,7 @@ public class SweXmlFactory {
         }
     }
 
-    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, 
+    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType,
             final AbstractEncoding encoding, final String values) {
         if ("1.0.0".equals(version)) {
             if (!(elementType instanceof org.geotoolkit.swe.xml.v100.AbstractDataRecordType)) {

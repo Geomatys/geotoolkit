@@ -110,7 +110,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName().toString())));
-        
+
         s.close();
     }
 
@@ -138,7 +138,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         Session session = s.createSession(true);
         session.addFeatures(s.getName().toString(),one);
         session.commit();
-        
+
         s.close();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());

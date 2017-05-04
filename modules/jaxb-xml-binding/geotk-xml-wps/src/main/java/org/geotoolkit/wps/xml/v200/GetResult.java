@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -56,21 +56,21 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.wps.xml
     protected String jobID;
 
     public GetResult() {
-        
+
     }
-    
+
     public GetResult(final String service, final String jobId) {
         super(service);
         this.jobID = jobId;
     }
-    
+
     /**
      * Gets the value of the jobID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getJobID() {
@@ -79,16 +79,16 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.wps.xml
 
     /**
      * Sets the value of the jobID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setJobID(String value) {
         this.jobID = value;
     }
-    
+
     @Override
     public Map<String, String> toKVP() throws UnsupportedOperationException {
         final Map<String, String> kvp = new HashMap<>();
@@ -98,5 +98,5 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.wps.xml
         kvp.put("JOBID",jobID);
         return kvp;
     }
-    
+
 }

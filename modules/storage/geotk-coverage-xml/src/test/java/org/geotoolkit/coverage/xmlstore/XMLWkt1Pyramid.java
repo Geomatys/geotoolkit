@@ -35,9 +35,9 @@ class XMLWkt1Pyramid extends XMLOldPyramid {
 
     /**
      * Only serialize into WKT1 version.
-     * 
+     *
      * @param crs
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     @Override
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) throws DataStoreException {
@@ -51,7 +51,7 @@ class XMLWkt1Pyramid extends XMLOldPyramid {
             f.setConvention(Convention.WKT1);
             this.crs = f.format(crs);
         }
-        
+
         if (this.crs == null && serializedCrs == null) {
             throw new DataStoreException("Input CRS cannot be serialized :\n"+crs);
         }

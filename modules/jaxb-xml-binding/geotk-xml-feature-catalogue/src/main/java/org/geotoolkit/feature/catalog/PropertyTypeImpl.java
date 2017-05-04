@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -47,11 +47,11 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
 
 /**
  * Abstract class for feature properties.
- * 
+ *
  * <p>Java class for AbstractFC_PropertyType_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFC_PropertyType_Type">
  *   &lt;complexContent>
@@ -68,8 +68,8 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,7 +86,7 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
     FeatureOperationImpl.class,
     AssociationRoleImpl.class
 })
-@XmlRootElement(name= "FC_PropertyType")        
+@XmlRootElement(name= "FC_PropertyType")
 public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, Referenceable {
 
     @XmlAttribute
@@ -105,7 +105,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     private FeatureType featureType;
     private List<Constraint> constrainedBy;
     private DefinitionReference definitionReference;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
@@ -115,9 +115,9 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
      * An empty constructor used by JAXB
      */
     public PropertyTypeImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureAttribute
      */
@@ -129,14 +129,14 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
             this.constrainedBy       = feature.getConstrainedBy();
             this.definition          = feature.getDefinition();
             this.featureType         = feature.getFeatureType();
-            this.memberName          = feature.getMemberName(); 
+            this.memberName          = feature.getMemberName();
         }
     }
-    
+
     /**
      * Build a new PropertyTypeImpl
      */
-    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality, 
+    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final MultiplicityImpl cardinality,
             final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference) {
         this.id                  = id;
         this.cardinality         = cardinality;
@@ -144,11 +144,11 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         this.constrainedBy       = constrainedBy;
         this.definition          = definition;
         this.featureType         = featureType;
-        this.memberName          = memberName; 
+        this.memberName          = memberName;
     }
     /**
      * Gets the value of the memberName property.
-     * 
+     *
      */
     @Override
     public LocalName getMemberName() {
@@ -157,7 +157,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Sets the value of the memberName property.
-     * 
+     *
      */
     public void setMemberName(final LocalName value) {
         this.memberName = value;
@@ -165,7 +165,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
     */
     @Override
     public String getDefinition() {
@@ -174,7 +174,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      */
     public void setDefinition(final String value) {
         this.definition = value;
@@ -182,7 +182,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Gets the value of the cardinality property.
-     * 
+     *
      */
     @Override
     public MultiplicityImpl getCardinality() {
@@ -191,7 +191,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Sets the value of the cardinality property.
-     * 
+     *
     */
     public void setCardinality(final MultiplicityImpl value) {
         this.cardinality = value;
@@ -199,7 +199,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Gets the value of the featureType property.
-     * 
+     *
      */
     @Override
     public FeatureType getFeatureType() {
@@ -208,7 +208,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Sets the value of the featureType property.
-     * 
+     *
      */
     public void setFeatureType(final FeatureType value) {
         this.featureType = value;
@@ -224,7 +224,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         }
         return this.constrainedBy;
     }
-    
+
     public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
             this.constrainedBy = new ArrayList<>();
@@ -238,7 +238,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Gets the value of the definitionReference property.
-     * 
+     *
     */
     @Override
     public DefinitionReference getDefinitionReference() {
@@ -247,12 +247,12 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
 
     /**
      * Sets the value of the definitionReference property.
-     * 
+     *
     */
     public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
-    
+
     /**
      * set the catalogue in href mode
      */
@@ -260,7 +260,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current catalogue href mode
      */
@@ -268,7 +268,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     public boolean isReference() {
         return isReference;
     }
-    
+
     @Override
     public PropertyTypeImpl getReferenceableObject() {
         PropertyTypeImpl result = new PropertyTypeImpl(this);
@@ -280,17 +280,17 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
     public String getId() {
         return id;
     }
-    
+
     public void setId(final String id) {
         this.id = id;
     }
-    
+
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
             alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
                 featureType = ((FeatureTypeImpl)featureType).getReferenceableObject();
@@ -300,7 +300,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         }
         return alreadySee;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
@@ -328,7 +328,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -339,7 +339,7 @@ public class PropertyTypeImpl extends AbstractMetadata implements PropertyType, 
         }
         if (object instanceof PropertyTypeImpl) {
             final PropertyTypeImpl that = (PropertyTypeImpl) object;
-            
+
             return Objects.equals(this.cardinality,         that.cardinality)         &&
                    Objects.equals(this.constrainedBy,       that.constrainedBy)       &&
                    Objects.equals(this.definition,          that.definition)          &&

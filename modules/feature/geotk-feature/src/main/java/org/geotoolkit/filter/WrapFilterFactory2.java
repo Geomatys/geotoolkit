@@ -96,7 +96,7 @@ import org.opengis.util.GenericName;
 /**
  * Wrap a filter factory.
  * Can be used as a base class to extend a factory capabilities.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WrapFilterFactory2 implements FilterFactory2 {
@@ -106,7 +106,7 @@ public class WrapFilterFactory2 implements FilterFactory2 {
     public WrapFilterFactory2(FilterFactory2 factory) {
         this.factory = factory;
     }
-    
+
     @Override
     public PropertyName property(GenericName name) {
         return factory.property(name);
@@ -566,5 +566,5 @@ public class WrapFilterFactory2 implements FilterFactory2 {
     public FilterCapabilities capabilities(String version, ScalarCapabilities scalar, SpatialCapabilities spatial, TemporalCapabilities temporal, IdCapabilities id) {
         return factory.capabilities(version, scalar, spatial, temporal, id);
     }
-    
+
 }

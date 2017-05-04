@@ -23,14 +23,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
   * @author Guilhem Legal (Geomatys)
  */
 public interface AbstractGeometry extends AbstractGML {
-    
+
     String getSrsName();
-    
+
     void setSrsName(final String srsName);
-    
+
     void setId(final String id);
-    
+
     int getCoordinateDimension();
-    
+
     CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst);
 }

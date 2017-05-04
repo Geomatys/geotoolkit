@@ -36,7 +36,7 @@ package org.geotoolkit.xal.model;
 public interface PremiseLocation {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();

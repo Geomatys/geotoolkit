@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:SolidArrayPropertyType is a container for an array of solids. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements is not supported.
- * 
+ *
  * <p>Java class for SolidArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SolidArrayPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SolidArrayPropertyType", propOrder = {
@@ -63,27 +63,27 @@ public class SolidArrayPropertyType {
 
     /**
      * Gets the value of the abstractSolid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractSolid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractSolid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link CompositeSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractSolidType>> getAbstractSolid() {
         if (abstractSolid == null) {
@@ -94,11 +94,11 @@ public class SolidArrayPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -110,11 +110,11 @@ public class SolidArrayPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

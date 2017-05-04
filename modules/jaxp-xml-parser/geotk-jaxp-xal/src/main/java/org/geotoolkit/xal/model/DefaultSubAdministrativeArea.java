@@ -41,7 +41,7 @@ public class DefaultSubAdministrativeArea implements SubAdministrativeArea {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param subAdministrativeAreaNames
      * @param localisation

@@ -29,9 +29,9 @@ import org.opengis.filter.capability.Functions;
 
 /**
  * <p>Java class for FunctionNamesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FunctionNamesType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.capability.Functions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,16 +61,16 @@ public class FunctionNamesType implements Functions {
      * Empty construtor used by JAXB
      */
     public FunctionNamesType() {
-        
+
     }
-    
+
     /**
      *Build a new Function names
      */
     public FunctionNamesType(final List<FunctionNameType> functionNames) {
         this.functionNames = functionNames;
     }
-    
+
     public Collection<FunctionName> getFunctionNames() {
         List<FunctionName> result = new ArrayList<FunctionName>();
         if (functionNames == null) {

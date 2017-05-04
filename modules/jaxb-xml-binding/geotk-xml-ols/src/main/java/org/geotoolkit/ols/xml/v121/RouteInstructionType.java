@@ -28,11 +28,11 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 /**
  * Defines a single turn-by-turn route instruction or advisory formatted for presentation.
- * 
+ *
  * <p>Java class for RouteInstructionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RouteInstructionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RouteInstructionType", propOrder = {
@@ -76,11 +76,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the instruction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getInstruction() {
         return instruction;
@@ -88,11 +88,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the instruction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setInstruction(String value) {
         this.instruction = value;
@@ -100,11 +100,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the distance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getDistance() {
         return distance;
@@ -112,11 +112,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the distance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setDistance(DistanceType value) {
         this.distance = value;
@@ -124,11 +124,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the routeInstructionGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public RouteGeometryType getRouteInstructionGeometry() {
         return routeInstructionGeometry;
@@ -136,11 +136,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the routeInstructionGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteGeometryType }
-     *     
+     *
      */
     public void setRouteInstructionGeometry(RouteGeometryType value) {
         this.routeInstructionGeometry = value;
@@ -148,11 +148,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public EnvelopeType getBoundingBox() {
         return boundingBox;
@@ -160,11 +160,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the boundingBox property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopeType }
-     *     
+     *
      */
     public void setBoundingBox(EnvelopeType value) {
         this.boundingBox = value;
@@ -172,11 +172,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the duration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Duration }
-     *     
+     *
      */
     public Duration getDuration() {
         return duration;
@@ -184,11 +184,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the duration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *     
+     *
      */
     public void setDuration(Duration value) {
         this.duration = value;
@@ -196,11 +196,11 @@ public class RouteInstructionType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -208,11 +208,11 @@ public class RouteInstructionType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;

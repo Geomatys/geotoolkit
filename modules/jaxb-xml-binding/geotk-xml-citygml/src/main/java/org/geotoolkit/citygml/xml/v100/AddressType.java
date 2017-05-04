@@ -32,11 +32,11 @@ import org.geotoolkit.gml.xml.v311.MultiPointPropertyType;
  * Please note, that addresses are modelled as GML features.
  * Every address can be assigned zero or more 2D or 3D point geometries
  * (one gml:MultiPoint geometry) locating the entrance(s).
- * 
+ *
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.gml.xml.v311.MultiPointPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,11 +70,11 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Gets the value of the xalAddress property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XalAddressPropertyType }
-     *     
+     *
      */
     public XalAddressPropertyType getXalAddress() {
         return xalAddress;
@@ -82,11 +82,11 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Sets the value of the xalAddress property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XalAddressPropertyType }
-     *     
+     *
      */
     public void setXalAddress(final XalAddressPropertyType value) {
         this.xalAddress = value;
@@ -94,11 +94,11 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Gets the value of the multiPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MultiPointPropertyType }
-     *     
+     *
      */
     public MultiPointPropertyType getMultiPoint() {
         return multiPoint;
@@ -106,11 +106,11 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Sets the value of the multiPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MultiPointPropertyType }
-     *     
+     *
      */
     public void setMultiPoint(final MultiPointPropertyType value) {
         this.multiPoint = value;

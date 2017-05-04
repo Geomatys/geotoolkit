@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoVolumePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoVolumePropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoVolumePropertyType", propOrder = {
@@ -58,11 +58,11 @@ public class TopoVolumePropertyType {
 
     /**
      * Gets the value of the topoVolume property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TopoVolumeType }
-     *     
+     *
      */
     public TopoVolumeType getTopoVolume() {
         return topoVolume;
@@ -70,11 +70,11 @@ public class TopoVolumePropertyType {
 
     /**
      * Sets the value of the topoVolume property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TopoVolumeType }
-     *     
+     *
      */
     public void setTopoVolume(TopoVolumeType value) {
         this.topoVolume = value;
@@ -82,11 +82,11 @@ public class TopoVolumePropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -98,11 +98,11 @@ public class TopoVolumePropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

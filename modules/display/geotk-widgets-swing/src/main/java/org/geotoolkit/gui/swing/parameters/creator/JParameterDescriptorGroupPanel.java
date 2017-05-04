@@ -47,56 +47,56 @@ import org.opengis.util.InternationalString;
  * @author Quentin Boileau (Geomatys)
  */
 public final class JParameterDescriptorGroupPanel extends GeneralParameterDescriptorPanel {
-    
+
     /**
      * Expender/Collapse icons.
      */
     private static final ImageIcon CARET_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CARET_DOWN, 18, Color.BLACK);
     private static final ImageIcon CARET_RIGHT = IconBuilder.createIcon(FontAwesomeIcons.ICON_CARET_RIGHT, 18, Color.BLACK);
-    
+
     /**
      * Prefix used on new parameter or group creation.
      */
     private static final String GROUP_PREFIX = "group";
     private static final String PARAM_PREFIX = "param";
-    
+
     /**
      * JParameterEditor propertyChangeListener transfered to JParameterDescriptorGroupPanel children
      * GeneralParameterDescriptorPanel. This listener is use by JParameterEditor to know if a parameter
      * is selected or not in order to update creatorPanel.
      */
-    private final PropertyChangeListener focusListener; //JParameterEditor 
+    private final PropertyChangeListener focusListener; //JParameterEditor
     private boolean rootGroup = false;
     private boolean editable;
     private boolean removable;
-    
+
     private boolean expended = true;
-    
+
     private int minOccurs;
     private int maxOccurs;
     private List<GeneralParameterDescriptorPanel> simpleParameters;
     private List<GeneralParameterDescriptorPanel> groupParameters;
-    
+
     /**
      * Create new form JParametersCreator
      */
-    public JParameterDescriptorGroupPanel(final ParameterDescriptorGroup descGroup, final EditableParameterFilter filter, 
+    public JParameterDescriptorGroupPanel(final ParameterDescriptorGroup descGroup, final EditableParameterFilter filter,
             final JParameterDescriptorGroupPanel parent, final PropertyChangeListener listener) {
         super(descGroup, parent);
-        
+
         this.focusListener = listener;
         this.rootGroup = parent == null;
         this.editable = filter != null ? filter.isEditable(descGroup) : true;
         this.removable = filter != null ? filter.isRemovable(descGroup) : true;
-        
+
         this.minOccurs = descGroup.getMinimumOccurs();
         this.maxOccurs = descGroup.getMaximumOccurs();
-        
+
         this.simpleParameters = new LinkedList<GeneralParameterDescriptorPanel>();
         this.groupParameters = new LinkedList<GeneralParameterDescriptorPanel>();
-        
+
         for (GeneralParameterDescriptor param : descGroup.descriptors()) {
-            
+
             GeneralParameterDescriptorPanel comp = null;
             if (param instanceof ParameterDescriptor) {
                 comp = new JParameterDescriptorPanel((ParameterDescriptor) param, this, filter);
@@ -107,36 +107,36 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
             }
         }
         //sort in alphabetical order using parameters code
-        Collections.sort(simpleParameters); 
-        Collections.sort(groupParameters); 
-        
+        Collections.sort(simpleParameters);
+        Collections.sort(groupParameters);
+
         initComponents();
-        
+
         paddingPanel.setBorder(new EmptyBorder(5, 28, 5, 28));
-        
+
         //disable add/remove button if group not editable/removable
         guiRemoveParamBtn.setEnabled(!rootGroup && removable);
         guiNewGroupBtn.setEnabled(editable);
         guiNewParamBtn.setEnabled(editable);
-        
+
         //expender init
         guiExpenderBtn.setText(null);
         guiExpenderBtn.setIcon(CARET_DOWN);
-        
+
         //ToolTipText on buttons.
         guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_collapse"));
         guiNewGroupBtn.setToolTipText(MessageBundle.format("parameters_addNewGroupParameter"));
         guiNewParamBtn.setToolTipText(MessageBundle.format("parameters_addNewSimpleParameter"));
         guiRemoveParamBtn.setToolTipText(MessageBundle.format("parameters_removeParameter"));
-       
+
         //label init
         guiGroupNameLbl.setText(code);
         guiGroupNameLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
         guiGroupNameLbl.addMouseListener(this);
-        
+
         updateContent();
     }
-    
+
     @Override
     public boolean isEditable() {
         return !rootGroup && editable;
@@ -157,7 +157,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
     public void setMaxOccurs(int maxOccurs) {
         this.maxOccurs = maxOccurs;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -284,7 +284,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
 
     /**
      * Expend/Collapse children parameters.
-     * @param evt 
+     * @param evt
      */
     private void guiExpenderBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiExpenderBtnActionPerformed
         expended = !expended;
@@ -292,7 +292,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
             guiExpenderBtn.setIcon(CARET_DOWN);
             guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_collapse"));
             bottomPanel.setVisible(true);
-            
+
         } else {
             guiExpenderBtn.setIcon(CARET_RIGHT);
             guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_expend"));
@@ -302,7 +302,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
 
     /**
      * Fire event to parent JParameterDescriptorGroupPanel
-     * @param evt 
+     * @param evt
      */
     private void guiRemoveParamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiRemoveParamBtnActionPerformed
         firePropertyChange(JParameterDescriptorsEditor.PARAMETER_REMOVED_EVENT, this, false);
@@ -310,13 +310,13 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
 
     /**
      * Add new JParameterDescriptorGroupPanel to children.
-     * @param evt 
+     * @param evt
      */
     private void guiNewGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNewGroupBtnActionPerformed
          final ParameterDescriptorGroup newGroup = new ParameterBuilder().addName(nextPrefixCode(GROUP_PREFIX)).createGroup();
          final JParameterDescriptorGroupPanel groupPanel = new JParameterDescriptorGroupPanel(newGroup, null, this, focusListener);
          groupParameters.add(groupPanel);
-         
+
          updateContent();
          groupPanel.setSelected(true);
          firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, newGroup);
@@ -324,7 +324,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
 
     /**
      * Add new JParameterDescriptorPanel to children.
-     * @param evt 
+     * @param evt
      */
     private void guiNewParamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNewParamBtnActionPerformed
         final ParameterDescriptor newDesc = new ParameterBuilder()
@@ -332,7 +332,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
                 .create(String.class, null);
         final JParameterDescriptorPanel panel = new JParameterDescriptorPanel(newDesc, this, null);
         simpleParameters.add(panel);
-        
+
         updateContent();
         panel.setSelected(true);
         firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, newDesc);
@@ -357,18 +357,18 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
      */
     @Override
     public void updateContent() {
-        
+
         guiGroupNameLbl.setText(code);
-        
+
         //clear
         parametersContainerPanel.removeAll();
-        
+
         final GridBagConstraints constraint = new GridBagConstraints();
         int index = 0;
-        
+
         //first all simple parameters
         for (GeneralParameterDescriptorPanel param : simpleParameters) {
-            
+
             if (param != null) {
                 constraint.gridx = 0;
                 constraint.gridy = index;
@@ -383,10 +383,10 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
                 index++;
             }
         }
-        
+
         //finish with group parameters
         for (GeneralParameterDescriptorPanel param : groupParameters) {
-            
+
             if (param != null) {
                 constraint.gridx = 0;
                 constraint.gridy = index;
@@ -403,10 +403,10 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         }
         this.revalidate();
     }
-    
+
     /**
      * Generate next unused prefix code.
-     * 
+     *
      * @param prefix
      * @return prefix string + index
      */
@@ -431,24 +431,24 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         }
         return prefix+i;
     }
-    
+
     /**
      * Check if input code String is a already used by another parameter or not.
-     * 
+     *
      * @param code String to test
-     * @param ignore GeneralParameterDescriptorPanel to ignore for test. 
+     * @param ignore GeneralParameterDescriptorPanel to ignore for test.
      * @return true if code is free and false otherwise.
      */
     public boolean isValidCode(final String code, final GeneralParameterDescriptorPanel ignore) {
         if (code == null) return false;
         boolean valid = true;
-        
+
         for (final GeneralParameterDescriptorPanel param : simpleParameters) {
             if (!param.equals(ignore) && code.equalsIgnoreCase(param.getCode())) {
                 valid = false;
             }
         }
-        
+
         for (final GeneralParameterDescriptorPanel param : groupParameters) {
             if (!param.equals(ignore) && code.equalsIgnoreCase(param.getCode())) {
                 valid = false;
@@ -466,11 +466,11 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         for (GeneralParameterDescriptorPanel param : groupParameters) {
             descriptors.add(param.getDescriptor());
         }
-        
+
         final InternationalString remark = remarks != null ? new SimpleInternationalString(remarks) : null;
         return ParametersExt.createParameterDescriptorGroup(code, remark, minOccurs, maxOccurs, descriptors);
     }
-    
+
     @Override
     public void setBackgroundColor(final Color color) {
         topPanel.setBackground(color);
@@ -481,7 +481,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
         //Parameter removed event
         //If parameter to remove isn't already removed, try to remove it and forward event.
         if (JParameterDescriptorsEditor.PARAMETER_REMOVED_EVENT.equals(evt.getPropertyName())) {
@@ -505,21 +505,21 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
             }
             firePropertyChange(JParameterDescriptorsEditor.PARAMETER_REMOVED_EVENT, evt.getOldValue(), removed);
             firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, this);
-            
+
         }
-        
+
         //Parameter change event.
         if (JParameterDescriptorsEditor.PARAMETER_CHANGE_EVENT.equals(evt.getPropertyName())) {
             this.revalidate();
         }
-        
+
         //forward event
         if (JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT.equals(evt.getPropertyName())) {
             firePropertyChange(JParameterDescriptorsEditor.DESCIPTOR_CHANGE_EVENT, null, this);
         }
-        
+
     }
-    
+
     /**
      * Sort GeneralParameterDescriptorPanel by first JParameterDescriptorPanel and then JParameterDescriptorGroupPanel.
      */
@@ -541,11 +541,11 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
                         return o1.compareTo(o2);
                     }
                 }
-            } 
-            
+            }
+
             if (o1 == null) return -1;
             if (o2 == null) return 1;
-            
+
             return 0;
         }
     }

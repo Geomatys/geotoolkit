@@ -49,60 +49,60 @@ import org.opengis.feature.catalog.util.MultiplicityRange;
  * @author Guilhem Legal (Geomatys)
  */
 public class FeatureCatalogueStandardTest {
- 
+
     @Test
     public void asValueMapTest() {
         MetadataStandard standard = FeatureCatalogueStandard.ISO_19110;
-        
+
         // empty case - should not raise exception
         FeatureCatalogueImpl metadata = new FeatureCatalogueImpl();
         Map<String,Object> map = standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
-        
+
         assertEquals(0, map.size());
-        
-        // more filled object 
+
+        // more filled object
         DefinitionSourceImpl definitionSource = new DefinitionSourceImpl("def-src-1", Citations.EPSG);
         metadata.setDefinitionSource(definitionSource);
-        
+
         List<Constraint> cst = new ArrayList<>();
         cst.add(new ConstraintImpl("some constraint"));
-        
+
         List<PropertyType> carrierOfCharacteristics = new ArrayList<>();
-        FeatureAttributeImpl fa1 = new FeatureAttributeImpl("fa-1", 
-                                                            Names.createMemberName("nmsp", ":", "fa-1", String.class), 
-                                                            "some def", 
+        FeatureAttributeImpl fa1 = new FeatureAttributeImpl("fa-1",
+                                                            Names.createMemberName("nmsp", ":", "fa-1", String.class),
+                                                            "some def",
                                                             new MultiplicityImpl(new MultiplicityRangeImpl(0, Integer.MAX_VALUE)),
-                                                            null, 
+                                                            null,
                                                             cst,
-                                                            "cd-2", 
+                                                            "cd-2",
                                                             Arrays.asList(new ListedValueImpl("cd-3", "lab", "def", null)),
                                                             Names.createTypeName("nmsp", ":", "CharacterString"));
         carrierOfCharacteristics.add(fa1);
         FeatureTypeImpl featureType = new FeatureTypeImpl("ft-1", Names.createLocalName("nmsp", ":", "ft-1"), "some def", "cd-1", Boolean.FALSE, new ArrayList<>(), metadata, carrierOfCharacteristics);
         fa1.setFeatureType(featureType);
-        
+
         metadata.setFeatureType(featureType);
-        
+
         map = standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
-        
+
         assertEquals(2, map.size());
-        
+
         map = standard.asValueMap(fa1, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.NON_EMPTY);
-        
+
         assertEquals(9, map.size());
-        
+
     }
-    
+
     @Test
     public void factoryCreateTest() throws Exception {
         MetadataFactory factory = new MetadataFactory(FeatureCatalogueStandard.ISO_19110, MetadataStandard.ISO_19115);
-        
+
         factory.create(FeatureType.class, Collections.<String,Object>emptyMap());
-        
+
         factory.create(Multiplicity.class, Collections.<String,Object>emptyMap());
-        
+
         factory.create(MultiplicityRange.class, Collections.<String,Object>emptyMap());
-        
+
         //factory.create(UnlimitedInteger.class, Collections.<String,Object>emptyMap());
     }
 }

@@ -30,9 +30,9 @@ import org.opengis.filter.capability.FunctionName;
 
 /**
  * <p>Java class for FunctionNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FunctionNameType">
  *   &lt;simpleContent>
@@ -42,8 +42,8 @@ import org.opengis.filter.capability.FunctionName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +56,7 @@ public class FunctionNameType implements FunctionName {
     private String value;
     @XmlAttribute(required = true)
     private String nArgs;
-    
+
     @XmlTransient
     private List<String> argumentNames;
     @XmlTransient
@@ -66,9 +66,9 @@ public class FunctionNameType implements FunctionName {
      * An empty constructor used by JAXB
      */
     public FunctionNameType() {
-        
+
     }
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -76,7 +76,7 @@ public class FunctionNameType implements FunctionName {
         this.value = name;
         this.nArgs = nArgs + "";
     }
-    
+
     /**
      * Gets the value of the value property.
      */

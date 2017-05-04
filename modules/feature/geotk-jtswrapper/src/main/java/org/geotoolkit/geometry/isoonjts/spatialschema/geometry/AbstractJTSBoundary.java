@@ -29,7 +29,7 @@ import org.opengis.geometry.Geometry;
  * @module
  */
 public abstract class AbstractJTSBoundary extends JTSComplex implements Boundary {
-        
+
     /**
      * Creates a new {@code JTSBoundary}.
      */

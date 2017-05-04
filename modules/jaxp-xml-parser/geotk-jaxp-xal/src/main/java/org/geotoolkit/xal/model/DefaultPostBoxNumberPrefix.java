@@ -30,7 +30,7 @@ public class DefaultPostBoxNumberPrefix implements PostBoxNumberPrefix {
     public DefaultPostBoxNumberPrefix(){}
 
     /**
-     * 
+     *
      * @param numberPrefixSeparator
      * @param grPostal
      * @param content

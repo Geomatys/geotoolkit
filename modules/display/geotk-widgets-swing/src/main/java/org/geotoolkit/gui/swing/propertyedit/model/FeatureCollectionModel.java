@@ -50,7 +50,7 @@ import org.opengis.filter.FilterFactory;
 
 /**
  * Feature collection model
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
@@ -66,7 +66,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     /** Creates a new instance of BasicTableModel
      * @param tab
-     * @param layer 
+     * @param layer
      */
     public FeatureCollectionModel(final JXTable tab, final FeatureMapLayer layer, final boolean selectIds) {
         super();
@@ -79,7 +79,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     public void setQuery(final Query candidateQuery) {
         query = removeGeometryAttributs(candidateQuery);
-        
+
         columns.clear();
         features.clear();
 
@@ -162,7 +162,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         if(column == 1) return "id";
         return columns.get(column-2).getName().tip().toString();
     }
-    
+
     public PropertyType getColumnDesc(final int column) {
         if(column == 0) return null;
         if(column == 1) return null;
@@ -206,7 +206,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
             final GenericName NAME = columns.get(columnIndex-2).getName();
 
             aValue = ObjectConverters.convert(aValue, getColumnClass(columnIndex));
-            
+
             try {
                 featureCollection.update(filter, Collections.singletonMap(NAME.toString(), aValue));
             } catch (DataStoreException ex) {

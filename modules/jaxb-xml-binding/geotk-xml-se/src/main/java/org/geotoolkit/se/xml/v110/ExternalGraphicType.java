@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ExternalGraphicType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExternalGraphicType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,11 +69,11 @@ public class ExternalGraphicType {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
@@ -81,11 +81,11 @@ public class ExternalGraphicType {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
@@ -93,11 +93,11 @@ public class ExternalGraphicType {
 
     /**
      * Gets the value of the inlineContent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InlineContentType }
-     *     
+     *
      */
     public InlineContentType getInlineContent() {
         return inlineContent;
@@ -105,11 +105,11 @@ public class ExternalGraphicType {
 
     /**
      * Sets the value of the inlineContent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InlineContentType }
-     *     
+     *
      */
     public void setInlineContent(final InlineContentType value) {
         this.inlineContent = value;
@@ -117,11 +117,11 @@ public class ExternalGraphicType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -129,11 +129,11 @@ public class ExternalGraphicType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -141,25 +141,25 @@ public class ExternalGraphicType {
 
     /**
      * Gets the value of the colorReplacement property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the colorReplacement property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColorReplacement().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ColorReplacementType }
-     * 
-     * 
+     *
+     *
      */
     public List<ColorReplacementType> getColorReplacement() {
         if (colorReplacement == null) {

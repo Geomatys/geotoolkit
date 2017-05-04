@@ -30,12 +30,12 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 /**
  * Type for building furnitures. As subclass of _CityObject, a BuildingFurniture inherits all
  *                 attributes and relations, in particular an id, names, external references, and generalization relations.
- *             
- * 
+ *
+ *
  * <p>Java class for BuildingFurnitureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BuildingFurnitureType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,11 +80,11 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the clazz property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClazz() {
         return clazz;
@@ -92,11 +92,11 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the clazz property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -104,25 +104,25 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the function property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -133,25 +133,25 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the usage property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the usage property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -162,11 +162,11 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the lod4Geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -174,11 +174,11 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the lod4Geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
@@ -186,11 +186,11 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the lod4ImplicitRepresentation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ImplicitRepresentationPropertyType }
-     *     
+     *
      */
     public ImplicitRepresentationPropertyType getLod4ImplicitRepresentation() {
         return lod4ImplicitRepresentation;
@@ -198,11 +198,11 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the lod4ImplicitRepresentation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ImplicitRepresentationPropertyType }
-     *     
+     *
      */
     public void setLod4ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod4ImplicitRepresentation = value;
@@ -210,25 +210,25 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the genericApplicationPropertyOfBuildingFurniture property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfBuildingFurniture property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGenericApplicationPropertyOfBuildingFurniture().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getGenericApplicationPropertyOfBuildingFurniture() {
         if (genericApplicationPropertyOfBuildingFurniture == null) {

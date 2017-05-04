@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LineStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,11 +80,11 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the extrude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isExtrude() {
         return extrude;
@@ -92,11 +92,11 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Sets the value of the extrude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setExtrude(final Boolean value) {
         this.extrude = value;
@@ -104,11 +104,11 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the tessellate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isTessellate() {
         return tessellate;
@@ -116,11 +116,11 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Sets the value of the tessellate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setTessellate(final Boolean value) {
         this.tessellate = value;
@@ -128,12 +128,12 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the altitudeModeGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAltitudeModeGroup() {
         return altitudeModeGroup;
@@ -141,12 +141,12 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Sets the value of the altitudeModeGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
-     *     
+     *
      */
     public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
@@ -154,25 +154,25 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the coordinates property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCoordinates().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getCoordinates() {
         if (coordinates == null) {
@@ -183,25 +183,25 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the lineStringSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lineStringSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLineStringSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLineStringSimpleExtensionGroup() {
         if (lineStringSimpleExtensionGroup == null) {
@@ -212,25 +212,25 @@ public class LineStringType extends AbstractGeometryType {
 
     /**
      * Gets the value of the lineStringObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lineStringObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLineStringObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getLineStringObjectExtensionGroup() {
         if (lineStringObjectExtensionGroup == null) {

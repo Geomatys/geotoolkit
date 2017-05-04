@@ -38,9 +38,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for EncodedValuesPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EncodedValuesPropertyType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EncodedValuesPropertyType", propOrder = {
@@ -80,9 +80,9 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     public EncodedValuesPropertyType() {
-        
+
     }
-    
+
     public EncodedValuesPropertyType(final EncodedValuesPropertyType that) {
         this.actuate = that.actuate;
         this.any     = that.any;
@@ -94,13 +94,13 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
         this.title   = that.title;
         this.type    = that.type;
     }
-    
+
     /**
      * Gets the value of the any property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
-     * 
+     *
      */
     @Override
     public List<Element> getAny() {
@@ -112,11 +112,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -129,11 +129,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -141,11 +141,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -154,11 +154,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -166,11 +166,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -179,11 +179,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -191,11 +191,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -204,11 +204,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -216,11 +216,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -229,11 +229,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -241,11 +241,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -257,11 +257,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -269,11 +269,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -285,11 +285,11 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
@@ -297,7 +297,7 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */
@@ -324,7 +324,7 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
             int i = 0;
             for (Element e : any) {
                 sb.append(i).append(':').append(e).append('\n');
-            }       
+            }
         }
         if (otherAttributes != null) {
             sb.append("otherAttributes:\n");

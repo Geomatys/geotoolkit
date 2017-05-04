@@ -33,24 +33,24 @@ import org.geotoolkit.ebrim.xml.RegistryObject;
 
 
 /**
- * id may be empty. 
+ * id may be empty.
  * If specified it may be in urn:uuid format or be in some arbitrary format.
  * If id is empty registry must generate globally unique id.
- * 
+ *
  * If id is provided and in proper UUID syntax (starts with urn:uuid:) registry will honour it.
- * 
+ *
  * If id is provided and is not in proper UUID syntax then it is used for
  * linkage within document and is ignored by the registry. In this case the
  * registry generates a UUID for id attribute.
- * 
+ *
  * id must not be null when object is being retrieved from the registry.
- * 
- * 			
- * 
+ *
+ *
+ *
  * <p>Java class for RegistryObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RegistryObjectType">
  *   &lt;complexContent>
@@ -79,8 +79,8 @@ import org.geotoolkit.ebrim.xml.RegistryObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -134,7 +134,7 @@ public class RegistryObjectType implements RegistryObject {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public InternationalStringType getName() {
@@ -150,7 +150,7 @@ public class RegistryObjectType implements RegistryObject {
 
     /**
      * Gets the value of the description property.
-     *     
+     *
      */
     public InternationalStringType getDescription() {
         return description;
@@ -165,7 +165,7 @@ public class RegistryObjectType implements RegistryObject {
 
     /**
      * Gets the value of the slot property.
-     * 
+     *
      */
     public List<SlotType> getSlot() {
         if (slot == null) {
@@ -183,7 +183,7 @@ public class RegistryObjectType implements RegistryObject {
         }
         this.slot.add(slot);
     }
-    
+
      /**
      * Sets the value of the slot property.
      */
@@ -191,7 +191,7 @@ public class RegistryObjectType implements RegistryObject {
         this.slot = slot;
     }
 
-    
+
     /**
      * Gets the value of the classification property.
      */
@@ -201,7 +201,7 @@ public class RegistryObjectType implements RegistryObject {
         }
         return this.classification;
     }
-    
+
     /**
      * Sets the value of the classification property.
      */
@@ -211,7 +211,7 @@ public class RegistryObjectType implements RegistryObject {
         }
         this.classification.add(classification);
     }
-    
+
     /**
      * Sets the value of the classification property.
      */
@@ -228,7 +228,7 @@ public class RegistryObjectType implements RegistryObject {
         }
         return this.externalIdentifier;
     }
-    
+
     /**
      * Sets the value of the externalIdentifier property.
      */
@@ -238,7 +238,7 @@ public class RegistryObjectType implements RegistryObject {
         }
         this.externalIdentifier.add(externalIdentifier);
     }
-    
+
     /**
      * Sets the value of the externalIdentifier property.
      */
@@ -259,7 +259,7 @@ public class RegistryObjectType implements RegistryObject {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      */
     public void setId(final String value) {
         this.id = value;

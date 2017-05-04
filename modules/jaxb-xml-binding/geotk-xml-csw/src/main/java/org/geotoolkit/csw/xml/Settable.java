@@ -18,14 +18,14 @@ package org.geotoolkit.csw.xml;
 
 /**
  * Allow to build a restricted record from a full Object.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
 public interface Settable {
-    
+
     public Object toBrief();
-    
+
     public Object toSummary();
 
 }

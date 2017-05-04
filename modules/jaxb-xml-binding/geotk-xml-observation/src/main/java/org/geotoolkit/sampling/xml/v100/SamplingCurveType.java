@@ -32,14 +32,14 @@ import org.opengis.geometry.Geometry;
 
 
 /**
- * A "SamplingCurve" is an identified 1-D spatial feature. 
+ * A "SamplingCurve" is an identified 1-D spatial feature.
  * It may be revisited for various purposes, in particular to retrieve multiple specimens or make repeated or complementary observations.
  * Specialized names for SamplingCurve include Sounding, ObservationWell, FlightLine, Transect.
- * 
+ *
  * <p>Java class for SamplingCurveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingCurveType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.opengis.geometry.Geometry;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -82,7 +82,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
         this.length = length;
         this.shape  = shape;
     }
-    
+
     public SamplingCurveType(final String               id,
                              final String               name,
                              final String               description,
@@ -98,7 +98,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the shape property.
-     * 
+     *
      */
     public CurvePropertyType getShape() {
         return shape;
@@ -132,7 +132,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
        }
        return null;
     }
-    
+
     /**
      * Vérifie que cette station est identique à l'objet spécifié
      */
@@ -146,7 +146,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
             final SamplingCurveType that = (SamplingCurveType) object;
             return Objects.equals(this.length, that.length)   &&
                    Objects.equals(this.shape,  that.shape);
-        } 
+        }
         return false;
     }
 

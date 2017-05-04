@@ -23,7 +23,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default immutable implementation of Point label descriptor.
- * 
+ *
  * @author johann Sorel (Geomatys)
  * @module
  */
@@ -41,10 +41,10 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     private final float rotation;
     private final CoordinateReferenceSystem crs;
     private final ProjectedGeometry geom;
-    
+
     public DefaultPointLabelDescriptor(final String text, final Font textFont, final Paint textPaint,
-            final float haloWidth, final Paint haloPaint, 
-            final float anchorX, final float anchorY, 
+            final float haloWidth, final Paint haloPaint,
+            final float anchorX, final float anchorY,
             final float dispX, final float dispY,
             final float rotation,
             final CoordinateReferenceSystem crs,
@@ -62,7 +62,7 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
         this.crs = crs;
         this.geom = geom;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -102,7 +102,7 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     public Paint getHaloPaint() {
         return haloPaint;
     }
-    
+
     /**
      * {@inheritDoc }
      */

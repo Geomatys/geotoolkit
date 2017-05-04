@@ -22,7 +22,7 @@ import org.geotoolkit.data.session.Session;
 
 /**
  * Text statements are queries express in a different form.
- * 
+ *
  * @author Johann Sorel (Geoamtys)
  * @module
  */
@@ -36,16 +36,16 @@ public interface TextStatement extends Source {
      * @return the query statement.
      */
     String getStatement();
-    
+
     /**
      * In the case of multiple selector in a query, each selector must specify
      * it's session. When the query is composed of only one selector then
-     * the session might be null.  
+     * the session might be null.
      * @return Session never null in multiple selector query.
      *         might be null in single selector query.
      */
     Session getSession();
-    
+
     /**
      * Since text statement are not linked to any specific data, they can contain a
      * name to simplify reconizing them.

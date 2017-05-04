@@ -39,7 +39,7 @@ public enum CSWVersion {
 
     /**
      * Returns {@link CSWVersion} that matches from the code.
-     * 
+     *
      * @param v code value to resolve.
      * @return {@link CSWVersion} from code value.
      * @throws IllegalArgumentException if the code does not correspond to any existing code in this enum
@@ -50,11 +50,11 @@ public enum CSWVersion {
                 return candidat;
             }
         }
-        
+
         try{
             return CSWVersion.valueOf(v);
         }catch(IllegalArgumentException ex){/*we tryed*/}
-        
+
         throw new IllegalArgumentException(v);
     }
 }

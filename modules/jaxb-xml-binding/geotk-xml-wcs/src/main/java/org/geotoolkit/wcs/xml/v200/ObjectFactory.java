@@ -26,18 +26,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.wcs._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.wcs._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -64,14 +64,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wcs._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link CoverageSubtypeParentType }
-     * 
+     *
      */
     public CoverageSubtypeParentType createCoverageSubtypeParentType() {
         return new CoverageSubtypeParentType();
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceParametersType }
-     * 
+     *
      */
     public ServiceParametersType createServiceParametersType() {
         return new ServiceParametersType();
@@ -87,7 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageDescriptionsType }
-     * 
+     *
      */
     public CoverageDescriptionsType createCoverageDescriptionsType() {
         return new CoverageDescriptionsType();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageSummaryType }
-     * 
+     *
      */
     public CoverageSummaryType createCoverageSummaryType() {
         return new CoverageSummaryType();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceMetadataType }
-     * 
+     *
      */
     public ServiceMetadataType createServiceMetadataType() {
         return new ServiceMetadataType();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeCoverageType }
-     * 
+     *
      */
     public DescribeCoverageType createDescribeCoverageType() {
         return new DescribeCoverageType();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageOfferingsType }
-     * 
+     *
      */
     public CoverageOfferingsType createCoverageOfferingsType() {
         return new CoverageOfferingsType();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContentsType }
-     * 
+     *
      */
     public ContentsType createContentsType() {
         return new ContentsType();
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCoverageType }
-     * 
+     *
      */
     public GetCoverageType createGetCoverageType() {
         return new GetCoverageType();
@@ -143,7 +143,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DimensionSliceType }
-     * 
+     *
      */
     public DimensionSliceType createDimensionSliceType() {
         return new DimensionSliceType();
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilitiesType }
-     * 
+     *
      */
     public GetCapabilitiesType createGetCapabilitiesType() {
         return new GetCapabilitiesType();
@@ -159,7 +159,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensionType }
-     * 
+     *
      */
     public ExtensionType createExtensionType() {
         return new ExtensionType();
@@ -167,7 +167,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageDescriptionType }
-     * 
+     *
      */
     public CoverageDescriptionType createCoverageDescriptionType() {
         return new CoverageDescriptionType();
@@ -175,7 +175,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DimensionTrimType }
-     * 
+     *
      */
     public DimensionTrimType createDimensionTrimType() {
         return new DimensionTrimType();
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CapabilitiesType }
-     * 
+     *
      */
     public CapabilitiesType createCapabilitiesType() {
         return new CapabilitiesType();
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OfferedCoverageType }
-     * 
+     *
      */
     public OfferedCoverageType createOfferedCoverageType() {
         return new OfferedCoverageType();
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DimensionTrimType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "DimensionTrim", substitutionHeadNamespace = "http://www.opengis.net/wcs/2.0", substitutionHeadName = "DimensionSubset")
     public JAXBElement<DimensionTrimType> createDimensionTrim(DimensionTrimType value) {
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoverageDescriptionsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageDescriptions")
     public JAXBElement<CoverageDescriptionsType> createCoverageDescriptions(CoverageDescriptionsType value) {
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageId")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoverageSummaryType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageSummary")
     public JAXBElement<CoverageSummaryType> createCoverageSummary(CoverageSummaryType value) {
@@ -236,7 +236,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceParametersType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "ServiceParameters")
     public JAXBElement<ServiceParametersType> createServiceParameters(ServiceParametersType value) {
@@ -245,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DescribeCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "DescribeCoverage")
     public JAXBElement<DescribeCoverageType> createDescribeCoverage(DescribeCoverageType value) {
@@ -254,7 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DimensionSliceType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "DimensionSlice", substitutionHeadNamespace = "http://www.opengis.net/wcs/2.0", substitutionHeadName = "DimensionSubset")
     public JAXBElement<DimensionSliceType> createDimensionSlice(DimensionSliceType value) {
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoverageSubtypeParentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageSubtypeParent")
     public JAXBElement<CoverageSubtypeParentType> createCoverageSubtypeParent(CoverageSubtypeParentType value) {
@@ -272,7 +272,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "GetCoverage")
     public JAXBElement<GetCoverageType> createGetCoverage(GetCoverageType value) {
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QName }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageSubtype")
     public JAXBElement<QName> createCoverageSubtype(QName value) {
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OfferedCoverageType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "OfferedCoverage")
     public JAXBElement<OfferedCoverageType> createOfferedCoverage(OfferedCoverageType value) {
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtensionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "Extension")
     public JAXBElement<ExtensionType> createExtension(ExtensionType value) {
@@ -308,7 +308,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetCapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "GetCapabilities")
     public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
@@ -317,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ServiceMetadataType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "ServiceMetadata")
     public JAXBElement<ServiceMetadataType> createServiceMetadata(ServiceMetadataType value) {
@@ -326,7 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DimensionSubsetType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "DimensionSubset")
     public JAXBElement<DimensionSubsetType> createDimensionSubset(DimensionSubsetType value) {
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ContentsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "Contents")
     public JAXBElement<ContentsType> createContents(ContentsType value) {
@@ -344,7 +344,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoverageDescriptionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageDescription", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractFeature")
     public JAXBElement<CoverageDescriptionType> createCoverageDescription(CoverageDescriptionType value) {
@@ -353,7 +353,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CapabilitiesType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "Capabilities")
     public JAXBElement<CapabilitiesType> createCapabilities(CapabilitiesType value) {
@@ -362,7 +362,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CoverageOfferingsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs/2.0", name = "CoverageOfferings")
     public JAXBElement<CoverageOfferingsType> createCoverageOfferings(CoverageOfferingsType value) {

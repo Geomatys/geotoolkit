@@ -43,7 +43,7 @@ public interface SortingCode {
     String getType();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();

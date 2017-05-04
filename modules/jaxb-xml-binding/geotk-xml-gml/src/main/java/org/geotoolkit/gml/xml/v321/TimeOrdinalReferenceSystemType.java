@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TimeOrdinalReferenceSystemType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeOrdinalReferenceSystemType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeOrdinalReferenceSystemType", propOrder = {
@@ -59,25 +59,25 @@ public class TimeOrdinalReferenceSystemType
 
     /**
      * Gets the value of the component property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the component property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getComponent().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeOrdinalEraPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeOrdinalEraPropertyType> getComponent() {
         if (component == null) {

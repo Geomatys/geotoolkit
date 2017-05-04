@@ -21,12 +21,12 @@ package org.geotoolkit.ows.xml;
  * @author guilhem
  */
 public interface DomainMetadata {
-    
+
     String getValue();
-    
+
     void setValue(String value) ;
-    
+
     String getReference();
-    
+
     void setReference(String value);
 }

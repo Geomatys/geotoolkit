@@ -28,5 +28,5 @@ public class MockRequest extends AbstractRequest{
     public MockRequest(MockClient server) {
         super(server);
     }
-    
+
 }

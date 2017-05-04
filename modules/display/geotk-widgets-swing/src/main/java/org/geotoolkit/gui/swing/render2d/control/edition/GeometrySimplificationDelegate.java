@@ -40,14 +40,14 @@ import org.opengis.feature.Feature;
 
 /**
  * Geometry simplification delegate.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelegate {
 
     private final DialogDecoration dialogDecoration = new DialogDecoration();
-    
+
     private Feature feature = null;
 
 
@@ -60,16 +60,16 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
         decoration.setGeometries(null);
         dialogDecoration.simplifyPanel.setGeometry(null);
     }
-    
+
     @Override
     public MapDecoration getDecoration() {
         final MapDecoration parentDeco = super.getDecoration();
         return MapDecorationStack.wrap(dialogDecoration,parentDeco);
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
-        if(feature != null){            
+        if(feature != null){
             final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
             dialogDecoration.simplifyPanel.setGeometry(feature);
@@ -102,31 +102,31 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
         private final JLayeredPane desktop;
         private final JInternalFrame frame;
         private final JSimplificationPanel simplifyPanel;
-        
+
         public DialogDecoration() {
             setLayout(new BorderLayout());
-            
+
             simplifyPanel = new JSimplificationPanel(map);
             simplifyPanel.addPropertyChangeListener(DialogDecoration.this);
-            
+
             frame = new JInternalFrame(MessageBundle.format("simplification"));
-            frame.setContentPane(simplifyPanel);      
+            frame.setContentPane(simplifyPanel);
             frame.setResizable(true);
             frame.setClosable(true);
             frame.setIconifiable(false);
             frame.pack();
             frame.setVisible(true);
-            
+
             desktop = new JLayeredPane();
             desktop.setOpaque(false);
             desktop.add(frame);
-            
-            add(BorderLayout.CENTER,desktop);            
+
+            add(BorderLayout.CENTER,desktop);
         }
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
-            
+
             if(JWKTPanel.GEOMETRY_PROPERTY.equals(evt.getPropertyName())){
                 final Geometry geom = dialogDecoration.simplifyPanel.getGeometry();
                 if(geom == null){
@@ -135,14 +135,14 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
                     decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
                 }
             }
-            
+
         }
-        
+
         @Override
         public void setMap2D(JMap2D map) {
             super.setMap2D(map);
             dialogDecoration.simplifyPanel.setMap(map);
         }
-        
+
     }
 }

@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.sld package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.sld package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -47,14 +47,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sld
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link LayerFeatureConstraints }
-     * 
+     *
      */
     public LayerFeatureConstraints createLayerFeatureConstraints() {
         return new LayerFeatureConstraints();
@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyledLayerDescriptor }
-     * 
+     *
      */
     public StyledLayerDescriptor createStyledLayerDescriptor() {
         return new StyledLayerDescriptor();
@@ -70,7 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserStyle }
-     * 
+     *
      */
     public UserStyle createUserStyle() {
         return new UserStyle();
@@ -78,7 +78,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RangeAxis }
-     * 
+     *
      */
     public RangeAxis createRangeAxis() {
         return new RangeAxis();
@@ -86,7 +86,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InlineFeature }
-     * 
+     *
      */
     public InlineFeature createInlineFeature() {
         return new InlineFeature();
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureTypeConstraint }
-     * 
+     *
      */
     public FeatureTypeConstraint createFeatureTypeConstraint() {
         return new FeatureTypeConstraint();
@@ -102,7 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Extent }
-     * 
+     *
      */
     public Extent createExtent() {
         return new Extent();
@@ -110,7 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedLayer }
-     * 
+     *
      */
     public NamedLayer createNamedLayer() {
         return new NamedLayer();
@@ -118,7 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoteOWS }
-     * 
+     *
      */
     public RemoteOWS createRemoteOWS() {
         return new RemoteOWS();
@@ -126,7 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NamedStyle }
-     * 
+     *
      */
     public NamedStyle createNamedStyle() {
         return new NamedStyle();
@@ -134,7 +134,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerCoverageConstraints }
-     * 
+     *
      */
     public LayerCoverageConstraints createLayerCoverageConstraints() {
         return new LayerCoverageConstraints();
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageConstraint }
-     * 
+     *
      */
     public CoverageConstraint createCoverageConstraint() {
         return new CoverageConstraint();
@@ -150,7 +150,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CoverageExtent }
-     * 
+     *
      */
     public CoverageExtent createCoverageExtent() {
         return new CoverageExtent();
@@ -158,7 +158,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserLayer }
-     * 
+     *
      */
     public UserLayer createUserLayer() {
         return new UserLayer();
@@ -166,7 +166,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UseSLDLibrary }
-     * 
+     *
      */
     public UseSLDLibrary createUseSLDLibrary() {
         return new UseSLDLibrary();
@@ -190,7 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Service")
     public JAXBElement<String> createService(final String value) {
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Value")
     public JAXBElement<String> createValue(final String value) {
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "IsDefault")
     public JAXBElement<Boolean> createIsDefault(final Boolean value) {
@@ -217,7 +217,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "TimePeriod")
     public JAXBElement<String> createTimePeriod(final String value) {

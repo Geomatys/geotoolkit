@@ -32,9 +32,9 @@ package org.geotoolkit.xal.model;
 public interface GrPostal {
 
     /**
-     * 
+     *
      * <p>Used by postal services to encode the name of the element.</p>
-     * 
+     *
      * @return
      */
     String getCode();

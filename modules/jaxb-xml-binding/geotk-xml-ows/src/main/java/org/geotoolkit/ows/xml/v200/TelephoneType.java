@@ -29,11 +29,11 @@ import org.geotoolkit.ows.xml.AbstractTelephone;
 /**
  * Telephone numbers for contacting the responsible
  *       individual or organization.
- * 
+ *
  * <p>Java class for TelephoneType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TelephoneType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.ows.xml.AbstractTelephone;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TelephoneType", propOrder = {
@@ -87,7 +87,7 @@ public class TelephoneType implements AbstractTelephone {
 
     /**
      * Gets the value of the voice property.
-     * 
+     *
      */
     @Override
     public List<String> getVoice() {
@@ -99,7 +99,7 @@ public class TelephoneType implements AbstractTelephone {
 
     /**
      * Gets the value of the facsimile property.
-     * 
+     *
      */
     @Override
     public List<String> getFacsimile() {

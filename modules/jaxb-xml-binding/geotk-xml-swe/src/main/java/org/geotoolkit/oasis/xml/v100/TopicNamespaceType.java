@@ -33,9 +33,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for TopicNamespaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopicNamespaceType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopicNamespaceType", propOrder = {
@@ -87,11 +87,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the topic property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TopicNamespaceType.Topic }
-     * 
-     * 
+     *
+     *
      */
     public List<TopicNamespaceType.Topic> getTopic() {
         if (topic == null) {
@@ -102,12 +102,12 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -118,11 +118,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -130,11 +130,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -142,11 +142,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the targetNamespace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetNamespace() {
         return targetNamespace;
@@ -154,11 +154,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the targetNamespace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetNamespace(String value) {
         this.targetNamespace = value;
@@ -166,11 +166,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the final property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isFinal() {
         if (_final == null) {
@@ -182,11 +182,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * Sets the value of the final property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setFinal(Boolean value) {
         this._final = value;
@@ -195,9 +195,9 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -208,8 +208,8 @@ public class TopicNamespaceType extends ExtensibleDocumented {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -221,11 +221,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
         /**
          * Gets the value of the parent property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getParent() {
             return parent;
@@ -233,11 +233,11 @@ public class TopicNamespaceType extends ExtensibleDocumented {
 
         /**
          * Sets the value of the parent property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setParent(String value) {
             this.parent = value;

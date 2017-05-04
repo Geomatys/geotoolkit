@@ -33,7 +33,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  * <strong>However, this implementation does NOT currently require that the start
  * point for element i+1 must be identical to the end point of element i.</strong>
  * This may change for later versions when arcs are supported.
- * 
+ *
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -47,7 +47,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  */
 @XmlType(name="CompositeCurveType", namespace="http://www.opengis.net/gml")
 public class JTSCompositeCurve extends AbstractJTSComposite implements CompositeCurve {
-    
+
     // A parent curve, if any.
     private CompositeCurve parent;
 
@@ -90,7 +90,7 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
     //*************************************************************************
     //  implement the OrientableCurve interface
     //*************************************************************************
-    
+
     /**
      * Returns the owner of this orientable curve, or {@code null} if none.
      *

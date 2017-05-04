@@ -25,9 +25,9 @@ import org.geotoolkit.sml.xml.AbstractRestrictedProcess;
 
 /**
  * <p>Java class for AbstractRestrictedProcessType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractRestrictedProcessType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.sml.xml.AbstractRestrictedProcess;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

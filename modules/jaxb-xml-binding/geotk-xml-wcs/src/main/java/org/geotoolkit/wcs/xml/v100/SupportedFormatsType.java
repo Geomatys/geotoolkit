@@ -27,12 +27,12 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
 
 
 /**
- * Unordered list of data transfer formats supported. 
- * 
+ * Unordered list of data transfer formats supported.
+ *
  * <p>Java class for SupportedFormatsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedFormatsType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,9 +64,9 @@ public class SupportedFormatsType {
      * Empty constructor use by JAXB
      */
     SupportedFormatsType(){
-        
+
     }
-    
+
     /**
      * Build a new list of supported formats.
      */
@@ -74,10 +74,10 @@ public class SupportedFormatsType {
          this.nativeFormat = nativeFormat;
          this.formats      = formats;
      }
-    
+
     /**
      * Gets the value of the formats property (unmodifiable).
-     * 
+     *
      */
     public List<CodeListType> getFormats() {
         return Collections.unmodifiableList(formats);

@@ -35,9 +35,9 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
 
 /**
  * <p>Java class for LiteralDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralDataType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.wps.xml.LiteralDataDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralDataType", propOrder = {
@@ -71,28 +71,28 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
     protected List<LiteralDataType.LiteralDataDomain> literalDataDomain;
 
     public LiteralDataType() {
-        
+
     }
-    
+
     public LiteralDataType(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
                 String defaultValue, Boolean _default) {
         literalDataDomain = new ArrayList<>();
         literalDataDomain.add(new LiteralDataDomain(allowedValues, anyValue, valuesReference, dataType, uom, defaultValue, _default));
-        
+
     }
     public LiteralDataType(DomainMetadataType dataType, DomainMetadataType uom) {
         literalDataDomain = new ArrayList<>();
         literalDataDomain.add(new LiteralDataDomain(dataType, uom));
-        
+
     }
-    
+
     /**
      * Gets the value of the literalDataDomain property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link LiteralDataType.LiteralDataDomain }
-     * 
-     * 
+     *
+     *
      */
     public List<LiteralDataType.LiteralDataDomain> getLiteralDataDomain() {
         if (literalDataDomain == null) {
@@ -100,7 +100,7 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
         }
         return this.literalDataDomain;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
@@ -112,7 +112,7 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -139,9 +139,9 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -151,8 +151,8 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -162,26 +162,26 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
         protected Boolean _default;
 
         public LiteralDataDomain() {
-            
+
         }
-        
+
         public LiteralDataDomain(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
                 String defaultValue, Boolean _default) {
             super(allowedValues, anyValue, valuesReference, dataType, uom, defaultValue);
             this._default = _default;
         }
-        
+
         public LiteralDataDomain(DomainMetadataType dataType, DomainMetadataType uom) {
             super(dataType, uom);
         }
 
         /**
          * Gets the value of the default property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Boolean }
-         *     
+         *
          */
         public Boolean isDefault() {
             return _default;
@@ -189,16 +189,16 @@ public class LiteralDataType extends DataDescriptionType implements LiteralDataD
 
         /**
          * Sets the value of the default property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Boolean }
-         *     
+         *
          */
         public void setDefault(Boolean value) {
             this._default = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(super.toString());

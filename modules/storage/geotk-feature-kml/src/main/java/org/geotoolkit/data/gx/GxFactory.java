@@ -273,7 +273,7 @@ public interface GxFactory {
     Wait createWait();
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param duration

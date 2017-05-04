@@ -30,23 +30,23 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Mark.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultMark implements Mark{
 
     private final Expression wkn;
-    
+
     private final ExternalMark external;
-    
+
     private final Fill fill;
-    
+
     private final Stroke stroke;
-        
+
     /**
      * Create a default immutable Mark.
-     * 
+     *
      * @param wkn : if null will be replaced by default value.
      * @param fill : if null will be replaced by default value.
      * @param stroke : if null will be replaced by default value.
@@ -57,10 +57,10 @@ public class DefaultMark implements Mark{
         this.fill = (fill == null) ? DEFAULT_FILL : fill;
         this.stroke = (stroke == null) ? DEFAULT_STROKE : stroke;
     }
-    
+
     /**
      * Create a default immutable Mark.
-     * 
+     *
      * @param external : if null will be replaced by default value.
      * @param fill : if null will be replaced by default value.
      * @param stroke : if null will be replaced by default value.
@@ -73,12 +73,12 @@ public class DefaultMark implements Mark{
             this.wkn = null;
             this.external = external;
         }
-        
+
         this.fill = fill;
         this.stroke = stroke;
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */
@@ -149,10 +149,10 @@ public class DefaultMark implements Mark{
     public int hashCode() {
         int hash = fill.hashCode();
         hash *= stroke.hashCode();
-        
+
         if(wkn != null) hash *= wkn.hashCode();
         if(external != null) hash *= external.hashCode();
-        
+
         return hash;
     }
 

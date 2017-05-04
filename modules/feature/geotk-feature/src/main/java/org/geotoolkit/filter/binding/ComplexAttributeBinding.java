@@ -35,7 +35,7 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
     public ComplexAttributeBinding() {
         super(Feature.class, 20);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return !xpath.startsWith("/") &&
@@ -66,7 +66,7 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
         }catch(PropertyNotFoundException ex){
             return null;
         }
-        
+
     }
 
     @Override

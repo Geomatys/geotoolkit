@@ -46,7 +46,7 @@ public class MapLayer extends MapItem {
 
     @XmlElement(name = "style")
     private StyledLayerDescriptor style;
-    
+
     @XmlElement(name = "opacity")
     private Double opacity;
 
@@ -94,5 +94,5 @@ public class MapLayer extends MapItem {
     public void setOpacity(Double opacity) {
         this.opacity = opacity;
     }
-    
+
 }

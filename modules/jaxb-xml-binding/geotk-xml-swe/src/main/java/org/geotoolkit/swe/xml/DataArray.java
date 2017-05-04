@@ -24,7 +24,7 @@ package org.geotoolkit.swe.xml;
 public interface DataArray extends AbstractDataArray {
 
     String getValues();
-    
+
     void setValues(final String values);
 
     AbstractDataValueProperty getDataValues();

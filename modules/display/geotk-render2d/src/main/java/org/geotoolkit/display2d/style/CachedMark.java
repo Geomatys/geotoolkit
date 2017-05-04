@@ -52,7 +52,7 @@ public class CachedMark extends Cache<Mark>{
         }
         MARK_FACTORIES = lst.toArray(new MarkFactory[0]);
     }
-    
+
     //IDS for cache map
     private Shape cachedWKN = null;
 
@@ -109,7 +109,7 @@ public class CachedMark extends Cache<Mark>{
         }else if(GO2Utilities.isStatic(expWKN)){
 
             Object markRef = expWKN.evaluate(null);
-            
+
             for(int i=0; i<MARK_FACTORIES.length && cachedWKN==null; i++){
                 try {
                     cachedWKN = MARK_FACTORIES[i].evaluateShape(null, markRef, 0);
@@ -117,7 +117,7 @@ public class CachedMark extends Cache<Mark>{
                     LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
                 }
             }
-            
+
             //we return false, invalid marker
             if(cachedWKN == null){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -160,10 +160,10 @@ public class CachedMark extends Cache<Mark>{
 
     public Shape getShape(final Object candidate, final RenderingHints hints){
         evaluate();
-        
+
         final Expression wkn = styleElement.getWellKnownName();
         final ExternalMark external = styleElement.getExternalMark();
-        
+
         Shape candidateShape = cachedWKN;
 
         if(candidateShape == null){
@@ -177,7 +177,7 @@ public class CachedMark extends Cache<Mark>{
                 markRef = external.getOnlineResource().getLinkage().toString();
                 markIndex = external.getMarkIndex();
             }
-            
+
             for(int i=0; i<MARK_FACTORIES.length && candidateShape==null; i++){
                 try {
                     candidateShape = MARK_FACTORIES[i].evaluateShape(format, markRef, markIndex);
@@ -186,10 +186,10 @@ public class CachedMark extends Cache<Mark>{
                 }
             }
         }
-        
+
         return candidateShape;
     }
-    
+
     public BufferedImage getImage(final Object candidate, final Float size, final RenderingHints hints){
         evaluate();
 
@@ -200,7 +200,7 @@ public class CachedMark extends Cache<Mark>{
         float margin = 0;
         int maxWidth = 0;
         int center = 0;
-        
+
         Shape candidateShape = getShape(candidate, hints);
 
 

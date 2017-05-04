@@ -29,7 +29,7 @@ public interface UomProperty {
     public UnitDefinitionType getUnitDefinition();
 
     public BaseUnitType getBaseUnit();
-    
+
     public String getCode();
 
     public String getRemoteSchema();

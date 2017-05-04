@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Display and edit a feature type.
- * 
+ *
  * Limitations :
  * - only feature type geometry crs can be modified.
  *

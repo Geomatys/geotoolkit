@@ -223,21 +223,21 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              * If we have found information in TFW or PRJ files, complete metadata.
              */
             if (gridToCRS != null || crs != null) {
-                
+
                 //-- if exist some metadata from sub reader complete them, else create new spatial metadata
                 if (main instanceof SpatialImageReader) {
                     metadata = ((SpatialImageReader) main).getImageMetadata(imageIndex);
                 } else {
                     metadata = new SpatialMetadata(false, this, null);
                 }
-                
+
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
                     final int height = getHeight(imageIndex);
                     new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height),
                             null, PixelOrientation.UPPER_LEFT);
                 }
-                
+
                 if (crs != null) {
                     new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
                 }

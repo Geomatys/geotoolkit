@@ -34,10 +34,10 @@ public enum WFSVersion {
     public String getCode() {
         return code;
     }
-    
+
     /**
      * Returns {@link WFSVersion} that matches from the code.
-     * 
+     *
      * @param v code value to resolve.
      * @return {@link WFSVersion} from code value.
      * @throws IllegalArgumentException if the code does not correspond to any existing code in this enum
@@ -48,11 +48,11 @@ public enum WFSVersion {
                 return candidat;
             }
         }
-        
+
         try{
             return WFSVersion.valueOf(v);
         }catch(IllegalArgumentException ex){/*we tryed*/}
-        
+
         throw new IllegalArgumentException(v);
     }
 

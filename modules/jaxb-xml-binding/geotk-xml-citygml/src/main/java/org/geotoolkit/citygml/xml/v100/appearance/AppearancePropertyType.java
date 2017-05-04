@@ -28,11 +28,11 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  * Denotes the relation of a _CityObject resp. CityModel to its appearances. The AppearancePropertyType
  *                 element must either carry a reference to a Appearance object or contain a Appearance object inline, but neither
  *                 both nor none.
- * 
+ *
  * <p>Java class for AppearancePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AppearancePropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AppearancePropertyType", propOrder = {
@@ -59,11 +59,11 @@ public class AppearancePropertyType extends FeaturePropertyType {
 
     /**
      * Gets the value of the appearance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AppearanceType }
-     *     
+     *
      */
     public AppearanceType getAppearance() {
         return appearance;
@@ -71,11 +71,11 @@ public class AppearancePropertyType extends FeaturePropertyType {
 
     /**
      * Sets the value of the appearance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AppearanceType }
-     *     
+     *
      */
     public void setAppearance(AppearanceType value) {
         this.appearance = value;

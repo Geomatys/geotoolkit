@@ -23,13 +23,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
+ *
  *    group type for the three kinds of group
- * 
+ *
  * <p>Java class for explicitGroup complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="explicitGroup">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

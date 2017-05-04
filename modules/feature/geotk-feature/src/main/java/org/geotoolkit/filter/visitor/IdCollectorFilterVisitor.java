@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ public class IdCollectorFilterVisitor extends DefaultFilterVisitor {
     public static final IdCollectorFilterVisitor IDENTIFIER_COLLECTOR = new IdCollectorFilterVisitor(false);
 
     private final boolean collectCharSequences;
-    
+
     private IdCollectorFilterVisitor(final boolean collectStringIds){
         collectCharSequences = collectStringIds;
     }

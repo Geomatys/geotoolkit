@@ -23,8 +23,8 @@ import java.util.Map;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Configurable {
-    
+
     Object getProperty(final String key);
-    
+
     Map<String, Object> getProperties();
 }

@@ -25,9 +25,9 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 
 /**
  * <p>Java class for GeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,11 +54,11 @@ public class GeometryType {
 
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PropertyNameType }
-     *     
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -66,11 +66,11 @@ public class GeometryType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PropertyNameType }
-     *     
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;

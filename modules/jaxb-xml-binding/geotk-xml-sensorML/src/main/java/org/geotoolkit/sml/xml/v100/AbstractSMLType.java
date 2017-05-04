@@ -27,11 +27,11 @@ import org.geotoolkit.sml.xml.AbstractSML;
 
 /**
  * Main Abstract SensorML Object
- * 
+ *
  * <p>Java class for AbstractSMLType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSMLType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.sml.xml.AbstractSML;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

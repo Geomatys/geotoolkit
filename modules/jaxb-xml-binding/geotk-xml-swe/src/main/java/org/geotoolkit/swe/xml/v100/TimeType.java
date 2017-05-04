@@ -33,9 +33,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -101,7 +101,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         }
 
     }
-    
+
     /**
      * Gets the value of the uom property.
      */
@@ -118,7 +118,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      */
     public AllowedTimesPropertyType getConstraint() {
         return constraint;
@@ -126,7 +126,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
 
     /**
      * Sets the value of the constraint property.
-     *     
+     *
      */
     public void setConstraint(final AllowedTimesPropertyType value) {
         this.constraint = value;

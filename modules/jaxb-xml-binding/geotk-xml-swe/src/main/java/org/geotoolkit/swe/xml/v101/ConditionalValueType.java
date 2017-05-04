@@ -40,9 +40,9 @@ import org.geotoolkit.swe.xml.Vector;
 
 /**
  * <p>Java class for ConditionalValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConditionalValueType">
  *   &lt;complexContent>
@@ -63,8 +63,8 @@ import org.geotoolkit.swe.xml.Vector;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,7 +86,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
             this.data = new Data(cv.getData());
         }
     }
-    
+
     /**
      * Gets the value of the data property.
      */
@@ -104,9 +104,9 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -117,8 +117,8 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -266,7 +266,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
                 this.type = d.getType();
             }
         }
-        
+
         /**
          * Gets the value of the count property.
          */
@@ -290,7 +290,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the quantity property.
-         * 
+         *
          */
         public void setQuantity(final QuantityType value) {
             this.quantity = value;
@@ -305,7 +305,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Sets the value of the time property.
-         * 
+         *
          */
         public void setTime(final TimeType value) {
             this.time = value;
@@ -313,7 +313,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the boolean property.
-         * 
+         *
          */
         public BooleanType getBoolean() {
             return _boolean;
@@ -511,7 +511,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          */
         public String getTitle() {
             return title;

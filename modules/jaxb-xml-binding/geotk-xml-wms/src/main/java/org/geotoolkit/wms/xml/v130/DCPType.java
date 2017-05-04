@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractDCP;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -40,7 +40,7 @@ import org.geotoolkit.wms.xml.AbstractDCP;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -65,17 +65,17 @@ public class DCPType implements AbstractDCP {
             this.http = new HTTP(that.http);
         }
     }
-     
+
     /**
      * Build a new DCP object.
      */
     public DCPType(final HTTP http) {
         this.http = http;
     }
-    
+
     /**
      * Gets the value of the http property.
-     * 
+     *
      */
     public HTTP getHTTP() {
         return http;

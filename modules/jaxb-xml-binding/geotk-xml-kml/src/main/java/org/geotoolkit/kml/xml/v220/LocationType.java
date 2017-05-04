@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for LocationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LocationType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,11 +75,11 @@ public class LocationType
 
     /**
      * Gets the value of the longitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getLongitude() {
         return longitude;
@@ -87,11 +87,11 @@ public class LocationType
 
     /**
      * Sets the value of the longitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setLongitude(final Double value) {
         this.longitude = value;
@@ -99,11 +99,11 @@ public class LocationType
 
     /**
      * Gets the value of the latitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getLatitude() {
         return latitude;
@@ -111,11 +111,11 @@ public class LocationType
 
     /**
      * Sets the value of the latitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setLatitude(final Double value) {
         this.latitude = value;
@@ -123,11 +123,11 @@ public class LocationType
 
     /**
      * Gets the value of the altitude property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getAltitude() {
         return altitude;
@@ -135,11 +135,11 @@ public class LocationType
 
     /**
      * Sets the value of the altitude property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setAltitude(final Double value) {
         this.altitude = value;
@@ -147,25 +147,25 @@ public class LocationType
 
     /**
      * Gets the value of the locationSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the locationSimpleExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocationSimpleExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getLocationSimpleExtensionGroup() {
         if (locationSimpleExtensionGroup == null) {
@@ -176,25 +176,25 @@ public class LocationType
 
     /**
      * Gets the value of the locationObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the locationObjectExtensionGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocationObjectExtensionGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractObjectType }
-     * 
-     * 
+     *
+     *
      */
     public List<AbstractObjectType> getLocationObjectExtensionGroup() {
         if (locationObjectExtensionGroup == null) {

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ import org.opengis.feature.Feature;
  * Extent the Standard Iterator, limited to Feature class
  * and add a close method from interface Closeable that is needed by the feature store
  * to release potential resources.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -36,12 +36,12 @@ public interface FeatureIterator extends CloseableIterator<Feature>{
      */
     @Override
     Feature next() throws FeatureStoreRuntimeException;
-    
+
     /**
      * {@inheritDoc }
-     * 
+     *
      * @return true if there are more features.
-     * @throws FeatureStoreRuntimeException 
+     * @throws FeatureStoreRuntimeException
      */
     @Override
     boolean hasNext() throws FeatureStoreRuntimeException;

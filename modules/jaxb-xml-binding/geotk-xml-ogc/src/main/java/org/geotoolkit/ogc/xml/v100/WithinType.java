@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Within")
 public class WithinType extends BinarySpatialOpType {
-    
+
     public WithinType() {
-        
+
     }
-    
+
     public WithinType(final WithinType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new WithinType(this);

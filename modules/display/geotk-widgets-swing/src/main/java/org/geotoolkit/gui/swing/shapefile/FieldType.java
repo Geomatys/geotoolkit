@@ -18,7 +18,7 @@ package org.geotoolkit.gui.swing.shapefile;
 
 /**
  * Supported field types for shapefiles.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  */
 enum FieldType {

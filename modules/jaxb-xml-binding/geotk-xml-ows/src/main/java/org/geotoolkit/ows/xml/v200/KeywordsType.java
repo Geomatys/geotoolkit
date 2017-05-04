@@ -30,11 +30,11 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
  * For OWS use, the optional thesaurusName element was
  *       omitted as being complex information that could be referenced by the
  *       codeSpace attribute of the Type element.
- * 
+ *
  * <p>Java class for KeywordsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KeywordsType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.ows.xml.AbstractKeywords;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "KeywordsType", propOrder = {
@@ -87,10 +87,10 @@ public class KeywordsType implements AbstractKeywords {
         this.keyword = keyword;
         this.type    = type;
     }
-    
+
     /**
      * Build a simple list of keywords without type.
-     * all the element of the list are in the parameters. 
+     * all the element of the list are in the parameters.
      */
     public KeywordsType(final LanguageStringType... keywords){
         this.keyword = new ArrayList<LanguageStringType>();
@@ -98,10 +98,10 @@ public class KeywordsType implements AbstractKeywords {
             keyword.add(element);
         }
     }
-    
+
     /**
      * Build a simple list of keywords without type.
-     * all the element of the list are in the parameters. 
+     * all the element of the list are in the parameters.
      */
     public KeywordsType(final String... keywords){
         this.keyword = new ArrayList<LanguageStringType>();
@@ -109,10 +109,10 @@ public class KeywordsType implements AbstractKeywords {
             keyword.add(new LanguageStringType(element));
         }
     }
-    
+
     /**
      * Gets the value of the keyword property.
-     * 
+     *
      */
     public List<LanguageStringType> getKeyword() {
         if (keyword == null) {
@@ -120,7 +120,7 @@ public class KeywordsType implements AbstractKeywords {
         }
         return this.keyword;
     }
-    
+
     @Override
     public List<String> getKeywordList() {
         List<String> keywordList = new ArrayList<String>();
@@ -137,11 +137,11 @@ public class KeywordsType implements AbstractKeywords {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getType() {
         return type;
@@ -149,11 +149,11 @@ public class KeywordsType implements AbstractKeywords {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setType(CodeType value) {
         this.type = value;

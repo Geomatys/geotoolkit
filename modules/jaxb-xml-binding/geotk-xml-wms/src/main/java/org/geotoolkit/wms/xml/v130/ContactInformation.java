@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractContactInformation;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.wms.xml.AbstractContactInformation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,17 +86,17 @@ public class ContactInformation implements AbstractContactInformation {
     public ContactInformation(final ContactPersonPrimary contactPersonPrimary, final String contactPosition,
             final ContactAddress contactAddress, final String contactVoiceTelephone, final String contactFacsimileTelephone,
             final String contactElectronicMailAddress) {
-        
+
         this.contactAddress               = contactAddress;
         this.contactElectronicMailAddress = contactElectronicMailAddress;
         this.contactFacsimileTelephone    = contactFacsimileTelephone;
         this.contactPersonPrimary         = contactPersonPrimary;
         this.contactPosition              = contactPosition;
-        this.contactVoiceTelephone        = contactVoiceTelephone; 
+        this.contactVoiceTelephone        = contactVoiceTelephone;
     }
     /**
      * Gets the value of the contactPersonPrimary property.
-     * 
+     *
      */
     public ContactPersonPrimary getContactPersonPrimary() {
         return contactPersonPrimary;
@@ -118,7 +118,7 @@ public class ContactInformation implements AbstractContactInformation {
 
     /**
      * Gets the value of the contactVoiceTelephone property.
-     * 
+     *
      */
     public String getContactVoiceTelephone() {
         return contactVoiceTelephone;
@@ -133,7 +133,7 @@ public class ContactInformation implements AbstractContactInformation {
 
     /**
      * Gets the value of the contactElectronicMailAddress property.
-     * 
+     *
      */
     public String getContactElectronicMailAddress() {
         return contactElectronicMailAddress;

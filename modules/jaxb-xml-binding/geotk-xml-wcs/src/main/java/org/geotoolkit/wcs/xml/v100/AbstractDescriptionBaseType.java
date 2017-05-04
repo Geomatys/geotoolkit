@@ -25,14 +25,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Description of a WCS object. 
- * 
+ * Description of a WCS object.
+ *
  * WCS version 1.0.0
- * 
+ *
  * <p>Java class for AbstractDescriptionBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDescriptionBaseType">
  *   &lt;complexContent>
@@ -44,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guihem Legal
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,35 +59,35 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class AbstractDescriptionBaseType {
 
     private List<MetadataLinkType> metadataLink;
-    
+
      /**
      * Empty constructor used by JAXB
      */
     AbstractDescriptionBaseType(){
     }
-    
+
     /**
      * build the base of a description.
      */
     public AbstractDescriptionBaseType(final List<MetadataLinkType> metadataLink){
         this.metadataLink = metadataLink;
     }
-    
+
     /**
      * build the base of a description.
      */
     public AbstractDescriptionBaseType(final MetadataLinkType... metadataLinks){
         this.metadataLink = new ArrayList<MetadataLinkType>();
-        
+
         for (MetadataLinkType e: metadataLinks){
             metadataLink.add(e);
         }
     }
-    
+
 
     /**
      * Gets the value of the metadataLink property.
-     * 
+     *
      */
     public List<MetadataLinkType> getMetadataLink() {
         if (metadataLink == null) {
@@ -103,7 +103,7 @@ public abstract class AbstractDescriptionBaseType {
     public void setMetadataLink(final List<MetadataLinkType> ml) {
         this.metadataLink = ml;
     }
-    
+
     public void setMetadata(final String link) {
         this.metadataLink = new ArrayList<MetadataLinkType>();
         this.metadataLink.add(new MetadataLinkType(link));

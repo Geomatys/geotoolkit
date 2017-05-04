@@ -116,7 +116,7 @@ public class DBRelationOperation extends AbstractOperation {
 
     @Override
     public Property apply(Feature ftr, ParameterValueGroup pvg) {
-        
+
         final Object key = ftr.getPropertyValue(relation.getCurrentColumn());
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), relation.getForeignTable()));
@@ -134,7 +134,7 @@ public class DBRelationOperation extends AbstractOperation {
         }else{
             value = res;
         }
-        
+
         return new AbstractAssociation(type) {
             @Override
             public Feature getValue() throws MultiValuedPropertyException {

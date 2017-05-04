@@ -33,7 +33,7 @@ import org.opengis.filter.identity.FeatureId;
 
 /**
  * Makes all queries in JDBC transaction.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JDBCAddDelta extends AddDelta{
@@ -46,7 +46,7 @@ public class JDBCAddDelta extends AddDelta{
     public Map<String, String> commit(FeatureStore store) throws DataStoreException {
         final DefaultJDBCFeatureStore jdbcstore = (DefaultJDBCFeatureStore) store;
         final Connection cnx = ((JDBCSession)session).getTransaction();
-        
+
         final List<FeatureId> createdIds = jdbcstore.addFeatures(type, features, cnx, null);
 
         //iterator and list should have the same size
@@ -69,5 +69,5 @@ public class JDBCAddDelta extends AddDelta{
         features.clear();
         return updates;
     }
-    
+
 }

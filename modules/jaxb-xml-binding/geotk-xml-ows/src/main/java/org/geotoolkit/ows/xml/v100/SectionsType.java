@@ -28,12 +28,12 @@ import org.geotoolkit.ows.xml.Sections;
 
 
 /**
- * Unordered list of zero or more names of requested sections in complete service metadata document. Each Section value shall contain an allowed section name as specified by each OWS specification. See Sections parameter subclause for more information.  
- * 
+ * Unordered list of zero or more names of requested sections in complete service metadata document. Each Section value shall contain an allowed section name as specified by each OWS specification. See Sections parameter subclause for more information.
+ *
  * <p>Java class for SectionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SectionsType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.Sections;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,7 +57,7 @@ public class SectionsType implements Sections {
 
     @XmlElement(name = "Section")
     private List<String> section = new ArrayList<>();
-    
+
     @XmlTransient
     private static final List<String> existingSections = new ArrayList<>(4);
     static {
@@ -68,25 +68,25 @@ public class SectionsType implements Sections {
         existingSections.add("FeatureTypeList");
         existingSections.add("All");
     }
-    
+
     /**
      * Empty constructor used bye JAXB.
      */
     SectionsType(){
     }
-    
+
     /**
      * Build a new list of Section.
-     * 
+     *
      * @param section one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      */
     public SectionsType(final List<String> section){
         this.section = section;
     }
-    
+
     /**
      * Build a new list of Section.
-     * 
+     *
      * @param section one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      */
     public SectionsType(final String... section){
@@ -94,9 +94,9 @@ public class SectionsType implements Sections {
         for (String s: section) {
             this.section.add(s);
         }
-        
+
     }
-    
+
     /**
      * return the list of section names (unmodifiable).
      */
@@ -125,24 +125,24 @@ public class SectionsType implements Sections {
         }
         return false;
     }
-    
+
      /**
      * Add a new section to the list.
-     * 
+     *
      * @param section a new section.
      */
     @Override
     public void add(final String section) {
         this.section.add(section);
     }
-    
+
     /**
-     * Return a List of all the existing sections. 
+     * Return a List of all the existing sections.
      */
     public static List<String> getExistingSections() {
         return existingSections;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

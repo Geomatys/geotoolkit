@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A polyhedral surface is a surface composed
- *    of polygon surfaces connected along their common boundary 
+ *    of polygon surfaces connected along their common boundary
  *    curves. This differs from the surface type only in the
  *    restriction on the types of surface patches acceptable.
- * 
+ *
  * <p>Java class for PolyhedralSurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PolyhedralSurfaceType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

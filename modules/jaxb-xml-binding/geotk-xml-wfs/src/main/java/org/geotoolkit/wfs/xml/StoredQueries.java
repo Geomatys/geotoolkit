@@ -29,18 +29,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlRootElement(name="StoredQueries")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StoredQueries {
-    
+
     @XmlJavaTypeAdapter(StoredQueryDescriptionAdapter.class)
     private List<StoredQueryDescription> storedQuery;
 
     public StoredQueries() {
-        
+
     }
-    
+
     public StoredQueries(final List<StoredQueryDescription> storedQuery) {
         this.storedQuery = storedQuery;
     }
-    
+
     /**
      * @return the storedQuery
      */

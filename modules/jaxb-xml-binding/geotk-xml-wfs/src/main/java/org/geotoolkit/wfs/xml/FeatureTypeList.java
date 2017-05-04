@@ -23,9 +23,9 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface FeatureTypeList {
-    
+
     void addFeatureType(final FeatureType ft);
-    
+
     List<? extends FeatureType> getFeatureType();
-    
+
 }

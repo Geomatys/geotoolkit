@@ -38,7 +38,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Postgresql version control.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PGVersionControl extends AbstractVersionControl{
@@ -48,7 +48,7 @@ public class PGVersionControl extends AbstractVersionControl{
      * Version label for pyramid without version informations.
      */
     public static final String UNSET = "unset";
-    
+
     private final PGCoverageStore store;
     private final GenericName name;
 
@@ -66,7 +66,7 @@ public class PGVersionControl extends AbstractVersionControl{
     public boolean isAutomatic() {
         return false;
     }
-    
+
     @Override
     public boolean isVersioned() throws VersioningException {
         return true;
@@ -89,9 +89,9 @@ public class PGVersionControl extends AbstractVersionControl{
         } catch (DataStoreException ex) {
             throw new VersioningException(ex.getMessage(), ex);
         }
-        
+
     }
-    
+
     @Override
     public List<Version> list() throws VersioningException {
         final StringBuilder sql = new StringBuilder();
@@ -106,7 +106,7 @@ public class PGVersionControl extends AbstractVersionControl{
         sql.append(" AS pp ON pp.\"pyramidId\" = p.id AND pp.key = 'version' ");
         sql.append("WHERE l.name = '");
         sql.append(name.tip().toString()).append('\'');
-        
+
         final ISODateParser dateparser = new ISODateParser();
         final List<Date> dates = new ArrayList<Date>();
         Connection cnx = null;
@@ -130,7 +130,7 @@ public class PGVersionControl extends AbstractVersionControl{
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         Collections.sort(dates);
         final List<Version> versions = new ArrayList<Version>(dates.size());
         for(Date d : dates){

@@ -136,7 +136,7 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
 
         final Geometry[] objectiveGeoms = projectedGeom.getDisplayGeometryJTS();
         final Shape[] displayShapes = projectedGeom.getDisplayShape();
-        
+
         for(int k=0;k<objectiveGeoms.length;k++){
             final Geometry objectiveGeom = objectiveGeoms[k];
             if(objectiveGeom instanceof Point){

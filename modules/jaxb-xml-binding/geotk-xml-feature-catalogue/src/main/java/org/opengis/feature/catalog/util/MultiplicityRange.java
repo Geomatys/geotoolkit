@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,8 +23,8 @@ import org.geotoolkit.util.UnlimitedInteger;
  * @author Guilhem Legal (Geomatys)
  */
 public interface MultiplicityRange {
-    
+
     Integer getLower();
-    
+
     Integer getUpper();
 }

@@ -27,11 +27,11 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
  * @module
  */
 public interface CanvasHandler {
-    
+
     J2DCanvas getCanvas();
-    
+
     void install(Component component);
-    
+
     void uninstall(Component component);
-        
+
 }

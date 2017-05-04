@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SpatiallyExtensiveSamplingFeaturePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatiallyExtensiveSamplingFeaturePropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,14 +78,14 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the spatiallyExtensiveSamplingFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SamplingSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingSurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingCurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SpatiallyExtensiveSamplingFeatureType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends SpatiallyExtensiveSamplingFeatureType> getSpatiallyExtensiveSamplingFeature() {
         return spatiallyExtensiveSamplingFeature;
@@ -93,14 +93,14 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the spatiallyExtensiveSamplingFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SamplingSolidType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingSurfaceType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SamplingCurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SpatiallyExtensiveSamplingFeatureType }{@code >}
-     *     
+     *
      */
     public void setSpatiallyExtensiveSamplingFeature(final JAXBElement<? extends SpatiallyExtensiveSamplingFeatureType> value) {
         this.spatiallyExtensiveSamplingFeature = ((JAXBElement<? extends SpatiallyExtensiveSamplingFeatureType> ) value);
@@ -108,11 +108,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -120,11 +120,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -132,11 +132,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -148,11 +148,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -160,11 +160,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -172,11 +172,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -184,11 +184,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -196,11 +196,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -208,11 +208,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -220,11 +220,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -232,11 +232,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -244,11 +244,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -256,11 +256,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -268,11 +268,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -280,11 +280,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -292,11 +292,11 @@ public class SpatiallyExtensiveSamplingFeaturePropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

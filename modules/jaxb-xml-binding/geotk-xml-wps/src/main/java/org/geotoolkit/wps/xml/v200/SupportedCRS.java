@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,25 +57,25 @@ public class SupportedCRS {
     protected Boolean _default;
 
     public SupportedCRS() {
-        
+
     }
-    
+
     public SupportedCRS(String value) {
         this.value = value;
     }
-    
+
     public SupportedCRS(String value, Boolean _default) {
         this.value = value;
         this._default = _default;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -83,11 +83,11 @@ public class SupportedCRS {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -95,11 +95,11 @@ public class SupportedCRS {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isDefault() {
         return _default;
@@ -107,11 +107,11 @@ public class SupportedCRS {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setDefault(Boolean value) {
         this._default = value;

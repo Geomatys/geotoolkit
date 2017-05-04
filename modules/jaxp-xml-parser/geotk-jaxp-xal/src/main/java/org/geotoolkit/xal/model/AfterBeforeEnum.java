@@ -41,7 +41,7 @@ public enum AfterBeforeEnum {
     private final  String beforeAfter;
 
     /**
-     * 
+     *
      * @param beforeAfter
      */
     private AfterBeforeEnum(String beforeAfter){

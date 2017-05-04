@@ -27,8 +27,8 @@ import org.geotoolkit.swe.xml.AnyResult;
 
 /**
  * Enregistrement permettant de regrouper plusieur type de resultat en un meme type.
- * (implementation decrivant une classe union) hormis l'identifiant, 
- * il ne doit y avoir qu'un attribut differend de {@code null}. 
+ * (implementation decrivant une classe union) hormis l'identifiant,
+ * il ne doit y avoir qu'un attribut differend de {@code null}.
  *
  * @version $Id:
  * @author Guilhem Legal
@@ -37,28 +37,28 @@ import org.geotoolkit.swe.xml.AnyResult;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Any")
 public class AnyResultType implements AnyResult, Entry {
-    
+
     /**
      * The result identifier.
      */
     @XmlAttribute
     private String id;
-    
+
     /**
      * The result can be a reference.
      */
     private ReferenceType reference;
-    
+
     /**
      * The result can be an array.
      */
     private DataArrayPropertyType array;
-    
+
     /**
      * Constructor used by jaxB
      */
     public AnyResultType(){}
-    
+
     /**
      * build a new result with the specified reference.
      *
@@ -69,7 +69,7 @@ public class AnyResultType implements AnyResult, Entry {
         this.id = id;
         this.reference = reference;
     }
-    
+
     /**
      * build a new result with the specified array of data.
      *
@@ -114,7 +114,7 @@ public class AnyResultType implements AnyResult, Entry {
         }
         return null;
     }
-    
+
     /**
      * return a result of type dataArray if it is, {@code null} else.
      */
@@ -160,7 +160,7 @@ public class AnyResultType implements AnyResult, Entry {
             res = array.toString();
         else
             res = reference.toString();
-        
+
         return "id = " + id + " value/idref: " + res;
     }
 }

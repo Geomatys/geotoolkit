@@ -25,23 +25,23 @@ import org.opengis.style.StyleVisitor;
 
 /**
  * Immutable implementation of Types External mark.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultExternalMark implements ExternalMark{
 
     private final OnlineResource online;
-    
+
     private final Icon icon;
-    
+
     private final String format;
-    
+
     private final int index;
-    
+
     /**
      * Create a default immutable external mark.
-     * 
+     *
      * @param online : only one between online and icon can be defined
      * @param format : can not be null
      * @param index : can be null
@@ -50,17 +50,17 @@ public class DefaultExternalMark implements ExternalMark{
         if( online == null || format == null ){
             throw new IllegalArgumentException("Online resource and format can not be null");
         }
-        
+
         this.online = online;
         this.icon = null;
         this.format = format;
         this.index = index;
     }
-    
-    
+
+
     /**
      * Create a default immutable external mark.
-     * 
+     *
      * @param icon : can not be null
      * @param format : can not be null
      * @param index : can be null
@@ -69,13 +69,13 @@ public class DefaultExternalMark implements ExternalMark{
         if( icon == null){
             throw new IllegalArgumentException("Icon can not be null");
         }
-        
+
         this.online = null;
         this.icon = icon;
         this.format = null;
         this.index = 0;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -166,5 +166,5 @@ public class DefaultExternalMark implements ExternalMark{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

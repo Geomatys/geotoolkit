@@ -29,7 +29,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Zoom in Handler for GoMap2D.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -44,7 +44,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
     public ZoomInHandler(final JMap2D map) {
         super(map);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -124,7 +124,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
                 decorationPane.setBuffer(null);
                 decorationPane.setFill(false);
                 decorationPane.setCoord(-10, -10,-10, -10, false);
-                
+
 //                int width = map.getComponent().getWidth() / 2;
 //                int height = map.getComponent().getHeight() / 2;
 //                int left = e.getX() - (width / 2);
@@ -134,7 +134,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
 
             } //right mouse button : pan action
             else if (mousebutton == MouseEvent.BUTTON3) {
-                
+
                 if(!isStateFull()){
                     decorationPane.setBuffer(null);
                     decorationPane.setFill(false);
@@ -180,7 +180,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
                 if ((lastX > 0) && (lastY > 0)) {
                     int dx = lastX - startX;
                     int dy = lastY - startY;
-                    
+
                     if(isStateFull()){
                         processDrag(lastX, lastY, x, y);
                     }else{

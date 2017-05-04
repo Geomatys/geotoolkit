@@ -31,9 +31,9 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentPropertyType;
 
 /**
  * <p>Java class for CapabilityListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CapabilityListType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.swe.xml.v200.AbstractDataComponentPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilityListType", propOrder = {
@@ -69,25 +69,25 @@ public class CapabilityListType
 
     /**
      * Gets the value of the capability property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the capability property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCapability().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CapabilityListType.Capability }
-     * 
-     * 
+     *
+     *
      */
     public List<CapabilityListType.Capability> getCapability() {
         if (capability == null) {
@@ -99,9 +99,9 @@ public class CapabilityListType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -111,8 +111,8 @@ public class CapabilityListType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -127,11 +127,11 @@ public class CapabilityListType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -139,11 +139,11 @@ public class CapabilityListType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

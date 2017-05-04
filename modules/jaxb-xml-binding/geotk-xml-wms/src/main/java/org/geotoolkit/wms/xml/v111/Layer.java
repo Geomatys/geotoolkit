@@ -34,8 +34,8 @@ import org.opengis.geometry.Envelope;
 
 
 /**
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -112,7 +112,7 @@ public class Layer implements AbstractLayer {
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
     private Integer fixedHeight;
-    
+
     /**
      * An empty constructor used by JAXB.
      */
@@ -121,13 +121,13 @@ public class Layer implements AbstractLayer {
 
      /**
       * Build a root layer with only few arguments
-      * 
+      *
       * @param title                   The title of the layer.
       * @param _abstract               A description of the layer.
       * @param crs                     The list of supported CRS.
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
-     public Layer(final String title, final String _abstract, final List<String> crs, 
+     public Layer(final String title, final String _abstract, final List<String> crs,
              final LatLonBoundingBox latLonBoundingBox, final List<AbstractLayer> layers) {
          this.title                   = title;
          this._abstract               = _abstract;
@@ -139,31 +139,31 @@ public class Layer implements AbstractLayer {
                 throw new IllegalArgumentException("not good version of layer. expected 1.1.1");
             }
          }
-         
+
          this.srs                     = crs;
          this.latLonBoundingBox       = latLonBoundingBox;
-            
+
      }
-     
+
      /**
       * Build a root layer with only few arguments
-      * 
+      *
       * @param title                   The title of the layer.
       * @param _abstract               A description of the layer.
       * @param crs                     The list of supported CRS.
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
-     public Layer(final String name, final String title, final String _abstract, final List<String> crs, 
+     public Layer(final String name, final String title, final String _abstract, final List<String> crs,
              final LatLonBoundingBox latLonBoundingBox, final List<AbstractLayer> layers) {
          this(title,_abstract,crs,latLonBoundingBox,layers);
          this.name = name;
-            
+
      }
-     
-     
+
+
      /**
       * Build a child layer for the specified version
-      * 
+      *
       * @param name      The title of the layer.
       * @param _abstract A description of the layer.
       * @param keyword   A keyword on the layer.
@@ -175,7 +175,7 @@ public class Layer implements AbstractLayer {
       * @param style      An object describing the style of the layer.
       * @param version    The version of the wms service.
       */
-     public Layer(final String name, final String _abstract, final String keyword, final List<String> crs, 
+     public Layer(final String name, final String _abstract, final String keyword, final List<String> crs,
              final LatLonBoundingBox latLonBoundingBox, final BoundingBox boundingBox, final String queryable,
              final List<AbstractDimension> dimensions, final List<Style> styles) {
          this.name                    = name;
@@ -190,9 +190,9 @@ public class Layer implements AbstractLayer {
                 this.style.add(s);
             }
          }
-         
+
          this.srs = crs;
-         
+
          this.dimension               = new ArrayList<Dimension>();
          for (AbstractDimension d: dimensions) {
              if (d instanceof Dimension) {
@@ -205,14 +205,14 @@ public class Layer implements AbstractLayer {
                 throw new IllegalArgumentException("not good version of layer. expected 1.1.1");
              }
          }
-         
-         this.latLonBoundingBox = latLonBoundingBox; 
+
+         this.latLonBoundingBox = latLonBoundingBox;
      }
-     
-     
-     
-     
-     
+
+
+
+
+
     /**
      * Build a full Layer object.
      */
@@ -223,7 +223,7 @@ public class Layer implements AbstractLayer {
             final List<DataURL> dataURL, final List<FeatureListURL> featureListURL, final List<Style> style, final ScaleHint scaleHint,
             final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final Integer cascaded,
             final Integer opaque, final Integer noSubsets, final Integer fixedWidth,  final Integer fixedHeight) {
-        
+
         this._abstract               = _abstract;
         this.attribution             = attribution;
         this.authorityURL            = authorityURL;
@@ -246,7 +246,7 @@ public class Layer implements AbstractLayer {
         this.title                   = title;
         this.scaleHint               = scaleHint;
         this.srs                     = crs;
-        
+
     }
 
     /**
@@ -275,7 +275,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the keywordList property.
-     * 
+     *
      */
     @Override
     public KeywordList getKeywordList() {
@@ -284,13 +284,13 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the srs property.
-     * 
+     *
      */
     public List<String> getSRS() {
         return srs;
     }
 
-    
+
     /**
      * Gets the value of the LatLonBoundingBox property.
      */
@@ -300,7 +300,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      */
     @Override
     public List<BoundingBox> getBoundingBox() {
@@ -309,16 +309,16 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the dimension property.
-     * 
-     */    
+     *
+     */
     @Override
     public List<Dimension> getDimension() {
         return dimension;
     }
-    
+
     /**
      * Gets the value of the extent property.
-     * 
+     *
      */
     public List<Extent> getExtent() {
         return extent;
@@ -326,7 +326,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the attribution property.
-     * 
+     *
      */
     public Attribution getAttribution() {
         return attribution;
@@ -334,7 +334,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the authorityURL property.
-     * 
+     *
      */
     public List<AuthorityURL> getAuthorityURL() {
         return authorityURL;
@@ -365,7 +365,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the featureListURL property.
-     * 
+     *
      */
     public List<FeatureListURL> getFeatureListURL() {
         return featureListURL;
@@ -385,13 +385,13 @@ public class Layer implements AbstractLayer {
     public ScaleHint getScaleInt() {
         return scaleHint;
     }
-    
+
     /**
      * Gets the value of the minScaleDenominator property.
      */
     @Override
     public Double getMinScaleDenominator() {
-        if (getScaleInt() != null && (getScaleInt().getMin() != null)   && (!getScaleInt().getMin().isEmpty())) 
+        if (getScaleInt() != null && (getScaleInt().getMin() != null)   && (!getScaleInt().getMin().isEmpty()))
             {return (Double.valueOf(getScaleInt().getMin()) * 2525.38136138052696);}
         return null;
     }
@@ -401,7 +401,7 @@ public class Layer implements AbstractLayer {
      */
     @Override
     public Double getMaxScaleDenominator() {
-        if (getScaleInt() != null && (getScaleInt().getMax() != null)  && (!getScaleInt().getMax().isEmpty())) 
+        if (getScaleInt() != null && (getScaleInt().getMax() != null)  && (!getScaleInt().getMax().isEmpty()))
             {return (Double.valueOf(getScaleInt().getMax()) * 2525.38136138052696);}
         return null;
     }
@@ -467,24 +467,24 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets all values of each dimension property.
-     * 
+     *
      */
     @Override
     public List<AbstractDimension> getAbstractDimension() {
-        
+
         List<AbstractDimension> list = new ArrayList<AbstractDimension>();
-        
+
         /*Transform a  List<Dimension> in an  List<AbstractDimension>*/
         for( Dimension dim : getDimension() ){
             list.add((AbstractDimension) dim);
         }
-    
-        /*Set the AbstractDimension value from the corresponding Extent 
+
+        /*Set the AbstractDimension value from the corresponding Extent
          *<Dimension name="time" ..../>
-         *<Extent name="time" ...>value1,value2,....</Extent> 
+         *<Extent name="time" ...>value1,value2,....</Extent>
          */
-        List<Extent> listExt =  getExtent();      
-        for (int i=0;i<listExt.size();i++){  
+        List<Extent> listExt =  getExtent();
+        for (int i=0;i<listExt.size();i++){
             AbstractDimension dimTmp = list.get(i);
             Extent extTmp = listExt.get(i);
             if(dimTmp.getDefault() == null){
@@ -492,7 +492,7 @@ public class Layer implements AbstractLayer {
             }
             dimTmp.setValue(extTmp.getvalue());
         }
-   
+
         return list;
     }
 
@@ -540,7 +540,7 @@ public class Layer implements AbstractLayer {
     public void setKeywordList(final KeywordList keywordList) {
         this.keywordList = keywordList;
     }
-    
+
     @Override
     public void setKeywordList(final List<String> keywordList) {
         if (keywordList != null) {
@@ -561,7 +561,7 @@ public class Layer implements AbstractLayer {
     public void setSrs(final List<String> srs) {
         this.srs = srs;
     }
-    
+
     @Override
     public void setCrs(final List<String> srs) {
         this.srs = srs;
@@ -594,7 +594,7 @@ public class Layer implements AbstractLayer {
     public void setAttribution(final Attribution attribution) {
         this.attribution = attribution;
     }
-    
+
     @Override
     public void setAttribution(final String title, final String href, final AbstractLogoURL logo) {
         LogoURL l = null;
@@ -610,7 +610,7 @@ public class Layer implements AbstractLayer {
     public void setAuthorityURL(final List<AuthorityURL> authorityURL) {
         this.authorityURL = authorityURL;
     }
-    
+
     @Override
     public void setAuthorityURL(final String format, final String href) {
         this.authorityURL.add(new AuthorityURL(format, href));
@@ -622,7 +622,7 @@ public class Layer implements AbstractLayer {
     public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
     }
-    
+
     /**
      * @param identifier the identifier to set
      */
@@ -648,7 +648,7 @@ public class Layer implements AbstractLayer {
     public void setDataURL(final List<DataURL> dataURL) {
         this.dataURL = dataURL;
     }
-    
+
     @Override
     public void setDataURL(final String format, final String href) {
         this.dataURL.add(new DataURL(format, href));
@@ -681,7 +681,7 @@ public class Layer implements AbstractLayer {
             }
         }
     }
-    
+
     /**
      * @param scaleHint the scaleHint to set
      */

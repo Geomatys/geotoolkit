@@ -34,25 +34,25 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of Types text symbolizer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSymbolizer{
 
     private final Expression label;
-    
+
     private final Font font;
-    
+
     private final LabelPlacement placement;
-    
+
     private final Halo halo;
-    
+
     private final Fill fill;
-        
+
     /**
      * Create a default immutable Text symbolizer.
-     * 
+     *
      * @param label : can not be null
      * @param font : if null will be replaced by default value.
      * @param placement : if null will be replaced by default value.
@@ -73,7 +73,7 @@ public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSym
         this.halo = (halo == null) ? DEFAULT_HALO : halo;
         this.fill = (fill == null) ? DEFAULT_FILL : fill;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -113,7 +113,7 @@ public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSym
     public Fill getFill() {
         return fill;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -147,7 +147,7 @@ public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSym
                 && Objects.equals(this.name, other.name)
                 && this.placement.equals(other.placement)
                 && this.uom.equals(other.uom);
-                        
+
 
     }
 
@@ -167,7 +167,7 @@ public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSym
         if(name != null) hash *= name.hashCode();
         hash *= uom.hashCode();
         return hash;
-        
+
     }
 
     /**

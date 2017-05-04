@@ -26,7 +26,7 @@ import org.opengis.util.CodeList;
  * @author Guilhem Legal (Geomatys)
  */
 public class ObservationStoreException extends DataStoreException {
-    
+
     /**
      * The exception code.
      */
@@ -36,7 +36,7 @@ public class ObservationStoreException extends DataStoreException {
      * The reason of the exception.
      */
     private final String locator;
-    
+
     /**
      * Creates an exception with the specified details message.
      *
@@ -67,7 +67,7 @@ public class ObservationStoreException extends DataStoreException {
     public ObservationStoreException(final String message, final CodeList exceptionCode, final String locator) {
         this(message, null, exceptionCode, locator);
     }
-    
+
     /**
      * Creates an exception with the specified exception cause.
      *
@@ -108,7 +108,7 @@ public class ObservationStoreException extends DataStoreException {
     public ObservationStoreException(final String message, final Exception cause, final CodeList exceptionCode) {
         this(message, cause, exceptionCode, null);
     }
-    
+
     /**
      * Creates an exception with the specified exception cause and code, and locator value.
      *

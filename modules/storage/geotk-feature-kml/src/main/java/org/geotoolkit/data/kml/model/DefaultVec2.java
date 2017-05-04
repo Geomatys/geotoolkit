@@ -31,7 +31,7 @@ public class DefaultVec2 implements Vec2 {
     private Units yUnit;
 
     /**
-     * 
+     *
      */
     public DefaultVec2() {
         this.x = DEF_VEC2_X;
@@ -41,7 +41,7 @@ public class DefaultVec2 implements Vec2 {
     }
 
     /**
-     * 
+     *
      * @param x
      * @param y
      * @param xUnit

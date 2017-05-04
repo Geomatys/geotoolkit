@@ -37,8 +37,8 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
-    public static AbstractGeographicBoundingBox createGeographicBoundingBox(final String currentVersion, final double minx, final double miny, 
+
+    public static AbstractGeographicBoundingBox createGeographicBoundingBox(final String currentVersion, final double minx, final double miny,
             final double maxx, final double maxy) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.LatLonBoundingBox(minx, miny, maxx, maxy);
@@ -48,7 +48,7 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractBoundingBox createBoundingBox(final String currentVersion, final String crs, final double minx, final double miny,
             final double maxx, final double maxy, final double resx, final double resy) {
         if ("1.1.1".equals(currentVersion)) {
@@ -59,7 +59,7 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractDimension createDimension(final String currentVersion, final String name, final String units, final String _default, final String value) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.Dimension(name, units, _default, value);
@@ -69,8 +69,8 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
-    public static AbstractDimension createDimension(final String currentVersion, final String value, final String name, final String units, final String unitSymbol, 
+
+    public static AbstractDimension createDimension(final String currentVersion, final String value, final String name, final String units, final String unitSymbol,
             final String _default, final Boolean multipleValues, final Boolean nearestValue,
             final Boolean current) {
         if ("1.1.1".equals(currentVersion)) {
@@ -81,7 +81,7 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractOnlineResource createOnlineResource(final String currentVersion, final String href) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.OnlineResource(href);
@@ -91,23 +91,23 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractLegendURL createLegendURL(final String currentVersion, final String format, final AbstractOnlineResource res, final Integer width, final Integer height) {
         if ("1.1.1".equals(currentVersion)) {
             if (res != null && !(res instanceof org.geotoolkit.wms.xml.v111.OnlineResource)) {
                 throw new IllegalArgumentException("unexpected object version for onlineResource");
-            } 
+            }
             return new org.geotoolkit.wms.xml.v111.LegendURL(format, (org.geotoolkit.wms.xml.v111.OnlineResource)res, width, height);
         } else if ("1.3.0".equals(currentVersion)) {
             if (res != null && !(res instanceof org.geotoolkit.wms.xml.v130.OnlineResource)) {
                 throw new IllegalArgumentException("unexpected object version for onlineResource");
-            } 
+            }
             return new org.geotoolkit.wms.xml.v130.LegendURL(format, (org.geotoolkit.wms.xml.v130.OnlineResource)res, width, height);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractLogoURL createLogoURL(final String currentVersion, final String format, final String href, final Integer width, final Integer height) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.LogoURL(format,href, width, height);
@@ -117,7 +117,7 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static Style createStyle(final String currentVersion, final String name, final String title, final String _abstract, final AbstractLegendURL... legendURLs) {
         if ("1.1.1".equals(currentVersion)) {
             org.geotoolkit.wms.xml.v111.LegendURL[] lURLs = null;
@@ -153,15 +153,15 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
+
     public static AbstractLayer createLayer(final String currentVersion, final String name, final String _abstract, final String keyword,
-            final List<String> crs, final AbstractGeographicBoundingBox geobbox, final AbstractBoundingBox bbox, final String queryable, 
+            final List<String> crs, final AbstractGeographicBoundingBox geobbox, final AbstractBoundingBox bbox, final String queryable,
             final List<AbstractDimension> dimensions, final List<Style> styles) {
-        
+
         if ("1.1.1".equals(currentVersion)) {
             if (geobbox != null && !(geobbox instanceof org.geotoolkit.wms.xml.v111.LatLonBoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for geobbox");
-            } 
+            }
             if (bbox != null && !(bbox instanceof org.geotoolkit.wms.xml.v111.BoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for bbox");
             }
@@ -175,14 +175,14 @@ public class WmsXmlFactory {
                     }
                 }
             }
-            return new org.geotoolkit.wms.xml.v111.Layer(name, _abstract, keyword, crs, 
+            return new org.geotoolkit.wms.xml.v111.Layer(name, _abstract, keyword, crs,
                                                          (org.geotoolkit.wms.xml.v111.LatLonBoundingBox)geobbox,
                                                          (org.geotoolkit.wms.xml.v111.BoundingBox) bbox,
                                                          queryable, dimensions, ops);
         } else if ("1.3.0".equals(currentVersion)) {
             if (geobbox != null && !(geobbox instanceof org.geotoolkit.wms.xml.v130.EXGeographicBoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for geobbox");
-            } 
+            }
             if (bbox != null && !(bbox instanceof org.geotoolkit.wms.xml.v130.BoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for bbox");
             }
@@ -196,7 +196,7 @@ public class WmsXmlFactory {
                     }
                 }
             }
-            return new org.geotoolkit.wms.xml.v130.Layer(name, _abstract, keyword, crs, 
+            return new org.geotoolkit.wms.xml.v130.Layer(name, _abstract, keyword, crs,
                                                          (org.geotoolkit.wms.xml.v130.EXGeographicBoundingBox)geobbox,
                                                          (org.geotoolkit.wms.xml.v130.BoundingBox) bbox,
                                                          queryable, dimensions, ops);
@@ -204,23 +204,23 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
-    
-    public static AbstractLayer createLayer(final String currentVersion, final String title, final String _abstract, final List<String> crs, 
+
+    public static AbstractLayer createLayer(final String currentVersion, final String title, final String _abstract, final List<String> crs,
              final AbstractGeographicBoundingBox geobbox, final List<AbstractLayer> layers) {
-        
+
         if ("1.1.1".equals(currentVersion)) {
             if (geobbox != null && !(geobbox instanceof org.geotoolkit.wms.xml.v111.LatLonBoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for geobbox");
-            } 
-            
-            return new org.geotoolkit.wms.xml.v111.Layer(title, _abstract, crs, 
+            }
+
+            return new org.geotoolkit.wms.xml.v111.Layer(title, _abstract, crs,
                                                          (org.geotoolkit.wms.xml.v111.LatLonBoundingBox)geobbox,
                                                          layers);
         } else if ("1.3.0".equals(currentVersion)) {
             if (geobbox != null && !(geobbox instanceof org.geotoolkit.wms.xml.v130.EXGeographicBoundingBox)) {
                 throw new IllegalArgumentException("unexpected object version for geobbox");
-            } 
-            return new org.geotoolkit.wms.xml.v130.Layer(title, _abstract, crs, 
+            }
+            return new org.geotoolkit.wms.xml.v130.Layer(title, _abstract, crs,
                                                          (org.geotoolkit.wms.xml.v130.EXGeographicBoundingBox)geobbox,
                                                          layers);
         } else {
@@ -372,7 +372,7 @@ public class WmsXmlFactory {
 
     public static AbstractWMSCapabilities createCapabilities(final String currentVersion, final AbstractService service,
             final AbstractCapability capability, final String updateSequence) {
-        
+
         if ("1.1.1".equals(currentVersion)) {
             if (service != null && !(service instanceof org.geotoolkit.wms.xml.v111.Service)) {
                 throw new IllegalArgumentException("unexpected object version for service");

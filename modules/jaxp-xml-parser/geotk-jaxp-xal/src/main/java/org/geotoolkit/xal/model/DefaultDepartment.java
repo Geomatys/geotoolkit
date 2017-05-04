@@ -33,7 +33,7 @@ public class DefaultDepartment implements Department {
     private String type;
 
     /**
-     * 
+     *
      */
     public DefaultDepartment(){
         this.addressLines = EMPTY_LIST;

@@ -22,8 +22,8 @@ package org.geotoolkit.gml.xml;
  * @module
  */
 public interface Code {
-    
+
      String getValue();
-     
+
      String getCodeSpace();
 }

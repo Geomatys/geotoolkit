@@ -36,11 +36,11 @@ import org.opengis.feature.PropertyType;
  * @author Guilhem Legal (Geomatys)
  */
 public class TimeStampEditor extends PropertyValueEditor implements ActionListener, ChangeListener{
-    
+
     private JXDatePicker datePicker = new JXDatePicker();
     private JSpinner hours = new JSpinner();
     private JSpinner minutes = new JSpinner();
-    
+
     public TimeStampEditor() {
         super(new BorderLayout());
         add(BorderLayout.WEST, datePicker);
@@ -49,15 +49,15 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
         datePicker.setOpaque(false);
         datePicker.addActionListener(this);
         datePicker.getEditor().addFocusListener(this);
-        
+
         hours.setOpaque(false);
         hours.addChangeListener(this);
         ((JSpinner.DefaultEditor) hours.getEditor()).getTextField().addFocusListener(this);
-        
+
         minutes.setOpaque(false);
         minutes.addChangeListener(this);
         ((JSpinner.DefaultEditor) minutes.getEditor()).getTextField().addFocusListener(this);
-        
+
     }
 
     @Override
@@ -70,8 +70,8 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
         final Timestamp t = (Timestamp) value;
         if (t != null) {
             datePicker.setDate(t);
-            final Calendar calendar = GregorianCalendar.getInstance(); 
-            calendar.setTime(t);   
+            final Calendar calendar = GregorianCalendar.getInstance();
+            calendar.setTime(t);
             final int hour  = calendar.get(Calendar.HOUR_OF_DAY);
             final int minute = calendar.get(Calendar.MINUTE);
             hours.setValue(hour);
@@ -81,10 +81,10 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
 
     @Override
     public Object getValue() {
-        final Calendar calendar = GregorianCalendar.getInstance(); 
+        final Calendar calendar = GregorianCalendar.getInstance();
         final Date d = datePicker.getDate();
         if (d != null) {
-            calendar.setTime(datePicker.getDate());   
+            calendar.setTime(datePicker.getDate());
             calendar.set(Calendar.HOUR_OF_DAY, (Integer)hours.getValue());
             calendar.set(Calendar.MINUTE, (Integer)minutes.getValue());
             return new Timestamp(calendar.getTimeInMillis());

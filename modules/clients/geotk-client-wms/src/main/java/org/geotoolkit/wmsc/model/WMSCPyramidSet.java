@@ -38,34 +38,34 @@ import org.opengis.util.FactoryException;
  * @module
  */
 public class WMSCPyramidSet extends CachedPyramidSet{
-    
+
     private final String layer;
-    
+
     public WMSCPyramidSet(final WebMapClientCached server, final String layer) throws CapabilitiesException {
         super(server,true,server.isCacheImage());
         this.layer = layer;
-        
+
         //WMSC is a WMS 1.1.1
-        final Capability capas = (Capability) server.getCapabilities().getCapability();        
+        final Capability capas = (Capability) server.getCapabilities().getCapability();
         final VendorSpecificCapabilities vendor = capas.getVendorSpecificCapabilities();
-        
+
         if(vendor == null){
             return;
         }
-        
+
         final List<TileSet> sets = vendor.getTileSet();
-        
+
         if(sets == null){
             return;
         }
-        
+
         //find tileset definition for this layer
         for(final TileSet set : sets){
             for(String layerName : set.getLayers()){
                 if(!layer.equals(layerName)){
                     continue;
                 }
-                            
+
                 try {
                     final WMSCPyramid pyramid = new WMSCPyramid(this, set);
                     getPyramids().add(pyramid);
@@ -74,16 +74,16 @@ public class WMSCPyramidSet extends CachedPyramidSet{
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.INFO, ex.getMessage(),ex);
                 }
-                
+
             }
-        }        
+        }
     }
 
     @Override
     protected WebMapClientCached getServer() {
         return (WebMapClientCached)super.getServer();
     }
-    
+
     public String getLayer() {
         return layer;
     }
@@ -97,5 +97,5 @@ public class WMSCPyramidSet extends CachedPyramidSet{
         request.setFormat(((WMSCPyramid)mosaic.getPyramid()).getTileset().getFormat());
         return request;
     }
-        
+
 }

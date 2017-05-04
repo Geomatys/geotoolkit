@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DWithin")
 public class DWithinType extends DistanceBufferType {
-    
+
     public DWithinType() {
-        
+
     }
-    
+
     public DWithinType(final DWithinType that) {
         super(that);
     }
-    
+
     @Override
     public SpatialOpsType getClone() {
         return new DWithinType(this);

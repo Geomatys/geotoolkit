@@ -110,7 +110,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
     }
 
 
-    public static WPS1ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering processBriefType) 
+    public static WPS1ProcessDescriptor create(WPSProcessingRegistry registry, ProcessOffering processBriefType)
             throws IOException, JAXBException, UnsupportedParameterException {
 
 
@@ -122,7 +122,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
         } else {
             processAbstract = new DefaultInternationalString("");
         }
-        
+
         final InternationalString processDisplayName;
         if (processBriefType.getFirstTitle()!= null) {
             processDisplayName = new DefaultInternationalString(processBriefType.getFirstTitle());
@@ -300,7 +300,7 @@ public class WPS1ProcessDescriptor extends AbstractProcessDescriptor {
                     if (inputUom != null) {
                         unit = Units.valueOf(inputUom.getDefault().getUOM().getValue());
                     }
-                    
+
                     if (unit!=null && Double.class.equals(clazz)) {
                         outputDescriptors.add(new ParameterBuilder().addName(outputName).setRemarks(outputAbstract).createBounded(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, unit));
                     } else {

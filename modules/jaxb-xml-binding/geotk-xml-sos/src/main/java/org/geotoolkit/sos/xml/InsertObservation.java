@@ -25,13 +25,13 @@ import org.opengis.observation.Observation;
  * @author Guilhem Legal (Geomatys).
  */
 public interface InsertObservation extends RequestBase {
-    
+
     String getAssignedSensorId();
-    
+
     List<? extends Observation> getObservations();
-    
+
     List<String> getOffering();
-    
+
     String getResponseFormat();
-    
+
 }

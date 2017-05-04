@@ -24,25 +24,25 @@ import org.opengis.filter.spatial.Within;
  * @module
  */
 public class WithinType extends BinarySpatialOpType implements Within {
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public WithinType() {
-        
+
     }
-    
+
     /**
      * Build a new Within Type
      */
     public WithinType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
-    
+
     public WithinType(final WithinType that) {
         super(that);
     }
-    
+
     @Override
     public WithinType getClone() {
         return new WithinType(this);

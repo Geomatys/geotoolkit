@@ -29,12 +29,12 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * A Surface is a 2-dimensional primitive and is composed of one or more surface patches. The surface patches are connected to one another.
- * 				The orientation of the surface is positive ("up"). The orientation of a surface chooses an "up" direction through the choice of the upward normal, which, if the surface is not a cycle, is the side of the surface from which the exterior boundary appears counterclockwise. Reversal of the surface orientation reverses the curve orientation of each boundary component, and interchanges the conceptual "up" and "down" direction of the surface. If the surface is the boundary of a solid, the "up" direction is usually outward. For closed surfaces, which have no boundary, the up direction is that of the surface patches, which must be consistent with one another. Its included surface patches describe the interior structure of the Surface.
- * 
+ *              The orientation of the surface is positive ("up"). The orientation of a surface chooses an "up" direction through the choice of the upward normal, which, if the surface is not a cycle, is the side of the surface from which the exterior boundary appears counterclockwise. Reversal of the surface orientation reverses the curve orientation of each boundary component, and interchanges the conceptual "up" and "down" direction of the surface. If the surface is the boundary of a solid, the "up" direction is usually outward. For closed surfaces, which have no boundary, the up direction is that of the surface patches, which must be consistent with one another. Its included surface patches describe the interior structure of the Surface.
+ *
  * <p>Java class for SurfaceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfaceType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,13 +66,13 @@ public class SurfaceType extends AbstractSurfaceType {
 
     /**
      * This element encapsulates the patches of the surface.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SurfacePatchArrayPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TrianglePatchArrayPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends SurfacePatchArrayPropertyType> getJbPatches() {
         return patches;
@@ -80,13 +80,13 @@ public class SurfaceType extends AbstractSurfaceType {
 
     /**
      * This element encapsulates the patches of the surface.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SurfacePatchArrayPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TrianglePatchArrayPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
-     *     
+     *
      */
     public void setJbPatches(final JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
         this.patches = ((JAXBElement<? extends SurfacePatchArrayPropertyType> ) value);

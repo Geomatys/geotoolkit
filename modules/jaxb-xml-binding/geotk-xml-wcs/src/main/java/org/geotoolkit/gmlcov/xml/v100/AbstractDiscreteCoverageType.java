@@ -26,11 +26,11 @@ import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 
 /**
  * This parallels gml:DiscreteCoverageType, except that the gml:coverageFunction element has been moved "up" into gmlcov:AbstractCoverageType. Its name has been adjusted following the rule defined in GML 3.2.1 Subclause F.2.1.2.2.
- * 
+ *
  * <p>Java class for AbstractDiscreteCoverageType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDiscreteCoverageType">
  *   &lt;complexContent>
@@ -41,17 +41,17 @@ import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDiscreteCoverageType")
 public class AbstractDiscreteCoverageType extends AbstractCoverageType {
 
     public AbstractDiscreteCoverageType() {
-        
+
     }
-    
+
     public AbstractDiscreteCoverageType(CoverageDescriptionType covDesc, RangeSetType rangeSet) {
         super(covDesc, rangeSet);
     }

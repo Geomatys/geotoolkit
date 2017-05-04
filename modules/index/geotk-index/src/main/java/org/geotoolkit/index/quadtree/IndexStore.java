@@ -18,24 +18,24 @@ package org.geotoolkit.index.quadtree;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author Tommaso Nolli
  * @module
  */
 public interface IndexStore {
     /**
      * Stores a <code>QuadTree</code>
-     * 
+     *
      * @param tree
      *                the <code>QuadTree</code> to store
-     * 
+     *
      * @throws StoreException
      */
     public void store(QuadTree tree) throws StoreException;
 
     /**
      * Loads a <code>QuadTree</code>
-     * 
+     *
      * @throws StoreException
      */
     public QuadTree load() throws StoreException;

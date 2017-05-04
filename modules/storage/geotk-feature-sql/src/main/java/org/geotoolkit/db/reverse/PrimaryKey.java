@@ -28,18 +28,18 @@ import org.apache.sis.util.ObjectConverters;
 
 /**
  * Describe a table primary key.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PrimaryKey {
-            
+
     private final String tableName;
     private final List<ColumnMetaModel> columns;
 
     public PrimaryKey(String tableName) {
-        this(tableName,null);        
+        this(tableName,null);
     }
-    
+
     public PrimaryKey(String tableName, List<ColumnMetaModel> columns) {
         this.tableName = tableName;
         if(columns == null) columns = Collections.emptyList();
@@ -57,14 +57,14 @@ public class PrimaryKey {
     public boolean isNull(){
         return columns.isEmpty();
     }
-    
+
     /**
      * Encodes a feature id from a primary key and result set values.
      */
     public String encodeFID(final ResultSet rs) throws SQLException {
 
         final int size = columns.size();
-        
+
         if (size == 0) {
             // generate a random id
             return FeatureExt.createDefaultFeatureId();
@@ -91,7 +91,7 @@ public class PrimaryKey {
         fid.setLength(fid.length() - 1);
         return fid.toString();
     }
-    
+
     public Object[] decodeFID(final String fid) {
         final String[] parts;
         //handle empty Strings
@@ -101,11 +101,11 @@ public class PrimaryKey {
             parts = fid.split("\\.");
         }
         final Object[] values = new Object[parts.length];
-        
+
         for(int i=0;i<parts.length;i++){
             values[i] = ObjectConverters.convert(parts[i], columns.get(i).getJavaType());
         }
-        
+
         return values;
     }
 
@@ -113,11 +113,11 @@ public class PrimaryKey {
         final String str = String.valueOf(obj);
         return str.replace('.', '◼');
     }
-    
+
     private static String unescapeDot(String str){
         return str.replace('◼','.');
     }
-    
+
     /**
      * Calculate the next entry primary key values.
      */
@@ -129,5 +129,5 @@ public class PrimaryKey {
         }
         return parts;
     }
-    
+
 }

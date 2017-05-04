@@ -24,6 +24,6 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  * @author guilhem
  */
 public interface GetCapabilities extends AbstractGetCapabilities {
-    
+
     List<String> getLanguages();
 }

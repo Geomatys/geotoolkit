@@ -37,11 +37,11 @@ import javafx.scene.layout.Border;
  * @param <T> cell target value type
  */
 public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
-    
+
     private final Function<T,Boolean> visiblePredicate;
     private final Function<T,T> onAction;
     protected final Button button = new Button();
-        
+
     public ButtonTreeTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, final Function<T,T> onAction){
         this.visiblePredicate = visiblePredicate;
         this.onAction = onAction;
@@ -49,22 +49,22 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
         setGraphic(button);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         setAlignment(Pos.CENTER);
-        
+
         if(!decorated){
             button.setBackground(Background.EMPTY);
             button.setBorder(Border.EMPTY);
             button.setPadding(Insets.EMPTY);
         }
         button.disableProperty().bind(editableProperty().not());
-                
+
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                
+
                 if(!isEditing()){
                     getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
                 }
-                
+
                 final T item = getItem();
                 final T res = actionPerformed(item);
                 if(!Objects.equals(res,item)){
@@ -77,7 +77,7 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
                 }
             }
         });
-        
+
     }
 
     public T actionPerformed(T candidate){
@@ -85,14 +85,14 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
             return onAction.apply(candidate);
         }
         return candidate;
-    } 
-    
+    }
+
     @Override
     public void commitEdit(T newValue) {
         super.commitEdit(newValue);
         updateItem(newValue, false);
     }
-    
+
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2017, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import org.geotoolkit.feature.catalog.util.MultiplicityImpl;
  * @author Guilhem Legal (Geomatys)
  */
 public class FeatureCatalogMarshallerPool {
-    
+
     private static final MarshallerPool INSTANCE;
     static {
         try {

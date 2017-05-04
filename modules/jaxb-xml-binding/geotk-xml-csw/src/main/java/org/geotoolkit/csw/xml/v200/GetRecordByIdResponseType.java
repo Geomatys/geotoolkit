@@ -29,12 +29,12 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
 /**
  * Returns a representation of the matching catalogue object.
  * If there is no matching record, the response message element is empty.
- *          
- * 
+ *
+ *
  * <p>Java class for GetRecordByIdResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetRecordByIdResponseType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,7 +72,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     public GetRecordByIdResponseType(final List<? extends Object> others) {
         this.any = others;
     }
-    
+
     /**
      * Gets the value of the any property.
      * (unmodifiable)

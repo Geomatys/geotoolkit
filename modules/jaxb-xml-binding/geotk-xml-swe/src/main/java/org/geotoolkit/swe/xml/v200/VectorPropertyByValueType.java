@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for VectorPropertyByValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VectorPropertyByValueType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VectorPropertyByValueType", propOrder = {
@@ -53,11 +53,11 @@ public class VectorPropertyByValueType {
 
     /**
      * Gets the value of the vector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getVector() {
         return vector;
@@ -65,11 +65,11 @@ public class VectorPropertyByValueType {
 
     /**
      * Sets the value of the vector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setVector(VectorType value) {
         this.vector = value;

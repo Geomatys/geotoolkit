@@ -31,20 +31,20 @@ public class OfferingProcedureType implements Entry{
      * The offering identifier.
      */
     private String idOffering;
-    
+
     /**
      * the process associated whith this offering.
      */
     private ReferenceType component;
-    
+
     /**
-     * Build a new link between a procedure and an offering. 
+     * Build a new link between a procedure and an offering.
      */
     public OfferingProcedureType(final String idOffering, final ReferenceType component) {
         this.idOffering = idOffering;
         this.component  = component;
     }
-    
+
     public OfferingProcedureType(final String idOffering, final String componentRef) {
         this.idOffering = idOffering;
         this.component  = new ReferenceType(null, componentRef);
@@ -78,7 +78,7 @@ public class OfferingProcedureType implements Entry{
     public ReferenceType getComponent() {
         return component;
     }
-    
+
     /**
      * Verifie si cette entree est identique a l'objet specifie.
      */

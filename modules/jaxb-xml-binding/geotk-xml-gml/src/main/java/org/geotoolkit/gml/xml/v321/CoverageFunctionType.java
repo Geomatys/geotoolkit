@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CoverageFunctionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageFunctionType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageFunctionType", propOrder = {
@@ -62,11 +62,11 @@ public class CoverageFunctionType {
 
     /**
      * Gets the value of the mappingRule property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getMappingRule() {
         return mappingRule;
@@ -74,11 +74,11 @@ public class CoverageFunctionType {
 
     /**
      * Sets the value of the mappingRule property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setMappingRule(StringOrRefType value) {
         this.mappingRule = value;
@@ -86,11 +86,11 @@ public class CoverageFunctionType {
 
     /**
      * Gets the value of the coverageMappingRule property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MappingRuleType }
-     *     
+     *
      */
     public MappingRuleType getCoverageMappingRule() {
         return coverageMappingRule;
@@ -98,11 +98,11 @@ public class CoverageFunctionType {
 
     /**
      * Sets the value of the coverageMappingRule property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MappingRuleType }
-     *     
+     *
      */
     public void setCoverageMappingRule(MappingRuleType value) {
         this.coverageMappingRule = value;
@@ -110,11 +110,11 @@ public class CoverageFunctionType {
 
     /**
      * Gets the value of the gridFunction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GridFunctionType }
-     *     
+     *
      */
     public GridFunctionType getGridFunction() {
         return gridFunction;
@@ -122,11 +122,11 @@ public class CoverageFunctionType {
 
     /**
      * Sets the value of the gridFunction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GridFunctionType }
-     *     
+     *
      */
     public void setGridFunction(GridFunctionType value) {
         this.gridFunction = value;

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour linestyle.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * <p>
  * <pre>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "linestyle")
 @XmlEnum

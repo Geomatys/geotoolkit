@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A knot is a breakpoint on a piecewise spline curve.
- * 
+ *
  * <p>Java class for KnotType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="KnotType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +63,7 @@ public class KnotType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public double getValue() {
         return value;
@@ -71,7 +71,7 @@ public class KnotType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      */
     public void setValue(final double value) {
         this.value = value;
@@ -79,11 +79,11 @@ public class KnotType {
 
     /**
      * Gets the value of the multiplicity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMultiplicity() {
         return multiplicity;
@@ -91,11 +91,11 @@ public class KnotType {
 
     /**
      * Sets the value of the multiplicity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMultiplicity(final Integer value) {
         this.multiplicity = value;
@@ -103,7 +103,7 @@ public class KnotType {
 
     /**
      * Gets the value of the weight property.
-     * 
+     *
      */
     public double getWeight() {
         return weight;
@@ -111,7 +111,7 @@ public class KnotType {
 
     /**
      * Sets the value of the weight property.
-     * 
+     *
      */
     public void setWeight(final double value) {
         this.weight = value;

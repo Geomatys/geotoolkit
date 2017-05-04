@@ -31,9 +31,9 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 /**
  * <p>Java class for InsertObservationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertObservationType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertObservationType", propOrder = {
@@ -74,9 +74,9 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
     private List<InsertObservationType.Observation> observation;
 
     public InsertObservationType() {
-        
+
     }
-    
+
     public InsertObservationType(final String version, final List<String> offering, final List<OMObservationType> observations) {
         super(version, "SOS");
         this.observation = new ArrayList<>();
@@ -85,13 +85,13 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
             this.observation.add(new Observation(om));
         }
     }
-    
+
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getOffering() {
         if (offering == null) {
@@ -102,10 +102,10 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
 
     /**
      * Gets the value of the observation property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link InsertObservationType.Observation }
-     * 
+     *
      */
     public List<InsertObservationType.Observation> getObservation() {
         if (observation == null) {
@@ -127,7 +127,7 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
         }
         return result;
     }
-    
+
     @Override
     public String getResponseFormat() {
         for (Object ext : getExtension()) {
@@ -144,9 +144,9 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -158,8 +158,8 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -171,20 +171,20 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
         private OMObservationType omObservation;
 
         public Observation() {
-            
+
         }
-        
+
         public Observation(final OMObservationType omObservation) {
             this.omObservation = omObservation;
         }
-        
+
         /**
          * Gets the value of the omObservation property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public OMObservationType getOMObservation() {
             return omObservation;
@@ -192,11 +192,11 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
 
         /**
          * Sets the value of the omObservation property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link OMObservationType }
-         *     
+         *
          */
         public void setOMObservation(OMObservationType value) {
             this.omObservation = value;

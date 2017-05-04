@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -33,11 +33,11 @@ import org.opengis.feature.catalog.util.MultiplicityRange;
 
 /**
  * Use to represent the possible cardinality of a relation. Represented by a set of simple multiplicity ranges.
- * 
+ *
  * <p>Java class for Multiplicity_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Multiplicity_Type">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.opengis.feature.catalog.util.MultiplicityRange;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,9 +68,9 @@ public class MultiplicityImpl implements Multiplicity {
      * An empty constructor used by JAXB
      */
     public MultiplicityImpl() {
-        
+
     }
-    
+
     public MultiplicityImpl(final Multiplicity other) {
         if (other != null) {
             this.range = new ArrayList<>();
@@ -79,23 +79,23 @@ public class MultiplicityImpl implements Multiplicity {
             }
         }
     }
-    
-    
+
+
     /**
-     * Build a simple Mulitiplicity 
+     * Build a simple Mulitiplicity
      */
     public MultiplicityImpl(final MultiplicityRange range) {
         this.range = new ArrayList<>();
         this.range.add(range);
     }
-    
+
     /**
-     * Build a complex Mulitiplicity 
+     * Build a complex Mulitiplicity
      */
     public MultiplicityImpl(final List<MultiplicityRange> range) {
         this.range = range;
     }
-    
+
     /**
      * Gets the value of the range property.
      */
@@ -106,15 +106,15 @@ public class MultiplicityImpl implements Multiplicity {
         }
         return this.range;
     }
-    
+
     /**
      * sets the value of the range property.
      */
     public void setRange(final List<MultiplicityRange> range) {
         this.range = range;
     }
-    
-    
+
+
     /**
      * sets the value of the range property.
      */
@@ -124,7 +124,7 @@ public class MultiplicityImpl implements Multiplicity {
         }
         this.range.add(range);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -133,8 +133,8 @@ public class MultiplicityImpl implements Multiplicity {
         }
         return s.toString();
     }
-    
-    
+
+
     /**
      * Verify if this entry is identical to the specified object.
      */

@@ -24,7 +24,7 @@ import org.opengis.util.GenericName;
 
 /**
  * WMTS Coverage Reference.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */

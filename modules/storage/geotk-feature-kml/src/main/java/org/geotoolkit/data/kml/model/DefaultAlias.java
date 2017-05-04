@@ -37,7 +37,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param targetHref
@@ -80,7 +80,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override

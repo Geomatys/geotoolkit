@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Value of a scale factor (or ratio) that has no physical unit. Uses the MeasureType with the restriction that the unit of measure referenced by uom must be suitable for a scale factor, such as percent, permil, or parts-per-million.
- * 
+ *
  * <p>Java class for ScaleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ScaleType">
  *   &lt;simpleContent>
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

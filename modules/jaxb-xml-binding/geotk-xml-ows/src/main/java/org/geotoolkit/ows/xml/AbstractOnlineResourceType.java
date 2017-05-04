@@ -22,7 +22,7 @@ package org.geotoolkit.ows.xml;
  * @module
  */
 public interface AbstractOnlineResourceType {
-    
+
     void setHref(String href);
 
     String getHref();

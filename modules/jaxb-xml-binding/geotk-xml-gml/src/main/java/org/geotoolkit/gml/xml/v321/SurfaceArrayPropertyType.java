@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:SurfaceArrayPropertyType is a container for an array of surfaces. The elements are always contained in the array property, referencing geometry elements or arrays of geometry elements via XLinks is not supported.
- * 
+ *
  * <p>Java class for SurfaceArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfaceArrayPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurfaceArrayPropertyType", propOrder = {
@@ -63,20 +63,20 @@ public class SurfaceArrayPropertyType {
 
     /**
      * Gets the value of the abstractSurface property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractSurface property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractSurface().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link CompositeSurfaceType }{@code >}
@@ -87,8 +87,8 @@ public class SurfaceArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractSurfaceType>> getAbstractSurface() {
         if (abstractSurface == null) {
@@ -99,11 +99,11 @@ public class SurfaceArrayPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -115,11 +115,11 @@ public class SurfaceArrayPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

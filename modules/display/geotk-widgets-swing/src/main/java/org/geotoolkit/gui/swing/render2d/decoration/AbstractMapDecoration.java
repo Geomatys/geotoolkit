@@ -21,16 +21,16 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 
 /**
- * Abstract implementation of MapDecoration, handle the 
+ * Abstract implementation of MapDecoration, handle the
  * getMap2D and setMap2D methods.
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public abstract class AbstractMapDecoration implements MapDecoration{
 
     protected JMap2D map = null;
-    
+
     @Override
     public void setMap2D(final JMap2D map) {
         this.map = map;
@@ -44,6 +44,6 @@ public abstract class AbstractMapDecoration implements MapDecoration{
     @Override
     public void dispose() {
     }
-    
+
 
 }

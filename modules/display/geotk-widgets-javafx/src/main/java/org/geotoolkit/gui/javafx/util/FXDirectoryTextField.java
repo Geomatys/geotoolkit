@@ -53,5 +53,5 @@ public class FXDirectoryTextField extends AbstractPathTextField {
     protected URI getURIForText(String inputText) throws Exception {
         return new URI(inputText);
     }
-    
+
 }

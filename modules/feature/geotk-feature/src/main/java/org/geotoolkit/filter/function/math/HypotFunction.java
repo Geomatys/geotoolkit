@@ -20,7 +20,7 @@ import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys
  */
 public class HypotFunction extends AbstractFunction {

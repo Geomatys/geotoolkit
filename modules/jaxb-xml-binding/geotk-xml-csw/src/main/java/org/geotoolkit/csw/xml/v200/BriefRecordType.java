@@ -24,16 +24,16 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
 
 
 /**
- * 
- *       This type defines a brief representation of the common record format. 
- *       It extends AbstractRecordType to include only the dc:identifier and 
+ *
+ *       This type defines a brief representation of the common record format.
+ *       It extends AbstractRecordType to include only the dc:identifier and
  *       dc:type properties.
- *       
- * 
+ *
+ *
  * <p>Java class for BriefRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BriefRecordType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +64,7 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Gets the value of the identifier property.
-     * 
+     *
      */
     public SimpleLiteral getIdentifier() {
         return identifier;
@@ -72,7 +72,7 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      */
     public void setIdentifier(final SimpleLiteral identifier) {
         this.identifier = identifier;
@@ -80,7 +80,7 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public SimpleLiteral getType() {
         return type;
@@ -88,7 +88,7 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final SimpleLiteral value) {
         this.type = value;

@@ -21,7 +21,7 @@ package org.geotoolkit.data.query;
  * Define the feature provider that will be use by the query.
  * Posible implementation are Selector or Join.
  *
- * This class is the counterpart of javax.jcr.query.qom.Source 
+ * This class is the counterpart of javax.jcr.query.qom.Source
  * from JSR-283 (Java Content Repository 2).
  *
  * @author Johann Sorel (Geomatys)

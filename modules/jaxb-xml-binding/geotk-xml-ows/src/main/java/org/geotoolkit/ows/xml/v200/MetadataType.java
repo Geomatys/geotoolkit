@@ -38,11 +38,11 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
  *       the contents of this element to always be a reference or always contain
  *       metadata. (Informative: This element was adapted from the
  *       metaDataProperty element in GML 3.0.)
- * 
+ *
  * <p>Java class for MetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetadataType", propOrder = {
@@ -91,11 +91,11 @@ public class MetadataType implements AbstractMetadata {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
-    
+
     public MetadataType() {
 
     }
-    
+
     public MetadataType(final String href) {
         this.href = href;
     }
@@ -119,12 +119,12 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the abstractMetaData property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AdditionalParameter }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
-     *     
+     *
      */
     @Override
     public JAXBElement<?> getAbstractMetaData() {
@@ -133,12 +133,12 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the abstractMetaData property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AdditionalParameter }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
-     *     
+     *
      */
     public void setAbstractMetaData(JAXBElement<?> value) {
         this.abstractMetaData = ((JAXBElement<?> ) value);
@@ -146,11 +146,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the about property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getAbout() {
@@ -159,11 +159,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the about property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbout(String value) {
         this.about = value;
@@ -171,11 +171,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -188,11 +188,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -200,11 +200,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -213,11 +213,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -225,11 +225,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -238,11 +238,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -250,11 +250,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -263,11 +263,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -275,11 +275,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -288,11 +288,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -300,11 +300,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -313,11 +313,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -325,11 +325,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -338,11 +338,11 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

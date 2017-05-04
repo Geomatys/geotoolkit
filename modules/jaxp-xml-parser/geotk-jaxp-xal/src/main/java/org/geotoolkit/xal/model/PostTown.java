@@ -49,14 +49,14 @@ import java.util.List;
 public interface PostTown {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the post town.</p>
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getPostTownNames();
@@ -68,7 +68,7 @@ public interface PostTown {
     PostTownSuffix getPostTownSuffix();
 
     /**
-     * 
+     *
      * @return
      */
     String getType();
@@ -92,7 +92,7 @@ public interface PostTown {
     void setPostTownSuffix(PostTownSuffix postTownSuffix);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

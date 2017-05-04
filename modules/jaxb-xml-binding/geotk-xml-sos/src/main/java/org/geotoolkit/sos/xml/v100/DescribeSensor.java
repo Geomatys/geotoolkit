@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -60,13 +60,13 @@ public class DescribeSensor extends RequestBaseType implements org.geotoolkit.sw
     @XmlElement(name="procedure", namespace="http://www.opengis.net/sos/1.0", required = true)
     @XmlSchemaType(name = "anyURI")
     private String procedure;
-    
+
     /**
-     * Identifier of the output format to be used for the requested data. 
-     * The outputFormats supported by a SOS server are listed in the operations 
-     * metadata section of the service metadata (capabilities XML). 
+     * Identifier of the output format to be used for the requested data.
+     * The outputFormats supported by a SOS server are listed in the operations
+     * metadata section of the service metadata (capabilities XML).
      * If this attribute is omitted, the outputFormat should be text/xml;subtype="sensorML/1.0.0".
-     * If the requested outputFormat is not supported by the SOS server, 
+     * If the requested outputFormat is not supported by the SOS server,
      * an exception message shall be returned.
      */
     @XmlAttribute(required = true)
@@ -94,7 +94,7 @@ public class DescribeSensor extends RequestBaseType implements org.geotoolkit.sw
          this.outputFormat = outputFormat;
          this.procedure    = procedure;
      }
-     
+
     /**
      * Return the value of the sensorId property.
      */
@@ -123,7 +123,7 @@ public class DescribeSensor extends RequestBaseType implements org.geotoolkit.sw
             final DescribeSensor that = (DescribeSensor) object;
             return Objects.equals(this.outputFormat, that.outputFormat) &&
                    Objects.equals(this.procedure,   that.procedure);
-        } 
+        }
         return false;
     }
 

@@ -31,10 +31,10 @@ import org.opengis.style.PointPlacement;
  */
 public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
 
-    @FXML protected FXNumberExpression uiRotation;    
+    @FXML protected FXNumberExpression uiRotation;
     @FXML protected FXAnchorPoint uiAnchor;
     @FXML protected FXDisplacement uiDisplacement;
-        
+
     @Override
     public Class<PointPlacement> getEditedClass() {
         return PointPlacement.class;
@@ -44,25 +44,25 @@ public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
     public PointPlacement newValue() {
         return getStyleFactory().pointPlacement();
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().pointPlacement(
-                    uiAnchor.valueProperty().get(), 
-                    uiDisplacement.valueProperty().get(), 
+                    uiAnchor.valueProperty().get(),
+                    uiDisplacement.valueProperty().get(),
                     uiRotation.valueProperty().get()));
         };
-        
+
         uiAnchor.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
         uiRotation.valueProperty().addListener(changeListener);
-        
+
         FXStyleElementController.configureAdvancedProperty(uiAnchor);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -70,7 +70,7 @@ public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
         uiAnchor.setLayer(layer);
         uiDisplacement.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(PointPlacement styleElement) {
         if(styleElement != null){
@@ -83,5 +83,5 @@ public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
             uiRotation.valueProperty().setValue(StyleConstants.LITERAL_ZERO_FLOAT);
         }
     }
-    
+
 }

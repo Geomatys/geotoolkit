@@ -171,7 +171,7 @@ public class SimulatedAnnealing {
         }else{
             return false;
         }
-        
+
     }
 
     /**

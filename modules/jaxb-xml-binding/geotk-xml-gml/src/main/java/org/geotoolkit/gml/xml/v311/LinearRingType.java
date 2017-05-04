@@ -33,11 +33,11 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * A LinearRing is defined by four or more coordinate tuples, with linear interpolation between them; the first and last coordinates must be coincident.
- * 
+ *
  * <p>Java class for LinearRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -83,23 +83,23 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
     private List<CoordType> coord;
 
     public LinearRingType() {
-        
+
     }
-    
+
     public LinearRingType(final String srsName, final DirectPositionListType posList) {
         super(srsName);
         this.posList = posList;
     }
-    
+
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -110,11 +110,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -122,11 +122,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -134,11 +134,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -146,11 +146,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
@@ -159,11 +159,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
     /**
      * Deprecated with GML version 3.0 and included for backwards compatibility with GML 2.
      * Use "pos" elements instead.Gets the value of the coord property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
-     * 
-     * 
+     *
+     *
      */
     public List<CoordType> getCoord() {
         if (coord == null) {
@@ -233,7 +233,7 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -248,7 +248,7 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
                 sb.append(c).append('\n');
             }
         }
-        
+
         if (posOrPointPropertyOrPointRep != null) {
             for (JAXBElement jb : posOrPointPropertyOrPointRep) {
                 sb.append(jb.getValue()).append('\n');

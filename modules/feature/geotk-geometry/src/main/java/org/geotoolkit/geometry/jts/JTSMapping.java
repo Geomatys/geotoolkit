@@ -31,24 +31,24 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Set of Utility function and methods for mapping
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public final class JTSMapping {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    
+
      private JTSMapping(){}
-    
+
     /**
      * Force geometry type.
      * If the given geometry is not of given class it will be adapted.
-     * 
+     *
      * @param <T>
      * @param geom
      * @param targetClass
-     * @return 
+     * @return
      */
     public static <T extends Geometry> T convertType(final Geometry geom, final Class<T> targetClass){
         if(geom == null) return null;
@@ -81,7 +81,7 @@ public final class JTSMapping {
             result.setSRID(geom.getSRID());
             result.setUserData(geom.getUserData());
         }
-        
+
         return targetClass.cast(result);
     }
 
@@ -358,7 +358,7 @@ public final class JTSMapping {
         if(geom instanceof GeometryCollection){
             return (GeometryCollection) geom;
         }
-        
+
         if(geom instanceof Point){
             return convertToMultiPoint(geom);
         }else if(geom instanceof LineString){

@@ -143,7 +143,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
             this.queryExpressionText.add(queryExpressionText);
         }
     }
-    
+
     public StoredQueryDescriptionType(final String id, final String title, final String _abstract, final List<ParameterExpressionType> parameters,
             final QueryExpressionTextType queryExpressionText) {
         this.id = id;
@@ -228,7 +228,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         }
         return results;
     }
-    
+
     /**
      * Gets the value of the queryExpressionText property.
      * Objects of the following type(s) are allowed in the list

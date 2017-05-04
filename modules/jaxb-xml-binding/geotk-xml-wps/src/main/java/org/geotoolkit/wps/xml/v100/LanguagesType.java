@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Identifies a list of languages supported by this service.
- * 
+ *
  * <p>Java class for LanguagesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LanguagesType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,16 +61,16 @@ public class LanguagesType {
     private List<String> language;
 
     public LanguagesType() {
-        
+
     }
-    
+
     public LanguagesType(final List<String> language) {
         this.language = language;
     }
-    
+
     /**
      * Identifier of a language supported by the service.  This language identifier shall be as specified in IETF RFC 4646.Gets the value of the language property.
-     * 
+     *
      */
     public List<String> getLanguage() {
         if (language == null) {
@@ -78,7 +78,7 @@ public class LanguagesType {
         }
         return this.language;
     }
-    
+
     public void setLanguage(List<String> language) {
         this.language = language;
     }

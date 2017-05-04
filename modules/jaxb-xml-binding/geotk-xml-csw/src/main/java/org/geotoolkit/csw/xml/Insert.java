@@ -23,10 +23,10 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Insert {
-    
+
      List<Object> getAny();
-     
+
      String getTypeName();
-     
+
      String getHandle();
 }

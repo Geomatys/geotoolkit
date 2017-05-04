@@ -23,8 +23,8 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface SosInsertionMetadata {
- 
+
     List<String> getObservationType();
-    
+
     List<String> getFeatureOfInterestType();
 }

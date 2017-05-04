@@ -30,15 +30,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
+ *
  * ClassificationScheme is the mapping of the same named interface in ebRIM.
  * It extends RegistryEntry.
- * 			
- * 
+ *
+ *
  * <p>Java class for ClassificationSchemeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClassificationSchemeType">
  *   &lt;complexContent>
@@ -60,15 +60,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassificationSchemeType", propOrder = {
     "classificationNode"
 })
-@XmlRootElement(name = "ClassificationScheme")        
+@XmlRootElement(name = "ClassificationScheme")
 public class ClassificationSchemeType extends RegistryEntryType {
 
     @XmlElement(name = "ClassificationNode")
@@ -88,7 +88,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
         }
         return this.classificationNode;
     }
-    
+
      /**
      * Sets the value of the classificationNode property.
      */
@@ -98,7 +98,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
         }
         this.classificationNode.add(classificationNode);
     }
-    
+
     /**
      * Sets the value of the classificationNode property.
      */
@@ -108,7 +108,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
 
     /**
      * Gets the value of the isInternal property.
-     * 
+     *
      */
     public boolean isIsInternal() {
         return isInternal;
@@ -116,7 +116,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
 
     /**
      * Sets the value of the isInternal property.
-     * 
+     *
      */
     public void setIsInternal(final boolean value) {
         this.isInternal = value;
@@ -124,11 +124,11 @@ public class ClassificationSchemeType extends RegistryEntryType {
 
     /**
      * Gets the value of the nodeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNodeType() {
         return nodeType;
@@ -136,11 +136,11 @@ public class ClassificationSchemeType extends RegistryEntryType {
 
     /**
      * Sets the value of the nodeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNodeType(final String value) {
         this.nodeType = value;
@@ -150,7 +150,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
         sb.append("isInternal:").append(isInternal).append('\n');
-        
+
         if (nodeType != null) {
             sb.append("nodeType:").append(nodeType).append('\n');
         }

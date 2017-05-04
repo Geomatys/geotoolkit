@@ -33,7 +33,7 @@ import org.geotoolkit.skos.xml.Concept;
 })
 @XmlRootElement(name = "GetNumeredConceptResponse", namespace = "http://ws.geotk.org/")
 public class GetNumeredConceptResponse {
-    
+
     @XmlElement(name = "return")
     private Concept response;
 
@@ -44,14 +44,14 @@ public class GetNumeredConceptResponse {
     public GetNumeredConceptResponse(Concept response) {
         this.response = response;
     }
-    
+
     /**
      * Gets the value of the return property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Concept }
-     *     
+     *
      */
     public Concept getReturn() {
         return response;
@@ -59,11 +59,11 @@ public class GetNumeredConceptResponse {
 
     /**
      * Sets the value of the return property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Concept }
-     *     
+     *
      */
     public void setReturn(Concept value) {
         this.response = value;

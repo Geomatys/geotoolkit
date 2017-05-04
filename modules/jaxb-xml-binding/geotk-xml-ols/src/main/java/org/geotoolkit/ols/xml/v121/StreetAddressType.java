@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * A set of precise and complete data elements that cannot be subdivided and that describe the physical location of a place.
- * 
+ *
  * <p>Java class for StreetAddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StreetAddressType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StreetAddressType", propOrder = {
@@ -69,12 +69,12 @@ public class StreetAddressType {
 
     /**
      * Gets the value of the streetLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractStreetLocatorType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BuildingLocatorType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractStreetLocatorType> getStreetLocation() {
         return streetLocation;
@@ -82,12 +82,12 @@ public class StreetAddressType {
 
     /**
      * Sets the value of the streetLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractStreetLocatorType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BuildingLocatorType }{@code >}
-     *     
+     *
      */
     public void setStreetLocation(JAXBElement<? extends AbstractStreetLocatorType> value) {
         this.streetLocation = ((JAXBElement<? extends AbstractStreetLocatorType> ) value);
@@ -95,25 +95,25 @@ public class StreetAddressType {
 
     /**
      * Gets the value of the street property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the street property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStreet().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link StreetNameType }
-     * 
-     * 
+     *
+     *
      */
     public List<StreetNameType> getStreet() {
         if (street == null) {
@@ -124,11 +124,11 @@ public class StreetAddressType {
 
     /**
      * Gets the value of the locator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocator() {
         return locator;
@@ -136,11 +136,11 @@ public class StreetAddressType {
 
     /**
      * Sets the value of the locator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocator(String value) {
         this.locator = value;

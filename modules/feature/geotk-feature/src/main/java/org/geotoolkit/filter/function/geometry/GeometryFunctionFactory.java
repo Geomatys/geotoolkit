@@ -29,7 +29,7 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  * @module
  */
 public class GeometryFunctionFactory extends AbstractFunctionFactory {
-    
+
     public static final String BUFFER       = "buffer";
     public static final String BUFFERGEO    = "bufferGeo";
     public static final String GEOMETRYTYPE = "geometryType";

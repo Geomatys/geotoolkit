@@ -27,9 +27,9 @@ import org.geotoolkit.sml.xml.AbstractLink;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.sml.xml.AbstractLink;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,7 +100,7 @@ public class Link implements AbstractLink {
         }
 
     }
-    
+
     /**
      * Gets the value of the source property.
      */

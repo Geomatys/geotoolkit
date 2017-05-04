@@ -21,12 +21,12 @@ package org.geotoolkit.ows.xml;
  * @author guilhem
  */
 public interface ValueReference {
-    
+
     String getReference();
-    
+
     void setReference(final String value);
-    
+
     String getValue();
-    
+
     void setValue(final String value);
 }

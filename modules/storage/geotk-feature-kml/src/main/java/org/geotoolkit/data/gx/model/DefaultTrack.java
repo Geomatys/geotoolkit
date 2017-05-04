@@ -45,7 +45,7 @@ public class DefaultTrack extends DefaultAbstractGeometry implements Track {
         this.whens = EMPTY_LIST;
         this.anglesList = EMPTY_LIST;
     }
-    
+
     public DefaultTrack(AltitudeMode altitudeMode,
             List<Calendar> whens, CoordinateSequence coord,
             List<Angles> angleList, Model model, ExtendedData extendedData){

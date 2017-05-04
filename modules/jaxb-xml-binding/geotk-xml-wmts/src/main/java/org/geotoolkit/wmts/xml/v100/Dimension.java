@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -99,11 +99,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * A name of dimensional axis
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -111,11 +111,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setIdentifier(final CodeType value) {
         this.identifier = value;
@@ -123,11 +123,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Units of measure of dimensional axis.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public DomainMetadataType getUOM() {
         return uom;
@@ -135,11 +135,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainMetadataType }
-     *     
+     *
      */
     public void setUOM(final DomainMetadataType value) {
         this.uom = value;
@@ -147,11 +147,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Gets the value of the unitSymbol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUnitSymbol() {
         return unitSymbol;
@@ -159,11 +159,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Sets the value of the unitSymbol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUnitSymbol(final String value) {
         this.unitSymbol = value;
@@ -171,11 +171,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefault() {
         return _default;
@@ -183,11 +183,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefault(final String value) {
         this._default = value;
@@ -195,11 +195,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Gets the value of the current property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isCurrent() {
         return current;
@@ -207,11 +207,11 @@ public class Dimension extends DescriptionType {
 
     /**
      * Sets the value of the current property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setCurrent(final Boolean value) {
         this.current = value;

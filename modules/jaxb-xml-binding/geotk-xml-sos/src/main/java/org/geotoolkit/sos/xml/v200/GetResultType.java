@@ -34,9 +34,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for GetResultType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetResultType">
  *   &lt;complexContent>
@@ -72,8 +72,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetResultType", propOrder = {
@@ -101,11 +101,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      * An empty constructor used by jaxB
      */
      GetResultType(){}
-     
+
     /**
      * Build a new request GetResult.
      */
-    public GetResultType(final String version, final String service, final String offering, final String observedProperty, 
+    public GetResultType(final String version, final String service, final String offering, final String observedProperty,
             final List<TemporalOpsType> timeFilter, final SpatialOpsType spatialFilter, final List<String> featureOfInterest){
        super(version, "SOS");
        if (timeFilter != null) {
@@ -121,14 +121,14 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
        }
        this.featureOfInterest = featureOfInterest;
     }
-    
+
     /**
      * Gets the value of the offering property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOffering() {
@@ -137,11 +137,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * Sets the value of the offering property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOffering(String value) {
         this.offering = value;
@@ -149,11 +149,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * Gets the value of the observedProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getObservedProperty() {
@@ -162,11 +162,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * Sets the value of the observedProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setObservedProperty(String value) {
         this.observedProperty = value;
@@ -185,7 +185,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
         }
         return result;
     }
-    
+
     public void addTemporalFilter(final TemporalOpsType temporal) {
         if (temporalFilter == null) {
             temporalFilter = new ArrayList<>();
@@ -194,10 +194,10 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     }
     /**
      * Gets the value of the featureOfInterest property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     @Override
     public List<String> getFeatureOfInterest() {
@@ -209,11 +209,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * Gets the value of the spatialFilter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetResultType.SpatialFilter }
-     *     
+     *
      */
     @Override
     public Filter getSpatialFilter() {
@@ -225,11 +225,11 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * Sets the value of the spatialFilter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetResultType.SpatialFilter }
-     *     
+     *
      */
     public void setSpatialFilter(SpatialFilterType value) {
         this.spatialFilter = value;
@@ -237,14 +237,14 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     /**
      * 1.0.0 compatibility
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public String getObservationTemplateId() {
         return null;
     }
-    
+
     @Override
     public String getResponseFormat() {
         for (Object ext : getExtension()) {

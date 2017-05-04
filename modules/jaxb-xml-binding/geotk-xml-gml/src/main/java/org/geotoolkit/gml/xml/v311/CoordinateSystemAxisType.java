@@ -31,12 +31,12 @@ import org.opengis.referencing.cs.AxisDirection;
 
 
 /**
- * Definition of a coordinate system axis. 
- * 
+ * Definition of a coordinate system axis.
+ *
  * <p>Java class for CoordinateSystemAxisType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinateSystemAxisType">
  *   &lt;complexContent>
@@ -52,7 +52,7 @@ import org.opengis.referencing.cs.AxisDirection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -74,11 +74,11 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
     private String uom;
 
     /**
-     * Set of alternative identifications of this coordinate system axis. 
-     * The first axisID, if any, is normally the primary identification code, 
-     * and any others are aliases. 
+     * Set of alternative identifications of this coordinate system axis.
+     * The first axisID, if any, is normally the primary identification code,
+     * and any others are aliases.
      * Gets the value of the axisID property.
-     * 
+     *
      * @return An unmodifiable list of the axis identifier.
      */
     public List<IdentifierType> getAxisID() {
@@ -94,18 +94,18 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
     public CodeType getAxisAbbrev() {
         return axisAbbrev;
     }
-    
+
     public void setAxisAbbrev(CodeType axisAbbrev) {
         this.axisAbbrev = axisAbbrev;
     }
-    
+
     public void setAxisAbbrev(String axisAbbrev) {
         this.axisAbbrev = new CodeType(axisAbbrev);
     }
-    
+
     /**
      * Gets the value of the axisDirection property.
-     * 
+     *
      */
     public CodeType getAxisDirection() {
         return axisDirection;
@@ -114,18 +114,18 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
     public void setAxisDirection(CodeType axisDirection) {
         this.axisDirection = axisAbbrev;
     }
-    
+
     public void setAxisDirection(String axisDirection) {
         this.axisDirection = new CodeType(axisDirection);
     }
-    
+
     public void setAxisDirection(AxisDirection axisDirection) {
         this.axisDirection = new CodeType(axisDirection.identifier());
     }
-    
+
     /**
      * Gets the value of the uom property.
-     * 
+     *
      */
     public String getUom() {
         return uom;

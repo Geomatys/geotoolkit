@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for localSimpleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="localSimpleType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,9 +47,9 @@ import javax.xml.bind.annotation.XmlType;
 public class LocalSimpleType extends SimpleType {
 
     public LocalSimpleType() {
-        
+
     }
-    
+
     public LocalSimpleType(final String name) {
          super(name);
     }

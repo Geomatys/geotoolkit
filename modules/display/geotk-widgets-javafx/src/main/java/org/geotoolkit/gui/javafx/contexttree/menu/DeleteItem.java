@@ -31,7 +31,7 @@ import org.geotoolkit.map.MapItem;
  * @author Johann Sorel (Geomatys)
  */
 public class DeleteItem extends ActionMenuItem{
-    
+
     private List<WeakReference<TreeItem>> itemRefs;
 
     /**
@@ -44,7 +44,7 @@ public class DeleteItem extends ActionMenuItem{
     @Override
     public MenuItem init(List<? extends TreeItem> selection) {
         if(selection.isEmpty()) return null;
-        
+
         boolean valid = true;
         itemRefs = new ArrayList<>();
         for(TreeItem<? extends TreeItem> ti : selection){
@@ -53,9 +53,9 @@ public class DeleteItem extends ActionMenuItem{
             if(!valid) return null;
             itemRefs.add(new WeakReference<>(ti));
         }
-        
+
         if(itemRefs.isEmpty()) return null;
-        
+
         return menuItem;
     }
 

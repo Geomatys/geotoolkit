@@ -27,11 +27,11 @@ import org.geotoolkit.ows.xml.v100.OnlineResourceType;
 
 /**
  * Connect point URL to translanted capabilities document. The language attribute shall be defined by a 3-letter code as described in ISO 639-2.
- * 
+ *
  * <p>Java class for DocumentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DocumentType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.ows.xml.v100.OnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +56,7 @@ public class DocumentType extends OnlineResourceType {
     public DocumentType() {
 
     }
-    
+
     public DocumentType(final DocumentType that) {
         super(that);
         if (that != null) {

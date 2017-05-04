@@ -29,7 +29,7 @@ public class DefaultPremiseNumber extends DefaultGenericTypedGrPostal implements
     private AfterBeforeEnum numberTypeOccurrence;
 
     public DefaultPremiseNumber(){}
-    
+
     /**
      *
      * @param numberType

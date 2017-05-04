@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for FileType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FileType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FileType", propOrder = {
@@ -77,11 +77,11 @@ public class FileType {
 
     /**
      * Gets the value of the rangeParameters property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AssociationRoleType }
-     *     
+     *
      */
     public AssociationRoleType getRangeParameters() {
         return rangeParameters;
@@ -89,11 +89,11 @@ public class FileType {
 
     /**
      * Sets the value of the rangeParameters property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AssociationRoleType }
-     *     
+     *
      */
     public void setRangeParameters(AssociationRoleType value) {
         this.rangeParameters = value;
@@ -101,11 +101,11 @@ public class FileType {
 
     /**
      * Gets the value of the fileName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFileName() {
         return fileName;
@@ -113,11 +113,11 @@ public class FileType {
 
     /**
      * Sets the value of the fileName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFileName(String value) {
         this.fileName = value;
@@ -125,11 +125,11 @@ public class FileType {
 
     /**
      * Gets the value of the fileReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFileReference() {
         return fileReference;
@@ -137,11 +137,11 @@ public class FileType {
 
     /**
      * Sets the value of the fileReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFileReference(String value) {
         this.fileReference = value;
@@ -149,11 +149,11 @@ public class FileType {
 
     /**
      * Gets the value of the fileStructure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeType }
-     *     
+     *
      */
     public CodeType getFileStructure() {
         return fileStructure;
@@ -161,11 +161,11 @@ public class FileType {
 
     /**
      * Sets the value of the fileStructure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeType }
-     *     
+     *
      */
     public void setFileStructure(CodeType value) {
         this.fileStructure = value;
@@ -173,11 +173,11 @@ public class FileType {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -185,11 +185,11 @@ public class FileType {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;
@@ -197,11 +197,11 @@ public class FileType {
 
     /**
      * Gets the value of the compression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCompression() {
         return compression;
@@ -209,11 +209,11 @@ public class FileType {
 
     /**
      * Sets the value of the compression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCompression(String value) {
         this.compression = value;

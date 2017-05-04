@@ -58,5 +58,5 @@ public class SinTest extends AbstractProcessTest {
 
         assertEquals(0.5971, result.doubleValue(), 0.0001);
     }
-    
+
 }

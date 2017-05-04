@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Location can be one of four things: Position, POI, Address or Point. Each of those types has been defined in the XLS namespace with this in condiseration.  
- * 
+ * Location can be one of four things: Position, POI, Address or Point. Each of those types has been defined in the XLS namespace with this in condiseration.
+ *
  * <p>Java class for AbstractLocationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractLocationType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractLocationType")

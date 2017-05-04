@@ -38,7 +38,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
     CachedPropertyName(final String property, final Class clazz, final FeatureType expectedType) {
         ensureNonNull("property name", property);
         this.property = property;
-                
+
         final Binding fallacc = Bindings.getBinding(clazz,property);
         this.accessor = fallacc;
     }

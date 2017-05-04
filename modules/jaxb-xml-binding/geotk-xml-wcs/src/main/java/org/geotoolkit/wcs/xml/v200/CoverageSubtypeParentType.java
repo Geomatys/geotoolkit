@@ -26,9 +26,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for CoverageSubtypeParentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageSubtypeParentType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageSubtypeParentType", propOrder = {
@@ -58,11 +58,11 @@ public class CoverageSubtypeParentType {
 
     /**
      * Gets the value of the coverageSubtype property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getCoverageSubtype() {
         return coverageSubtype;
@@ -70,11 +70,11 @@ public class CoverageSubtypeParentType {
 
     /**
      * Sets the value of the coverageSubtype property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setCoverageSubtype(QName value) {
         this.coverageSubtype = value;
@@ -82,11 +82,11 @@ public class CoverageSubtypeParentType {
 
     /**
      * Gets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public CoverageSubtypeParentType getCoverageSubtypeParent() {
         return coverageSubtypeParent;
@@ -94,11 +94,11 @@ public class CoverageSubtypeParentType {
 
     /**
      * Sets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public void setCoverageSubtypeParent(CoverageSubtypeParentType value) {
         this.coverageSubtypeParent = value;

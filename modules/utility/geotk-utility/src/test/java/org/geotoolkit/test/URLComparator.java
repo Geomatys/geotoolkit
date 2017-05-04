@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class URLComparator {
 
     private static final Object NO_VALUE = new Object();
-    
+
     private final String expected;
     private final String result;
 

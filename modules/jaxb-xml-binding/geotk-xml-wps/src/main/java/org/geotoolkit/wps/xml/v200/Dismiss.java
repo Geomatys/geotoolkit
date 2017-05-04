@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,11 +57,11 @@ public class Dismiss extends RequestBaseType {
 
     /**
      * Gets the value of the jobID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getJobID() {
         return jobID;
@@ -69,11 +69,11 @@ public class Dismiss extends RequestBaseType {
 
     /**
      * Sets the value of the jobID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setJobID(String value) {
         this.jobID = value;
@@ -88,7 +88,7 @@ public class Dismiss extends RequestBaseType {
         kvp.put("JOBID",jobID);
         return kvp;
     }
-    
-    
+
+
 
 }

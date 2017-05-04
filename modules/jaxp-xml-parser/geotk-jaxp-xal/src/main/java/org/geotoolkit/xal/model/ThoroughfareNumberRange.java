@@ -56,7 +56,7 @@ import java.util.List;
 public interface ThoroughfareNumberRange {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -75,7 +75,7 @@ public interface ThoroughfareNumberRange {
 
     /**
      * <p>Thoroughfare number ranges are odd or even.</p>
-     * 
+     *
      * @return
      */
     OddEvenEnum getRangeType();
@@ -101,7 +101,7 @@ public interface ThoroughfareNumberRange {
     AfterBeforeEnum getIndicatorOccurence();
 
     /**
-     * 
+     *
      * @return
      */
     AfterBeforeTypeNameEnum getNumberRangeOccurence();
@@ -173,7 +173,7 @@ public interface ThoroughfareNumberRange {
     void setType(String type);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

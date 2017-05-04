@@ -37,31 +37,31 @@ public interface GetChangeSetsRequest extends Request{
     void setEnvelope(Envelope env);
 
     long getUserId();
-    
+
     /**
-     * Find changesets by the user with the given user id or display name. 
-     * Providing both is an error. 
+     * Find changesets by the user with the given user id or display name.
+     * Providing both is an error.
      */
     void setUserId(long id);
-    
+
     String getUserName();
-    
+
     /**
-     * Find changesets by the user with the given user id or display name. 
-     * Providing both is an error. 
+     * Find changesets by the user with the given user id or display name.
+     * Providing both is an error.
      */
     void setUserName(String name);
-    
+
     DateRange getTimeRange();
-    
+
     /**
      * start date is mandatory, close date is optional.
-     * 
-     * Find changesets closed after T1 
-     * Find changesets that were closed after T1 and created before T2 
+     *
+     * Find changesets closed after T1
+     * Find changesets that were closed after T1 and created before T2
      */
     void setTimeRange(DateRange range);
-    
+
     boolean isOnlyOpenChangeSets();
 
     /**

@@ -32,10 +32,10 @@ import static org.opengis.annotation.Obligation.*;
  */
 @UML(identifier="SimpleDataRecord", specification=UNSPECIFIED)
 public interface SimpleDataRecord extends AbstractDataRecord {
-    
+
     /**
      * this field is restricted to AnyScalar value.
      */
     Collection<? extends AnyScalar> getField();
-    
+
 }

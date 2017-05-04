@@ -18,32 +18,32 @@ package org.geotoolkit.wms.xml;
 
 /**
  * Interface for Online resource object.
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
 public interface AbstractOnlineResource {
-    
+
      /**
      * Gets the value of the href property.
-     * 
+     *
      */
     String getHref();
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     void setHref(String href);
-    
+
     String getType();
-    
+
     String getRole();
-    
+
     String getArcrole();
-    
+
     String getTitle();
-    
+
     String getShow();
-    
+
     String getActuate();
 }

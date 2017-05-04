@@ -37,7 +37,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     private AltitudeMode altitudeMode;
 
     /**
-     * 
+     *
      */
     public DefaultLookAt() {
         this.longitude = DEF_LONGITUDE;
@@ -50,7 +50,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions

@@ -36,7 +36,7 @@ package org.geotoolkit.xal.model;
 public interface CountryNameCode {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();
@@ -50,7 +50,7 @@ public interface CountryNameCode {
     String getScheme();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();
@@ -68,7 +68,7 @@ public interface CountryNameCode {
     void setScheme(String scheme);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

@@ -28,83 +28,83 @@ import org.opengis.util.FactoryException;
 
 /**
  * This class is the opposite of EpsgFactory, rather then create CRS objects
- * it allows to store user defined CRS and allocate them an EPSG code 
+ * it allows to store user defined CRS and allocate them an EPSG code
  * in range [32768, 60 000 000[
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface EPSGWriter {
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate CoordinateReferenceSystem
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateCoordinateReferenceSystem(final CoordinateReferenceSystem candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate CoordinateSystem
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateCoordinateSystem(final CoordinateSystem candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate Datum
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateDatum(final Datum candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate Projection
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateProjection(final Projection candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate Extent
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateArea(final Extent candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate Unit
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateUOM(final Unit candidate) throws FactoryException;
- 
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate Ellipsoid
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreateEllipsoid(final Ellipsoid candidate) throws FactoryException;
-    
+
     /**
      * Store given object and return it's allocated epsg code.
-     * 
+     *
      * @param candidate PrimeMeridian
      * @return integer, allocated epsg code
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     int getOrCreatePrimeMeridian(final PrimeMeridian candidate) throws FactoryException;
-    
+
 }

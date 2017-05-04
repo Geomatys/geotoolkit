@@ -26,15 +26,15 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
 
 
 /**
- * 
- * Request for a description of service capabilities. See OGC 05-008 
+ *
+ * Request for a description of service capabilities. See OGC 05-008
  * for more information.
- *          
- * 
+ *
+ *
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
 
     /**
      * Build a new getCapabilities request with the specified service
-     * 
+     *
      * @param acceptVersions The different versions accepted by the client.
      * @param sections The different sections of the capabilities document requested.
      *                 one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".

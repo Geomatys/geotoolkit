@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -31,7 +31,7 @@ import org.opengis.temporal.RelativePosition;
 
 /**
  * A one-dimensional geometric primitive that represent extent in time.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @author Remi Marechal (Geomatys)
  * @module
@@ -50,7 +50,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * This is the {@link Instant} at which this Period starts.
      */
     private Instant begining;
-    
+
     /**
      * This is the {@link Instant} at which this Period ends.
      */
@@ -61,12 +61,12 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      */
     private DefaultPeriod() {
     }
-    
+
     /**
      * Creates a default {@link Period} implementation from the given properties and {@link Instant}.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     * 
+     *
      * <table class="referencingTemporal">
      *   <caption>Recognized properties (non exhaustive list)</caption>
      *   <tr>
@@ -91,22 +91,22 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      *
      * @param properties The properties to be given to this object.
      * @param begining begin instant of the period.
-     * @param ending end instant of the period. 
-     * @throws IllegalArgumentException 
+     * @param ending end instant of the period.
+     * @throws IllegalArgumentException
      */
     public DefaultPeriod(final Map<String , ?> properties, final Instant begining, final Instant ending) {
         super(properties);
         ArgumentChecks.ensureNonNull("begining", begining);
         ArgumentChecks.ensureNonNull("ending", ending);
-	//-- begining must be before or equals ending
-        if (begining != null && 
+    //-- begining must be before or equals ending
+        if (begining != null &&
                 (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
                 RelativePosition.EQUALS.equals(begining.relativePosition(ending)))) {
              this.begining = begining;
              this.ending = ending;
          }
      }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -121,13 +121,13 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (object != null) {
             begining = object.getBeginning();
             ending = object.getEnding();
-            
+
             if (object instanceof DefaultPeriod) {
                 //--- voir pour get duration
-            }            
+            }
         }
     }
-    
+
     /**
      * Returns a Geotk implementation with the values of the given arbitrary implementation.
      * This method performs the first applicable action in the following choices:
@@ -155,7 +155,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
 
     /**
      * Returns {@link Period} to the {@link Instant} at which it starts.
-     * 
+     *
      * @return {@link Period} to the {@link Instant} at which it starts.
      */
     @Override
@@ -163,10 +163,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     public Instant getBeginning() {
         return begining;
     }
-    
+
     /**
      * Set {@link Period} to the {@link Instant} at which it starts.
-     * 
+     *
      * @param begining start {@link Instant} of the {@link Period}.
      */
     public void setBegining(final Instant begining) {
@@ -175,7 +175,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
 
     /**
      * Returns {@link Period} to the {@link Instant} at which it ends.
-     * 
+     *
      * @return {@link Period} to the {@link Instant} at which it ends.
      */
     @Override
@@ -183,10 +183,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     public Instant getEnding() {
         return ending;
     }
-    
+
     /**
      * Duration only use for XML binding.
-     * 
+     *
      * @return {@link String} which represent duration for XML binding format.
      */
     @XmlElement(name = "duration")
@@ -198,10 +198,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         }
         return null;
     }
-    
+
     /**
      * Set {@link Period} to the {@link Instant} at which it ends.
-     * 
+     *
      * @param ending ending {@link Instant} of the {@link Period}.
      */
     public void setEnding(final Instant ending) {

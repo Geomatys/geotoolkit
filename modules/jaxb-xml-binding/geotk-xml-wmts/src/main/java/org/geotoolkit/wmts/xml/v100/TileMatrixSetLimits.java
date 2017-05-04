@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -56,14 +56,14 @@ public class TileMatrixSetLimits {
     private List<TileMatrixLimits> tileMatrixLimits;
 
     /**
-     * Metadata describing the limits of the TileMatrixSet indices. 
+     * Metadata describing the limits of the TileMatrixSet indices.
      * Multiplicity must be the multiplicity of TileMatrix in this TileMatrixSet.
      * Gets the value of the tileMatrixLimits property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TileMatrixLimits }
-     * 
-     * 
+     *
+     *
      */
     public List<TileMatrixLimits> getTileMatrixLimits() {
         if (tileMatrixLimits == null) {

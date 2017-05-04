@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines a spatial filter which selects POIs located within a specified distance from a location.
- * 
+ *
  * <p>Java class for WithinDistanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WithinDistanceType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WithinDistanceType", propOrder = {
@@ -65,7 +65,7 @@ public class WithinDistanceType {
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOIType }{@code >}
@@ -74,7 +74,7 @@ public class WithinDistanceType {
      *     {@link JAXBElement }{@code <}{@link AbstractLocationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointOfInterestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractPositionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractLocationType> getLocation() {
         return location;
@@ -82,7 +82,7 @@ public class WithinDistanceType {
 
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractPOIType }{@code >}
@@ -91,7 +91,7 @@ public class WithinDistanceType {
      *     {@link JAXBElement }{@code <}{@link AbstractLocationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PointOfInterestType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractPositionType }{@code >}
-     *     
+     *
      */
     public void setLocation(JAXBElement<? extends AbstractLocationType> value) {
         this.location = ((JAXBElement<? extends AbstractLocationType> ) value);
@@ -99,11 +99,11 @@ public class WithinDistanceType {
 
     /**
      * Gets the value of the minimumDistance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getMinimumDistance() {
         return minimumDistance;
@@ -111,11 +111,11 @@ public class WithinDistanceType {
 
     /**
      * Sets the value of the minimumDistance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setMinimumDistance(DistanceType value) {
         this.minimumDistance = value;
@@ -123,11 +123,11 @@ public class WithinDistanceType {
 
     /**
      * Gets the value of the maximumDistance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public DistanceType getMaximumDistance() {
         return maximumDistance;
@@ -135,11 +135,11 @@ public class WithinDistanceType {
 
     /**
      * Sets the value of the maximumDistance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceType }
-     *     
+     *
      */
     public void setMaximumDistance(DistanceType value) {
         this.maximumDistance = value;

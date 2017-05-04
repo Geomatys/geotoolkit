@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Abstract type representing the response information returned from a service request.
- * 
+ *
  * <p>Java class for AbstractResponseParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractResponseParametersType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractResponseParametersType")

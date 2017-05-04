@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ import org.geotoolkit.storage.StorageListener;
  * @author Johann Sorel (Geomatys)
  */
 public interface CoverageStoreListener extends StorageListener<CoverageStoreManagementEvent, CoverageStoreContentEvent> {
-    
+
     /**
      * Fired when a new pyramid/mosaic has been created, modified or deleted.
      * @param event
@@ -37,5 +37,5 @@ public interface CoverageStoreListener extends StorageListener<CoverageStoreMana
      */
     @Override
     void contentChanged(CoverageStoreContentEvent event);
-    
+
 }

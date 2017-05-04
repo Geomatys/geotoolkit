@@ -35,21 +35,21 @@ import org.opengis.style.ContrastMethod;
 public class FXContrastEnhancement extends FXStyleElementController<ContrastEnhancement>{
 
     @FXML
-    private RadioButton uiNone;    
+    private RadioButton uiNone;
     @FXML
     private RadioButton uiNormalize;
     @FXML
     private RadioButton uiHistogram;
     @FXML
     private FXNumberExpression uiGamma;
-    
+
     private final ToggleGroup group = new ToggleGroup();
-    
+
     @FXML
     void updateType(ActionEvent event){
         rebuildValue();
     }
-    
+
     @Override
     public Class<ContrastEnhancement> getEditedClass() {
         return ContrastEnhancement.class;
@@ -59,7 +59,7 @@ public class FXContrastEnhancement extends FXStyleElementController<ContrastEnha
     public ContrastEnhancement newValue() {
         return StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT;
     }
-    
+
     private void rebuildValue(){
         ContrastMethod cm = ContrastMethod.NONE;
         if(uiHistogram.isSelected()){
@@ -69,23 +69,23 @@ public class FXContrastEnhancement extends FXStyleElementController<ContrastEnha
         }
         value.set(getStyleFactory().contrastEnhancement(uiGamma.valueProperty().get(), cm));
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
-        
+        super.initialize();
+
         uiNone.setToggleGroup(group);
         uiNormalize.setToggleGroup(group);
         uiHistogram.setToggleGroup(group);
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             rebuildValue();
         };
-        
+
         uiGamma.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     protected void updateEditor(ContrastEnhancement styleElement) {
         uiGamma.valueProperty().set(styleElement.getGammaValue());
@@ -98,5 +98,5 @@ public class FXContrastEnhancement extends FXStyleElementController<ContrastEnha
             uiNone.setSelected(true);
         }
     }
-    
+
 }

@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  * Denotes the relation of a texture to a surface, that is augmented by a TextureParameterization
  *                 object. The TextureAssociationType element must either carry a reference to a _TextureParameterization object or
  *                 contain a _TextureParameterization object inline, but neither both nor none.
- * 
+ *
  * <p>Java class for TextureAssociationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TextureAssociationType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TextureAssociationType", propOrder = {
@@ -85,13 +85,13 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the textureParameterization property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TexCoordListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTextureParameterizationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TexCoordGenType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractTextureParameterizationType> getTextureParameterization() {
         return textureParameterization;
@@ -99,13 +99,13 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the textureParameterization property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TexCoordListType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTextureParameterizationType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TexCoordGenType }{@code >}
-     *     
+     *
      */
     public void setTextureParameterization(JAXBElement<? extends AbstractTextureParameterizationType> value) {
         this.textureParameterization = ((JAXBElement<? extends AbstractTextureParameterizationType> ) value);
@@ -113,11 +113,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the uri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUri() {
         return uri;
@@ -125,11 +125,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the uri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUri(String value) {
         this.uri = value;
@@ -137,11 +137,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -149,11 +149,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -161,11 +161,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -177,11 +177,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -189,11 +189,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -201,11 +201,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -213,11 +213,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -225,11 +225,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -237,11 +237,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -249,11 +249,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -261,11 +261,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -273,11 +273,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -285,11 +285,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -297,11 +297,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -309,11 +309,11 @@ public class TextureAssociationType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -321,11 +321,11 @@ public class TextureAssociationType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

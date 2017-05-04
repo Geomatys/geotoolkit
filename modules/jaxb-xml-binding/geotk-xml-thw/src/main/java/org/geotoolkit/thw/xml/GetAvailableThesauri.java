@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for getAvailableThesauri complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="getAvailableThesauri">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAvailableThesauri")
@@ -48,16 +48,16 @@ public class GetAvailableThesauri {
     private String outputFormat;
 
     private Boolean showDeactivated;
-    
+
     public GetAvailableThesauri() {
-        
+
     }
-    
+
     public GetAvailableThesauri(final String outputFormat,final Boolean showDeactivated) {
         this.outputFormat = outputFormat;
         this.showDeactivated = showDeactivated;
     }
-    
+
     /**
      * @return the outputFormat
      */

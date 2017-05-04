@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BlockType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BlockType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BlockType")
@@ -68,11 +68,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the compression property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCompression() {
         return compression;
@@ -80,11 +80,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the compression property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCompression(String value) {
         this.compression = value;
@@ -92,11 +92,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the encryption property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncryption() {
         return encryption;
@@ -104,11 +104,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the encryption property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncryption(String value) {
         this.encryption = value;
@@ -116,11 +116,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the paddingBytesAfter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getPaddingBytesAfter() {
         return paddingBytesAfter;
@@ -128,11 +128,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the paddingBytesAfter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setPaddingBytesAfter(BigInteger value) {
         this.paddingBytesAfter = value;
@@ -140,11 +140,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the paddingBytesBefore property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getPaddingBytesBefore() {
         return paddingBytesBefore;
@@ -152,11 +152,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the paddingBytesBefore property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setPaddingBytesBefore(BigInteger value) {
         this.paddingBytesBefore = value;
@@ -164,11 +164,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the byteLength property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getByteLength() {
         return byteLength;
@@ -176,11 +176,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the byteLength property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setByteLength(BigInteger value) {
         this.byteLength = value;
@@ -188,11 +188,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRef() {
         return ref;
@@ -200,11 +200,11 @@ public class BlockType extends AbstractSWEType {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRef(String value) {
         this.ref = value;

@@ -29,9 +29,9 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -85,8 +85,8 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -135,7 +135,7 @@ public class ArrayLink implements AbstractArrayLink {
             }
         }
     }
-    
+
     /**
      * Gets the value of the sourceArray property.
      */
@@ -183,7 +183,7 @@ public class ArrayLink implements AbstractArrayLink {
 
     /**
      * Sets the value of the sourceIndex property.
-     * 
+     *
      */
     public void setSourceIndex(final LinkRef value) {
         this.sourceIndex = value;
@@ -191,7 +191,7 @@ public class ArrayLink implements AbstractArrayLink {
 
     /**
      * Gets the value of the connection property.
-     * 
+     *
      */
     public List<Connection> getConnection() {
         if (connection == null) {

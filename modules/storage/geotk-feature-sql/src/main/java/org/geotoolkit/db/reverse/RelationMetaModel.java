@@ -24,12 +24,12 @@ import org.opengis.filter.expression.PropertyName;
 
 /**
  * Description of a relation between two tables.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class RelationMetaModel {
-    
+
     public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final String relationName;
@@ -39,12 +39,12 @@ public class RelationMetaModel {
     private final String foreignColumn;
     private final boolean imported;
     private final boolean deleteCascade;
-    
+
     //for filter
     private final PropertyName property;
 
     public RelationMetaModel(final String relationName,final String currentColumn, final String foreignSchema,
-            final String foreignTable, final String foreignColumn, 
+            final String foreignTable, final String foreignColumn,
             boolean imported, boolean deleteCascade) {
         ArgumentChecks.ensureNonNull("relation name", relationName);
         ArgumentChecks.ensureNonNull("current column", currentColumn);
@@ -63,7 +63,7 @@ public class RelationMetaModel {
     public String getRelationName() {
         return relationName;
     }
-    
+
     public String getCurrentColumn() {
         return currentColumn;
     }
@@ -82,12 +82,12 @@ public class RelationMetaModel {
 
     /**
      * Indicate if this key is imported.
-     * @return 
+     * @return
      */
     public boolean isImported() {
         return imported;
     }
-    
+
     /**
      * @return true if relation implies a delete on cascade.
      */
@@ -98,7 +98,7 @@ public class RelationMetaModel {
     public Filter toFilter(final Object value){
         return FF.equals(property, FF.literal(value));
     }
-        
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(currentColumn);

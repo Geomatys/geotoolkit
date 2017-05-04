@@ -41,7 +41,7 @@ import org.opengis.geometry.primitive.SurfacePatch;
  * @module
  */
 public class JTSPrimitiveFactory implements PrimitiveFactory {
-    
+
     /**
      * a default CRS to use when creating primitives
      */
@@ -56,7 +56,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
 
     /**
      * DOCUMENT ME
-     * 
+     *
      * @param crs
      */
     public JTSPrimitiveFactory(final CoordinateReferenceSystem crs) {
@@ -67,7 +67,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     //*************************************************************************
     //  implement the PrimitiveFactory interface
     //*************************************************************************
-    
+
     /**
      * Returns the coordinate reference system in use for all
      * {@linkplain Primitive primitive}geometric objects to be created through
@@ -144,7 +144,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     @Override
     public Surface createSurface(final List<SurfacePatch> patches) {
         JTSSurface result = new JTSSurface(crs);
-        List<?> cast = (List<?>) patches;   
+        List<?> cast = (List<?>) patches;
         result.getPatches().addAll( (List<JTSSurfacePatch>) cast );
         return result;
     }
@@ -166,8 +166,8 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
         ((List)result.getPatches()).add(poly);
         return result;
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */
@@ -202,7 +202,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
         return result;
     }
 
-    
+
     public PolyhedralSurface createPolyhedralSurface(final List<Polygon> patches)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);

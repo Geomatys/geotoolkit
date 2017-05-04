@@ -28,9 +28,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for TopicSetType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopicSetType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopicSetType", propOrder = {
@@ -57,12 +57,12 @@ public class TopicSetType extends ExtensibleDocumented {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {

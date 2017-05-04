@@ -29,7 +29,7 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
     public TimeAnyInteractsType() {
 
     }
-    
+
     public TimeAnyInteractsType(final TimeAnyInteractsType that) {
         super(that);
     }

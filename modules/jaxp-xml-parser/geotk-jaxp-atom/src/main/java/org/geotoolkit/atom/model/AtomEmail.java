@@ -39,7 +39,7 @@ public interface AtomEmail {
     String getAddress();
 
     /**
-     * 
+     *
      * @param address
      */
     void setAddress(String address);

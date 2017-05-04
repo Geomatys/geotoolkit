@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class HilbertAccessByteArray extends HilbertChannelTreeAccess {
     /**
      * Build a {@link Tree} from a already filled {@link File}.
-     * 
+     *
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
@@ -40,10 +40,10 @@ public class HilbertAccessByteArray extends HilbertChannelTreeAccess {
     HilbertAccessByteArray(final byte[] data, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
         this(data, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH);
     }
-    
+
     /**
      * Build a {@link Tree} from a already filled {@link File}.
-     * 
+     *
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
@@ -54,52 +54,52 @@ public class HilbertAccessByteArray extends HilbertChannelTreeAccess {
     HilbertAccessByteArray(final byte[] data, final int magicNumber, final double versionNumber, final int byteBufferLength) throws IOException, ClassNotFoundException {
         super(new SeekableByteArrayChannel(data), magicNumber, versionNumber, byteBufferLength);
     }
-    
+
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.<br/>
      * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param maxElements element number per cell.
-     * @param crs 
+     * @param crs
      * @throws IOException if problem during read or write Node.
      */
-    HilbertAccessByteArray(final int magicNumber, final double versionNumber, 
+    HilbertAccessByteArray(final int magicNumber, final double versionNumber,
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
         this(magicNumber, versionNumber, maxElements, hilbertOrder, crs, DEFAULT_BUFFER_LENGTH);
     }
-    
+
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.<br/>
      * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
-     * 
+     *
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
-     * @param crs 
+     * @param crs
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
-    HilbertAccessByteArray(final int magicNumber, final double versionNumber, 
+    HilbertAccessByteArray(final int magicNumber, final double versionNumber,
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         super(new SeekableByteArrayChannel(), magicNumber, versionNumber, maxElements, hilbertOrder, crs, byteBufferLength);
     }
-    
+
     /**
      * Returns internal channel stored data.<br>
      * <strong>Don't forget to call {@link TreeAccess#close() } or {@link TreeAccess#flush() } before,
      * to update internal channel values.</strong>
-     * 
+     *
      * @return internal channel stored data.
-     * @see SeekableByteArrayChannel#getData() 
+     * @see SeekableByteArrayChannel#getData()
      */
     public byte[] getData() {
         return ((SeekableByteArrayChannel)inOutChannel).getData();

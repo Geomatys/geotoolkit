@@ -22,15 +22,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         Encapsulates a single LineString to represent centerLineOf or 
+ *
+ *         Encapsulates a single LineString to represent centerLineOf or
  *         edgeOf properties.
- *       
- * 
+ *
+ *
  * <p>Java class for LineStringPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,13 +53,13 @@ import javax.xml.bind.annotation.XmlType;
 public class LineStringPropertyType extends GeometryAssociationType {
 
     public LineStringPropertyType() {
-        
+
     }
-    
+
     public LineStringPropertyType(LineStringPropertyType that) {
         super(that);
     }
-    
+
     @Override
     public GeometryAssociationType getClone() {
         return new LineStringPropertyType(this);

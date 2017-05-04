@@ -30,33 +30,33 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Stroke.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultStroke implements Stroke{
 
     private final GraphicFill fill;
-    
+
     private final GraphicStroke stroke;
-    
+
     private final Expression color;
-    
+
     private final Expression opacity;
-    
+
     private final Expression width;
-    
+
     private final Expression join;
-    
+
     private final Expression cap;
-    
+
     private final float[] dashes;
-    
+
     private final Expression offset;
-    
+
     /**
      * Create a default immutable stroke.
-     * 
+     *
      * @param color : if null or Expression.NIL will be replaced by default value.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
      * @param width : if null or Expression.NIL will be replaced by default value.
@@ -67,11 +67,11 @@ public class DefaultStroke implements Stroke{
      */
     public DefaultStroke(final Expression color, final Expression opacity, final Expression width,
             final Expression join, final Expression cap, final float[] dashes, final Expression offset){
-        
+
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
-        
+
         this.fill = null;
         this.stroke = null;
         this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
@@ -82,10 +82,10 @@ public class DefaultStroke implements Stroke{
         this.dashes = dashes;
         this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
     }
-    
+
     /**
      * Create a default immutable stroke.
-     * 
+     *
      * @param fill : only one between fill and stroke can be defined, both can be null
      * @param color : if null or Expression.NIL will be replaced by default value.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
@@ -95,13 +95,13 @@ public class DefaultStroke implements Stroke{
      * @param dashes : can be null, if not null then it must have 2 fields
      * @param offset : if null or Expression.NIL will be replaced by default value.
      */
-    DefaultStroke(final GraphicFill fill, final Expression color, final Expression opacity, 
+    DefaultStroke(final GraphicFill fill, final Expression color, final Expression opacity,
             final Expression width, final Expression join, final Expression cap, final float[] dashes, final Expression offset){
-                
+
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
-        
+
         this.fill = fill;
         this.stroke = null;
         this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
@@ -112,12 +112,12 @@ public class DefaultStroke implements Stroke{
         this.dashes = dashes;
         this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
     }
-    
-    
-    
+
+
+
     /**
      * Create a default immutable stroke.
-     * 
+     *
      * @param stroke : only one between fill and stroke can be defined, both can be null
      * @param color : if null or Expression.NIL will be replaced by default value.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
@@ -127,16 +127,16 @@ public class DefaultStroke implements Stroke{
      * @param dashes : can be null, if not null then it must have 2 fields
      * @param offset : if null or Expression.NIL will be replaced by default value.
      */
-    DefaultStroke(final GraphicStroke stroke, final Expression color, final Expression opacity, 
+    DefaultStroke(final GraphicStroke stroke, final Expression color, final Expression opacity,
             final Expression width, final Expression join, final Expression cap, final float[] dashes, final Expression offset){
         if(stroke == null){
             throw new IllegalArgumentException("Stroke can not be null.");
         }
-        
+
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
-        
+
         this.fill = null;
         this.stroke = stroke;
         this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
@@ -147,7 +147,7 @@ public class DefaultStroke implements Stroke{
         this.dashes = dashes;
         this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -211,7 +211,7 @@ public class DefaultStroke implements Stroke{
     public float[] getDashArray() {
         return dashes;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -244,7 +244,7 @@ public class DefaultStroke implements Stroke{
 
         DefaultStroke other = (DefaultStroke) obj;
 
-        return 
+        return
             Objects.deepEquals(this.dashes, other.dashes)
             && Objects.equals(this.stroke, other.stroke)
             && Objects.equals(this.fill, other.fill)

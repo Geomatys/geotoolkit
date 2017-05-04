@@ -77,8 +77,8 @@ public class FXMap extends BorderPane {
             updateImage();
         }
     });
-    
-    
+
+
     private final List<FXMapDecoration> userDecorations = new ArrayList<>();
     private final StackPane mapDecorationPane = new StackPane();
     private final StackPane userDecorationPane = new StackPane();
@@ -87,7 +87,7 @@ public class FXMap extends BorderPane {
     private int nextMapDecorationIndex = 1;
     private FXInformationDecoration informationDecoration = new DefaultInformationDecoration();
     private FXMapDecoration backDecoration = new FXColorDecoration();
-    
+
     public FXMap(){
         this(false,null);
     }
@@ -95,12 +95,12 @@ public class FXMap extends BorderPane {
     public FXMap(final boolean statefull) {
         this(statefull, null);
     }
-    
+
     public FXMap(final boolean statefull, Hints hints){
 //        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         view.heightProperty().bind(mapDecorationPane.heightProperty());
         view.widthProperty().bind(mapDecorationPane.widthProperty());
-        
+
         mapDecorationPane.getChildren().add(0,view);
         mainDecorationPane.getChildren().add(0,backDecoration.getComponent());
         mainDecorationPane.getChildren().add(1,mapDecorationPane);
@@ -112,11 +112,11 @@ public class FXMap extends BorderPane {
         mapDecorationPane.setFocusTraversable(true);
         userDecorationPane.setFocusTraversable(true);
         mainDecorationPane.setFocusTraversable(true);
-        
+
         canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100), hints);
         canvas.setMonitor(new NeverFailMonitor());
         canvas.setContainer(new ContextContainer2D(canvas, statefull));
-        canvas.setAutoRepaint(true);        
+        canvas.setAutoRepaint(true);
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
@@ -127,7 +127,7 @@ public class FXMap extends BorderPane {
                         @Override
                         public void run() {
                             updateImage();
-                            
+
                             final Object state = evt.getNewValue();
                             if(AbstractCanvas.RENDERING.equals(state)){
                                 getInformationDecoration().setPaintingIconVisible(true);
@@ -139,10 +139,10 @@ public class FXMap extends BorderPane {
                             }
                         }
                     });
-                    
+
                 }else if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
                     nextPreviousList.put(canvas.getCenterTransform());
-                } 
+                }
             }
         });
         canvas.getContainer().addPropertyChangeListener(new PropertyChangeListener() {
@@ -153,7 +153,7 @@ public class FXMap extends BorderPane {
                 }
             }
         });
-        
+
     }
 
     private boolean first = true;
@@ -161,7 +161,7 @@ public class FXMap extends BorderPane {
     public NextPreviousList<AffineTransform> getNextPreviousList() {
         return nextPreviousList;
     }
-    
+
     @Override
     protected void updateBounds() {
         super.updateBounds();
@@ -181,7 +181,7 @@ public class FXMap extends BorderPane {
             }
         }
     }
-    
+
     private void updateImage() {
         final Runnable r = new Runnable() {
             @Override
@@ -199,14 +199,14 @@ public class FXMap extends BorderPane {
                 }
             }
         };
-        
+
         if(Platform.isFxApplicationThread()){
             r.run();
         }else{
             Platform.runLater(r);
         }
     }
-    
+
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
@@ -245,7 +245,7 @@ public class FXMap extends BorderPane {
     public ReadOnlyObjectProperty<FXCanvasHandler> getHandlerProperty(){
         return handlerProp;
     }
-    
+
     public FXCanvasHandler getHandler(){
         return handlerProp.getValue();
     }
@@ -392,26 +392,26 @@ public class FXMap extends BorderPane {
         mapDecorationPane.getChildren().add(nextMapDecorationIndex, deco.getComponent());
         nextMapDecorationIndex++;
     }
-    
+
     private class ResizableCanvas extends Canvas{
-        
+
         public ResizableCanvas() {}
-  
+
         @Override
         public boolean isResizable() {
             return true;
         }
- 
+
         @Override
         public double prefWidth(double height) {
             return 10;
         }
- 
+
         @Override
         public double prefHeight(double width) {
             return 10;
         }
-        
+
     }
-    
+
 }

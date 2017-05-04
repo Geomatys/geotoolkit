@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * multipolygon creation handler
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -54,7 +54,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
         nbRighClick = 0;
         decoration.setGeometries(null);
     }
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) {
 
@@ -92,7 +92,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
             subGeometries.add(candidate);
             geometry = EditionHelper.createMultiPolygon(subGeometries);
             decoration.setGeometries(Collections.singleton(geometry));
-        }else if(button == MouseEvent.BUTTON3){            
+        }else if(button == MouseEvent.BUTTON3){
             justCreated = false;
             nbRighClick++;
             if (nbRighClick == 1) {
@@ -128,7 +128,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
     public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
-        lastY = e.getY();        
+        lastY = e.getY();
         super.mousePressed(e);
     }
 

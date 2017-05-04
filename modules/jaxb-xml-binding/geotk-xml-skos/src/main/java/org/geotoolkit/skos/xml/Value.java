@@ -30,26 +30,26 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Value implements Serializable{
-    
+
     @XmlValue
     private String value;
-    
+
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
     private String lang;
 
     public Value() {
-        
+
     }
-    
+
     public Value(final String value) {
         this.value = value;
     }
-    
+
     public Value(final String value, final String lang) {
         this.value = value;
         this.lang  = lang;
     }
-    
+
     /**
      * @return the value
      */
@@ -77,7 +77,7 @@ public class Value implements Serializable{
     public void setLang(String lang) {
         this.lang = lang;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Value]:").append('\n');

@@ -27,9 +27,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for AbstractDataRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDataRecordType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
     public AbstractDataRecordType(final String id, final String definition, final boolean fixed) {
         super(id, definition, fixed);
     }
-    
+
     @Override
     public String toString() {
         return super.toString();

@@ -30,7 +30,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 public class BufferedImageTranscoder extends ImageTranscoder {
 
     private BufferedImage img;
-    
+
     @Override
     public BufferedImage createImage(final int w, final int h) {
         return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -44,5 +44,5 @@ public class BufferedImageTranscoder extends ImageTranscoder {
     public BufferedImage getBufferedImage() {
         return img;
     }
-    
+
 }

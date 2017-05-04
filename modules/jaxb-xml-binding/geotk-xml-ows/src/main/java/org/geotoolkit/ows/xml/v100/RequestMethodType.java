@@ -28,12 +28,12 @@ import org.geotoolkit.ows.xml.AbstractRequestMethod;
 
 
 /**
- * Connect point URL and any constraints for this HTTP request method for this operation request. In the OnlineResourceType, the xlink:href attribute in the xlink:simpleLink attribute group shall be used to contain this URL. The other attributes in the xlink:simpleLink attribute group should not be used. 
- * 
+ * Connect point URL and any constraints for this HTTP request method for this operation request. In the OnlineResourceType, the xlink:href attribute in the xlink:simpleLink attribute group shall be used to contain this URL. The other attributes in the xlink:simpleLink attribute group should not be used.
+ *
  * <p>Java class for RequestMethodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestMethodType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.ows.xml.AbstractRequestMethod;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
         super(href);
         this.constraint = constraints;
     }
-    
+
     public RequestMethodType(final RequestMethodType that){
         super(that);
         if (that != null && that.constraint != null) {
@@ -91,14 +91,14 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
             }
         }
     }
-    
+
     /**
      * Build a new Request method.
      */
     public RequestMethodType(final List<DomainType> constraint){
         this.constraint = constraint;
     }
-    
+
     /**
      * Gets the value of the constraint property.
      */
@@ -109,7 +109,7 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
         }
         return Collections.unmodifiableList(constraint);
     }
-    
+
      /**
      * Verify that this entry is identical to the specified object.
      */
@@ -131,7 +131,7 @@ public class RequestMethodType extends OnlineResourceType implements AbstractReq
         hash = 59 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         String s = super.toString();

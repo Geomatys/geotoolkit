@@ -21,7 +21,7 @@ package org.geotoolkit.ows.xml;
  * @module
  */
 public interface AbstractDCP {
-    
+
     AbstractHTTP getHTTP();
 
 }

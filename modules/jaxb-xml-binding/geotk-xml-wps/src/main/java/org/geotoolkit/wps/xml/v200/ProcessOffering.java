@@ -34,9 +34,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -77,9 +77,9 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     protected String processModel;
 
     public ProcessOffering() {
-        
+
     }
-    
+
     public ProcessOffering(ProcessDescriptionType process) {
         this.process = process;
     }
@@ -88,7 +88,7 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     public AbstractCodeType getIdentifier() {
         return process.getIdentifier();
     }
-    
+
     @Override
     public String getFirstTitle() {
         return process.getFirstTitle();
@@ -103,14 +103,14 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
     public List<? extends AbstractKeywords> getKeywords() {
         return process.getKeywords();
     }
-    
+
     /**
      * Gets the value of the process property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessDescriptionType }
-     *     
+     *
      */
     public ProcessDescriptionType getProcess() {
         return process;
@@ -118,11 +118,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Sets the value of the process property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessDescriptionType }
-     *     
+     *
      */
     public void setProcess(ProcessDescriptionType value) {
         this.process = value;
@@ -130,12 +130,12 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
      *     {@link Element }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -143,12 +143,12 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
      *     {@link Element }
-     *     
+     *
      */
     public void setAny(Object value) {
         this.any = value;
@@ -156,11 +156,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Gets the value of the jobControlOptions property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getJobControlOptions() {
         if (jobControlOptions == null) {
@@ -171,25 +171,25 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Gets the value of the outputTransmission property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the outputTransmission property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOutputTransmission().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DataTransmissionModeType }
-     * 
-     * 
+     *
+     *
      */
     public List<DataTransmissionModeType> getOutputTransmission() {
         if (outputTransmission == null) {
@@ -200,11 +200,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Gets the value of the processVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessVersion() {
         return processVersion;
@@ -212,11 +212,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Sets the value of the processVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessVersion(String value) {
         this.processVersion = value;
@@ -224,11 +224,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Gets the value of the processModel property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessModel() {
         if (processModel == null) {
@@ -240,11 +240,11 @@ public class ProcessOffering implements org.geotoolkit.wps.xml.ProcessOffering {
 
     /**
      * Sets the value of the processModel property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessModel(String value) {
         this.processModel = value;

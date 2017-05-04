@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.AbstractQuantityProperty;
 
 /**
  * Quantity is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for QuantityPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QuantityPropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractQuantityProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -30,7 +30,7 @@ import javax.swing.ImageIcon;
 
 /**
  * IconBundle, manage icons and avoid double loading
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -127,7 +127,7 @@ public final class IconBundle {
 
         for(int i = BUNDLES.size()-1; i>=0; i--){
             ResourceBundle bundle = BUNDLES.get(i);
-            
+
             if (existe(bundle, key)) {
                 String adress = bundle.getString(key);
                 if (adress.startsWith("$")) {

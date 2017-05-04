@@ -32,9 +32,9 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,7 +49,7 @@ import org.geotoolkit.wcs.xml.CoverageInfo;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -78,7 +78,7 @@ public class Contents implements Content{
      */
     Contents(){
     }
-    
+
     /**
      * Build the contents party of a Capabilities document.
      */
@@ -88,9 +88,9 @@ public class Contents implements Content{
         this.otherSource     = otherSource;
         this.supportedCRS    = supportedCRS;
         this.supportedFormat = supportedFormat;
-        
+
     }
-    
+
     /**
      * Unordered list of brief metadata describing top-level coverages available from this WCS server. This list shall be included unless one or more OtherSources are referenced and all this metadata is available from those sources. Gets the value of the coverageSummary property.
      */

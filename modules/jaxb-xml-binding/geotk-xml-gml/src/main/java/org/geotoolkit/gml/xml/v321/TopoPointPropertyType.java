@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoPointPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoPointPropertyType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoPointPropertyType", propOrder = {
@@ -58,11 +58,11 @@ public class TopoPointPropertyType {
 
     /**
      * Gets the value of the topoPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TopoPointType }
-     *     
+     *
      */
     public TopoPointType getTopoPoint() {
         return topoPoint;
@@ -70,11 +70,11 @@ public class TopoPointPropertyType {
 
     /**
      * Sets the value of the topoPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TopoPointType }
-     *     
+     *
      */
     public void setTopoPoint(TopoPointType value) {
         this.topoPoint = value;
@@ -82,11 +82,11 @@ public class TopoPointPropertyType {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public boolean isOwns() {
         if (owns == null) {
@@ -98,11 +98,11 @@ public class TopoPointPropertyType {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;

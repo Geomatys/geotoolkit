@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractSecurity;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.sml.xml.AbstractSecurity;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -153,35 +153,35 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the classification property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ClassificationType }
-     *     
-     
+     *
+
     public ClassificationType getClassification() {
         return classification;
     }
 
     /**
      * Sets the value of the classification property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ClassificationType }
-     *     
-     
+     *
+
     public void setClassification(ClassificationType value) {
         this.classification = value;
     }*/
 
     /**
      * Gets the value of the classificationReason property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClassificationReason() {
         return classificationReason;
@@ -189,11 +189,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the classificationReason property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClassificationReason(final String value) {
         this.classificationReason = value;
@@ -201,11 +201,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the classifiedBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getClassifiedBy() {
         return classifiedBy;
@@ -213,11 +213,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the classifiedBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setClassifiedBy(final String value) {
         this.classifiedBy = value;
@@ -225,11 +225,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the dateOfExemptedSource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDateOfExemptedSource() {
         return dateOfExemptedSource;
@@ -237,11 +237,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the dateOfExemptedSource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDateOfExemptedSource(final XMLGregorianCalendar value) {
         this.dateOfExemptedSource = value;
@@ -249,11 +249,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the declassDate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDeclassDate() {
         return declassDate;
@@ -261,11 +261,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the declassDate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDeclassDate(final XMLGregorianCalendar value) {
         this.declassDate = value;
@@ -273,11 +273,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the declassEvent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDeclassEvent() {
         return declassEvent;
@@ -285,11 +285,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the declassEvent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDeclassEvent(final String value) {
         this.declassEvent = value;
@@ -307,11 +307,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the declassManualReview property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isDeclassManualReview() {
         return declassManualReview;
@@ -319,11 +319,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the declassManualReview property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setDeclassManualReview(final Boolean value) {
         this.declassManualReview = value;
@@ -331,11 +331,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Gets the value of the derivedFrom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDerivedFrom() {
         return derivedFrom;
@@ -343,11 +343,11 @@ public class Security implements AbstractSecurity {
 
     /**
      * Sets the value of the derivedFrom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDerivedFrom(final String value) {
         this.derivedFrom = value;

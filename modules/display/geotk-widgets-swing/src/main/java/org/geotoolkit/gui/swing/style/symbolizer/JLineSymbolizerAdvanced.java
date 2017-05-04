@@ -40,27 +40,27 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * Line symbolizer edition panel
- * 
+ *
  * @author Johann Sorel
  * @module
  */
 public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> {
-    
+
     private MapLayer layer = null;
     private LineSymbolizer oldSymbolizer = null;
-    
-    /** 
+
+    /**
      * Creates new form JLineSymbolizerPanel
      */
     public JLineSymbolizerAdvanced() {
         super(LineSymbolizer.class);
         initComponents();
-        
+
         //align labels
         alignLabelColumnWidth(this);
-                
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -72,7 +72,7 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
         guiUOM.setLayer(layer);
         guiOffset.setLayer(layer);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -80,14 +80,14 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
     public MapLayer getLayer(){
         return layer;
     }
- 
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final LineSymbolizer symbol) {
         oldSymbolizer = symbol;
-        if (symbol != null) {            
+        if (symbol != null) {
             guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiStroke.parse(symbol.getStroke());
             guiOffset.parse(symbol.getPerpendicularOffset());
@@ -106,21 +106,21 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
             name = oldSymbolizer.getName();
             desc = oldSymbolizer.getDescription();
         }
-        
+
         return getStyleFactory().lineSymbolizer(
                     name,
                     guiGeom.create(),
                     desc,
                     guiUOM.create(),
-                    guiStroke.create(), 
+                    guiStroke.create(),
                     guiOffset.create());
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiUOM,guiGeom,guiStroke,guiOffset};
     }
-    
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -241,7 +241,7 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChanguiGeome(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChanguiGeome
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChanguiGeome

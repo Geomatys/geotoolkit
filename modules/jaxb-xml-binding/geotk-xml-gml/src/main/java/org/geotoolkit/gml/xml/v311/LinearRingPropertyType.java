@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Encapsulates a ring to represent properties in features or geometry collections.
- * 
+ *
  * <p>Java class for LinearRingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingPropertyType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,11 +55,11 @@ public class LinearRingPropertyType {
 
     /**
      * Gets the value of the linearRing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LinearRingType }
-     *     
+     *
      */
     public LinearRingType getLinearRing() {
         return linearRing;
@@ -67,11 +67,11 @@ public class LinearRingPropertyType {
 
     /**
      * Sets the value of the linearRing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LinearRingType }
-     *     
+     *
      */
     public void setLinearRing(final LinearRingType value) {
         this.linearRing = value;

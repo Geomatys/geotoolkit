@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OriginType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OriginType">
  *   &lt;complexContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OriginType")
@@ -59,11 +59,11 @@ public class OriginType {
 
     /**
      * Gets the value of the x property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getX() {
         return x;
@@ -71,11 +71,11 @@ public class OriginType {
 
     /**
      * Sets the value of the x property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setX(Double value) {
         this.x = value;
@@ -83,11 +83,11 @@ public class OriginType {
 
     /**
      * Gets the value of the y property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getY() {
         return y;
@@ -95,11 +95,11 @@ public class OriginType {
 
     /**
      * Sets the value of the y property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setY(Double value) {
         this.y = value;

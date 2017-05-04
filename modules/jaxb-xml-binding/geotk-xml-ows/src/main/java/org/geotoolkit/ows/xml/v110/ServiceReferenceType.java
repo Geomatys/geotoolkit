@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Complete reference to a remote resource that needs to be retrieved from an OWS using an XML-encoded operation request. This element shall be used, within an InputData or Manifest element that is used for input data, when that input data needs to be retrieved from another web service using a XML-encoded OWS operation request. This element shall not be used for local payload input data or for requesting the resource from a web server using HTTP Get. 
- * 
+ * Complete reference to a remote resource that needs to be retrieved from an OWS using an XML-encoded operation request. This element shall be used, within an InputData or Manifest element that is used for input data, when that input data needs to be retrieved from another web service using a XML-encoded OWS operation request. This element shall not be used for local payload input data or for requesting the resource from a web server using HTTP Get.
+ *
  * <p>Java class for ServiceReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServiceReferenceType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +61,7 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Gets the value of the requestMessage property.
-     * 
+     *
      */
     public Object getRequestMessage() {
         return requestMessage;
@@ -69,7 +69,7 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Sets the value of the requestMessage property.
-     * 
+     *
      */
     public void setRequestMessage(final Object value) {
         this.requestMessage = value;
@@ -77,7 +77,7 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Gets the value of the requestMessageReference property.
-     * 
+     *
      */
     public String getRequestMessageReference() {
         return requestMessageReference;
@@ -85,7 +85,7 @@ public class ServiceReferenceType extends ReferenceType {
 
     /**
      * Sets the value of the requestMessageReference property.
-     * 
+     *
      */
     public void setRequestMessageReference(final String value) {
         this.requestMessageReference = value;

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DistanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistanceType">
  *   &lt;complexContent>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceType")
@@ -53,11 +53,11 @@ public class DistanceType extends AbstractMeasureType {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public DistanceUnitType getUom() {
         if (uom == null) {
@@ -69,11 +69,11 @@ public class DistanceType extends AbstractMeasureType {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DistanceUnitType }
-     *     
+     *
      */
     public void setUom(DistanceUnitType value) {
         this.uom = value;

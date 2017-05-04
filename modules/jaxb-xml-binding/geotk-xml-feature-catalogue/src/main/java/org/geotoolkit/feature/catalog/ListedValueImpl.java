@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,11 +32,11 @@ import org.opengis.feature.catalog.ListedValue;
 
 /**
  * Value for an enumerated feature attribute domain, including its codes and interpretation.
- * 
+ *
  * <p>Java class for FC_ListedValue_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_ListedValue_Type">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.opengis.feature.catalog.ListedValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -75,9 +75,9 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
      * An empty constructor used by JAXB
      */
     public ListedValueImpl() {
-        
+
     }
-    
+
     /**
      * Clone a Listed value
      */
@@ -89,21 +89,21 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
             this.label               = feature.getLabel();
         }
     }
-    
+
     /**
      * Clone a DefinitionReference
      */
     public ListedValueImpl(final String code, final String label, final String definition, final DefinitionReference definitionReference) {
-       
+
         this.definitionReference = definitionReference;
         this.code                = code;
         this.definition          = definition;
         this.label               = label;
     }
-    
+
     /**
      * Gets the value of the label property.
-     * 
+     *
      */
     public String getLabel() {
         return label;
@@ -111,7 +111,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      */
     public void setLabel(final String value) {
         this.label = value;
@@ -119,7 +119,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      */
     public String getCode() {
         return code;
@@ -127,7 +127,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      */
     public void setCode(final String value) {
         this.code = value;
@@ -135,7 +135,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      */
     public String getDefinition() {
         return definition;
@@ -143,7 +143,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      */
     public void setDefinition(final String value) {
         this.definition = value;
@@ -151,7 +151,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Gets the value of the definitionReference property.
-     * 
+     *
      */
     public DefinitionReference getDefinitionReference() {
         return definitionReference;
@@ -159,12 +159,12 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
 
     /**
      * Sets the value of the definitionReference property.
-     * 
+     *
      */
     public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[ListedValue]:").append('\n');
@@ -182,7 +182,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -193,7 +193,7 @@ public class ListedValueImpl extends AbstractMetadata implements ListedValue {
         }
         if (object instanceof ListedValueImpl) {
             final ListedValueImpl that = (ListedValueImpl) object;
-            
+
            return Objects.equals(this.code,                that.code)                &&
                    Objects.equals(this.definition,          that.definition)          &&
                    Objects.equals(this.definitionReference, that.definitionReference) &&

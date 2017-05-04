@@ -29,9 +29,9 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 
 /**
  * <p>Java class for PhenomenonPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PhenomenonPropertyType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,13 +62,13 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     private CompoundPhenomenonType compoundPhenomenon;
     @XmlElement(name = "CompositePhenomenon")
     private CompositePhenomenonType compositePhenomenon;
-    
+
     /**
      * Allow to record the pehnomenon when its in href mode
      */
     @XmlTransient
     PhenomenonType hiddenPhenomenon;
-    
+
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -94,7 +94,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
      * An empty constructor used by JAXB.
      */
     PhenomenonPropertyType() {
-        
+
     }
 
     /**
@@ -103,12 +103,12 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     public PhenomenonPropertyType(final String href) {
         this.href = href;
     }
-    
+
     /**
      * Build a new Phenomenon Property.
      */
     public PhenomenonPropertyType(final PhenomenonType observedProperty) {
-        
+
         if (observedProperty instanceof CompositePhenomenonType) {
             this.compositePhenomenon       = (CompositePhenomenonType)observedProperty;
         } else if (observedProperty instanceof CompoundPhenomenonType) {
@@ -119,7 +119,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
             throw new IllegalArgumentException("only phenomenonType, CompositePhenomenonType and compoundPhenomenonType are allowed was:" + observedProperty);
         }
     }
-    
+
     /**
      * Set the phenomenon into href mode.
      */
@@ -134,7 +134,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
             setPhenomenon(null);
         }
     }
-    
+
     /**
      * Gets the value of the phenomenon property.
      */
@@ -153,7 +153,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     }
 
     public void setPhenomenon(final PhenomenonType pheno) {
-        
+
         if (pheno instanceof CompositePhenomenonType) {
             this.compositePhenomenon   = (CompositePhenomenonType)pheno;
             this.phenomenon            = null;
@@ -162,7 +162,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
             this.compoundPhenomenon    = (CompoundPhenomenonType)pheno;
             this.phenomenon            = null;
             this.compositePhenomenon   = null;
-            
+
         } else if (pheno instanceof PhenomenonType) {
             this.phenomenon           =  pheno;
             this.compositePhenomenon   = null;
@@ -230,7 +230,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     public String getActuate() {
         return actuate;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -279,7 +279,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[PhenomenonPropertyType]");
@@ -289,7 +289,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
             s.append(compositePhenomenon).append('\n');
         if (compoundPhenomenon != null)
             s.append(compoundPhenomenon).append('\n');
-        
+
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

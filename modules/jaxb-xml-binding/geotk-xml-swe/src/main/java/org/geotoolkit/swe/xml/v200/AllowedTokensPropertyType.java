@@ -30,9 +30,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AllowedTokensPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedTokensPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedTokensPropertyType", propOrder = {
@@ -73,11 +73,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the allowedTokens property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     @Override
     public AllowedTokensType getAllowedTokens() {
@@ -86,11 +86,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the allowedTokens property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTokensType }
-     *     
+     *
      */
     public void setAllowedTokens(AllowedTokensType value) {
         this.allowedTokens = value;
@@ -98,11 +98,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -115,11 +115,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public void setType(final String value) {
@@ -130,11 +130,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -143,11 +143,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(String value) {
@@ -156,11 +156,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -169,11 +169,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setRole(String value) {
@@ -182,11 +182,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -195,11 +195,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setArcrole(String value) {
@@ -208,11 +208,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -221,11 +221,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setTitle(String value) {
@@ -234,11 +234,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -250,11 +250,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public void setShow(String value) {
@@ -265,11 +265,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -281,11 +281,11 @@ public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty 
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public void setActuate(String value) {

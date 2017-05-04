@@ -38,7 +38,7 @@ public abstract class AbstractCSWRequest extends AbstractRequest{
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw");
 
     protected static final MarshallerPool POOL;
-    
+
     static {
         POOL = EBRIMMarshallerPool.getInstance();
     }

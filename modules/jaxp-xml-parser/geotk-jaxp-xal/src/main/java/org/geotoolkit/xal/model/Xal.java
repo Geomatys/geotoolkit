@@ -47,10 +47,10 @@ public interface Xal {
      * @return
      */
     List<AddressDetails> getAddressDetails();
-    
+
     /**
      * <p>Specific to DTD to specify the version number of DTD.</p>
-     * 
+     *
      * @return
      */
     String getVersion();

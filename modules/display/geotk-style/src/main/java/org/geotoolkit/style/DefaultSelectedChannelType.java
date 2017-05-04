@@ -25,19 +25,19 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of Types SelectedChannelType.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultSelectedChannelType implements SelectedChannelType{
 
     private final String name;
-    
+
     private final ContrastEnhancement enhance;
-    
+
     /**
      * Create a default immutable Selected channel type.
-     * 
+     *
      * @param name : can not be null
      * @param enchance : if null will be replaced by default description.
      */
@@ -46,7 +46,7 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
         this.name = name;
         this.enhance = (enhance == null) ? DEFAULT_CONTRAST_ENHANCEMENT : enhance;
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * Refers to a metadata package that contains metadata properties for an object. The metadataType attribute indicates the type of metadata referred to. 
- * 
+ * Refers to a metadata package that contains metadata properties for an object. The metadataType attribute indicates the type of metadata referred to.
+ *
  * <p>Java class for MetadataLinkType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataLinkType">
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -64,16 +64,16 @@ public class MetadataLinkType extends MetadataAssociationType {
      * An empty constructor used by JAXB
      */
     MetadataLinkType() {
-        
+
     }
-    
+
     /**
      * Build a new link (with only href attribute fill).
      */
     public MetadataLinkType(final String href) {
         super(href);
     }
-    
+
     /**
      * Gets the value of the metadataType property.
      */

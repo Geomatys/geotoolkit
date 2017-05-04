@@ -41,7 +41,7 @@ import org.geotoolkit.style.visitor.CopyStyleVisitor;
 public class LayerStylePropertyPanel extends MultiPropertyPanel {
 
     private Object target = null;
-    
+
     //store a copy of the layer and it's style
     //we do this to handle properly the apply and reset actions
     private MapLayer mimicLayer = null;
@@ -71,7 +71,7 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
     public void reset() {
         setTarget(target);
     }
-    
+
     private MapLayer createMimic(Object target){
         if(target instanceof MapLayer){
             final MapLayer origLayer = (MapLayer) target;
@@ -128,7 +128,7 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return MessageBundle.format("property_style");
@@ -138,5 +138,5 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
     public boolean canHandle(Object target) {
         return true;
     }
-    
+
 }

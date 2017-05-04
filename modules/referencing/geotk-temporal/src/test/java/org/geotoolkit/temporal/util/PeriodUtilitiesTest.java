@@ -280,7 +280,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         expResult = "2004-02-25T00:00:00Z/2004-03-20T00:00:00Z/P1W1D";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-        
+
         /**
          * Test 4: one week and one day period one second
          */
@@ -294,18 +294,18 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         expResult = "2004-02-25T00:00:01Z/2004-03-20T00:00:04Z/P1W1DT1S";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
-        
+
         /**
          * Test 5: one week and one day period one second 250 millisecond
          */
         instance = new PeriodUtilities(df2);
-         
+
         dates    = new TreeSet<>();
         dates.add(df2.parse("2004-02-25T00:00:01.250Z"));
         dates.add(df2.parse("2004-03-04T00:00:02.500Z"));
         dates.add(df2.parse("2004-03-12T00:00:03.750Z"));
         dates.add(df2.parse("2004-03-20T00:00:05.000Z"));
-        
+
         expResult = "2004-02-25T00:00:01.250Z/2004-03-20T00:00:05.000Z/P1W1DT1.250S";
         result = instance.getDatesRespresentation(dates);
         assertEquals(expResult, result);
@@ -449,7 +449,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         periods = "2003-01-07T00:00:00Z,2004-01-07T00:00:00Z,2004-01-28T00:00:00Z/2004-03-17T00:00:00Z/P1W,2005-03-02T00:00:00Z,2005-07-20T00:00:00Z,2005-11-09T00:00:00Z/2005-11-30T00:00:00Z/P1W,2009-10-31T00:00:00Z,2010-10-31T00:00:00Z,2011-10-31T00:00:00Z";
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-        
+
         /**
          * Test 4: one week and one day period one second
          */
@@ -463,13 +463,13 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
 
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
-        
-        
+
+
         /**
          * Test 5: one week and one day period one second 250 millisecond
          */
         instance = new PeriodUtilities(df2);
-        
+
         periods = "2004-02-25T00:00:01.250Z/2004-03-20T00:00:05.000Z/P1W1DT1.250S";
 
         expResult    = new TreeSet<>();
@@ -477,7 +477,7 @@ public class PeriodUtilitiesTest extends org.geotoolkit.test.TestBase {
         expResult.add(df2.parse("2004-03-04T00:00:02.500Z"));
         expResult.add(df2.parse("2004-03-12T00:00:03.750Z"));
         expResult.add(df2.parse("2004-03-20T00:00:05.000Z"));
-        
+
         result = instance.getDatesFromPeriodDescription(periods);
         assertEquals(expResult, result);
     }

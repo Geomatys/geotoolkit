@@ -58,7 +58,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     private static final AttributeType URLTYPE = new SingleAttributeTypeBuilder().setName(NamesExt.valueOf(""))
             .setValueClass(URL.class).build();
     private static final FileFilter IMAGES_FILTER = new FileNameExtensionFilter("Images", "jpg", "gif", "png", "ico", "bmp", "svg");
-    
+
     private MapLayer layer = null;
     private ExternalGraphic external = null;
 
@@ -98,7 +98,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
             //TODO : not handled yet
             //external.getCustomProperties();
             guiMime.setText(external.getFormat());
-            
+
             final OnlineResource res = external.getOnlineResource();
             if(res != null && res.getLinkage() != null){
                 try {
@@ -140,12 +140,12 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         }
         guiMime.setText(mimeType);
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

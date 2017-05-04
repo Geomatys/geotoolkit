@@ -44,5 +44,5 @@ public class NumberToLocalDateTimeConverter extends SimpleConverter<Double, Loca
         return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
     }
 
-    
+
 }

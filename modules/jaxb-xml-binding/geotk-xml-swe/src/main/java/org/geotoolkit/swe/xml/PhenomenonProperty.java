@@ -22,10 +22,10 @@ package org.geotoolkit.swe.xml;
  * @module
  */
 public interface PhenomenonProperty {
- 
+
     String getHref();
-            
+
     void setToHref();
-    
+
     Phenomenon getPhenomenon();
 }

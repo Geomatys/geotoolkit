@@ -33,9 +33,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for CreatedOrModifiedFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CreatedOrModifiedFeatureType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreatedOrModifiedFeatureType", propOrder = {
@@ -63,19 +63,19 @@ public class CreatedOrModifiedFeatureType {
     private String handle;
 
     public CreatedOrModifiedFeatureType() {
-        
+
     }
-    
+
     public CreatedOrModifiedFeatureType(final ResourceIdType rid, final String handle) {
         if (rid != null) {
             this.resourceId = Arrays.asList(rid);
         }
         this.handle = handle;
     }
-    
+
     /**
      * Gets the value of the resourceId property.
-     * 
+     *
     */
     public List<ResourceIdType> getResourceId() {
         if (resourceId == null) {
@@ -86,11 +86,11 @@ public class CreatedOrModifiedFeatureType {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHandle() {
         return handle;
@@ -98,11 +98,11 @@ public class CreatedOrModifiedFeatureType {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHandle(String value) {
         this.handle = value;

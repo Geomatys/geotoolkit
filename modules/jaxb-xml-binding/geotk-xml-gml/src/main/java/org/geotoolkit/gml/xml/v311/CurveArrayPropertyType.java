@@ -28,13 +28,13 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * A container for an array of curves. The elements are always contained in the array property, referencing geometry elements 
- * 			or arrays of geometry elements is not supported.
- * 
+ * A container for an array of curves. The elements are always contained in the array property, referencing geometry elements
+ *          or arrays of geometry elements is not supported.
+ *
  * <p>Java class for CurveArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveArrayPropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,13 +61,13 @@ public class CurveArrayPropertyType {
 
     /**
      * Gets the value of the abstractCurve property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
      * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
-     * 
+     *
      */
     public List<JAXBElement<? extends AbstractCurveType>> getJbAbstractCurve() {
         if (abstractCurve == null) {

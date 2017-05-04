@@ -30,7 +30,7 @@ public class DefaultLargeMailUserName implements LargeMailUserName{
     public DefaultLargeMailUserName(){}
 
     /**
-     * 
+     *
      * @param type
      * @param code
      * @param content

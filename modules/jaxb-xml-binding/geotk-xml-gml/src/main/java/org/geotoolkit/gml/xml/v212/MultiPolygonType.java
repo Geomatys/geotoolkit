@@ -22,15 +22,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         A MultiPolygon is defined by one or more Polygons, referenced through 
- *         polygonMember elements. 
- *       
- * 
+ *
+ *         A MultiPolygon is defined by one or more Polygons, referenced through
+ *         polygonMember elements.
+ *
+ *
  * <p>Java class for MultiPolygonType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiPolygonType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

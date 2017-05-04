@@ -30,7 +30,7 @@ public abstract class DataStore extends org.apache.sis.storage.DataStore {
      * @return source configuration parameters
      */
     public abstract ParameterValueGroup getConfiguration();
-    
+
     /**
      * Get the factory which created this source.
      *

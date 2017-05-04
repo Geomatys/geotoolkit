@@ -31,13 +31,13 @@ public class DefaultTimeSpan extends DefaultAbstractTimePrimitive implements Tim
     private Calendar end;
 
     /**
-     * 
+     *
      */
     public DefaultTimeSpan() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractTimePrimitiveSimpleExtensions

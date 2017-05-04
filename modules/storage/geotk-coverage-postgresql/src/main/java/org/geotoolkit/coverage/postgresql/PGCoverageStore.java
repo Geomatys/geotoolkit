@@ -372,8 +372,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
         super.finalize();
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
 }

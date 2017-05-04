@@ -32,11 +32,11 @@ import org.geotoolkit.ows.xml.Sections;
  *       sections in complete service metadata document. Each Section value shall
  *       contain an allowed section name as specified by each OWS specification.
  *       See Sections parameter subclause for more information.
- * 
+ *
  * <p>Java class for SectionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SectionsType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ows.xml.Sections;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SectionsType", propOrder = {
@@ -65,7 +65,7 @@ public class SectionsType implements Sections {
      */
     SectionsType(){
     }
-    
+
     /**
      * Build a new list of Section.
      */
@@ -79,10 +79,10 @@ public class SectionsType implements Sections {
     public SectionsType(final String section){
         this.section = Arrays.asList(section);
     }
-    
+
     /**
      * Gets the value of the section property.
-     * 
+     *
      */
     @Override
     public List<String> getSection() {
@@ -109,10 +109,10 @@ public class SectionsType implements Sections {
         }
         return false;
     }
-    
+
      /**
      * Add a new section to the list.
-     * 
+     *
      * @param section a new section.
      */
     @Override

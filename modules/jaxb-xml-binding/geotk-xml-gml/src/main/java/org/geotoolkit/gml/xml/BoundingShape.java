@@ -26,8 +26,8 @@ import java.util.List;
 public interface BoundingShape {
 
     List<String> getNull();
-    
+
     List<String> getNilReason();
-    
+
     Envelope getEnvelope();
 }

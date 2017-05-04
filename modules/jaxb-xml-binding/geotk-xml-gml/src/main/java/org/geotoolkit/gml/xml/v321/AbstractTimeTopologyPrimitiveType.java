@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractTimeTopologyPrimitiveType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeTopologyPrimitiveType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeTopologyPrimitiveType", propOrder = {
@@ -56,23 +56,23 @@ public abstract class AbstractTimeTopologyPrimitiveType extends AbstractTimePrim
     private ReferenceType complex;
 
     public AbstractTimeTopologyPrimitiveType() {
-        
+
     }
-    
+
     public AbstractTimeTopologyPrimitiveType(final AbstractTimeTopologyPrimitiveType that) {
         super(that);
         if (that != null) {
             this.complex = new ReferenceType(that.complex);
         }
     }
-    
+
     /**
      * Gets the value of the complex property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getComplex() {
         return complex;
@@ -80,11 +80,11 @@ public abstract class AbstractTimeTopologyPrimitiveType extends AbstractTimePrim
 
     /**
      * Sets the value of the complex property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setComplex(ReferenceType value) {
         this.complex = value;

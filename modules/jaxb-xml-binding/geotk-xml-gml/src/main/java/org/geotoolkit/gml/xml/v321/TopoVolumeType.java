@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TopoVolumeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TopoVolumeType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TopoVolumeType", propOrder = {
@@ -62,25 +62,25 @@ public class TopoVolumeType
 
     /**
      * Gets the value of the directedTopoSolid property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the directedTopoSolid property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDirectedTopoSolid().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectedTopoSolidPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<DirectedTopoSolidPropertyType> getDirectedTopoSolid() {
         if (directedTopoSolid == null) {
@@ -91,11 +91,11 @@ public class TopoVolumeType
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -103,11 +103,11 @@ public class TopoVolumeType
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

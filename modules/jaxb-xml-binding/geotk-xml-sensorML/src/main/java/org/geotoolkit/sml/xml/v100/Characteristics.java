@@ -37,9 +37,9 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -116,7 +116,7 @@ public class Characteristics implements AbstractCharacteristics {
             this.type    = capa.getType();
         }
     }
-    
+
     /**
      * Gets the value of the abstractDataRecord property.
      */
@@ -133,7 +133,7 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the abstractDataRecord property.
-     * 
+     *
      */
     public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -330,7 +330,7 @@ public class Characteristics implements AbstractCharacteristics {
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {
                 record = true;
             }
-            
+
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

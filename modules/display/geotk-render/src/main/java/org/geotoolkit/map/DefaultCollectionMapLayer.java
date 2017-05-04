@@ -28,7 +28,7 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Default implementation of a collection MapLayer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -41,7 +41,7 @@ class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMa
 
     /**
      * Creates a new instance of DefaultCollectionMapLayer
-     * 
+     *
      * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
@@ -77,7 +77,7 @@ class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMa
     public Collection<?> getCollection() {
         return this.collection;
     }
-    
+
     /**
      * Can not calculate bounds on a collection layer.
      * @return a full world envelope.
@@ -86,5 +86,5 @@ class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMa
     public Envelope getBounds() {
         return new Envelope2D(CommonCRS.WGS84.normalizedGeographic(),-180,-90,360,180);
     }
-   
+
 }

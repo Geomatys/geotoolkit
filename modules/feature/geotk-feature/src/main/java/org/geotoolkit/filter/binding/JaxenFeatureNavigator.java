@@ -204,7 +204,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public String getElementStringValue(Object o) {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Property){
             final Property candidate = (Property) o;
             if(candidate instanceof Attribute && ((Attribute)candidate).getType().getMaximumOccurs()>1){
@@ -267,7 +267,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public Iterator getChildAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Feature){
             final Feature candidate = (Feature) o;
             return new PropIterator(candidate,false);
@@ -328,7 +328,7 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public Iterator getAttributeAxisIterator(Object o) throws UnsupportedAxisException {
         if(o instanceof Fake) o = ((Fake)o).value;
-        
+
         if(o instanceof Feature){
             final Feature att = (Feature) o;
             return new PropIterator(att, true);
@@ -455,10 +455,10 @@ final class JaxenFeatureNavigator implements Navigator{
 
             }
         }
-        
+
     }
 
-    
+
     private static class PropIterator implements Iterator{
 
         private final Feature feature;
@@ -467,7 +467,7 @@ final class JaxenFeatureNavigator implements Navigator{
 
         public PropIterator(Feature f, boolean attributes) {
             this.feature = f;
-            
+
             //we must unloop multi-attributes and multi-association
             final List props = new ArrayList<>();
             final Iterator<? extends PropertyType> pite = f.getType().getProperties(true).iterator();
@@ -475,17 +475,17 @@ final class JaxenFeatureNavigator implements Navigator{
                 final PropertyType candidate = pite.next();
                 final GenericName gname = candidate.getName();
                 final String name = candidate.getName().toString();
-                
+
                 final boolean isAtt = candidate.getName().tip().toString().startsWith("@");
                 if((attributes && !isAtt) || (!attributes && isAtt)){
                     continue;
                 }
-                
+
 //                if(candidate instanceof AttributeType && ((AttributeType)candidate).getMaximumOccurs()>1){
 //                    for(Object o : ((Collection)values)){
 //                        props.add(new Fake(gname,o));
 //                    }
-//                }else 
+//                }else
                 if(candidate instanceof FeatureAssociationRole && ((FeatureAssociationRole)candidate).getMaximumOccurs()>1){
                     final FeatureAssociation complete = (FeatureAssociation)feature.getProperty(name);
                     final Collection<? extends Feature> values = (Collection)complete.getValues();
@@ -494,9 +494,9 @@ final class JaxenFeatureNavigator implements Navigator{
                     }
                 }else{
                     props.add(feature.getProperty(name));
-                }                
+                }
             }
-            
+
             ite = props.iterator();
         }
 
@@ -515,7 +515,7 @@ final class JaxenFeatureNavigator implements Navigator{
         }
 
     }
-    
+
     public static final class Fake{
         public final GenericName name;
         public final Feature value;
@@ -526,7 +526,7 @@ final class JaxenFeatureNavigator implements Navigator{
             this.name = name;
             this.value = value;
         }
-        
+
     }
-    
+
 }

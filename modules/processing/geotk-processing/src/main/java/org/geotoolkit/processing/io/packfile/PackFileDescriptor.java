@@ -46,7 +46,7 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("files to pack")
             .setRequired(true)
             .create(File[].class, null);
-    
+
     /**
      * Mandatory - path
      */
@@ -55,9 +55,9 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("zip file destination")
             .setRequired(true)
             .create(File.class, null);
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(SOURCE_IN,TARGET_IN);
@@ -70,13 +70,13 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("packed file")
             .setRequired(true)
             .create(File.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new PackFileDescriptor();
 
     public PackFileDescriptor() {

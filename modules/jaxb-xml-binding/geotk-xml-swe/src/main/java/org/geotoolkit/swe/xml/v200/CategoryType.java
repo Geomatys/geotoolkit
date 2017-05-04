@@ -26,9 +26,9 @@ import org.geotoolkit.swe.xml.AbstractCategory;
 
 /**
  * <p>Java class for CategoryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CategoryType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swe.xml.AbstractCategory;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CategoryType", propOrder = {
@@ -58,21 +58,21 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
     private String value;
 
     public CategoryType() {
-        
+
     }
-    
+
     public CategoryType(final String definition, final String value) {
         super(null, definition, null);
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Reference }
-     *     
+     *
      */
     @Override
     public Reference getCodeSpace() {
@@ -81,11 +81,11 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Reference }
-     *     
+     *
      */
     public void setCodeSpace(Reference value) {
         this.codeSpace = value;
@@ -93,11 +93,11 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTokensPropertyType }
-     *     
+     *
      */
     @Override
     public AllowedTokensPropertyType getConstraint() {
@@ -106,11 +106,11 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTokensPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedTokensPropertyType value) {
         this.constraint = value;
@@ -118,11 +118,11 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -131,11 +131,11 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;

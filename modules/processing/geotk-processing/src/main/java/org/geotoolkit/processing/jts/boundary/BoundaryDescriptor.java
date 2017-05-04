@@ -33,10 +33,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class BoundaryDescriptor extends AbstractProcessDescriptor{
-        
+
     /**Process name : boundary */
     public static final String NAME = "jts:boundary";
-    
+
     /**
      * Input parameters
      */
@@ -45,10 +45,10 @@ public class BoundaryDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Geometry JTS")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
-    
+
     /**
      * OutputParameters
      */
@@ -57,7 +57,7 @@ public class BoundaryDescriptor extends AbstractProcessDescriptor{
             .setRemarks("Boundary geometry result")
             .setRequired(true)
             .create(Geometry.class, null);
-    
+
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
@@ -74,5 +74,5 @@ public class BoundaryDescriptor extends AbstractProcessDescriptor{
     public Process createProcess(final ParameterValueGroup input) {
         return new BoundaryProcess(input);
     }
-    
+
 }

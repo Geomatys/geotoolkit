@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Bean of idinfo element of shp.xml.
- * 
+ *
  * @module
  */
 public class IdInfo {

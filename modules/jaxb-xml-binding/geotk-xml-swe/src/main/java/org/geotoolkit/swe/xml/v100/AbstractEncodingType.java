@@ -30,9 +30,9 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 
 /**
  * <p>Java class for AbstractEncodingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractEncodingType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,11 +73,11 @@ public class AbstractEncodingType implements AbstractEncoding {
             this.id = enc.getId();
         }
     }
-    
+
     public AbstractEncodingType(final String id) {
         this.id = id;
     }
-    
+
     /**
      * Gets the value of the id property.
      */

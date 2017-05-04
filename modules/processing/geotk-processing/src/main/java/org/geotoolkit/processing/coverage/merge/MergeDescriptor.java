@@ -30,8 +30,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- *  
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class MergeDescriptor extends AbstractProcessDescriptor {
@@ -47,7 +47,7 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoveragesDesc))
             .setRequired(true)
             .create(Coverage[].class, null);
-    
+
     /**
      * Mandatory - output coverage envelope
      */
@@ -57,7 +57,7 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelopeDesc))
             .setRequired(true)
             .create(Envelope.class, null);
-    
+
     /**
      * Mandatory - output coverage resolution
      */
@@ -70,7 +70,7 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
             .addName(NAME + "InputParameters").createGroup(IN_COVERAGES, IN_ENVELOPE, IN_RESOLUTION);
-    
+
     /**
      * Mandatory - Resulting coverage.
      */
@@ -83,12 +83,12 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
 
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
             .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
-    
+
     public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 
     private MergeDescriptor() {
-        super(NAME, GeotkProcessingRegistry.IDENTIFICATION, 
-                new SimpleInternationalString("Merge multiple coverages."), 
+        super(NAME, GeotkProcessingRegistry.IDENTIFICATION,
+                new SimpleInternationalString("Merge multiple coverages."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -96,6 +96,6 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
     public Process createProcess(ParameterValueGroup input) {
         return new MergeProcess(input);
     }
-    
-    
+
+
 }

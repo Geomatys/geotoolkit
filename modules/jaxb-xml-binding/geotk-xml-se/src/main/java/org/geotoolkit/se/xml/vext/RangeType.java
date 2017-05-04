@@ -31,9 +31,9 @@ import org.geotoolkit.se.xml.v110.SymbolizerType;
 
 /**
  * <p>Java class for RuleType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RuleType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.se.xml.v110.SymbolizerType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,20 +81,20 @@ public class RangeType {
 
     /**
      * Gets the value of the symbolizer property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the symbolizer property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSymbolizer().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LineSymbolizerType }{@code >}
@@ -103,8 +103,8 @@ public class RangeType {
      * {@link JAXBElement }{@code <}{@link PointSymbolizerType }{@code >}
      * {@link JAXBElement }{@code <}{@link TextSymbolizerType }{@code >}
      * {@link JAXBElement }{@code <}{@link RasterSymbolizerType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends SymbolizerType>> getSymbolizer() {
         if (symbolizer == null) {

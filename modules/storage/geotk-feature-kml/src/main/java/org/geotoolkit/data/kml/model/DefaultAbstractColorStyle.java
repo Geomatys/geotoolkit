@@ -31,13 +31,13 @@ public abstract class DefaultAbstractColorStyle extends DefaultAbstractSubStyle 
     protected ColorMode colorMode;
 
     /**
-     * 
+     *
      */
     protected DefaultAbstractColorStyle() {
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * <p>Java class for DistanceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistanceType">
  *   &lt;simpleContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,9 +56,9 @@ public class DistanceType {
      * An empty constructor used by JAXB
      */
     public DistanceType() {
-        
+
     }
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -66,10 +66,10 @@ public class DistanceType {
         this.value = value;
         this.units = units;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      */
     public double getValue() {
         return value;

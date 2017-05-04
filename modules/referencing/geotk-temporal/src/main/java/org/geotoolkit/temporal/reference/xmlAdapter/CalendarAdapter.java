@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2014, Geomatys
  *
@@ -38,14 +38,14 @@ public class CalendarAdapter extends PropertyType<CalendarAdapter, Calendar>{
      */
     public CalendarAdapter() {
     }
-    
+
     /**
      * Constructor for the {@link #wrap} method only.
      */
     private CalendarAdapter(final Calendar calendar) {
         super(calendar);
     }
-    
+
     /**
      * Invoked by JAXB at marshalling time for getting the actual element to write
      * inside the {@code <gml:Calendar>} XML element.
@@ -57,7 +57,7 @@ public class CalendarAdapter extends PropertyType<CalendarAdapter, Calendar>{
     public DefaultCalendar getElement() {
         return DefaultCalendar.castOrCopy(metadata);
     }
-    
+
     /**
      * Returns the GeoAPI interface which is bound by this adapter.
      * This method is indirectly invoked by the private constructor
@@ -81,7 +81,7 @@ public class CalendarAdapter extends PropertyType<CalendarAdapter, Calendar>{
     protected CalendarAdapter wrap(Calendar cal) {
         return new CalendarAdapter(cal);
     }
-    
+
     /**
      * Invoked by JAXB at unmarshalling time for storing the result temporarily.
      *

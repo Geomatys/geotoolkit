@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
 public class AffineTransformGeometryTransformer extends AbstractGeometryTransformer{
 
     private final java.awt.geom.AffineTransform transform;
-    
+
     /**
      * Constructor
      * @param transform

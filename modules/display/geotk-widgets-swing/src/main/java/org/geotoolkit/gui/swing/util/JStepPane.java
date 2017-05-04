@@ -32,13 +32,13 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 /**
  * Step panel, similar to what can be found on web application.
  * Step > subStep > subStep > ...
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JStepPane extends JPanel{
 
     public static final class Step{
-        
+
         private final String name;
         private final ImageIcon icon;
         private final JComponent component;
@@ -48,46 +48,46 @@ public class JStepPane extends JPanel{
             this.icon = icon;
             this.component = component;
         }
-        
+
     }
-    
+
     private final JToolBar guiTop = new JToolBar();
     private final JPanel guiCenter = new JPanel(new BorderLayout());
     private final List<Step> steps = new ArrayList<Step>();
-    
+
     public JStepPane() {
-        setLayout(new BorderLayout());        
-        guiTop.setFloatable(false);        
+        setLayout(new BorderLayout());
+        guiTop.setFloatable(false);
         add(BorderLayout.NORTH,guiTop);
         add(BorderLayout.CENTER,guiCenter);
     }
-    
+
     public void addStep(final Step step){
         steps.add(step);
         moveTo(step);
     }
-    
+
     public void moveTo(Step step){
         if(step == null) return;
-        
+
         final int index = steps.indexOf(step);
         for(int i=steps.size()-1; i>index; i--){
             steps.remove(i);
         }
         rebuildTop();
-        
-        
+
+
         guiCenter.removeAll();
         guiCenter.add(BorderLayout.CENTER,step.component);
         guiCenter.revalidate();
         guiCenter.repaint();
     }
-    
+
     private void rebuildTop(){
         guiTop.removeAll();
-        
+
         for(final Step step : steps){
-            
+
             final AbstractAction act = new AbstractAction(step.name, step.icon) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -98,13 +98,13 @@ public class JStepPane extends JPanel{
             final JButton button = new JButton(act);
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            
+
             guiTop.add(button);
             guiTop.add(new JLabel(IconBundle.getIcon("24_step")));
         }
-        
+
         guiTop.revalidate();
         guiTop.repaint();
     }
-    
+
 }

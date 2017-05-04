@@ -41,7 +41,7 @@ import org.opengis.util.InternationalString;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Element")
 public class ElementType implements Element {
-    
+
     /**
      * Name of the test applied to the data.
      */
@@ -59,10 +59,10 @@ public class ElementType implements Element {
 
     /**
      * Type of method used to evaluate quality of the dataset, or {@code null} if unspecified.
-     
+
     JAXB issue private EvaluationMethodType evaluationMethodType;
      */
-    
+
     /**
      * Description of the evaluation method.
      */
@@ -81,7 +81,7 @@ public class ElementType implements Element {
      * @deprecated Replaced by {@link #getDates}.
      */
     private Date[] date;
-    
+
     /**
      * Date or range of dates on which a data quality measure was applied.
      * The collection size is 1 for a single date, or 2 for a range. Returns
@@ -113,11 +113,11 @@ public class ElementType implements Element {
      */
     public ElementType() {
     }
-    
+
     /**
      * Name of the test applied to the data.
      */
-    public Collection<InternationalString> getNamesOfMeasure(){ 
+    public Collection<InternationalString> getNamesOfMeasure(){
         throw new UnsupportedOperationException("Not supported yet.");
         //return  namesOfMeasure;
     }
@@ -125,21 +125,21 @@ public class ElementType implements Element {
     /**
      * Code identifying a registered standard procedure, or {@code null} if none.
      */
-    public Identifier getMeasureIdentification(){ 
+    public Identifier getMeasureIdentification(){
         return measureIdentification;
     }
 
     /**
      * Description of the measure being determined.
      */
-    public InternationalString getMeasureDescription(){ 
+    public InternationalString getMeasureDescription(){
         return measureDescription;
     }
 
     /**
      * Type of method used to evaluate quality of the dataset, or {@code null} if unspecified.
      */
-    public EvaluationMethodType getEvaluationMethodType(){ 
+    public EvaluationMethodType getEvaluationMethodType(){
         throw new UnsupportedOperationException("Not supported yet.");
        //return evaluationMethodType;
     }
@@ -147,14 +147,14 @@ public class ElementType implements Element {
     /**
      * Description of the evaluation method.
      */
-    public InternationalString getEvaluationMethodDescription(){ 
+    public InternationalString getEvaluationMethodDescription(){
         return evaluationMethodDescription;
     }
 
     /**
      * Reference to the procedure information, or {@code null} if none.
      */
-    public Citation getEvaluationProcedure(){ 
+    public Citation getEvaluationProcedure(){
         return evaluationProcedure;
     }
 
@@ -165,10 +165,10 @@ public class ElementType implements Element {
      *
      * @deprecated Replaced by {@link #getDates}.
      */
-    public Date[] getDate(){ 
+    public Date[] getDate(){
         return date;
     }
-    
+
     /**
      * Date or range of dates on which a data quality measure was applied.
      * The collection size is 1 for a single date, or 2 for a range. Returns
@@ -176,7 +176,7 @@ public class ElementType implements Element {
      *
      * @since Types 2.1
      */
-    public Collection<Date> getDates(){ 
+    public Collection<Date> getDates(){
         return dates;
     }
 
@@ -198,7 +198,7 @@ public class ElementType implements Element {
      *
      * @since Types 2.1
      */
-    public Collection<? extends Result> getResults(){ 
+    public Collection<? extends Result> getResults(){
         return results;
     }
 }

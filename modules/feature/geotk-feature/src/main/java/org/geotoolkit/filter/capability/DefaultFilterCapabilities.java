@@ -39,8 +39,8 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
     private final ScalarCapabilities scalar;
     private final TemporalCapabilities temporal;
 
-    public DefaultFilterCapabilities(final String version, final IdCapabilities id, 
-            final SpatialCapabilities spatial, 
+    public DefaultFilterCapabilities(final String version, final IdCapabilities id,
+            final SpatialCapabilities spatial,
             final ScalarCapabilities scalar,
             final TemporalCapabilities temporal) {
         this.version = version;
@@ -73,7 +73,7 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
     public TemporalCapabilities getTemporalCapabilities() {
         return temporal;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -124,7 +124,7 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         }
         return true;
     }
-    
+
     /**
      * {@inheritDoc }
      */

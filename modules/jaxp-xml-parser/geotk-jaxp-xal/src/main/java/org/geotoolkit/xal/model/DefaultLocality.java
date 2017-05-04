@@ -46,7 +46,7 @@ public class DefaultLocality implements Locality {
     }
 
     /**
-     * 
+     *
      * @param addressLines
      * @param localityNames
      * @param postal
@@ -59,7 +59,7 @@ public class DefaultLocality implements Locality {
      * @param indicator
      * @throws XalException
      */
-    public DefaultLocality(List<GenericTypedGrPostal> addressLines, 
+    public DefaultLocality(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> localityNames, Object postal,
             Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode,

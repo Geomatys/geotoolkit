@@ -30,12 +30,12 @@ import org.opengis.util.GenericName;
 
 /**
  * A "SamplingFeatureRelation" is used to describe relationships between
- * 				sampling features, including part-whole, siblings, etc.
- * 
+ *              sampling features, including part-whole, siblings, etc.
+ *
  * <p>Java class for SamplingFeatureComplexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SamplingFeatureComplexType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.util.GenericName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SamplingFeatureComplexType", propOrder = {
@@ -65,16 +65,16 @@ public class SamplingFeatureComplexType implements SamplingFeatureRelation {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getRoleReference() {
         return role;
     }
-    
+
     @Override
     public GenericName getRole() {
         if (role.getHref() != null) {
@@ -86,11 +86,11 @@ public class SamplingFeatureComplexType implements SamplingFeatureRelation {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setRole(ReferenceType value) {
         this.role = value;
@@ -98,16 +98,16 @@ public class SamplingFeatureComplexType implements SamplingFeatureRelation {
 
     /**
      * Gets the value of the relatedSamplingFeature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SFSamplingFeaturePropertyType }
-     *     
+     *
      */
     public SFSamplingFeaturePropertyType getRelatedSamplingFeature() {
         return relatedSamplingFeature;
     }
-    
+
     @Override
     public SamplingFeature getTarget() {
         if (relatedSamplingFeature != null) {
@@ -118,11 +118,11 @@ public class SamplingFeatureComplexType implements SamplingFeatureRelation {
 
     /**
      * Sets the value of the relatedSamplingFeature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SFSamplingFeaturePropertyType }
-     *     
+     *
      */
     public void setRelatedSamplingFeature(SFSamplingFeaturePropertyType value) {
         this.relatedSamplingFeature = value;

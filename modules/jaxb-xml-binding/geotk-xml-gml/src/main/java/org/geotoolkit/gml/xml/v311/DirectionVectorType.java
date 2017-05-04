@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Direction expressed as a vector, either using components, or using angles.
- * 
+ *
  * <p>Java class for DirectionVectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectionVectorType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,11 @@ public class DirectionVectorType {
 
     /**
      * Gets the value of the vector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getVector() {
         return vector;
@@ -73,11 +73,11 @@ public class DirectionVectorType {
 
     /**
      * Sets the value of the vector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setVector(final VectorType value) {
         this.vector = value;
@@ -85,11 +85,11 @@ public class DirectionVectorType {
 
     /**
      * Gets the value of the horizontalAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getHorizontalAngle() {
         return horizontalAngle;
@@ -97,11 +97,11 @@ public class DirectionVectorType {
 
     /**
      * Sets the value of the horizontalAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setHorizontalAngle(final AngleType value) {
         this.horizontalAngle = value;
@@ -109,11 +109,11 @@ public class DirectionVectorType {
 
     /**
      * Gets the value of the verticalAngle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AngleType }
-     *     
+     *
      */
     public AngleType getVerticalAngle() {
         return verticalAngle;
@@ -121,11 +121,11 @@ public class DirectionVectorType {
 
     /**
      * Sets the value of the verticalAngle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AngleType }
-     *     
+     *
      */
     public void setVerticalAngle(final AngleType value) {
         this.verticalAngle = value;

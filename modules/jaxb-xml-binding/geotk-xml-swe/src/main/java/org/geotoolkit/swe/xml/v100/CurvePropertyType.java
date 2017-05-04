@@ -25,11 +25,11 @@ import org.geotoolkit.swe.xml.AbstractCurveProperty;
 
 /**
  * Curve is a data-type so usually appears "by value" rather than by reference.
- * 
+ *
  * <p>Java class for CurvePropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurvePropertyType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.swe.xml.AbstractCurveProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,11 +66,11 @@ public class CurvePropertyType implements AbstractCurveProperty {
 
     /**
      * Gets the value of the curve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveType }
-     *     
+     *
      */
     public CurveType getCurve() {
         return curve;
@@ -78,11 +78,11 @@ public class CurvePropertyType implements AbstractCurveProperty {
 
     /**
      * Sets the value of the curve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveType }
-     *     
+     *
      */
     public void setCurve(final CurveType value) {
         this.curve = value;

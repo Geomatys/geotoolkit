@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ContentType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentType", propOrder = {
@@ -67,11 +67,11 @@ public class ContentType {
 
     /**
      * Gets the value of the data property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getData() {
         return data;
@@ -79,11 +79,11 @@ public class ContentType {
 
     /**
      * Sets the value of the data property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setData(String value) {
         this.data = value;
@@ -91,11 +91,11 @@ public class ContentType {
 
     /**
      * Gets the value of the url property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getURL() {
         return url;
@@ -103,11 +103,11 @@ public class ContentType {
 
     /**
      * Sets the value of the url property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setURL(String value) {
         this.url = value;
@@ -115,11 +115,11 @@ public class ContentType {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -127,11 +127,11 @@ public class ContentType {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(String value) {
         this.format = value;
@@ -139,11 +139,11 @@ public class ContentType {
 
     /**
      * Gets the value of the width property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getWidth() {
         return width;
@@ -151,11 +151,11 @@ public class ContentType {
 
     /**
      * Sets the value of the width property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -163,11 +163,11 @@ public class ContentType {
 
     /**
      * Gets the value of the height property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getHeight() {
         return height;
@@ -175,11 +175,11 @@ public class ContentType {
 
     /**
      * Sets the value of the height property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;

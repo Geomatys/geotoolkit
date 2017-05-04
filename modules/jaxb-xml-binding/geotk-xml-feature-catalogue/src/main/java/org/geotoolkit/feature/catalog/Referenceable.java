@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,13 +23,13 @@ package org.geotoolkit.feature.catalog;
  * @module
  */
 public interface Referenceable {
-    
+
     public void setReference(boolean isReference);
-    
+
     public boolean isReference();
-    
+
     public Referenceable getReferenceableObject();
-    
+
     public String getId();
 
 }

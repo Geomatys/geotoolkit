@@ -70,15 +70,15 @@ import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Convert filters and expressions in SQL.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public interface FilterToSQL extends FilterVisitor, ExpressionVisitor{
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // EXPRESSION EXPRESSION ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     StringBuilder visit(NilExpression candidate, Object o);
 
@@ -93,7 +93,7 @@ public interface FilterToSQL extends FilterVisitor, ExpressionVisitor{
 
     @Override
     StringBuilder visit(Literal candidate, Object o);
-    
+
     @Override
     StringBuilder visit(Multiply candidate, Object o);
 
@@ -102,11 +102,11 @@ public interface FilterToSQL extends FilterVisitor, ExpressionVisitor{
 
     @Override
     StringBuilder visit(Subtract candidate, Object o);
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FILTER EXPRESSION ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     StringBuilder visitNullFilter(Object o);
 

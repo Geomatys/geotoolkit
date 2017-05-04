@@ -59,7 +59,7 @@ import java.util.List;
 public interface SubPremise {
 
     /**
-     * 
+     *
      * @return
      */
     List<GenericTypedGrPostal> getAddressLines();
@@ -77,7 +77,7 @@ public interface SubPremise {
     SubPremiseLocation getSubPremiseLocation();
 
     /**
-     * 
+     *
      * @return
      */
     List<SubPremiseNumber> getSubPremiseNumbers();
@@ -144,7 +144,7 @@ public interface SubPremise {
     SubPremise getSubPremise();
 
     /**
-     * 
+     *
      * @return
      */
     String getType();
@@ -224,7 +224,7 @@ public interface SubPremise {
     void setSubPremise(SubPremise subPremise);
 
     /**
-     * 
+     *
      * @param type
      */
     void setType(String type);

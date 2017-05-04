@@ -30,9 +30,9 @@ import org.opengis.util.InternationalString;
 
 /**
  * <p>Java class for TimeEdgeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeEdgeType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.util.InternationalString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeEdgeType", propOrder = {
@@ -64,9 +64,9 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
     private TimePeriodPropertyType extent;
 
     public TimeEdgeType() {
-        
+
     }
-    
+
     public TimeEdgeType(final TimeEdgeType that) {
         super(that);
         if (that != null) {
@@ -81,14 +81,14 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
             }
         }
     }
-    
+
     /**
      * Gets the value of the start property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public TimeNodePropertyType getStart() {
         return start;
@@ -96,11 +96,11 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Sets the value of the start property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public void setStart(TimeNodePropertyType value) {
         this.start = value;
@@ -108,11 +108,11 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Gets the value of the end property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public TimeNodePropertyType getEnd() {
         return end;
@@ -120,11 +120,11 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Sets the value of the end property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeNodePropertyType }
-     *     
+     *
      */
     public void setEnd(TimeNodePropertyType value) {
         this.end = value;
@@ -132,11 +132,11 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Gets the value of the extent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public TimePeriodPropertyType getExtent() {
         return extent;
@@ -144,11 +144,11 @@ public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements S
 
     /**
      * Sets the value of the extent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public void setExtent(TimePeriodPropertyType value) {
         this.extent = value;

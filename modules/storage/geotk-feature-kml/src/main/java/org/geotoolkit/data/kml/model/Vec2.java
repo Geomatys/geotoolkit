@@ -52,7 +52,7 @@ public interface Vec2 {
     Units getXUnits();
 
     /**
-     * 
+     *
      * @return
      */
     Units getYUnits();

@@ -39,9 +39,9 @@ import org.opengis.geometry.Envelope;
 
 /**
  * <p>Java class for CoverageSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageSummaryType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.opengis.geometry.Envelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageSummaryType", propOrder = {
@@ -88,10 +88,10 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
     private List<JAXBElement<? extends MetadataType>> metadata;
 
     public CoverageSummaryType() {
-        
+
     }
-    
-    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox, 
+
+    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox,
             final QName coverageSubtype) {
         super(title, _abstract, null);
         if (bbox != null) {
@@ -100,7 +100,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         }
         this.coverageId = identifier;
         this.coverageSubtype = coverageSubtype;
-                
+
     }
     /**
      * Gets the value of the wgs84BoundingBox property.
@@ -114,11 +114,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Gets the value of the coverageId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCoverageId() {
         return coverageId;
@@ -126,11 +126,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Sets the value of the coverageId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCoverageId(String value) {
         this.coverageId = value;
@@ -138,11 +138,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Gets the value of the coverageSubtype property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getCoverageSubtype() {
         return coverageSubtype;
@@ -150,11 +150,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Sets the value of the coverageSubtype property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setCoverageSubtype(QName value) {
         this.coverageSubtype = value;
@@ -162,11 +162,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Gets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public CoverageSubtypeParentType getCoverageSubtypeParent() {
         return coverageSubtypeParent;
@@ -174,11 +174,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Sets the value of the coverageSubtypeParent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoverageSubtypeParentType }
-     *     
+     *
      */
     public void setCoverageSubtypeParent(CoverageSubtypeParentType value) {
         this.coverageSubtypeParent = value;
@@ -186,12 +186,12 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      * {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
@@ -202,12 +202,12 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link MetadataType }{@code >}
      * {@link JAXBElement }{@code <}{@link AdditionalParametersType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {
@@ -221,11 +221,11 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         if (href != null) {
             this.metadata = new ArrayList<>();
             final org.geotoolkit.ows.xml.v200.ObjectFactory factory = new org.geotoolkit.ows.xml.v200.ObjectFactory();
-            
+
             this.metadata.add(factory.createMetadata(new MetadataType(href)));
         }
     }
-    
+
     @Override
     public Envelope getLonLatEnvelope() {
         //TODO

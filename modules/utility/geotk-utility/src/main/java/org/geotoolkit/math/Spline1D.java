@@ -17,7 +17,7 @@
 package org.geotoolkit.math;
 
 /**
- *	Table avec interpolations cubiques B-Spline.
+ *  Table avec interpolations cubiques B-Spline.
  *
  * @author Numerical Recipes in C
  * @author Martin Desruisseaux
@@ -99,11 +99,11 @@ public class Spline1D extends Search1D {
      * Renvoie la donnée <var>y</var> interpolée au <var>xi</var> spécifié. Les index
      * {@link #klo} et {@link #khi} doivent avoir été trouvés avant l'appel de cette méthode.
      *
-     * @param xi			Valeur de <var>x</var> pour laquelle on désire une
-     *						valeur <var>y</var> interpolée.
-     * @param reUseIndex	<code>true</code> s'il faut réutiliser les même
-     *						index que ceux de la dernière interpolation.
-     * @return				Valeur <var>y</var> interpolée.
+     * @param xi            Valeur de <var>x</var> pour laquelle on désire une
+     *                      valeur <var>y</var> interpolée.
+     * @param reUseIndex    <code>true</code> s'il faut réutiliser les même
+     *                      index que ceux de la dernière interpolation.
+     * @return              Valeur <var>y</var> interpolée.
      */
     @Override
     protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
@@ -115,15 +115,15 @@ public class Spline1D extends Search1D {
                 constructY2();
             }
             /*~******************************************************************
-             *																	*
-             * NUMERICAL RECIPES - splint (section 3.3)							*
-             *																	*
-             *	Given the arrays x1[0..n-1] and ya[0..n-1], wich tabulate a		*
-             *	function (with the xa_i's in order) and given the array			*
-             *	y2a[0..n-1] wich is the output from spline above, and given a	*
-             *	value of x_i, this routine returns a cubic-spline interpolated	*
-             *	value y.														*
-             *																	*
+             *                                                                  *
+             * NUMERICAL RECIPES - splint (section 3.3)                         *
+             *                                                                  *
+             *  Given the arrays x1[0..n-1] and ya[0..n-1], wich tabulate a     *
+             *  function (with the xa_i's in order) and given the array         *
+             *  y2a[0..n-1] wich is the output from spline above, and given a   *
+             *  value of x_i, this routine returns a cubic-spline interpolated  *
+             *  value y.                                                        *
+             *                                                                  *
              ********************************************************************/
             double a = x[khi];
             double b = x[klo];
@@ -143,19 +143,19 @@ public class Spline1D extends Search1D {
      */
     private final void constructY2() {
         /*~**********************************************************************************
-         *																					*
-         * NUMERICAL RECIPES - spline (section 3.3)											*
-         *																					*
-         *	Given arrays x[0..n-1] and y[0..n-1] containing a tabulated fonction,			*
-         *	i.e. y=f(x_i), with x_1 < x_2 < x_N, and given yp1 and ypn for the first		*
-         *	derivative of the interpolating function at points 1 and n respectively,		*
-         *	this routine returns an array y2[0..n-1] that contains the second derivatives	*
-         *	of the interpolating function at the tabulated points x_i. If yp1 and/or yp2	*
-         *	are equal to 1E+30 or larger, the routine is signaled to set the corresponding	*
-         *	boundary condition for a natural spline, with zero second derivative on that	*
-         *	boundary.																		*
-         *																					*
-         *	Adapté du C par Martin Desruisseaux.											*
+         *                                                                                  *
+         * NUMERICAL RECIPES - spline (section 3.3)                                         *
+         *                                                                                  *
+         *  Given arrays x[0..n-1] and y[0..n-1] containing a tabulated fonction,           *
+         *  i.e. y=f(x_i), with x_1 < x_2 < x_N, and given yp1 and ypn for the first        *
+         *  derivative of the interpolating function at points 1 and n respectively,        *
+         *  this routine returns an array y2[0..n-1] that contains the second derivatives   *
+         *  of the interpolating function at the tabulated points x_i. If yp1 and/or yp2    *
+         *  are equal to 1E+30 or larger, the routine is signaled to set the corresponding  *
+         *  boundary condition for a natural spline, with zero second derivative on that    *
+         *  boundary.                                                                       *
+         *                                                                                  *
+         *  Adapté du C par Martin Desruisseaux.                                            *
          ************************************************************************************/
         sentry = y2 = new double[y.length];
         final double u[] = new double[y.length];
@@ -237,9 +237,9 @@ public class Spline1D extends Search1D {
      * dans le vecteur des <var>y</var> sans créer de vecteur temporaire. Voyez la description de
      * la méthode de la classe de base pour plus de détails.
      *
-     * @param dxStart	Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
-     * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
-     * @return			Le tableau des <var>y</var>.
+     * @param dxStart   Plage minimal des <var>x</var> qu'il doit y avoir de chaque côté d'un NaN pour l'interpoler.
+     * @param dxStop    Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
+     * @return          Le tableau des <var>y</var>.
      */
     @Override
     public double[] interpolateNaN(final double dxStart, final double dxStop) {

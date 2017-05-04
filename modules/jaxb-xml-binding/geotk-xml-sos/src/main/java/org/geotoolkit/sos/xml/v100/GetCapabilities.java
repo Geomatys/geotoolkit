@@ -30,9 +30,9 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -65,7 +65,7 @@ public class GetCapabilities extends GetCapabilitiesType implements org.geotoolk
     public  GetCapabilities() {
         super("SOS");
     }
-    
+
     /**
      * Build a new getCapabilities request with the specified service
      */
@@ -100,7 +100,7 @@ public class GetCapabilities extends GetCapabilitiesType implements org.geotoolk
     public int hashCode() {
         return super.hashCode();
     }
-    
+
     @Override
     public boolean isValidSections() {
         if (sections != null) {

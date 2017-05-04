@@ -41,7 +41,7 @@ public class DefaultTextStatement implements TextStatement {
     public String getStatement() {
         return statement;
     }
-    
+
     @Override
     public Session getSession(){
         return session;
@@ -51,5 +51,5 @@ public class DefaultTextStatement implements TextStatement {
     public String getName() {
         return name;
     }
-    
+
 }

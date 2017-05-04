@@ -26,9 +26,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for PropertyIsLikeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyIsLikeType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,9 +70,9 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-        
+
     }
-    
+
     /**
      *Build a new Property is like operator
      */
@@ -112,10 +112,10 @@ public class PropertyIsLikeType extends ComparisonOpsType {
             this.wildCard   = that.wildCard;
         }
     }
-    
+
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -123,7 +123,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -131,7 +131,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the literal property.
-     * 
+     *
      */
     public LiteralType getLiteral() {
         return literal;
@@ -139,7 +139,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the literal property.
-     * 
+     *
     */
     public void setLiteral(final LiteralType value) {
         this.literal = value;
@@ -147,7 +147,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the escape property.
-     * 
+     *
      */
     public String getEscape() {
         return escape;
@@ -155,7 +155,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the escape property.
-     * 
+     *
      */
     public void setEscape(final String value) {
         this.escape = value;
@@ -163,7 +163,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the singleChar property.
-     * 
+     *
      */
     public String getSingleChar() {
         return singleChar;
@@ -171,7 +171,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the singleChar property.
-     * 
+     *
      */
     public void setSingleChar(final String value) {
         this.singleChar = value;
@@ -179,7 +179,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Gets the value of the wildCard property.
-     * 
+     *
      */
     public String getWildCard() {
         return wildCard;
@@ -187,7 +187,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
 
     /**
      * Sets the value of the wildCard property.
-     * 
+     *
      */
     public void setWildCard(final String value) {
         this.wildCard = value;

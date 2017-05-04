@@ -35,7 +35,7 @@ import org.opengis.style.Fill;
 
 /**
  * Fill panel
- * 
+ *
  * @author  Johann Sorel
  * @module
  */
@@ -44,8 +44,8 @@ public class JFillPane extends StyleElementEditor<Fill>{
     private MapLayer layer = null;
     private Fill fill = null;
 
-    /** 
-     * Creates new form JFillPanel 
+    /**
+     * Creates new form JFillPanel
      */
     public JFillPane() {
         super(Fill.class);
@@ -71,7 +71,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -92,7 +92,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
     @Override
     public Fill create() {
         return getStyleFactory().fill(
-                guiColor.create(), 
+                guiColor.create(),
                 guiAlpha.create());
     }
 
@@ -100,7 +100,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelColor,guiLabelAlpha,guiLabelFill};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -187,7 +187,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }

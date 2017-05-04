@@ -32,9 +32,9 @@ import org.geotoolkit.sos.xml.GetCapabilities;
 
 /**
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.sos.xml.GetCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType", propOrder = {
@@ -58,7 +58,7 @@ import org.geotoolkit.sos.xml.GetCapabilities;
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     private List<Object> extension;
-    
+
     private static List<String> ACCEPTED_SECTIONS = Arrays.asList("All",
                                                                   "ServiceIdentification",
                                                                   "ServiceProvider",
@@ -70,9 +70,9 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
      * minimal getCapabilities request.
      */
     public GetCapabilitiesType() {
-        
+
     }
-    
+
     /**
      * Build a new getCapabilities request with the specified service
      */
@@ -87,13 +87,13 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
     public GetCapabilitiesType(final String acceptVersions, final String acceptFormats) {
         super(acceptVersions, acceptFormats, "SOS");
     }
-    
+
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
-     * 
+     *
      */
     public List<Object> getExtension() {
         if (extension == null) {
@@ -104,11 +104,11 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -121,11 +121,11 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for InterpolationMethodType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "InterpolationMethod")
 @XmlEnum
@@ -56,8 +56,8 @@ public enum InterpolationMethod implements org.geotoolkit.wcs.xml.InterpolationM
     BARYCENTRIC("barycentric"),
 
     /**
-     * No interpolation. 
-     * 
+     * No interpolation.
+     *
      */
     @XmlEnumValue("none")
     NONE("none");

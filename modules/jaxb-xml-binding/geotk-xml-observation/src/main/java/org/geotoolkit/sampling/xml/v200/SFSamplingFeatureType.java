@@ -44,7 +44,7 @@ import org.opengis.observation.sampling.SurveyProcedure;
 
 /**
  * A "SamplingFeature" is a feature used primarily for taking
- * 				observations.
+ *              observations.
  *
  * <p>Java class for SF_SamplingFeatureType complex type.
  *
@@ -134,7 +134,7 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
     public FeaturePropertyType getSampledFeatureProperty() {
         return sampledFeature;
     }
-    
+
     @Override
     public List<FeaturePropertyType> getSampledFeatures() {
         if (sampledFeature != null) {

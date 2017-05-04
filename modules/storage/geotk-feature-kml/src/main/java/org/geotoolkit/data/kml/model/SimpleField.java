@@ -32,7 +32,7 @@ import java.util.List;
  *  &lt;attribute name="type" type="string"/>
  *  &lt;attribute name="name" type="string"/>
  *  &lt;/complexType>
- * 
+ *
  *  &lt;element name="SimpleFieldExtension" abstract="true"/>
  * </pre>
  *
@@ -54,7 +54,7 @@ public interface SimpleField {
     String getType();
 
     /**
-     * 
+     *
      * @return
      */
     String getName();
@@ -84,7 +84,7 @@ public interface SimpleField {
     void setName(String name);
 
     /**
-     * 
+     *
      * @param simpleFieldExtensions
      */
     void setSimpleFieldExtensions(List<Object> simpleFieldExtensions);

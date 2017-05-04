@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for Function_NamesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Function_NamesType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Function_NamesType", propOrder = {
@@ -54,11 +54,11 @@ public class FunctionNamesType {
 
     /**
      * Gets the value of the functionName property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FunctionNameType }
-     * 
-     * 
+     *
+     *
      */
     public List<FunctionNameType> getFunctionName() {
         if (functionName == null) {

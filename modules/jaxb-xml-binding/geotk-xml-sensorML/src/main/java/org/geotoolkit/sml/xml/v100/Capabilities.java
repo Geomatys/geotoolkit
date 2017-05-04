@@ -37,9 +37,9 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,7 +154,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -165,7 +165,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -205,7 +205,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -269,7 +269,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public String getType() {
         return type;

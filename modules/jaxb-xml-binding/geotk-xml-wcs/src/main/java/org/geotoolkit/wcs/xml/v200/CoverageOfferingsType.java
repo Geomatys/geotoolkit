@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CoverageOfferingsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageOfferingsType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageOfferingsType", propOrder = {
@@ -59,11 +59,11 @@ public class CoverageOfferingsType {
 
     /**
      * Gets the value of the serviceMetadata property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceMetadataType }
-     *     
+     *
      */
     public ServiceMetadataType getServiceMetadata() {
         return serviceMetadata;
@@ -71,11 +71,11 @@ public class CoverageOfferingsType {
 
     /**
      * Sets the value of the serviceMetadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceMetadataType }
-     *     
+     *
      */
     public void setServiceMetadata(ServiceMetadataType value) {
         this.serviceMetadata = value;
@@ -83,7 +83,7 @@ public class CoverageOfferingsType {
 
     /**
      * Gets the value of the offeredCoverage property.
-     * 
+     *
      */
     public List<OfferedCoverageType> getOfferedCoverage() {
         if (offeredCoverage == null) {

@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Human-readable descriptive information for the object it is included within.
- * 
+ *
  * WCS version 1.0.0
- * 
+ *
  * <p>Java class for AbstractDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDescriptionType">
  *   &lt;complexContent>
@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -76,7 +76,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
      */
     AbstractDescriptionType(){
     }
-    
+
     /**
      * Build a new description.
      */
@@ -106,7 +106,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
     public void setTitle(final String label) {
         setLabel(label);
     }
-    
+
     public void setLabel(final String label) {
         //first we erase the old one.
         for (int i = 0; i < rest.size(); i++) {
@@ -149,7 +149,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
     public void setAbstract(final String abs) {
         setDescription(abs);
     }
-    
+
     public String getDescription() {
         for (JAXBElement<String> jb : rest) {
             if ("description".equals(jb.getName().getLocalPart())) {
@@ -173,15 +173,15 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
             rest.add(factory.createDescription(description));
         }
     }
-    
+
     /**
-     * Gets the rest of the content model. 
-     * 
+     * Gets the rest of the content model.
+     *
      */
     public List<JAXBElement<String>> getRest() {
         return Collections.unmodifiableList(rest);
     }
-    
+
     /**
      * Add a new element to the rest list.
      */

@@ -36,12 +36,12 @@ import org.opengis.geometry.Envelope;
 
 
 /**
- * Brief metadata describing one or more coverages available from this WCS server. 
- * 
+ * Brief metadata describing one or more coverages available from this WCS server.
+ *
  * <p>Java class for CoverageSummaryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoverageSummaryType">
  *   &lt;complexContent>
@@ -63,7 +63,7 @@ import org.opengis.geometry.Envelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -88,28 +88,28 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
      */
     public CoverageSummaryType() {
     }
-    
+
     /**
      * An light constructor.
      */
     public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox) {
         super(title, _abstract, null);
         if (identifier != null) {
-            setIdentifier(identifier); 
+            setIdentifier(identifier);
         }
         if (bbox != null) {
             setWGS84BoundingBox(bbox);
         }
     }
-    
+
     /**
      * An light constructor.
      */
     public CoverageSummaryType(final List<LanguageStringType> title, final List<LanguageStringType> _abstract) {
         super(title, _abstract, null);
     }
-    
-    
+
+
     /**
      * An full constructor.
      */
@@ -118,7 +118,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         super(title, _abstract, keywords);
         this.rest = rest;
     }
-    
+
     public String getIdentifier() {
         for (JAXBElement<?> jb : rest) {
             if ("Identifier".equals(jb.getName().getLocalPart())) {
@@ -142,7 +142,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
             this.rest.add(factory.createIdentifier(metadata));
         }
     }
-    
+
     public MetadataType getMetadata() {
         for (JAXBElement<?> jb : rest) {
             if ("Metadata".equals(jb.getName().getLocalPart())) {
@@ -158,7 +158,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
             setMetadata(new MetadataType(href));
         }
     }
-    
+
     public void setMetadata(final MetadataType metadata) {
         // first we remove the old one
         for (int i = 0; i < rest.size(); i++) {
@@ -173,16 +173,16 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
             this.rest.add(factory.createMetadata(metadata));
         }
     }
-            
+
     /**
-     * Gets the rest of the content model. 
-     * 
+     * Gets the rest of the content model.
+     *
      */
     @Override
     public List<JAXBElement<?>> getRest() {
         return Collections.unmodifiableList(rest);
     }
-    
+
     /**
      * Add a new Element to the list
      */
@@ -195,7 +195,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         //should return the WGS84BoundingBox from the REST list
         return null;
     }
-    
+
     public WGS84BoundingBoxType getWGS84BoundingBox() {
         for (JAXBElement<?> jb : rest) {
             if (jb.getValue() instanceof WGS84BoundingBoxType) {
@@ -204,7 +204,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         }
         return null;
     }
-    
+
     public final void setWGS84BoundingBox(final WGS84BoundingBoxType metadata) {
         // first we remove the old one
         for (int i = 0; i < rest.size(); i++) {

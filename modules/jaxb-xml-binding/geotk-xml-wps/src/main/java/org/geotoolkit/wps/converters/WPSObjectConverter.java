@@ -27,7 +27,7 @@ import org.apache.sis.util.ObjectConverter;
  * @author Quentin Boileau (Geomatys).
  */
 public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
-    
+
     public static final String MIME         = "mime";
     public static final String SCHEMA       = "schema";
     public static final String ENCODING     = "encoding";
@@ -37,7 +37,7 @@ public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
     public static final String WPSVERSION   = "wpsVersion";
     public static final String GMLVERSION   = "gmlVersion";
 
-    
+
     /**
      * Converts an object of the {@linkplain #getSourceClass() source type}
      * to an object of the {@linkplain #getTargetClass() target type}.

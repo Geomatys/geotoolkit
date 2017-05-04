@@ -31,9 +31,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>Java class for TimeClockType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeClockType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeClockType", propOrder = {
@@ -74,11 +74,11 @@ public class TimeClockType
 
     /**
      * Gets the value of the referenceEvent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getReferenceEvent() {
         return referenceEvent;
@@ -86,11 +86,11 @@ public class TimeClockType
 
     /**
      * Sets the value of the referenceEvent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setReferenceEvent(StringOrRefType value) {
         this.referenceEvent = value;
@@ -98,11 +98,11 @@ public class TimeClockType
 
     /**
      * Gets the value of the referenceTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getReferenceTime() {
         return referenceTime;
@@ -110,11 +110,11 @@ public class TimeClockType
 
     /**
      * Sets the value of the referenceTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setReferenceTime(XMLGregorianCalendar value) {
         this.referenceTime = value;
@@ -122,11 +122,11 @@ public class TimeClockType
 
     /**
      * Gets the value of the utcReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getUtcReference() {
         return utcReference;
@@ -134,11 +134,11 @@ public class TimeClockType
 
     /**
      * Sets the value of the utcReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setUtcReference(XMLGregorianCalendar value) {
         this.utcReference = value;
@@ -146,25 +146,25 @@ public class TimeClockType
 
     /**
      * Gets the value of the dateBasis property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the dateBasis property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDateBasis().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeCalendarPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<TimeCalendarPropertyType> getDateBasis() {
         if (dateBasis == null) {

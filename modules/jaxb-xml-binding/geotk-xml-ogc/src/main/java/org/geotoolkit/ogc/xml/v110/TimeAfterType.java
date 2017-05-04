@@ -33,7 +33,7 @@ public class TimeAfterType extends BinaryTemporalOpType implements After {
     public TimeAfterType() {
 
     }
-    
+
     public TimeAfterType(final TimeAfterType that) {
         super(that);
     }

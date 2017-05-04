@@ -22,6 +22,6 @@ package org.geotoolkit.sml.xml;
  * @author Guilhem Legal (Geomatys)
  */
 public interface AbstractRules {
-    
+
     AbstractRulesDefinition getRulesDefinition();
 }

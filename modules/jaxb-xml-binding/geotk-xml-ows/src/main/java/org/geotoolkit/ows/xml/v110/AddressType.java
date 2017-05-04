@@ -27,12 +27,12 @@ import org.geotoolkit.ows.xml.AbstractAddress;
 
 
 /**
- * Location of the responsible individual or organization. 
- * 
+ * Location of the responsible individual or organization.
+ *
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -49,7 +49,7 @@ import org.geotoolkit.ows.xml.AbstractAddress;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -81,9 +81,9 @@ public class AddressType implements AbstractAddress {
      * Empty constructor used by JAXB
      */
     AddressType(){
-        
+
     }
-    
+
     /**
      * Build a new Adress.
      */
@@ -96,7 +96,7 @@ public class AddressType implements AbstractAddress {
         this.electronicMailAddress = electronicMailAddress;
         this.postalCode            = postalCode;
     }
-    
+
     /**
      * Build a simple new Adress.
      */
@@ -111,10 +111,10 @@ public class AddressType implements AbstractAddress {
         this.electronicMailAddress.add(electronicMailAddress);
         this.postalCode            = postalCode;
     }
-    
+
     /**
      * Gets the value of the deliveryPoint property.
-     * 
+     *
      */
     @Override
     public List<String> getDeliveryPoint() {
@@ -126,7 +126,7 @@ public class AddressType implements AbstractAddress {
 
     /**
      * Gets the value of the city property.
-     * 
+     *
      */
     @Override
     public String getCity() {
@@ -143,7 +143,7 @@ public class AddressType implements AbstractAddress {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      */
     @Override
     public String getPostalCode() {
@@ -168,7 +168,7 @@ public class AddressType implements AbstractAddress {
         }
         return this.electronicMailAddress;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -180,8 +180,8 @@ public class AddressType implements AbstractAddress {
         if (object instanceof AddressType) {
             final AddressType that = (AddressType) object;
             return Objects.equals(this.administrativeArea,    that.administrativeArea)    &&
-                   Objects.equals(this.city,                  that.city)                  && 
-                   Objects.equals(this.country,               that.country)               && 
+                   Objects.equals(this.city,                  that.city)                  &&
+                   Objects.equals(this.country,               that.country)               &&
                    Objects.equals(this.deliveryPoint,         that.deliveryPoint)         &&
                    Objects.equals(this.electronicMailAddress, that.electronicMailAddress) &&
                    Objects.equals(this.postalCode,            that.postalCode) ;
@@ -200,7 +200,7 @@ public class AddressType implements AbstractAddress {
         hash = 79 * hash + (this.electronicMailAddress != null ? this.electronicMailAddress.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString(){
         StringBuilder s = new StringBuilder();

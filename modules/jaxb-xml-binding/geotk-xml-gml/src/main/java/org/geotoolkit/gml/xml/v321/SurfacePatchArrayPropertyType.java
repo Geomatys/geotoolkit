@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:SurfacePatchArrayPropertyType is a container for a sequence of surface patches.
- * 
+ *
  * <p>Java class for SurfacePatchArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SurfacePatchArrayPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurfacePatchArrayPropertyType", propOrder = {

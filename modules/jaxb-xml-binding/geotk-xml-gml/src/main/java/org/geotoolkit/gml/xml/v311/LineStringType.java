@@ -115,7 +115,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
             pos.add(position);
         }
     }
-    
+
     /**
      * Build a new LineString with the specified coordinates
      */
@@ -224,7 +224,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         double miny =  Double.MAX_VALUE;
         double maxx = -Double.MAX_VALUE;
         double maxy = -Double.MAX_VALUE;
-        
+
         if (pos != null && !pos.isEmpty()) {
             for (DirectPositionType p : pos) {
                 final double x = p.getOrdinate(0);
@@ -239,10 +239,10 @@ public class LineStringType extends AbstractCurveType implements LineString {
             return new EnvelopeType("bound-1", lowerCorner, upperCorner, getSrsName());
         }
         return null;
-        
+
         // TODO try with posList and coordinates if pos is null or empty
     }
-    
+
     @Override
     public void emptySrsNameOnChild() {
          if (pos != null && !pos.isEmpty()) {
@@ -253,9 +253,9 @@ public class LineStringType extends AbstractCurveType implements LineString {
         } else if (posList != null) {
             posList.setSrsName(null);
             posList.setSrsDimension(null);
-        } 
+        }
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

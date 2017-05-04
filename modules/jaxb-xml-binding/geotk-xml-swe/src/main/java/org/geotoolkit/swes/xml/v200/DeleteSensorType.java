@@ -28,9 +28,9 @@ import org.geotoolkit.swes.xml.DeleteSensor;
 
 /**
  * <p>Java class for DeleteSensorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DeleteSensorType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.swes.xml.DeleteSensor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteSensorType", propOrder = {
@@ -57,26 +57,26 @@ public class DeleteSensorType extends ExtensibleRequestType implements DeleteSen
     private String procedure;
 
     public DeleteSensorType() {
-        
+
     }
-    
+
     public DeleteSensorType(final String version, final String procedure) {
         super(version, "SOS");
         this.procedure = procedure;
     }
-    
+
     public DeleteSensorType(final String version, final String service, final String procedure) {
         super(version, service);
         this.procedure = procedure;
     }
-    
+
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getProcedure() {
@@ -85,11 +85,11 @@ public class DeleteSensorType extends ExtensibleRequestType implements DeleteSen
 
     /**
      * Sets the value of the procedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcedure(String value) {
         this.procedure = value;

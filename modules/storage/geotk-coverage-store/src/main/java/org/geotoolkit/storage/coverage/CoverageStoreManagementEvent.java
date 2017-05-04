@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Coverage store structure change event.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CoverageStoreManagementEvent extends StorageEvent {
@@ -38,12 +38,12 @@ public class CoverageStoreManagementEvent extends StorageEvent {
         MOSAIC_DELETE
     };
 
-    private final Type type;    
+    private final Type type;
     private final GenericName coverageName;
     private final String pyramidId;
     private final String mosaicId;
-    
-    
+
+
     public CoverageStoreManagementEvent(Object source, Type type, GenericName name, String pyramidId, String mosaicId) {
         super(source);
         this.type = type;
@@ -55,7 +55,7 @@ public class CoverageStoreManagementEvent extends StorageEvent {
     public Type getType() {
         return type;
     }
-    
+
     public GenericName getCoverageName() {
         return coverageName;
     }
@@ -67,55 +67,55 @@ public class CoverageStoreManagementEvent extends StorageEvent {
     public String getMosaicId() {
         return mosaicId;
     }
-    
+
     @Override
     public CoverageStoreManagementEvent copy(final Object source){
         return new CoverageStoreManagementEvent(source, type, coverageName, pyramidId, mosaicId);
     }
-    
+
     public static CoverageStoreManagementEvent createCoverageAddEvent(
             final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_ADD, name, null, null);
     }
-    
+
     public static CoverageStoreManagementEvent createCoverageUpdateEvent(
             final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_UPDATE, name, null, null);
     }
-    
+
     public static CoverageStoreManagementEvent createCoverageDeleteEvent(
             final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_DELETE, name, null, null);
     }
-    
+
     public static CoverageStoreManagementEvent createPyramidAddEvent(
             final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_ADD, name, pyramidId, null);
     }
-    
+
     public static CoverageStoreManagementEvent createPyramidUpdateEvent(
             final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_UPDATE, name, pyramidId, null);
     }
-    
+
     public static CoverageStoreManagementEvent createPyramidDeleteEvent(
             final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_DELETE, name, pyramidId, null);
     }
-    
+
     public static CoverageStoreManagementEvent createMosaicAddEvent(
             final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_ADD, name, pyramidId, mosaicId);
     }
-    
+
     public static CoverageStoreManagementEvent createMosaicUpdateEvent(
             final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_UPDATE, name, pyramidId, mosaicId);
     }
-    
+
     public static CoverageStoreManagementEvent createMosaicDeleteEvent(
             final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_DELETE, name, pyramidId, mosaicId);
     }
-    
+
 }

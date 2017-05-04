@@ -31,9 +31,9 @@ import org.apache.sis.util.Version;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -96,11 +96,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the layer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLayer() {
         return layer;
@@ -108,11 +108,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the layer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLayer(final String value) {
         this.layer = value;
@@ -120,11 +120,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the style property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStyle() {
         return style;
@@ -132,11 +132,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the style property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStyle(final String value) {
         this.style = value;
@@ -144,11 +144,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -156,11 +156,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -168,11 +168,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Dimension name and value Gets the value of the dimensionNameValue property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DimensionNameValue }
-     * 
-     * 
+     *
+     *
      */
     public List<DimensionNameValue> getDimensionNameValue() {
         if (dimensionNameValue == null) {
@@ -183,11 +183,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the tileMatrixSet property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTileMatrixSet() {
         return tileMatrixSet;
@@ -195,11 +195,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the tileMatrixSet property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTileMatrixSet(final String value) {
         this.tileMatrixSet = value;
@@ -207,11 +207,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the tileMatrix property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTileMatrix() {
         return tileMatrix;
@@ -219,11 +219,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the tileMatrix property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTileMatrix(final String value) {
         this.tileMatrix = value;
@@ -231,11 +231,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the tileRow property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileRow() {
         return tileRow;
@@ -243,11 +243,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the tileRow property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileRow(final Integer value) {
         this.tileRow = value;
@@ -255,11 +255,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the tileCol property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getTileCol() {
         return tileCol;
@@ -267,11 +267,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the tileCol property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setTileCol(final Integer value) {
         this.tileCol = value;
@@ -279,11 +279,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -292,11 +292,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setService(final String value) {
         this.service = value;
@@ -304,11 +304,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -320,11 +320,11 @@ public class GetTile implements RequestBase {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

@@ -32,17 +32,17 @@ public class FXEditionBar extends ToolBar {
     private static final String CENTER = "buttongroup-center";
     private static final String RIGHT  = "buttongroup-right";
     private static final String SINGLE = "buttongroup-single";
-    
+
     public FXEditionBar(FXMap map) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
-        
+
         final Button butEdit = new FXEditAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         butEdit.getStyleClass().add(SINGLE);
-        
+
         final HBox hboxHandler = new HBox(butEdit);
-        
+
         getItems().add(hboxHandler);
-        
+
     }
-    
+
 }

@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 
 /**
  * <p>Java class for ReferenceParametersType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceParametersType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceParametersType", propOrder = {
@@ -63,12 +63,12 @@ public class ReferenceParametersType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -79,7 +79,7 @@ public class ReferenceParametersType {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * @return
      *     always non-null
      */

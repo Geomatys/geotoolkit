@@ -283,7 +283,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                             } else {
                                 //characteristic already exist
                             }
-                            
+
                         }
                         return atb.build();
                     }else{
@@ -380,7 +380,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
                 } else if(maxxAtt!=null){
                     atb.setMaximumOccurs(Integer.parseInt(maxxAtt));
                 }
-                
+
                 atts.add(atb.build());
 
             } else if (particle instanceof GroupRef) {
@@ -763,13 +763,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
      * Add property to feature type builder.
      * This methods skips standard object properties, reset identifier parameters
      * and unroll propertytypes.
-     * 
+     *
      * @param ftb
      * @param property
      */
     private void addProperty(FeatureTypeBuilder ftb, PropertyType property) {
 
-        if (skipStandardObjectProperties && 
+        if (skipStandardObjectProperties &&
                (Utils.GML_ABSTRACT_FEATURE_PROPERTIES.contains(property.getName()) ||
                 Utils.GML_STANDARD_OBJECT_PROPERTIES.contains(property.getName()))
                 ) {
@@ -832,7 +832,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable {
 
     /**
      * Stores the names of types being created at this time.
-     * 
+     *
      */
     private static final class BuildStack extends HashSet<GenericName> {
 

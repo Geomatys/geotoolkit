@@ -27,9 +27,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -71,7 +71,7 @@ public class DescribeResultModel extends RequestBaseType {
 
     /**
      * Gets the value of the resultName property.
-     * 
+     *
      */
     public QName getResultName() {
         return resultName;

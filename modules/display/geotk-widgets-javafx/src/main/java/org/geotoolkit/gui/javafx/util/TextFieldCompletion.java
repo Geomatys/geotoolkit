@@ -32,15 +32,15 @@ import javafx.stage.Popup;
 
 /**
  * Auto-completion for textfield.
- * 
- * Note : To update completion list over input text change, you must override 
+ *
+ * Note : To update completion list over input text change, you must override
  * {@link #getChoices(java.lang.String) } method.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
 public class TextFieldCompletion {
-    
+
     private final TextInputControl textField;
     private final Popup popup = new Popup();
     private final ListView<String> list = new ListView<>();
@@ -48,18 +48,18 @@ public class TextFieldCompletion {
 
     public TextFieldCompletion(final TextInputControl textField) {
         this.textField = textField;
-        
+
         list.setMinSize(0, 0);
-        
+
         popup.setAutoHide(true);
         popup.getContent().add(list);
-        
+
         // Event management
         this.textField.setOnKeyPressed(this::onKeyPress);
         this.textField.setOnMousePressed((MouseEvent e)->onKeyPress(null));
         this.textField.setOnMouseClicked((MouseEvent e)->updateChoices(textField.textProperty(), null, textField.textProperty().get()));
         this.textField.textProperty().addListener(this::updateChoices);
-        
+
         // If user click or press enter on a popup item, we put selected value as text field value.
         final MultipleSelectionModel<String> sModel = list.getSelectionModel();
         sModel.setSelectionMode(SelectionMode.SINGLE);
@@ -81,7 +81,7 @@ public class TextFieldCompletion {
                 }
             }
         });
-        
+
         list.setOnMouseClicked((MouseEvent event)-> {
             if (MouseButton.PRIMARY.equals(event.getButton())) {
                 final String val = sModel.getSelectedItem();
@@ -94,29 +94,29 @@ public class TextFieldCompletion {
             }
         });
     }
-    
+
     /**
      * Return list of possible choices to complete input text.
      * @param text The text to find completion for. Can be null or empty.
-     * @return A list of possible texts to replace the input one. Can be empty, 
+     * @return A list of possible texts to replace the input one. Can be empty,
      * but not null.
      */
     protected ObservableList<String> getChoices(String text){
         final ObservableList lst = FXCollections.observableArrayList();
         return lst;
     }
-    
+
     private void onKeyPress(KeyEvent event) {
         if (event == null || event.getCode() == null) {
             return;
         }
-        
+
         final KeyCode code = event.getCode();
-        
+
         if (code == KeyCode.UP) {
             caretPos = -1;
             moveCaret(textField.getLength());
-            
+
         } else if (code == KeyCode.DOWN) {
             if (!popup.isShowing()) {
                 final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
@@ -127,7 +127,7 @@ public class TextFieldCompletion {
             }
             caretPos = -1;
             moveCaret(textField.getLength());
-            
+
         } else if (code == KeyCode.BACK_SPACE) {
             caretPos = textField.getCaretPosition();
         } else if (code == KeyCode.DELETE) {
@@ -148,7 +148,7 @@ public class TextFieldCompletion {
             }
         }
     }
-    
+
     private void moveCaret(int textLength) {
         if (caretPos == -1) {
             textField.positionCaret(textLength);
@@ -156,5 +156,5 @@ public class TextFieldCompletion {
             textField.positionCaret(caretPos);
         }
     }
-    
+
 }

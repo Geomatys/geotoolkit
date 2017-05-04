@@ -25,9 +25,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for ComparisonOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ComparisonOpsType">
  *   &lt;complexContent>
@@ -36,18 +36,18 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOpsType")
-@XmlSeeAlso({PropertyIsNullType.class, 
-             BinaryComparisonOpType.class, 
+@XmlSeeAlso({PropertyIsNullType.class,
+             BinaryComparisonOpType.class,
              PropertyIsLikeType.class,
              PropertyIsBetweenType.class})
 public abstract class ComparisonOpsType implements Filter {
-    
+
     @Override
     public String toString() {
         return "class: " + this.getClass().getSimpleName() + '\n';

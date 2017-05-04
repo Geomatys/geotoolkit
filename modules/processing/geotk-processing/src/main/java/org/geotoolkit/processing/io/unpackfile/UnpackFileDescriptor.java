@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>RESULT_OUT "files" result files</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -58,7 +58,7 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("url,uri,file to read from")
             .setRequired(true)
             .create(Object.class, null);
-    
+
     /**
      * Mandatory - path
      */
@@ -67,9 +67,9 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("url,uri,file destination")
             .setRequired(true)
             .create(Object.class, null);
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(SOURCE_IN,TARGET_IN);
@@ -82,13 +82,13 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
             .setRemarks("unpacked files")
             .setRequired(true)
             .create(URL[].class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new UnpackFileDescriptor();
 
     private UnpackFileDescriptor() {

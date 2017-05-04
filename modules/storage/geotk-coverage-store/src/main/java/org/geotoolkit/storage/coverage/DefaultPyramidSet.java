@@ -26,12 +26,12 @@ import org.apache.sis.util.Classes;
 
 /**
  * Default PyramidSet.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultPyramidSet extends AbstractPyramidSet{
-    
+
     private final String id = UUID.randomUUID().toString();
     private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
     private final List<String> formats = new ArrayList<String>();
@@ -55,5 +55,5 @@ public class DefaultPyramidSet extends AbstractPyramidSet{
     public String toString(){
         return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
-    
+
 }

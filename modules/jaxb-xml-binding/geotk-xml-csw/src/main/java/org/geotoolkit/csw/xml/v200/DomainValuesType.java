@@ -30,9 +30,9 @@ import org.geotoolkit.csw.xml.DomainValues;
 
 /**
  * <p>Java class for DomainValuesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainValuesType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.csw.xml.DomainValues;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -126,10 +126,10 @@ public class DomainValuesType implements DomainValues {
         this.listOfValues  = new ListOfValuesType(listOfValues);
         this.type          = type;
     }
-    
+
     /**
      * Gets the value of the propertyName property.
-     * 
+     *
      */
     public String getPropertyName() {
         return propertyName;
@@ -137,7 +137,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the propertyName property.
-     * 
+     *
      */
     public void setPropertyName(final String value) {
         this.propertyName = value;
@@ -152,7 +152,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the parameterName property.
-     * 
+     *
      */
     public void setParameterName(final String value) {
         this.parameterName = value;
@@ -160,7 +160,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Gets the value of the listOfValues property.
-     * 
+     *
      */
     public ListOfValuesType getListOfValues() {
         return listOfValues;
@@ -168,7 +168,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the listOfValues property.
-     * 
+     *
      */
     public void setListOfValues(final ListOfValuesType value) {
         this.listOfValues = value;
@@ -176,7 +176,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Gets the value of the conceptualScheme property.
-     * 
+     *
      */
     public ConceptualSchemeType getConceptualScheme() {
         return conceptualScheme;
@@ -184,7 +184,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the conceptualScheme property.
-     * 
+     *
      */
     public void setConceptualScheme(final ConceptualSchemeType value) {
         this.conceptualScheme = value;
@@ -192,7 +192,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Gets the value of the rangeOfValues property.
-     * 
+     *
      */
     public RangeOfValuesType getRangeOfValues() {
         return rangeOfValues;
@@ -200,7 +200,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the rangeOfValues property.
-     * 
+     *
      */
     public void setRangeOfValues(final RangeOfValuesType value) {
         this.rangeOfValues = value;
@@ -208,7 +208,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      */
     public QName getType() {
         return type;
@@ -216,7 +216,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final QName value) {
         this.type = value;
@@ -224,7 +224,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Gets the value of the uom property.
-     * 
+     *
      */
     public String getUom() {
         return uom;
@@ -232,7 +232,7 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      */
     public void setUom(final String value) {
         this.uom = value;

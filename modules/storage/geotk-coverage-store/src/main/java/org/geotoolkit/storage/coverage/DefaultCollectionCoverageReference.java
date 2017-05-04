@@ -27,11 +27,11 @@ import org.opengis.util.GenericName;
 /**
  * Default Coverage collection references.<br>
  * This implementation uses the children nodes which are coverages to form a collection.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultCollectionCoverageReference extends AbstractCollectionCoverageReference {
-    
+
     public DefaultCollectionCoverageReference(CoverageStore store, GenericName name) {
         super(store,name);
     }
@@ -46,5 +46,5 @@ public class DefaultCollectionCoverageReference extends AbstractCollectionCovera
         }
         return Collections.unmodifiableCollection(references);
     }
-    
+
 }

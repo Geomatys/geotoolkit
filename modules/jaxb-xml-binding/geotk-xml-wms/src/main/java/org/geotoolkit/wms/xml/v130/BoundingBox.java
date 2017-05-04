@@ -26,9 +26,9 @@ import org.geotoolkit.wms.xml.AbstractBoundingBox;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.wms.xml.AbstractBoundingBox;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -53,7 +53,7 @@ import org.geotoolkit.wms.xml.AbstractBoundingBox;
 @XmlRootElement(name = "BoundingBox")
 public class BoundingBox implements AbstractBoundingBox{
 
-   
+
     @XmlAttribute(name = "CRS")
     private String crs;
     @XmlAttribute(required = true)
@@ -78,9 +78,9 @@ public class BoundingBox implements AbstractBoundingBox{
     /**
      * Build a new bounding box version 1.3.0.
      *
-     * @param crs 
-     * @param minx 
-     * @param miny 
+     * @param crs
+     * @param minx
+     * @param miny
      * @param maxx
      * @param maxy
      * @param resx
@@ -95,9 +95,9 @@ public class BoundingBox implements AbstractBoundingBox{
         this.crs  = crs;
         this.resx = resx;
         this.resy = resy;
-       
+
     }
-    
+
     /**
      * Gets the value of the crs property.
      */

@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @auhor Guilhem Legal
  * @module
  */
@@ -66,9 +66,9 @@ public class UserDefinedSymbolization {
      * Empty Constructor used by JAXB.
      */
     UserDefinedSymbolization() {
-        
+
     }
-    
+
     /**
      * Build a new User Defined Symbolization.
      */
@@ -81,7 +81,7 @@ public class UserDefinedSymbolization {
         this.remoteWFS     = remoteWFS;
         this.remoteWCS     = remoteWCS;
     }
-    
+
    /**
     * Gets the value of the supportSLD property.
     */

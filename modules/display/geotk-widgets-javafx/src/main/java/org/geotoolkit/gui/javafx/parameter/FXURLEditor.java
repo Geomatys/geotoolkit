@@ -76,7 +76,7 @@ public class FXURLEditor extends FXValueEditor {
 
         currentAttributeType.addListener(this::updateConverter);
         currentParamDesc.addListener(this::updateConverter);
-        
+
         Bindings.bindBidirectional(pathField.textProperty(), valueProperty,
                 new StringConverter() {
                     @Override
@@ -98,7 +98,7 @@ public class FXURLEditor extends FXValueEditor {
         return valueProperty;
     }
 
-    
+
     public void updateConverter(ObservableValue observable, Object oldValue, Object newValue) {
         valueConverter = ObjectConverters.find(String.class, getValueClass());
     }
@@ -147,7 +147,7 @@ public class FXURLEditor extends FXValueEditor {
             final String chosenPath = super.chooseInputContent();
             setPreviousPath(chosenPath);
             return chosenPath;
-        }        
+        }
     }
 
     public static final class Spi extends FXValueEditorSpi {
@@ -168,5 +168,5 @@ public class FXURLEditor extends FXValueEditor {
         public FXValueEditor createEditor() {
             return new FXURLEditor(this);
         }
-    } 
+    }
 }

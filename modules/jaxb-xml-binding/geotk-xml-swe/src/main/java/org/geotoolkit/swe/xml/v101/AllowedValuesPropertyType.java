@@ -28,9 +28,9 @@ import org.geotoolkit.swe.xml.AbstractAllowedValuesProperty;
 
 /**
  * <p>Java class for AllowedValuesPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedValuesPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.swe.xml.AbstractAllowedValuesProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -98,11 +98,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the allowedValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     @Override
     public AllowedValues getAllowedValues() {
@@ -111,11 +111,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the allowedValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValues }
-     *     
+     *
      */
     public void setAllowedValues(final AllowedValues value) {
         this.allowedValues = value;
@@ -123,11 +123,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRemoteSchema() {
@@ -136,11 +136,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setRemoteSchema(final String value) {
@@ -149,11 +149,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -162,11 +162,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setType(final String value) {
@@ -175,11 +175,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -188,11 +188,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(final String value) {
@@ -201,11 +201,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -214,11 +214,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setRole(final String value) {
@@ -227,11 +227,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -240,11 +240,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setArcrole(final String value) {
@@ -253,11 +253,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -266,11 +266,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setTitle(final String value) {
@@ -279,11 +279,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -292,11 +292,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setShow(final String value) {
@@ -305,11 +305,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -318,11 +318,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setActuate(final String value) {

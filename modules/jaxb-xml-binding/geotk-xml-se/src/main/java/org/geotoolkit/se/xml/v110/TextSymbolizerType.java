@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for TextSymbolizerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TextSymbolizerType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,11 +76,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public ParameterValueType getGeometry() {
         return geometry;
@@ -88,11 +88,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryType }
-     *     
+     *
      */
     public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
@@ -100,11 +100,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the label property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getLabel() {
         return label;
@@ -112,11 +112,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setLabel(final ParameterValueType value) {
         this.label = value;
@@ -124,11 +124,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the font property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FontType }
-     *     
+     *
      */
     public FontType getFont() {
         return font;
@@ -136,11 +136,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the font property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FontType }
-     *     
+     *
      */
     public void setFont(final FontType value) {
         this.font = value;
@@ -148,11 +148,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the labelPlacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LabelPlacementType }
-     *     
+     *
      */
     public LabelPlacementType getLabelPlacement() {
         return labelPlacement;
@@ -160,11 +160,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the labelPlacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LabelPlacementType }
-     *     
+     *
      */
     public void setLabelPlacement(final LabelPlacementType value) {
         this.labelPlacement = value;
@@ -172,11 +172,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the halo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HaloType }
-     *     
+     *
      */
     public HaloType getHalo() {
         return halo;
@@ -184,11 +184,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the halo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HaloType }
-     *     
+     *
      */
     public void setHalo(final HaloType value) {
         this.halo = value;
@@ -196,11 +196,11 @@ public class TextSymbolizerType
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FillType }
-     *     
+     *
      */
     public FillType getFill() {
         return fill;
@@ -208,11 +208,11 @@ public class TextSymbolizerType
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FillType }
-     *     
+     *
      */
     public void setFill(final FillType value) {
         this.fill = value;

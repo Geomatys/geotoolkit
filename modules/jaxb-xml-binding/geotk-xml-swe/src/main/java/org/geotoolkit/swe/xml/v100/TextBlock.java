@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
             this.tokenSeparator   = tb.getTokenSeparator();
         }
     }
-    
+
     /**
      * Crée un nouveau encodage de texte.
      */
@@ -81,11 +81,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Gets the value of the tokenSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTokenSeparator() {
@@ -94,11 +94,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Sets the value of the tokenSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTokenSeparator(final String value) {
         this.tokenSeparator = value;
@@ -106,11 +106,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Gets the value of the blockSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getBlockSeparator() {
@@ -119,11 +119,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Sets the value of the blockSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBlockSeparator(final String value) {
         this.blockSeparator = value;
@@ -131,11 +131,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Gets the value of the decimalSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDecimalSeparator() {
@@ -144,11 +144,11 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     /**
      * Sets the value of the decimalSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimalSeparator(final String value) {
         this.decimalSeparator = value;

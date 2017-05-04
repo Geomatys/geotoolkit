@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlRootElement(name = "GetNumeredConcept", namespace = "http://ws.geotk.org/")
 public class GetNumeredConcept {
-    
+
     private String uri;
     private String language;
     private String outputFormat;
@@ -65,7 +65,7 @@ public class GetNumeredConcept {
         this.theme        = theme;
         this.thesaurusUri = thesaurusUri;
     }
-    
+
     public GetNumeredConcept(final URI uri, final String language) {
         this.language = language;
         if (uri != null) {
@@ -75,11 +75,11 @@ public class GetNumeredConcept {
 
     /**
      * Gets the value of the uri property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUri() {
         return uri;
@@ -87,11 +87,11 @@ public class GetNumeredConcept {
 
     /**
      * Sets the value of the uri property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUri(String value) {
         this.uri = value;
@@ -99,11 +99,11 @@ public class GetNumeredConcept {
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -111,11 +111,11 @@ public class GetNumeredConcept {
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;

@@ -22,7 +22,7 @@ import org.opengis.style.Description;
 
 /**
  * Mutable named style.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -30,13 +30,13 @@ public interface MutableNamedStyle extends MutableLayerStyle,NamedStyle{
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
-    
+
     /**
      * Set the name of the named style.
      * @param name : new name
      */
     void setName(String name);
-    
+
     /**
      * Set the description of the named style.
      * @param description : new description

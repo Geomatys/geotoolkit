@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +59,11 @@ public class LineSymbolizer
 
     /**
      * Gets the value of the geometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Geometry }
-     *     
+     *
      */
     public Geometry getGeometry() {
         return geometry;
@@ -71,11 +71,11 @@ public class LineSymbolizer
 
     /**
      * Sets the value of the geometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Geometry }
-     *     
+     *
      */
     public void setGeometry(final Geometry value) {
         this.geometry = value;
@@ -83,11 +83,11 @@ public class LineSymbolizer
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Stroke }
-     *     
+     *
      */
     public Stroke getStroke() {
         return stroke;
@@ -95,11 +95,11 @@ public class LineSymbolizer
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Stroke }
-     *     
+     *
      */
     public void setStroke(final Stroke value) {
         this.stroke = value;

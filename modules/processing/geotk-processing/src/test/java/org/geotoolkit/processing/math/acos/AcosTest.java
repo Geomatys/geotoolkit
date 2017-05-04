@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public class AcosTest extends AbstractProcessTest {
 
-   
+
     public AcosTest() {
         super("math:acos");
     }
@@ -55,8 +55,8 @@ public class AcosTest extends AbstractProcessTest {
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
+
         assertEquals(0.8762, result.doubleValue(), 0.0001);
     }
-    
+
 }

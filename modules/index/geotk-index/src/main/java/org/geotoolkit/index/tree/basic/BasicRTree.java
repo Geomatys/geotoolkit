@@ -31,12 +31,12 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
  * BasicRTree : Tree implementation.<br/><br/>
- * 
- * It's a Tree implementation with a faster insertion and remove action, 
+ *
+ * It's a Tree implementation with a faster insertion and remove action,
  * but search is lesser fast than other Trees.<br/>
- * If stored datas are often updated, which mean more insertions or removes action, 
+ * If stored datas are often updated, which mean more insertions or removes action,
  * it's a Tree implementation which respond to this criteria.<br/><br/>
- * 
+ *
  * Note : In this RTree version it exist two made to split a Node, named : LINEAR and QUADRATIC.<br/>
  * For more informations see {@link SplitCase} javadoc.
  *
@@ -44,19 +44,19 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * @see SplitCase.
  */
 public class BasicRTree<E> extends AbstractTree<E> {
-    
+
     /**
      * Split made choice.
      */
     private final SplitCase choice;
-    
+
     /**
      * Create a Basic RTree implementation.
-     * 
+     *
      * @param treeAccess object in which all Tree information are stored.
      * @param choice split made choice.
      * @param treeEltMap object in which data and tree identifier are stored.
-     * @throws StoreIndexException 
+     * @throws StoreIndexException
      * @see TreeAccess
      * @see SplitCase
      * @see TreeElementMapper
@@ -70,7 +70,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -94,7 +94,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
             subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
         }
-        
+
         /**
          * Currently candidate was modified from precedently sub-Insert() call.
          * Affect candidate object with new candidate from sub-Insert method.
@@ -102,9 +102,9 @@ public class BasicRTree<E> extends AbstractTree<E> {
         if (subCandidateParent != null) {
             fileCandidate = subCandidateParent;
         }
-        treeAccess.writeNode(fileCandidate); 
+        treeAccess.writeNode(fileCandidate);
         assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
-        
+
         if (fileCandidate.getChildCount() > getMaxElements()) {
             assert fileCandidate.checkInternal() : "nodeInsert : before Branch grafting.";
 //            /*********************** Branch grafting **************************/
@@ -138,7 +138,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
             final Node[] splitTable = splitNode(fileCandidate);
             final Node split1 = (Node)splitTable[0];
             final Node split2 = (Node)splitTable[1];
-            
+
             final int candidateParentID = fileCandidate.getParentId();
             if (candidateParentID == 0) { // on est sur le noeud root
                 // on clear le candidate
@@ -146,7 +146,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
                 fileCandidate.clear();
                 fileCandidate.setProperties(IS_OTHER);
                 fileCandidate.addChild(split1);
-                fileCandidate.addChild(split2);     
+                fileCandidate.addChild(split2);
                 assert split1.checkInternal() : "nodeInsert : split1.";
                 assert split2.checkInternal() : "nodeInsert : split2.";
                 assert fileCandidate.checkInternal() : "nodeInsert : split root.";
@@ -170,7 +170,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
          */
         return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
     }
-    
+
     /**
      * Split a overflow {@code Node} in accordance with R-Tree properties.
      *
@@ -184,23 +184,23 @@ public class BasicRTree<E> extends AbstractTree<E> {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
         int childNumber = candidate.getChildCount();
-        if (childNumber < 2) 
+        if (childNumber < 2)
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         final int maxElmnts   = getMaxElements();
-        
+
         final Node[] children = candidate.getChildren();
         assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
-        
+
         final byte candidateProperties = candidate.getProperties();
-        
+
         Node s1 = null;
         Node s2 = null;
-        
+
         double refValue = Double.NEGATIVE_INFINITY;
         double tempValue;
         int index1 = 0;
         int index2 = 0;
-        
+
         switch (choice) {
             /**
              * Find the two further Nodes.
@@ -231,7 +231,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
                     for (int j = i + 1; j < childNumber; j++) {
                         bound1 = children[i].getBoundary();
                         bound2 = children[j].getBoundary();
-                        
+
                         rectGlobal = bound1.clone();
                         add(rectGlobal, bound2);
                         tempValue  = calculator.getSpace(rectGlobal) - calculator.getSpace(bound1) - calculator.getSpace(bound2);
@@ -247,30 +247,30 @@ public class BasicRTree<E> extends AbstractTree<E> {
             }
             break;
         }
-        
+
         assert (s1 != null && s2 != null) : "s1 || s2 == null";
-        
+
         final int maxid = Math.max(index1, index2);
         System.arraycopy(children, maxid+1, children, maxid, children.length-maxid-1);
         children[children.length-1] = null;
-        
+
         final int minid = Math.min(index1, index2);
         System.arraycopy(children, minid+1, children, minid, children.length-minid-1);
         children[children.length-1] = null;
         childNumber -= 2;
-        
+
         double[] r1Temp, r2Temp;
         double demimaxE = maxElmnts / 3.0;
         demimaxE = Math.max(demimaxE, 1);
-        
+
         //result1 attributs
         int r1ChCount = 0;
         Node[] result1Children = new Node[childNumber+1];
-        
+
         //result2 attributs
         int r2ChCount = 0;
         Node[] result2Children = new Node[childNumber+1];
-        
+
         //add s1 s2
         result1Children[r1ChCount++] = s1;
         result2Children[r2ChCount++] = s2;
@@ -281,10 +281,10 @@ public class BasicRTree<E> extends AbstractTree<E> {
             add(r1Temp, currentFileNode.getBoundary());
             r2Temp = s2.getBoundary().clone();
             add(r2Temp, currentFileNode.getBoundary());
-            
+
             final double area1 = calculator.getSpace(r1Temp);
             final double area2 = calculator.getSpace(r2Temp);
-            
+
             if (area1 < area2) {
                 if (r2ChCount <= demimaxE && r1ChCount > demimaxE) {
                     result2Children[r2ChCount++] = currentFileNode;
@@ -307,7 +307,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
         }
         result1Children = Arrays.copyOf(result1Children, r1ChCount);
         result2Children = Arrays.copyOf(result2Children, r2ChCount);
-                
+
         final Node result1, result2;
         final boolean isLeaf = candidate.isLeaf();
         if (!isLeaf && r1ChCount == 1) {
@@ -327,10 +327,10 @@ public class BasicRTree<E> extends AbstractTree<E> {
         // check result
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
-        
+
         return new Node[]{result1, result2};
     }
-    
+
     /**
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
@@ -351,11 +351,11 @@ public class BasicRTree<E> extends AbstractTree<E> {
         final int nodeACount = nodeA.getChildCount();
         final int nodeBCount = nodeB.getChildCount();
         final int size = nodeACount + nodeBCount;
-        
+
         final List<Node> listFN = new ArrayList<Node>(size);
         final Node[] nodeAChildren = nodeA.getChildren();
         final Node[] nodeBChildren = nodeB.getChildren();
-        
+
         final double[] globalE = nodeAChildren[0].getBoundary().clone();
         for (Node nod : nodeAChildren) {
             add(globalE, nod.getBoundary());
@@ -365,7 +365,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
             add(globalE, nod.getBoundary());
             listFN.add(nod);
         }
-        
+
         if(listFN.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
         final int maxEltsPermit = getMaxElements();
         final int dim           = globalE.length >> 1;
@@ -400,10 +400,10 @@ public class BasicRTree<E> extends AbstractTree<E> {
                 index = cut;
             }
         }
-        
+
         //index not wrong a split is better.
         if (index > maxEltsPermit || (size-index) > maxEltsPermit) return;
-        
+
         nodeA.clear();
         nodeB.clear();
         for (int i = 0; i < index; i++) {
@@ -421,7 +421,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
         assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
-    
+
     /**
      * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
      *
@@ -481,7 +481,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
-                } else if (currentChild.isLeaf() 
+                } else if (currentChild.isLeaf()
                      && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
                     if (reinsertListCoords == null) {
                         reinsertListCoords  = new ArrayList<double[]>();

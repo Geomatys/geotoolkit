@@ -40,28 +40,28 @@ public class ImageStatisticsProcess extends AbstractProcess {
     public ImageStatisticsProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void execute() throws ProcessException {
         final RenderedImage inImg = value(INPUT_IMAGE,  inputParameters);
-        
+
         final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(inImg);
-        
+
         final int numBand = pix.getNumBands();
         final Statistics[] stats = new Statistics[numBand];
         for (int b = 0; b < numBand; b++) {
             stats[b] = new Statistics("statistic from band "+b);
         }
-        
+
         int b = 0;
         while (pix.next()) {
             stats[b].accept(pix.getSampleDouble());
-            if (++b == numBand) b = 0; 
+            if (++b == numBand) b = 0;
         }
-                
+
         Parameters.getOrCreate(OUTPUT_STATS, outputParameters).setValue(stats);
     }
 }

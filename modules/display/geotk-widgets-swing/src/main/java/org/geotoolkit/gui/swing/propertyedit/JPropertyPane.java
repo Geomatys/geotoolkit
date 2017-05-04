@@ -126,7 +126,7 @@ public class JPropertyPane extends JPanel{
 
     public void addEditPanel(final PropertyPane pan){
         panels.add(pan);
-        
+
         removeAll();
         tabs.removeAll();
         if(panels.size()>1){

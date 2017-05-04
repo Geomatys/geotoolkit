@@ -40,11 +40,11 @@ public interface SymbolizerRenderer {
 
     /**
      * Original SymbolizerRendererService.
-     * 
+     *
      * @return SymbolizerRendererService
      */
     SymbolizerRendererService getService();
-    
+
     /**
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
      *
@@ -55,7 +55,7 @@ public interface SymbolizerRenderer {
 
     /**
      * Paint in one iteration a complete set of features.
-     * 
+     *
      * @param graphics : iterator over all graphics to render
      * @throws PortrayalException
      */

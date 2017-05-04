@@ -47,7 +47,7 @@ public class GetMap130 extends AbstractGetMap {
     public GetMap130(final String serverURL, final ClientSecurity security){
         super(serverURL,"1.3.0", security);
     }
-    
+
     public GetMap130(final WebMapClient server, final ClientSecurity security){
         super(server,"1.3.0", security);
     }

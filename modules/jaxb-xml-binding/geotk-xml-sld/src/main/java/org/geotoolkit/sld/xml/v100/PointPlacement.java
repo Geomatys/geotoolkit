@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +63,11 @@ public class PointPlacement {
 
     /**
      * Gets the value of the anchorPoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AnchorPoint }
-     *     
+     *
      */
     public AnchorPoint getAnchorPoint() {
         return anchorPoint;
@@ -75,11 +75,11 @@ public class PointPlacement {
 
     /**
      * Sets the value of the anchorPoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AnchorPoint }
-     *     
+     *
      */
     public void setAnchorPoint(final AnchorPoint value) {
         this.anchorPoint = value;
@@ -87,11 +87,11 @@ public class PointPlacement {
 
     /**
      * Gets the value of the displacement property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Displacement }
-     *     
+     *
      */
     public Displacement getDisplacement() {
         return displacement;
@@ -99,11 +99,11 @@ public class PointPlacement {
 
     /**
      * Sets the value of the displacement property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Displacement }
-     *     
+     *
      */
     public void setDisplacement(final Displacement value) {
         this.displacement = value;
@@ -111,11 +111,11 @@ public class PointPlacement {
 
     /**
      * Gets the value of the rotation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getRotation() {
         return rotation;
@@ -123,11 +123,11 @@ public class PointPlacement {
 
     /**
      * Sets the value of the rotation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setRotation(final ParameterValueType value) {
         this.rotation = value;

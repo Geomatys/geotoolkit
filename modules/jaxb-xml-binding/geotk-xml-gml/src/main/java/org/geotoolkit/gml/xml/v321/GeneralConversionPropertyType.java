@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * gml:GeneralConversionPropertyType is a property type for association roles to a general conversion, either referencing or containing the definition of that conversion.
- * 
+ *
  * <p>Java class for GeneralConversionPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeneralConversionPropertyType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeneralConversionPropertyType", propOrder = {
@@ -84,12 +84,12 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the abstractGeneralConversion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ConversionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralConversionType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractGeneralConversionType> getAbstractGeneralConversion() {
         return abstractGeneralConversion;
@@ -97,12 +97,12 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the abstractGeneralConversion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ConversionType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractGeneralConversionType }{@code >}
-     *     
+     *
      */
     public void setAbstractGeneralConversion(JAXBElement<? extends AbstractGeneralConversionType> value) {
         this.abstractGeneralConversion = ((JAXBElement<? extends AbstractGeneralConversionType> ) value);
@@ -110,25 +110,25 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNilReason().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -139,11 +139,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -151,11 +151,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -163,11 +163,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -179,11 +179,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -191,11 +191,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -203,11 +203,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -215,11 +215,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -227,11 +227,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -239,11 +239,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -251,11 +251,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -263,11 +263,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -275,11 +275,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -287,11 +287,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -299,11 +299,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -311,11 +311,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -323,11 +323,11 @@ public class GeneralConversionPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

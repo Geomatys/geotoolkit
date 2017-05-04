@@ -30,9 +30,9 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,11 +94,11 @@ public class Rule {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -106,11 +106,11 @@ public class Rule {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -118,11 +118,11 @@ public class Rule {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -130,11 +130,11 @@ public class Rule {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -142,11 +142,11 @@ public class Rule {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAbstract() {
         return _abstract;
@@ -154,11 +154,11 @@ public class Rule {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAbstract(final String value) {
         this._abstract = value;
@@ -166,11 +166,11 @@ public class Rule {
 
     /**
      * Gets the value of the legendGraphic property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LegendGraphic }
-     *     
+     *
      */
     public LegendGraphic getLegendGraphic() {
         return legendGraphic;
@@ -178,11 +178,11 @@ public class Rule {
 
     /**
      * Sets the value of the legendGraphic property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LegendGraphic }
-     *     
+     *
      */
     public void setLegendGraphic(final LegendGraphic value) {
         this.legendGraphic = value;
@@ -190,11 +190,11 @@ public class Rule {
 
     /**
      * Gets the value of the filter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FilterType }
-     *     
+     *
      */
     public FilterType getFilter() {
         return filter;
@@ -202,11 +202,11 @@ public class Rule {
 
     /**
      * Sets the value of the filter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FilterType }
-     *     
+     *
      */
     public void setFilter(final FilterType value) {
         this.filter = value;
@@ -214,11 +214,11 @@ public class Rule {
 
     /**
      * Gets the value of the elseFilter property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ElseFilter }
-     *     
+     *
      */
     public ElseFilter getElseFilter() {
         return elseFilter;
@@ -226,11 +226,11 @@ public class Rule {
 
     /**
      * Sets the value of the elseFilter property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ElseFilter }
-     *     
+     *
      */
     public void setElseFilter(final ElseFilter value) {
         this.elseFilter = value;
@@ -238,11 +238,11 @@ public class Rule {
 
     /**
      * Gets the value of the minScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMinScaleDenominator() {
         return minScaleDenominator;
@@ -250,11 +250,11 @@ public class Rule {
 
     /**
      * Sets the value of the minScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
@@ -262,11 +262,11 @@ public class Rule {
 
     /**
      * Gets the value of the maxScaleDenominator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getMaxScaleDenominator() {
         return maxScaleDenominator;
@@ -274,11 +274,11 @@ public class Rule {
 
     /**
      * Sets the value of the maxScaleDenominator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
@@ -286,20 +286,20 @@ public class Rule {
 
     /**
      * Gets the value of the symbolizer property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the symbolizer property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSymbolizer().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link TextSymbolizer }{@code >}
@@ -308,8 +308,8 @@ public class Rule {
      * {@link JAXBElement }{@code <}{@link RasterSymbolizer }{@code >}
      * {@link JAXBElement }{@code <}{@link PointSymbolizer }{@code >}
      * {@link JAXBElement }{@code <}{@link PolygonSymbolizer }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends SymbolizerType>> getSymbolizer() {
         if (symbolizer == null) {

@@ -66,7 +66,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     public XMLCoverageStore(Path root) throws URISyntaxException, IOException {
         this(root,true);
     }
-    
+
     public XMLCoverageStore(URL rootPath) throws URISyntaxException, IOException {
         this(rootPath, true);
     }
@@ -83,7 +83,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     public XMLCoverageStore(URL rootPath, boolean cacheTileStateInMemory) throws URISyntaxException, IOException {
         this(toParameters(rootPath.toURI(), cacheTileStateInMemory));
     }
-        
+
     public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
         final URI rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
@@ -99,7 +99,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
         return params;
     }
-    
+
     @Override
     public CoverageStoreFactory getFactory() {
         return (CoverageStoreFactory) DataStores.getFactoryById(XMLCoverageStoreFactory.NAME);

@@ -25,9 +25,9 @@ import org.geotoolkit.wfs.xml.Property;
 
 /**
  * <p>Java class for PropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.wfs.xml.Property;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyType", propOrder = {
@@ -63,30 +63,30 @@ public class PropertyType  implements Property {
         this.name  = name;
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
     }
-    
+
     public String getLocalName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -94,11 +94,11 @@ public class PropertyType  implements Property {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getValue() {
         return value;
@@ -106,11 +106,11 @@ public class PropertyType  implements Property {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setValue(Object value) {
         this.value = value;

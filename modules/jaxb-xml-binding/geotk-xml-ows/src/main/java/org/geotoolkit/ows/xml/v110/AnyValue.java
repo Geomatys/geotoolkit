@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -45,13 +45,13 @@ import javax.xml.bind.annotation.XmlType;
 public class AnyValue implements org.geotoolkit.ows.xml.AnyValue {
 
     public AnyValue() {
-        
+
     }
-    
+
     public AnyValue(AnyValue that) {
-        
+
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         return object instanceof AnyValue;

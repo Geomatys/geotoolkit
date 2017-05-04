@@ -31,11 +31,11 @@ import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
 
 /**
  * gml:CurveSegmentArrayPropertyType is a container for an array of curve segments.
- * 
+ *
  * <p>Java class for CurveSegmentArrayPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CurveSegmentArrayPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CurveSegmentArrayPropertyType", propOrder = {

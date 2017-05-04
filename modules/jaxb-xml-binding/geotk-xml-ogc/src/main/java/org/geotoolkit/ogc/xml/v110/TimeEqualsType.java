@@ -45,7 +45,7 @@ public class TimeEqualsType extends BinaryTemporalOpType implements TEquals {
     public TemporalOpsType getClone() {
         return new TimeEqualsType(this);
     }
-    
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

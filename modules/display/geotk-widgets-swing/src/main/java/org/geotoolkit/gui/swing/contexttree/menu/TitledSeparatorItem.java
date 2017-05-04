@@ -28,32 +28,32 @@ import org.jdesktop.swingx.JXTitledSeparator;
 
 /**
  * popup control separator, use for JContextTree
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
 public abstract class TitledSeparatorItem extends JXTitledSeparator implements TreePopupItem{
-       
+
     public static final int LEFT = SwingConstants.LEFT;
     public static final int RIGHT = SwingConstants.RIGHT;
     public static final int CENTER = SwingConstants.CENTER;
-        
-    /** 
+
+    /**
      * Creates a new instance of separator
      */
     public TitledSeparatorItem() {
         super();
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of separator
      * @param title
      */
     public TitledSeparatorItem(final String title) {
         super(title);
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of separator
      * @param title
      * @param position of the texte, SwingConstants
@@ -61,8 +61,8 @@ public abstract class TitledSeparatorItem extends JXTitledSeparator implements T
     public TitledSeparatorItem(final String title,final int position) {
         super(title,position);
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of separator
      * @param title
      * @param position of the texte, SwingConstants
@@ -71,16 +71,16 @@ public abstract class TitledSeparatorItem extends JXTitledSeparator implements T
     public TitledSeparatorItem(final String title,final int position,final Icon img) {
         super(title,position,img);
     }
-    
+
     @Override
     public Component getComponent(final TreePath[] selection) {
         return this;
     }
-    
+
     @Override
     public boolean isValid(final TreePath[] selection){
         return true;
     }
-    
-    
+
+
 }

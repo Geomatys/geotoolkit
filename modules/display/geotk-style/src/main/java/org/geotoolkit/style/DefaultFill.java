@@ -27,21 +27,21 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Fill.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class DefaultFill implements Fill{
 
     private final GraphicFill fill;
-    
+
     private final Expression color;
-    
+
     private final Expression opacity;
-    
+
     /**
      * Create a default immutable Fill.
-     * 
+     *
      * @param fill : can be bull, if null the color attribut will be used for rendering.
      * @param color : if null or Expression.NIL will be replaced by default value.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
@@ -51,7 +51,7 @@ public class DefaultFill implements Fill{
         this.color = (color == null || color == NIL) ? DEFAULT_FILL_COLOR : color;
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_FILL_OPACITY : opacity;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -115,7 +115,7 @@ public class DefaultFill implements Fill{
         if(color != null) hash += color.hashCode();
         if(fill != null) hash += fill.hashCode();
         if(opacity != null) hash += opacity.hashCode();
-        
+
         return hash;
     }
 
@@ -132,5 +132,5 @@ public class DefaultFill implements Fill{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

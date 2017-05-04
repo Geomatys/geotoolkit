@@ -25,9 +25,9 @@ import org.geotoolkit.swe.xml.AbstractText;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.geotoolkit.swe.xml.AbstractText;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +62,7 @@ public class Text extends AbstractDataComponentType implements AbstractText {
             this.value = tx.getValue();
         }
     }
-    
+
     public Text(final String definition, final String value) {
         super(definition);
         this.value = value;

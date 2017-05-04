@@ -45,7 +45,7 @@ public class DefaultGridTemplate implements GridTemplate{
     private final Paint labelPaint;
     private final float haloWidth;
     private final Paint haloPaint;
-    
+
     private final float xTextOffset;
     private final float yTextOffset;
 
@@ -53,12 +53,12 @@ public class DefaultGridTemplate implements GridTemplate{
             final Paint mainLinePaint, final Stroke lineStroke, final Paint linePaint, final Font mainLabelFont,
             final Paint mainLabelPaint, final float mainHaloWidth, final Paint mainHaloPaint, final Font labelFont,
             final Paint labelPaint, final float haloWidth, final Paint haloPaint) {
-        this(crs, mainLineStroke, 
-             mainLinePaint, lineStroke, linePaint, mainLabelFont, 
-             mainLabelPaint, mainHaloWidth, mainHaloPaint, labelFont, 
+        this(crs, mainLineStroke,
+             mainLinePaint, lineStroke, linePaint, mainLabelFont,
+             mainLabelPaint, mainHaloWidth, mainHaloPaint, labelFont,
              labelPaint, haloWidth, haloPaint, 0, 0);
     }
-    
+
     public DefaultGridTemplate(final CoordinateReferenceSystem crs, final Stroke mainLineStroke,
             final Paint mainLinePaint, final Stroke lineStroke, final Paint linePaint, final Font mainLabelFont,
             final Paint mainLabelPaint, final float mainHaloWidth, final Paint mainHaloPaint, final Font labelFont,
@@ -154,5 +154,5 @@ public class DefaultGridTemplate implements GridTemplate{
     public float getYTextOffset() {
         return yTextOffset;
     }
-    
+
 }

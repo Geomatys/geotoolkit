@@ -32,11 +32,11 @@ import org.geotoolkit.csw.xml.GetDomainResponse;
  * Returns the actual values for some property. In general this is a
  *          subset of the value domain (that is, set of permissible values),
  *          although in some cases these may be the same.
- * 
+ *
  * <p>Java class for GetDomainResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetDomainResponseType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.csw.xml.GetDomainResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,9 +66,9 @@ public class GetDomainResponseType implements GetDomainResponse {
      * An empty constructor used by JAXB
      */
     public GetDomainResponseType() {
-        
+
     }
-    
+
     /**
      * build a new response to a getDomain request
      */
@@ -85,7 +85,7 @@ public class GetDomainResponseType implements GetDomainResponse {
             }
         }
     }
-    
+
     /**
      * Gets the value of the domainValues property.
      * (unmodifiable)

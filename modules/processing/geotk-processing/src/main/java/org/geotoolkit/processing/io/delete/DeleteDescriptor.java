@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>RESULT_OUT "result" result of the deletion</li>
  * </ul>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -56,9 +56,9 @@ public final class DeleteDescriptor extends AbstractProcessDescriptor {
             .setRemarks("The path(URI,URL,File,String) to object to delete")
             .setRequired(true)
             .create(Object.class, null);
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(PATH_IN);
@@ -71,13 +71,13 @@ public final class DeleteDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Success of the deletion")
             .setRequired(true)
             .create(Boolean.class, null);
-    
-    /** 
-     * Output Parameters 
+
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
-    
+
     public static final ProcessDescriptor INSTANCE = new DeleteDescriptor();
 
     private DeleteDescriptor() {

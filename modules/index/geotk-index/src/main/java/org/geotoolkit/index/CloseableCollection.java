@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Tag interface for collection that must be closed 
- * 
+ * Tag interface for collection that must be closed
+ *
  * @author jesse
  * @module
  */

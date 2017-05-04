@@ -23,26 +23,26 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface Envelope extends org.opengis.geometry.Envelope {
-    
+
     String getSrsName();
-    
+
     Integer getSrsDimension();
-    
+
     void setSrsDimension(Integer dim);
-            
+
     //DirectPosition getLowerCorner();
-    
+
     //DirectPosition getUpperCorner();
-    
+
     List<String> getAxisLabels();
-    
+
     void setAxisLabels(final List<String> axisLabels);
-    
+
     List<String> getUomLabels();
-    
+
     Coordinates getCoordinates();
-    
+
     List<? extends DirectPosition> getPos();
-     
+
     boolean isCompleteEnvelope2D();
 }

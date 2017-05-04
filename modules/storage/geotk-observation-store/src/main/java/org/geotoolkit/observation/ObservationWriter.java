@@ -37,11 +37,11 @@ public interface ObservationWriter {
      * @param template An O&M observation
      *
      * @return The new identifiers of the observation
-     * 
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     String writeObservationTemplate(final ObservationTemplate template) throws DataStoreException;
-    
+
     /**
      * Write a new Observation into the database
      *
@@ -52,7 +52,7 @@ public interface ObservationWriter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     String writeObservation(final Observation observation) throws DataStoreException;
-    
+
     /**
      * Write a list of observations into the database
      *
@@ -63,7 +63,7 @@ public interface ObservationWriter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<String> writeObservations(final List<Observation> observations) throws DataStoreException;
-    
+
      /**
      * Write a list of phenomenons into the database
      *
@@ -77,29 +77,29 @@ public interface ObservationWriter {
      * Remove an observation with the specified identifier.
      *
      * @param observationID
-     * 
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     void removeObservation(final String observationID) throws DataStoreException;
-    
+
     /**
      * Remove an observation with the specified procedure.
      *
      * @param procedureID
-     * 
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     void removeObservationForProcedure(final String procedureID) throws DataStoreException;
-    
+
     /**
      * Remove a procedure from the O&M datasource.
      *
      * @param procedureID
-     * 
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     void removeProcedure(String procedureID) throws DataStoreException;
-    
+
     /**
      * Write a new Observation offering into the database
      *
@@ -129,14 +129,14 @@ public interface ObservationWriter {
 
     /**
      * Record a procedure with its location and parent.
-     * 
+     *
      * @param procedureID identifier of the procedure.
      * @param position The GML position of the procedure or @{code null}.
      * @param parent The parent procedure identifier @{code null}
      * @throws org.apache.sis.storage.DataStoreException
      */
     void writeProcedure(final String procedureID, final AbstractGeometry position, final String parent, final String type) throws DataStoreException;
-    
+
     /**
      * Record the location of a sensor.
      *

@@ -22,12 +22,12 @@ package org.geotoolkit.wps;
  * @module
  */
 public class WPSInputLiteral extends AbstractWPSInput{
-    
+
     private String data;
     private String dataType;
     private String uom;
 
-    
+
     /**
      * Minimal constructor with only identifier and href Input Literal parameters
      * @param identifier
@@ -39,7 +39,7 @@ public class WPSInputLiteral extends AbstractWPSInput{
         this.dataType = null;
         this.uom = null;
     }
-    
+
     /**
      * Constructor with all Input Literal parameters
      * @param identifier
@@ -48,7 +48,7 @@ public class WPSInputLiteral extends AbstractWPSInput{
      * @param schema
      * @param mime
      */
-    public WPSInputLiteral(final String identifier, final String data, final String dataType, 
+    public WPSInputLiteral(final String identifier, final String data, final String dataType,
             final String uom) {
         super(identifier);
         this.data = data;
@@ -77,5 +77,5 @@ public class WPSInputLiteral extends AbstractWPSInput{
         return uom;
     }
 
-    
+
 }

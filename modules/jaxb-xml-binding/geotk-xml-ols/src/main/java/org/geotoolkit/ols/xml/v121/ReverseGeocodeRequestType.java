@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Reverse Geocode Request.
- * 
+ *
  * <p>Java class for ReverseGeocodeRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReverseGeocodeRequestType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReverseGeocodeRequestType", propOrder = {
@@ -61,11 +61,11 @@ public class ReverseGeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PositionType }
-     *     
+     *
      */
     public PositionType getPosition() {
         return position;
@@ -73,11 +73,11 @@ public class ReverseGeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PositionType }
-     *     
+     *
      */
     public void setPosition(PositionType value) {
         this.position = value;
@@ -85,25 +85,25 @@ public class ReverseGeocodeRequestType extends AbstractRequestParametersType {
 
     /**
      * Gets the value of the reverseGeocodePreference property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the reverseGeocodePreference property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getReverseGeocodePreference().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ReverseGeocodePreferenceType }
-     * 
-     * 
+     *
+     *
      */
     public List<ReverseGeocodePreferenceType> getReverseGeocodePreference() {
         if (reverseGeocodePreference == null) {

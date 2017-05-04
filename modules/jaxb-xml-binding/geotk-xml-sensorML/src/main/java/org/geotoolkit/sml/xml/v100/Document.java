@@ -35,9 +35,9 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -117,7 +117,7 @@ public class Document implements AbstractDocument {
             }
         }
     }
-    
+
     /**
      * Gets the value of the description property.
      */

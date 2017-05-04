@@ -40,11 +40,11 @@ import org.geotoolkit.ows.xml.AbstractDescription;
  *       of the parent object in that language. Multiple Title or Abstract
  *       elements shall not exist in the same Description with the same xml:lang
  *       attribute value unless otherwise specified.
- * 
+ *
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.ows.xml.AbstractDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescriptionType", propOrder = {
@@ -87,7 +87,7 @@ public class DescriptionType implements AbstractDescription {
      */
     protected DescriptionType() {
     }
-    
+
     public DescriptionType(final String title,  final String _abstract,
             final List<String> keywords) {
         if (title != null) {
@@ -103,7 +103,7 @@ public class DescriptionType implements AbstractDescription {
             this.keywords.add(new KeywordsType(keywords));
         }
     }
-    
+
     /**
      * Build a new DescriptionType (full version).
      */
@@ -113,7 +113,7 @@ public class DescriptionType implements AbstractDescription {
         this.keywords  = keywords;
         this.title     = title;
     }
-    
+
      /**
      * Build a new DescriptionType (full version).
      */
@@ -125,10 +125,10 @@ public class DescriptionType implements AbstractDescription {
         this.title     = new ArrayList<LanguageStringType>();
         this.title.add(title);
     }
-    
+
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public List<LanguageStringType> getTitle() {
         if (title == null) {
@@ -136,7 +136,7 @@ public class DescriptionType implements AbstractDescription {
         }
         return this.title;
     }
-    
+
     @Override
     public String getFirstTitle() {
         if (title != null && title.size() > 0) {
@@ -166,10 +166,10 @@ public class DescriptionType implements AbstractDescription {
             this.title.add(new LanguageStringType(title));
         }
     }
-    
+
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      */
     public List<LanguageStringType> getAbstract() {
         if (_abstract == null) {
@@ -177,7 +177,7 @@ public class DescriptionType implements AbstractDescription {
         }
         return this._abstract;
     }
-    
+
     @Override
     public String getFirstAbstract() {
         if (_abstract != null && _abstract.size() > 0) {
@@ -210,7 +210,7 @@ public class DescriptionType implements AbstractDescription {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      */
     @Override
     public List<KeywordsType> getKeywords() {
@@ -226,7 +226,7 @@ public class DescriptionType implements AbstractDescription {
     public void setKeywords(final List<KeywordsType> keywords) {
         this.keywords = keywords;
     }
-    
+
     public void setKeywordValues(final List<String> keywords) {
         if (keywords != null) {
             this.keywords = new ArrayList<KeywordsType>();

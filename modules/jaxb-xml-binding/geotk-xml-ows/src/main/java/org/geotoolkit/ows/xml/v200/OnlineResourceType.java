@@ -30,11 +30,11 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  * For OWS use in the service metadata document, the
  *       CI_OnlineResource class was XML encoded as the attributeGroup
  *       "xlink:simpleAttrs", as used in GML.
- * 
+ *
  * <p>Java class for OnlineResourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OnlineResourceType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OnlineResourceType")
@@ -77,7 +77,7 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
      */
     public OnlineResourceType(){
     }
-    
+
     public OnlineResourceType(final OnlineResourceType that) {
         if (that != null) {
             this.href    = that.href;
@@ -89,21 +89,21 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
             this.title   = that.title;
         }
     }
-    
+
     /**
      * Build a new Online resource with only the href property (most of the case).
      */
     public OnlineResourceType(final String href){
         this.href = href;
     }
-    
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -115,11 +115,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -127,11 +127,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -140,11 +140,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(String value) {
@@ -153,11 +153,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -165,11 +165,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -177,11 +177,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -189,11 +189,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -201,11 +201,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -213,11 +213,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -225,11 +225,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -237,11 +237,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -249,11 +249,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -261,11 +261,11 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;

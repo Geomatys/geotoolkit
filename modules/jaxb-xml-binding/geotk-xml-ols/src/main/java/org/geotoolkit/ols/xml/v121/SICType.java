@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for SICType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SICType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SICType")
@@ -58,11 +58,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -70,11 +70,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -82,11 +82,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the subType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSubType() {
         return subType;
@@ -94,11 +94,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the subType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSubType(String value) {
         this.subType = value;
@@ -106,11 +106,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCategory() {
         return category;
@@ -118,11 +118,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCategory(String value) {
         this.category = value;
@@ -130,11 +130,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCode() {
         return code;
@@ -142,11 +142,11 @@ public class SICType extends AbstractNamedReferenceSystem {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(String value) {
         this.code = value;

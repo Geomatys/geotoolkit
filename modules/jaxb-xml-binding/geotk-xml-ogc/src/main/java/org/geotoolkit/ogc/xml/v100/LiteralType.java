@@ -86,7 +86,7 @@ public class LiteralType implements XMLLiteral {
         this.content = new ArrayList<Object>();
         this.content.add(content);
     }
-    
+
     public LiteralType(final LiteralType that) {
         if (that != null && that.content != null) {
             this.content = new ArrayList<Object>(that.content);
@@ -161,7 +161,7 @@ public class LiteralType implements XMLLiteral {
      */
     @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-    	return visitor.visit(this,extraData);
+        return visitor.visit(this,extraData);
     }
 
       @Override

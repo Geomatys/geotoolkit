@@ -23,15 +23,15 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
 
 
 /**
- * Denotes the relation of a _CityObject to its implicit geometry representation, 
+ * Denotes the relation of a _CityObject to its implicit geometry representation,
  * which is a representation of a geometry by referencing a prototype and transforming it to its real position in space.
  * The ImplicitRepresentationPropertyType element must either carry a reference to a ImplicitGeometry object or contain a
- * ImplicitGeometry object inline, but neither both nor none. 
- * 
+ * ImplicitGeometry object inline, but neither both nor none.
+ *
  * <p>Java class for ImplicitRepresentationPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImplicitRepresentationPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

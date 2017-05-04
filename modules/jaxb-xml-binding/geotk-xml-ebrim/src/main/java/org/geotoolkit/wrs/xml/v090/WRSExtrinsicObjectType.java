@@ -27,16 +27,16 @@ import org.geotoolkit.ebrim.xml.v250.ExtrinsicObjectType;
 
 
 /**
- * 
- *       Extends ExtrinsicObjectType to include a content element that provides 
- *       a reference to a representation of the extrinsic content available in a 
+ *
+ *       Extends ExtrinsicObjectType to include a content element that provides
+ *       a reference to a representation of the extrinsic content available in a
  *       repository; the repository may be maintained by a third-party provider.
- *       
- * 
+ *
+ *
  * <p>Java class for WRSExtrinsicObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="WRSExtrinsicObjectType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.ebrim.xml.v250.ExtrinsicObjectType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

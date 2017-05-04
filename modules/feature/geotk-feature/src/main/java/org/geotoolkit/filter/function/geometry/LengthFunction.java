@@ -22,11 +22,11 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Extract geometry length.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class LengthFunction extends AbstractFunction {
-    
+
     public LengthFunction(final Expression expr1) {
         super(GeometryFunctionFactory.LENGTH, new Expression[] {expr1}, null);
     }
@@ -40,9 +40,9 @@ public class LengthFunction extends AbstractFunction {
         } catch (Exception e){
             throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
         }
-        
+
         if(geom==null) return 0.0;
         return geom.getLength();
     }
-        
+
 }

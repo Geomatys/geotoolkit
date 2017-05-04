@@ -94,7 +94,7 @@ public class ClassifierList implements AbstractClassifierList {
             }
         }
     }
-    
+
     /**
      * Gets the value of the classifier property.
      *
@@ -135,7 +135,7 @@ public class ClassifierList implements AbstractClassifierList {
     public void setClassifier(final List<Classifier> classifier) {
         this.classifier = classifier;
     }
-    
+
     /**
      * Gets the value of the id property.
      */

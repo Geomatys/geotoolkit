@@ -143,7 +143,7 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     public WebFeatureClient create(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);

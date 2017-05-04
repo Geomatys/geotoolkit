@@ -28,7 +28,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
 
 
 /**
- * 
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,7 +47,7 @@ public class PutStyles implements AbstractOperation {
     public PutStyles() {
 
     }
-    
+
     public PutStyles(final PutStyles that) {
         if (that != null) {
             if (that.format != null) {
@@ -77,7 +77,7 @@ public class PutStyles implements AbstractOperation {
             this.dcpType.addAll(Arrays.asList(dcpList));
         }
     }
-    
+
     /**
      * Gets the value of the format property.
      */
@@ -94,13 +94,13 @@ public class PutStyles implements AbstractOperation {
     public List<String> getFormats() {
         final List<String> formats = new ArrayList<String>();
         final List<Format> list = getFormat();
-        
+
         for (final Format curr : list) {
             formats.add(curr.getvalue());
         }
         return formats;
     }
-    
+
     /**
      * Gets the value of the dcpType property.
      */

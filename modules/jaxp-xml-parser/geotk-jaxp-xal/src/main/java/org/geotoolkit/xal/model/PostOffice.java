@@ -164,7 +164,7 @@ public interface PostOffice {
     String getIndicator();
 
     /**
-     * 
+     *
      * @param indicator
      */
     void setIndicator(String indicator);

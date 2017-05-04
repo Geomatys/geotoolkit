@@ -34,20 +34,20 @@ public class PropertyIsLessThanOrEqualToType extends BinaryComparisonOpType impl
      * Empty constructor used by JAXB
      */
      public PropertyIsLessThanOrEqualToType() {
-        
+
      }
-    
+
     /**
      * Build a new Binary comparison operator
      */
     public  PropertyIsLessThanOrEqualToType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
-    
+
     public PropertyIsLessThanOrEqualToType(final PropertyIsLessThanOrEqualToType that) {
         super(that);
     }
-    
+
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsLessThanOrEqualToType(this);

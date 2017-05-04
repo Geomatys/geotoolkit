@@ -41,9 +41,9 @@ import org.geotoolkit.swe.xml.v100.TimeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -58,8 +58,8 @@ import org.geotoolkit.swe.xml.v100.TimeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -135,7 +135,7 @@ public class TimePosition implements AbstractTimePosition {
             }
         }
     }
-    
+
     /**
      * Gets the value of the time property.
      */

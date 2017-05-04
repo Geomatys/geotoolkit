@@ -29,7 +29,7 @@ import org.opengis.feature.FeatureType;
 
 /**
  * Edition tool to create multi polygon parts.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -37,7 +37,7 @@ public class MultiPolygonPartCreationTool extends AbstractEditionTool {
 
     public MultiPolygonPartCreationTool() {
         super(1250,"multipolygonPartCreation", MessageBundle.formatInternational(MessageBundle.Keys.createPart),
-             new SimpleInternationalString("Tool to create part of a MultiPolygon."), 
+             new SimpleInternationalString("Tool to create part of a MultiPolygon."),
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 

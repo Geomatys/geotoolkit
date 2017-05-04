@@ -31,9 +31,9 @@ import org.geotoolkit.sml.xml.AbstractRights;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.sml.xml.AbstractRights;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,7 +94,7 @@ public class Rights implements AbstractRights {
             }
         }
     }
-    
+
     /**
      * Gets the value of the documentation property.
      */

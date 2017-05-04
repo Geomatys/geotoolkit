@@ -27,14 +27,14 @@ import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
 
 /**
- * 
+ *
  * Description type for process or input/output data items.
- * 			
- * 
+ *
+ *
  * <p>Java class for DescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescriptionType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.ows.xml.v200.LanguageStringType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescriptionType")
@@ -67,13 +67,13 @@ import org.geotoolkit.ows.xml.v200.LanguageStringType;
 public class DescriptionType extends BasicIdentificationType {
 
     public DescriptionType() {
-        
+
     }
-    
+
     public DescriptionType(CodeType identifier, final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
             final List<KeywordsType> keywords) {
         super(identifier, title, _abstract, keywords);
-        
+
     }
 
 }

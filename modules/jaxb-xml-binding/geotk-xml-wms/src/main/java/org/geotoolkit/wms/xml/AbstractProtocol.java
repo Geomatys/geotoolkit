@@ -23,7 +23,7 @@ package org.geotoolkit.wms.xml;
  * @module
  */
 public interface AbstractProtocol {
-    
+
     AbstractOnlineResource getOnlineResource();
 
 }

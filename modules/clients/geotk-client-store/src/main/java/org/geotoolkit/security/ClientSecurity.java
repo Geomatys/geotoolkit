@@ -24,47 +24,47 @@ import java.net.URLConnection;
 /**
  * This class offer a set of methods which should be called by client modules
  * to handle authentication or encryption processes required for security.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public interface ClientSecurity {
-    
+
     /**
      * If an securisation process require addition parameters to be encoded
      * in the url, then the manager should returned a modified url. Otherwise
      * the original url is returned.
-     * 
+     *
      * @param url : original url
      * @return modified url with additional parameters.
      */
     URL secure(URL url);
-    
+
     /**
      * If an securisation process require addition parameters to be encoded
      * in the header map, then the manager can add then here.
-     * 
+     *
      * @param cnx urlConnection
      * @return modified URL connection
      */
     URLConnection secure(URLConnection cnx);
-    
+
     /**
      * If the securisation imply some encryption. The manager
      * should encapsulate the given stream.
-     * 
+     *
      * @param stream
      * @return OutputStream
      */
     OutputStream encrypt(OutputStream stream);
-    
+
     /**
      * If the securisation imply some encryption. The manager
      * should encapsulate the given stream.
-     * 
+     *
      * @param stream
-     * @return 
+     * @return
      */
     InputStream decrypt(InputStream stream);
-    
+
 }

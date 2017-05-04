@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ClothoidType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ClothoidType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClothoidType", propOrder = {
@@ -81,11 +81,11 @@ public class ClothoidType
 
     /**
      * Gets the value of the refLocation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ClothoidType.RefLocation }
-     *     
+     *
      */
     public ClothoidType.RefLocation getRefLocation() {
         return refLocation;
@@ -93,11 +93,11 @@ public class ClothoidType
 
     /**
      * Sets the value of the refLocation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ClothoidType.RefLocation }
-     *     
+     *
      */
     public void setRefLocation(ClothoidType.RefLocation value) {
         this.refLocation = value;
@@ -105,11 +105,11 @@ public class ClothoidType
 
     /**
      * Gets the value of the scaleFactor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getScaleFactor() {
         return scaleFactor;
@@ -117,11 +117,11 @@ public class ClothoidType
 
     /**
      * Sets the value of the scaleFactor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setScaleFactor(BigDecimal value) {
         this.scaleFactor = value;
@@ -129,7 +129,7 @@ public class ClothoidType
 
     /**
      * Gets the value of the startParameter property.
-     * 
+     *
      */
     public double getStartParameter() {
         return startParameter;
@@ -137,7 +137,7 @@ public class ClothoidType
 
     /**
      * Sets the value of the startParameter property.
-     * 
+     *
      */
     public void setStartParameter(double value) {
         this.startParameter = value;
@@ -145,7 +145,7 @@ public class ClothoidType
 
     /**
      * Gets the value of the endParameter property.
-     * 
+     *
      */
     public double getEndParameter() {
         return endParameter;
@@ -153,7 +153,7 @@ public class ClothoidType
 
     /**
      * Sets the value of the endParameter property.
-     * 
+     *
      */
     public void setEndParameter(double value) {
         this.endParameter = value;
@@ -161,11 +161,11 @@ public class ClothoidType
 
     /**
      * Gets the value of the interpolation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public CurveInterpolationType getInterpolation() {
         if (interpolation == null) {
@@ -177,11 +177,11 @@ public class ClothoidType
 
     /**
      * Sets the value of the interpolation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CurveInterpolationType }
-     *     
+     *
      */
     public void setInterpolation(CurveInterpolationType value) {
         this.interpolation = value;
@@ -190,9 +190,9 @@ public class ClothoidType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -204,8 +204,8 @@ public class ClothoidType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -218,11 +218,11 @@ public class ClothoidType
 
         /**
          * Gets the value of the affinePlacement property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link AffinePlacementType }
-         *     
+         *
          */
         public AffinePlacementType getAffinePlacement() {
             return affinePlacement;
@@ -230,11 +230,11 @@ public class ClothoidType
 
         /**
          * Sets the value of the affinePlacement property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link AffinePlacementType }
-         *     
+         *
          */
         public void setAffinePlacement(AffinePlacementType value) {
             this.affinePlacement = value;

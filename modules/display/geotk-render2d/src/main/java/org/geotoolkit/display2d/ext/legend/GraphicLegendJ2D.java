@@ -33,7 +33,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Graphic decoration to paint a legend if the canvas container hold a 
+ * Graphic decoration to paint a legend if the canvas container hold a
  * MapContext object.
  *
  * @author Johann Sorel (Geomatys)
@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
 public class GraphicLegendJ2D extends PositionedGraphic2D{
 
     private static final int ROUND_SIZE = 12;
-    
+
     private final LegendTemplate template;
 
     public GraphicLegendJ2D(final J2DCanvas canvas, final LegendTemplate template){
@@ -56,7 +56,7 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
         if(!isVisible()){
             return;
         }
-        
+
         final GraphicContainer container = getCanvas().getContainer();
         if(!(container instanceof ContextContainer2D)) return;
 

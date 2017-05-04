@@ -114,7 +114,7 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
             .setRequired(false)
             .create(Boolean.class, false);
 
-    
+
     /**************************************************************************/
 
                                       /*OUTPUT*/

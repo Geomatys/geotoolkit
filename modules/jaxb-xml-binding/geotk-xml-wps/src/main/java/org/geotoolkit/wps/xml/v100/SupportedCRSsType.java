@@ -27,12 +27,12 @@ import org.geotoolkit.wps.xml.DataDescription;
 
 
 /**
- * Listing of the Coordinate Reference System (CRS) support for this process input or output. 
- * 
+ * Listing of the Coordinate Reference System (CRS) support for this process input or output.
+ *
  * <p>Java class for SupportedCRSsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SupportedCRSsType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.wps.xml.DataDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,21 +72,21 @@ public class SupportedCRSsType implements DataDescription {
     protected CRSsType supported;
 
     public SupportedCRSsType() {
-        
+
     }
-    
+
     public SupportedCRSsType(String _default, final List<String> supported) {
         this._default = new Default(_default);
         this.supported  = new CRSsType(supported);
     }
-    
+
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SupportedCRSsType.Default }
-     *     
+     *
      */
     public SupportedCRSsType.Default getDefault() {
         return _default;
@@ -94,11 +94,11 @@ public class SupportedCRSsType implements DataDescription {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SupportedCRSsType.Default }
-     *     
+     *
      */
     public void setDefault(final SupportedCRSsType.Default value) {
         this._default = value;
@@ -106,11 +106,11 @@ public class SupportedCRSsType implements DataDescription {
 
     /**
      * Gets the value of the supported property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CRSsType }
-     *     
+     *
      */
     public CRSsType getSupported() {
         return supported;
@@ -118,11 +118,11 @@ public class SupportedCRSsType implements DataDescription {
 
     /**
      * Sets the value of the supported property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CRSsType }
-     *     
+     *
      */
     public void setSupported(final CRSsType value) {
         this.supported = value;
@@ -139,7 +139,7 @@ public class SupportedCRSsType implements DataDescription {
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      * @param object Object to compare
@@ -167,9 +167,9 @@ public class SupportedCRSsType implements DataDescription {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -181,8 +181,8 @@ public class SupportedCRSsType implements DataDescription {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -195,20 +195,20 @@ public class SupportedCRSsType implements DataDescription {
         protected String crs;
 
         public Default() {
-            
+
         }
-        
+
         public Default(String crs) {
             this.crs = crs;
         }
-        
+
         /**
          * Gets the value of the crs property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getCRS() {
             return crs;
@@ -216,16 +216,16 @@ public class SupportedCRSsType implements DataDescription {
 
         /**
          * Sets the value of the crs property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setCRS(final String value) {
             this.crs = value;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");

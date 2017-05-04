@@ -33,11 +33,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Defines the top element of an XML document representing a message.
- * 
+ *
  * <p>Java class for XLSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="XLSType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "XLSType", propOrder = {
@@ -75,13 +75,13 @@ public class XLSType {
 
     /**
      * Gets the value of the header property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ResponseHeaderType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractHeaderType }{@code >}
      *     {@link JAXBElement }{@code <}{@link RequestHeaderType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractHeaderType> getHeader() {
         return header;
@@ -89,13 +89,13 @@ public class XLSType {
 
     /**
      * Sets the value of the header property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ResponseHeaderType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractHeaderType }{@code >}
      *     {@link JAXBElement }{@code <}{@link RequestHeaderType }{@code >}
-     *     
+     *
      */
     public void setHeader(JAXBElement<? extends AbstractHeaderType> value) {
         this.header = ((JAXBElement<? extends AbstractHeaderType> ) value);
@@ -103,27 +103,27 @@ public class XLSType {
 
     /**
      * Gets the value of the body property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the body property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBody().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractBodyType }{@code >}
      * {@link JAXBElement }{@code <}{@link RequestType }{@code >}
      * {@link JAXBElement }{@code <}{@link ResponseType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractBodyType>> getBody() {
         if (body == null) {
@@ -134,11 +134,11 @@ public class XLSType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getVersion() {
         return version;
@@ -146,23 +146,23 @@ public class XLSType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setVersion(BigDecimal value) {
         this.version = value;
     }
 
     /**
-     * Defines the preferred language used for formatting responses. 
-     * 
+     * Defines the preferred language used for formatting responses.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -170,11 +170,11 @@ public class XLSType {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;

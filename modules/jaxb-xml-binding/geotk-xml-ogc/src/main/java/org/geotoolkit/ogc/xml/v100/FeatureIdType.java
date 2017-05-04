@@ -28,9 +28,9 @@ import org.opengis.filter.identity.Identifier;
 
 /**
  * <p>Java class for FeatureIdType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureIdType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.opengis.filter.identity.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,19 +55,19 @@ public class FeatureIdType implements FeatureId {
      * An empty constructor used by JAXB
      */
     public FeatureIdType() {
-        
+
     }
-    
+
     /**
      * Build a new FeaturId with the specified ID
      */
     public FeatureIdType(final String fid) {
         this.fid = fid;
     }
-    
+
     /**
      * Gets the value of the fid property.
-     * 
+     *
      */
     public String getFid() {
         return fid;
@@ -77,10 +77,10 @@ public class FeatureIdType implements FeatureId {
     public String getID() {
         return fid;
     }
-    
+
     /**
      * Sets the value of the fid property.
-     * 
+     *
      */
     public void setFid(final String value) {
         this.fid = value;

@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for StatusCodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StatusCodeType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ public class StatusCodeType {
 
    /**
     * Gets the value of the statusCode property.
-    * 
+    *
     */
    public StatusCodeType getStatusCode() {
       return statusCode;
@@ -66,7 +66,7 @@ public class StatusCodeType {
 
    /**
     * Sets the value of the statusCode property.
-    * 
+    *
     */
    public void setStatusCode(final StatusCodeType value) {
       this.statusCode = value;
@@ -74,7 +74,7 @@ public class StatusCodeType {
 
    /**
     * Gets the value of the value property.
-    * 
+    *
     */
    public String getValue() {
       return value;

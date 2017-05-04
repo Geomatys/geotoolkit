@@ -35,9 +35,9 @@ import org.geotoolkit.swe.xml.v200.XMLEncodingType;
 
 /**
  * <p>Java class for ArraySettingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ArraySettingPropertyType">
  *   &lt;complexContent>
@@ -71,8 +71,8 @@ import org.geotoolkit.swe.xml.v200.XMLEncodingType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArraySettingPropertyType", propOrder = {
@@ -88,11 +88,11 @@ public class ArraySettingPropertyType {
 
     /**
      * Gets the value of the arrayValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ArraySettingPropertyType.ArrayValues }
-     *     
+     *
      */
     public ArraySettingPropertyType.ArrayValues getArrayValues() {
         return arrayValues;
@@ -100,11 +100,11 @@ public class ArraySettingPropertyType {
 
     /**
      * Sets the value of the arrayValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ArraySettingPropertyType.ArrayValues }
-     *     
+     *
      */
     public void setArrayValues(ArraySettingPropertyType.ArrayValues value) {
         this.arrayValues = value;
@@ -112,11 +112,11 @@ public class ArraySettingPropertyType {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRef() {
         return ref;
@@ -124,11 +124,11 @@ public class ArraySettingPropertyType {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRef(String value) {
         this.ref = value;
@@ -137,9 +137,9 @@ public class ArraySettingPropertyType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -162,8 +162,8 @@ public class ArraySettingPropertyType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -179,11 +179,11 @@ public class ArraySettingPropertyType {
 
         /**
          * Gets the value of the encoding property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ArraySettingPropertyType.ArrayValues.Encoding }
-         *     
+         *
          */
         public ArraySettingPropertyType.ArrayValues.Encoding getEncoding() {
             return encoding;
@@ -191,11 +191,11 @@ public class ArraySettingPropertyType {
 
         /**
          * Sets the value of the encoding property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ArraySettingPropertyType.ArrayValues.Encoding }
-         *     
+         *
          */
         public void setEncoding(ArraySettingPropertyType.ArrayValues.Encoding value) {
             this.encoding = value;
@@ -203,11 +203,11 @@ public class ArraySettingPropertyType {
 
         /**
          * Gets the value of the value property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link EncodedValuesPropertyType }
-         *     
+         *
          */
         public EncodedValuesPropertyType getValue() {
             return value;
@@ -215,11 +215,11 @@ public class ArraySettingPropertyType {
 
         /**
          * Sets the value of the value property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link EncodedValuesPropertyType }
-         *     
+         *
          */
         public void setValue(EncodedValuesPropertyType value) {
             this.value = value;
@@ -228,9 +228,9 @@ public class ArraySettingPropertyType {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -242,8 +242,8 @@ public class ArraySettingPropertyType {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -256,14 +256,14 @@ public class ArraySettingPropertyType {
 
             /**
              * Gets the value of the abstractEncoding property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
-             *     
+             *
              */
             public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
                 return abstractEncoding;
@@ -271,14 +271,14 @@ public class ArraySettingPropertyType {
 
             /**
              * Sets the value of the abstractEncoding property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
              *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
-             *     
+             *
              */
             public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
                 this.abstractEncoding = value;

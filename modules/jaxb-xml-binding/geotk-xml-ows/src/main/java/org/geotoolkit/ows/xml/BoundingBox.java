@@ -24,12 +24,12 @@ import java.util.List;
  * @module
  */
 public interface BoundingBox {
-    
+
     List<Double> getLowerCorner();
-    
+
     List<Double> getUpperCorner();
-    
+
     Integer getDimensions();
-    
+
     String getCrs();
 }

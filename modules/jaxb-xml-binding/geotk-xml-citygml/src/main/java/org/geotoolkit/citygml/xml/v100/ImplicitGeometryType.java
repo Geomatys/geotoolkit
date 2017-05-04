@@ -42,11 +42,11 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
  * It is a 4x4 matrix that is multiplied with the prototype coordinates using homogeneous coordinates, i.e. (x,y,z,1).
  * This way even a projection might be modelled by the transformation matrix.
  * The concept of implicit geometries is an enhancement of the geometry model of GML3.
- * 
+ *
  * <p>Java class for ImplicitGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ImplicitGeometryType">
  *   &lt;complexContent>
@@ -62,8 +62,8 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,11 +88,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Gets the value of the mimeType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -100,11 +100,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Sets the value of the mimeType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(final String value) {
         this.mimeType = value;
@@ -122,11 +122,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Gets the value of the libraryObject property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLibraryObject() {
         return libraryObject;
@@ -134,11 +134,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Sets the value of the libraryObject property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLibraryObject(final String value) {
         this.libraryObject = value;
@@ -146,11 +146,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Gets the value of the relativeGMLGeometry property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getRelativeGMLGeometry() {
         return relativeGMLGeometry;
@@ -158,11 +158,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Sets the value of the relativeGMLGeometry property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setRelativeGMLGeometry(final GeometryPropertyType value) {
         this.relativeGMLGeometry = value;
@@ -170,11 +170,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Gets the value of the referencePoint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public PointPropertyType getReferencePoint() {
         return referencePoint;
@@ -182,11 +182,11 @@ public class ImplicitGeometryType extends AbstractGMLType {
 
     /**
      * Sets the value of the referencePoint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointPropertyType }
-     *     
+     *
      */
     public void setReferencePoint(final PointPropertyType value) {
         this.referencePoint = value;

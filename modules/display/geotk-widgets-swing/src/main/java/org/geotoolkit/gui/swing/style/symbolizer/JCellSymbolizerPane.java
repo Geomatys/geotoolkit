@@ -271,7 +271,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         if(ts!=null){
             rule.symbolizers().add(ts);
         }
-        
+
         return new CellSymbolizer((Integer)guiCellSize.getValue(), rule);
     }
 
@@ -279,7 +279,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

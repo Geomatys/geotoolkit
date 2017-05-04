@@ -36,7 +36,7 @@ public class FXMapContainerPane extends Pane implements FXMapDecoration{
     public FXMapContainerPane() {
         setCache(false);
     }
-    
+
     @Override
     public void refresh() {
     }
@@ -74,5 +74,5 @@ public class FXMapContainerPane extends Pane implements FXMapDecoration{
     public FXRenderingContext getContext() {
         return context;
     }
-    
+
 }

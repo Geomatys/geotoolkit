@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for GenericMetaDataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GenericMetaDataType">
  *   &lt;complexContent>
@@ -39,15 +39,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GenericMetaDataType")
 public class GenericMetaDataType extends AbstractMetaDataType {
 
   public GenericMetaDataType() {
-      
+
   }
 
   public GenericMetaDataType(final AbstractMetaDataType that) {

@@ -30,9 +30,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for MultiGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiGeometryType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiGeometryType", propOrder = {
@@ -60,16 +60,16 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
     private GeometryArrayPropertyType geometryMembers;
 
     public MultiGeometryType() {
-        
+
     }
-    
+
     public MultiGeometryType(List<GeometryPropertyType> geometryMember) {
         this.geometryMember = geometryMember;
     }
-    
+
     /**
      * Gets the value of the geometryMember property.
-     * 
+     *
      */
     @Override
     public List<GeometryPropertyType> getGeometryMember() {
@@ -81,11 +81,11 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
 
     /**
      * Gets the value of the geometryMembers property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryArrayPropertyType }
-     *     
+     *
      */
     public GeometryArrayPropertyType getGeometryMembers() {
         return geometryMembers;
@@ -93,11 +93,11 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
 
     /**
      * Sets the value of the geometryMembers property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryArrayPropertyType }
-     *     
+     *
      */
     public void setGeometryMembers(GeometryArrayPropertyType value) {
         this.geometryMembers = value;

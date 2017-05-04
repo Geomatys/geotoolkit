@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines an address
- * 
+ *
  * <p>Java class for AddressType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddressType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressType", propOrder = {
@@ -70,11 +70,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Gets the value of the freeFormAddress property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFreeFormAddress() {
         return freeFormAddress;
@@ -82,11 +82,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Sets the value of the freeFormAddress property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFreeFormAddress(String value) {
         this.freeFormAddress = value;
@@ -94,11 +94,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Gets the value of the streetAddress property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StreetAddressType }
-     *     
+     *
      */
     public StreetAddressType getStreetAddress() {
         return streetAddress;
@@ -106,11 +106,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Sets the value of the streetAddress property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StreetAddressType }
-     *     
+     *
      */
     public void setStreetAddress(StreetAddressType value) {
         this.streetAddress = value;
@@ -118,7 +118,7 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Gets the value of the place property.
-     * 
+     *
      */
     public List<NamedPlaceType> getPlace() {
         if (place == null) {
@@ -129,11 +129,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Gets the value of the postalCode property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPostalCode() {
         return postalCode;
@@ -141,11 +141,11 @@ public class AddressType extends AbstractAddressType {
 
     /**
      * Sets the value of the postalCode property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPostalCode(String value) {
         this.postalCode = value;

@@ -44,7 +44,7 @@ public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
     protected CheckBox uiAligned;
     @FXML
     protected CheckBox uiRepeated;
-        
+
     @Override
     public Class<LinePlacement> getEditedClass() {
         return LinePlacement.class;
@@ -54,21 +54,21 @@ public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
     public LinePlacement newValue() {
         return getStyleFactory().linePlacement(StyleConstants.DEFAULT_LINEPLACEMENT_OFFSET);
     }
-    
+
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().linePlacement(
-                    uiOffset.valueProperty().get(), 
-                    uiInitialGap.valueProperty().get(), 
-                    uiGap.valueProperty().get(), 
-                    uiRepeated.isSelected(), 
-                    uiAligned.isSelected(), 
+                    uiOffset.valueProperty().get(),
+                    uiInitialGap.valueProperty().get(),
+                    uiGap.valueProperty().get(),
+                    uiRepeated.isSelected(),
+                    uiAligned.isSelected(),
                     uiGeneralized.isSelected()));
         };
-        
+
         uiGeneralized.selectedProperty().addListener(changeListener);
         uiAligned.selectedProperty().addListener(changeListener);
         uiRepeated.selectedProperty().addListener(changeListener);
@@ -76,7 +76,7 @@ public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
         uiInitialGap.valueProperty().addListener(changeListener);
         uiGap.valueProperty().addListener(changeListener);
     }
-    
+
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
@@ -84,11 +84,11 @@ public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
         uiInitialGap.setLayer(layer);
         uiGap.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(LinePlacement styleElement) {
         if(styleElement==null) styleElement = StyleConstants.DEFAULT_LINEPLACEMENT;
-        
+
         uiOffset.valueProperty().set(styleElement.getPerpendicularOffset());
         uiInitialGap.valueProperty().set(styleElement.getInitialGap());
         uiGap.valueProperty().set(styleElement.getGap());
@@ -96,5 +96,5 @@ public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
         uiAligned.selectedProperty().set(styleElement.IsAligned());
         uiRepeated.selectedProperty().set(styleElement.isRepeated());
     }
-    
+
 }

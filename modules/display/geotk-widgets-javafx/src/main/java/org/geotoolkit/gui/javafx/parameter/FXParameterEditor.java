@@ -49,25 +49,25 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class FXParameterEditor extends BorderPane {
-    
+
     private final TreeTableView treetable = new TreeTableView();
     private ParameterValueGroup parameter;
 
     public FXParameterEditor() {
-        
+
         //this will cause the column width to fit the view area
         treetable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         treetable.getStylesheets().add("org/geotoolkit/gui/javafx/parameter/parameters.css");
-        
+
         final ScrollPane scroll = new ScrollPane(treetable);
         scroll.setFitToWidth(true);
         scroll.setFitToHeight(true);
         setCenter(scroll);
-        
+
         treetable.getColumns().add(new ParamEnableColumn());
         treetable.getColumns().add(new ParamNameColumn());
         treetable.getColumns().add(new ParamValueColumn());
-        
+
         setPrefSize(300, 300);
         setMinSize(250, 250);
     }
@@ -85,16 +85,16 @@ public class FXParameterEditor extends BorderPane {
     public ParameterValueGroup getParameter() {
         return parameter;
     }
-    
+
     private TreeItem toTree(ParameterValueGroup parent, GeneralParameterDescriptor desc, GeneralParameterValue parameter){
-        
-        final TreeItem<ParamEntry> root = 
+
+        final TreeItem<ParamEntry> root =
             new TreeItem<>(new ParamEntry(parent,desc,parameter));
-        
+
         if(parameter!=null && desc instanceof ParameterDescriptorGroup){
             final ParameterDescriptorGroup descGroup = (ParameterDescriptorGroup) desc;
             final ParameterValueGroup group = (ParameterValueGroup) parameter;
-            
+
             for(GeneralParameterDescriptor childDesc : descGroup.descriptors()){
                 //TODO , handle multiplicity
                 if(childDesc.getMaximumOccurs()>1) continue;
@@ -102,17 +102,17 @@ public class FXParameterEditor extends BorderPane {
                 if(childVal==null && childDesc.getMinimumOccurs()>0){
                     childVal = ParametersExt.getOrCreateParameter(group, childDesc.getName().getCode());
                 }
-                
+
                 final TreeItem item = toTree(group, childDesc, childVal);
                 root.getChildren().add(item);
             }
         }
-        
+
         return root;
-    }    
-    
+    }
+
     private static class ParamEntry {
-        
+
         public ParameterValueGroup parent;
         public GeneralParameterDescriptor desc;
         public final SimpleObjectProperty<GeneralParameterValue> value;
@@ -122,11 +122,11 @@ public class FXParameterEditor extends BorderPane {
             this.desc = desc;
             this.value = new SimpleObjectProperty<>(value);
         }
-        
+
     }
-    
-    
-    
+
+
+
     public class ParamNameColumn extends TreeTableColumn<ParamEntry,ParamEntry>{
 
         public ParamNameColumn() {
@@ -139,7 +139,7 @@ public class FXParameterEditor extends BorderPane {
         }
 
     }
-    
+
     public class ParamValueColumn extends TreeTableColumn<ParamEntry,GeneralParameterValue>{
         public ParamValueColumn() {
             super("Value");
@@ -156,7 +156,7 @@ public class FXParameterEditor extends BorderPane {
             setMinWidth(120);
         }
     }
-    
+
     public class ParamEnableColumn extends TreeTableColumn<ParamEntry,GeneralParameterValue>{
         public ParamEnableColumn() {
             super("");
@@ -221,7 +221,7 @@ public class FXParameterEditor extends BorderPane {
         protected void updateItem(GeneralParameterValue item, boolean empty) {
             super.updateItem(item, empty);
             final ParamEntry entry = getTreeTableRow().getItem();
-            
+
             setText(null);
             setGraphic(null);
             if (!empty && entry != null && entry.value.getValue() != null && entry.desc instanceof ParameterDescriptor) {
@@ -239,7 +239,7 @@ public class FXParameterEditor extends BorderPane {
             }
         }
     }
-    
+
     private class ParamEnableCell extends TreeTableCell<ParamEntry, GeneralParameterValue>{
 
         private final RadioButton cb = new RadioButton();
@@ -270,18 +270,18 @@ public class FXParameterEditor extends BorderPane {
                 }
             });
         }
-        
+
         @Override
         protected void updateItem(GeneralParameterValue item, boolean empty) {
             super.updateItem(item, empty);
             final ParamEntry entry = getTreeTableRow().getItem();
-            
+
             setText(null);
             setGraphic(null);
             if(!empty && entry!=null && entry.value != null){
                 final int minOcc = entry.desc.getMinimumOccurs();
                 final int maxOcc = entry.desc.getMaximumOccurs();
-                
+
                 if(minOcc==0 && maxOcc==1){
                     setGraphic(cb);
                     cb.setSelected(entry.value.getValue()!=null);
@@ -289,6 +289,6 @@ public class FXParameterEditor extends BorderPane {
             }
         }
     }
-    
-    
+
+
 }

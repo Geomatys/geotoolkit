@@ -39,7 +39,7 @@ public class Concat extends AbstractProcess {
     public Concat(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     /**
      *  {@inheritDoc }
      */
@@ -57,19 +57,19 @@ public class Concat extends AbstractProcess {
             suffix = suffixVal.stringValue();
         }
         final String value  = getOrCreate(VALUE, inputParameters).stringValue();
-        
+
         String result = value;
         if (prefix != null) {
             result = prefix + value;
         }
-        
+
         if (suffix != null) {
             result = result + suffix;
         }
-        
+
         getOrCreate(RESULT_OUT, outputParameters).setValue(result);
-        
+
         fireProcessCompleted("Concat done.");
     }
-    
+
 }

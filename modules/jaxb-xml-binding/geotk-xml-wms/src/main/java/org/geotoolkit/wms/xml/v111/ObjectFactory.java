@@ -20,18 +20,18 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the generated package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the generated package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module
  */
 @XmlRegistry
@@ -40,14 +40,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: generated
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link Extent }
-     * 
+     *
      */
     public Extent createExtent() {
         return new Extent();
@@ -55,7 +55,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UserDefinedSymbolization }
-     * 
+     *
      */
     public UserDefinedSymbolization createUserDefinedSymbolization() {
         return new UserDefinedSymbolization();
@@ -63,7 +63,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Get }
-     * 
+     *
      */
     public Get createGet() {
         return new Get();
@@ -71,7 +71,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DataURL }
-     * 
+     *
      */
     public DataURL createDataURL() {
         return new DataURL();
@@ -79,7 +79,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LegendURL }
-     * 
+     *
      */
     public LegendURL createLegendURL() {
         return new LegendURL();
@@ -87,7 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Dimension }
-     * 
+     *
      */
     public Dimension createDimension() {
         return new Dimension();
@@ -95,7 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LogoURL }
-     * 
+     *
      */
     public LogoURL createLogoURL() {
         return new LogoURL();
@@ -103,7 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Identifier }
-     * 
+     *
      */
     public Identifier createIdentifier() {
         return new Identifier();
@@ -111,7 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Request }
-     * 
+     *
      */
     public Request createRequest() {
         return new Request();
@@ -119,7 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Exception }
-     * 
+     *
      */
     public Exception createException() {
         return new Exception();
@@ -127,7 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Keyword }
-     * 
+     *
      */
     public Keyword createKeyword() {
         return new Keyword();
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactPersonPrimary }
-     * 
+     *
      */
     public ContactPersonPrimary createContactPersonPrimary() {
         return new ContactPersonPrimary();
@@ -143,7 +143,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WMTMSCapabilities }
-     * 
+     *
      */
     public WMT_MS_Capabilities createWMTMSCapabilities() {
         return new WMT_MS_Capabilities();
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeywordList }
-     * 
+     *
      */
     public KeywordList createKeywordList() {
         return new KeywordList();
@@ -159,7 +159,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Format }
-     * 
+     *
      */
     public Format createFormat() {
         return new Format();
@@ -167,7 +167,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleSheetURL }
-     * 
+     *
      */
     public StyleSheetURL createStyleSheetURL() {
         return new StyleSheetURL();
@@ -175,7 +175,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Attribution }
-     * 
+     *
      */
     public Attribution createAttribution() {
         return new Attribution();
@@ -183,7 +183,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ScaleHint }
-     * 
+     *
      */
     public ScaleHint createScaleHint() {
         return new ScaleHint();
@@ -191,7 +191,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DCPType }
-     * 
+     *
      */
     public DCPType createDCPType() {
         return new DCPType();
@@ -199,7 +199,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HTTP }
-     * 
+     *
      */
     public HTTP createHTTP() {
         return new HTTP();
@@ -207,7 +207,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OnlineResource }
-     * 
+     *
      */
     public OnlineResource createOnlineResource() {
         return new OnlineResource();
@@ -215,7 +215,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCapabilities }
-     * 
+     *
      */
     public GetCapabilities createGetCapabilities() {
         return new GetCapabilities();
@@ -223,7 +223,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link VendorSpecificCapabilities }
-     * 
+     *
      */
     public VendorSpecificCapabilities createVendorSpecificCapabilities() {
         return new VendorSpecificCapabilities();
@@ -231,7 +231,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Post }
-     * 
+     *
      */
     public Post createPost() {
         return new Post();
@@ -239,7 +239,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MetadataURL }
-     * 
+     *
      */
     public MetadataURL createMetadataURL() {
         return new MetadataURL();
@@ -247,7 +247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetLegendGraphic }
-     * 
+     *
      */
     public GetLegendGraphic createGetLegendGraphic() {
         return new GetLegendGraphic();
@@ -255,7 +255,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactAddress }
-     * 
+     *
      */
     public ContactAddress createContactAddress() {
         return new ContactAddress();
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FeatureListURL }
-     * 
+     *
      */
     public FeatureListURL createFeatureListURL() {
         return new FeatureListURL();
@@ -271,7 +271,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactInformation }
-     * 
+     *
      */
     public ContactInformation createContactInformation() {
         return new ContactInformation();
@@ -279,7 +279,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Layer }
-     * 
+     *
      */
     public Layer createLayer() {
         return new Layer();
@@ -287,7 +287,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingBox }
-     * 
+     *
      */
     public BoundingBox createBoundingBox() {
         return new BoundingBox();
@@ -295,7 +295,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleURL }
-     * 
+     *
      */
     public StyleURL createStyleURL() {
         return new StyleURL();
@@ -303,7 +303,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuthorityURL }
-     * 
+     *
      */
     public AuthorityURL createAuthorityURL() {
         return new AuthorityURL();
@@ -311,7 +311,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Service }
-     * 
+     *
      */
     public Service createService() {
         return new Service();
@@ -319,7 +319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFeatureInfo }
-     * 
+     *
      */
     public GetFeatureInfo createGetFeatureInfo() {
         return new GetFeatureInfo();
@@ -327,7 +327,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetStyles }
-     * 
+     *
      */
     public GetStyles createGetStyles() {
         return new GetStyles();
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Capability }
-     * 
+     *
      */
     public Capability createCapability() {
         return new Capability();
@@ -343,7 +343,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PutStyles }
-     * 
+     *
      */
     public PutStyles createPutStyles() {
         return new PutStyles();
@@ -351,7 +351,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DescribeLayer }
-     * 
+     *
      */
     public DescribeLayer createDescribeLayer() {
         return new DescribeLayer();
@@ -359,7 +359,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Style }
-     * 
+     *
      */
     public Style createStyle() {
         return new Style();
@@ -367,7 +367,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LatLonBoundingBox }
-     * 
+     *
      */
     public LatLonBoundingBox createLatLonBoundingBox() {
         return new LatLonBoundingBox();
@@ -375,7 +375,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetMap }
-     * 
+     *
      */
     public GetMap createGetMap() {
         return new GetMap();

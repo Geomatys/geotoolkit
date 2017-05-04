@@ -117,7 +117,7 @@ public class MPCoverageReference extends AbstractPyramidalCoverageReference {
     public void setSampleModel(SampleModel sampleModel) {
         this.sampleModel = sampleModel;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -193,9 +193,9 @@ public class MPCoverageReference extends AbstractPyramidalCoverageReference {
     @Override
     public void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, RenderedImage image) throws DataStoreException {
         final Pyramid pyram = findPyramidByID(pyramidId);
-        
+
         if (getColorModel() == null) setColorModel(image.getColorModel());
-        
+
         final List<GridMosaic> listGM = pyram.getMosaics();
         for (int id = 0, len = listGM.size(); id < len; id++) {
             final MPGridMosaic gm = (MPGridMosaic) listGM.get(id);

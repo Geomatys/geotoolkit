@@ -24,9 +24,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ShadedReliefType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ShadedReliefType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,11 +57,11 @@ public class ShadedReliefType {
 
     /**
      * Gets the value of the brightnessOnly property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isBrightnessOnly() {
         return brightnessOnly;
@@ -69,11 +69,11 @@ public class ShadedReliefType {
 
     /**
      * Sets the value of the brightnessOnly property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setBrightnessOnly(final Boolean value) {
         this.brightnessOnly = value;
@@ -81,11 +81,11 @@ public class ShadedReliefType {
 
     /**
      * Gets the value of the reliefFactor property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Double }
-     *     
+     *
      */
     public Double getReliefFactor() {
         return reliefFactor;
@@ -93,11 +93,11 @@ public class ShadedReliefType {
 
     /**
      * Sets the value of the reliefFactor property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Double }
-     *     
+     *
      */
     public void setReliefFactor(final Double value) {
         this.reliefFactor = value;

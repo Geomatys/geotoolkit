@@ -32,9 +32,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for LiteralType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LiteralType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,38 +64,38 @@ public class LiteralType implements XMLLiteral {
      * an empty constructor used by JAXB
      */
     public LiteralType() {
-        
+
     }
-    
+
     /**
      * build a new Literal with the specified list of object
      */
     public LiteralType(final List<Object> content) {
         this.content = content;
     }
-    
+
      /**
      * build a new Literal with the specified Object.
      */
     public LiteralType(final Object content) {
-        this.content = new ArrayList<>(); 
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
-    
+
     public LiteralType(final LiteralType that) {
         if (that != null && that.content != null) {
-            this.content = new ArrayList<>(that.content); 
+            this.content = new ArrayList<>(that.content);
         }
     }
-    
+
     /**
      * build a new Literal with the specified String
      */
     public LiteralType(final String content) {
-        this.content = new ArrayList<>(); 
+        this.content = new ArrayList<>();
         this.content.add(content);
     }
-    
+
     /**
      * Gets the value of the content property.
      * (unmodifiable)
@@ -107,7 +107,7 @@ public class LiteralType implements XMLLiteral {
         }
         return Collections.unmodifiableList(content);
     }
-    
+
     /**
      * Sets the value of the content property.
      */
@@ -120,7 +120,7 @@ public class LiteralType implements XMLLiteral {
             this.content.add(content);
         }
     }
-    
+
     /**
      * Sets the value of the content property.
      */
@@ -128,7 +128,7 @@ public class LiteralType implements XMLLiteral {
     public void setContent(final List<Object> content) {
         this.content = content;
     }
-    
+
     /**
      * The more often we just want to get a single String value.
      * This method return the first object of the list and cast it in String (if its possible).
@@ -163,7 +163,7 @@ public class LiteralType implements XMLLiteral {
        Object literal = null;
        if (content != null && !content.isEmpty()) {
             literal = content.get(0);
-       } 
+       }
        return ObjectConverters.convert(literal, context);
     }
 
@@ -175,7 +175,7 @@ public class LiteralType implements XMLLiteral {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -212,7 +212,7 @@ public class LiteralType implements XMLLiteral {
      */
     @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-    	return visitor.visit(this,extraData);
+        return visitor.visit(this,extraData);
     }
 
 }

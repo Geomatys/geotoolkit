@@ -28,11 +28,11 @@ import org.opengis.coverage.grid.GridEnvelope;
 /**
  * Provides grid coordinate values for the diametrically opposed corners of an envelope that bounds a section of grid.
  * The value of a single coordinate is the number of offsets from the origin of the grid in the direction of a specific axis.
- * 
+ *
  * <p>Java class for GridEnvelopeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridEnvelopeType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.coverage.grid.GridEnvelope;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class GridEnvelopeType implements GridEnvelope {
      * Empty constructor used by JAXB
      */
     GridEnvelopeType(){
-        
+
     }
 
     /**
@@ -91,7 +91,7 @@ public class GridEnvelopeType implements GridEnvelope {
         this.high = high;
         this.low  = low;
     }
-    
+
     /**
      * Gets the value of the low property.
      */
@@ -153,7 +153,7 @@ public class GridEnvelopeType implements GridEnvelope {
         public GmlGridCoordinates(final int[] coordinates) {
             this.coordinates = coordinates.clone();
         }
-    
+
         public int getDimension() {
             if (coordinates != null) {
                 return coordinates.length;

@@ -24,12 +24,12 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author Guilhem Legal (Geomatys)
  */
 public interface BaseRequest extends RequestBase {
- 
+
     String getHandle();
-    
+
     void setHandle(final String value);
-    
+
     Map<String, String> getPrefixMapping();
-    
+
     void setPrefixMapping(final Map<String, String> prefixMapping);
 }

@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ValueListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValueListType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +55,7 @@ public class ValueListType {
     private List<String> value;
 
     /**
-     * Gets the value of the value property. 
+     * Gets the value of the value property.
      */
     public List<String> getValue() {
         if (value == null) {
@@ -63,16 +63,16 @@ public class ValueListType {
         }
         return this.value;
     }
-    
+
      /**
-     * Sets the value of the value property. 
+     * Sets the value of the value property.
      */
     public void setValue(final List<String> value) {
         this.value = value;
     }
-    
+
     /**
-     * Gets the value of the value property. 
+     * Gets the value of the value property.
      */
     public void setValue(final String value) {
         if (this.value == null) {

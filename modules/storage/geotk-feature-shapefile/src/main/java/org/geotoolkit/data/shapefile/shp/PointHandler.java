@@ -25,7 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 
 /**
  * Wrapper for a Shapefile point.
- * 
+ *
  * @author aaime
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
@@ -48,7 +48,7 @@ public class PointHandler extends AbstractShapeHandler {
 
     /**
      * Returns the shapefile shape type value for a point
-     * 
+     *
      * @return int Shapefile.POINT
      */
     @Override
@@ -77,7 +77,7 @@ public class PointHandler extends AbstractShapeHandler {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createPoint(coord);
     }
-    
+
     @Override
     public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {

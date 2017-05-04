@@ -24,9 +24,9 @@ import org.geotoolkit.sml.xml.AbstractDataSource;
 
 /**
  * <p>Java class for DataSourceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataSourceType">
  *   &lt;complexContent>
@@ -71,8 +71,8 @@ import org.geotoolkit.sml.xml.AbstractDataSource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,7 +105,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
             }
         }
     }
-    
+
     /**
      * Gets the value of the dataDefinition property.
      */

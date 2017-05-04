@@ -23,6 +23,6 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @author guilhem
  */
 public interface GetResult extends RequestBase {
-    
+
     String getJobID();
 }

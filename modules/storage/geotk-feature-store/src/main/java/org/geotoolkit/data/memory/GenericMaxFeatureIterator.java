@@ -104,14 +104,14 @@ public class GenericMaxFeatureIterator<R extends FeatureIterator> implements Fea
 
     /**
      * Wrap a FeatureReader with a max limit.
-     * 
+     *
      */
     private static final class GenericMaxFeatureReader extends GenericMaxFeatureIterator<FeatureReader> implements FeatureReader{
 
         private GenericMaxFeatureReader(final FeatureReader reader,final int limit){
             super(reader,limit);
         }
-        
+
         @Override
         public FeatureType getFeatureType() {
             return iterator.getFeatureType();

@@ -39,7 +39,7 @@ package org.geotoolkit.xal.model;
 public interface DependentLocalityNumber {
 
     /**
-     * 
+     *
      * @return
      */
     String getContent();
@@ -52,7 +52,7 @@ public interface DependentLocalityNumber {
     AfterBeforeEnum getNameNumberOccurrence();
 
     /**
-     * 
+     *
      * @return
      */
     GrPostal getGrPostal();
@@ -70,7 +70,7 @@ public interface DependentLocalityNumber {
     void setNameNumberOccurrence(AfterBeforeEnum nameNumberOccurrence);
 
     /**
-     * 
+     *
      * @param grPostal
      */
     void setGrPostal(GrPostal grPostal);

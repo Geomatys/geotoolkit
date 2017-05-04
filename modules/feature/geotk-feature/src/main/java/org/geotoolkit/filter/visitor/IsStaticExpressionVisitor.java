@@ -42,7 +42,7 @@ import org.opengis.filter.expression.Subtract;
  *     ...
  * }
  * </code></pre>
- * 
+ *
  * @author Jody
  * @author Johann Sorel (Geomatys)
  * @module

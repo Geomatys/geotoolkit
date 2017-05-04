@@ -25,9 +25,9 @@ import org.geotoolkit.se.xml.vext.JenksType;
 
 /**
  * <p>Java class for ColorMapType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ColorMapType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.se.xml.vext.JenksType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,11 @@ public class ColorMapType {
 
     /**
      * Gets the value of the categorize property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CategorizeType }
-     *     
+     *
      */
     public CategorizeType getCategorize() {
         return categorize;
@@ -73,11 +73,11 @@ public class ColorMapType {
 
     /**
      * Sets the value of the categorize property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CategorizeType }
-     *     
+     *
      */
     public void setCategorize(final CategorizeType value) {
         this.categorize = value;
@@ -85,11 +85,11 @@ public class ColorMapType {
 
     /**
      * Gets the value of the interpolate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InterpolateType }
-     *     
+     *
      */
     public InterpolateType getInterpolate() {
         return interpolate;
@@ -97,24 +97,24 @@ public class ColorMapType {
 
     /**
      * Sets the value of the interpolate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InterpolateType }
-     *     
+     *
      */
     public void setInterpolate(final InterpolateType value) {
         this.interpolate = value;
     }
 
-    
+
     /**
      * Gets the value of the jenks property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JenksType }
-     *     
+     *
      */
     public JenksType getJenks() {
         return jenks;
@@ -122,15 +122,15 @@ public class ColorMapType {
 
     /**
      * Sets the value of the jenks property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JenksType }
-     *     
+     *
      */
     public void setJenks(final JenksType jenks) {
         this.jenks = jenks;
     }
 
-    
+
 }

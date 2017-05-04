@@ -35,9 +35,9 @@ import org.geotoolkit.internal.GeotkFX;
  * @author Johann Sorel (Geomatys)
  */
 public class FXOptionDialog {
-    
+
     public static boolean showOkCancel(Object owner, Node content, String title, boolean modal){
-        
+
         final Dialog dia = new Dialog();
         final DialogPane pane = new DialogPane();
         pane.getButtonTypes().add(ButtonType.OK);
@@ -50,9 +50,9 @@ public class FXOptionDialog {
         }
         dia.setDialogPane(pane);
         final Optional<ButtonType> result = dia.showAndWait();
-        
+
         return result.isPresent() && result.get() == ButtonType.OK;
-        
+
 //        if(result.isPresent() && result.get() == ButtonType.OK){
 //            if(layerVisible){
 //                return chooser.getSelectedLayers();
@@ -67,17 +67,17 @@ public class FXOptionDialog {
 //        }else{
 //            return Collections.EMPTY_LIST;
 //        }
-//        
+//
 //        final Dialog dialog = new Dialog();
 //        dialog.setContent(content);
-//        dialog.setIconifiable(false);        
-//        final AtomicBoolean state = new AtomicBoolean(false);        
+//        dialog.setIconifiable(false);
+//        final AtomicBoolean state = new AtomicBoolean(false);
 //        dialog.getActions().addAll(new OkAction(dialog, state), new CancelAction(dialog, state));
-//        
+//
 //        dialog.show();
 //        return state.get();
     }
-    
+
     private static class OkAction extends Action implements Consumer<ActionEvent>{
         private final Dialog dialog;
         private final AtomicBoolean state;
@@ -88,14 +88,14 @@ public class FXOptionDialog {
             this.dialog = dialog;
             this.state = state;
         }
-        
+
         @Override
         public void accept(ActionEvent event) {
             state.set(true);
             dialog.hide();
         }
     }
-    
+
     private static class CancelAction extends Action implements Consumer<ActionEvent>{
         private final Dialog dialog;
         private final AtomicBoolean state;
@@ -106,13 +106,13 @@ public class FXOptionDialog {
             this.dialog = dialog;
             this.state = state;
         }
-        
+
         @Override
         public void accept(ActionEvent event) {
             state.set(false);
             dialog.hide();
         }
     }
-    
-    
+
+
 }

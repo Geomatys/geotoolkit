@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CreateStoredQueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CreateStoredQueryType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreateStoredQueryType", propOrder = {
@@ -53,25 +53,25 @@ import javax.xml.bind.annotation.XmlType;
 public class CreateStoredQueryType extends BaseRequestType implements CreateStoredQuery {
 
     public CreateStoredQueryType() {
-        
+
     }
-    
-    public CreateStoredQueryType(final String service, final String version, final String handle, 
+
+    public CreateStoredQueryType(final String service, final String version, final String handle,
             final List<StoredQueryDescriptionType> storedQueryDefinition) {
         super(service, version, handle);
         this.storedQueryDefinition = storedQueryDefinition;
     }
-    
+
     @XmlElement(name = "StoredQueryDefinition")
     private List<StoredQueryDescriptionType> storedQueryDefinition;
 
     /**
      * Gets the value of the storedQueryDefinition property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link StoredQueryDescriptionType }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<StoredQueryDescriptionType> getStoredQueryDefinition() {

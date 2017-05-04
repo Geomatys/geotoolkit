@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Defines the header information for response messages.
- * 
+ *
  * <p>Java class for ResponseHeaderType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ResponseHeaderType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponseHeaderType", propOrder = {
@@ -59,11 +59,11 @@ public class ResponseHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the errorList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ErrorListType }
-     *     
+     *
      */
     public ErrorListType getErrorList() {
         return errorList;
@@ -71,11 +71,11 @@ public class ResponseHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the errorList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ErrorListType }
-     *     
+     *
      */
     public void setErrorList(ErrorListType value) {
         this.errorList = value;
@@ -83,11 +83,11 @@ public class ResponseHeaderType extends AbstractHeaderType {
 
     /**
      * Gets the value of the sessionID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSessionID() {
         return sessionID;
@@ -95,11 +95,11 @@ public class ResponseHeaderType extends AbstractHeaderType {
 
     /**
      * Sets the value of the sessionID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSessionID(String value) {
         this.sessionID = value;

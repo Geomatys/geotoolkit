@@ -33,9 +33,9 @@ import org.geotoolkit.swe.xml.DataStreamDefinition;
 
 /**
  * <p>Java class for DataStreamDefinitionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataStreamDefinitionType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.DataStreamDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -32,9 +32,9 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXFeature extends Group {
-    
+
     private static final CachedSymbolizer[] EMPTY = new CachedSymbolizer[0];
-    
+
     final FXRenderingContext context;
     final Feature feature;
     private CachedSymbolizer[] symbolizers = EMPTY;
@@ -60,33 +60,33 @@ public class FXFeature extends Group {
         }
         setSymbolizers(css);
     }
-    
+
     public void setSymbolizers(CachedSymbolizer ... symbolizers) {
         this.symbolizers = symbolizers;
         updateGraphic();
     }
-    
+
     private void updateGraphic(){
         getChildren().clear();
-        
+
         if(feature==null || symbolizers.length==0) return;
-                
+
         for(CachedSymbolizer s : symbolizers){
             if(s==null) continue;
-            
+
             if(s instanceof CachedPointSymbolizer){
-                
+
             }else if(s instanceof CachedLineSymbolizer){
                 getChildren().add(new FXLineSymbolizer(this, (CachedLineSymbolizer) s));
             }else if(s instanceof CachedPolygonSymbolizer){
-                
+
             }else if(s instanceof CachedTextSymbolizer){
-                
+
             }else if(s instanceof CachedRasterSymbolizer){
-                
+
             }
         }
-        
+
     }
-    
+
 }

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @module
  */
 public class SubstractTest extends AbstractProcessTest {
-   
+
 
     public SubstractTest() {
         super("math:substract");
@@ -61,5 +61,5 @@ public class SubstractTest extends AbstractProcessTest {
         //Test
         assertEquals(new Double(11.8), result);
     }
-    
+
 }

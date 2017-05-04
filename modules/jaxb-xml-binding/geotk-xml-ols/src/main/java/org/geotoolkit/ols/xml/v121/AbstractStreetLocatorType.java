@@ -24,17 +24,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 	The AbstractStreetLocatorType is an abstract type  for describing the location on a street within an AddressType.
- * 	We do this because the components of a location on a street vary greatly throughout the world.
- * 	So that the schema can accommodate this variation we create derived types such as the
- * 	BuildingLocatorType which has the components for an apartment or suite or floor within a building.
- * 		
- * 
+ *
+ *  The AbstractStreetLocatorType is an abstract type  for describing the location on a street within an AddressType.
+ *  We do this because the components of a location on a street vary greatly throughout the world.
+ *  So that the schema can accommodate this variation we create derived types such as the
+ *  BuildingLocatorType which has the components for an apartment or suite or floor within a building.
+ *
+ *
  * <p>Java class for AbstractStreetLocatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractStreetLocatorType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractStreetLocatorType")

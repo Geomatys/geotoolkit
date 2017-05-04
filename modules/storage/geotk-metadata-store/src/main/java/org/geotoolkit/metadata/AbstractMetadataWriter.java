@@ -33,7 +33,7 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
      * A debugging logger.
      */
     protected static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.io");
-    
+
     public static final int INSERTED = 0;
 
     public static final int REPLACED = 1;
@@ -42,10 +42,10 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
      * The default level for logging non essential informations (ToSee => finer)
      */
     protected Level logLevel = Level.INFO;
-    
+
     /**
      * Build a new metadata writer.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     public AbstractMetadataWriter() throws MetadataIoException {
@@ -53,10 +53,10 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
 
     /**
      * Record an object in the metadata dataSource.
-     * 
+     *
      * @param obj The object to store in the dataSource.
      * @return true if the storage succeed, false else.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     @Override
@@ -66,7 +66,7 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
      * Delete an object in the metadata database.
      * @param metadataID The identifier of the metadata to delete.
      * @return true if the delete succeed, false else.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     @Override
@@ -79,7 +79,7 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
      * @param metadataID The identifier of the metadata to Replace.
      * @param any The object to replace the matching metadata.
      * @return true if the replacing succeed.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     @Override
@@ -91,12 +91,12 @@ public abstract class AbstractMetadataWriter implements MetadataWriter {
      * @param metadataID The identifier of the metadata to Replace.
      * @param properties A List of property-value to replace in the specified metadata.
      * @return true if the update succeed.
-     * 
+     *
      * @throws org.geotoolkit.metadata.MetadataIoException
      */
     @Override
     public abstract boolean updateMetadata(final String metadataID, final Map<String , Object> properties) throws MetadataIoException;
-    
+
     /**
      * @return true if the Writer supports the delete mecanism.
      */

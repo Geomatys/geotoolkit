@@ -27,11 +27,11 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 /**
  * Envelope that includes also a temporal extent.
- * 
+ *
  * <p>Java class for EnvelopeWithTimePeriodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnvelopeWithTimePeriodType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,9 +64,9 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
     protected String frame;
 
     public EnvelopeWithTimePeriodType() {
-        
+
     }
-    
+
     public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriod that) {
         super(that);
         if (that != null) {
@@ -79,7 +79,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
             this.frame = that.getFrame();
         }
     }
-    
+
     /**
      * Gets the value of the beginPosition property.
      */
@@ -98,11 +98,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Gets the value of the frame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getFrame() {
@@ -111,11 +111,11 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
 
     /**
      * Sets the value of the frame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrame(final String value) {
         this.frame = value;

@@ -37,7 +37,7 @@ public class DefaultAngles implements Angles {
     }
 
     /**
-     * 
+     *
      * @param angles
      */
     public DefaultAngles(double... angles){

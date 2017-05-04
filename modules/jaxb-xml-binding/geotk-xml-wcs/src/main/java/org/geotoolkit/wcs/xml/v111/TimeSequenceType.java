@@ -29,12 +29,12 @@ import org.geotoolkit.wcs.xml.TimeSequence;
 
 
 /**
- * List of time positions and periods. The time positions and periods should be ordered from the oldest to the newest, but this is not required. 
- * 
+ * List of time positions and periods. The time positions and periods should be ordered from the oldest to the newest, but this is not required.
+ *
  * <p>Java class for TimeSequenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeSequenceType">
  *   &lt;complexContent>
@@ -47,7 +47,7 @@ import org.geotoolkit.wcs.xml.TimeSequence;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module
  */
@@ -68,27 +68,27 @@ public class TimeSequenceType implements TimeSequence {
      */
     TimeSequenceType() {
     }
-    
+
     /**
      * build a new time sequence.
-     * 
+     *
      * @param timePositionOrTimePeriod a list of timePosition and timePeriod
      */
     public TimeSequenceType(final List<Object> timePositionOrTimePeriod) {
         this.timePositionOrTimePeriod = timePositionOrTimePeriod;
-        
+
     }
-    
+
     /**
      * build a new time sequence with a simple timePosition.
-     * 
+     *
      * @param timePosition a simple timePosition
      */
     public TimeSequenceType(final TimePositionType timePosition) {
         timePositionOrTimePeriod = new ArrayList<Object>();
         timePositionOrTimePeriod.add(timePosition);
     }
-    
+
     public TimeSequenceType(final String timePosition) {
         timePositionOrTimePeriod = new ArrayList<Object>();
         if (timePosition != null) {
@@ -96,17 +96,17 @@ public class TimeSequenceType implements TimeSequence {
             timePositionOrTimePeriod.add(tp);
         }
     }
-    
+
     /**
      * build a new time sequence with a simple timePosition.
-     * 
+     *
      * @param timePosition a simple timePosition
      */
     public TimeSequenceType(final TimePeriodType timePeriod) {
         timePositionOrTimePeriod = new ArrayList<Object>();
         timePositionOrTimePeriod.add(timePeriod);
     }
-    
+
     /**
      * Gets the value of the timePositionOrTimePeriod property.
      * (unmodifable)

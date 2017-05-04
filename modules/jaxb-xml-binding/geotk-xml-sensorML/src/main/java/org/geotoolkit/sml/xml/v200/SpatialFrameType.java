@@ -33,9 +33,9 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
 
 /**
  * <p>Java class for SpatialFrameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialFrameType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.swe.xml.v200.AbstractSWEIdentifiableType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialFrameType", propOrder = {
@@ -75,11 +75,11 @@ public class SpatialFrameType
 
     /**
      * Gets the value of the origin property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrigin() {
         return origin;
@@ -87,11 +87,11 @@ public class SpatialFrameType
 
     /**
      * Sets the value of the origin property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrigin(String value) {
         this.origin = value;
@@ -99,25 +99,25 @@ public class SpatialFrameType
 
     /**
      * Gets the value of the axis property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the axis property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAxis().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SpatialFrameType.Axis }
-     * 
-     * 
+     *
+     *
      */
     public List<SpatialFrameType.Axis> getAxis() {
         if (axis == null) {
@@ -129,9 +129,9 @@ public class SpatialFrameType
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -141,8 +141,8 @@ public class SpatialFrameType
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -159,11 +159,11 @@ public class SpatialFrameType
 
         /**
          * Gets the value of the value property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getValue() {
             return value;
@@ -171,11 +171,11 @@ public class SpatialFrameType
 
         /**
          * Sets the value of the value property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setValue(String value) {
             this.value = value;
@@ -183,11 +183,11 @@ public class SpatialFrameType
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -195,11 +195,11 @@ public class SpatialFrameType
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

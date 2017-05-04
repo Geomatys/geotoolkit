@@ -53,7 +53,7 @@ public interface LinearRing extends AbstractGeometry {
      * @return
      */
     CoordinateSequence getCoordinateSequence();
-    
+
     /**
      *
      * @return
@@ -73,7 +73,7 @@ public interface LinearRing extends AbstractGeometry {
     AltitudeMode getAltitudeMode();
 
     /**
-     * 
+     *
      * @param extrude
      */
     void setExtrude(boolean extrude);

@@ -27,14 +27,14 @@ import org.geotoolkit.csw.xml.DistributedSearch;
 
 /**
  * Governs the behaviour of a distributed search.
- * hopCount     - the maximum number of message hops before the search is terminated. 
- * 
+ * hopCount     - the maximum number of message hops before the search is terminated.
+ *
  * Each catalogue node decrements this value when the request is received, and must not forward the request if hopCount=0.
- * 
+ *
  * <p>Java class for DistributedSearchType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistributedSearchType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.csw.xml.DistributedSearch;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +60,7 @@ public class DistributedSearchType implements DistributedSearch {
      * An empty constructor used by JAXB
      */
     public DistributedSearchType(){
-        
+
     }
 
     public DistributedSearchType(final DistributedSearchType other){
@@ -68,14 +68,14 @@ public class DistributedSearchType implements DistributedSearch {
             this.hopCount = new Integer(other.hopCount);
         }
     }
-    
+
     /**
      * Build a new Distributed search
      */
     public DistributedSearchType(final Integer hopCount){
         this.hopCount = hopCount;
     }
-    
+
     /**
      */
     @Override
@@ -85,16 +85,16 @@ public class DistributedSearchType implements DistributedSearch {
         }
         return hopCount;
     }
-    
+
      /**
      * Sets the value of the hopCount property.
-     * 
+     *
      */
     @Override
     public void setHopCount(final Integer value) {
         this.hopCount = value;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */

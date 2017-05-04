@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -25,7 +25,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 /**
  * A data type that shall be used for identifying temporal position within a temporal coordinate
  * system.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module
  */

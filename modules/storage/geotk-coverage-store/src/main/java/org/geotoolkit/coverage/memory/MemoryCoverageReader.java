@@ -31,7 +31,7 @@ import org.opengis.util.GenericName;
 
 /**
  * Coverage reader wrapping a coverage.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class MemoryCoverageReader extends GridCoverageReader {
@@ -60,5 +60,5 @@ public class MemoryCoverageReader extends GridCoverageReader {
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         return Collections.emptyList();
     }
-    
+
 }

@@ -115,7 +115,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             this.id = new ArrayList<>();
             this.id.add(createIdOps((AbstractIdType) obj));
 
-        // clone    
+        // clone
         } else if (obj instanceof FilterType) {
             final FilterType that = (FilterType) obj;
             if (that.comparisonOps != null) {
@@ -155,7 +155,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                 final TemporalOpsType temp = that.temporalOps.getValue().getClone();
                 this.temporalOps = createTemporalOps(temp);
             }
-        } else { 
+        } else {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
     }

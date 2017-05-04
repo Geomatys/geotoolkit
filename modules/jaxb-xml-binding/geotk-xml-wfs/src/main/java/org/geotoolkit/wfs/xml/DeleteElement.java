@@ -25,10 +25,10 @@ import org.opengis.filter.Filter;
  * @author Guilhem Legal (Geomatys)
  */
 public interface DeleteElement {
-    
+
     Filter getFilter();
-    
+
     QName getTypeName();
-    
+
     String getHandle();
 }

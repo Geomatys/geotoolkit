@@ -144,8 +144,8 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client{
         throw new DataStoreException("Can not create new coverage.");
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
 }

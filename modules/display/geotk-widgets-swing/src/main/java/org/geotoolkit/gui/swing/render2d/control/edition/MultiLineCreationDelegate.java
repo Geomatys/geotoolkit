@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * multi-line creation handler
- * 
+ *
  * @author Johann Sorel
  * @module
  */
@@ -58,7 +58,7 @@ public class MultiLineCreationDelegate extends AbstractFeatureEditionDelegate {
 
         final int button = e.getButton();
 
-        if(button == MouseEvent.BUTTON1){            
+        if(button == MouseEvent.BUTTON1){
             nbRighClick = 0;
             coords.add(helper.toCoord(e.getX(), e.getY()));
             if(coords.size() == 1){
@@ -75,8 +75,8 @@ public class MultiLineCreationDelegate extends AbstractFeatureEditionDelegate {
             subGeometries.add(candidate);
             geometry = EditionHelper.createMultiLine(subGeometries);
             decoration.setGeometries(Collections.singleton(geometry));
-                    
-        }else if(button == MouseEvent.BUTTON3){            
+
+        }else if(button == MouseEvent.BUTTON3){
             nbRighClick++;
             if (nbRighClick == 1) {
                 if (coords.size() > 1) {

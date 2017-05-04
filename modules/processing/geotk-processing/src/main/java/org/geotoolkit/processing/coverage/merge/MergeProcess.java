@@ -80,7 +80,7 @@ public class MergeProcess extends AbstractProcess {
         final Coverage[] inputCoverage = (Coverage[]) Parameters.getOrCreate(IN_COVERAGES, inputParameters).getValue();
         final Envelope inputEnvelope = (Envelope) Parameters.getOrCreate(IN_ENVELOPE, inputParameters).getValue();
         final double inputResolution = (Double) Parameters.getOrCreate(IN_RESOLUTION, inputParameters).getValue();
-        
+
         //find the best data type;
         int datatype = -1;
         for(Coverage gc : inputCoverage){
@@ -92,18 +92,18 @@ public class MergeProcess extends AbstractProcess {
                 datatype = largest(datatype, gctype);
             }
         }
-        
+
         //calculate the output grid geometry and image size
         final int sizeX = (int)(inputEnvelope.getSpan(0) / inputResolution);
         final int sizeY = (int)(inputEnvelope.getSpan(1) / inputResolution);
         final GridGeometry2D gridGeom = new GridGeometry2D(
                 new GridEnvelope2D(0, 0, sizeX, sizeY), inputEnvelope);
-        
+
         //force sample type and area of each coverage
         final Coverage[] fittedCoverages = new Coverage[inputCoverage.length];
         for(int i=0;i<inputCoverage.length;i++){
             fittedCoverages[i] = inputCoverage[i];
-            
+
             //Reformat
             final ProcessDescriptor coverageReformatDesc = ReformatDescriptor.INSTANCE;
             final ParameterValueGroup reformatParams = coverageReformatDesc.getInputDescriptor().createValue();
@@ -111,7 +111,7 @@ public class MergeProcess extends AbstractProcess {
             reformatParams.parameter("datatype").setValue(datatype);
             final Process reformatProcess = coverageReformatDesc.createProcess(reformatParams);
             fittedCoverages[i] = (GridCoverage2D)reformatProcess.call().parameter("result").getValue();
-            
+
             //Resample
             final ProcessDescriptor coverageResampleDesc = ResampleDescriptor.INSTANCE;
             final ParameterValueGroup resampleParams = coverageResampleDesc.getInputDescriptor().createValue();
@@ -121,17 +121,17 @@ public class MergeProcess extends AbstractProcess {
             final Process resampleProcess = coverageResampleDesc.createProcess(resampleParams);
             fittedCoverages[i] = (GridCoverage2D)resampleProcess.call().parameter("result").getValue();
         }
-        
+
         //Band combine
         final ProcessDescriptor coverageResampleDesc = BandCombineDescriptor.INSTANCE;
         final ParameterValueGroup resampleParams = coverageResampleDesc.getInputDescriptor().createValue();
         resampleParams.parameter("coverages").setValue(fittedCoverages);
         final Process resampleProcess = coverageResampleDesc.createProcess(resampleParams);
         final Coverage result = (GridCoverage2D)resampleProcess.call().parameter("result").getValue();
-        
+
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(result);
     }
-    
+
     private static int largest(int datatype1, int datatype2){
         if(datatype1 == DataBuffer.TYPE_DOUBLE || datatype2 == DataBuffer.TYPE_DOUBLE){
             return DataBuffer.TYPE_DOUBLE;
@@ -148,5 +148,5 @@ public class MergeProcess extends AbstractProcess {
         }
         return DataBuffer.TYPE_UNDEFINED;
     }
-    
+
 }

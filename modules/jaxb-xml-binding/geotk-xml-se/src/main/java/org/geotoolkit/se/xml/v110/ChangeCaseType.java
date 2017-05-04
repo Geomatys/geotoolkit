@@ -26,9 +26,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for ChangeCaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ChangeCaseType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,11 +60,11 @@ public class ChangeCaseType
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -72,11 +72,11 @@ public class ChangeCaseType
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *     
+     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -84,11 +84,11 @@ public class ChangeCaseType
 
     /**
      * Gets the value of the direction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectionType }
-     *     
+     *
      */
     public DirectionType getDirection() {
         return direction;
@@ -96,11 +96,11 @@ public class ChangeCaseType
 
     /**
      * Sets the value of the direction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectionType }
-     *     
+     *
      */
     public void setDirection(final DirectionType value) {
         this.direction = value;
