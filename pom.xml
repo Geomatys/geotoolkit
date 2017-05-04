@@ -1142,14 +1142,17 @@
       <url>http://maven.geotoolkit.org</url>
     </repository>
     <repository>
-      <id>dev</id>
-      <name>Geomatys internal repository</name>
-      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+      <id>geomatys</id>
+      <name>Geomatys public repository</name>
+      <url>http://nexus.geomatys.com/repository/maven-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>unidata</id>
       <name>unidata</name>
-      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -1163,9 +1166,12 @@
       <url>http://maven.geotoolkit.org</url>
     </pluginRepository>
     <pluginRepository>
-      <id>dev</id>
-      <name>Geomatys internal repository</name>
-      <url>http://dev.geomatys.com/nexus/content/repositories/releases</url>
+      <id>geomatys</id>
+      <name>Geomatys public repository</name>
+      <url>http://nexus.geomatys.com/repository/maven-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 
